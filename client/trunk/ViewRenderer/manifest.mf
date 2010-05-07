@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.inventory.views.viewrenderer
+OpenIDE-Module-Localizing-Bundle: org/inventory/views/viewrenderer/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
