@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package servlets;
 
 import java.io.IOException;
@@ -14,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ejb.EJB;
 /**
  *
- * @author dib
+ * @author Charles Edward Bedón Cortázar <charles.bedon@zoho.com>
  */
 public class TestServlet extends HttpServlet {
     @EJB
@@ -33,15 +28,14 @@ public class TestServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         try {
             sbr.createInitialDataset();
-            
-            //sbr.buildMetaModel();
-            //sbr.getObjectInmediateHierarchy(new Long(10), "ConfigurationItem");
+            sbr.buildMetaModel();
+
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ProxyServlet</title>");  
+            out.println("<title>Test</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Este es el servlet que llam&eacute;: " + request.getContextPath () + "</h1>");
+            out.println("<h1>This servlet creates the meta model and add test data: " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
            

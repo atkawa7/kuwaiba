@@ -3,6 +3,7 @@ package entity.core.metamodel;
 import core.annotations.Metadata;
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,8 +21,8 @@ import javax.persistence.OneToOne;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Metadata //Anotación personalizada para marcarla como que no se debe pasar a los
-          //clientes para que administren su meta, ya que ella es una clase de utilidad
+@Metadata //Custom annotation to mark instances of this class as not business object
+          
 @NamedQuery(name="flushClassMetadata", query="DELETE FROM ClassMetadata x")
 public class ClassMetadata implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -35,20 +36,20 @@ public class ClassMetadata implements Serializable {
     private String displayName;
 
     @JoinColumn(nullable=false,name="package_id")
-    @ManyToOne//(cascade=CascadeType.PERSIST) Si se le pone cascade, si se intenta meter un paquete cuyo nombre
-            //(Columna única) ya existe, el man se totea porque no entiende que ignore la adicionada si ya hay uno con ese nombre
-    private PackageMetadata packageInfo; //Paquete donde se encuentra. útil para crear luego
-                                         //instancias a partir de su nombrte full-qualified usando class.forName
+    @ManyToOne//(cascade=CascadeType.PERSIST) We don't need cascade, since we're supposed to check
+              //data integrity before performing a deletion
+    private PackageMetadata packageInfo; //This is the package where the class belongs to. It's useful to reassemble the full-qualified
+                                         //name in order to call Class.forName
     private String description;
     @Column(nullable=false)
-    private Boolean isCustom=false;       //Indica si es una clase del core o si es creada para un cliente en particular
+    private Boolean isCustom=false;       //Shows if this is a core class (the ones provided in the official release) or a custom one
     private byte[] smallIcon;
     private byte[] icon;
     @OneToMany
-    @JoinTable(name="ContainerHierarchy") //Este es el nombre que tendrá la tabla que implementa la relación
+    @JoinTable(name="ContainerHierarchy") //This is the name assigned to the table which implement the relationship
     private List<ClassMetadata> possibleChildren;
 
-    @OneToMany
+    @OneToMany(cascade=CascadeType.PERSIST) //If one deletes a class, the related attributes should be deleted too. 
     @JoinTable(name="AttributesMap")
     private List<AttributeMetadata> attributes; //Represents the relationship with the attributes metadata information
 

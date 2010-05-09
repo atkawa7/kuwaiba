@@ -52,14 +52,14 @@ public class BackendBean implements BackendBeanRemote {
         List<Country> sl = new ArrayList<Country> ();
         for (int i=1;i<11;i++){
             StateObject r = new StateObject();
-            r.setName("Departamento "+String.valueOf(i));
+            r.setName("State "+String.valueOf(i));
             rl.add(r);
         }
         for (int i=1;i<11;i++){
-            Country sdh = new Country();
-            sdh.setName("País "+String.valueOf(i));
-            sdh.setParent(RootObject.PARENT_ROOT); //Indica que el padre es el root
-            sl.add(sdh);
+            Country country = new Country();
+            country.setName("Country "+String.valueOf(i));
+            country.setParent(RootObject.PARENT_ROOT); //Means the parent is the root
+            sl.add(country);
         }
 
         for (Country s : sl){
@@ -98,7 +98,7 @@ public class BackendBean implements BackendBeanRemote {
             Dictionary<String, PackageMetadata> packages = new Hashtable<String, PackageMetadata>();
 
             for (EntityType entity : ent){
-                if(!Modifier.isAbstract(entity.getJavaType().getModifiers())){ //Por el momento, las abstractas son aquellas clases base, no es necesario hacer nada con ellas
+                if(!Modifier.isAbstract(entity.getJavaType().getModifiers())){ //By now the abstract classes are ignored, that is, the base classes (RootObject, ConfigurationItem, Generic*, etc)
                     if(entity.getJavaType().getAnnotation(Metadata.class)!=null ||
                             entity.getJavaType().getAnnotation(Hidden.class)!=null)
                         continue;
@@ -116,9 +116,11 @@ public class BackendBean implements BackendBeanRemote {
                     }
 
                     em.persist(new ClassMetadata(entity.getJavaType().getSimpleName(),
-                           pm,
-                           "La clase "+entity.getJavaType().getSimpleName(),
-                           false,null,atts,null));
+                                                   pm,
+                                                   "Class "+entity.getJavaType().getSimpleName(),
+                                                    false,null,atts,null
+                                                )
+                              );
                 }
             }
         }
