@@ -166,6 +166,25 @@
 <sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
 </sp:SignedParts>
 </wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_getLightMetadata_Input_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
 <wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_getPossibleChildren_Input_Policy">
 <sp:EncryptedParts>
 <sp:Body />
@@ -300,6 +319,25 @@
 </sp:SignedParts>
 </wsp:Policy>
 <wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_createObject_Output_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_getLightMetadata_Output_Policy">
 <sp:EncryptedParts>
 <sp:Body />
 </sp:EncryptedParts>
@@ -526,6 +564,12 @@
 <message name="removeObjectResponse">
 <part name="parameters" element="tns:removeObjectResponse" />
 </message>
+<message name="getLightMetadata">
+<part name="parameters" element="tns:getLightMetadata" />
+</message>
+<message name="getLightMetadataResponse">
+<part name="parameters" element="tns:getLightMetadataResponse" />
+</message>
 <portType name="KuwaibaWebservice">
 <operation name="getMetadata">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getMetadataRequest" message="tns:getMetadata" />
@@ -598,6 +642,10 @@
 <operation name="removeObject">
 <input wsam:Action="http://webservice/KuwaibaWebservice/removeObjectRequest" message="tns:removeObject" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/removeObjectResponse" message="tns:removeObjectResponse" />
+</operation>
+<operation name="getLightMetadata">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getLightMetadataRequest" message="tns:getLightMetadata" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getLightMetadataResponse" message="tns:getLightMetadataResponse" />
 </operation>
 </portType>
 <binding name="KuwaibaWebservicePortBinding" type="tns:KuwaibaWebservice">
@@ -777,6 +825,17 @@
 </input>
 <output>
 <wsp:PolicyReference URI="#MainWSPortBinding_removeObject_Output_Policy" />
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getLightMetadata">
+<soap:operation soapAction="" />
+<input>
+<wsp:PolicyReference URI="#MainWSPortBinding_getLightMetadata_Input_Policy" />
+<soap:body use="literal" />
+</input>
+<output>
+<wsp:PolicyReference URI="#MainWSPortBinding_getLightMetadata_Output_Policy" />
 <soap:body use="literal" />
 </output>
 </operation>

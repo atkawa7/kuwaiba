@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.interfaces.LocalClassMetadata;
+import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.customization.hierarchycustomizer.actions.Delete;
 import org.openide.nodes.AbstractNode;
@@ -17,16 +17,16 @@ import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
 
 /**
- *
+ * A node representing a ClassMetadataLight
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class ClassMetadataNode extends AbstractNode {
    static final String PARENT_ICON_PATH = "org/inventory/customization/hierarchycustomizer/res/flag-green.png";
    static final String CHILDREN_ICON_PATH = "org/inventory/customization/hierarchycustomizer/res/flag-black.png";
-   private LocalClassMetadata object;
+   private LocalClassMetadataLight object;
    private String displayName;
    
-   public ClassMetadataNode(LocalClassMetadata _lcm){
+   public ClassMetadataNode(LocalClassMetadataLight _lcm){
       super (new ClassMetadataChildren(),Lookups.singleton(_lcm));
       setIconBaseWithExtension(PARENT_ICON_PATH);
       this.object = _lcm;
@@ -38,7 +38,7 @@ public class ClassMetadataNode extends AbstractNode {
        setIconBaseWithExtension(CHILDREN_ICON_PATH);
    }
 
-    public LocalClassMetadata getObject() {
+    public LocalClassMetadataLight getObject() {
         return object;
     }
 

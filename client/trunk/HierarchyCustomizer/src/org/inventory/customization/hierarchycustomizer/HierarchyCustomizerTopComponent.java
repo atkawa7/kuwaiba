@@ -3,9 +3,10 @@ package org.inventory.customization.hierarchycustomizer;
 import java.awt.BorderLayout;
 import java.awt.dnd.DragSource;
 import java.util.logging.Logger;
+import javax.swing.ActionMap;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
-import org.inventory.core.services.interfaces.LocalClassMetadata;
+import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataChildren;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
@@ -17,7 +18,7 @@ import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.AbstractNode;
 import org.openide.util.Lookup;
-import org.openide.util.Utilities;
+
 
 /**
  * Represents the GUI for customizing the container hierarchy
@@ -31,7 +32,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
     static final String ICON_PATH = "org/inventory/customization/hierarchycustomizer/res/icon.png";
     private static final String PREFERRED_ID = "HierarchyCustomizerTopComponent";
     private final ExplorerManager em = new ExplorerManager();
-    private HierarchyCustomizerService hml = new HierarchyCustomizerService();
+    private HierarchyCustomizerService hml = new HierarchyCustomizerService(this);
 
     public HierarchyCustomizerTopComponent() {
         initComponents();
@@ -42,8 +43,9 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
     }
 
     private void initComponentsCustom() {
-        associateLookup(ExplorerUtils.createLookup(em, this.getActionMap()));
-
+        associateLookup(ExplorerUtils.createLookup(em, new ActionMap()));
+        //Lookup.Result result = getLookup().lookupResult(LocalClassMetadataLight.class);
+        //result.addLookupListener(hml);
         BeanTreeView bTreeView = new BeanTreeView();
         JList lstClasses = new JList();
 
@@ -59,6 +61,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
         DragSource.getDefaultDragSource().addDragSourceListener(hml);
 
         pnlHierarchyManagerScrollMain.setViewportView(lstClasses);
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -100,7 +103,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
                 .addContainerGap()
                 .addComponent(lblInfo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlHierarchyManagerMain, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE))
+                .addComponent(pnlHierarchyManagerMain, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -149,10 +152,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
 
     @Override
     public void componentOpened() {
-        Lookup.Result result2 = Utilities.actionsGlobalContext().
-                lookupResult(LocalClassMetadata.class);
-
-        result2.addLookupListener(hml);
+        
     }
 
     @Override

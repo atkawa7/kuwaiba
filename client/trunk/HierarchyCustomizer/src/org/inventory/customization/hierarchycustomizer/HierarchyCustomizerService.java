@@ -21,20 +21,21 @@ import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
 import org.openide.util.Utilities;
 
-
 /**
  * Contains the business logic for the related TopComponent
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class HierarchyCustomizerService implements DragSourceListener,LookupListener,DropTargetListener{
 
+    private HierarchyCustomizerTopComponent hctc;
     private LocalClassMetadataLight[] allMeta;
     private CommunicationsStub com = CommunicationsStub.getInstance();
     private NotificationUtil notifier;
 
-    public HierarchyCustomizerService(){
+    public HierarchyCustomizerService(HierarchyCustomizerTopComponent _hctc){
         notifier = Lookup.getDefault().lookup(NotificationUtil.class);
         allMeta = com.getAllLightMeta();
+        this.hctc = _hctc;
 
         if (allMeta==null){
            notifier.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_RETRIEVE_HIERARCHY_TEXT"),
@@ -42,10 +43,10 @@ public class HierarchyCustomizerService implements DragSourceListener,LookupList
            allMeta = new LocalClassMetadata[0];
         }
 
-        Lookup.Result result = Utilities.actionsGlobalContext().
-                lookupResult(LocalClassMetadataLight.class);
-                //lookupResult(LocalObjectLight.class);
-        result.addLookupListener(this);
+
+        //Lookup.Result result = hctc.getLookup().lookupResult(LocalClassMetadataLight.class);
+//        Lookup.Result result = Utilities.actionsGlobalContext().lookupResult(LocalClassMetadataLight.class);
+//        result.addLookupListener(this);
     }
     public LocalClassMetadataLight[] getAllMeta() {
         return allMeta;
@@ -87,6 +88,7 @@ public class HierarchyCustomizerService implements DragSourceListener,LookupList
 
     //LookupListener methods
     public void resultChanged(LookupEvent le) {
+        System.out.println("aaaaaa");
         
     }
 

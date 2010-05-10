@@ -20,6 +20,10 @@
 
 <xs:element name="getLastErrResponse" type="tns:getLastErrResponse" />
 
+<xs:element name="getLightMetadata" type="tns:getLightMetadata" />
+
+<xs:element name="getLightMetadataResponse" type="tns:getLightMetadataResponse" />
+
 <xs:element name="getMetadata" type="tns:getMetadata" />
 
 <xs:element name="getMetadataForClass" type="tns:getMetadataForClass" />
@@ -267,6 +271,16 @@
 <xs:complexType name="createObjectResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObjectLight" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getLightMetadata">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getLightMetadataResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 

@@ -2,7 +2,7 @@ package org.inventory.customization.hierarchycustomizer.nodes;
 
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.interfaces.LocalClassMetadata;
+import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 /**
@@ -11,12 +11,12 @@ import org.openide.nodes.Node;
  */
 public class ClassMetadataChildren extends Children.Keys {
 
-    public ClassMetadataChildren(LocalClassMetadata[] lcm){
+    public ClassMetadataChildren(LocalClassMetadataLight[] lcm){
         setKeys(lcm);
     }
 
     public ClassMetadataChildren(){
-        setKeys(new LocalClassMetadata[0]);
+        setKeys(new LocalClassMetadataLight[0]);
     }
 
     @Override
@@ -33,8 +33,8 @@ public class ClassMetadataChildren extends Children.Keys {
         }
         return new ClassMetadataNode(possibleChildren);
         }*/
-        if (t instanceof LocalClassMetadata)
-            return new Node[] {new ClassMetadataNode((LocalClassMetadata)t)};
+        if (t instanceof LocalClassMetadataLight)
+            return new Node[] {new ClassMetadataNode((LocalClassMetadataLight)t)};
         else
             return new Node[] {new ClassMetadataNode((String)t)};
     }
@@ -42,7 +42,7 @@ public class ClassMetadataChildren extends Children.Keys {
     @Override
     public void addNotify(){
         if (this.getNode() instanceof ClassMetadataNode){ //Ignores the root node
-            LocalClassMetadata lcm = ((ClassMetadataNode)this.getNode()).getObject();
+            LocalClassMetadataLight lcm = ((ClassMetadataNode)this.getNode()).getObject();
             List children = CommunicationsStub.getInstance().getPossibleChildren(
                     lcm.getPackageName()+"."+lcm.getClassName());
             setKeys(children);

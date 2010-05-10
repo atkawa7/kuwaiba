@@ -239,10 +239,10 @@ public class CommunicationsStub {
             this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
             return null;
         }
-        LocalClassMetadataLight[] lm = new LocalClassMetadata[metas.size()];
+        LocalClassMetadataLight[] lm = new LocalClassMetadataLight[metas.size()];
         int i=0;
         for (ClassInfoLight cm : metas){
-            lm[i] = new LocalClassMetadataLightImpl(cm);
+            lm[i] = (LocalClassMetadataLight)new LocalClassMetadataLightImpl(cm);
             i++;
         }
         return lm;
