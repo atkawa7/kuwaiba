@@ -6,10 +6,10 @@ import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
-import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter.Popup;
 
@@ -35,8 +35,6 @@ public final class Create extends AbstractAction implements Popup{
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/actions/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR,
                     CommunicationsStub.getInstance().getError());
         else{
-            //TODO This should be replaced by a TreeModelListener, since add() is deprecated
-            node.getChildren().add(new Node[]{new ObjectNode(myLol)});
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/actions/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO,
                     java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/actions/Bundle").getString("LBL_CREATED"));
         }
@@ -45,14 +43,14 @@ public final class Create extends AbstractAction implements Popup{
     public JMenuItem getPopupPresenter() {
         JMenu mnuPossibleChildren = new JMenu(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/actions/Bundle").getString("LBL_NEW"));
 
-        List<String> items = CommunicationsStub.getInstance().
+        List<LocalClassMetadataLight> items = CommunicationsStub.getInstance().
                 getPossibleChildren(lol.getPackageName()+"."+lol.getClassName());
 
         if (items.size() == 0) mnuPossibleChildren.setEnabled(false);
         else
-            for(String item: items){
-                JMenuItem smiChildren = new JMenuItem(item.substring(item.lastIndexOf('.')+1));
-                smiChildren.setName(item);
+            for(LocalClassMetadataLight item: items){
+                JMenuItem smiChildren = new JMenuItem(item.getClassName());
+                smiChildren.setName(item.getPackageName()+"."+item.getClassName());
                 smiChildren.addActionListener(this);
                 mnuPossibleChildren.add(smiChildren);
             }

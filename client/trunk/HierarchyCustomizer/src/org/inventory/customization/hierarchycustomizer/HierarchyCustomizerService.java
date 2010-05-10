@@ -14,9 +14,8 @@ import java.util.List;
 import javax.swing.JList;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
-import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
-import org.inventory.objectcache.Cache;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
@@ -24,39 +23,31 @@ import org.openide.util.Utilities;
 
 
 /**
- * Contains the business logic associated to the TopComponent
+ * Contains the business logic for the related TopComponent
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class HierarchyCustomizerService implements DragSourceListener,LookupListener,DropTargetListener{
 
-    private LocalClassMetadata[] allMeta;
+    private LocalClassMetadataLight[] allMeta;
     private CommunicationsStub com = CommunicationsStub.getInstance();
-    private Cache cache = Cache.getInstace();
     private NotificationUtil notifier;
 
     public HierarchyCustomizerService(){
         notifier = Lookup.getDefault().lookup(NotificationUtil.class);
-        if(cache.hasAllMeta())
-            allMeta = cache.getMetaCache();
-        else{
-            allMeta = com.getAllMeta();
+        allMeta = com.getAllLightMeta();
 
-            if (allMeta!=null){
-                cache.resetMetaCache();
-                cache.addMultipleMeta(allMeta);
-                cache.setHasAllMeta(true);
-            }else{
-                notifier.showSimplePopup("Error extrayendo jerarquía",
+        if (allMeta==null){
+           notifier.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_RETRIEVE_HIERARCHY_TEXT"),
                         notifier.ERROR, com.getError());
-                allMeta = new LocalClassMetadata[0];
-            }
+           allMeta = new LocalClassMetadata[0];
         }
+
         Lookup.Result result = Utilities.actionsGlobalContext().
-                //lookupResult(LocalClassMetadata.class);
-                lookupResult(LocalObjectLight.class);
+                lookupResult(LocalClassMetadataLight.class);
+                //lookupResult(LocalObjectLight.class);
         result.addLookupListener(this);
     }
-    public LocalClassMetadata[] getAllMeta() {
+    public LocalClassMetadataLight[] getAllMeta() {
         return allMeta;
     }
 
@@ -89,8 +80,8 @@ public class HierarchyCustomizerService implements DragSourceListener,LookupList
                     
                     //com.addPossibleChildren(String parentClass);
             }else
-                notifier.showSimplePopup("Error Modificando Jerarquía", notifier.ERROR,
-                          "La operación de arrastre no es permitida");
+                notifier.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_UPDATE_HIERARCHY_TEXT"), notifier.ERROR,
+                          java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_OPERATION_NOT_PERMITTED"));
         }
     }
 
@@ -102,22 +93,22 @@ public class HierarchyCustomizerService implements DragSourceListener,LookupList
 
     //DropTargetListener methods
     public void dragEnter(DropTargetDragEvent dtde) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("NOT SUPPORTED YET."));
     }
 
     public void dragOver(DropTargetDragEvent dtde) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("NOT SUPPORTED YET."));
     }
 
     public void dropActionChanged(DropTargetDragEvent dtde) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("NOT SUPPORTED YET."));
     }
 
     public void dragExit(DropTargetEvent dte) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("NOT SUPPORTED YET."));
     }
 
     public void drop(DropTargetDropEvent dtde) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("NOT SUPPORTED YET."));
     }
 }

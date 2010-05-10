@@ -6,7 +6,7 @@ import org.inventory.core.services.interfaces.NotificationUtil;
 import org.openide.util.Lookup;
 
 /**
- * Contiene la lógica de negocio para el componente principal
+ * Provides the business logic for the related TopComponent
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class NavigationTreeService {
@@ -23,9 +23,9 @@ public class NavigationTreeService {
             NotificationUtil nu = Lookup.getDefault().
                 lookup(NotificationUtil.class);
             if (nu == null)
-                System.out.println("[TreeManager:Constructor] Error: "+com.getError());
+                System.out.println(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("DBG_CREATION_ERROR")+com.getError());
             else
-                nu.showSimplePopup("Error en la Creación de Árbol", NotificationUtil.ERROR, com.getError());
+                nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_TITLE_CREATION"), NotificationUtil.ERROR, com.getError());
             return null;
         }
     }

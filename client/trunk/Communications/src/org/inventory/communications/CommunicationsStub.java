@@ -23,19 +23,21 @@ import org.inventory.webservice.RemoteObjectLight;
 import org.inventory.webservice.RemoteTreeNodeLight;
 
 /**
- * Clase singleton que le permite a todos los módulos comunicarse con el server
- * TODO: hacerla Threadeada para los casos en los que se requieran comunicaciones simultáneas de objetos
+ * Singleton class that provides communication and caching services to the rest of the modules
+ * TODO: Make it a thread to support simlutaneous operations
+ * TODO: Use the cachin mechanism within this class, in order to avoid the other classes
+ * to call it by themselves
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class CommunicationsStub {
     private static CommunicationsStub instance=null;
     private KuwaibaWebserviceService service;
     private KuwaibaWebservice port;
-    private String error="No se ha definido errores";
+    private String error=java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_ERROR");
     private LocalObjectLightImpl context;
     private LocalObjectLightImpl[] contextChildren;
     
-    //Implementaremos un patrón de diseño singleton
+    //Implements the singleton pattern
     private CommunicationsStub(){
         this.service = new KuwaibaWebserviceService();
         this.port = service.getKuwaibaWebservicePort();
@@ -63,8 +65,8 @@ public class CommunicationsStub {
 
             contextChildren = children;
             return true;
-        }catch(Exception connectException){ //TODO Averiguar por qué no deja que se capture una ConnectException
-            this.error = "No fue posible establecer comunicación con el servidor";
+        }catch(Exception connectException){ //TODO Find out why the ConnectException is not the one thrown here
+            this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
             return false;
         }
     }
@@ -80,8 +82,8 @@ public class CommunicationsStub {
         return res;
     }
     /*
-     * @param obj contiene el objeto que s actualizará. Nótese que ese objeto no es el "original",
-     * sino sólo parte de él. Sólo se colocan los atributos que han cambiado
+     * @param obj is the object to be updated. Note that this object doesn't have
+     *            every field within the "original". it only has field(s) to be updated
      */
     public boolean saveObject(LocalObject obj){
         ObjectUpdate update = new ObjectUpdate();
@@ -105,27 +107,28 @@ public class CommunicationsStub {
     }
 
     /*
-     * Wrapper para la función ídem en el webservice que se encarga de bloquear
-     * un objeto para sólo lectura ya que se está editando
-     * @param oid El oid del objeto (identificador único)
-     * @param objectClass Clase del objeto
-     * @param value Valor al cual se fijará el lock (readonly o permiso completo)
+     * This is a wrapper method with the same name as the one in the webservice used to lock
+     * an object as read only because an operation is being performed on it
+     * @param oid the object oid
+     * @param objectClass the object class
+     * @param value Lock value. By now is a boolean, but I expect in the future a three level lock can be implemented (r,w,nothing)
      */
     public boolean setObjectLock(Long oid, String objectClass,Boolean value){
         return true;
     }
 
+
     /*
-     * TODO: Hacer que se acceda al caché por medio del communications
+     * Retrieves the whole object info
+     * @param objectClass object class
+     * @param oid object id
+     * @param lcmd metadata associated. Useful to map the response. Mmm, this should be corrected
      */
     public LocalObject getObjectInfo(String objectClass, Long oid, LocalClassMetadata lcmd){
-        //En este caso sí es necesario conocer el meta, pero con el fin de no
-        //tener una dependencia del communicationsstub a objectcache (quiero que
-        //sea un módulo completamente stand-alone). Se delega entonce fijar el neta
-        //en quien hace uso de este método
+
         LocalObjectImpl res = new LocalObjectImpl(port.getObjectInfo(objectClass, oid),lcmd);
         if (res == null){
-            this.error = "No se debe haber encontrado el objeto";
+            this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_OBJECT");
         }
         return res;
     }
@@ -160,7 +163,7 @@ public class CommunicationsStub {
         try{
             metas= port.getMetadata();
         }catch(Exception connectException){
-            this.error = "No se pudo conectar con el servidor";
+            this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
             return null;
         }
         LocalClassMetadata[] lm = new LocalClassMetadata[metas.size()];
@@ -173,7 +176,8 @@ public class CommunicationsStub {
     }
 
     /*
-     * Trae la metainformación de una clase dada
+     * Retrieves the metadata for a given class
+     * @param className the object class
      */
     public LocalClassMetadata getMetaForClass(String className){
         ClassInfo cm = port.getMetadataForClass(className);
@@ -184,8 +188,10 @@ public class CommunicationsStub {
         return new LocalClassMetadataImpl(cm);
     }
 
-    //TODO: Por el momento, el valor es un string, pero es posible que en el futuro
-    //evolucione a un objeto completo
+    /*
+     * Retrieves a List type attribute.
+     * @param className attribute class (usually sibling of GenericListType)
+     */
     public LocalObjectListItem[] getList(String className){
 
         ObjectList list = port.getMultipleChoice(className);
@@ -193,9 +199,9 @@ public class CommunicationsStub {
         if (list == null)
             return res;
 
-        //El +1 se debe a que se adiciona un ítem: el vació o nulo
+        //The +1 represents the empty room left for the "null" value
         res = new LocalObjectListItemImpl[list.getList().getEntry().size() + 1];
-        res[0] = new LocalObjectListItemImpl(LocalObjectListItem.NULL_ID,"","None");
+        res[0] = new LocalObjectListItemImpl(LocalObjectListItem.NULL_ID,"",java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("NONE"));
         int i = 1;
         for(Entry entry : list.getList().getEntry()){
             res[i] = new LocalObjectListItemImpl(entry.getKey(),entry.getValue(),entry.getValue());
@@ -213,15 +219,32 @@ public class CommunicationsStub {
     }
 
     /*
-     * Elimina un objeto dado
-     * @param className Nombre de la clase a la que pertenece el objeto (incluyendo el paquete)
-     * @param oid id del objeto
-     * @return Éxito o fracaso
+     * Deletes the given object
+     * @param className Object class (including its package)
+     * @param oid object id
+     * @return Success or failure
      */
     public boolean removeObject(String className, Long oid){
         boolean res = port.removeObject(className,oid);
         if (!res)
             this.error = port.getLastErr();
         return res;
+    }
+
+    public LocalClassMetadataLight[] getAllLightMeta() {
+        List<ClassInfoLight> metas;
+        try{
+            metas= port.getLightMetadata();
+        }catch(Exception connectException){
+            this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
+            return null;
+        }
+        LocalClassMetadataLight[] lm = new LocalClassMetadata[metas.size()];
+        int i=0;
+        for (ClassInfoLight cm : metas){
+            lm[i] = new LocalClassMetadataLightImpl(cm);
+            i++;
+        }
+        return lm;
     }
 }

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.inventory.customization.attributecustomizer;
 
 import org.inventory.customization.attributecustomizer.nodes.ClassMetadataChildren;
@@ -20,7 +16,7 @@ import org.openide.explorer.view.TreeTableView;
 import org.openide.nodes.AbstractNode;
 
 /**
- * Top component which displays something.
+ * This component is used to cutomiza the way the attributes are shown in the interface
  */
 @ConvertAsProperties(dtd = "-//org.inventory.customization.attributecustomizer//AttributeCustomizer//EN",
 autostore = false)
@@ -53,34 +49,21 @@ public final class AttributeCustomizerTopComponent extends TopComponent
     private void initComponents() {
 
         pnlClassCustomizerMain = new javax.swing.JPanel();
-        txtSearch = new javax.swing.JTextField();
-        lblSearch = new javax.swing.JLabel();
+        lblInfo = new javax.swing.JLabel();
         pnlTableEnclosing = new javax.swing.JPanel();
-        btnSave = new javax.swing.JButton();
 
-        txtSearch.setText(org.openide.util.NbBundle.getMessage(AttributeCustomizerTopComponent.class, "AttributeCustomizerTopComponent.txtSearch.text")); // NOI18N
-        txtSearch.setToolTipText(org.openide.util.NbBundle.getMessage(AttributeCustomizerTopComponent.class, "AttributeCustomizerTopComponent.txtSearch.toolTipText")); // NOI18N
-        txtSearch.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtSearchActionPerformed(evt);
-            }
-        });
-
-        org.openide.awt.Mnemonics.setLocalizedText(lblSearch, org.openide.util.NbBundle.getMessage(AttributeCustomizerTopComponent.class, "AttributeCustomizerTopComponent.lblSearch.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(lblInfo, org.openide.util.NbBundle.getMessage(AttributeCustomizerTopComponent.class, "AttributeCustomizerTopComponent.lblInfo.text")); // NOI18N
 
         javax.swing.GroupLayout pnlTableEnclosingLayout = new javax.swing.GroupLayout(pnlTableEnclosing);
         pnlTableEnclosing.setLayout(pnlTableEnclosingLayout);
         pnlTableEnclosingLayout.setHorizontalGroup(
             pnlTableEnclosingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 531, Short.MAX_VALUE)
+            .addGap(0, 631, Short.MAX_VALUE)
         );
         pnlTableEnclosingLayout.setVerticalGroup(
             pnlTableEnclosingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 302, Short.MAX_VALUE)
+            .addGap(0, 312, Short.MAX_VALUE)
         );
-
-        btnSave.setMnemonic('G');
-        org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(AttributeCustomizerTopComponent.class, "AttributeCustomizerTopComponent.btnSave.text")); // NOI18N
 
         javax.swing.GroupLayout pnlClassCustomizerMainLayout = new javax.swing.GroupLayout(pnlClassCustomizerMain);
         pnlClassCustomizerMain.setLayout(pnlClassCustomizerMainLayout);
@@ -90,27 +73,16 @@ public final class AttributeCustomizerTopComponent extends TopComponent
                 .addContainerGap()
                 .addGroup(pnlClassCustomizerMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pnlTableEnclosing, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(pnlClassCustomizerMainLayout.createSequentialGroup()
-                        .addComponent(lblSearch)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlClassCustomizerMainLayout.createSequentialGroup()
-                        .addComponent(btnSave)
-                        .addGap(20, 20, 20))))
+                    .addComponent(lblInfo)))
         );
         pnlClassCustomizerMainLayout.setVerticalGroup(
             pnlClassCustomizerMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlClassCustomizerMainLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlClassCustomizerMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblSearch))
+                .addComponent(lblInfo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pnlTableEnclosing, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(btnSave)
-                .addContainerGap())
+                .addGap(52, 52, 52))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -141,16 +113,10 @@ public final class AttributeCustomizerTopComponent extends TopComponent
         pnlTableEnclosing.add(tblClassCustomizerMain,BorderLayout.CENTER);
         
     }
-    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtSearchActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnSave;
-    private javax.swing.JLabel lblSearch;
+    private javax.swing.JLabel lblInfo;
     private javax.swing.JPanel pnlClassCustomizerMain;
     private javax.swing.JPanel pnlTableEnclosing;
-    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
     private TreeTableView tblClassCustomizerMain;
     /**

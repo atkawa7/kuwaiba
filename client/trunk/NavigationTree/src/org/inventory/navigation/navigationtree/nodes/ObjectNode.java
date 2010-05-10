@@ -40,7 +40,7 @@ public class ObjectNode extends AbstractNode{
         this.object = _lol;
         pcl = new ObjectNodePropertyChangeListener(this);
         this.addPropertyChangeListener(pcl);
-        explorerAction.putValue(OpenLocalExplorerAction.NAME, "Explorer from here");
+        explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_EXPLORE"));
         createAction = new Create(object,this);
         deleteAction = new Delete(this);
         editAction = new Edit(this);
@@ -57,7 +57,7 @@ public class ObjectNode extends AbstractNode{
     @Override
     public String getDisplayName(){
         String displayName = (object.getDisplayname().equals("") ||
-                                    object.getDisplayname().equals(null))?"<Sin Nombre>":object.getDisplayname();
+                                    object.getDisplayname().equals(null))?java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_NONAME"):object.getDisplayname();
         return displayName + " ["+object.getClassName()+"]";
     }
 
@@ -65,8 +65,8 @@ public class ObjectNode extends AbstractNode{
     protected Sheet createSheet(){
         sheet = Sheet.createDefault();
         
-        Set generalPropertySet = Sheet.createPropertiesSet(); //Categoría de atributos generales
-        Set administrativePropertySet = Sheet.createPropertiesSet(); //Categoría de atributos administrativos
+        Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
+        Set administrativePropertySet = Sheet.createPropertiesSet(); //Administrative attributes category
 
         LocalClassMetadata meta = CommunicationsStub.getInstance().getMetaForClass(object.getClassName());
 
@@ -121,8 +121,8 @@ public class ObjectNode extends AbstractNode{
         generalPropertySet.setName("1");
         administrativePropertySet.setName("2");
 
-        generalPropertySet.setDisplayName("General Attributes");
-        administrativePropertySet.setDisplayName("Administrative Attributes");
+        generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
+        administrativePropertySet.setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_ADMINISTRATIVE_ATTRIBUTES"));
 
         
         sheet.put(generalPropertySet);

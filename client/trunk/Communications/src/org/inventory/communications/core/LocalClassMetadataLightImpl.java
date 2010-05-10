@@ -4,7 +4,9 @@ import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.webservice.ClassInfoLight;
 
 /**
- *
+ * Implementation of the common interface to represent the classmetadata in a simple
+ * way so it can be shown in trees and lists. This is done because to bring the whole
+ * metadata is not necessary (ie. Container Hierarchy Manager)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class LocalClassMetadataLightImpl implements LocalClassMetadataLight{
@@ -37,4 +39,8 @@ public class LocalClassMetadataLightImpl implements LocalClassMetadataLight{
         return id;
     }
 
+    @Override
+    public String toString(){
+        return className;
+    }
 }

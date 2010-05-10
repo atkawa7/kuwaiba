@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
-import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataChildren;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
@@ -29,7 +28,6 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
     implements ExplorerManager.Provider{
 
     private static HierarchyCustomizerTopComponent instance;
-    /** path to the icon used by the component and its open action */
     static final String ICON_PATH = "org/inventory/customization/hierarchycustomizer/res/icon.png";
     private static final String PREFERRED_ID = "HierarchyCustomizerTopComponent";
     private final ExplorerManager em = new ExplorerManager();

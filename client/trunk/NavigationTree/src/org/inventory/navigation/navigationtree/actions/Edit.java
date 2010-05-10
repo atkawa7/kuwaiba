@@ -14,7 +14,7 @@ public final class Edit extends AbstractAction {
 
     public Edit(Node _node) {
         this.node = _node;
-        putValue(NAME, "Edit");
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/actions/Bundle").getString("LBL_EDIT"));
     }
 
     public void actionPerformed(ActionEvent ev) {

@@ -10,6 +10,7 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 
@@ -103,5 +104,9 @@ public class Cache{
 
     public void setHasAllMeta(boolean hasAllMeta) {
         this.hasAllMeta = hasAllMeta;
+    }
+
+    public LocalClassMetadataLight[] getLightMetaCache() {
+        return new LocalClassMetadataLight[0];
     }
 }

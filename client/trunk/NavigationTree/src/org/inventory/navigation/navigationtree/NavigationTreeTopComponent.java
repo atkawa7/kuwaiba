@@ -16,12 +16,14 @@ import org.openide.nodes.AbstractNode;
 import org.openide.windows.Mode;
 import org.openide.windows.WindowManager;
 
+/*
+ * This component is not a singleton. The user would want to create more than one instance of it
+ */
 @ConvertAsProperties(dtd = "-//org.inventory.navigation.navigationtree//NavigationTree//EN",
 autostore = false)
 public final class NavigationTreeTopComponent extends TopComponent
         implements ExplorerManager.Provider{
 
-    //private static NavigationTreeTopComponent instance;
     /** path to the icon used by the component and its open action */
     static final String ICON_PATH = "org/inventory/navigation/navigationtree/res/icon.png";
     static final String ROOT_ICON_PATH = "org/inventory/navigation/navigationtree/res/root.png";
@@ -54,7 +56,7 @@ public final class NavigationTreeTopComponent extends TopComponent
         );
     }// </editor-fold>//GEN-END:initComponents
     /*
-     * Adiciona e inicializa los componentes no creados mediante el editor de GUIs
+     * Adds and setup all the components created without the help of the GUI Editor
      */
     public void initComponentsCustom(){
         ActionMap ac = this.getActionMap();
@@ -76,15 +78,15 @@ public final class NavigationTreeTopComponent extends TopComponent
             AbstractNode root = new AbstractNode(new ObjectChildren(rootChildren));
             root.setIconBaseWithExtension(ROOT_ICON_PATH);
             em.setRootContext(root);
-            em.getRootContext().setDisplayName("Inicio");
+            em.getRootContext().setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_ROOT"));
             add(treeView,BorderLayout.CENTER);
         }
-        //add(new PropertySheetView(),BorderLayout.SOUTH);
         
-        //Le dice de manera dinámica al WindowManager que este componente irá
-        //en el modo explorador (parte izquierda). Esto se hace aquí, ya que en
-        //el layer.xml se ha quitado toda referencia a ese modo porque este módulo
-        //ya no es singleton
+        /* This makes programatically the Window Manager to use an "explorer" (window docked at left side)
+           this should be done because since this component is not singleton anymore, all XML configuration files
+           and
+         */
+
         Mode myMode = WindowManager.getDefault().findMode("explorer");
         myMode.dockInto(this);
     }
@@ -127,16 +129,16 @@ public final class NavigationTreeTopComponent extends TopComponent
     return getDefault();
     }*/
 
-    //Debería guardar el estado de las cosas contenidas?
     @Override
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_NEVER;
     }
 
-    //El displayname del árbol
+    
     @Override
     public void componentOpened() {
-        setDisplayName("Árbol de Navegación");
+        //Set the tree title
+        setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_TITLE"));
     }
 
     @Override
@@ -145,10 +147,9 @@ public final class NavigationTreeTopComponent extends TopComponent
     }
 
     /*
-     * IMPORTANT: Este par de métodos son bacanos porque sirven para congelar
-     * el estado de un componente. Uno aquí usando el método "put" crea nuevas
-     * propiedades, como nombre de la ventana, posición del scroll, etc, que
-     * luego se leerán con "readProperties" y se restaurarán!
+     * These to methods are interesting, since they're useful to freeze
+     * the state of a given component by means of writing and reading values from
+     * a properties file as if it was a hash
      */
     void writeProperties(java.util.Properties p) {
         p.setProperty("version", "1.0");
