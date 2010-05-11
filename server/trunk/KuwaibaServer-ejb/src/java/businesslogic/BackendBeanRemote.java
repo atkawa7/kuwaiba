@@ -36,4 +36,5 @@ public interface BackendBeanRemote {
     public Boolean addPossibleChildren(Long parentClassId, String[] possibleChildren);
     public boolean removeObject(Class className, Long oid);
     public ClassInfoLight[] getPossibleChildren(java.lang.Class parentClass);
+    public ClassInfoLight[] getLightMetadata();
 }

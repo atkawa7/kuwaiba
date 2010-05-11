@@ -225,7 +225,7 @@ public class KuwaibaWebservice {
     }
 
     /**
-     * Adiciona a la jerarquía de continencia las clases proporcionadas
+     * Updates the container hierarchy for a given class
      * @param parentClass Clase a la cual se le desea adicionar un posible hijo en la jerarquía
      * @param possibleChildren Arreglo con los nombre de
      * @return true si la operación fur completada con éxito, false si ocurrió algún error. Si sólo la adición de algunas 
@@ -241,7 +241,7 @@ public class KuwaibaWebservice {
     }
 
     /**
-     * Elimina un objeto
+     * Deletes an object
      * @param className Nombre de la clase a la que pertenece el elemento
      * @return true si fue posible ejecutar la acción, false en otro caso
      */
@@ -259,5 +259,13 @@ public class KuwaibaWebservice {
             this.lastErr = cnfe.getMessage();
             return false;
         }
+    }
+
+    /**
+     * Provides metadata for all classes, but the ligh version
+     */
+    @WebMethod(operationName = "getLightMetadata")
+    public ClassInfoLight[] getLightMetadata() {
+        return sbr.getLightMetadata();
     }
 }

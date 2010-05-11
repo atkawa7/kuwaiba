@@ -7,8 +7,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
- * Es una clase wrapper de la entidad ClassMetadata que contiene la información
- * requerida por los clientes para el despliegue de atributos y eventualmente reglas de negocio
+ * This is a wrapper class for ClassMetadata, containing the info requiered for the clients
+ * to render the object attributes in the right way
  *
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
@@ -30,7 +30,7 @@ public class ClassInfo extends ClassInfoLight{
 
     public ClassInfo(){}
     public ClassInfo(ClassMetadata myClass){
-        super(myClass.getId(),myClass.getName(),myClass.getPackageName().getName());
+        super(myClass.getId(),myClass.getName(),myClass.getPackageInfo().getName());
         
         List<AttributeMetadata> ar = myClass.getAttributes();
         this.attributeNames = new String[ar.size()];

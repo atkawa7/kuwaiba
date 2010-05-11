@@ -294,7 +294,7 @@ public class BackendBean implements BackendBeanRemote {
                         //res.add(((ClassMetadata)obj).getPackageName().getName()+"."+((ClassMetadata)obj).getName());
                         res.add(new ClassInfoLight(((ClassMetadata)obj).getId(),
                                                      ((ClassMetadata)obj).getName(),
-                                                     ((ClassMetadata)obj).getPackageName().getName()));
+                                                     ((ClassMetadata)obj).getPackageInfo().getName()));
                 myClass = myClass.getSuperclass();
             }
             return res.toArray(new ClassInfoLight[0]);
@@ -482,5 +482,25 @@ public class BackendBean implements BackendBeanRemote {
             return false;
         }
         return true;
+    }
+
+    public ClassInfoLight[] getLightMetadata() {
+        System.out.println("[getLightMetadata] Llamado");
+        if (em != null){
+            String sentence = "SELECT x FROM ClassMetadata x";
+            Query q = em.createQuery(sentence);
+            List<ClassMetadata> cr = q.getResultList();
+            ClassInfoLight[] cml = new ClassInfoLight[cr.size()];
+            int i=0;
+            for (ClassMetadata myClass : cr){
+                cml[i] = new ClassInfoLight(myClass.getId(),myClass.getName(),myClass.getPackageInfo().getName());
+                i++;
+            }
+            return cml;
+        }
+        else {
+            this.error = "El EntityManager no existe";
+            return null;
+        }
     }
 }

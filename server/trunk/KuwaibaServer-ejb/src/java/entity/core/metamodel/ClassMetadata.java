@@ -90,14 +90,6 @@ public class ClassMetadata implements Serializable {
         this.isCustom = isCustom;
     }
 
-    public PackageMetadata getPackageName() {
-        return packageInfo;
-    }
-
-    public void setPackageName(PackageMetadata packageName) {
-        this.packageInfo = packageName;
-    }
-
     public String getDescription() {
         return description;
     }
