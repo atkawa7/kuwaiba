@@ -17,6 +17,7 @@ import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.openide.util.Lookup;
+import org.openide.util.Lookup.Result;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
 import org.openide.util.Utilities;
@@ -43,10 +44,13 @@ public class HierarchyCustomizerService implements DragSourceListener,LookupList
            allMeta = new LocalClassMetadata[0];
         }
 
-
-        //Lookup.Result result = hctc.getLookup().lookupResult(LocalClassMetadataLight.class);
-//        Lookup.Result result = Utilities.actionsGlobalContext().lookupResult(LocalClassMetadataLight.class);
-//        result.addLookupListener(this);
+        Result result = hctc.getLookup().lookupResult(LocalClassMetadataLight.class);
+        //This is really curious. If this line is omitted, the instances within the lookup never
+        //will be found. Please refer to http://netbeans.dzone.com/articles/netbeans-lookups-explained
+        //He doesn't explain it, but he uses it. It's important to point out that this workaround
+        //is not neccessary if you're going to listen from other module than the one with the view (BeanTreeView or whatever else)
+        result.allInstances();
+        result.addLookupListener(this);
     }
     public LocalClassMetadataLight[] getAllMeta() {
         return allMeta;
@@ -88,7 +92,7 @@ public class HierarchyCustomizerService implements DragSourceListener,LookupList
 
     //LookupListener methods
     public void resultChanged(LookupEvent le) {
-        System.out.println("aaaaaa");
+        
         
     }
 

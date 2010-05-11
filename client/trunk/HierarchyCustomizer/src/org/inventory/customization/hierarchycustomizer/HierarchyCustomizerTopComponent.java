@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
-import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataChildren;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
@@ -17,7 +16,6 @@ import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.AbstractNode;
-import org.openide.util.Lookup;
 
 
 /**
@@ -32,7 +30,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
     static final String ICON_PATH = "org/inventory/customization/hierarchycustomizer/res/icon.png";
     private static final String PREFERRED_ID = "HierarchyCustomizerTopComponent";
     private final ExplorerManager em = new ExplorerManager();
-    private HierarchyCustomizerService hml = new HierarchyCustomizerService(this);
+    private HierarchyCustomizerService hml;
 
     public HierarchyCustomizerTopComponent() {
         initComponents();
@@ -44,8 +42,9 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
 
     private void initComponentsCustom() {
         associateLookup(ExplorerUtils.createLookup(em, new ActionMap()));
-        //Lookup.Result result = getLookup().lookupResult(LocalClassMetadataLight.class);
-        //result.addLookupListener(hml);
+
+        hml = new HierarchyCustomizerService(this);
+
         BeanTreeView bTreeView = new BeanTreeView();
         JList lstClasses = new JList();
 
@@ -157,7 +156,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+
     }
 
     void writeProperties(java.util.Properties p) {
