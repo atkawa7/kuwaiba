@@ -21,7 +21,7 @@ import javax.persistence.OneToOne;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Metadata //Custom annotation to mark instances of this class as not business object
+@Metadata //Custom annotation to mark instances of this class as not business objects
           
 @NamedQuery(name="flushClassMetadata", query="DELETE FROM ClassMetadata x")
 public class ClassMetadata implements Serializable {
@@ -43,8 +43,16 @@ public class ClassMetadata implements Serializable {
     private String description;
     @Column(nullable=false)
     private Boolean isCustom=false;       //Shows if this is a core class (the ones provided in the official release) or a custom one
+    @Column(nullable=false)
+    private Boolean isAbstract=false;     //Indicates if a class can have instances by itself (base classes like GenericXXX or RootObject are used only for object orientation)
+    protected Boolean isAccountable;      //Indicates if a
     private byte[] smallIcon;
     private byte[] icon;
+
+    /*
+     * Note: In the container hierarchy there must be a dummy class to represent
+     * the root node in the navigation tree
+     */
     @OneToMany
     @JoinTable(name="ContainerHierarchy") //This is the name assigned to the table which implement the relationship
     private List<ClassMetadata> possibleChildren;
@@ -64,11 +72,12 @@ public class ClassMetadata implements Serializable {
     }
 
     public ClassMetadata(String _name, PackageMetadata _myPackage, String _description,
-            Boolean _isCustom, List<ClassMetadata> _children, List <AttributeMetadata> _attributes, ClassMetadata _parent){
+            Boolean _isCustom, Boolean _isAbstract,List<ClassMetadata> _children, List <AttributeMetadata> _attributes, ClassMetadata _parent){
         this.name = _name;
         this.packageInfo = _myPackage;
         this.description = _description;
         this.isCustom = _isCustom;
+        this.isAbstract = _isAbstract;
         this.possibleChildren = _children;
         this.attributes = _attributes;
         this.parent = _parent;
@@ -185,7 +194,7 @@ public class ClassMetadata implements Serializable {
 
     @Override
     public String toString() {
-        return "meta.ClassRegistry[id=" + id + "]";
+        return "meta.ClassMetadata[id=" + id + "]";
     }
 
 }

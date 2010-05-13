@@ -98,30 +98,31 @@ public class BackendBean implements BackendBeanRemote {
             Dictionary<String, PackageMetadata> packages = new Hashtable<String, PackageMetadata>();
 
             for (EntityType entity : ent){
-                if(!Modifier.isAbstract(entity.getJavaType().getModifiers())){ //By now the abstract classes are ignored, that is, the base classes (RootObject, ConfigurationItem, Generic*, etc)
-                    if(entity.getJavaType().getAnnotation(Metadata.class)!=null ||
-                            entity.getJavaType().getAnnotation(Hidden.class)!=null)
+                if(entity.getJavaType().getAnnotation(Metadata.class)!=null ||
+                        entity.getJavaType().getAnnotation(Hidden.class)!=null)
                         continue;
-                    List<AttributeMetadata> atts = new ArrayList<AttributeMetadata>();
-                    Set<Attribute> metaAtts = entity.getAttributes();
-                    PackageMetadata pm;
-                    for(Attribute att : metaAtts)
-                        atts.add(new AttributeMetadata(att));
+                List<AttributeMetadata> atts = new ArrayList<AttributeMetadata>();
+                Set<Attribute> metaAtts = entity.getAttributes();
+                PackageMetadata pm;
+                for(Attribute att : metaAtts)
+                    atts.add(new AttributeMetadata(att));
 
-                    pm = packages.get(entity.getJavaType().getPackage().getName());
-                    if (pm == null){
-                        pm = new PackageMetadata(entity.getJavaType().getPackage().getName(),"");
-                        packages.put(entity.getJavaType().getPackage().getName(),pm);
-                        em.persist(pm);
-                    }
 
-                    em.persist(new ClassMetadata(entity.getJavaType().getSimpleName(),
-                                                   pm,
-                                                   "Class "+entity.getJavaType().getSimpleName(),
-                                                    false,null,atts,null
-                                                )
-                              );
+                pm = packages.get(entity.getJavaType().getPackage().getName());
+                if (pm == null){
+                    pm = new PackageMetadata(entity.getJavaType().getPackage().getName(),"");
+                    packages.put(entity.getJavaType().getPackage().getName(),pm);
+                    em.persist(pm);
                 }
+
+                em.persist(new ClassMetadata(entity.getJavaType().getSimpleName(),
+                                             pm,
+                                             "Class "+entity.getJavaType().getSimpleName(),
+                                             false,Modifier.isAbstract(entity.getJavaType().getModifiers()),
+                                             null,atts,null
+                                             )
+                          );
+
             }
         }
         else this.error = "El EntityManager no existe";
