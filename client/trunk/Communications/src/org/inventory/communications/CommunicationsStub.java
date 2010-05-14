@@ -249,4 +249,8 @@ public class CommunicationsStub {
         }
         return lm;
     }
+
+    public String getRootClass(){
+        return port.getDummyRootClass();
+    }
 }

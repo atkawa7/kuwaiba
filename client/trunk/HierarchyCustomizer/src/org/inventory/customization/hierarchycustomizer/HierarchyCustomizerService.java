@@ -53,7 +53,7 @@ public class HierarchyCustomizerService implements DragSourceListener,LookupList
         //This is really curious. If this line is omitted, the instances within the lookup never
         //will be found. Please refer to http://netbeans.dzone.com/articles/netbeans-lookups-explained
         //He doesn't explain it, but he uses it. It's important to point out that this workaround
-        //is not neccessary if you're going to listen from other module than the one with the view (BeanTreeView or whatever else)
+        //is not neccessary if you're going to listen from other module than the one with the explorer view (BeanTreeView or whatever else)
         result.allInstances();
         result.addLookupListener(this);
     }
@@ -61,6 +61,20 @@ public class HierarchyCustomizerService implements DragSourceListener,LookupList
         return allMeta;
     }
 
+    /*
+     * Removes the DummyRoot, since it won't be used anymore
+     */
+    public void removeDummyRoot(){
+        LocalClassMetadataLight[] tempMeta = new LocalClassMetadataLight[allMeta.length - 1];
+        
+        int i = 0;
+        for (LocalClassMetadataLight item : allMeta)
+            if (!item.getClassName().equals(com.getRootClass())){
+                tempMeta[i] = item;
+                i++;
+            }
+        allMeta = tempMeta;
+    }
 
     //DragSourceListener methods
     public void dragEnter(DragSourceDragEvent dsde) {

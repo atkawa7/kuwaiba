@@ -52,6 +52,8 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
 
         em.setRootContext(new AbstractNode(new ClassMetadataChildren(hml.getAllMeta())));
 
+        hml.removeDummyRoot();
+
         bTreeView.setRootVisible(false);
 
         pnlLeft.add(bTreeView,BorderLayout.CENTER);
@@ -73,6 +75,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
         pnlRight = new javax.swing.JPanel();
         pnlHierarchyManagerScrollMain = new javax.swing.JScrollPane();
         lblInfo = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
 
         pnlHierarchyManagerMain.setOneTouchExpandable(true);
 
@@ -86,6 +89,8 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
 
         org.openide.awt.Mnemonics.setLocalizedText(lblInfo, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.lblInfo.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.jLabel1.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -93,22 +98,26 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlHierarchyManagerMain, javax.swing.GroupLayout.DEFAULT_SIZE, 914, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblInfo)
-                        .addContainerGap(20, Short.MAX_VALUE))))
+                    .addComponent(pnlHierarchyManagerMain, javax.swing.GroupLayout.PREFERRED_SIZE, 756, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblInfo)
+                    .addComponent(jLabel1))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblInfo)
+                .addComponent(lblInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlHierarchyManagerMain, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE))
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pnlHierarchyManagerMain, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblInfo;
     private javax.swing.JSplitPane pnlHierarchyManagerMain;
     private javax.swing.JScrollPane pnlHierarchyManagerScrollMain;
