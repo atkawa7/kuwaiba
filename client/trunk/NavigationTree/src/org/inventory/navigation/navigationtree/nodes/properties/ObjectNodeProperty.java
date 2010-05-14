@@ -33,7 +33,7 @@ public class ObjectNodeProperty extends ReadWrite{
     }
 
     /*
-     This constructor is called when the property is actually a list
+     This constructor is called when the property is a list
      *@param _name
      */
     public ObjectNodeProperty(String _name, Class _valueType, Object _value,

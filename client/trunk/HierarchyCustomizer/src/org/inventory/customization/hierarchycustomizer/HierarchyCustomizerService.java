@@ -10,17 +10,20 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 import javax.swing.JList;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataNode;
+import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
-import org.openide.util.Utilities;
 
 /**
  * Contains the business logic for the related TopComponent
@@ -32,6 +35,7 @@ public class HierarchyCustomizerService implements DragSourceListener,LookupList
     private LocalClassMetadataLight[] allMeta;
     private CommunicationsStub com = CommunicationsStub.getInstance();
     private NotificationUtil notifier;
+    private Result result;
 
     public HierarchyCustomizerService(HierarchyCustomizerTopComponent _hctc){
         notifier = Lookup.getDefault().lookup(NotificationUtil.class);
@@ -44,7 +48,8 @@ public class HierarchyCustomizerService implements DragSourceListener,LookupList
            allMeta = new LocalClassMetadata[0];
         }
 
-        Result result = hctc.getLookup().lookupResult(LocalClassMetadataLight.class);
+        //result = hctc.getLookup().lookupResult(LocalClassMetadataLight.class);
+        result = hctc.getLookup().lookupResult(ClassMetadataNode.class);
         //This is really curious. If this line is omitted, the instances within the lookup never
         //will be found. Please refer to http://netbeans.dzone.com/articles/netbeans-lookups-explained
         //He doesn't explain it, but he uses it. It's important to point out that this workaround
@@ -78,7 +83,7 @@ public class HierarchyCustomizerService implements DragSourceListener,LookupList
                 List<Long> possibleChildrenIds = new ArrayList<Long>();
                 
                 for (Object obj : selectedItems)
-                    possibleChildrenIds.add(((LocalClassMetadata)obj).getId());
+                    possibleChildrenIds.add(((LocalClassMetadataLight)obj).getId());
 
                     //Transferable data = ((DragSourceContext) dsde.getSource()).getTransferable();
                     //String className = (String)data.getTransferData(data.getTransferDataFlavors()[3]);
@@ -92,8 +97,23 @@ public class HierarchyCustomizerService implements DragSourceListener,LookupList
 
     //LookupListener methods
     public void resultChanged(LookupEvent le) {
-        
-        
+        Object obj = result.allInstances().iterator().next();
+        if (obj != null){
+
+            Vector content = new Vector(Arrays.asList(allMeta));
+            //LocalClassMetadataLight currentSelection;
+            ClassMetadataNode currentSelection;
+            //currentSelection = (LocalClassMetadataLight) obj;
+            currentSelection = (ClassMetadataNode) obj;
+
+            hctc.getbTreeView().expandNode(currentSelection);
+
+            for (Node child : currentSelection.getChildren().getNodes())
+                content.remove(((ClassMetadataNode)child).getObject());
+
+            content.remove(currentSelection.getObject());
+            hctc.getLstClasses().setListData(content);
+        }
     }
 
 

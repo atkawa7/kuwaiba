@@ -73,4 +73,19 @@ public class LocalObjectLightImpl implements LocalObjectLight, Transferable{
     public String getPackageName() {
         return this.packageName;
     }
+
+   @Override
+   public boolean equals(Object obj){
+        if (obj.getClass().equals(this.getClass()))
+            return (this.getOid() == ((LocalObjectLightImpl)obj).getOid());
+        else
+            return false;
+   }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + (this.displayName != null ? this.displayName.hashCode() : 0);
+        return hash;
+    }
 }

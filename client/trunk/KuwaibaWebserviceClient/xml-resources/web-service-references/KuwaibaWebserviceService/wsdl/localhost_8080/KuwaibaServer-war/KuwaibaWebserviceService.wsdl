@@ -492,23 +492,11 @@
 <message name="getTreeNodeLightResponse">
 <part name="parameters" element="tns:getTreeNodeLightResponse" />
 </message>
-<message name="getRootNode">
-<part name="parameters" element="tns:getRootNode" />
-</message>
-<message name="getRootNodeResponse">
-<part name="parameters" element="tns:getRootNodeResponse" />
-</message>
 <message name="getObjectChildren">
 <part name="parameters" element="tns:getObjectChildren" />
 </message>
 <message name="getObjectChildrenResponse">
 <part name="parameters" element="tns:getObjectChildrenResponse" />
-</message>
-<message name="getRootNodeLight">
-<part name="parameters" element="tns:getRootNodeLight" />
-</message>
-<message name="getRootNodeLightResponse">
-<part name="parameters" element="tns:getRootNodeLightResponse" />
 </message>
 <message name="getObjectInfo">
 <part name="parameters" element="tns:getObjectInfo" />
@@ -570,6 +558,18 @@
 <message name="getLightMetadataResponse">
 <part name="parameters" element="tns:getLightMetadataResponse" />
 </message>
+<message name="getDummyRootId">
+<part name="parameters" element="tns:getDummyRootId" />
+</message>
+<message name="getDummyRootIdResponse">
+<part name="parameters" element="tns:getDummyRootIdResponse" />
+</message>
+<message name="getDummyRootClass">
+<part name="parameters" element="tns:getDummyRootClass" />
+</message>
+<message name="getDummyRootClassResponse">
+<part name="parameters" element="tns:getDummyRootClassResponse" />
+</message>
 <portType name="KuwaibaWebservice">
 <operation name="getMetadata">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getMetadataRequest" message="tns:getMetadata" />
@@ -595,17 +595,9 @@
 <input wsam:Action="http://webservice/KuwaibaWebservice/getTreeNodeLightRequest" message="tns:getTreeNodeLight" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getTreeNodeLightResponse" message="tns:getTreeNodeLightResponse" />
 </operation>
-<operation name="getRootNode">
-<input wsam:Action="http://webservice/KuwaibaWebservice/getRootNodeRequest" message="tns:getRootNode" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/getRootNodeResponse" message="tns:getRootNodeResponse" />
-</operation>
 <operation name="getObjectChildren">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getObjectChildrenRequest" message="tns:getObjectChildren" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getObjectChildrenResponse" message="tns:getObjectChildrenResponse" />
-</operation>
-<operation name="getRootNodeLight">
-<input wsam:Action="http://webservice/KuwaibaWebservice/getRootNodeLightRequest" message="tns:getRootNodeLight" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/getRootNodeLightResponse" message="tns:getRootNodeLightResponse" />
 </operation>
 <operation name="getObjectInfo">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getObjectInfoRequest" message="tns:getObjectInfo" />
@@ -646,6 +638,14 @@
 <operation name="getLightMetadata">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getLightMetadataRequest" message="tns:getLightMetadata" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getLightMetadataResponse" message="tns:getLightMetadataResponse" />
+</operation>
+<operation name="getDummyRootId">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootIdRequest" message="tns:getDummyRootId" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootIdResponse" message="tns:getDummyRootIdResponse" />
+</operation>
+<operation name="getDummyRootClass">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootClassRequest" message="tns:getDummyRootClass" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootClassResponse" message="tns:getDummyRootClassResponse" />
 </operation>
 </portType>
 <binding name="KuwaibaWebservicePortBinding" type="tns:KuwaibaWebservice">
@@ -708,25 +708,7 @@
 <soap:body use="literal" />
 </output>
 </operation>
-<operation name="getRootNode">
-<soap:operation soapAction="" />
-<input>
-<soap:body use="literal" />
-</input>
-<output>
-<soap:body use="literal" />
-</output>
-</operation>
 <operation name="getObjectChildren">
-<soap:operation soapAction="" />
-<input>
-<soap:body use="literal" />
-</input>
-<output>
-<soap:body use="literal" />
-</output>
-</operation>
-<operation name="getRootNodeLight">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
@@ -836,6 +818,24 @@
 </input>
 <output>
 <wsp:PolicyReference URI="#MainWSPortBinding_getLightMetadata_Output_Policy" />
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getDummyRootId">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getDummyRootClass">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
 <soap:body use="literal" />
 </output>
 </operation>

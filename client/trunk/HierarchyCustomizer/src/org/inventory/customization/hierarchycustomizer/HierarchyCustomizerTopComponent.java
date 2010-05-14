@@ -31,6 +31,8 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
     private static final String PREFERRED_ID = "HierarchyCustomizerTopComponent";
     private final ExplorerManager em = new ExplorerManager();
     private HierarchyCustomizerService hml;
+    private BeanTreeView bTreeView;
+    private JList lstClasses;
 
     public HierarchyCustomizerTopComponent() {
         initComponents();
@@ -45,8 +47,8 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
 
         hml = new HierarchyCustomizerService(this);
 
-        BeanTreeView bTreeView = new BeanTreeView();
-        JList lstClasses = new JList();
+        bTreeView = new BeanTreeView();
+        lstClasses = new JList();
 
         em.setRootContext(new AbstractNode(new ClassMetadataChildren(hml.getAllMeta())));
 
@@ -142,6 +144,14 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
                 "There seem to be multiple components with the '" + PREFERRED_ID
                 + "' ID. That is a potential source of errors and unexpected behavior.");
         return getDefault();
+    }
+
+    public BeanTreeView getbTreeView() {
+        return bTreeView;
+    }
+
+    public JList getLstClasses() {
+        return lstClasses;
     }
 
     @Override

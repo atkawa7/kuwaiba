@@ -26,9 +26,17 @@ public class ClassMetadataNode extends AbstractNode {
    private LocalClassMetadataLight object;
    private String displayName;
    
-   public ClassMetadataNode(LocalClassMetadataLight _lcm){
+   public ClassMetadataNode(LocalClassMetadataLight _lcm, boolean isMain){
       super (new ClassMetadataChildren(),Lookups.singleton(_lcm));
       setIconBaseWithExtension(PARENT_ICON_PATH);
+      this.object = _lcm;
+   }
+
+   // TODO: I hate this!! please find the right way to create the node as a LEAF
+   // withouth duplicate the code, using that joker parameter (isMain)
+   public ClassMetadataNode(LocalClassMetadataLight _lcm){
+      super (Children.LEAF,Lookups.singleton(_lcm));
+      setIconBaseWithExtension(CHILDREN_ICON_PATH);
       this.object = _lcm;
    }
 

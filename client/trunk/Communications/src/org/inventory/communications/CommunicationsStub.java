@@ -50,15 +50,17 @@ public class CommunicationsStub {
 
     public boolean getRootNode(){
         try{
-            RemoteTreeNodeLight result = port.getRootNodeLight();
+
+            List<RemoteObjectLight> result = port.getObjectChildren(port.getDummyRootId(),
+                                                                    port.getDummyRootClass());
             if(result ==null){
                 error = port.getLastErr();
                 return false;
             }
         
-            LocalObjectLightImpl[] children = new LocalObjectLightImpl[result.getChildren().size()];
+            LocalObjectLightImpl[] children = new LocalObjectLightImpl[result.size()];
             int i = 0;
-            for (RemoteObjectLight obj : result.getChildren()){
+            for (RemoteObjectLight obj : result){
                 children[i] = new LocalObjectLightImpl(obj);
                 i++;
             }

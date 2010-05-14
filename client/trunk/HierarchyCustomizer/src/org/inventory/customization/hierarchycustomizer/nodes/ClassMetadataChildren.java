@@ -11,30 +11,26 @@ import org.openide.nodes.Node;
  */
 public class ClassMetadataChildren extends Children.Keys {
 
+    private boolean main;
+
     public ClassMetadataChildren(LocalClassMetadataLight[] lcm){
+        this.main = true;
         setKeys(lcm);
     }
 
     public ClassMetadataChildren(){
+        this.main = false;
         setKeys(new LocalClassMetadataLight[0]);
     }
 
     @Override
     protected Node[] createNodes(Object t) {
-        /*if(isMain)
-        return new ClassMetadataNode(lcm,this);
-        else{
-        LocalClassMetadata [] possibleChildren =
-        new LocalClassMetadata[t.getPossibleChildren().length];
-        int i=0;
-        for (String str: t.getPossibleChildren()){
-        possibleChildren[i] = (LocalClassMetadata)Cache.getInstace().getMetaForClass(str);
-        i++;
+        if (t instanceof LocalClassMetadataLight){
+            if (main) // I hate this!! please find the right way to create the node as a LEAF
+                return new Node[] {new ClassMetadataNode((LocalClassMetadataLight)t,main)};
+            else
+                return new Node[] {new ClassMetadataNode((LocalClassMetadataLight)t)};
         }
-        return new ClassMetadataNode(possibleChildren);
-        }*/
-        if (t instanceof LocalClassMetadataLight)
-            return new Node[] {new ClassMetadataNode((LocalClassMetadataLight)t)};
         else
             return new Node[] {new ClassMetadataNode((String)t)};
     }

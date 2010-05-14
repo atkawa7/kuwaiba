@@ -16,6 +16,14 @@
 
 <xs:element name="createSessionResponse" type="tns:createSessionResponse" />
 
+<xs:element name="getDummyRootClass" type="tns:getDummyRootClass" />
+
+<xs:element name="getDummyRootClassResponse" type="tns:getDummyRootClassResponse" />
+
+<xs:element name="getDummyRootId" type="tns:getDummyRootId" />
+
+<xs:element name="getDummyRootIdResponse" type="tns:getDummyRootIdResponse" />
+
 <xs:element name="getLastErr" type="tns:getLastErr" />
 
 <xs:element name="getLastErrResponse" type="tns:getLastErrResponse" />
@@ -47,14 +55,6 @@
 <xs:element name="getPossibleChildren" type="tns:getPossibleChildren" />
 
 <xs:element name="getPossibleChildrenResponse" type="tns:getPossibleChildrenResponse" />
-
-<xs:element name="getRootNode" type="tns:getRootNode" />
-
-<xs:element name="getRootNodeLight" type="tns:getRootNodeLight" />
-
-<xs:element name="getRootNodeLightResponse" type="tns:getRootNodeLightResponse" />
-
-<xs:element name="getRootNodeResponse" type="tns:getRootNodeResponse" />
 
 <xs:element name="getTreeNode" type="tns:getTreeNode" />
 
@@ -118,6 +118,16 @@
 </xs:sequence>
 </xs:complexType>
 </xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getDummyRootClass">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getDummyRootClassResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -235,6 +245,16 @@
 </xs:complexContent>
 </xs:complexType>
 
+<xs:complexType name="getDummyRootId">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getDummyRootIdResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="getPossibleChildren">
 <xs:sequence>
 <xs:element name="parentClass" type="xs:string" minOccurs="0" />
@@ -281,23 +301,6 @@
 <xs:complexType name="getLightMetadataResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getRootNode">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getRootNodeResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteTreeNode" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="remoteTreeNode">
-<xs:sequence>
-<xs:element name="root" type="tns:remoteObject" minOccurs="0" />
-<xs:element name="children" type="tns:remoteObject" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -381,13 +384,10 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getRootNodeLight">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getRootNodeLightResponse">
+<xs:complexType name="remoteTreeNode">
 <xs:sequence>
-<xs:element name="return" type="tns:remoteTreeNodeLight" minOccurs="0" />
+<xs:element name="root" type="tns:remoteObject" minOccurs="0" />
+<xs:element name="children" type="tns:remoteObject" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 </xs:schema>

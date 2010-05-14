@@ -43,4 +43,24 @@ public class LocalClassMetadataLightImpl implements LocalClassMetadataLight{
     public String toString(){
         return className;
     }
+
+   /*
+    * The equals method is overwritten in order to make the comparison based on the id, which is
+    * the actual unique identifier (this is used when filtering the list of possible children in the Hierarchy Manager)
+    */
+   @Override
+   public boolean equals(Object obj){
+        if (obj.getClass().equals(this.getClass()))
+            return this.getId().equals(((LocalClassMetadataLightImpl)obj).getId());
+        else
+            return false;
+   }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 41 * hash + (this.className != null ? this.className.hashCode() : 0);
+        return hash;
+    }
 }

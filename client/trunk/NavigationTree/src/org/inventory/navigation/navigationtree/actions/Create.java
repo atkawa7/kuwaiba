@@ -10,6 +10,7 @@ import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.RootObjectNode;
 import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter.Popup;
 
@@ -17,12 +18,22 @@ import org.openide.util.actions.Presenter.Popup;
 public final class Create extends AbstractAction implements Popup{
     private LocalObjectLight lol;
     private ObjectNode node;
+    private RootObjectNode ron;
     
 
-    public Create(LocalObjectLight _lol, ObjectNode _node) {
+    public Create(){
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/actions/Bundle").getString("LBL_NEW"));
+    }
+
+    public Create(LocalObjectLight _lol, ObjectNode _node) {
+        this();
         this.lol=_lol;
         this.node = _node;
+    }
+
+    public Create (RootObjectNode _ron){
+        this();
+        this.ron = _ron;
     }
 
     public void actionPerformed(ActionEvent ev) {

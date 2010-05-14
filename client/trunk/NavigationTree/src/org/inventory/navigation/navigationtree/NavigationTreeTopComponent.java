@@ -5,6 +5,7 @@ import javax.swing.ActionMap;
 import javax.swing.text.DefaultEditorKit;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.navigation.navigationtree.nodes.ObjectChildren;
+import org.inventory.navigation.navigationtree.nodes.RootObjectNode;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.util.ImageUtilities;
@@ -12,7 +13,6 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
-import org.openide.nodes.AbstractNode;
 import org.openide.windows.Mode;
 import org.openide.windows.WindowManager;
 
@@ -75,7 +75,7 @@ public final class NavigationTreeTopComponent extends TopComponent
         //AbstractNode root = new AbstractNode(tm);
         LocalObjectLight[] rootChildren = nts.getRootChildren();
         if (rootChildren != null){
-            AbstractNode root = new AbstractNode(new ObjectChildren(rootChildren));
+            RootObjectNode root = new RootObjectNode(new ObjectChildren(rootChildren));
             root.setIconBaseWithExtension(ROOT_ICON_PATH);
             em.setRootContext(root);
             em.getRootContext().setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_ROOT"));
