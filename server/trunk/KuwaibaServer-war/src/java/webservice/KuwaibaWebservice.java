@@ -31,7 +31,7 @@ public class KuwaibaWebservice {
      *       errores no vaya a sobreescribir
      */
     /*
-     * Tiene el último error
+     * Contains the last error or notification
      */
     private String lastErr ="No error specified";
 
@@ -90,28 +90,10 @@ public class KuwaibaWebservice {
         return null;
     }
 
-    @WebMethod(operationName = "getRootNode")
-    public RemoteTreeNode getRootNode(){
-        System.out.println("Llamada a getRootNode");
-        RemoteTreeNode res = sbr.getRootInmediateHierarchy();
-        if(res == null)
-            this.lastErr = "Error en el backendBean";
-        return res;
-    }
-
     @WebMethod(operationName = "getObjectChildren")
     public RemoteObjectLight[] getObjectChildren(@WebParam(name = "oid") Long oid, @WebParam(name = "objectClass") String objectClass){
         System.out.println("[getObjectChildren]: Llamada");
         RemoteObjectLight[] res = sbr.getObjectChildren(oid,objectClass);
-        if(res == null)
-            this.lastErr = "Error en el backendBean";
-        return res;
-    }
-
-    @WebMethod(operationName = "getRootNodeLight")
-    public RemoteTreeNodeLight getRootNodeLigh(){
-        System.out.println("[getRootNode]: Llamado");
-        RemoteTreeNodeLight res = sbr.getRootInmediateHierarchyLight();
         if(res == null)
             this.lastErr = "Error en el backendBean";
         return res;
@@ -135,7 +117,7 @@ public class KuwaibaWebservice {
     }
 
     /**
-     * @return Cadena con el último error
+     * @return String with the last error
      */
     @WebMethod(operationName = "getLastErr")
     public String getLastErr() {
@@ -267,5 +249,16 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "getLightMetadata")
     public ClassInfoLight[] getLightMetadata() {
         return sbr.getLightMetadata();
+    }
+
+    @WebMethod(operationName = "getDummyRootId")
+    public Long getDummyRootId() {
+        return sbr.getDummyRootId();
+    }
+
+
+    @WebMethod(operationName = "getDummyRootClass")
+    public String getDummyRootClass() {
+        return sbr.getDummyRootClass();
     }
 }

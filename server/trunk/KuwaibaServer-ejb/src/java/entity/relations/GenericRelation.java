@@ -1,10 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package entity.relations;
 
+import core.annotations.Administrative;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,10 +8,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 /**
- *
+ * Represents a simple relationship (this concept is not mature yet)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
+@Administrative
 public class GenericRelation implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

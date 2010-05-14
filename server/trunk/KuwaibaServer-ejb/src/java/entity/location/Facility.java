@@ -13,7 +13,7 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Facility extends GenericFacility implements Serializable {
+public class Facility extends GenericLocation implements Serializable {
 
     @Override
     public String toString() {

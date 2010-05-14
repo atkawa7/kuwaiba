@@ -5,7 +5,7 @@
 
 package entity.core.metamodel;
 
-import core.annotations.Hidden;
+import core.annotations.Administrative;
 import core.annotations.Metadata;
 import java.io.Serializable;
 import javax.persistence.Entity;
@@ -20,7 +20,7 @@ import javax.persistence.Table;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Hidden //Anotación personalizada para marcarla como que no se debe pasar a los
+@Administrative //Anotación personalizada para marcarla como que no se debe pasar a los
           //clientes para que administren su meta, ya que ella es una clase de utilidad
 @Table(name="locks")
 public class LockEntry implements Serializable {

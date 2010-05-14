@@ -5,7 +5,7 @@
 
 package entity.session;
 
-import core.annotations.Hidden;
+import core.annotations.Administrative;
 import entity.config.User;
 import java.io.Serializable;
 import java.util.Date;
@@ -24,7 +24,7 @@ import javax.persistence.TemporalType;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Hidden
+@Administrative
 public class UserSession implements Serializable {
     private static final long serialVersionUID = 1L;
     @OneToOne

@@ -1,31 +1,20 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+package entity.core;
 
-package entity.config;
-
-import core.annotations.Administrative;
+import core.annotations.Dummy;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 /**
- *
- * @author dib
+ * This is a dummy class used *only* to hold container information about the root node
+ * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Administrative
-@Table(name="Groups")
-public class UserGroup implements Serializable { //Group es una plabra de servada de JavaQL
+@Dummy
+public class DummyRoot implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
 
     public Long getId() {
         return id;
@@ -45,10 +34,10 @@ public class UserGroup implements Serializable { //Group es una plabra de servad
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UserGroup)) {
+        if (!(object instanceof DummyRoot)) {
             return false;
         }
-        UserGroup other = (UserGroup) object;
+        DummyRoot other = (DummyRoot) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -57,7 +46,7 @@ public class UserGroup implements Serializable { //Group es una plabra de servad
 
     @Override
     public String toString() {
-        return "entity.config.Groups[id=" + id + "]";
+        return "entity.core.DummyRoot[id=" + id + "]";
     }
 
 }

@@ -5,14 +5,16 @@
 
 package entity.multiple;
 
+import core.annotations.Administrative;
 import entity.core.AdministrativeItem;
 import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- *
+ * Represents a generic list type attribute
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
+@Administrative
 @Entity
 public abstract class GenericObjectList extends AdministrativeItem implements Serializable {
     protected String displayName;

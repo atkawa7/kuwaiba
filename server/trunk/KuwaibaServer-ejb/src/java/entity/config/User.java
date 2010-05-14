@@ -5,7 +5,7 @@
 
 package entity.config;
 
-import core.annotations.Hidden;
+import core.annotations.Administrative;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,7 +20,7 @@ import java.util.List;
  * @author dib
  */
 @Entity
-@Hidden
+@Administrative
 @Table(name="Users") //User un nombre de tabla reservado
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;

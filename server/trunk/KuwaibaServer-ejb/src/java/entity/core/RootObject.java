@@ -7,7 +7,7 @@ package entity.core;
 
 import java.io.Serializable;
 
-//Anotaciones
+//Annotations
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Entity;
@@ -19,7 +19,7 @@ import javax.persistence.GenerationType;
 
 
 /**
- *
+ * The Root of all hierarchy
  * @author Charles Bedon <charles.bedon@zoho.com>
  */
 @Entity
@@ -27,7 +27,8 @@ import javax.persistence.GenerationType;
 @Table(name="RootObject") //Esto le dice con qué nombre crear la tabla. El defaul, es decir, si uno no usa esta anotación es el mismo nombre de la tabla
 public abstract class RootObject implements Serializable {
 
-    public static final Long PARENT_ROOT = new Long(0); // Indica el valor reservado para aquellos objetos cuyo padre es el root
+    public static final Long PARENT_ROOT = new Long(0); // This is the id for the single instance of the root object
+    public static final String ROOT_CLASS = "DummyRoot"; // this is the class that represents the root object
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE) //Esto le dice cómo generar la llave primaria (SEQUENCE lo hacecustomizable, uno le puede decir cómo la genere)
@@ -37,8 +38,6 @@ public abstract class RootObject implements Serializable {
     @Column(nullable=false)
     protected Boolean isLocked= false; //indica si un objeto está bloqueado para sólo lectura
     
-    //protected RootObject parent = null; //Indica el oid del padre. El 0 indica que su padre es nulo (por ahora dejémolo null)
-    //protected List<RootObject> children;
     protected Long parent = null;
 
     public Long getParent() {

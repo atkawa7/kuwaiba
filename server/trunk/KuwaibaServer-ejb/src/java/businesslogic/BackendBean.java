@@ -5,13 +5,14 @@ import core.toserialize.ObjectList;
 import core.toserialize.RemoteObject;
 import core.toserialize.RemoteObjectLight;
 import core.toserialize.RemoteTreeNode;
-import core.toserialize.RemoteTreeNodeLight;
-import core.annotations.Hidden;
+import core.annotations.Administrative;
+import core.annotations.Dummy;
 import core.annotations.Metadata;
 import core.exceptions.ObjectNotFoundException;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectUpdate;
+import entity.core.DummyRoot;
 import entity.core.RootObject;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
@@ -48,16 +49,25 @@ public class BackendBean implements BackendBeanRemote {
     private String error;
 
     public void createInitialDataset() {
+        String[] countryNames = new String[]{"Colombia","Brazil","England","Germany","United States"};
+
         List<StateObject> rl = new ArrayList<StateObject> ();
         List<Country> sl = new ArrayList<Country> ();
-        for (int i=1;i<11;i++){
+
+        //Let's create the root
+        DummyRoot root = new DummyRoot();
+        root.setId(RootObject.PARENT_ROOT);
+        em.persist(root);
+
+
+        for (int i=1;i<3;i++){
             StateObject r = new StateObject();
-            r.setName("State "+String.valueOf(i));
+            r.setName("State #"+String.valueOf(i));
             rl.add(r);
         }
-        for (int i=1;i<11;i++){
+        for(String name : countryNames){
             Country country = new Country();
-            country.setName("Country "+String.valueOf(i));
+            country.setName(name);
             country.setParent(RootObject.PARENT_ROOT); //Means the parent is the root
             sl.add(country);
         }
@@ -70,8 +80,6 @@ public class BackendBean implements BackendBeanRemote {
             r.setParent(sl.iterator().next().getId());
             em.persist(r);
         }
-
-
     }
 
     /*
@@ -99,7 +107,7 @@ public class BackendBean implements BackendBeanRemote {
 
             for (EntityType entity : ent){
                 if(entity.getJavaType().getAnnotation(Metadata.class)!=null ||
-                        entity.getJavaType().getAnnotation(Hidden.class)!=null)
+                        entity.getJavaType().getAnnotation(Administrative.class)!=null)
                         continue;
                 List<AttributeMetadata> atts = new ArrayList<AttributeMetadata>();
                 Set<Attribute> metaAtts = entity.getAttributes();
@@ -119,14 +127,29 @@ public class BackendBean implements BackendBeanRemote {
                                              pm,
                                              "Class "+entity.getJavaType().getSimpleName(),
                                              false,Modifier.isAbstract(entity.getJavaType().getModifiers()),
+                                             (entity.getJavaType().getAnnotation(Dummy.class)!=null),
                                              null,atts,null
                                              )
                           );
 
             }
         }
-        else this.error = "El EntityManager no existe";
+        else this.error = "No EntityManager available";
 
+    }
+
+    /*
+     * Returns the id that will be use to reference the root object
+     */
+    public Long getDummyRootId(){
+        return RootObject.PARENT_ROOT;
+    }
+
+    /*
+     * Return the class used to represent the root node
+     */
+    public String getDummyRootClass(){
+        return RootObject.ROOT_CLASS;
     }
 
     public RemoteTreeNode getObjectInmediateHierarchy(Long oid, String objectClass) {
@@ -158,7 +181,8 @@ public class BackendBean implements BackendBeanRemote {
             sentence = "SELECT x.possibleChildren FROM ClassMetadata x WHERE x.name='"+
                     objectClass+"'";
             query = em.createQuery(sentence);
-            partialResult = query.getResultList();//Estas son clases que pueden ser hijas
+            partialResult = query.getResultList();//Instances of this class can
+                                                  //be contained within the instances of the given class
             for (Object res : partialResult){
                 String perClassQuery = "SELECT x FROM "+((ClassMetadata)res).getName()+" x WHERE x.parent="
                         +String.valueOf(oid);
@@ -178,7 +202,7 @@ public class BackendBean implements BackendBeanRemote {
      * TODO: Fusionarla con la anterior para mayor eficiencia (e incluir entradas
      * en el meta de contenencia para los que no tienen padre)
      */
-    public RemoteTreeNode getRootInmediateHierarchy() {
+    /*public RemoteTreeNode getRootInmediateHierarchy() {
         System.out.println("[getRootInmediateHierarchy] Llamado");
         if (em != null){
 
@@ -192,7 +216,7 @@ public class BackendBean implements BackendBeanRemote {
             this.error = "El EntityManager no existe";
             return null;
         }
-    }
+    }*/
 
     public RemoteObject getObjectInfo(String objectClass,Long oid){
         System.out.println("[getObjectInfo]: Llamado");
@@ -258,20 +282,20 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
-    public RemoteTreeNodeLight getRootInmediateHierarchyLight(){
-        System.out.println("[getRootInmediateHierarchy] Llamado");
-        if (em != null){
-            String sentence = "SELECT x from RootObject x WHERE x.parent = "+RootObject.PARENT_ROOT;
-            Query query = em.createQuery(sentence);
+    /*public RemoteTreeNodeLight getRootInmediateHierarchyLight(){
+    System.out.println("[getRootInmediateHierarchy] Llamado");
+    if (em != null){
+    String sentence = "SELECT x from RootObject x WHERE x.parent = "+RootObject.PARENT_ROOT;
+    Query query = em.createQuery(sentence);
 
-            List result = query.getResultList();
-            return new RemoteTreeNodeLight(null,result.toArray());
-        }
-        else {
-            this.error = "El EntityManager no existe";
-            return null;
-        }
+    List result = query.getResultList();
+    return new RemoteTreeNodeLight(null,result.toArray());
     }
+    else {
+    this.error = "El EntityManager no existe";
+    return null;
+    }
+    }*/
 
      public String getError(){
         return this.error;
@@ -334,7 +358,7 @@ public class BackendBean implements BackendBeanRemote {
     public ClassInfo[] getMetadata(){
         System.out.println("[getMetadata] Llamado");
         if (em != null){
-            String sentence = "SELECT x FROM ClassMetadata x";
+            String sentence = "SELECT x FROM ClassMetadata x ORDER BY x.name";
             Query q = em.createQuery(sentence);
             List<ClassMetadata> cr = q.getResultList();
             ClassInfo[] cm = new ClassInfo[cr.size()];
@@ -382,7 +406,7 @@ public class BackendBean implements BackendBeanRemote {
             this.error= e.getMessage();
             return null;
             }*/
-            String sentence = "SELECT x FROM "+className+" x";
+            String sentence = "SELECT x FROM "+className+" x ORDER BY x.name";
             Query q = em.createQuery(sentence,GenericObjectList.class);
             List<GenericObjectList> list = q.getResultList();
             return new ObjectList(className,list);
@@ -488,7 +512,7 @@ public class BackendBean implements BackendBeanRemote {
     public ClassInfoLight[] getLightMetadata() {
         System.out.println("[getLightMetadata] Llamado");
         if (em != null){
-            String sentence = "SELECT x FROM ClassMetadata x";
+            String sentence = "SELECT x FROM ClassMetadata x ORDER BY x.name";
             Query q = em.createQuery(sentence);
             List<ClassMetadata> cr = q.getResultList();
             ClassInfoLight[] cml = new ClassInfoLight[cr.size()];

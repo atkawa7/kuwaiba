@@ -45,7 +45,10 @@ public class ClassMetadata implements Serializable {
     private Boolean isCustom=false;       //Shows if this is a core class (the ones provided in the official release) or a custom one
     @Column(nullable=false)
     private Boolean isAbstract=false;     //Indicates if a class can have instances by itself (base classes like GenericXXX or RootObject are used only for object orientation)
-    protected Boolean isAccountable;      //Indicates if a
+    @Column(nullable=false)
+    private Boolean isAccountable=true;      //Indicates if the instance of this class is a physical active
+    @Column(nullable=false)
+    private Boolean isDummy=false;      //Is this a dummy class as described in the Dummy annotation?
     private byte[] smallIcon;
     private byte[] icon;
 
@@ -72,12 +75,13 @@ public class ClassMetadata implements Serializable {
     }
 
     public ClassMetadata(String _name, PackageMetadata _myPackage, String _description,
-            Boolean _isCustom, Boolean _isAbstract,List<ClassMetadata> _children, List <AttributeMetadata> _attributes, ClassMetadata _parent){
+            Boolean _isCustom, Boolean _isAbstract, Boolean _isDummy,List<ClassMetadata> _children, List <AttributeMetadata> _attributes, ClassMetadata _parent){
         this.name = _name;
         this.packageInfo = _myPackage;
         this.description = _description;
         this.isCustom = _isCustom;
         this.isAbstract = _isAbstract;
+        this.isDummy = _isDummy;
         this.possibleChildren = _children;
         this.attributes = _attributes;
         this.parent = _parent;

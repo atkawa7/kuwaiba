@@ -5,7 +5,7 @@
 
 package entity.session;
 
-import core.annotations.Hidden;
+import core.annotations.Administrative;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,7 +18,7 @@ import javax.persistence.Id;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Hidden
+@Administrative
 public class ClientDetail implements Serializable {
     private static final long serialVersionUID = 1L;
     @Column(nullable=false)
