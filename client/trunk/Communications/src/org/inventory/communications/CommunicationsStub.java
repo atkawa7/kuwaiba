@@ -20,7 +20,6 @@ import org.inventory.webservice.ObjectList;
 import org.inventory.webservice.ObjectList.List.Entry;
 import org.inventory.webservice.ObjectUpdate;
 import org.inventory.webservice.RemoteObjectLight;
-import org.inventory.webservice.RemoteTreeNodeLight;
 
 /**
  * Singleton class that provides communication and caching services to the rest of the modules
@@ -213,7 +212,7 @@ public class CommunicationsStub {
         return res;
     }
 
-    public boolean addPossibleChildren(Long parentClassId, List<String> possibleChildren){
+    public boolean addPossibleChildren(Long parentClassId, List<Long> possibleChildren){
         boolean res = port.addPossibleChildren(parentClassId, possibleChildren);
         if (!res)
             this.error = port.getLastErr();

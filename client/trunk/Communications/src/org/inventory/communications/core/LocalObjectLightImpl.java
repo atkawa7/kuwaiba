@@ -1,7 +1,6 @@
 package org.inventory.communications.core;
 
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import org.inventory.core.services.interfaces.LocalObjectLight;
@@ -12,9 +11,8 @@ import org.inventory.webservice.RemoteObjectLight;
  * es sólo información de despliegue (sin detalle)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class LocalObjectLightImpl implements LocalObjectLight, Transferable{
-    public static final DataFlavor DATA_FLAVOR =
-            new DataFlavor(LocalObjectLightImpl.class,"Object/LocalObjectLight");
+public class LocalObjectLightImpl implements LocalObjectLight{
+
     private Long oid;
     protected String className;
     protected String packageName;

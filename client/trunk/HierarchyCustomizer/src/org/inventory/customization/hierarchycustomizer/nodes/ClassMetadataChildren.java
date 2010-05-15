@@ -25,14 +25,12 @@ public class ClassMetadataChildren extends Children.Keys {
 
     @Override
     protected Node[] createNodes(Object t) {
-        if (t instanceof LocalClassMetadataLight){
+        //if (t instanceof LocalClassMetadataLight){
             if (main) // I hate this!! please find the right way to create the node as a LEAF
                 return new Node[] {new ClassMetadataNode((LocalClassMetadataLight)t,main)};
             else
                 return new Node[] {new ClassMetadataNode((LocalClassMetadataLight)t)};
-        }
-        else
-            return new Node[] {new ClassMetadataNode((String)t)};
+        //}
     }
 
     @Override

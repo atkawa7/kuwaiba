@@ -1,12 +1,13 @@
 package org.inventory.customization.hierarchycustomizer;
 
 import java.awt.BorderLayout;
+import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragSource;
 import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import javax.swing.JList;
-import javax.swing.ListSelectionModel;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataChildren;
+import org.inventory.customization.hierarchycustomizer.nodes.TransferManager;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -58,10 +59,16 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
 
         pnlLeft.add(bTreeView,BorderLayout.CENTER);
 
-        lstClasses.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        //By now, due to tranferable constraints (I'd have to create a Tranferable List to support multiple selections)
+        //lstClasses.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstClasses.setDragEnabled(true);
 
-        DragSource.getDefaultDragSource().addDragSourceListener(hml);
+        TransferManager tm = new TransferManager(lstClasses);
+
+        DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(lstClasses,DnDConstants.ACTION_MOVE, tm);
+        lstClasses.setTransferHandler(tm);
+
+        DragSource.getDefaultDragSource().addDragSourceListener(tm);
 
         pnlHierarchyManagerScrollMain.setViewportView(lstClasses);
 

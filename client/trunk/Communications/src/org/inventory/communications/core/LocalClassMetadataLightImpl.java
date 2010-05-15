@@ -1,5 +1,8 @@
 package org.inventory.communications.core;
 
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.webservice.ClassInfoLight;
 
@@ -62,5 +65,20 @@ public class LocalClassMetadataLightImpl implements LocalClassMetadataLight{
         hash = 41 * hash + (this.id != null ? this.id.hashCode() : 0);
         hash = 41 * hash + (this.className != null ? this.className.hashCode() : 0);
         return hash;
+    }
+
+    public DataFlavor[] getTransferDataFlavors() {
+        return new DataFlavor[]{LocalClassMetadataLight.DATA_FLAVOR};
+    }
+
+    public boolean isDataFlavorSupported(DataFlavor flavor) {
+        return flavor.equals(LocalClassMetadataLight.DATA_FLAVOR);
+    }
+
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+        if (isDataFlavorSupported(flavor))
+            return this;
+        else
+            throw new UnsupportedFlavorException(flavor);
     }
 }

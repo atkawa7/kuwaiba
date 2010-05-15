@@ -270,7 +270,7 @@
 <xs:complexType name="addPossibleChildren">
 <xs:sequence>
 <xs:element name="parentClassId" type="xs:long" minOccurs="0" />
-<xs:element name="possibleChildren" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="possibleChildren" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
