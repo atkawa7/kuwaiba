@@ -28,7 +28,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Stateless;
+import javax.ejb.Stateful;
+//import javax.ejb.Stateless;
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -39,7 +40,7 @@ import javax.persistence.metamodel.EntityType;
  *
  * @author Charles Edward bedon Cortazar <charles.bedon@zoho.com>
  */
-@Stateless
+@Stateful
 public class BackendBean implements BackendBeanRemote {
     //En una aplicación J2EE el EM se inserta automáticamente, para eso es la anotación
     //y no es necesario instanciarlo, porque el container lo maneja, sin embargo en una aplicación
@@ -198,26 +199,6 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
-    /*
-     * TODO: Fusionarla con la anterior para mayor eficiencia (e incluir entradas
-     * en el meta de contenencia para los que no tienen padre)
-     */
-    /*public RemoteTreeNode getRootInmediateHierarchy() {
-        System.out.println("[getRootInmediateHierarchy] Llamado");
-        if (em != null){
-
-            String sentence = "SELECT x from RootObject x WHERE x.parent = "+RootObject.PARENT_ROOT;
-            Query query = em.createQuery(sentence);
-
-            List result = query.getResultList();
-            return new RemoteTreeNode(null,result.toArray());
-        }
-        else {
-            this.error = "El EntityManager no existe";
-            return null;
-        }
-    }*/
-
     public RemoteObject getObjectInfo(String objectClass,Long oid){
         System.out.println("[getObjectInfo]: Llamado");
         if (em != null){
@@ -281,21 +262,6 @@ public class BackendBean implements BackendBeanRemote {
             return false;
         }
     }
-
-    /*public RemoteTreeNodeLight getRootInmediateHierarchyLight(){
-    System.out.println("[getRootInmediateHierarchy] Llamado");
-    if (em != null){
-    String sentence = "SELECT x from RootObject x WHERE x.parent = "+RootObject.PARENT_ROOT;
-    Query query = em.createQuery(sentence);
-
-    List result = query.getResultList();
-    return new RemoteTreeNodeLight(null,result.toArray());
-    }
-    else {
-    this.error = "El EntityManager no existe";
-    return null;
-    }
-    }*/
 
      public String getError(){
         return this.error;
@@ -398,7 +364,7 @@ public class BackendBean implements BackendBeanRemote {
     public ObjectList getMultipleChoice(String className){
         System.out.println("[getMetadata] Llamado");
         if (em != null){
-            /*Consideremos hacer esto en el futuro, por ahora, hagamos el cast con GenericMultiChoice
+            /*Maybe later, I can fix the method to avoid the cast
              try{
             Class multiObjectClass = Class.forName(className);
             }catch(Exception e){
@@ -418,49 +384,31 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     /*
-     * Adiciona posibles hijos de una clase en la jerarquía de contenencia
-     * TODO Debido a que no pude hacer de LocalClassMetadata un Transferable, lo único
-     * que puedo pasar por ahora son los nombres de las clases, aunque realmente debería
-     * pasar los ids
+     * Adds to a given class a list of possible children classes whose instances can be contained
+     *
+     * @param parentClassId Id of the class whos instances can contain the instances of the next param
+     * @param _possibleChildren ids of the candidates to be contained
+     * @return success or failure
      */
-    public Boolean addPossibleChildren(Long parentClassId, String[] _possibleChildren) {
+    public Boolean addPossibleChildren(Long parentClassId, Long[] _possibleChildren) {
         System.out.println("[addPossibleChildren] Llamado");
 
         if (em != null){
             ClassMetadata parentClass;
-            ClassMetadata[] possibleChildren = new ClassMetadata[_possibleChildren.length];
+            
             List<ClassMetadata> currenPossibleChildren;
-            List<String> repeatedClasses = new ArrayList<String>(); //Usamos esta sólo para hacer que esta llamada sea segura
-                                                                     //porque en teoría, en el cliente se va a proveer de un mecanismo
-                                                                     //que no permita que se intente adicionar a la jerarquía de continencia
-                                                                     //una clase que ya había sido adicionada
             Query q;
 
             parentClass = em.find(ClassMetadata.class, parentClassId);
             currenPossibleChildren = parentClass.getPossibleChildren();
 
-            int i = 0;
-            for (String className : _possibleChildren){
-                String sentence = "SELECT x FROM ClassMetadata x WHERE x.name='"+
-                                                    className+"'";
-                System.out.println("[addPossibleChildren] Ejecutando "+sentence);
-                q= em.createQuery(sentence);
-                possibleChildren[i] = (ClassMetadata) q.getSingleResult();
-                if (currenPossibleChildren.contains(possibleChildren[i]))
-                    repeatedClasses.add(className);
-                else
-                    parentClass.getPossibleChildren().add(possibleChildren[i]);
-                i++;
+            for (Long possibleChild : _possibleChildren){
+                ClassMetadata cm = em.find(ClassMetadata.class, possibleChild);
+
+                if (!currenPossibleChildren.contains(cm)) // If the class is already a possible child, it won't add it
+                    parentClass.getPossibleChildren().add(cm);
             }
             em.merge(parentClass);
-            if (repeatedClasses.size()>0){
-                this.error = "La siguientes clases ya habían sido adicionadas ";
-                for (String rep : repeatedClasses)
-                    this.error += rep+",";
-                this.error = this.error.substring(0, this.error.length() - 1);
-                return false;
-            }
-
         }
         else {
             this.error = "El EntityManager no existe";
@@ -469,8 +417,26 @@ public class BackendBean implements BackendBeanRemote {
         return true;
     }
 
+    /*
+     * The opposite of addPossibleChildren. It removes the given possible children
+     * TODO: Make this method safe. This is, check if there's already intances of the given
+     * "children to be deleted" with parentClass as their parent
+     * @param parentClassId Id of the class whos instances can contain the instances of the next param
+     * @param childrenTBeRemoved ids of the candidates to be deleted
+     * @return success or failure
+     */
+    public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) {
+        System.out.println("[removeObject] Called");
+
+        if (em != null){
+        }else{
+
+        }
+        return false;
+    }
+
     public boolean removeObject(Class className, Long oid){
-        System.out.println("[removeObject] Llamado");
+        System.out.println("[removeObject] Called");
 
         if (em != null){
             //TODO ¿Será que se deja una relación del objeto a su metadata para

@@ -215,8 +215,18 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "addPossibleChildren")
     public Boolean addPossibleChildren(@WebParam(name = "parentClassId")
     Long parentClassId, @WebParam(name = "possibleChildren")
-    java.lang.String[] possibleChildren) {
+    Long[] possibleChildren) {
         Boolean res = sbr.addPossibleChildren(parentClassId, possibleChildren);
+        if(!res)
+            this.lastErr = sbr.getError();
+        return res;
+    }
+
+    @WebMethod(operationName = "removePossibleChildren")
+    public Boolean removePossibleChildren(@WebParam(name = "parentClassId")
+    Long parentClassId, @WebParam(name = "childrenToBeRemoved")
+    Long[] childrenToBeRemoved) {
+        Boolean res = sbr.removePossibleChildren(parentClassId, childrenToBeRemoved);
         if(!res)
             this.lastErr = sbr.getError();
         return res;

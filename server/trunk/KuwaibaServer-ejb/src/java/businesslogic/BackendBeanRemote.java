@@ -13,8 +13,9 @@ import core.toserialize.RemoteTreeNode;
 import javax.ejb.Remote;
 
 /**
+ * Interface exposing the methods within BackEndbean
  *
- * @author dib
+ * @author Charles Edward Bedón Cortázar <charles.bedon@zoho.com>
  */
 @Remote
 public interface BackendBeanRemote {
@@ -24,19 +25,18 @@ public interface BackendBeanRemote {
     public Long getDummyRootId();
     public String getDummyRootClass();
     public RemoteTreeNode getObjectInmediateHierarchy(java.lang.Long oid, String objectClass);
-    //public RemoteTreeNode getRootInmediateHierarchy();
     public core.toserialize.RemoteObject getObjectInfo(java.lang.String objectClass, java.lang.Long oid);
     public boolean updateObject(ObjectUpdate obj) throws core.exceptions.ObjectNotFoundException;
     public java.lang.String getError();
     public boolean setObjectLock(java.lang.Long oid, java.lang.String objectClass, java.lang.Boolean value);
-    //public core.toserialize.RemoteTreeNodeLight getRootInmediateHierarchyLight();
     public RemoteObjectLight[] getObjectChildren(Long oid, String objectClass);
     public RemoteObjectLight createObject(String objectClass, Long parentOid, String template);
     public ClassInfo[] getMetadata();
     public ClassInfo getMetadataForClass(String className);
     public void buildMetaModel();
     public core.toserialize.ObjectList getMultipleChoice(java.lang.String className);
-    public Boolean addPossibleChildren(Long parentClassId, String[] possibleChildren);
+    public Boolean addPossibleChildren(Long parentClassId, Long[] possibleChildren);
+    public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved);
     public boolean removeObject(Class className, Long oid);
     public ClassInfoLight[] getPossibleChildren(java.lang.Class parentClass);
     public ClassInfoLight[] getLightMetadata();
