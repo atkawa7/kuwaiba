@@ -68,18 +68,22 @@ public class HierarchyCustomizerService implements LookupListener{
         Object obj = result.allInstances().iterator().next();
         if (obj != null){
 
-            Vector content = new Vector(Arrays.asList(allMeta));
+            ClassMetadataNode currentSelection = (ClassMetadataNode) obj;
 
-            ClassMetadataNode currentSelection;
-            currentSelection = (ClassMetadataNode) obj;
+            if(currentSelection.isLeaf()) //Show nothing for ClassMetadataNodes representing to possible children
+                hctc.getLstClasses().setListData(new Object[0]);
+            else{
+                Vector content = new Vector(Arrays.asList(allMeta));
 
-            hctc.getbTreeView().expandNode(currentSelection);
 
-            for (Node child : currentSelection.getChildren().getNodes())
+                hctc.getbTreeView().expandNode(currentSelection);
+
+                for (Node child : currentSelection.getChildren().getNodes())
                 content.remove(((ClassMetadataNode)child).getObject());
 
-            content.remove(currentSelection.getObject());
-            hctc.getLstClasses().setListData(content);
+                content.remove(currentSelection.getObject());
+                hctc.getLstClasses().setListData(content);
+            }
         }
     }
 }

@@ -220,6 +220,19 @@ public class CommunicationsStub {
     }
 
     /*
+     * Removes possible children from the given class' container hierarchy
+     * @param Id for the parent class
+     * @param childrenToBeDeleted List if ids of the classes to be removed as possible children
+     * @return Sucess or failure
+     */
+    public boolean removePossibleChildren(Long parentClassId, List<Long> childrenToBeDeleted){
+        boolean res = port.removePossibleChildren(parentClassId, childrenToBeDeleted);
+        if (!res)
+            this.error = port.getLastErr();
+        return res;
+    }
+
+    /*
      * Deletes the given object
      * @param className Object class (including its package)
      * @param oid object id

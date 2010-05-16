@@ -59,7 +59,7 @@ public class TransferManager extends TransferHandler implements DragGestureListe
 
     public void dragDropEnd(DragSourceDropEvent dsde) {
 
-        throw new UnsupportedOperationException("Not supported yet.");
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /*
