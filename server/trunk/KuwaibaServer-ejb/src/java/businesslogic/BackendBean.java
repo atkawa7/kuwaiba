@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Stateful;
-//import javax.ejb.Stateless;
+//import javax.ejb.Stateful;
+import javax.ejb.Stateless;
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -40,7 +40,7 @@ import javax.persistence.metamodel.EntityType;
  *
  * @author Charles Edward bedon Cortazar <charles.bedon@zoho.com>
  */
-@Stateful
+@Stateless
 public class BackendBean implements BackendBeanRemote {
     //En una aplicación J2EE el EM se inserta automáticamente, para eso es la anotación
     //y no es necesario instanciarlo, porque el container lo maneja, sin embargo en una aplicación
@@ -282,7 +282,6 @@ public class BackendBean implements BackendBeanRemote {
                 List partialResult = query.getResultList();
                 if (partialResult!=null)
                     for (Object obj : partialResult)
-                        //res.add(((ClassMetadata)obj).getPackageName().getName()+"."+((ClassMetadata)obj).getName());
                         res.add(new ClassInfoLight(((ClassMetadata)obj).getId(),
                                                      ((ClassMetadata)obj).getName(),
                                                      ((ClassMetadata)obj).getPackageInfo().getName()));
@@ -426,13 +425,24 @@ public class BackendBean implements BackendBeanRemote {
      * @return success or failure
      */
     public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) {
-        System.out.println("[removeObject] Called");
+        System.out.println("[removePossibleChildren] Called");
 
         if (em != null){
-        }else{
+            ClassMetadata parent = em.find(ClassMetadata.class, parentClassId);
+            for (Long id : childrenToBeRemoved)
+                for (ClassMetadata cm :parent.getPossibleChildren())
+                    if(cm.getId().equals(id)){
+                        parent.getPossibleChildren().remove(cm);
+                        break;
+                    }
 
+           em.merge(parent);
+           return true;
+        }else{
+            this.error = "The EntityManager does not exist";
+            return false;
         }
-        return false;
+        
     }
 
     public boolean removeObject(Class className, Long oid){
