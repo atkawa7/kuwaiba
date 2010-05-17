@@ -65,6 +65,9 @@ public class HierarchyCustomizerService implements LookupListener{
 
     //LookupListener methods
     public void resultChanged(LookupEvent le) {
+        //Sometimes the event is fired but the object is no longer available (i.e., if you remove a node from the tree)
+        if (result.allInstances().size()==0)
+            return;
         Object obj = result.allInstances().iterator().next();
         if (obj != null){
 
@@ -74,7 +77,6 @@ public class HierarchyCustomizerService implements LookupListener{
                 hctc.getLstClasses().setListData(new Object[0]);
             else{
                 Vector content = new Vector(Arrays.asList(allMeta));
-
 
                 hctc.getbTreeView().expandNode(currentSelection);
 

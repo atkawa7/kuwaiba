@@ -1,16 +1,12 @@
 package org.inventory.customization.hierarchycustomizer.nodes;
 
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
-import java.io.IOException;
-import java.util.ArrayList;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.TransferHandler;

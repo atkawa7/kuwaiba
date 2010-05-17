@@ -53,8 +53,12 @@ public class ClassMetadataNode extends AbstractNode {
 
     @Override
    public Action[] getActions(boolean context){
-        if(this.isLeaf()) //return actions only for the nodes representing possible children
-            return new Action[]{new Delete(this)};
+        if(this.isLeaf()){ //return actions only for the nodes representing possible children
+            Delete deleteAction;
+            deleteAction = new Delete(this);
+            deleteAction.addPropertyChangeListener((ClassMetadataChildren)this.getParentNode().getChildren());
+            return new Action[]{deleteAction};
+        }
         else
             return new Action[0];
    }
@@ -84,7 +88,12 @@ public class ClassMetadataNode extends AbstractNode {
 //                                getChildren().add(new Node[]{new ClassMetadataNode((LocalClassMetadataLight)data)});
                         if (CommunicationsStub.getInstance().addPossibleChildren(object.getId(),
                                   tokens)){
-                             getChildren().add(new Node[]{new ClassMetadataNode(data)});
+
+                            //This raises a IllegalStateException that can be ignore, since is a warning related to 
+                            //firing a change event about a property that doesn't belong to the object
+                            //fixes on this are welcome
+                             firePropertyChange(Node.PROP_PARENT_NODE, "add", data);
+
                              nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
                                     NotificationUtil.INFO,java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));
                         }

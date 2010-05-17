@@ -1,7 +1,6 @@
 package org.inventory.customization.hierarchycustomizer.actions;
 
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -9,7 +8,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataNode;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 
 /**
@@ -35,9 +33,9 @@ public class Delete extends AbstractAction{
                 ((ClassMetadataNode)node.getParentNode()).getObject().getId(),
                   oids)){
 
-            node.getParentNode().getChildren().remove(new Node[]{node});
+            firePropertyChange(Node.PROP_PARENT_NODE, "remove", node.getObject());
+            //node.getParentNode().getChildren().remove(new Node[]{node});
             
-
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
                     NotificationUtil.INFO,
                     java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));
