@@ -8,6 +8,10 @@
 
 <xs:element name="closeSessionResponse" type="tns:closeSessionResponse" />
 
+<xs:element name="copyObjects" type="tns:copyObjects" />
+
+<xs:element name="copyObjectsResponse" type="tns:copyObjectsResponse" />
+
 <xs:element name="createObject" type="tns:createObject" />
 
 <xs:element name="createObjectResponse" type="tns:createObjectResponse" />
@@ -64,6 +68,10 @@
 
 <xs:element name="getTreeNodeResponse" type="tns:getTreeNodeResponse" />
 
+<xs:element name="moveObjects" type="tns:moveObjects" />
+
+<xs:element name="moveObjectsResponse" type="tns:moveObjectsResponse" />
+
 <xs:element name="removeObject" type="tns:removeObject" />
 
 <xs:element name="removeObjectResponse" type="tns:removeObjectResponse" />
@@ -80,19 +88,6 @@
 
 <xs:element name="updateObjectResponse" type="tns:updateObjectResponse" />
 
-<xs:complexType name="createSession">
-<xs:sequence>
-<xs:element name="username" type="xs:string" minOccurs="0" />
-<xs:element name="password" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="createSessionResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="removePossibleChildren">
 <xs:sequence>
 <xs:element name="parentClassId" type="xs:long" minOccurs="0" />
@@ -103,6 +98,19 @@
 <xs:complexType name="removePossibleChildrenResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createSession">
+<xs:sequence>
+<xs:element name="username" type="xs:string" minOccurs="0" />
+<xs:element name="password" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createSessionResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" />
 </xs:sequence>
 </xs:complexType>
 
@@ -193,6 +201,7 @@
 <xs:complexType name="classInfoLight">
 <xs:sequence>
 <xs:element name="id" type="xs:long" minOccurs="0" />
+<xs:element name="isAbstract" type="xs:boolean" minOccurs="0" />
 <xs:element name="className" type="xs:string" minOccurs="0" />
 <xs:element name="_package" type="xs:string" minOccurs="0" />
 </xs:sequence>
@@ -262,6 +271,19 @@
 </xs:complexContent>
 </xs:complexType>
 
+<xs:complexType name="moveObjects">
+<xs:sequence>
+<xs:element name="targetOid" type="xs:long" minOccurs="0" />
+<xs:element name="objects" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="moveObjectsResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="getDummyRootId">
 <xs:sequence />
 </xs:complexType>
@@ -281,6 +303,19 @@
 <xs:complexType name="getPossibleChildrenResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="copyObjects">
+<xs:sequence>
+<xs:element name="targetOid" type="xs:long" minOccurs="0" />
+<xs:element name="templateObjects" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="copyObjectsResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -321,16 +356,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getLastErr">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getLastErrResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="updateObject">
 <xs:sequence>
 <xs:element name="objectupdate" type="tns:objectUpdate" minOccurs="0" />
@@ -349,6 +374,16 @@
 <xs:complexType name="updateObjectResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getLastErr">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getLastErrResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -375,6 +410,19 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="removeObject">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0" />
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removeObjectResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="getTreeNode">
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0" />
@@ -392,19 +440,6 @@
 <xs:sequence>
 <xs:element name="root" type="tns:remoteObject" minOccurs="0" />
 <xs:element name="children" type="tns:remoteObject" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="removeObject">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0" />
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="removeObjectResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 </xs:schema>

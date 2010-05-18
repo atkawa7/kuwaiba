@@ -166,6 +166,44 @@
 <sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
 </sp:SignedParts>
 </wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_copyObjects_Input_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_moveObjects_Input_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
 <wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_removePossibleChildren_Input_Policy">
 <sp:EncryptedParts>
 <sp:Body />
@@ -356,6 +394,44 @@
 <sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
 </sp:SignedParts>
 </wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_copyObjects_Output_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_moveObjects_Output_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
 <wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_removePossibleChildren_Output_Policy">
 <sp:EncryptedParts>
 <sp:Body />
@@ -506,17 +582,35 @@
 <message name="createObjectResponse">
 <part name="parameters" element="tns:createObjectResponse" />
 </message>
-<message name="getDummyRootId">
-<part name="parameters" element="tns:getDummyRootId" />
+<message name="copyObjects">
+<part name="parameters" element="tns:copyObjects" />
 </message>
-<message name="getDummyRootIdResponse">
-<part name="parameters" element="tns:getDummyRootIdResponse" />
+<message name="copyObjectsResponse">
+<part name="parameters" element="tns:copyObjectsResponse" />
 </message>
-<message name="getDummyRootClass">
-<part name="parameters" element="tns:getDummyRootClass" />
+<message name="createSession">
+<part name="parameters" element="tns:createSession" />
 </message>
-<message name="getDummyRootClassResponse">
-<part name="parameters" element="tns:getDummyRootClassResponse" />
+<message name="createSessionResponse">
+<part name="parameters" element="tns:createSessionResponse" />
+</message>
+<message name="closeSession">
+<part name="parameters" element="tns:closeSession" />
+</message>
+<message name="closeSessionResponse">
+<part name="parameters" element="tns:closeSessionResponse" />
+</message>
+<message name="getTreeNode">
+<part name="parameters" element="tns:getTreeNode" />
+</message>
+<message name="getTreeNodeResponse">
+<part name="parameters" element="tns:getTreeNodeResponse" />
+</message>
+<message name="getTreeNodeLight">
+<part name="parameters" element="tns:getTreeNodeLight" />
+</message>
+<message name="getTreeNodeLightResponse">
+<part name="parameters" element="tns:getTreeNodeLightResponse" />
 </message>
 <message name="getObjectChildren">
 <part name="parameters" element="tns:getObjectChildren" />
@@ -535,6 +629,12 @@
 </message>
 <message name="updateObjectResponse">
 <part name="parameters" element="tns:updateObjectResponse" />
+</message>
+<message name="getLastErr">
+<part name="parameters" element="tns:getLastErr" />
+</message>
+<message name="getLastErrResponse">
+<part name="parameters" element="tns:getLastErrResponse" />
 </message>
 <message name="setObjectLock">
 <part name="parameters" element="tns:setObjectLock" />
@@ -584,35 +684,23 @@
 <message name="getLightMetadataResponse">
 <part name="parameters" element="tns:getLightMetadataResponse" />
 </message>
-<message name="createSession">
-<part name="parameters" element="tns:createSession" />
+<message name="getDummyRootId">
+<part name="parameters" element="tns:getDummyRootId" />
 </message>
-<message name="createSessionResponse">
-<part name="parameters" element="tns:createSessionResponse" />
+<message name="getDummyRootIdResponse">
+<part name="parameters" element="tns:getDummyRootIdResponse" />
 </message>
-<message name="closeSession">
-<part name="parameters" element="tns:closeSession" />
+<message name="getDummyRootClass">
+<part name="parameters" element="tns:getDummyRootClass" />
 </message>
-<message name="closeSessionResponse">
-<part name="parameters" element="tns:closeSessionResponse" />
+<message name="getDummyRootClassResponse">
+<part name="parameters" element="tns:getDummyRootClassResponse" />
 </message>
-<message name="getTreeNode">
-<part name="parameters" element="tns:getTreeNode" />
+<message name="moveObjects">
+<part name="parameters" element="tns:moveObjects" />
 </message>
-<message name="getTreeNodeResponse">
-<part name="parameters" element="tns:getTreeNodeResponse" />
-</message>
-<message name="getTreeNodeLight">
-<part name="parameters" element="tns:getTreeNodeLight" />
-</message>
-<message name="getTreeNodeLightResponse">
-<part name="parameters" element="tns:getTreeNodeLightResponse" />
-</message>
-<message name="getLastErr">
-<part name="parameters" element="tns:getLastErr" />
-</message>
-<message name="getLastErrResponse">
-<part name="parameters" element="tns:getLastErrResponse" />
+<message name="moveObjectsResponse">
+<part name="parameters" element="tns:moveObjectsResponse" />
 </message>
 <portType name="KuwaibaWebservice">
 <operation name="getMetadata">
@@ -623,13 +711,25 @@
 <input wsam:Action="http://webservice/KuwaibaWebservice/createObjectRequest" message="tns:createObject" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/createObjectResponse" message="tns:createObjectResponse" />
 </operation>
-<operation name="getDummyRootId">
-<input wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootIdRequest" message="tns:getDummyRootId" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootIdResponse" message="tns:getDummyRootIdResponse" />
+<operation name="copyObjects">
+<input wsam:Action="http://webservice/KuwaibaWebservice/copyObjectsRequest" message="tns:copyObjects" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/copyObjectsResponse" message="tns:copyObjectsResponse" />
 </operation>
-<operation name="getDummyRootClass">
-<input wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootClassRequest" message="tns:getDummyRootClass" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootClassResponse" message="tns:getDummyRootClassResponse" />
+<operation name="createSession">
+<input wsam:Action="http://webservice/KuwaibaWebservice/createSessionRequest" message="tns:createSession" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/createSessionResponse" message="tns:createSessionResponse" />
+</operation>
+<operation name="closeSession">
+<input wsam:Action="http://webservice/KuwaibaWebservice/closeSessionRequest" message="tns:closeSession" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/closeSessionResponse" message="tns:closeSessionResponse" />
+</operation>
+<operation name="getTreeNode">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getTreeNodeRequest" message="tns:getTreeNode" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getTreeNodeResponse" message="tns:getTreeNodeResponse" />
+</operation>
+<operation name="getTreeNodeLight">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getTreeNodeLightRequest" message="tns:getTreeNodeLight" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getTreeNodeLightResponse" message="tns:getTreeNodeLightResponse" />
 </operation>
 <operation name="getObjectChildren">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getObjectChildrenRequest" message="tns:getObjectChildren" />
@@ -642,6 +742,10 @@
 <operation name="updateObject">
 <input wsam:Action="http://webservice/KuwaibaWebservice/updateObjectRequest" message="tns:updateObject" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/updateObjectResponse" message="tns:updateObjectResponse" />
+</operation>
+<operation name="getLastErr">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getLastErrRequest" message="tns:getLastErr" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getLastErrResponse" message="tns:getLastErrResponse" />
 </operation>
 <operation name="setObjectLock">
 <input wsam:Action="http://webservice/KuwaibaWebservice/setObjectLockRequest" message="tns:setObjectLock" />
@@ -675,25 +779,17 @@
 <input wsam:Action="http://webservice/KuwaibaWebservice/getLightMetadataRequest" message="tns:getLightMetadata" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getLightMetadataResponse" message="tns:getLightMetadataResponse" />
 </operation>
-<operation name="createSession">
-<input wsam:Action="http://webservice/KuwaibaWebservice/createSessionRequest" message="tns:createSession" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/createSessionResponse" message="tns:createSessionResponse" />
+<operation name="getDummyRootId">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootIdRequest" message="tns:getDummyRootId" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootIdResponse" message="tns:getDummyRootIdResponse" />
 </operation>
-<operation name="closeSession">
-<input wsam:Action="http://webservice/KuwaibaWebservice/closeSessionRequest" message="tns:closeSession" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/closeSessionResponse" message="tns:closeSessionResponse" />
+<operation name="getDummyRootClass">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootClassRequest" message="tns:getDummyRootClass" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootClassResponse" message="tns:getDummyRootClassResponse" />
 </operation>
-<operation name="getTreeNode">
-<input wsam:Action="http://webservice/KuwaibaWebservice/getTreeNodeRequest" message="tns:getTreeNode" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/getTreeNodeResponse" message="tns:getTreeNodeResponse" />
-</operation>
-<operation name="getTreeNodeLight">
-<input wsam:Action="http://webservice/KuwaibaWebservice/getTreeNodeLightRequest" message="tns:getTreeNodeLight" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/getTreeNodeLightResponse" message="tns:getTreeNodeLightResponse" />
-</operation>
-<operation name="getLastErr">
-<input wsam:Action="http://webservice/KuwaibaWebservice/getLastErrRequest" message="tns:getLastErr" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/getLastErrResponse" message="tns:getLastErrResponse" />
+<operation name="moveObjects">
+<input wsam:Action="http://webservice/KuwaibaWebservice/moveObjectsRequest" message="tns:moveObjects" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/moveObjectsResponse" message="tns:moveObjectsResponse" />
 </operation>
 </portType>
 <binding name="KuwaibaWebservicePortBinding" type="tns:KuwaibaWebservice">
@@ -720,7 +816,18 @@
 <soap:body use="literal" />
 </output>
 </operation>
-<operation name="getDummyRootId">
+<operation name="copyObjects">
+<soap:operation soapAction="" />
+<input>
+<wsp:PolicyReference URI="#MainWSPortBinding_copyObjects_Input_Policy" />
+<soap:body use="literal" />
+</input>
+<output>
+<wsp:PolicyReference URI="#MainWSPortBinding_copyObjects_Output_Policy" />
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="createSession">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
@@ -729,7 +836,25 @@
 <soap:body use="literal" />
 </output>
 </operation>
-<operation name="getDummyRootClass">
+<operation name="closeSession">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getTreeNode">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getTreeNodeLight">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
@@ -757,6 +882,15 @@
 </output>
 </operation>
 <operation name="updateObject">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getLastErr">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
@@ -853,7 +987,7 @@
 <soap:body use="literal" />
 </output>
 </operation>
-<operation name="createSession">
+<operation name="getDummyRootId">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
@@ -862,7 +996,7 @@
 <soap:body use="literal" />
 </output>
 </operation>
-<operation name="closeSession">
+<operation name="getDummyRootClass">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
@@ -871,30 +1005,14 @@
 <soap:body use="literal" />
 </output>
 </operation>
-<operation name="getTreeNode">
+<operation name="moveObjects">
 <soap:operation soapAction="" />
 <input>
+<wsp:PolicyReference URI="#MainWSPortBinding_moveObjects_Input_Policy" />
 <soap:body use="literal" />
 </input>
 <output>
-<soap:body use="literal" />
-</output>
-</operation>
-<operation name="getTreeNodeLight">
-<soap:operation soapAction="" />
-<input>
-<soap:body use="literal" />
-</input>
-<output>
-<soap:body use="literal" />
-</output>
-</operation>
-<operation name="getLastErr">
-<soap:operation soapAction="" />
-<input>
-<soap:body use="literal" />
-</input>
-<output>
+<wsp:PolicyReference URI="#MainWSPortBinding_moveObjects_Output_Policy" />
 <soap:body use="literal" />
 </output>
 </operation>
