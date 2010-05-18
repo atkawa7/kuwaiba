@@ -30,7 +30,7 @@ public class ClassInfo extends ClassInfoLight{
 
     public ClassInfo(){}
     public ClassInfo(ClassMetadata myClass){
-        super(myClass.getId(),myClass.getName(),myClass.getPackageInfo().getName());
+        super(myClass.getId(),myClass.getIsAbstract(),myClass.getName(),myClass.getPackageInfo().getName());
         
         List<AttributeMetadata> ar = myClass.getAttributes();
         this.attributeNames = new String[ar.size()];

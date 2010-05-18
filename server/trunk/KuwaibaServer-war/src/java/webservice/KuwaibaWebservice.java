@@ -271,4 +271,26 @@ public class KuwaibaWebservice {
     public String getDummyRootClass() {
         return sbr.getDummyRootClass();
     }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "copyObjects")
+    public Boolean copyObjects(@WebParam(name = "targetOid")
+    Long targetOid, @WebParam(name = "templateObjects")
+    Long[] templateObjects) {
+        //TODO write your implementation code here:
+        return null;
+    }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "moveObjects")
+    public Boolean moveObjects(@WebParam(name = "targetOid")
+    Long targetOid, @WebParam(name = "objects")
+    Long[] objects) {
+        //TODO write your implementation code here:
+        return null;
+    }
 }

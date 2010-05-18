@@ -201,4 +201,28 @@ public class ClassMetadata implements Serializable {
         return "meta.ClassMetadata[id=" + id + "]";
     }
 
+    public Boolean getIsAbstract() {
+        return isAbstract;
+    }
+
+    public void setIsAbstract(Boolean isAbstract) {
+        this.isAbstract = isAbstract;
+    }
+
+    public Boolean getIsAccountable() {
+        return isAccountable;
+    }
+
+    public void setIsAccountable(Boolean isAccountable) {
+        this.isAccountable = isAccountable;
+    }
+
+    public Boolean getIsDummy() {
+        return isDummy;
+    }
+
+    public void setIsDummy(Boolean isDummy) {
+        this.isDummy = isDummy;
+    }
+
 }

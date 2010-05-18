@@ -11,13 +11,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ClassInfoLight {
     protected Long id;
+    protected Boolean isAbstract;
     protected String className;
     protected String _package;
 
     public ClassInfoLight(){}
 
-    public ClassInfoLight(Long _id, String _className, String _packageName){
+    public ClassInfoLight(Long _id, Boolean _isAbstract ,String _className, String _packageName){
         this.id = _id;
+        this.isAbstract = _isAbstract;
         this.className = _className;
         this._package = _packageName;
     }

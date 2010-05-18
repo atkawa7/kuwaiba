@@ -14,7 +14,7 @@ import javax.persistence.Entity;
  * @author dib
  */
 @Entity
-public class GenericNetworkElement extends ConfigurationItem implements Serializable {
+public abstract class GenericNetworkElement extends ConfigurationItem implements Serializable {
     private static final long serialVersionUID = 1L;
 
 }

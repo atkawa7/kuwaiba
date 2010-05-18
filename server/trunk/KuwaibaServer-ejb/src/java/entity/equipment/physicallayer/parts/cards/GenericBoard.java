@@ -9,6 +9,6 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class GenericBoard extends GenericPart implements Serializable {
+public abstract class GenericBoard extends GenericPart implements Serializable {
 
 }
