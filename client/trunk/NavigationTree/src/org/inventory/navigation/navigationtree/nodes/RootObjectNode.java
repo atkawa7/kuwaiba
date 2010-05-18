@@ -17,7 +17,9 @@ public class RootObjectNode extends AbstractNode{
 
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{new Create(this)};
+        Create createAction = new Create(this);
+        createAction.addPropertyChangeListener((ObjectChildren)this.getChildren());
+        return new Action[]{createAction};
     }
 
 }

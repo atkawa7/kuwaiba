@@ -33,7 +33,7 @@ public class Delete extends AbstractAction{
                 ((ClassMetadataNode)node.getParentNode()).getObject().getId(),
                   oids)){
 
-            firePropertyChange(Node.PROP_PARENT_NODE, "remove", node.getObject());
+            firePropertyChange(NAME, "remove", node.getObject());
             //node.getParentNode().getChildren().remove(new Node[]{node});
             
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),

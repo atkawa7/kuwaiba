@@ -38,16 +38,21 @@ public class ObjectNode extends AbstractNode{
     public ObjectNode(LocalObjectLight _lol){
         super(new ObjectChildren(), Lookups.singleton(_lol));
         this.object = _lol;
-        pcl = new ObjectNodePropertyChangeListener(this);
-        this.addPropertyChangeListener(pcl);
+        
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_EXPLORE"));
+
+        //The children must be the listener so it can set the modified keys (after an object creation or removal)
         createAction = new Create(object,this);
-        deleteAction = new Delete(this);
+        createAction.addPropertyChangeListener((ObjectChildren)this.getChildren());
+        //Since the listener for the delete action is the parent node, and as itis not been set here yet,
+        //the listener have to be added later (see getActions)
+
+        //Does not need listener
         editAction = new Edit(this);
     }
 
     /*
-     * Returns the related object
+     * Returns the wrapped object
      * @return returns the related business object
      */
     public LocalObjectLight getObject(){
@@ -131,8 +136,14 @@ public class ObjectNode extends AbstractNode{
         return sheet;
     }
 
+    //This method is called for the very first time when the firt context menu is created, and
+    //called everytime
     @Override
     public Action[] getActions(boolean context){
+        if(deleteAction == null){
+            deleteAction = new Delete(this);
+            deleteAction.addPropertyChangeListener((ObjectChildren)this.getParentNode().getChildren());
+        }
         return new Action[]{createAction, editAction,deleteAction,explorerAction};
     }
 

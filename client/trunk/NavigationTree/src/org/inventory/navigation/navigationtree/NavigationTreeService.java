@@ -17,8 +17,9 @@ public class NavigationTreeService {
         this.component = _component;
     }
     public LocalObjectLight[] getRootChildren(){
-        if(com.getRootNode())
-            return com.getContextChildren();
+        LocalObjectLight[] rootChildren = com.getRootNodeChildren();
+        if(rootChildren != null)
+            return rootChildren;
         else{
             NotificationUtil nu = Lookup.getDefault().
                 lookup(NotificationUtil.class);

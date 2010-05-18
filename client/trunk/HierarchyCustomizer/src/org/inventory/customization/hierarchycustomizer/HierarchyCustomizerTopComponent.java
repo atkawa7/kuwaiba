@@ -69,6 +69,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
         DragSource.getDefaultDragSource().addDragSourceListener(tm);
 
         pnlHierarchyManagerScrollMain.setViewportView(lstClasses);
+        //lblInfo.getLayout().
 
     }
 
@@ -80,7 +81,9 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
         pnlRight = new javax.swing.JPanel();
         pnlHierarchyManagerScrollMain = new javax.swing.JScrollPane();
         lblInfo = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        lblInfo2 = new javax.swing.JLabel();
+
+        setLayout(new java.awt.BorderLayout(10, 10));
 
         pnlHierarchyManagerMain.setOneTouchExpandable(true);
 
@@ -92,38 +95,18 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
 
         pnlHierarchyManagerMain.setRightComponent(pnlRight);
 
+        add(pnlHierarchyManagerMain, java.awt.BorderLayout.CENTER);
+
         org.openide.awt.Mnemonics.setLocalizedText(lblInfo, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.lblInfo.text")); // NOI18N
+        add(lblInfo, java.awt.BorderLayout.PAGE_START);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.jLabel1.text")); // NOI18N
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlHierarchyManagerMain, javax.swing.GroupLayout.PREFERRED_SIZE, 756, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblInfo)
-                    .addComponent(jLabel1))
-                .addContainerGap(21, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(pnlHierarchyManagerMain, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        org.openide.awt.Mnemonics.setLocalizedText(lblInfo2, org.openide.util.NbBundle.getMessage(HierarchyCustomizerTopComponent.class, "HierarchyCustomizerTopComponent.lblInfo2.text")); // NOI18N
+        add(lblInfo2, java.awt.BorderLayout.NORTH);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblInfo;
+    private javax.swing.JLabel lblInfo2;
     private javax.swing.JSplitPane pnlHierarchyManagerMain;
     private javax.swing.JScrollPane pnlHierarchyManagerScrollMain;
     private javax.swing.JPanel pnlLeft;

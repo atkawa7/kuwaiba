@@ -9,7 +9,6 @@ import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataChildren;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataNode;
-import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;
 import org.openide.util.LookupEvent;

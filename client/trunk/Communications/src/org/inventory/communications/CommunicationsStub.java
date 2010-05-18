@@ -34,7 +34,7 @@ public class CommunicationsStub {
     private KuwaibaWebservice port;
     private String error=java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_ERROR");
     private LocalObjectLightImpl context;
-    private LocalObjectLightImpl[] contextChildren;
+
     
     //Implements the singleton pattern
     private CommunicationsStub(){
@@ -47,14 +47,14 @@ public class CommunicationsStub {
             return instance;
     }
 
-    public boolean getRootNode(){
+    public LocalObjectLight[] getRootNodeChildren(){
         try{
 
             List<RemoteObjectLight> result = port.getObjectChildren(port.getDummyRootId(),
                                                                     port.getDummyRootClass());
             if(result ==null){
                 error = port.getLastErr();
-                return false;
+                return null;
             }
         
             LocalObjectLightImpl[] children = new LocalObjectLightImpl[result.size()];
@@ -64,22 +64,21 @@ public class CommunicationsStub {
                 i++;
             }
 
-            contextChildren = children;
-            return true;
+            return children;
+
         }catch(Exception connectException){ //TODO Find out why the ConnectException is not the one thrown here
             this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
-            return false;
+            return null;
         }
     }
 
-    public LocalObjectLightImpl[] getObjectChildren(Long oid, String objectClass){
+    public List<LocalObjectLight> getObjectChildren(Long oid, String objectClass){
         List <RemoteObjectLight> children = port.getObjectChildren(oid, objectClass);
-        LocalObjectLightImpl[] res = new LocalObjectLightImpl[children.size()];
-        int i = 0;
-        for (RemoteObjectLight rol : children){
-            res[i] = new LocalObjectLightImpl(rol);
-            i++;
-        }
+        List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
+        
+        for (RemoteObjectLight rol : children)
+            res.add(new LocalObjectLightImpl(rol));
+        
         return res;
     }
     /*
@@ -132,10 +131,6 @@ public class CommunicationsStub {
             this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_OBJECT");
         }
         return res;
-    }
-
-    public LocalObjectLightImpl[] getContextChildren(){
-        return this.contextChildren;
     }
 
     public String getError() {
@@ -264,5 +259,27 @@ public class CommunicationsStub {
 
     public String getRootClass(){
         return port.getDummyRootClass();
+    }
+
+    public Long getRootId(){
+        return port.getDummyRootId();
+    }
+
+    /*
+     * The only reason for this method is to avoid calling the getMetaForClass to know details about DummyRoot.
+     * This may be addressed once the local cache is fully functional. But by now, we'll stick to this.
+     */
+    public List<LocalClassMetadataLight> getRootPossibleChildren() {
+        List<ClassInfoLight> list = port.getRootPossibleChildren();
+        List <LocalClassMetadataLight> res = new ArrayList<LocalClassMetadataLight>();
+        if(list==null){
+            this.error = port.getLastErr();
+            return null;
+        }
+        else
+            for (ClassInfoLight cil : list)
+                res.add(new LocalClassMetadataLightImpl(cil));
+
+        return res;
     }
 }

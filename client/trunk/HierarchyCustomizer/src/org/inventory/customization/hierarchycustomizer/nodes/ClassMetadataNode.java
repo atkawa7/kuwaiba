@@ -24,7 +24,7 @@ public class ClassMetadataNode extends AbstractNode {
    static final String ROOT_PARENT_ICON_PATH = "org/inventory/customization/hierarchycustomizer/res/flag-red.png";
    static final String CHILDREN_ICON_PATH = "org/inventory/customization/hierarchycustomizer/res/flag-black.png";
    private LocalClassMetadataLight object;
-   private String displayName;
+   
    
    public ClassMetadataNode(LocalClassMetadataLight _lcm, boolean isMain){
       super (new ClassMetadataChildren(),Lookups.singleton(_lcm));
@@ -101,7 +101,7 @@ public class ClassMetadataNode extends AbstractNode {
                             //This raises a IllegalStateException that can be ignore, since is a warning related to 
                             //firing a change event about a property that doesn't belong to the object
                             //fixes on this are welcome
-                             firePropertyChange(Node.PROP_PARENT_NODE, "add", data);
+                             firePropertyChange(PROP_PARENT_NODE, "add", data);
 
                              nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
                                     NotificationUtil.INFO,java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));
