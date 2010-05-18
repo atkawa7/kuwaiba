@@ -28,7 +28,7 @@ import javax.persistence.GenerationType;
 public abstract class RootObject implements Serializable {
 
     public static final Long PARENT_ROOT = new Long(0); // This is the id for the single instance of the root object
-    public static final String ROOT_CLASS = "DummyRoot"; // this is the class that represents the root object
+    public static final Class ROOT_CLASS = DummyRoot.class; // this is the class that represents the root object
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE) //Esto le dice cómo generar la llave primaria (SEQUENCE lo hacecustomizable, uno le puede decir cómo la genere)

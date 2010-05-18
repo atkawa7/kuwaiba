@@ -163,6 +163,14 @@ public class KuwaibaWebservice {
         }
     }
 
+    /*
+     * Inquires for the possible children of a the root node
+     */
+    @WebMethod(operationName = "getRootPossibleChildren")
+    public ClassInfoLight[] getRootPossibleChildren(){
+        return sbr.getRootPossibleChildren();
+    }
+
     /**
      * Web service operation
      */
@@ -269,7 +277,7 @@ public class KuwaibaWebservice {
 
     @WebMethod(operationName = "getDummyRootClass")
     public String getDummyRootClass() {
-        return sbr.getDummyRootClass();
+        return sbr.getDummyRootClass().getSimpleName();
     }
 
     /**

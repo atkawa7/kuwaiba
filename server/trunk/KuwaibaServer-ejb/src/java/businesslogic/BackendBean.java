@@ -149,7 +149,7 @@ public class BackendBean implements BackendBeanRemote {
     /*
      * Return the class used to represent the root node
      */
-    public String getDummyRootClass(){
+    public Class getDummyRootClass(){
         return RootObject.ROOT_CLASS;
     }
 
@@ -186,7 +186,7 @@ public class BackendBean implements BackendBeanRemote {
                                                   //be contained within the instances of the given class
             for (Object res : partialResult){
                 String perClassQuery = "SELECT x FROM "+((ClassMetadata)res).getName()+" x WHERE x.parent="
-                        +String.valueOf(oid);
+                        +String.valueOf(oid)+" ORDER BY x.name";
                 query = em.createQuery(perClassQuery);
                 result.addAll(query.getResultList());
             }
@@ -294,6 +294,10 @@ public class BackendBean implements BackendBeanRemote {
             this.error = "El EntityManager no existe";
             return null;
         }
+    }
+
+    public ClassInfoLight[] getRootPossibleChildren(){
+        return getPossibleChildren(RootObject.ROOT_CLASS);
     }
 
     public RemoteObjectLight createObject(String objectClass, Long parentOid, String template){

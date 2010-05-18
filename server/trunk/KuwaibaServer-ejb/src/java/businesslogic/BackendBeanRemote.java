@@ -23,7 +23,7 @@ public interface BackendBeanRemote {
     public void createInitialDataset(); //just for testing purposes
     
     public Long getDummyRootId();
-    public String getDummyRootClass();
+    public Class getDummyRootClass();
     public RemoteTreeNode getObjectInmediateHierarchy(java.lang.Long oid, String objectClass);
     public core.toserialize.RemoteObject getObjectInfo(java.lang.String objectClass, java.lang.Long oid);
     public boolean updateObject(ObjectUpdate obj) throws core.exceptions.ObjectNotFoundException;
@@ -39,5 +39,7 @@ public interface BackendBeanRemote {
     public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved);
     public boolean removeObject(Class className, Long oid);
     public ClassInfoLight[] getPossibleChildren(java.lang.Class parentClass);
+    public ClassInfoLight[] getRootPossibleChildren();
     public ClassInfoLight[] getLightMetadata();
+    
 }
