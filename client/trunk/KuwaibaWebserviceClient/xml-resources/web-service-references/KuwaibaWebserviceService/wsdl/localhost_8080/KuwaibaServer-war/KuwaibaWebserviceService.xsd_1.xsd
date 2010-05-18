@@ -60,6 +60,10 @@
 
 <xs:element name="getPossibleChildrenResponse" type="tns:getPossibleChildrenResponse" />
 
+<xs:element name="getRootPossibleChildren" type="tns:getRootPossibleChildren" />
+
+<xs:element name="getRootPossibleChildrenResponse" type="tns:getRootPossibleChildrenResponse" />
+
 <xs:element name="getTreeNode" type="tns:getTreeNode" />
 
 <xs:element name="getTreeNodeLight" type="tns:getTreeNodeLight" />
@@ -204,6 +208,16 @@
 <xs:element name="isAbstract" type="xs:boolean" minOccurs="0" />
 <xs:element name="className" type="xs:string" minOccurs="0" />
 <xs:element name="_package" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getRootPossibleChildren">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getRootPossibleChildrenResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 

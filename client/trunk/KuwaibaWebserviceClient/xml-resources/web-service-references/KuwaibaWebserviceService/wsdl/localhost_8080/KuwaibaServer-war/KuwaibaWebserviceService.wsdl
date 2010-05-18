@@ -128,25 +128,6 @@
 <sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
 </sp:SignedParts>
 </wsp:Policy>
-<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_getMetadata_Input_Policy">
-<sp:EncryptedParts>
-<sp:Body />
-</sp:EncryptedParts>
-<sp:SignedParts>
-<sp:Body />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
-<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
-</sp:SignedParts>
-</wsp:Policy>
 <wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_createObject_Input_Policy">
 <sp:EncryptedParts>
 <sp:Body />
@@ -166,64 +147,7 @@
 <sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
 </sp:SignedParts>
 </wsp:Policy>
-<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_copyObjects_Input_Policy">
-<sp:EncryptedParts>
-<sp:Body />
-</sp:EncryptedParts>
-<sp:SignedParts>
-<sp:Body />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
-<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
-</sp:SignedParts>
-</wsp:Policy>
-<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_moveObjects_Input_Policy">
-<sp:EncryptedParts>
-<sp:Body />
-</sp:EncryptedParts>
-<sp:SignedParts>
-<sp:Body />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
-<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
-</sp:SignedParts>
-</wsp:Policy>
-<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_removePossibleChildren_Input_Policy">
-<sp:EncryptedParts>
-<sp:Body />
-</sp:EncryptedParts>
-<sp:SignedParts>
-<sp:Body />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
-<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
-</sp:SignedParts>
-</wsp:Policy>
-<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_getLightMetadata_Input_Policy">
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_removeObject_Input_Policy">
 <sp:EncryptedParts>
 <sp:Body />
 </sp:EncryptedParts>
@@ -280,7 +204,7 @@
 <sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
 </sp:SignedParts>
 </wsp:Policy>
-<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_removeObject_Input_Policy">
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_setObjectLock_Input_Policy">
 <sp:EncryptedParts>
 <sp:Body />
 </sp:EncryptedParts>
@@ -299,7 +223,102 @@
 <sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
 </sp:SignedParts>
 </wsp:Policy>
-<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_setObjectLock_Input_Policy">
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_getRootPossibleChildren_Input_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_getMetadata_Input_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_removePossibleChildren_Input_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_copyObjects_Input_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_moveObjects_Input_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_getLightMetadata_Input_Policy">
 <sp:EncryptedParts>
 <sp:Body />
 </sp:EncryptedParts>
@@ -356,25 +375,6 @@
 <sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
 </sp:SignedParts>
 </wsp:Policy>
-<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_getMetadata_Output_Policy">
-<sp:EncryptedParts>
-<sp:Body />
-</sp:EncryptedParts>
-<sp:SignedParts>
-<sp:Body />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
-<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
-</sp:SignedParts>
-</wsp:Policy>
 <wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_createObject_Output_Policy">
 <sp:EncryptedParts>
 <sp:Body />
@@ -394,64 +394,7 @@
 <sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
 </sp:SignedParts>
 </wsp:Policy>
-<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_copyObjects_Output_Policy">
-<sp:EncryptedParts>
-<sp:Body />
-</sp:EncryptedParts>
-<sp:SignedParts>
-<sp:Body />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
-<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
-</sp:SignedParts>
-</wsp:Policy>
-<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_moveObjects_Output_Policy">
-<sp:EncryptedParts>
-<sp:Body />
-</sp:EncryptedParts>
-<sp:SignedParts>
-<sp:Body />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
-<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
-</sp:SignedParts>
-</wsp:Policy>
-<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_removePossibleChildren_Output_Policy">
-<sp:EncryptedParts>
-<sp:Body />
-</sp:EncryptedParts>
-<sp:SignedParts>
-<sp:Body />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
-<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
-<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
-<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
-</sp:SignedParts>
-</wsp:Policy>
-<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_getLightMetadata_Output_Policy">
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_removeObject_Output_Policy">
 <sp:EncryptedParts>
 <sp:Body />
 </sp:EncryptedParts>
@@ -508,7 +451,7 @@
 <sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
 </sp:SignedParts>
 </wsp:Policy>
-<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_removeObject_Output_Policy">
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_setObjectLock_Output_Policy">
 <sp:EncryptedParts>
 <sp:Body />
 </sp:EncryptedParts>
@@ -527,7 +470,102 @@
 <sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
 </sp:SignedParts>
 </wsp:Policy>
-<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_setObjectLock_Output_Policy">
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_getRootPossibleChildren_Output_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_getMetadata_Output_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_removePossibleChildren_Output_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_copyObjects_Output_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_moveObjects_Output_Policy">
+<sp:EncryptedParts>
+<sp:Body />
+</sp:EncryptedParts>
+<sp:SignedParts>
+<sp:Body />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="ReplyTo" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="To" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="From" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="AckRequested" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="CreateSequence" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="Sequence" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="MessageID" />
+<sp:Header Name="FaultTo" Namespace="http://www.w3.org/2005/08/addressing" />
+<sp:Header Namespace="http://docs.oasis-open.org/ws-rx/wsrm/200702" Name="SequenceAcknowledgement" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="Action" />
+<sp:Header Namespace="http://www.w3.org/2005/08/addressing" Name="RelatesTo" />
+</sp:SignedParts>
+</wsp:Policy>
+<wsp:Policy xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" wsu:Id="MainWSPortBinding_getLightMetadata_Output_Policy">
 <sp:EncryptedParts>
 <sp:Body />
 </sp:EncryptedParts>
@@ -648,6 +686,12 @@
 <message name="getPossibleChildrenResponse">
 <part name="parameters" element="tns:getPossibleChildrenResponse" />
 </message>
+<message name="getRootPossibleChildren">
+<part name="parameters" element="tns:getRootPossibleChildren" />
+</message>
+<message name="getRootPossibleChildrenResponse">
+<part name="parameters" element="tns:getRootPossibleChildrenResponse" />
+</message>
 <message name="getMetadataForClass">
 <part name="parameters" element="tns:getMetadataForClass" />
 </message>
@@ -754,6 +798,10 @@
 <operation name="getPossibleChildren">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getPossibleChildrenRequest" message="tns:getPossibleChildren" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getPossibleChildrenResponse" message="tns:getPossibleChildrenResponse" />
+</operation>
+<operation name="getRootPossibleChildren">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getRootPossibleChildrenRequest" message="tns:getRootPossibleChildren" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getRootPossibleChildrenResponse" message="tns:getRootPossibleChildrenResponse" />
 </operation>
 <operation name="getMetadataForClass">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getMetadataForClassRequest" message="tns:getMetadataForClass" />
@@ -918,6 +966,17 @@
 </input>
 <output>
 <wsp:PolicyReference URI="#MainWSPortBinding_getPossibleChildren_Output_Policy" />
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getRootPossibleChildren">
+<soap:operation soapAction="" />
+<input>
+<wsp:PolicyReference URI="#MainWSPortBinding_getRootPossibleChildren_Input_Policy" />
+<soap:body use="literal" />
+</input>
+<output>
+<wsp:PolicyReference URI="#MainWSPortBinding_getRootPossibleChildren_Output_Policy" />
 <soap:body use="literal" />
 </output>
 </operation>
