@@ -21,13 +21,17 @@ import org.openide.util.lookup.Lookups;
  */
 public class ClassMetadataNode extends AbstractNode {
    static final String PARENT_ICON_PATH = "org/inventory/customization/hierarchycustomizer/res/flag-green.png";
+   static final String ROOT_PARENT_ICON_PATH = "org/inventory/customization/hierarchycustomizer/res/flag-red.png";
    static final String CHILDREN_ICON_PATH = "org/inventory/customization/hierarchycustomizer/res/flag-black.png";
    private LocalClassMetadataLight object;
    private String displayName;
    
    public ClassMetadataNode(LocalClassMetadataLight _lcm, boolean isMain){
       super (new ClassMetadataChildren(),Lookups.singleton(_lcm));
-      setIconBaseWithExtension(PARENT_ICON_PATH);
+      if (_lcm.getClassName().equals(CommunicationsStub.getInstance().getRootClass()))
+          setIconBaseWithExtension(ROOT_PARENT_ICON_PATH);
+      else
+        setIconBaseWithExtension(PARENT_ICON_PATH);
       this.object = _lcm;
    }
 
@@ -45,10 +49,15 @@ public class ClassMetadataNode extends AbstractNode {
 
    @Override
    public String getDisplayName(){
-       if (object!=null)
-            return object.getClassName();
+       if (object!=null){
+            if (object.getClassName().equals(CommunicationsStub.getInstance().getRootClass()))
+                return java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_ROOTNODE_TEXT");
+            else
+                return object.getClassName();
+                
+       }
        else
-           return displayName;
+           return java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_NONAME");
    }
 
     @Override

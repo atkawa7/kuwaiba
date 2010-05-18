@@ -17,7 +17,7 @@ public class ClassMetadataChildren extends Children.Keys implements PropertyChan
     private boolean main;
     List<LocalClassMetadataLight> keys;
 
-    public ClassMetadataChildren(LocalClassMetadataLight[] lcm){
+    public ClassMetadataChildren(List<LocalClassMetadataLight> lcm){
         this.main = true;
         setKeys(lcm);
     }
@@ -53,6 +53,10 @@ public class ClassMetadataChildren extends Children.Keys implements PropertyChan
         }
     }
 
+    public List<LocalClassMetadataLight> getKeys(){
+        return keys;
+    }
+
     public void propertyChange(PropertyChangeEvent evt) {
         if(evt.getOldValue().equals("add"))
             keys.add((LocalClassMetadataLight)evt.getNewValue());
@@ -60,13 +64,5 @@ public class ClassMetadataChildren extends Children.Keys implements PropertyChan
             keys.remove((LocalClassMetadataLight)evt.getNewValue());
         
         setKeys(keys);
-    }
-
-    public List<LocalClassMetadataLight> getCurrentKeys(){
-        return this.keys;
-    }
-
-    public void setCurrentKeys(List<LocalClassMetadataLight> _keys){
-        this.keys = _keys;
     }
 }

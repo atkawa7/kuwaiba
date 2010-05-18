@@ -51,9 +51,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
         bTreeView = new BeanTreeView();
         lstClasses = new JList();
 
-        em.setRootContext(new AbstractNode(new ClassMetadataChildren(hml.getAllMeta())));
-
-        hml.removeDummyRoot();
+        em.setRootContext(new AbstractNode(new ClassMetadataChildren(hml.getTreeModel())));
 
         bTreeView.setRootVisible(false);
 

@@ -15,11 +15,14 @@ import org.inventory.webservice.ClassInfoLight;
 public class LocalClassMetadataLightImpl implements LocalClassMetadataLight{
 
     protected Long id;
+    protected Boolean isAbstract;
     protected String className;
     protected String packageName;
 
+
     public LocalClassMetadataLightImpl(ClassInfoLight cil){
         this.id = cil.getId();
+        this.isAbstract = cil.isIsAbstract();
         this.className = cil.getClassName();
         this.packageName = cil.getPackage();
     }
@@ -46,6 +49,12 @@ public class LocalClassMetadataLightImpl implements LocalClassMetadataLight{
     public String toString(){
         return className;
     }
+
+    public Boolean getIsAbstract() {
+        return isAbstract;
+    }
+
+
 
    /*
     * The equals method is overwritten in order to make the comparison based on the id, which is
