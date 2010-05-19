@@ -51,6 +51,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
+import util.MetadataUtils;
 
 /**
  *
@@ -527,18 +528,65 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
-    public boolean moveObjects(Long targetOid, Long[] objects){
+    /*
+     * To ask for the object classes may seem a bit forced, but keeps the method simple (native types)
+     * and efficiente. maybe requesting for a RemoteObjectLight[] would be better.
+     * We'll try that when we do some code cleanup
+     */
+    public boolean moveObjects(Long targetOid, Long[] objectOids, String[] objectClasses){
         if (em != null){
-            for (Long oid : objects){
-                RootObject ro = em.find(RootObject.class, oid);
-                ro.setParent(targetOid);
-                em.merge(ro);
+            if (objectOids.length == objectClasses.length){
+                for (int i = 0; i<objectClasses.length;i++){
+                    String sentence = "UPDATE "+objectClasses[i]+" x SET x.parent="+targetOid+" WHERE x.id="+objectOids[i];
+                    Query q = em.createQuery(sentence);
+                    q.executeUpdate();
+                }
+                return true;
+            }else{
+                this.error = "Array lenghts are different(objectOids, objectClasses)";
+                return false;
             }
-            return true;
         }
         else {
             this.error = "The EntityManager does not exist";
             return false;
+        }
+    }
+
+    /*
+     * To ask for the object classes may seem a bit forced, but keeps the method simple (native types)
+     * and efficient. maybe requesting for a RemoteObjectLight[] would be better.
+     * We'll try that when we do some code cleanup
+     */
+    public RemoteObjectLight[] copyObjects(Long targetOid, Long[] templateOids, String[] objectClasses){
+        if (em != null){
+            if (templateOids.length == objectClasses.length){
+                RemoteObjectLight[] res = new RemoteObjectLight[objectClasses.length];
+                for (int i = 0; i<objectClasses.length;i++){
+                    //TODO: A more efficient way? maybe retrieving two or more objects at a time?
+                    String sentence = "SELECT x FROM "+objectClasses[i]+" x WHERE x.id="+templateOids[i];
+                    Query q = em.createQuery(sentence);
+                    Object obj = q.getSingleResult(), clone;
+                    
+                    clone = MetadataUtils.clone(obj);
+                    ((RootObject)clone).setParent(targetOid);
+                    ((RootObject)clone).setIsLocked(false);
+                    //Nice trick to generate an Id
+                    ((RootObject)clone).setId((new RootObject() {}).getId());
+                    
+
+                    em.persist(clone);
+                    res[i] = new RemoteObjectLight(clone);
+                }
+                return res;
+            }else{
+                this.error = "Array lenghts are different(objectOids, objectClasses)";
+                return null;
+            }
+        }
+        else {
+            this.error = "The EntityManager does not exist";
+            return null;
         }
     }
 }

@@ -300,11 +300,13 @@ public class KuwaibaWebservice {
      * Web service operation
      */
     @WebMethod(operationName = "copyObjects")
-    public Boolean copyObjects(@WebParam(name = "targetOid")
+    public RemoteObjectLight[] copyObjects(@WebParam(name = "targetOid")
     Long targetOid, @WebParam(name = "templateObjects")
-    Long[] templateObjects) {
-        //TODO write your implementation code here:
-        return null;
+    Long[] templateObjects, String[] objectClasses) {
+        RemoteObjectLight[] res = sbr.copyObjects(targetOid, templateObjects, objectClasses);
+            if (res == null)
+                this.lastErr = sbr.getError();
+        return res;
     }
 
     /**
@@ -315,7 +317,7 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "moveObjects")
     public Boolean moveObjects(@WebParam(name = "targetOid")
     Long targetOid, @WebParam(name = "objects")
-    Long[] objects) {
-        return sbr.moveObjects(targetOid, objects);
+    Long[] objectOids, String[] objectClasses) {
+        return sbr.moveObjects(targetOid, objectOids,objectClasses);
     }
 }

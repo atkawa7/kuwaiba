@@ -1,19 +1,30 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *  under the License.
  */
-
 package core.toserialize;
 
 import entity.multiple.GenericObjectList;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import util.MetadataUtils;
 
 /**
  * Esta clase representa un objeto extraído de la base de datos, es lo que se
@@ -32,7 +43,8 @@ public class RemoteObject extends RemoteObjectLight {
     public RemoteObject(){}
 
     public RemoteObject(Object object){
-        List<Field> allAttributes = getAllAttributes(object.getClass(), new ArrayList<Field>());
+        List<Field> allAttributes = MetadataUtils.getAllAttributes(object.getClass(),
+                                                                    new ArrayList<Field>());
         attributes = new String [allAttributes.size()];
         values = new String [allAttributes.size()];
         
@@ -43,9 +55,10 @@ public class RemoteObject extends RemoteObjectLight {
             attributes[i]=f.getName();
             
             try{
-                //Cuidado: getDeclaredMethods agarra los privados y protegidos pero NO los heredados
-                //El solito hace lo contrario. Ahora bien
-                Method m = object.getClass().getMethod("get"+capitalize(f.getName()), new Class[]{});
+                //getDeclaredMethods takes private and protected methods, but NOT the inherit ones
+                //getMethods do the opposite. Now:
+                Method m = object.getClass().getMethod("get"+MetadataUtils.capitalize(f.getName()),
+                                                        new Class[]{});
                 Object value = m.invoke(object, new Object[]{});
                 if (value == null)  values[i]=null;
                 else{
@@ -74,35 +87,5 @@ public class RemoteObject extends RemoteObjectLight {
             }
             i++;
         }
-    }
-
-    /*
-     * TODO: No debería ir aquí sino en un clase de utilidades
-     * Es necesaria porque no existe forma de saber los atributos heredados
-     * Pilas, tambén se debe revisar porqué tocó hacerle la comparación con cadenas a lo modificadores y no sirvió el otro con booleanos
-     */
-    public List<Field> getAllAttributes(Class<?> aClass, List<Field> attributesSoFar){
-        //System.out.println("Atributos para: "+aClass.getName());
-        for (Field f : aClass.getDeclaredFields()){
-            //System.out.print("Analizando "+f.getName()+"...");
-            if(!(Modifier.toString(f.getModifiers()).startsWith("private") || Modifier.toString(f.getModifiers()).startsWith("protected transient"))){
-            //if(Modifier.isPrivate(f.getModifiers())||Modifier.isTransient(f.getModifiers())){
-                attributesSoFar.add(f);
-            }
-            //System.out.println("Valor:"+Modifier.toString(f.getModifiers()));
-        }
-        //if (!aClass.getSuperclass().getName().equalsIgnoreCase("RemoteObject"))
-        if (aClass.getSuperclass() != null)
-            getAllAttributes(aClass.getSuperclass(), attributesSoFar);
-        return attributesSoFar;
-    }
-
-    /*
-     * TODO: No debería ir aquí sino en un clase de utilidades
-     * Es necesaria para poder simular los getters al concatenar "get" y el nombre del atributo en mayúscula
-     */
-    public String capitalize(String s) {
-        if (s.length() == 0) return s;
-        return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 }

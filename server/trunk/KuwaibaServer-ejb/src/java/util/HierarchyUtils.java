@@ -9,7 +9,7 @@ package util;
  *
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class HierarchyUtil {
+public class HierarchyUtils {
 
     /*
      * Este método dice si una clase dada es subclase de otra

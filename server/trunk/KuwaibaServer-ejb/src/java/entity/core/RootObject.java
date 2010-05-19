@@ -1,10 +1,22 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *  under the License.
  */
-
 package entity.core;
 
+import core.annotations.NoCopy;
 import java.io.Serializable;
 
 //Annotations
@@ -25,19 +37,21 @@ import javax.persistence.GenerationType;
 @Entity
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS) //Por defecto el valor es SINGLE_TABLE, con lo cual, todas las subclases se mapena en la misma tabla
 @Table(name="RootObject") //Esto le dice con qué nombre crear la tabla. El defaul, es decir, si uno no usa esta anotación es el mismo nombre de la tabla
-public abstract class RootObject implements Serializable {
+public abstract class RootObject implements Serializable, Cloneable {
 
     public static final Long PARENT_ROOT = new Long(0); // This is the id for the single instance of the root object
     public static final Class ROOT_CLASS = DummyRoot.class; // this is the class that represents the root object
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE) //Esto le dice cómo generar la llave primaria (SEQUENCE lo hacecustomizable, uno le puede decir cómo la genere)
+    @NoCopy
     protected Long id; //Llave primaria
     @Column(nullable=false)
     protected String name = ""; //Nombre
     @Column(nullable=false)
+    @NoCopy
     protected Boolean isLocked= false; //indica si un objeto está bloqueado para sólo lectura
-    
+    @NoCopy
     protected Long parent = null;
 
     public Long getParent() {

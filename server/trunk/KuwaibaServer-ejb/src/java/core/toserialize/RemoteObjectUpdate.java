@@ -6,7 +6,7 @@ import entity.relations.GenericRelation;
 import java.util.Set;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
-import util.HierarchyUtil;
+import util.HierarchyUtils;
 
 /**
  * Representa una actualización, pero deserializada (desde el punto de vista de aplicación)
@@ -52,9 +52,9 @@ public class RemoteObjectUpdate {
                         if(updatedAttributes[i].getJavaType().equals(Integer.class))
                             this.newValues[i] = Integer.valueOf(object.getNewValues()[i]);
                         else
-                            if(HierarchyUtil.
+                            if(HierarchyUtils.
                                     isSubclass(updatedAttributes[i].getJavaType(),GenericObjectList.class) ||
-                               HierarchyUtil.
+                               HierarchyUtils.
                                     isSubclass(updatedAttributes[i].getJavaType(),GenericRelation.class))
                                 this.newValues[i] = Long.valueOf(object.getNewValues()[i]);
         }
@@ -89,8 +89,8 @@ public class RemoteObjectUpdate {
             value="'"+(String)this.newValues[i]+"'";
         else
             value = this.newValues[i].toString();
-        if (HierarchyUtil.isSubclass(updatedAttributes[i].getJavaType(),GenericObjectList.class) ||
-                           HierarchyUtil.
+        if (HierarchyUtils.isSubclass(updatedAttributes[i].getJavaType(),GenericObjectList.class) ||
+                           HierarchyUtils.
                                 isSubclass(updatedAttributes[i].getJavaType(),GenericRelation.class)){
             att= this.updatedAttributes[i].getName()+"_id";
             if (value.equals("0")) //Si es relación, y el id es 0, es porque en la lista se escogió "<ninguno>"
