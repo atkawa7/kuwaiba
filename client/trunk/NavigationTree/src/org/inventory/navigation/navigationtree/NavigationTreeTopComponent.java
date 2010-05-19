@@ -1,7 +1,22 @@
+/*
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *  under the License.
+ */
 package org.inventory.navigation.navigationtree;
 
 import java.awt.BorderLayout;
-import javax.swing.ActionMap;
 import javax.swing.text.DefaultEditorKit;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.navigation.navigationtree.nodes.ObjectChildren;
@@ -59,20 +74,24 @@ public final class NavigationTreeTopComponent extends TopComponent
      * Adds and setup all the components created without the help of the GUI Editor
      */
     public void initComponentsCustom(){
-        ActionMap ac = this.getActionMap();
-        //ac.put(DefaultEditorKit.copyAction, ExplorerUtils.actionCopy(em));
-        //ac.put(DefaultEditorKit.cutAction, ExplorerUtils.actionCut(em));
         //Asocia un lookup, un espacio para registrar los elementos
         //usar InstanceContent para lookups dinámicos, y ProxyLookup si se desea
         //presentar varios lookups en un mismo sitio
-        ac.put(DefaultEditorKit.deleteNextCharAction, ExplorerUtils.actionDelete(em, true));
+        getActionMap().put(DefaultEditorKit.CopyAction.class, ExplorerUtils.actionCopy(em));
+        getActionMap().put(DefaultEditorKit.CutAction.class, ExplorerUtils.actionCut(em));
+        getActionMap().put(DefaultEditorKit.PasteAction.class, ExplorerUtils.actionPaste(em));
+
         nts = new NavigationTreeService(this);
-        associateLookup(ExplorerUtils.createLookup(em, ac));
+        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
         setLayout(new BorderLayout());
         BeanTreeView treeView = new BeanTreeView();
         treeView.setWheelScrollingEnabled(true);
-        //tm = new TreeManager();
-        //AbstractNode root = new AbstractNode(tm);
+
+        //DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(treeView,
+        //        DnDConstants.ACTION_MOVE, null);
+        //treeView.
+        //treeView.setTransferHandler(new ObjectTransferManager(null))
+
         LocalObjectLight[] rootChildren = nts.getRootChildren();
         if (rootChildren != null){
             RootObjectNode root = new RootObjectNode(new ObjectChildren(rootChildren));

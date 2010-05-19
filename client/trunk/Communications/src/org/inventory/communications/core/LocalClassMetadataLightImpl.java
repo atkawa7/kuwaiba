@@ -1,6 +1,7 @@
 package org.inventory.communications.core;
 
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
@@ -12,7 +13,7 @@ import org.inventory.webservice.ClassInfoLight;
  * metadata is not necessary (ie. Container Hierarchy Manager)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class LocalClassMetadataLightImpl implements LocalClassMetadataLight{
+public class LocalClassMetadataLightImpl implements LocalClassMetadataLight,Transferable{
 
     protected Long id;
     protected Boolean isAbstract;

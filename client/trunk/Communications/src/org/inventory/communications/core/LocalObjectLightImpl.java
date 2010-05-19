@@ -11,7 +11,8 @@ import org.inventory.webservice.RemoteObjectLight;
  * es sólo información de despliegue (sin detalle)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class LocalObjectLightImpl implements LocalObjectLight{
+public class LocalObjectLightImpl implements LocalObjectLight{ //This class implements Transferable because of
+                                                               //LocalObjectLight interface extends from it
 
     private Long oid;
     protected String className;
@@ -53,21 +54,6 @@ public class LocalObjectLightImpl implements LocalObjectLight{
         return this.displayName;
     }
 
-    public DataFlavor[] getTransferDataFlavors() {
-        return new DataFlavor[]{DATA_FLAVOR};
-    }
-
-    public boolean isDataFlavorSupported(DataFlavor flavor) {
-        return flavor == DATA_FLAVOR;
-    }
-
-    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-        if(flavor == DATA_FLAVOR)
-            return this;
-        else
-            throw new UnsupportedFlavorException(flavor);
-    }
-
     public String getPackageName() {
         return this.packageName;
     }
@@ -85,5 +71,21 @@ public class LocalObjectLightImpl implements LocalObjectLight{
         int hash = 7;
         hash = 31 * hash + (this.displayName != null ? this.displayName.hashCode() : 0);
         return hash;
+    }
+
+    //Transferable methods
+    public DataFlavor[] getTransferDataFlavors() {
+        return new DataFlavor[]{DATA_FLAVOR};
+    }
+
+    public boolean isDataFlavorSupported(DataFlavor flavor) {
+        return flavor == DATA_FLAVOR;
+    }
+
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+        if(flavor == DATA_FLAVOR)
+            return this;
+        else
+            throw new UnsupportedFlavorException(flavor);
     }
 }

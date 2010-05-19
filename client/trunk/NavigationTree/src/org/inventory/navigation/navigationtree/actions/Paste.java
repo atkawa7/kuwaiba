@@ -1,19 +1,3 @@
-/*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
- *
- *  Licensed under the EPL License, Version 1.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.eclipse.org/legal/epl-v10.html
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *  under the License.
- */
 package org.inventory.navigation.navigationtree.actions;
 
 import java.awt.event.ActionEvent;
@@ -31,25 +15,25 @@ import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter.Popup;
 
 
-public final class Create extends AbstractAction implements Popup{
+public final class Paste extends AbstractAction implements Popup{
     private LocalObjectLight lol;
     private ObjectNode node;
     private RootObjectNode ron;
     private CommunicationsStub com;
 
-    public Create(){
+    public Paste(){
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_NEW"));
         com = CommunicationsStub.getInstance();
     }
 
-    public Create(LocalObjectLight _lol, ObjectNode _node) {
+    public Paste(LocalObjectLight _lol, ObjectNode _node) {
         this();
         this.lol=_lol;
         this.node = _node;
         this.ron = null;
     }
 
-    public Create (RootObjectNode _ron){
+    public Paste (RootObjectNode _ron){
         this();
         this.ron = _ron;
         this.lol=null;

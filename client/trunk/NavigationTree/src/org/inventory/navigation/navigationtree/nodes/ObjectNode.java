@@ -1,21 +1,50 @@
+/*
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *  under the License.
+ */
 package org.inventory.navigation.navigationtree.nodes;
 
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.io.IOException;
+import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
+import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.navigation.navigationtree.actions.Create;
 import org.inventory.navigation.navigationtree.actions.Delete;
 import org.inventory.navigation.navigationtree.actions.Edit;
 import org.inventory.navigation.navigationtree.nodes.properties.ObjectNodeProperty;
-import org.inventory.navigation.navigationtree.nodes.properties.ObjectNodePropertyChangeListener;
+import org.openide.actions.CopyAction;
+import org.openide.actions.CutAction;
 import org.openide.actions.OpenLocalExplorerAction;
+import org.openide.actions.PasteAction;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
+import org.openide.util.Lookup;
+import org.openide.util.NbBundle;
+import org.openide.util.actions.SystemAction;
+import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
 
 /**
@@ -25,9 +54,10 @@ import org.openide.util.lookup.Lookups;
 public class ObjectNode extends AbstractNode{
     
     private LocalObjectLight object;
-    private ObjectNodePropertyChangeListener pcl;
     //There can be only one instance for OpenLocalExplorerAction, this attribute is a kind of singleton
     private static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
+
+    private CommunicationsStub com;
 
     private Create createAction;
     private Delete deleteAction;
@@ -38,7 +68,9 @@ public class ObjectNode extends AbstractNode{
     public ObjectNode(LocalObjectLight _lol){
         super(new ObjectChildren(), Lookups.singleton(_lol));
         this.object = _lol;
-        
+
+        com= CommunicationsStub.getInstance();
+
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_EXPLORE"));
 
         //The children must be the listener so it can set the modified keys (after an object creation or removal)
@@ -73,10 +105,9 @@ public class ObjectNode extends AbstractNode{
         Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
         Set administrativePropertySet = Sheet.createPropertiesSet(); //Administrative attributes category
 
-        LocalClassMetadata meta = CommunicationsStub.getInstance().getMetaForClass(object.getClassName());
+        LocalClassMetadata meta = com.getMetaForClass(object.getClassName());
 
-        LocalObject lo = CommunicationsStub.getInstance().getObjectInfo(
-                object.getClassName(), object.getOid(), meta);
+        LocalObject lo = com.getObjectInfo(object.getClassName(), object.getOid(), meta);
 
         int i = 0;
         for(LocalAttributeMetadata lam:meta.getAttributes()){
@@ -86,7 +117,7 @@ public class ObjectNode extends AbstractNode{
 
                 if (meta.isMultiple(lam.getName())){
                     //TODO take this from the local cache
-                    LocalObjectListItem[] list = CommunicationsStub.getInstance().getList(lam.getType());
+                    LocalObjectListItem[] list = com.getList(lam.getType());
                     LocalObjectListItem val = null;
 
                     for (LocalObjectListItem loli : list)
@@ -136,7 +167,7 @@ public class ObjectNode extends AbstractNode{
         return sheet;
     }
 
-    //This method is called for the very first time when the firt context menu is created, and
+    //This method is called for the very first time when the first context menu is created, and
     //called everytime
     @Override
     public Action[] getActions(boolean context){
@@ -145,7 +176,74 @@ public class ObjectNode extends AbstractNode{
             deleteAction.addPropertyChangeListener((ObjectChildren)this.getParentNode().getChildren());
         }
         return new Action[]{createAction, editAction,deleteAction,explorerAction};
+        /*return new Action[]{
+                    SystemAction.get(CopyAction.class),
+                    SystemAction.get(CutAction.class),
+                    SystemAction.get(PasteAction.class)
+        };*/
     }
+
+    @Override
+    protected void createPasteTypes(Transferable t, List s) {
+    super.createPasteTypes(t, s);
+    PasteType paste = getDropType( t, DnDConstants.ACTION_COPY, -1 );
+    if( null != paste )
+    s.add( paste );
+    }
+
+    @Override
+    public PasteType getDropType(final Transferable _obj, int action, int index){
+        final ObjectNode dropNode = (ObjectNode)NodeTransfer.node( _obj,
+                DnDConstants.ACTION_COPY_OR_MOVE+NodeTransfer.CLIPBOARD_CUT );
+
+        if (dropNode == null || this.equals(dropNode.getParentNode()))
+            return null;
+
+        return new PasteType() {
+
+            @Override
+            public Transferable paste() throws IOException {
+                boolean canMove = false;
+                try{
+                    NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
+                    LocalObjectLight obj = dropNode.getObject();
+                    for(LocalClassMetadataLight lcml : com.getPossibleChildren(object.getPackageName()+"."+object.getClassName())){
+                        if(lcml.getClassName().equals(obj.getClassName()))
+                            canMove = true;
+                    }
+                    if (canMove){
+                        if (com.moveObjects(getObject().getOid(),
+                                new LocalObjectLight[] {obj}))
+                            firePropertyChange(PROP_NAME, "add", obj);
+                        else
+                            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").
+                                    getString("LBL_MOVEOPERATION_TITLE"), NotificationUtil.ERROR, com.getError());
+
+                    }else
+                        nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").
+                                    getString("LBL_MOVEOPERATION_TITLE"), NotificationUtil.ERROR,
+                                    //NbBundle.getMessage(ObjectNode.class, "LBL_MOVEOPERATION_TEXT",new Object[]{obj.getClassName(),object.getClassName()})
+                                    java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_MOVEOPERATION_TEXT")
+                        );
+                }catch(Exception ex){
+                   ex.printStackTrace();
+                }
+                return object;
+            }
+        };
+    }
+
+    /*@Override
+    public Cookie getCookie(Class clazz) {
+    ObjectChildren ch = (ObjectChildren)getChildren();
+    
+    if (clazz.isInstance(ch)) {
+    return (Cookie) ch;
+    }
+
+    return super.getCookie(clazz);
+    }*/
+
 
     //TODO Set this to false is the object is locked
     @Override
@@ -155,6 +253,16 @@ public class ObjectNode extends AbstractNode{
 
     @Override
     public boolean canCut(){
+        return true;
+    }
+
+    @Override
+    public boolean canCopy(){
+        return true;
+    }
+
+    @Override
+    public boolean canDestroy(){
         return true;
     }
 }

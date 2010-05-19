@@ -1,3 +1,19 @@
+/*
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *  under the License.
+ */
 package org.inventory.customization.hierarchycustomizer.nodes;
 
 import java.awt.datatransfer.Transferable;
@@ -10,7 +26,6 @@ import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.customization.hierarchycustomizer.actions.Delete;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
-import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
@@ -74,47 +89,47 @@ public class ClassMetadataNode extends AbstractNode {
 
    @Override
    public PasteType getDropType(final Transferable obj, int action, int index){
-            return new PasteType() {
-                @Override
-                public Transferable paste() throws IOException {
-                    //Only can be dropped into a parent node (the ones marked with a green flag)
-                    if (isLeaf())
-                        return null;
-                    NotificationUtil nu = Lookup.getDefault().
-                                lookup(NotificationUtil.class);
-                    try {
-                        LocalClassMetadataLight data = (LocalClassMetadataLight)obj.getTransferData(
-                                LocalClassMetadataLight.DATA_FLAVOR);
+        return new PasteType() {
+            @Override
+            public Transferable paste() throws IOException {
+                //Only can be dropped into a parent node (the ones marked with a green flag)
+                if (isLeaf())
+                    return null;
+                NotificationUtil nu = Lookup.getDefault().
+                            lookup(NotificationUtil.class);
+                try {
+                    LocalClassMetadataLight data = (LocalClassMetadataLight)obj.getTransferData(
+                            LocalClassMetadataLight.DATA_FLAVOR);
 
-                        ArrayList<Long> tokens = new ArrayList<Long>();
-                        tokens.add(data.getId());
+                    ArrayList<Long> tokens = new ArrayList<Long>();
+                    tokens.add(data.getId());
 
-                        //This is supposed to support multiple object drags,
-                        //but as long as I can't make it work, It'll be commented out
+                    //This is supposed to support multiple object drags,
+                    //but as long as I can't make it work, It'll be commented out
 //                        if (CommunicationsStub.getInstance().addPossibleChildren(object.getId(),
 //                                data)){
 //                            for (Object obj : data)
 //                                getChildren().add(new Node[]{new ClassMetadataNode((LocalClassMetadataLight)data)});
-                        if (CommunicationsStub.getInstance().addPossibleChildren(object.getId(),
-                                  tokens)){
+                    if (CommunicationsStub.getInstance().addPossibleChildren(object.getId(),
+                              tokens)){
 
-                            //This raises a IllegalStateException that can be ignore, since is a warning related to 
-                            //firing a change event about a property that doesn't belong to the object
-                            //fixes on this are welcome
-                             firePropertyChange(PROP_PARENT_NODE, "add", data);
+                        //This raises a IllegalStateException that can be ignore, since is a warning related to
+                        //firing a change event about a property that doesn't belong to the object
+                        //fixes on this are welcome
+                         firePropertyChange(PROP_PARENT_NODE, "add", data);
 
-                             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
-                                    NotificationUtil.INFO,java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));
-                        }
-                        else
-                            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
-                                    NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());
-                    }catch (Exception ex) {
-                            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
-                                    NotificationUtil.ERROR,ex.getMessage());
+                         nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
+                                NotificationUtil.INFO,java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));
                     }
-                    return null;
+                    else
+                        nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
+                                NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());
+                }catch (Exception ex) {
+                        nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
+                                NotificationUtil.ERROR,ex.getMessage());
                 }
-            };
+                return null;
+            }
+        };
    }
 }

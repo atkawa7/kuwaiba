@@ -31,25 +31,25 @@ import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter.Popup;
 
 
-public final class Create extends AbstractAction implements Popup{
+public final class Copy extends AbstractAction implements Popup{
     private LocalObjectLight lol;
     private ObjectNode node;
     private RootObjectNode ron;
     private CommunicationsStub com;
 
-    public Create(){
+    public Copy(){
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_NEW"));
         com = CommunicationsStub.getInstance();
     }
 
-    public Create(LocalObjectLight _lol, ObjectNode _node) {
+    public Copy(LocalObjectLight _lol, ObjectNode _node) {
         this();
         this.lol=_lol;
         this.node = _node;
         this.ron = null;
     }
 
-    public Create (RootObjectNode _ron){
+    public Copy (RootObjectNode _ron){
         this();
         this.ron = _ron;
         this.lol=null;
