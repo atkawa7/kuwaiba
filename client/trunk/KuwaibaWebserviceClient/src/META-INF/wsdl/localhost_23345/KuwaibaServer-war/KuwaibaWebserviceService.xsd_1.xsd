@@ -1,16 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.2-hudson-752-. --><xs:schema xmlns:tns="http://webservice/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://webservice/">
 
-<xs:element name="addPossibleChildren" type="tns:addPossibleChildren" />
-
-<xs:element name="addPossibleChildrenResponse" type="tns:addPossibleChildrenResponse" />
-
 <xs:element name="closeSession" type="tns:closeSession" />
 
 <xs:element name="closeSessionResponse" type="tns:closeSessionResponse" />
-
-<xs:element name="copyObjects" type="tns:copyObjects" />
-
-<xs:element name="copyObjectsResponse" type="tns:copyObjectsResponse" />
 
 <xs:element name="createObject" type="tns:createObject" />
 
@@ -20,21 +12,9 @@
 
 <xs:element name="createSessionResponse" type="tns:createSessionResponse" />
 
-<xs:element name="getDummyRootClass" type="tns:getDummyRootClass" />
-
-<xs:element name="getDummyRootClassResponse" type="tns:getDummyRootClassResponse" />
-
-<xs:element name="getDummyRootId" type="tns:getDummyRootId" />
-
-<xs:element name="getDummyRootIdResponse" type="tns:getDummyRootIdResponse" />
-
 <xs:element name="getLastErr" type="tns:getLastErr" />
 
 <xs:element name="getLastErrResponse" type="tns:getLastErrResponse" />
-
-<xs:element name="getLightMetadata" type="tns:getLightMetadata" />
-
-<xs:element name="getLightMetadataResponse" type="tns:getLightMetadataResponse" />
 
 <xs:element name="getMetadata" type="tns:getMetadata" />
 
@@ -60,9 +40,13 @@
 
 <xs:element name="getPossibleChildrenResponse" type="tns:getPossibleChildrenResponse" />
 
-<xs:element name="getRootPossibleChildren" type="tns:getRootPossibleChildren" />
+<xs:element name="getRootNode" type="tns:getRootNode" />
 
-<xs:element name="getRootPossibleChildrenResponse" type="tns:getRootPossibleChildrenResponse" />
+<xs:element name="getRootNodeLight" type="tns:getRootNodeLight" />
+
+<xs:element name="getRootNodeLightResponse" type="tns:getRootNodeLightResponse" />
+
+<xs:element name="getRootNodeResponse" type="tns:getRootNodeResponse" />
 
 <xs:element name="getTreeNode" type="tns:getTreeNode" />
 
@@ -72,18 +56,6 @@
 
 <xs:element name="getTreeNodeResponse" type="tns:getTreeNodeResponse" />
 
-<xs:element name="moveObjects" type="tns:moveObjects" />
-
-<xs:element name="moveObjectsResponse" type="tns:moveObjectsResponse" />
-
-<xs:element name="removeObject" type="tns:removeObject" />
-
-<xs:element name="removeObjectResponse" type="tns:removeObjectResponse" />
-
-<xs:element name="removePossibleChildren" type="tns:removePossibleChildren" />
-
-<xs:element name="removePossibleChildrenResponse" type="tns:removePossibleChildrenResponse" />
-
 <xs:element name="setObjectLock" type="tns:setObjectLock" />
 
 <xs:element name="setObjectLockResponse" type="tns:setObjectLockResponse" />
@@ -91,19 +63,6 @@
 <xs:element name="updateObject" type="tns:updateObject" />
 
 <xs:element name="updateObjectResponse" type="tns:updateObjectResponse" />
-
-<xs:complexType name="removePossibleChildren">
-<xs:sequence>
-<xs:element name="parentClassId" type="xs:long" minOccurs="0" />
-<xs:element name="childrenToBeRemoved" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="removePossibleChildrenResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
 
 <xs:complexType name="createSession">
 <xs:sequence>
@@ -150,16 +109,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getDummyRootClass">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getDummyRootClassResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="setObjectLock">
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0" />
@@ -187,9 +136,8 @@
 </xs:complexType>
 
 <xs:complexType name="classInfo">
-<xs:complexContent>
-<xs:extension base="tns:classInfoLight">
 <xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0" />
 <xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="attributeTypes" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="attributeDisplayNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
@@ -197,27 +145,6 @@
 <xs:element name="attributesIsAdministrative" type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="attributesIsMultiple" type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="attributesDescription" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-
-<xs:complexType name="classInfoLight">
-<xs:sequence>
-<xs:element name="id" type="xs:long" minOccurs="0" />
-<xs:element name="isAbstract" type="xs:boolean" minOccurs="0" />
-<xs:element name="className" type="xs:string" minOccurs="0" />
-<xs:element name="_package" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getRootPossibleChildren">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getRootPossibleChildrenResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -256,7 +183,6 @@
 <xs:element name="displayName" type="xs:string" minOccurs="0" />
 <xs:element name="oid" type="xs:long" minOccurs="0" />
 <xs:element name="className" type="xs:string" minOccurs="0" />
-<xs:element name="packageName" type="xs:string" minOccurs="0" />
 <xs:element name="hasChildren" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
@@ -285,30 +211,6 @@
 </xs:complexContent>
 </xs:complexType>
 
-<xs:complexType name="moveObjects">
-<xs:sequence>
-<xs:element name="targetOid" type="xs:long" minOccurs="0" />
-<xs:element name="objects" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="arg2" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="moveObjectsResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getDummyRootId">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getDummyRootIdResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:long" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="getPossibleChildren">
 <xs:sequence>
 <xs:element name="parentClass" type="xs:string" minOccurs="0" />
@@ -317,34 +219,7 @@
 
 <xs:complexType name="getPossibleChildrenResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="copyObjects">
-<xs:sequence>
-<xs:element name="targetOid" type="xs:long" minOccurs="0" />
-<xs:element name="templateObjects" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="arg2" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="copyObjectsResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="addPossibleChildren">
-<xs:sequence>
-<xs:element name="parentClassId" type="xs:long" minOccurs="0" />
-<xs:element name="possibleChildren" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="addPossibleChildrenResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
+<xs:element name="return" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -358,17 +233,24 @@
 
 <xs:complexType name="createObjectResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:remoteObjectLight" minOccurs="0" />
+<xs:element name="return" type="tns:remoteObject" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getLightMetadata">
+<xs:complexType name="getRootNode">
 <xs:sequence />
 </xs:complexType>
 
-<xs:complexType name="getLightMetadataResponse">
+<xs:complexType name="getRootNodeResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="return" type="tns:remoteTreeNode" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteTreeNode">
+<xs:sequence>
+<xs:element name="root" type="tns:remoteObject" minOccurs="0" />
+<xs:element name="children" type="tns:remoteObject" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -426,19 +308,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="removeObject">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0" />
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="removeObjectResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="getTreeNode">
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0" />
@@ -452,10 +321,13 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="remoteTreeNode">
+<xs:complexType name="getRootNodeLight">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getRootNodeLightResponse">
 <xs:sequence>
-<xs:element name="root" type="tns:remoteObject" minOccurs="0" />
-<xs:element name="children" type="tns:remoteObject" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="return" type="tns:remoteTreeNodeLight" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 </xs:schema>

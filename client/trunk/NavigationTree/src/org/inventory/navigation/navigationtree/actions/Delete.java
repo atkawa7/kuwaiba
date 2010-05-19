@@ -21,7 +21,9 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.navigation.navigationtree.nodes.ObjectChildren;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
 public final class Delete extends AbstractAction {
@@ -41,7 +43,7 @@ public final class Delete extends AbstractAction {
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             if (CommunicationsStub.getInstance().removeObject(node.getObject().getPackageName()+"."+node.getObject().getClassName(),
                     node.getObject().getOid())){
-                firePropertyChange(NAME, "remove", node.getObject());
+                ((ObjectChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
                 nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_DELETION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_DELETION_TEXT_OK"));                
             }
             else

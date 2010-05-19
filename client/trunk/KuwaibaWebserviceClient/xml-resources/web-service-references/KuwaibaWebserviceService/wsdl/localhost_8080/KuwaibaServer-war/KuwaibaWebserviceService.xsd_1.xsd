@@ -289,6 +289,7 @@
 <xs:sequence>
 <xs:element name="targetOid" type="xs:long" minOccurs="0" />
 <xs:element name="objects" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="arg2" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -324,12 +325,13 @@
 <xs:sequence>
 <xs:element name="targetOid" type="xs:long" minOccurs="0" />
 <xs:element name="templateObjects" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="arg2" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="copyObjectsResponse">
 <xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 

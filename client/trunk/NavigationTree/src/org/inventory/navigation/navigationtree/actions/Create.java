@@ -25,16 +25,16 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.navigation.navigationtree.nodes.ObjectChildren;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.RootObjectNode;
+import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter.Popup;
 
 
 public final class Create extends AbstractAction implements Popup{
-    private LocalObjectLight lol;
-    private ObjectNode node;
-    private RootObjectNode ron;
+    private Node node;
     private CommunicationsStub com;
 
     public Create(){
@@ -42,30 +42,27 @@ public final class Create extends AbstractAction implements Popup{
         com = CommunicationsStub.getInstance();
     }
 
-    public Create(LocalObjectLight _lol, ObjectNode _node) {
+    public Create(ObjectNode _node) {
         this();
-        this.lol=_lol;
         this.node = _node;
-        this.ron = null;
     }
 
     public Create (RootObjectNode _ron){
         this();
-        this.ron = _ron;
-        this.lol=null;
+        node = _ron;
     }
 
     public void actionPerformed(ActionEvent ev) {
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         LocalObjectLight myLol = CommunicationsStub.getInstance().createObject(
                 ((JMenuItem)ev.getSource()).getName(),
-                (lol==null)?(com.getRootId()):lol.getOid(),
+                (node instanceof RootObjectNode)?(com.getRootId()):(((ObjectNode)node)).getObject().getOid(),
                 null);
         if (myLol == null)
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR,
                     CommunicationsStub.getInstance().getError());
         else{
-            firePropertyChange(NAME, "add", myLol);
+            ((ObjectChildren)node.getChildren()).add(new ObjectNode[]{new ObjectNode(myLol)});
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO,
                     java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_CREATED"));
         }
@@ -75,11 +72,11 @@ public final class Create extends AbstractAction implements Popup{
         JMenu mnuPossibleChildren = new JMenu(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_NEW"));
 
         List<LocalClassMetadataLight> items;
-        if (this.lol == null) //For the root node
+        if (node instanceof RootObjectNode) //For the root node
             items = CommunicationsStub.getInstance().getRootPossibleChildren();
         else
             items = CommunicationsStub.getInstance().
-                    getPossibleChildren(lol.getPackageName()+"."+lol.getClassName());
+                    getPossibleChildren(((ObjectNode)node).getObject().getPackageName()+"."+((ObjectNode)node).getObject().getClassName());
 
         if (items.size() == 0) mnuPossibleChildren.setEnabled(false);
             else

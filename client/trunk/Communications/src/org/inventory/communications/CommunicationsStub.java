@@ -17,7 +17,6 @@
 package org.inventory.communications;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.inventory.communications.core.LocalClassMetadataImpl;
 import org.inventory.communications.core.LocalClassMetadataLightImpl;
@@ -302,16 +301,46 @@ public class CommunicationsStub {
 
     public boolean moveObjects(Long targetOid, LocalObjectLight[] _objects) {
 
-        List<Long> objects = new ArrayList<Long>();
+        List<Long> objectOids = new ArrayList<Long>();
+        List<String> objectClasses = new ArrayList<String>();
 
-        for (LocalObjectLight lol : _objects)
-            objects.add(lol.getOid());
+        for (LocalObjectLight lol : _objects){
+            objectOids.add(lol.getOid());
+            objectClasses.add(lol.getClassName());
+        }
 
-        if (port.moveObjects(targetOid, objects))
+        if (port.moveObjects(targetOid, objectOids, objectClasses))
             return true;
         else{
             this.error = port.getLastErr();
             return false;
+        }
+    }
+
+    public LocalObjectLight[] copyObjects(Long targetOid, LocalObjectLight[] _objects){
+        List<Long> objectOids = new ArrayList<Long>();
+        List<String> objectClasses = new ArrayList<String>();
+
+        for (LocalObjectLight lol : _objects){
+            objectOids.add(lol.getOid());
+            objectClasses.add(lol.getClassName());
+        }
+
+        List<RemoteObjectLight> objs = port.copyObjects(targetOid, objectOids, objectClasses);
+
+        if (objs != null){
+            LocalObjectLight[] res = new LocalObjectLight[objs.size()];
+            int i = 0;
+            for (RemoteObjectLight rol : objs){
+                res[i] = new LocalObjectLightImpl(rol);
+                i++;
+            }
+            return res;
+        }
+
+        else{
+            this.error = port.getLastErr();
+            return null;
         }
     }
 }

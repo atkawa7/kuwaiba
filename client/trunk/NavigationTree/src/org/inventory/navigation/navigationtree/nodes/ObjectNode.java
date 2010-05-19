@@ -33,17 +33,13 @@ import org.inventory.navigation.navigationtree.actions.Create;
 import org.inventory.navigation.navigationtree.actions.Delete;
 import org.inventory.navigation.navigationtree.actions.Edit;
 import org.inventory.navigation.navigationtree.nodes.properties.ObjectNodeProperty;
-import org.openide.actions.CopyAction;
-import org.openide.actions.CutAction;
 import org.openide.actions.OpenLocalExplorerAction;
-import org.openide.actions.PasteAction;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Node;
 import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
 import org.openide.util.Lookup;
-import org.openide.util.NbBundle;
-import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
 
@@ -73,13 +69,8 @@ public class ObjectNode extends AbstractNode{
 
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_EXPLORE"));
 
-        //The children must be the listener so it can set the modified keys (after an object creation or removal)
-        createAction = new Create(object,this);
-        createAction.addPropertyChangeListener((ObjectChildren)this.getChildren());
-        //Since the listener for the delete action is the parent node, and as itis not been set here yet,
-        //the listener have to be added later (see getActions)
-
-        //Does not need listener
+        createAction = new Create(this);
+        deleteAction = new Delete(this);
         editAction = new Edit(this);
     }
 
@@ -171,10 +162,6 @@ public class ObjectNode extends AbstractNode{
     //called everytime
     @Override
     public Action[] getActions(boolean context){
-        if(deleteAction == null){
-            deleteAction = new Delete(this);
-            deleteAction.addPropertyChangeListener((ObjectChildren)this.getParentNode().getChildren());
-        }
         return new Action[]{createAction, editAction,deleteAction,explorerAction};
         /*return new Action[]{
                     SystemAction.get(CopyAction.class),
@@ -192,7 +179,7 @@ public class ObjectNode extends AbstractNode{
     }
 
     @Override
-    public PasteType getDropType(final Transferable _obj, int action, int index){
+    public PasteType getDropType(Transferable _obj, final int action, int index){
         final ObjectNode dropNode = (ObjectNode)NodeTransfer.node( _obj,
                 DnDConstants.ACTION_COPY_OR_MOVE+NodeTransfer.CLIPBOARD_CUT );
 
@@ -212,12 +199,31 @@ public class ObjectNode extends AbstractNode{
                             canMove = true;
                     }
                     if (canMove){
-                        if (com.moveObjects(getObject().getOid(),
-                                new LocalObjectLight[] {obj}))
-                            firePropertyChange(PROP_NAME, "add", obj);
-                        else
-                            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").
-                                    getString("LBL_MOVEOPERATION_TITLE"), NotificationUtil.ERROR, com.getError());
+                          if ((action & DnDConstants.ACTION_MOVE) != 0 ){
+                              LocalObjectLight[] copiedNodes = com.copyObjects(getObject().getOid(),
+                                                                new LocalObjectLight[] {obj});
+                                if (copiedNodes!= null){
+                                    for (LocalObjectLight lol : copiedNodes)
+                                        getChildren().add(new Node[]{new ObjectNode(lol)});
+
+                                }
+                                else
+                                    nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").
+                                        getString("LBL_MOVEOPERATION_TITLE"), NotificationUtil.ERROR, com.getError());
+                          }
+                          else{
+                                if (com.moveObjects(getObject().getOid(),new LocalObjectLight[] {obj})){
+                                    dropNode.getParentNode().getChildren().remove(new Node[]{dropNode});
+                                    getChildren().add(new Node[]{new ObjectNode(obj)});
+
+                                }
+                                else
+                                    nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").
+                                        getString("LBL_MOVEOPERATION_TITLE"), NotificationUtil.ERROR, com.getError());
+                          }
+
+
+                        
 
                     }else
                         nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").
@@ -232,18 +238,6 @@ public class ObjectNode extends AbstractNode{
             }
         };
     }
-
-    /*@Override
-    public Cookie getCookie(Class clazz) {
-    ObjectChildren ch = (ObjectChildren)getChildren();
-    
-    if (clazz.isInstance(ch)) {
-    return (Cookie) ch;
-    }
-
-    return super.getCookie(clazz);
-    }*/
-
 
     //TODO Set this to false is the object is locked
     @Override
