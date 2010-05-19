@@ -1,3 +1,19 @@
+/*
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *  under the License.
+ */
 package webservice;
 
 import core.toserialize.ClassInfo;
@@ -36,10 +52,10 @@ public class KuwaibaWebservice {
     private String lastErr ="No error specified";
 
     /*
-     * Autentica un cliente
-     * @param username El nombre de usuario
-     * @param password La contraseña
-     * @return true si puedo autenticarse, falso en otro caso. El error es escrito en la pila de errores para el segundo caso
+     * Authenticates the user
+     * @param username user login
+     * @param password user password
+     * @return true success or failure
      **/
     @WebMethod(operationName = "createSession")
     public boolean createSession(@WebParam(name = "username") String username, @WebParam(name = "password") String password){
@@ -292,13 +308,14 @@ public class KuwaibaWebservice {
     }
 
     /**
-     * Web service operation
+     * Moves objects from its current parent to a target.
+     * Note: This method does *not* check if the parent change is possible according to the container hierarchy
+     * the developer must check it on his side!
      */
     @WebMethod(operationName = "moveObjects")
     public Boolean moveObjects(@WebParam(name = "targetOid")
     Long targetOid, @WebParam(name = "objects")
     Long[] objects) {
-        //TODO write your implementation code here:
-        return null;
+        return sbr.moveObjects(targetOid, objects);
     }
 }

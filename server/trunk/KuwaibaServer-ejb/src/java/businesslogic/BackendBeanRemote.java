@@ -41,5 +41,6 @@ public interface BackendBeanRemote {
     public ClassInfoLight[] getPossibleChildren(java.lang.Class parentClass);
     public ClassInfoLight[] getRootPossibleChildren();
     public ClassInfoLight[] getLightMetadata();
+    public boolean moveObjects(Long targetOid, Long[] objects);
     
 }
