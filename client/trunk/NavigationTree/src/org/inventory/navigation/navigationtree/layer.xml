@@ -5,7 +5,7 @@
         <folder name="Edit">
             <file name="org-inventory-navigation-navigationtree-actions-Edit.instance">
                 <attr name="delegate" methodvalue="org.openide.awt.Actions.inject"/>
-                <attr name="displayName" bundlevalue="org.inventory.navigation.navigationtree.Bundle#CTL_Edit"/>
+                <attr name="displayName" bundlevalue="org.inventory.navigation.navigationtree.Bundle#LBL_EDIT"/>
                 <attr name="iconBase" stringvalue="org/inventory/navigation/navigationtree/res/edit.png"/>
                 <attr name="injectable" stringvalue="org.inventory.navigation.navigationtree.actions.Edit"/>
                 <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.context"/>
@@ -24,7 +24,7 @@
         </folder>
         <file name="org-inventory-navigation-navigationtree-actions-Create.instance">
             <attr name="delegate" methodvalue="org.openide.awt.Actions.inject"/>
-            <attr name="displayName" bundlevalue="org.inventory.navigation.navigationtree.Bundle#CTL_Create"/>
+            <attr name="displayName" bundlevalue="org.inventory.navigation.navigationtree.Bundle#LBL_NEW"/>
             <attr name="iconBase" stringvalue="org/inventory/navigation/navigationtree/res/add.png"/>
             <attr name="injectable" stringvalue="org.inventory.navigation.navigationtree.actions.Create"/>
             <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.context"/>
@@ -34,7 +34,7 @@
         </file>
                 <file name="org-inventory-navigation-navigationtree-actions-Delete.instance">
             <attr name="delegate" methodvalue="org.openide.awt.Actions.inject"/>
-            <attr name="displayName" bundlevalue="org.inventory.navigation.navigationtree.Bundle#CTL_Delete"/>
+            <attr name="displayName" bundlevalue="org.inventory.navigation.navigationtree.Bundle#LBL_DELETE"/>
             <attr name="iconBase" stringvalue="org/inventory/navigation/navigationtree/res/delete.png"/>
             <attr name="injectable" stringvalue="org.inventory.navigation.navigationtree.actions.Delete"/>
             <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.context"/>

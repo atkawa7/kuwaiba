@@ -33,13 +33,17 @@ import org.inventory.navigation.navigationtree.actions.Create;
 import org.inventory.navigation.navigationtree.actions.Delete;
 import org.inventory.navigation.navigationtree.actions.Edit;
 import org.inventory.navigation.navigationtree.nodes.properties.ObjectNodeProperty;
+import org.openide.actions.CopyAction;
+import org.openide.actions.CutAction;
 import org.openide.actions.OpenLocalExplorerAction;
+import org.openide.actions.PasteAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Node;
 import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
 import org.openide.util.Lookup;
+import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
 
@@ -162,20 +166,24 @@ public class ObjectNode extends AbstractNode{
     //called everytime
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{createAction, editAction,deleteAction,explorerAction};
-        /*return new Action[]{
-                    SystemAction.get(CopyAction.class),
-                    SystemAction.get(CutAction.class),
-                    SystemAction.get(PasteAction.class)
-        };*/
+        return new Action[]{createAction, 
+                            editAction,
+                            deleteAction,
+                            null,
+                            SystemAction.get(CopyAction.class),
+                            SystemAction.get(CutAction.class),
+                            SystemAction.get(PasteAction.class),
+                            null,
+                            explorerAction};
+
     }
 
     @Override
     protected void createPasteTypes(Transferable t, List s) {
-    super.createPasteTypes(t, s);
-    PasteType paste = getDropType( t, DnDConstants.ACTION_COPY, -1 );
-    if( null != paste )
-    s.add( paste );
+        super.createPasteTypes(t, s);
+        PasteType paste = getDropType( t, DnDConstants.ACTION_COPY, -1 );
+        if( null != paste )
+            s.add( paste );
     }
 
     @Override

@@ -17,6 +17,10 @@
 package org.inventory.navigation.navigationtree;
 
 import java.awt.BorderLayout;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.navigation.navigationtree.nodes.ObjectChildren;
@@ -74,24 +78,28 @@ public final class NavigationTreeTopComponent extends TopComponent
      * Adds and setup all the components created without the help of the GUI Editor
      */
     public void initComponentsCustom(){
-        //Asocia un lookup, un espacio para registrar los elementos
-        //usar InstanceContent para lookups dinámicos, y ProxyLookup si se desea
-        //presentar varios lookups en un mismo sitio
-        getActionMap().put(DefaultEditorKit.CopyAction.class, ExplorerUtils.actionCopy(em));
-        getActionMap().put(DefaultEditorKit.CutAction.class, ExplorerUtils.actionCut(em));
-        getActionMap().put(DefaultEditorKit.PasteAction.class, ExplorerUtils.actionPaste(em));
+        //Associates a lookup to this component
+        //use InstanceContent dynamic lookups (?), and ProxyLookup to expose many lookups
+        //within the same (?)
+        ActionMap map = getActionMap();
+        map.put(DefaultEditorKit.copyAction, ExplorerUtils.actionCopy(em));
+        map.put(DefaultEditorKit.cutAction, ExplorerUtils.actionCut(em));
+        map.put(DefaultEditorKit.pasteAction, ExplorerUtils.actionPaste(em));
+        
 
+        //Now the keystrokes
+        InputMap keys = getInputMap();
+        keys.put(KeyStroke.getKeyStroke("control C"), DefaultEditorKit.copyAction);
+        keys.put(KeyStroke.getKeyStroke("control X"), DefaultEditorKit.cutAction);
+        keys.put(KeyStroke.getKeyStroke("control V"), DefaultEditorKit.pasteAction);
+        
         nts = new NavigationTreeService(this);
-        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
+        associateLookup(ExplorerUtils.createLookup(em, map));
         setLayout(new BorderLayout());
         BeanTreeView treeView = new BeanTreeView();
         treeView.setWheelScrollingEnabled(true);
 
-        //DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(treeView,
-        //        DnDConstants.ACTION_MOVE, null);
-        //treeView.
-        //treeView.setTransferHandler(new ObjectTransferManager(null))
-
+        
         LocalObjectLight[] rootChildren = nts.getRootChildren();
         if (rootChildren != null){
             RootObjectNode root = new RootObjectNode(new ObjectChildren(rootChildren));
@@ -158,11 +166,13 @@ public final class NavigationTreeTopComponent extends TopComponent
     public void componentOpened() {
         //Set the tree title
         setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_TITLE"));
+        ExplorerUtils.activateActions(em, true);
+
     }
 
     @Override
     public void componentClosed() {
-        
+        ExplorerUtils.activateActions(em, false);
     }
 
     /*

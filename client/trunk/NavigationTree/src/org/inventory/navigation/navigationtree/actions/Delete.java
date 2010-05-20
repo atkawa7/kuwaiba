@@ -17,8 +17,10 @@
 package org.inventory.navigation.navigationtree.actions;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.ObjectChildren;
@@ -32,6 +34,8 @@ public final class Delete extends AbstractAction {
 
     public Delete(ObjectNode _node) {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_DELETE"));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
+        putValue(MNEMONIC_KEY,KeyEvent.VK_D);
         this.node = _node;
     }
 
