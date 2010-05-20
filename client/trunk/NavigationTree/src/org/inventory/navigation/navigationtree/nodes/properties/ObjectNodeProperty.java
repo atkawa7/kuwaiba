@@ -87,9 +87,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
             update.setOid(node.getObject().getOid());
             if(!CommunicationsStub.getInstance().saveObject(update))
                 System.out.println("[saveObject]: Error "+ CommunicationsStub.getInstance().getError());
-            else
-                if (this.getName().equals("name"))
-                    node.getObject().setDisplayName((String)t);
+            
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -111,7 +109,8 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
                 return;
 
             if (this.getName().equals("name")){
-                node.setDisplayName((String) getValue());
+                node.getObject().setDisplayName((String)getPropertyEditor().getValue());
+                node.setDisplayName((String)getPropertyEditor().getValue());
             }
             
         } catch (Exception ex) {

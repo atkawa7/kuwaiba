@@ -65,6 +65,8 @@ public class ObjectNode extends AbstractNode{
 
     private Sheet sheet;
 
+    private String prueba="prueba";
+
     public ObjectNode(LocalObjectLight _lol){
         super(new ObjectChildren(), Lookups.singleton(_lol));
         this.object = _lol;
