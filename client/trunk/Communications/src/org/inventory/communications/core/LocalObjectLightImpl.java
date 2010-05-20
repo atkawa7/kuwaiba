@@ -58,6 +58,10 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
         return this.packageName;
     }
 
+    public void setDisplayName(String text){
+        this.displayName = text;
+    }
+
    @Override
    public boolean equals(Object obj){
         if (obj.getClass().equals(this.getClass()))

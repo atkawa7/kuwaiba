@@ -112,7 +112,7 @@ public class ObjectNode extends AbstractNode{
 
                 if (meta.isMultiple(lam.getName())){
                     //TODO take this from the local cache
-                    LocalObjectListItem[] list = com.getList(lam.getType());
+                    LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName());
                     LocalObjectListItem val = null;
 
                     for (LocalObjectListItem loli : list)
@@ -130,15 +130,15 @@ public class ObjectNode extends AbstractNode{
                                            lam.getDisplayName().equals("")?lam.getName():lam.getDisplayName(),
                                            lam.getDescription(),
                                            list,
-                                           lo);
+                                           this);
                 }
                 else{
                     property = new ObjectNodeProperty(
                                                         lam.getName(),
-                                                        (lo.getAttribute(lam.getName())== null)?null:lo.getAttribute(lam.getName()).getClass(),
+                                                        lam.getType(),
                                                         lo.getAttribute(lam.getName()),
                                                         lam.getDisplayName().equals("")?lam.getName():lam.getDisplayName(),
-                                                        lam.getDescription(),lo);
+                                                        lam.getDescription(),this);
                 }
 
                 if(lam.getIsAdministrative())
@@ -228,11 +228,7 @@ public class ObjectNode extends AbstractNode{
                                 else
                                     nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").
                                         getString("LBL_MOVEOPERATION_TITLE"), NotificationUtil.ERROR, com.getError());
-                          }
-
-
-                        
-
+                          }                        
                     }else
                         nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").
                                     getString("LBL_MOVEOPERATION_TITLE"), NotificationUtil.ERROR,

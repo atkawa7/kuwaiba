@@ -34,7 +34,7 @@ public final class Edit extends AbstractAction {
     public Edit(Node _node) {
         this.node = _node;
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_EDIT"));
-        putValue(ACTION_COMMAND_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E,InputEvent.CTRL_MASK));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E,InputEvent.CTRL_MASK));
         putValue(MNEMONIC_KEY,KeyEvent.VK_E);
     }
 

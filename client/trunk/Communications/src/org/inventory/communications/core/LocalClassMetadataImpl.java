@@ -12,11 +12,7 @@ import org.inventory.webservice.ClassInfo;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
-        implements LocalClassMetadata,Transferable {
-
-    public static final DataFlavor DATA_FLAVOR =
-            new DataFlavor(LocalClassMetadata.class,"Object/LocalClassMetadata");
-
+        implements LocalClassMetadata{
 
     private String [] attributeNames; //En algún momento pensé que el displayName
                                       //de los atributos se podía fijar de una vez en el
@@ -156,25 +152,5 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
     @Override
     public String toString(){
         return this.className;
-    }
-
-    public DataFlavor[] getTransferDataFlavors() {
-        return new DataFlavor[]{DATA_FLAVOR};
-    }
-
-    public boolean isDataFlavorSupported(DataFlavor flavor) {
-        return flavor == DATA_FLAVOR;
-
-    }
-
-    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-        if (flavor == DATA_FLAVOR)
-            return this;
-        else
-            throw new UnsupportedFlavorException(flavor);
-    }
-
-    public String[] getPossibleChildren() {
-        return new String[0];
     }
 }

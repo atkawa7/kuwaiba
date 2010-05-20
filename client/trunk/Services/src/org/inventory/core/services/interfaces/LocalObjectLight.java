@@ -17,4 +17,6 @@ public interface LocalObjectLight extends Transferable {
     public Boolean hasChildren();
     public String getDisplayname();
     public String getPackageName();
+
+    public void setDisplayName(String text);
 }

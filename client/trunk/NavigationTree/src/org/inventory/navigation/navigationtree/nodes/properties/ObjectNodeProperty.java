@@ -16,11 +16,14 @@
  */
 package org.inventory.navigation.navigationtree.nodes.properties;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.nodes.PropertySupport.ReadWrite;
 import org.openide.util.Lookup;
 
@@ -29,18 +32,22 @@ import org.openide.util.Lookup;
  * as LocalObject is just a proxy and can't be a bean itself
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ObjectNodeProperty extends ReadWrite{
+public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListener{
     private Object value;
-    private LocalObject lo;
     private LocalObjectListItem[] list;
+    private ObjectNode node;
 
 
-
+    /*
+     * This constructor is called when the type is anything but a list
+     */
     public ObjectNodeProperty(String _name, Class _valueType, Object _value,
-            String _displayName,String _toolTextTip, LocalObject _lo) {
+            String _displayName,String _toolTextTip,ObjectNode _node) {
         super(_name,_valueType,_displayName,_toolTextTip);
+        this.setName(_name);
         this.value = _value;
-        this.lo = _lo;
+        this.node = _node;
+        this.getPropertyEditor().addPropertyChangeListener(this);
     }
 
     /*
@@ -48,7 +55,7 @@ public class ObjectNodeProperty extends ReadWrite{
      *@param _name
      */
     public ObjectNodeProperty(String _name, Class _valueType, Object _value,
-            String _displayName,String _toolTextTip, LocalObjectListItem[] _list, LocalObject _lo) {
+            String _displayName,String _toolTextTip, LocalObjectListItem[] _list, ObjectNode _node) {
         super(_name,_valueType,_displayName,_toolTextTip);
         if (_value != null)
             this.value = _value;
@@ -56,12 +63,13 @@ public class ObjectNodeProperty extends ReadWrite{
             //If it is a null value, we create a dummy null value from the generic method available in the interface
             this.value = Lookup.getDefault().lookup(LocalObjectListItem.class).getNullValue();
         this.list = _list;
-        this.lo = _lo;
+        this.node = _node;
+        this.getPropertyEditor().addPropertyChangeListener(this);
     }
 
     @Override
     public Object getValue() throws IllegalAccessException, InvocationTargetException {
-        return this.value;
+            return this.value;
     }
 
     @Override
@@ -71,17 +79,20 @@ public class ObjectNodeProperty extends ReadWrite{
             value = t;
 
             if (t instanceof LocalObjectListItem)
-                update.setLocalObject(lo.getClassName(),
+                update.setLocalObject(node.getObject().getClassName(),
                     new String[]{this.getName()}, new Object[]{((LocalObjectListItem)t).getId()});
             else
-                update.setLocalObject(lo.getClassName(),
+                update.setLocalObject(node.getObject().getClassName(),
                     new String[]{this.getName()}, new Object[]{t});
-            update.setOid(lo.getOid());
+            update.setOid(node.getObject().getOid());
             if(!CommunicationsStub.getInstance().saveObject(update))
                 System.out.println("[saveObject]: Error "+ CommunicationsStub.getInstance().getError());
-            }catch(Exception e){
-                e.printStackTrace();
-            }
+            else
+                if (this.getName().equals("name"))
+                    node.getObject().setDisplayName((String)t);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     
@@ -91,5 +102,21 @@ public class ObjectNodeProperty extends ReadWrite{
             return new ItemListPropertyEditor(list);
         else
             return super.getPropertyEditor();
+    }
+
+     //PropertyListener methods
+    public void propertyChange(PropertyChangeEvent evt) {
+        try {
+            if (this.getValue() == null) 
+                return;
+
+            if (this.getName().equals("name")){
+                node.setDisplayName((String) getValue());
+            }
+            
+        } catch (Exception ex) {
+            return;
+        } 
+
     }
 }

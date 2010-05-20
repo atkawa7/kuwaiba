@@ -17,6 +17,9 @@
 package org.inventory.navigation.navigationtree;
 
 import java.awt.BorderLayout;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
@@ -87,8 +90,8 @@ public final class NavigationTreeTopComponent extends TopComponent
         map.put(DefaultEditorKit.pasteAction, ExplorerUtils.actionPaste(em));
         
 
-        //Now the keystrokes
-        InputMap keys = getInputMap();
+        //Now the keystrokes (doesn't seem to be working)
+        InputMap keys = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         keys.put(KeyStroke.getKeyStroke("control C"), DefaultEditorKit.copyAction);
         keys.put(KeyStroke.getKeyStroke("control X"), DefaultEditorKit.cutAction);
         keys.put(KeyStroke.getKeyStroke("control V"), DefaultEditorKit.pasteAction);
