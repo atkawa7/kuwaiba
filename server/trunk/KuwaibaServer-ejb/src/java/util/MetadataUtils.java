@@ -17,7 +17,6 @@
 
 package util;
 
-import entity.core.RootObject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
