@@ -32,6 +32,7 @@ import javax.jws.WebService;
 import businesslogic.BackendBeanRemote;
 import core.exceptions.ObjectNotFoundException;
 import core.toserialize.ClassInfoLight;
+import javassist.bytecode.stackmap.TypeData.ClassName;
 
 /**
  * Represents the main webservice
@@ -297,12 +298,18 @@ public class KuwaibaWebservice {
     }
 
     /**
-     * Web service operation
+     * Copy objects from its current parent to a target.
+     * Note: This method does *not* check if the parent change is possible according to the container hierarchy
+     * the developer must check it on his side!
+     * @param targetOid The new parent's oid
+     * @param objectClasses Class names of the objects to be moved
+     * @param templateOids Oids of the objects to be used as templates
+     * @return An array with the new objects
      */
     @WebMethod(operationName = "copyObjects")
     public RemoteObjectLight[] copyObjects(@WebParam(name = "targetOid")
-    Long targetOid, @WebParam(name = "templateObjects")
-    Long[] templateObjects, String[] objectClasses) {
+    Long targetOid, @WebParam(name = "objectClases")
+    String[] objectClasses, @WebParam(name = "templateObjects")Long[] templateObjects ) {
         RemoteObjectLight[] res = sbr.copyObjects(targetOid, templateObjects, objectClasses);
             if (res == null)
                 this.lastErr = sbr.getError();
@@ -313,11 +320,34 @@ public class KuwaibaWebservice {
      * Moves objects from its current parent to a target.
      * Note: This method does *not* check if the parent change is possible according to the container hierarchy
      * the developer must check it on his side!
+     * @param targetOid The new parent's oid
+     * @param objectClasses Class names of the objects to be moved
+     * @param objectOids Oids of the objects to be moved
+     * @return Success or failure
      */
     @WebMethod(operationName = "moveObjects")
     public Boolean moveObjects(@WebParam(name = "targetOid")
-    Long targetOid, @WebParam(name = "objects")
-    Long[] objectOids, String[] objectClasses) {
+    Long targetOid, @WebParam(name = "objectsClasses")
+            String[] objectClasses,@WebParam(name = "objectsOids")Long[] objectOids) {
         return sbr.moveObjects(targetOid, objectOids,objectClasses);
+    }
+
+    /**
+     * Searches for objects given some criteria
+     * @param  
+     */
+    @WebMethod(operationName = "searchForObjects")
+    public RemoteObjectLight[] searchForObjects(@WebParam(name="className")String className, @WebParam(name="paramNames")
+            String[] paramNames, @WebParam(name="paramValues")String[] paramValues){
+
+        if (paramNames.length != paramValues.length){
+            this.lastErr = "The array sizes don't match (paramNames,paramValues)";
+            return null;
+        }
+
+        RemoteObjectLight[] res = sbr.searchForObjects(className,paramNames, paramValues);
+        if (res == null)
+            this.lastErr = sbr.getError();
+        return res;
     }
 }

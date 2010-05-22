@@ -54,7 +54,7 @@ import javax.persistence.metamodel.EntityType;
 import util.MetadataUtils;
 
 /**
- *
+ * Handles the logic of all calls so far
  * @author Charles Edward bedon Cortazar <charles.bedon@zoho.com>
  */
 @Stateful
@@ -553,10 +553,11 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
-    /*
+    /**
      * To ask for the object classes may seem a bit forced, but keeps the method simple (native types)
      * and efficient. maybe requesting for a RemoteObjectLight[] would be better.
      * We'll try that when we do some code cleanup
+     * @param targetOid the new parent
      */
     public RemoteObjectLight[] copyObjects(Long targetOid, Long[] templateOids, String[] objectClasses){
         if (em != null){
@@ -583,6 +584,36 @@ public class BackendBean implements BackendBeanRemote {
                 this.error = "Array lenghts are different(objectOids, objectClasses)";
                 return null;
             }
+        }
+        else {
+            this.error = "The EntityManager does not exist";
+            return null;
+        }
+    }
+
+    public RemoteObjectLight[] searchForObjects(String className, String[] paramNames, String[] paramValues) {
+        if (em != null){
+            Query query;
+            RemoteObjectLight[] res;
+            String sentence ="SELECT x FROM "+className+" x WHERE ";
+            for (int i = 0; i < paramNames.length ; i++){
+                sentence += "x."+paramNames[i]+"="+paramValues[i];
+                if ((i+1) != paramNames.length)
+                    sentence += " AND ";
+            }
+
+            System.out.println("[searchForObjects] "+ sentence);
+
+            query = em.createQuery(sentence);
+            List<Object> result = query.getResultList();
+            res = new RemoteObjectLight[result.size()];
+
+            int i = 0;
+            for (Object obj: result){
+                res[i] = new RemoteObjectLight(obj);
+                i++;
+            }
+            return res;
         }
         else {
             this.error = "The EntityManager does not exist";
