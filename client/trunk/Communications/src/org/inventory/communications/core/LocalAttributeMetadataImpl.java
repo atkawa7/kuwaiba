@@ -60,7 +60,7 @@ public class LocalAttributeMetadataImpl
     }
 
     public String getDisplayName() {
-        return displayName;
+        return displayName.equals("")?name:displayName;
     }
 
     public void setDisplayName(String displayName) {

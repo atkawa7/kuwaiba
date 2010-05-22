@@ -309,7 +309,7 @@ public class CommunicationsStub {
             objectClasses.add(lol.getClassName());
         }
 
-        if (port.moveObjects(targetOid, objectOids, objectClasses))
+        if (port.moveObjects(targetOid, objectClasses, objectOids))
             return true;
         else{
             this.error = port.getLastErr();
@@ -326,7 +326,7 @@ public class CommunicationsStub {
             objectClasses.add(lol.getClassName());
         }
 
-        List<RemoteObjectLight> objs = port.copyObjects(targetOid, objectOids, objectClasses);
+        List<RemoteObjectLight> objs = port.copyObjects(targetOid, objectClasses, objectOids);
 
         if (objs != null){
             LocalObjectLight[] res = new LocalObjectLight[objs.size()];
@@ -342,5 +342,21 @@ public class CommunicationsStub {
             this.error = port.getLastErr();
             return null;
         }
+    }
+
+    public LocalObjectLight[] searchForObjects(String className, List<String> atts, List<String> values) {
+        List<RemoteObjectLight> found = port.searchForObjects(className, atts, values);
+        if (found == null)
+            this.error = port.getLastErr();
+        LocalObjectLight[] res = new LocalObjectLight[found.size()];
+
+        int i = 0;
+        for (RemoteObjectLight rol : found){
+            res[i] = new LocalObjectLightImpl(rol);
+            i++;
+        }
+
+        return res;
+
     }
 }
