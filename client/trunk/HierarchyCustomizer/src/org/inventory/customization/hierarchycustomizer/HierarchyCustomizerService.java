@@ -34,34 +34,37 @@ public class HierarchyCustomizerService implements LookupListener{
         allMeta = com.getAllLightMeta();
         this.hctc = _hctc;
 
+        listModel = new ArrayList<LocalClassMetadataLight>();
+
+        treeModel = new ArrayList<LocalClassMetadataLight>();
+
+
         if (allMeta==null){
            notifier.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_RETRIEVE_HIERARCHY_TEXT"),
                         notifier.ERROR, com.getError());
            allMeta = new LocalClassMetadata[0];
-        }
+        }else{
 
-        result = hctc.getLookup().lookupResult(ClassMetadataNode.class);
-        //This is really curious. If this line is omitted, the instances within the lookup never
-        //will be found. Please refer to http://netbeans.dzone.com/articles/netbeans-lookups-explained
-        //He doesn't explain it, but he uses it. It's important to point out that this workaround
-        //is not neccessary if you're going to listen from other module than the one with the explorer view (BeanTreeView or whatever else)
-        result.allInstances();
-        result.addLookupListener(this);
+            result = hctc.getLookup().lookupResult(ClassMetadataNode.class);
+            //This is really curious. If this line is omitted, the instances within the lookup never
+            //will be found. Please refer to http://netbeans.dzone.com/articles/netbeans-lookups-explained
+            //He doesn't explain it, but he uses it. It's important to point out that this workaround
+            //is not neccessary if you're going to listen from other module than the one with the explorer view (BeanTreeView or whatever else)
+            result.allInstances();
+            result.addLookupListener(this);
 
-        //Build the lstClasses model, made out of allMeta minus DummyRoot
-        //and the bTreeView model, made out of allMeta minus the abstract classes
-        //(RootObject, ConfigurationItem, GenericXXX, etc)
-        listModel = new ArrayList<LocalClassMetadataLight>();
+            //Build the lstClasses model, made out of allMeta minus DummyRoot
+            //and the bTreeView model, made out of allMeta minus the abstract classes
+            //(RootObject, ConfigurationItem, GenericXXX, etc)
+            String rootClass = com.getRootClass();
 
-        treeModel = new ArrayList<LocalClassMetadataLight>();
-        String rootClass = com.getRootClass();
+            for (LocalClassMetadataLight item : allMeta){
+                if (!item.getClassName().equals(rootClass))
+                    listModel.add(item);
 
-        for (LocalClassMetadataLight item : allMeta){
-            if (!item.getClassName().equals(rootClass))
-                listModel.add(item);
-
-            if (!item.getIsAbstract())
-                treeModel.add(item);
+                if (!item.getIsAbstract())
+                    treeModel.add(item);
+            }
         }
     }
 

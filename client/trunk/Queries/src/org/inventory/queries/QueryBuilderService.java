@@ -42,6 +42,7 @@ import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
 import org.inventory.core.services.interfaces.NotificationUtil;
+import org.openide.util.Lookup;
 
 /**
  * Implements the business logic for the related TopComponent
@@ -56,9 +57,13 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
 
     public QueryBuilderService(QueryBuilderTopComponent _qbtc){
         this.qbtc = _qbtc;
-        com = CommunicationsStub.getInstance();
-        //nu = Lookup.getDefault().lookup(NotificationUtil.class);
+        com = CommunicationsStub.getInstance();   
+    }
+
+    public void initComponents(){
         LocalClassMetadataLight[] lcml = com.getAllLightMeta();
+
+        nu = Lookup.getDefault().lookup(NotificationUtil.class);
         if (lcml == null)
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/queries/Bundle").getString("LBL_TITLE_CREATION"),
                     NotificationUtil.ERROR, com.getError());
@@ -159,6 +164,11 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
     }
 
     public void search() {
+        if (enablers == null){
+            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/queries/Bundle").getString("LBL_QUERY_RESULT"), NotificationUtil.WARNING, java.util.ResourceBundle.getBundle("org/inventory/queries/Bundle").getString("LBL_QUERY_RESULT_TEXT"));
+            return;
+        }
+
         List<String> atts,values;
         atts= new ArrayList<String>();
         values= new ArrayList<String>();
@@ -184,9 +194,25 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
                 }
             }
         }
+
+        LocalClassMetadataLight selectedClass = (LocalClassMetadataLight)qbtc.getList().getSelectedValue();
         LocalObjectLight[] found = com.searchForObjects(
-                ((LocalClassMetadataLight)qbtc.getList().getSelectedValue()).getClassName(),atts, values);
-        QueryResultTopComponent qrtc = new QueryResultTopComponent(found);
+                selectedClass.getClassName(),atts, values);
+
+        if (found == null){
+            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/queries/Bundle").getString("LBL_QUERY RESULT"), 
+                    NotificationUtil.ERROR, com.getError());
+            return;
+        }
+
+        if (found.length == 0){
+            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/queries/Bundle").getString("LBL_QUERY_RESULT"),
+                    NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/inventory/queries/Bundle").getString("LBL_QUERY_RESULT_EMPTY"));
+            return;
+        }
+
+
+        QueryResultTopComponent qrtc = new QueryResultTopComponent(found,selectedClass.getClassName());
         qrtc.open();
         qrtc.requestActive();
     }

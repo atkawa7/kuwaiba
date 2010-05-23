@@ -23,7 +23,7 @@ import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
-import org.inventory.customization.hierarchycustomizer.actions.Delete;
+import org.inventory.customization.hierarchycustomizer.actions.Remove;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
@@ -78,8 +78,8 @@ public class ClassMetadataNode extends AbstractNode {
     @Override
    public Action[] getActions(boolean context){
         if(this.isLeaf()){ //return actions only for the nodes representing possible children
-            Delete deleteAction;
-            deleteAction = new Delete(this);
+            Remove deleteAction;
+            deleteAction = new Remove(this);
             deleteAction.addPropertyChangeListener((ClassMetadataChildren)this.getParentNode().getChildren());
             return new Action[]{deleteAction};
         }

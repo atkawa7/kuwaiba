@@ -23,7 +23,7 @@
             <file name="QueryBuilderTopComponent.settings" url="QueryBuilderTopComponentSettings.xml"/>
         </folder>
         <folder name="Modes">
-            <folder name="bottomSlidingSide">
+            <folder name="output">
                 <file name="QueryBuilderTopComponent.wstcref" url="QueryBuilderTopComponentWstcref.xml"/>
             </folder>
         </folder>

@@ -18,7 +18,6 @@ package org.inventory.queries;
 
 import java.util.logging.Logger;
 import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import org.openide.util.NbBundle;
@@ -50,6 +49,7 @@ public final class QueryBuilderTopComponent extends TopComponent {
     }
 
     public void initCustomComponents(){
+        qbs = new QueryBuilderService(this);
         //Not working the relation 1.0
         pnlMainQueryBuilder.setDividerLocation(700);
         GroupLayout layout = new GroupLayout(pnlLeftPanel);
@@ -67,10 +67,12 @@ public final class QueryBuilderTopComponent extends TopComponent {
         pnlMainQueryBuilder = new javax.swing.JSplitPane();
         pnlQueryBuilderRightScroll = new javax.swing.JScrollPane();
         lstClasses = new javax.swing.JList();
-        jPanel1 = new javax.swing.JPanel();
+        pnlMainLeftPanel = new javax.swing.JPanel();
+        barSearch = new javax.swing.JToolBar();
+        btnSearch = new javax.swing.JButton();
+        btnSave = new javax.swing.JButton();
         pnlQueryBuilderLeftScroll = new javax.swing.JScrollPane();
         pnlLeftPanel = new javax.swing.JPanel();
-        btnSearch = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -80,22 +82,40 @@ public final class QueryBuilderTopComponent extends TopComponent {
 
         pnlMainQueryBuilder.setRightComponent(pnlQueryBuilderRightScroll);
 
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        pnlMainLeftPanel.setLayout(new java.awt.BorderLayout());
 
-        pnlLeftPanel.setLayout(null);
-        pnlQueryBuilderLeftScroll.setViewportView(pnlLeftPanel);
+        barSearch.setRollover(true);
 
-        jPanel1.add(pnlQueryBuilderLeftScroll, java.awt.BorderLayout.CENTER);
-
+        btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/search.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSearch, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSearch.text")); // NOI18N
+        btnSearch.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSearch.toolTipText")); // NOI18N
+        btnSearch.setFocusable(false);
+        btnSearch.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSearch.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSearchActionPerformed(evt);
             }
         });
-        jPanel1.add(btnSearch, java.awt.BorderLayout.PAGE_START);
+        barSearch.add(btnSearch);
 
-        pnlMainQueryBuilder.setLeftComponent(jPanel1);
+        org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSave.text")); // NOI18N
+        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSave.toolTipText")); // NOI18N
+        btnSave.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/save.png"))); // NOI18N
+        btnSave.setEnabled(false);
+        btnSave.setFocusable(false);
+        btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barSearch.add(btnSave);
+
+        pnlMainLeftPanel.add(barSearch, java.awt.BorderLayout.PAGE_START);
+
+        pnlLeftPanel.setLayout(null);
+        pnlQueryBuilderLeftScroll.setViewportView(pnlLeftPanel);
+
+        pnlMainLeftPanel.add(pnlQueryBuilderLeftScroll, java.awt.BorderLayout.CENTER);
+
+        pnlMainQueryBuilder.setLeftComponent(pnlMainLeftPanel);
 
         add(pnlMainQueryBuilder, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -105,10 +125,12 @@ public final class QueryBuilderTopComponent extends TopComponent {
     }//GEN-LAST:event_btnSearchActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToolBar barSearch;
+    private javax.swing.JButton btnSave;
     private javax.swing.JButton btnSearch;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JList lstClasses;
     private javax.swing.JPanel pnlLeftPanel;
+    private javax.swing.JPanel pnlMainLeftPanel;
     private javax.swing.JSplitPane pnlMainQueryBuilder;
     private javax.swing.JScrollPane pnlQueryBuilderLeftScroll;
     private javax.swing.JScrollPane pnlQueryBuilderRightScroll;
@@ -151,8 +173,7 @@ public final class QueryBuilderTopComponent extends TopComponent {
 
     @Override
     public void componentOpened() {
-        if (qbs == null)
-            qbs = new QueryBuilderService(this);
+        qbs.initComponents();
     }
 
     @Override

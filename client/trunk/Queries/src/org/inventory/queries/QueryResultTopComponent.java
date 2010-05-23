@@ -30,7 +30,6 @@ import org.openide.explorer.ExplorerManager.Provider;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.ListView;
 import org.openide.nodes.AbstractNode;
-import org.openide.nodes.Children;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -44,7 +43,7 @@ public class QueryResultTopComponent extends TopComponent implements Provider{
     private ExplorerManager em = new ExplorerManager();
     private ListView lv;
 
-    QueryResultTopComponent(LocalObjectLight[] found) {
+    QueryResultTopComponent(LocalObjectLight[] found,String title) {
         lv = new ListView();
         ActionMap map = getActionMap();
         map.put(DefaultEditorKit.copyAction, ExplorerUtils.actionCopy(em));
@@ -60,12 +59,20 @@ public class QueryResultTopComponent extends TopComponent implements Provider{
         associateLookup(ExplorerUtils.createLookup(em, map));
 
         em.setRootContext(new AbstractNode(new ObjectChildren(found)));
+        setDisplayName("Search results for "+ title);
 
         setLayout(new BorderLayout());
         this.add(lv,BorderLayout.CENTER);
+
         Mode myMode = WindowManager.getDefault().findMode("explorer");
         myMode.dockInto(this);
     }
+
+    @Override
+    public int getPersistenceType() {
+        return TopComponent.PERSISTENCE_NEVER;
+    }
+
     public ExplorerManager getExplorerManager() {
         return em;
     }

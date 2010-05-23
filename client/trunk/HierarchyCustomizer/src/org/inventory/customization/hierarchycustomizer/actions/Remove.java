@@ -14,12 +14,12 @@ import org.openide.util.Lookup;
  * Implements the "remove a class from container hierarchy" action
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class Delete extends AbstractAction{
+public class Remove extends AbstractAction{
 
     ClassMetadataNode node;
 
-    public Delete(){}
-    public Delete(ClassMetadataNode _node){
+    public Remove(){}
+    public Remove(ClassMetadataNode _node){
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_REMOVE"));
         this.node = _node;
     }

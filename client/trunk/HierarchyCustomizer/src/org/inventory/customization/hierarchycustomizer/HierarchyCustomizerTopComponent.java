@@ -85,7 +85,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
         DragSource.getDefaultDragSource().addDragSourceListener(tm);
 
         pnlHierarchyManagerScrollMain.setViewportView(lstClasses);
-        //lblInfo.getLayout().
+        pnlHierarchyManagerMain.setDividerLocation(200);
 
     }
 
