@@ -596,12 +596,19 @@ public class BackendBean implements BackendBeanRemote {
             Query query;
             RemoteObjectLight[] res;
             String sentence ="SELECT x FROM "+className+" x WHERE ";
-            for (int i = 0; i < paramNames.length ; i++){
-                sentence += "x."+paramNames[i]+"="+paramValues[i];
-                if ((i+1) != paramNames.length)
-                    sentence += " AND ";
-            }
-
+            if (paramNames.length == 0) //Retrive them all
+                sentence += "1=1";
+            else
+                for (int i = 0; i < paramNames.length ; i++){
+                    if (paramValues[i].contains("\'")) //This is really ugly, but we ran out of time for the alpha release. I'll fix it ASAP
+                        //LIKE statement is case sesitive, so we have to lower both things before to compare them
+                        sentence += "lower(x."+paramNames[i]+") LIKE '%"+paramValues[i].substring(1, paramValues[i].length()-1).toLowerCase()+"%'";
+                    else
+                        sentence += "x."+paramNames[i]+"="+paramValues[i];
+                    if ((i+1) != paramNames.length)
+                        sentence += " AND ";
+                }
+            
             System.out.println("[searchForObjects] "+ sentence);
 
             query = em.createQuery(sentence);
