@@ -18,6 +18,7 @@ import javax.persistence.OneToOne;
 @Entity
 public abstract class GenericApplicationElement extends ConfigurationItem implements Serializable {
     protected String service;
+    
     @OneToOne
     protected OperatingSystem operatingSystem;
 

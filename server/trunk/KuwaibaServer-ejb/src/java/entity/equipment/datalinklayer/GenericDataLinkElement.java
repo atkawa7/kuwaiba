@@ -15,5 +15,5 @@ import entity.core.ConfigurationItem;
  */
 @Entity
 public abstract class GenericDataLinkElement extends ConfigurationItem implements Serializable {
-    
+
 }
