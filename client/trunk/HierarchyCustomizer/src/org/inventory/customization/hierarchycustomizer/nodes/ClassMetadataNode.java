@@ -80,7 +80,6 @@ public class ClassMetadataNode extends AbstractNode {
         if(this.isLeaf()){ //return actions only for the nodes representing possible children
             Remove deleteAction;
             deleteAction = new Remove(this);
-            deleteAction.addPropertyChangeListener((ClassMetadataChildren)this.getParentNode().getChildren());
             return new Action[]{deleteAction};
         }
         else
@@ -113,10 +112,7 @@ public class ClassMetadataNode extends AbstractNode {
                     if (CommunicationsStub.getInstance().addPossibleChildren(object.getId(),
                               tokens)){
 
-                        //This raises a IllegalStateException that can be ignore, since is a warning related to
-                        //firing a change event about a property that doesn't belong to the object
-                        //fixes on this are welcome
-                         firePropertyChange(PROP_PARENT_NODE, "add", data);
+                        ((ClassMetadataChildren)getChildren()).add(new ClassMetadataNode[]{new ClassMetadataNode(data)});
 
                          nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
                                 NotificationUtil.INFO,java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));

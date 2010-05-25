@@ -16,43 +16,40 @@
  */
 package org.inventory.customization.hierarchycustomizer.nodes;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
-import org.openide.nodes.Children;
+import org.openide.nodes.Children.Array;
 import org.openide.nodes.Node;
 /**
- *
+ * Represents a class node.
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ClassMetadataChildren extends Children.Keys implements PropertyChangeListener{
+public class ClassMetadataChildren extends Array{
 
     private boolean main;
     List<LocalClassMetadataLight> keys;
 
     public ClassMetadataChildren(List<LocalClassMetadataLight> lcm){
         this.main = true;
-        setKeys(lcm);
+        this.keys= new ArrayList<LocalClassMetadataLight>(lcm);
     }
 
     public ClassMetadataChildren(){
         this.main = false;
-        setKeys(new LocalClassMetadataLight[0]);
     }
 
     @Override
-    protected Node[] createNodes(Object t) {
-        if (main){ // I hate this!! please find the right way to create the node as a LEAF
-            ClassMetadataNode cm = new ClassMetadataNode((LocalClassMetadataLight)t,main);
-            cm.addPropertyChangeListener((ClassMetadataChildren)cm.getChildren());
-            return new Node[] {cm};
-        }
-        else{
-            return new Node[] {new ClassMetadataNode((LocalClassMetadataLight)t)};
-        }
+    protected Collection<Node> initCollection (){
+        List<Node> myNodes = new ArrayList<Node>();
+        for (LocalClassMetadataLight lcml : keys)
+            if (main) // This is kinda weird, because
+                myNodes.add(new ClassMetadataNode(lcml,main));
+            else
+                myNodes.add(new ClassMetadataNode(lcml));
+        return myNodes;
     }
 
     @Override
@@ -61,7 +58,6 @@ public class ClassMetadataChildren extends Children.Keys implements PropertyChan
             LocalClassMetadataLight lcm = ((ClassMetadataNode)this.getNode()).getObject();
             List children = CommunicationsStub.getInstance().getPossibleChildren(
                     lcm.getPackageName()+"."+lcm.getClassName());
-            setKeys(children);
             
             keys = new ArrayList<LocalClassMetadataLight>();
             keys.addAll(children);
@@ -69,16 +65,15 @@ public class ClassMetadataChildren extends Children.Keys implements PropertyChan
         }
     }
 
-    public List<LocalClassMetadataLight> getKeys(){
-        return keys;
-    }
+    public LocalClassMetadataLight[] getKeys(){
+        LocalClassMetadataLight[] myKeys = new LocalClassMetadataLight[getNodes().length];
 
-    public void propertyChange(PropertyChangeEvent evt) {
-        if(evt.getOldValue().equals("add"))
-            keys.add((LocalClassMetadataLight)evt.getNewValue());
-        else
-            keys.remove((LocalClassMetadataLight)evt.getNewValue());
-        
-        setKeys(keys);
+        int i = 0;
+        for (Node n : getNodes()){
+            myKeys[i] = ((ClassMetadataNode)n).getObject();
+            i++;
+        }
+
+        return myKeys;
     }
 }

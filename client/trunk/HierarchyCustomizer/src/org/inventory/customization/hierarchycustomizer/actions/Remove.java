@@ -6,6 +6,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataChildren;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataNode;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
@@ -33,8 +34,8 @@ public class Remove extends AbstractAction{
                 ((ClassMetadataNode)node.getParentNode()).getObject().getId(),
                   oids)){
 
-            firePropertyChange(NAME, "remove", node.getObject());
-            //node.getParentNode().getChildren().remove(new Node[]{node});
+            
+            ((ClassMetadataChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
             
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
                     NotificationUtil.INFO,
