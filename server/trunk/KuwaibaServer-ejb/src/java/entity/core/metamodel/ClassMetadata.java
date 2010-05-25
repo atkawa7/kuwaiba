@@ -30,7 +30,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 /**
  * This class holds information about the existing classes
@@ -80,9 +79,9 @@ public class ClassMetadata implements Serializable {
     @JoinTable(name="AttributesMap")
     private List<AttributeMetadata> attributes; //Represents the relationship with the attributes metadata information
 
-    @OneToOne
-    @JoinColumn(nullable=false,name="parent_id",updatable=false)
-    private ClassMetadata parent; //Represents the relation with the parent class
+    //@JoinColumn(nullable=false,name="parent_id",updatable=false) //This mapping won't let me query for results usin JPQL
+    @Column(nullable=false,name="parent_id",updatable=false)
+    private Long parent; //Represents the relation with the parent class
                                   //The top should be RootObject, except of course, for RootObject itself
 
 
@@ -90,7 +89,7 @@ public class ClassMetadata implements Serializable {
     }
 
     public ClassMetadata(String _name, PackageMetadata _myPackage, String _description,
-            Boolean _isCustom, Boolean _isAbstract, Boolean _isDummy,List<ClassMetadata> _children, List <AttributeMetadata> _attributes, ClassMetadata _parent){
+            Boolean _isCustom, Boolean _isAbstract, Boolean _isDummy,List<ClassMetadata> _children, List <AttributeMetadata> _attributes, Long _parent){
         this.name = _name;
         this.packageInfo = _myPackage;
         this.description = _description;
@@ -182,11 +181,11 @@ public class ClassMetadata implements Serializable {
         this.packageInfo = packageInfo;
     }
 
-    public ClassMetadata getParent() {
+    public Long getParent() {
         return parent;
     }
 
-    public void setParent(ClassMetadata parent) {
+    public void setParent(Long parent) {
         this.parent = parent;
     }
 

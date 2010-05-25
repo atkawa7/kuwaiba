@@ -27,7 +27,7 @@ public class TestServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            sbr.createInitialDataset();
+            //sbr.createInitialDataset();
             sbr.buildMetaModel();
 
             out.println("<html>");
@@ -35,7 +35,7 @@ public class TestServlet extends HttpServlet {
             out.println("<title>Test</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>This servlet creates the meta model and add test data: " + request.getContextPath () + "</h1>");
+            out.println("<h1>Metadata created successfully</h1>");
             out.println("</body>");
             out.println("</html>");
            

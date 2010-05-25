@@ -22,7 +22,6 @@ import core.toserialize.RemoteObject;
 import core.toserialize.RemoteObjectLight;
 import core.toserialize.RemoteTreeNode;
 import core.annotations.Administrative;
-import core.annotations.Dummy;
 import core.annotations.Metadata;
 import core.exceptions.ObjectNotFoundException;
 import core.todeserialize.ObjectUpdate;
@@ -30,13 +29,11 @@ import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectUpdate;
 import entity.core.DummyRoot;
 import entity.core.RootObject;
-import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
 import entity.core.metamodel.PackageMetadata;
 import entity.location.Country;
 import entity.location.StateObject;
 import entity.multiple.GenericObjectList;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -49,7 +46,6 @@ import javax.ejb.Stateful;
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
 import util.HierarchyUtils;
 import util.MetadataUtils;
@@ -122,35 +118,15 @@ public class BackendBean implements BackendBeanRemote {
             query.executeUpdate();
 
             Set<EntityType<?>> ent = em.getMetamodel().getEntities();
-            Dictionary<String, PackageMetadata> packages = new Hashtable<String, PackageMetadata>();
+            Dictionary<String, EntityType> alreadyPersisted = new Hashtable<String, EntityType>();
 
             for (EntityType entity : ent){
                 if(entity.getJavaType().getAnnotation(Metadata.class)!=null ||
                         entity.getJavaType().getAnnotation(Administrative.class)!=null)
                         continue;
-                List<AttributeMetadata> atts = new ArrayList<AttributeMetadata>();
-                Set<Attribute> metaAtts = entity.getAttributes();
-                PackageMetadata pm;
-                for(Attribute att : metaAtts)
-                    atts.add(new AttributeMetadata(att));
-
-
-                pm = packages.get(entity.getJavaType().getPackage().getName());
-                if (pm == null){
-                    pm = new PackageMetadata(entity.getJavaType().getPackage().getName(),"");
-                    packages.put(entity.getJavaType().getPackage().getName(),pm);
-                    em.persist(pm);
-                }
-
-                em.persist(new ClassMetadata(entity.getJavaType().getSimpleName(),
-                                             pm,
-                                             java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CLASS")+entity.getJavaType().getSimpleName(),
-                                             false,Modifier.isAbstract(entity.getJavaType().getModifiers()),
-                                             (entity.getJavaType().getAnnotation(Dummy.class)!=null),
-                                             null,atts,null
-                                             )
-                          );
-
+                if (alreadyPersisted.get(entity.getJavaType().getSimpleName())!=null)
+                    continue;
+                HierarchyUtils.persistClassBranch(entity, alreadyPersisted, em);
             }
         }
         else this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
