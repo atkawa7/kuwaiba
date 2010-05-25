@@ -1,3 +1,19 @@
+/*
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *  under the License.
+ */
 package entity.core.metamodel;
 
 import core.annotations.Metadata;
@@ -65,10 +81,9 @@ public class ClassMetadata implements Serializable {
     private List<AttributeMetadata> attributes; //Represents the relationship with the attributes metadata information
 
     @OneToOne
-    @JoinColumn(name="parent_id")
+    @JoinColumn(nullable=false,name="parent_id",updatable=false)
     private ClassMetadata parent; //Represents the relation with the parent class
-                                  //(actually necessary given the relationship already mapped by the Entity Manager?)
-                                  //This attribute should be null for those classes whose parent is different than RootObject or one of its children
+                                  //The top should be RootObject, except of course, for RootObject itself
 
 
     public ClassMetadata() {

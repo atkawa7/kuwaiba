@@ -55,7 +55,7 @@ public class RemoteObject extends RemoteObjectLight {
             attributes[i]=f.getName();
             
             try{
-                //getDeclaredMethods takes private and protected methods, but NOT the inherit ones
+                //getDeclaredMethods takes private and protected methods, but NOT the inherited ones
                 //getMethods do the opposite. Now:
                 Method m = object.getClass().getMethod("get"+MetadataUtils.capitalize(f.getName()),
                                                         new Class[]{});
