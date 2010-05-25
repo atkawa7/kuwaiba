@@ -41,6 +41,7 @@ import javax.persistence.OneToMany;
 @NamedQuery(name="flushClassMetadata", query="DELETE FROM ClassMetadata x")
 public class ClassMetadata implements Serializable {
     private static final long serialVersionUID = 1L;
+    public static final Long ROOT_CLASS_ID = new Long(0);
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

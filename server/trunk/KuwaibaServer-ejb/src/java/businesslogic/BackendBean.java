@@ -126,7 +126,7 @@ public class BackendBean implements BackendBeanRemote {
                         continue;
                 if (alreadyPersisted.get(entity.getJavaType().getSimpleName())!=null)
                     continue;
-                HierarchyUtils.persistClassBranch(entity, alreadyPersisted, em);
+                HierarchyUtils.persistClass(entity,em);
             }
         }
         else this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");

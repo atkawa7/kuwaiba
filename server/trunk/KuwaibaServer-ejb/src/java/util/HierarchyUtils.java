@@ -70,45 +70,59 @@ public class HierarchyUtils {
         return result;
     }
 
-    /**
+
+     /**
      * This method tries to persists a class and all superclasses not  already persisted
      * @param aClass The class to be persisted (with its superclasses)
      * @param alreadyPersisted The list of classes already persisted
      * @param em The current entity manager
      */
-    public static void persistClassBranch(EntityType entity, Dictionary<String, EntityType> alreadyPersisted,EntityManager em){
-        EntityType myEntity = entity;
-        while (myEntity != null){
-            if (alreadyPersisted.get(myEntity.getJavaType().getSimpleName())==null){
-                persistClass(myEntity, em);
-                alreadyPersisted.put(myEntity.getJavaType().getSimpleName(), myEntity);
-            }
-            myEntity = (EntityType) myEntity.getSupertype();
-        }
-    }
+    public static Long persistClass(EntityType entity, EntityManager em){
 
-    public static void persistClass(EntityType entity, EntityManager em){
+        String sentence = "SELECT x.id FROM ClassMetadata x WHERE x.name = '"+entity.getJavaType().getSimpleName()+"'";
+        Query query = em.createQuery(sentence);
+        try{
+            Long res = (Long)query.getSingleResult();
+            return res;
+        }catch(NoResultException nre){ // if the class doesn't exists, go on
+
+        }
+
         List<AttributeMetadata> atts = new ArrayList<AttributeMetadata>();
         Set<Attribute> metaAtts = entity.getAttributes();
         PackageMetadata pm;
-        String sentence = "SELECT x FROM PackageMetadata x WHERE x.name = '"+entity.getJavaType().getPackage().getName()+"'";
-        Query query = em.createQuery(sentence);
+        sentence = "SELECT x FROM PackageMetadata x WHERE x.name = '"+entity.getJavaType().getPackage().getName()+"'";
+        query = em.createQuery(sentence);
+        Long parentId;
         try{
             pm = (PackageMetadata)query.getSingleResult();
         }catch(NoResultException nre){ // if the packagemetadata has not been create yet, we do
             pm = new PackageMetadata(entity.getJavaType().getPackage().getName(),"");
             em.persist(pm);
         }
+
+        sentence = "SELECT x.id FROM ClassMetadata x WHERE x.name = '"+entity.getJavaType().getSuperclass().getSimpleName()+"'";
+        query = em.createQuery(sentence);
+        try{
+            parentId = (Long)query.getSingleResult();
+        }catch(NoResultException nre){ // if the parent class has not been create yet, we do
+            if ((EntityType)entity.getSupertype() == null) //The parent is not an entity
+                parentId = ClassMetadata.ROOT_CLASS_ID;
+            else
+                parentId = persistClass((EntityType)entity.getSupertype(), em);
+        }
         for(Attribute att : metaAtts)
             atts.add(new AttributeMetadata(att));
 
-        em.persist(new ClassMetadata(entity.getJavaType().getSimpleName(),
+        ClassMetadata cm = new ClassMetadata(entity.getJavaType().getSimpleName(),
                                              pm,
                                              java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CLASS")+entity.getJavaType().getSimpleName(),
                                              false,Modifier.isAbstract(entity.getJavaType().getModifiers()),
                                              (entity.getJavaType().getAnnotation(Dummy.class)!=null),
-                                             null,atts,new Long(0)
-                                             )
-                          );
+                                             null,atts,parentId
+                                             );
+
+        em.persist(cm);
+        return cm.getId();
     }
 }
