@@ -5,7 +5,6 @@ import java.awt.BorderLayout;
 import java.util.logging.Logger;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
-import org.inventory.objectcache.Cache;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -28,7 +27,6 @@ public final class AttributeCustomizerTopComponent extends TopComponent
     static final String ICON_PATH = "org/inventory/customization/attributecustomizer/res/3d.png";
     private static final String PREFERRED_ID = "AttributeCustomizerTopComponent";
     private CommunicationsStub com = CommunicationsStub.getInstance();
-    private Cache cache;
     private ExplorerManager em = new ExplorerManager();
 
     public AttributeCustomizerTopComponent() {

@@ -28,6 +28,7 @@ import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.objectcache.Cache;
 import org.inventory.webservice.ClassInfo;
 import org.inventory.webservice.ClassInfoLight;
 import org.inventory.webservice.KuwaibaWebservice;
@@ -49,13 +50,14 @@ public class CommunicationsStub {
     private KuwaibaWebserviceService service;
     private KuwaibaWebservice port;
     private String error=java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_ERROR");
-    private LocalObjectLightImpl context;
+    private Cache cache;
 
     
     //Implements the singleton pattern
     private CommunicationsStub(){
         this.service = new KuwaibaWebserviceService();
         this.port = service.getKuwaibaWebservicePort();
+        cache = Cache.getInstace();
     }
 
     public static CommunicationsStub getInstance(){
@@ -63,6 +65,10 @@ public class CommunicationsStub {
             return instance;
     }
 
+    /**
+     * Retrieves the root node's children
+     * @return an array of local objects representing the root node's children
+     */
     public LocalObjectLight[] getRootNodeChildren(){
         try{
 
@@ -88,6 +94,10 @@ public class CommunicationsStub {
         }
     }
 
+    /**
+     * Retrieves a given object's children
+     * @return an array of local objects representing the object's children
+     */
     public List<LocalObjectLight> getObjectChildren(Long oid, String objectClass){
         List <RemoteObjectLight> children = port.getObjectChildren(oid, objectClass);
         List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
@@ -97,9 +107,13 @@ public class CommunicationsStub {
         
         return res;
     }
-    /*
+    
+    /**
+     * Updates the attributes of a given object
+     *
      * @param obj is the object to be updated. Note that this object doesn't have
      *            every field within the "original". it only has field(s) to be updated
+     * @return success or failure
      */
     public boolean saveObject(LocalObject obj){
         ObjectUpdate update = new ObjectUpdate();
@@ -122,23 +136,24 @@ public class CommunicationsStub {
         return res;
     }
 
-    /*
+    /**
      * This is a wrapper method with the same name as the one in the webservice used to lock
      * an object as read only because an operation is being performed on it
      * @param oid the object oid
      * @param objectClass the object class
      * @param value Lock value. By now is a boolean, but I expect in the future a three level lock can be implemented (r,w,nothing)
+     * @return success or failure
      */
     public boolean setObjectLock(Long oid, String objectClass,Boolean value){
         return true;
     }
 
-
-    /*
+    /**
      * Retrieves the whole object info
      * @param objectClass object class
      * @param oid object id
      * @param lcmd metadata associated. Useful to map the response. Mmm, this should be corrected
+     * @return The local representation of the object
      */
     public LocalObject getObjectInfo(String objectClass, Long oid, LocalClassMetadata lcmd){
 
@@ -149,20 +164,60 @@ public class CommunicationsStub {
         return res;
     }
 
+    /**
+     * Returns the last error related to communications
+     * @return The error string
+     */
     public String getError() {
         return error;
     }
 
+    /**
+     * Gets the possible instances that can be contained into a give class instance.
+     * Pay attention that this method calls the recurseive web method. This is,
+     * this method won't give you the abstract classes in the contaiiner hierarchy
+     * but those instanceables. This method is used by the navigation tree nodes
+     * to know what classes to show in the menu, but it's not used by the container manager,
+     * which uses getPossibleChildrenNoRecursive
+     * The result is cached
+     * @param className
+     * @return allPosible children
+     */
     public List<LocalClassMetadataLight> getPossibleChildren(String className) {
-        List<ClassInfoLight> resAsRemote = port.getPossibleChildren(className);
+
+        List<LocalClassMetadataLight> resAsLocal = cache.getPossibleChildrenCached(className);
+        if (resAsLocal == null){
+            resAsLocal = new ArrayList<LocalClassMetadataLight>();
+            List<ClassInfoLight> resAsRemote = port.getPossibleChildren(className);
+            if (port == null){
+                this.error = port.getLastErr();
+                return null;
+            }
+            for (ClassInfoLight cil : resAsRemote){
+                resAsLocal.add(new LocalClassMetadataLightImpl(cil));
+            }
+            cache.addPossibleChildrenCached(className, resAsLocal);
+        }
+        return resAsLocal;
+    }
+
+    /**
+     * Same as above method, but this one doesn't go deeper into the container hierarchy
+     * The result is not cached
+     * @param className
+     * @return allPosible children
+     */
+    public List<LocalClassMetadataLight> getPossibleChildrenNoRecursive(String className) {
+        List<ClassInfoLight> resAsRemote = port.getPossibleChildrenNoRecursive(className);
         List<LocalClassMetadataLight> resAsLocal = new ArrayList<LocalClassMetadataLight>();
         if (port == null){
-           this.error = port.getLastErr();
-           return null;
+            this.error = port.getLastErr();
+            return null;
         }
         for (ClassInfoLight cil : resAsRemote)
             resAsLocal.add(new LocalClassMetadataLightImpl(cil));
-         return resAsLocal;
+        
+        return resAsLocal;
     }
 
     public LocalObjectLight createObject(String objectClass, Long parentOid, String template){

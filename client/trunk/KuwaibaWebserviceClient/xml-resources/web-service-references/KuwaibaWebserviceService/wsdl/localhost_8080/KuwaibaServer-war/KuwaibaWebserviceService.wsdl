@@ -686,6 +686,12 @@
 <message name="getPossibleChildrenResponse">
 <part name="parameters" element="tns:getPossibleChildrenResponse" />
 </message>
+<message name="getPossibleChildrenNoRecursive">
+<part name="parameters" element="tns:getPossibleChildrenNoRecursive" />
+</message>
+<message name="getPossibleChildrenNoRecursiveResponse">
+<part name="parameters" element="tns:getPossibleChildrenNoRecursiveResponse" />
+</message>
 <message name="getRootPossibleChildren">
 <part name="parameters" element="tns:getRootPossibleChildren" />
 </message>
@@ -804,6 +810,10 @@
 <operation name="getPossibleChildren">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getPossibleChildrenRequest" message="tns:getPossibleChildren" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getPossibleChildrenResponse" message="tns:getPossibleChildrenResponse" />
+</operation>
+<operation name="getPossibleChildrenNoRecursive">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getPossibleChildrenNoRecursiveRequest" message="tns:getPossibleChildrenNoRecursive" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getPossibleChildrenNoRecursiveResponse" message="tns:getPossibleChildrenNoRecursiveResponse" />
 </operation>
 <operation name="getRootPossibleChildren">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getRootPossibleChildrenRequest" message="tns:getRootPossibleChildren" />
@@ -976,6 +986,15 @@
 </input>
 <output>
 <wsp:PolicyReference URI="#MainWSPortBinding_getPossibleChildren_Output_Policy" />
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getPossibleChildrenNoRecursive">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
 <soap:body use="literal" />
 </output>
 </operation>
