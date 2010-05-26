@@ -304,6 +304,35 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    public ClassInfoLight[] getPossibleChildrenNoRecursive(Class parentClass) {
+        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_GETPOSSIBLECHILDRENNORECURSIVE"));
+        List<ClassInfoLight> res = new ArrayList();
+         if (em != null){
+             String sentence;
+             Class myClass;
+             Query query;
+
+             myClass = parentClass;
+             while (!myClass.equals(RootObject.class) && !myClass.equals(Object.class)){
+                 sentence = "SELECT x.possibleChildren FROM ClassMetadata x WHERE x.name='"+myClass.getSimpleName()+"'";
+                 query = em.createQuery(sentence);
+                 List partialResult = query.getResultList();
+                 if (partialResult!=null)
+                     for (Object obj : partialResult)
+                         res.add(new ClassInfoLight(((ClassMetadata)obj).getId(),
+                                                      ((ClassMetadata)obj).getIsAbstract(),
+                                                      ((ClassMetadata)obj).getName(),
+                                                      ((ClassMetadata)obj).getPackageInfo().getName()));
+                 myClass = myClass.getSuperclass();
+             }
+             return res.toArray(new ClassInfoLight[0]);
+          }
+          else {
+              this.error = "El EntityManager no existe";
+              return null;
+          }
+    }
+
     public ClassInfoLight[] getRootPossibleChildren(){
         return getPossibleChildren(RootObject.ROOT_CLASS);
     }

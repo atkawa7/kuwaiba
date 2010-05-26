@@ -50,6 +50,7 @@ public interface BackendBeanRemote {
     public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved);
     public boolean removeObject(Class className, Long oid);
     public ClassInfoLight[] getPossibleChildren(java.lang.Class parentClass);
+    public ClassInfoLight[] getPossibleChildrenNoRecursive(Class parentClass);
     public ClassInfoLight[] getRootPossibleChildren();
     public ClassInfoLight[] getLightMetadata();
     public boolean moveObjects(Long targetOid, Long[] objectOids, String[] objectClasses);

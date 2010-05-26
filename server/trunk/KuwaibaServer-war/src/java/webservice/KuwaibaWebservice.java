@@ -165,7 +165,6 @@ public class KuwaibaWebservice {
 
     /**
      * Return all possible classes taht can be contained by the given class instances
-     * TODO: To cache results on client side
      */
     @WebMethod(operationName = "getPossibleChildren")
     public ClassInfoLight[] getPossibleChildren(
@@ -174,6 +173,22 @@ public class KuwaibaWebservice {
         try {
             parentClass = Class.forName(_parentClass);
             return sbr.getPossibleChildren(parentClass);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    /**
+     * Return all possible classes taht can be contained by the given class instances
+     */
+    @WebMethod(operationName = "getPossibleChildrenNoRecursive")
+    public ClassInfoLight[] getPossibleChildrenNoRecursive(
+            @WebParam(name = "parentClass")String _parentClass) {
+        Class parentClass;
+        try {
+            parentClass = Class.forName(_parentClass);
+            return sbr.getPossibleChildrenNoRecursive(parentClass);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, ex);
             return null;
