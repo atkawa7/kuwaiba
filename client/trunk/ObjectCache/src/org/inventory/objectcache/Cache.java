@@ -1,8 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *  under the License.
  */
-
 package org.inventory.objectcache;
 
 import java.util.ArrayList;
@@ -13,100 +24,153 @@ import java.util.List;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
+import org.inventory.core.services.interfaces.LocalObjectListItem;
 
 /**
- * Esta clase definitivamente evolucionará bastante en la estructura del caché
- * TODO: Evaluar si sería conveniente crear lookups para administrar el caché
- * digamos que sería una forma más natural de hacerlo.
- * TODO: Hacer que los servicios no dependan de la caché, sino que la use a través de su interfaz
+ * This class implements the local caching functionality
  *
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class Cache{
     private static Cache instance;
-    private List<LocalObject> objectCache; //Provee caché para objetos (LocalObjects)
-    private Dictionary<String,LocalClassMetadata> metaCache; //provee caché para las meta
-    private boolean hasAllMeta=false; //Indica si se ha llenado toda la cache de metas para no volver a pedirla
-                                      //y asumir que la que se encuentra está completa
-                                      //Esto es útil para los casos administrativos en los que se pide
-                                      //Toda la caché (digamos para editar atributos) y no pedirla nuevamente
-                                      //si se editarán las clases como tal
+    private List<LocalObject> objectIndex; //Cache for objects (LocalObjects)
+    private Dictionary<String,LocalClassMetadata> metadataIndex; //Cache for metadata (the complete metadata information)
+    private Dictionary<String,LocalClassMetadataLight> lightMetadataIndex; //Cache for lightmetadata (usually for administrative purposes)
+    private Dictionary<String,List<LocalClassMetadataLight>> possibleChildrenIndex; //Cache for possible children
+    private Dictionary<String,List<LocalObjectListItem>> listIndex; //Cache for list-type attributes
+    private Long rootId = null;
+    private String rootClass = null;
 
     private Cache(){
-        this.objectCache = new ArrayList<LocalObject>();
-        this.metaCache = new Hashtable<String, LocalClassMetadata>();
-        this.hasAllMeta = false;
+        this.objectIndex = new ArrayList<LocalObject>();
+        this.metadataIndex = new Hashtable<String, LocalClassMetadata>();
+        this.lightMetadataIndex = new Hashtable<String, LocalClassMetadataLight>();
+        this.possibleChildrenIndex = new Hashtable<String, List<LocalClassMetadataLight>>();
     }
 
     /**
-     * El caché es un singleton también
-     * @return
+     * This class is a singleton too
+     * @return the singleton instance
      */
     public static Cache getInstace(){
         if(instance == null) instance = new Cache();
         return instance;
     }
 
-    /*
-     * TODO: Implementarlo
-     */
-    public LocalObject getFirstObject() {
-        //return this.objectCache.pop();
-        return this.objectCache.get(0);
+    public void setRootId(Long _rootId){
+        rootId = _rootId;
+    }
+
+    public Long getRootId(){
+        return rootId;
+    }
+
+    public void setRootClass(String _rootClass){
+        this.rootClass = _rootClass;
+    }
+
+    public String getRootClass(){
+        return rootClass;
     }
 
     public void addObject(LocalObject lo) {
-        this.objectCache.add(lo);
+        this.objectIndex.add(lo);
     }
 
-    public List<LocalObject> getObjectCache() {
-        return this.objectCache;
+    public List<LocalObject> getObjectIndex() {
+        return this.objectIndex;
     }
 
-    public LocalClassMetadata[] getMetaCache(){
-        LocalClassMetadata[] res = new LocalClassMetadata[this.metaCache.size()];
+    public LocalClassMetadata[] getMetadataIndex(){
+        LocalClassMetadata[] res = new LocalClassMetadata[this.metadataIndex.size()];
         int i = 0;
-        Enumeration keys = metaCache.keys();
+        Enumeration keys = metadataIndex.keys();
         while(keys.hasMoreElements()){
-            res[i] = metaCache.get(keys.nextElement());
+            res[i] = metadataIndex.get(keys.nextElement());
             i++;
         }
         return res;
     }
 
-    public void refresh(){}
-
-    public void resetMetaCache(){
+    public void resetMetadataIndex(){
         int i = 0;
-        Enumeration keys = metaCache.keys();
+        Enumeration keys = metadataIndex.keys();
         while(keys.hasMoreElements()){
-            metaCache.remove(keys.nextElement());
+            metadataIndex.remove(keys.nextElement());
             i++;
         }
     }
 
     public LocalClassMetadata getMetaForClass(String className) {
-        return this.metaCache.get(className);
+        return this.metadataIndex.get(className);
     }
 
-    public void addMeta(LocalClassMetadata li) {
-        this.metaCache.put(li.getClassName(),li);
-    }
+    public void addMeta(LocalClassMetadata[] all, boolean overwrite){
+        if (overwrite){
+            Enumeration en = metadataIndex.keys();
+            while (en.hasMoreElements())
+                metadataIndex.remove(en);
+        }
 
-    public void addMultipleMeta(LocalClassMetadata[] all){
         for (LocalClassMetadata lcmi : all)
-            this.addMeta(lcmi);
+            this.metadataIndex.put(lcmi.getClassName(), lcmi);
     }
 
-    public boolean hasAllMeta() {
-        return hasAllMeta;
+    public LocalClassMetadataLight[] getLightMetadataIndex() {
+        LocalClassMetadataLight[] res = new LocalClassMetadataLight[this.metadataIndex.size()];
+        int i = 0;
+        Enumeration keys = lightMetadataIndex.keys();
+        while(keys.hasMoreElements()){
+            res[i] = metadataIndex.get(keys.nextElement());
+            i++;
+        }
+        return res;
     }
 
-    public void setHasAllMeta(boolean hasAllMeta) {
-        this.hasAllMeta = hasAllMeta;
+    public void addLightMeta(LocalClassMetadataLight[] all, boolean overwrite){
+        if (overwrite){
+            Enumeration en = lightMetadataIndex.keys();
+            while (en.hasMoreElements())
+                lightMetadataIndex.remove(en);
+        }
+
+        for (LocalClassMetadataLight lcml : all)
+            this.lightMetadataIndex.put(lcml.getClassName(), lcml);
     }
 
-    public LocalClassMetadataLight[] getLightMetaCache() {
-        return new LocalClassMetadataLight[0];
+    public void addPossibleChildrenCached(String className, List<LocalClassMetadataLight> children){
+        List<LocalClassMetadataLight> toBeAdded = new ArrayList<LocalClassMetadataLight>();
+        for (LocalClassMetadataLight lcml : children){
+            LocalClassMetadataLight myLocal = lightMetadataIndex.get(lcml.getClassName());
+            if (myLocal==null){
+                lightMetadataIndex.put(className, lcml);
+                toBeAdded.add(lcml);
+            }
+            else
+                toBeAdded.add(myLocal); //We reuse the instance in the light metadata index
+        }
+        possibleChildrenIndex.put(className,toBeAdded);
+    }
+    
+    public List<LocalClassMetadataLight> getPossibleChildrenCached(String className){
+        return possibleChildrenIndex.get(className);
+    }
+
+    public LocalObjectListItem[] getListCached(String className){
+        List<LocalObjectListItem> existingItems = listIndex.get(className);
+        if (existingItems == null) //The list is not cached
+            return null;
+
+        LocalObjectListItem[] res = new LocalObjectListItem[existingItems.size()];
+        int i = 0;
+        for (LocalObjectListItem item : existingItems){
+            res[i] = item;
+            i++;
+        }
+        return res;
+    }
+
+    public void addListCached(String className, List<LocalObjectListItem> items){
+        listIndex.put(className, items);
     }
 }

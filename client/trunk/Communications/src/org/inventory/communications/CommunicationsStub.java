@@ -71,9 +71,14 @@ public class CommunicationsStub {
      */
     public LocalObjectLight[] getRootNodeChildren(){
         try{
+            
+            if (cache.getRootId()==null)
+                cache.setRootId(port.getDummyRootId());
+            if (cache.getRootClass()==null)
+                cache.setRootClass(port.getDummyRootClass());
 
-            List<RemoteObjectLight> result = port.getObjectChildren(port.getDummyRootId(),
-                                                                    port.getDummyRootClass());
+            List<RemoteObjectLight> result = port.getObjectChildren(cache.getRootId(),
+                                                                    cache.getRootClass());
             if(result ==null){
                 error = port.getLastErr();
                 return null;
@@ -224,6 +229,14 @@ public class CommunicationsStub {
         return new LocalObjectLightImpl(port.createObject(objectClass, template,parentOid));
     }
 
+    /**
+     * Retrieves complete information about classes. It always take them from the
+     * server rather than from the cache, because this methods is suggested to be used
+     * for administrative tasks when it's necessary to have the metadata up to date.
+     * Anyway, the retrieved information is cached in order to be used when mapping the object's attributes
+     * in the property sheets
+     * @return an array with all the class metadata information
+     */
     public LocalClassMetadata[] getAllMeta() {
 
         List<ClassInfo> metas;
@@ -239,42 +252,62 @@ public class CommunicationsStub {
             lm[i] = new LocalClassMetadataImpl(cm);
             i++;
         }
+        cache.addMeta(lm,true); //wipe out the cache and write it again
         return lm;
     }
 
-    /*
+    /**
      * Retrieves the metadata for a given class
      * @param className the object class
+     * @return the metadata information
      */
     public LocalClassMetadata getMetaForClass(String className){
+        LocalClassMetadata res = cache.getMetaForClass(className);
+        if (res != null)
+            return res;
+
         ClassInfo cm = port.getMetadataForClass(className);
         if (cm ==null){
             this.error = port.getLastErr();
             return null;
         }
-        return new LocalClassMetadataImpl(cm);
+
+        res = new LocalClassMetadataImpl(cm);
+        cache.addMeta(new LocalClassMetadata[]{res}, false);
+        return res;
     }
 
-    /*
+    /**
      * Retrieves a List type attribute.
-     * @param className attribute class (usually sibling of GenericListType)
+     * @param className attribute class (usually descendant of GenericListType)
+     * @return 
      */
     public LocalObjectListItem[] getList(String className){
 
-        ObjectList list = port.getMultipleChoice(className);
-        LocalObjectListItemImpl[] res=null;
-        if (list == null)
+        LocalObjectListItem[] res = cache.getListCached(className);
+        if (res != null)
             return res;
 
+        ObjectList remoteList = port.getMultipleChoice(className);
+        
+        if (remoteList == null){
+            this.error = port.getLastErr();
+            return null;
+        }
+            
+        List<LocalObjectListItem> loli = new ArrayList<LocalObjectListItem>();
         //The +1 represents the empty room left for the "null" value
-        res = new LocalObjectListItemImpl[list.getList().getEntry().size() + 1];
+        res = new LocalObjectListItemImpl[remoteList.getList().getEntry().size() + 1];
         res[0] = new LocalObjectListItemImpl(LocalObjectListItem.NULL_ID,"",java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("NONE"));
+        loli.add(res[0]);
         int i = 1;
-        for(Entry entry : list.getList().getEntry()){
+        for(Entry entry : remoteList.getList().getEntry()){
             res[i] = new LocalObjectListItemImpl(entry.getKey(),entry.getValue(),entry.getValue());
+            loli.add(res[i]);
             i++;
         }
 
+        cache.addListCached(className, loli);
         return res;
     }
 
@@ -285,7 +318,7 @@ public class CommunicationsStub {
         return res;
     }
 
-    /*
+    /**
      * Removes possible children from the given class' container hierarchy
      * @param Id for the parent class
      * @param childrenToBeDeleted List if ids of the classes to be removed as possible children
@@ -311,6 +344,11 @@ public class CommunicationsStub {
         return res;
     }
 
+    /**
+     * The result is cached to be used when needed somewhere else, but the whole
+     * metadata information is always retrieved directly from the ws
+     * @return an array with all class metadata (the light version)
+     */
     public LocalClassMetadataLight[] getAllLightMeta() {
         List<ClassInfoLight> metas;
         try{
@@ -325,15 +363,21 @@ public class CommunicationsStub {
             lm[i] = (LocalClassMetadataLight)new LocalClassMetadataLightImpl(cm);
             i++;
         }
+
+        cache.addLightMeta(lm, true);
         return lm;
     }
 
-    public String getRootClass(){
-        return port.getDummyRootClass();
+    public Long getRootId(){
+        if (cache.getRootId() == null)
+            cache.setRootId(port.getDummyRootId());
+        return cache.getRootId();
     }
 
-    public Long getRootId(){
-        return port.getDummyRootId();
+    public String getRootClass(){
+        if (cache.getRootClass() == null)
+            cache.setRootClass(port.getDummyRootClass());
+        return cache.getRootClass();
     }
 
     /*
