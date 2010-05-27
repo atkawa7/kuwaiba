@@ -30,7 +30,6 @@ import core.toserialize.RemoteObjectUpdate;
 import entity.core.DummyRoot;
 import entity.core.RootObject;
 import entity.core.metamodel.ClassMetadata;
-import entity.core.metamodel.PackageMetadata;
 import entity.location.Country;
 import entity.location.StateObject;
 import entity.multiple.GenericObjectList;
