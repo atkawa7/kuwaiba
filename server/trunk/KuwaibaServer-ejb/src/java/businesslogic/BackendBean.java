@@ -45,6 +45,9 @@ import javax.ejb.Stateful;
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import util.HierarchyUtils;
 import util.MetadataUtils;
@@ -72,7 +75,6 @@ public class BackendBean implements BackendBeanRemote {
         DummyRoot root = new DummyRoot();
         root.setId(RootObject.PARENT_ROOT);
         em.persist(root);
-
 
         for (int i=1;i<3;i++){
             StateObject r = new StateObject();
@@ -195,7 +197,6 @@ public class BackendBean implements BackendBeanRemote {
     public RemoteObject getObjectInfo(String objectClass,Long oid){
         System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_GETOBJECTINFO"));
         if (em != null){
-            //String myClassName = objectClass.substring(objectClass.lastIndexOf("."));
             String sentence = "SELECT x from "+objectClass+" x WHERE x.id="+String.valueOf(oid);
             Query query = em.createQuery(sentence);
             Object result = query.getSingleResult();
@@ -610,6 +611,7 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    /*
     public RemoteObjectLight[] searchForObjects(String className, String[] paramNames, String[] paramValues) {
         if (em != null){
             Query query;
@@ -633,6 +635,33 @@ public class BackendBean implements BackendBeanRemote {
             query = em.createQuery(sentence);
             List<Object> result = query.getResultList();
             res = new RemoteObjectLight[result.size()];
+
+            int i = 0;
+            for (Object obj: result){
+                res[i] = new RemoteObjectLight(obj);
+                i++;
+            }
+            return res;
+        }
+        else {
+            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            return null;
+        }
+    }*/
+    public RemoteObjectLight[] searchForObjects(Class searchedClass, String[] paramNames,
+            Object[] paramValues) {
+        if (em != null){
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery query = cb.createQuery();
+            Root entity = query.from(searchedClass);
+            for (int i = 0; i< paramNames.length; i++)
+                if (paramValues[i] instanceof String)
+                    query.where(cb.like(entity.get(paramNames[i]),"%"+paramValues[i]+"%"));
+                else
+                    query.where(cb.equal(entity.get(paramNames[i]),paramValues[i]));
+
+            List<Object> result = em.createQuery(query).getResultList();
+            RemoteObjectLight[] res = new RemoteObjectLight[result.size()];
 
             int i = 0;
             for (Object obj: result){

@@ -32,7 +32,7 @@ import javax.jws.WebService;
 import businesslogic.BackendBeanRemote;
 import core.exceptions.ObjectNotFoundException;
 import core.toserialize.ClassInfoLight;
-import javassist.bytecode.stackmap.TypeData.ClassName;
+import util.MetadataUtils;
 
 /**
  * Represents the main webservice
@@ -353,14 +353,30 @@ public class KuwaibaWebservice {
      */
     @WebMethod(operationName = "searchForObjects")
     public RemoteObjectLight[] searchForObjects(@WebParam(name="className")String className, @WebParam(name="paramNames")
-            String[] paramNames, @WebParam(name="paramValues")String[] paramValues){
+            String[] paramNames, @WebParam(name="paramTypes")String[] paramTypes,
+            @WebParam(name="paramValues")String[] paramValues){
 
-        if (paramNames.length != paramValues.length){
-            this.lastErr = "The array sizes don't match (paramNames,paramValues)";
+        if (paramNames.length != paramValues.length || paramTypes.length != paramValues.length){
+            this.lastErr = "The array sizes don't match (paramNames,paramValues, paramTypes)";
             return null;
         }
 
-        RemoteObjectLight[] res = sbr.searchForObjects(className,paramNames, paramValues);
+        Class toBeSearched;
+        try {
+            toBeSearched = Class.forName(className);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, ex);
+            this.lastErr = ex.getMessage();
+            return null;
+        }
+
+        Object[] mappedValues = new Object[paramNames.length];
+
+        for(int i = 0; i<mappedValues.length; i++)
+            mappedValues[i] = MetadataUtils.getRealValue(paramTypes[i], paramValues[i]);
+
+
+        RemoteObjectLight[] res = sbr.searchForObjects(toBeSearched,paramNames, mappedValues);
         if (res == null)
             this.lastErr = sbr.getError();
         return res;

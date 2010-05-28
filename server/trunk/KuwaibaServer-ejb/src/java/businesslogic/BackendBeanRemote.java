@@ -55,5 +55,5 @@ public interface BackendBeanRemote {
     public ClassInfoLight[] getLightMetadata();
     public boolean moveObjects(Long targetOid, Long[] objectOids, String[] objectClasses);
     public RemoteObjectLight[] copyObjects(Long targetOid, Long[] templateOids, String[] objectClasses);
-    public RemoteObjectLight[] searchForObjects(String className,String[] paramNames, String[] paramValues);
+    public RemoteObjectLight[] searchForObjects(java.lang.Class searchedClass, String[] paramNames, Object[] paramValues);
 }
