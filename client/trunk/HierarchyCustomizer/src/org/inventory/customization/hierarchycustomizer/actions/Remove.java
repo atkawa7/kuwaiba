@@ -31,12 +31,11 @@ public class Remove extends AbstractAction{
         CommunicationsStub com = CommunicationsStub.getInstance();
         oids.add(node.getObject().getId());
         if (com.removePossibleChildren(
-                ((ClassMetadataNode)node.getParentNode()).getObject().getId(),
-                  oids)){
+                ((ClassMetadataNode)node.getParentNode()).getObject().getId(),oids)){
 
-            
             ((ClassMetadataChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
-            
+            com.refreshCache(false, false, false, true);
+
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
                     NotificationUtil.INFO,
                     java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));

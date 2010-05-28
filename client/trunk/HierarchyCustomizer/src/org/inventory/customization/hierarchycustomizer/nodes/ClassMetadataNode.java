@@ -68,8 +68,7 @@ public class ClassMetadataNode extends AbstractNode {
             if (object.getClassName().equals(CommunicationsStub.getInstance().getRootClass()))
                 return java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_ROOTNODE_TEXT");
             else
-                return object.getClassName();
-                
+                return object.getClassName();       
        }
        else
            return java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_NONAME");
@@ -113,6 +112,7 @@ public class ClassMetadataNode extends AbstractNode {
                               tokens)){
 
                         ((ClassMetadataChildren)getChildren()).add(new ClassMetadataNode[]{new ClassMetadataNode(data)});
+                        CommunicationsStub.getInstance().refreshCache(false, false, false, true);
 
                          nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
                                 NotificationUtil.INFO,java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));

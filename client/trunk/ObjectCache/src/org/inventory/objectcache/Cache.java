@@ -46,6 +46,7 @@ public class Cache{
         this.metadataIndex = new Hashtable<String, LocalClassMetadata>();
         this.lightMetadataIndex = new Hashtable<String, LocalClassMetadataLight>();
         this.possibleChildrenIndex = new Hashtable<String, List<LocalClassMetadataLight>>();
+        this.listIndex = new Hashtable<String, List<LocalObjectListItem>>();
     }
 
     /**
@@ -93,26 +94,17 @@ public class Cache{
     }
 
     public void resetMetadataIndex(){
-        int i = 0;
         Enumeration keys = metadataIndex.keys();
-        while(keys.hasMoreElements()){
+        while(keys.hasMoreElements())
             metadataIndex.remove(keys.nextElement());
-            i++;
-        }
     }
 
     public LocalClassMetadata getMetaForClass(String className) {
         return this.metadataIndex.get(className);
     }
 
-    public void addMeta(LocalClassMetadata[] all, boolean overwrite){
-        if (overwrite){
-            Enumeration en = metadataIndex.keys();
-            while (en.hasMoreElements())
-                metadataIndex.remove(en);
-        }
-
-        for (LocalClassMetadata lcmi : all)
+    public void addMeta(LocalClassMetadata[] all){
+         for (LocalClassMetadata lcmi : all)
             this.metadataIndex.put(lcmi.getClassName(), lcmi);
     }
 
@@ -127,15 +119,15 @@ public class Cache{
         return res;
     }
 
-    public void addLightMeta(LocalClassMetadataLight[] all, boolean overwrite){
-        if (overwrite){
-            Enumeration en = lightMetadataIndex.keys();
-            while (en.hasMoreElements())
-                lightMetadataIndex.remove(en);
-        }
-
+    public void addLightMeta(LocalClassMetadataLight[] all){
         for (LocalClassMetadataLight lcml : all)
             this.lightMetadataIndex.put(lcml.getClassName(), lcml);
+    }
+
+    public void resetLightMetadataIndex() {
+        Enumeration keys = lightMetadataIndex.keys();
+        while(keys.hasMoreElements())
+            lightMetadataIndex.remove(keys.nextElement());
     }
 
     public void addPossibleChildrenCached(String className, List<LocalClassMetadataLight> children){
@@ -156,6 +148,16 @@ public class Cache{
         return possibleChildrenIndex.get(className);
     }
 
+    public void resetPossibleChildrenCached() {
+        Enumeration em = possibleChildrenIndex.keys();
+        while (em.hasMoreElements())
+            possibleChildrenIndex.remove(em.nextElement());
+    }
+
+    public Dictionary<String, List<LocalClassMetadataLight>> getAllPossibleChildren() {
+        return possibleChildrenIndex;
+    }
+
     public LocalObjectListItem[] getListCached(String className){
         List<LocalObjectListItem> existingItems = listIndex.get(className);
         if (existingItems == null) //The list is not cached
@@ -172,5 +174,15 @@ public class Cache{
 
     public void addListCached(String className, List<LocalObjectListItem> items){
         listIndex.put(className, items);
+    }
+
+    public void resetLists() {
+        Enumeration keys = listIndex.keys();
+        while(keys.hasMoreElements())
+            listIndex.remove(keys.nextElement());
+    }
+
+    public Dictionary<String, List<LocalObjectListItem>> getAllList() {
+        return listIndex;
     }
 }

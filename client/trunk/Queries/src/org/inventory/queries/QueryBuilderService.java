@@ -169,9 +169,11 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
             return;
         }
 
-        List<String> atts,values;
+        List<String> types,atts,values;
+        types= new ArrayList<String>();
         atts= new ArrayList<String>();
         values= new ArrayList<String>();
+        LocalClassMetadataLight selectedClass = (LocalClassMetadataLight)qbtc.getList().getSelectedValue();
 
         for (JCheckBox checkbox : enablers){
             if (checkbox.isSelected()){
@@ -181,23 +183,26 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
                     //Adds single quotes so the server has just to concatenate the tokens.  This is a temporal workaround
                     //since the server should check for these characters in order to escape them
                     //to avoid SQL injection
-                    values.add("'"+((JTextField)component).getText()+"'");
+                    values.add(((JTextField)component).getText());
+                    com.getMetaForClass(selectedClass.getClassName()).getTypeForAttribute(component.getName());
                     continue;
                 }
                 if (component instanceof JCheckBox){
                     values.add(String.valueOf(((JCheckBox)component).isEnabled()));
+                    types.add("Boolean");
                     continue;
                 }
                 if (component instanceof JComboBox){
                     values.add(((LocalObjectListItem)((JComboBox)component).getSelectedItem()).getId().toString());
+                    types.add("Long");
                     continue;
                 }
             }
         }
 
-        LocalClassMetadataLight selectedClass = (LocalClassMetadataLight)qbtc.getList().getSelectedValue();
+        
         LocalObjectLight[] found = com.searchForObjects(
-                selectedClass.getClassName(),atts, values);
+                selectedClass.getPackageName()+"."+selectedClass.getClassName(),atts,types, values);
 
         if (found == null){
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/queries/Bundle").getString("LBL_QUERY RESULT"), 

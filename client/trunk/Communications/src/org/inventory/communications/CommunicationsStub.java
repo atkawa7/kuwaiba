@@ -17,6 +17,8 @@
 package org.inventory.communications;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.List;
 import org.inventory.communications.core.LocalClassMetadataImpl;
 import org.inventory.communications.core.LocalClassMetadataLightImpl;
@@ -252,7 +254,7 @@ public class CommunicationsStub {
             lm[i] = new LocalClassMetadataImpl(cm);
             i++;
         }
-        cache.addMeta(lm,true); //wipe out the cache and write it again
+        cache.addMeta(lm); //wipe out the cache and write it again
         return lm;
     }
 
@@ -273,7 +275,7 @@ public class CommunicationsStub {
         }
 
         res = new LocalClassMetadataImpl(cm);
-        cache.addMeta(new LocalClassMetadata[]{res}, false);
+        cache.addMeta(new LocalClassMetadata[]{res});
         return res;
     }
 
@@ -364,7 +366,7 @@ public class CommunicationsStub {
             i++;
         }
 
-        cache.addLightMeta(lm, true);
+        cache.addLightMeta(lm);
         return lm;
     }
 
@@ -443,8 +445,9 @@ public class CommunicationsStub {
         }
     }
 
-    public LocalObjectLight[] searchForObjects(String className, List<String> atts, List<String> values) {
-        List<RemoteObjectLight> found = port.searchForObjects(className, atts, values);
+    public LocalObjectLight[] searchForObjects(String className, List<String> atts,
+            List<String> types, List<String> values) {
+        List<RemoteObjectLight> found = port.searchForObjects(className,atts, types, values);
         if (found == null)
             this.error = port.getLastErr();
         LocalObjectLight[] res = new LocalObjectLight[found.size()];
@@ -457,5 +460,63 @@ public class CommunicationsStub {
 
         return res;
 
+    }
+
+    /**
+     * Reset the cache to the default, this is, only:
+     * -Root id and class
+     */
+    public void resetCache(){
+
+        //Set the new values
+        cache.setRootClass(port.getDummyRootClass());
+        cache.setRootId(port.getDummyRootId());
+
+        //Wipe out the dictionaries
+        cache.resetMetadataIndex();
+        cache.resetLightMetadataIndex();
+        cache.resetPossibleChildrenCached();
+        cache.resetLists();
+    }
+
+    /**
+     * Refreshes all existing objects, according to the flags provided
+     */
+    public void refreshCache(boolean refreshMeta, boolean refreshLightMeta,
+            boolean refreshList, boolean refreshPossibleChildren){
+        if (refreshMeta)
+            for (LocalClassMetadata lcm : cache.getMetadataIndex()){
+                LocalClassMetadata myLocal =
+                        new LocalClassMetadataImpl(port.getMetadataForClass(lcm.getClassName()));
+                if(myLocal!=null)
+                cache.addMeta(new LocalClassMetadata[]{myLocal});
+            }
+
+        if (refreshLightMeta){
+            List<ClassInfoLight> myLocalLight  = port.getLightMetadata();
+            if (myLocalLight != null)
+                getAllLightMeta();
+        }
+
+        if (refreshList){
+            Dictionary<String, List<LocalObjectListItem>> myLocalList
+                    = cache.getAllList();
+            Enumeration em = myLocalList.keys();
+            while(em.hasMoreElements()){
+                String item = (String) em.nextElement();
+                myLocalList.remove(item);
+                getList(item);
+            }
+        }
+        if (refreshPossibleChildren){
+            Dictionary<String, List<LocalClassMetadataLight>> myLocalPossibleChildren
+                    = cache.getAllPossibleChildren();
+            Enumeration em = myLocalPossibleChildren.keys();
+            while(em.hasMoreElements()){
+                String item = (String) em.nextElement();
+                myLocalPossibleChildren.remove(item);
+                getPossibleChildren(item);
+            }
+        }
     }
 }
