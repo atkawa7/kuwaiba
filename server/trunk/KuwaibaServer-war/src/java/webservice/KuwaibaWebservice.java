@@ -108,9 +108,9 @@ public class KuwaibaWebservice {
     }
 
     @WebMethod(operationName = "getObjectChildren")
-    public RemoteObjectLight[] getObjectChildren(@WebParam(name = "oid") Long oid, @WebParam(name = "objectClass") String objectClass){
+    public RemoteObjectLight[] getObjectChildren(@WebParam(name = "oid") Long oid, @WebParam(name = "objectClassId") Long objectClassId){
         System.out.println("[getObjectChildren]: Llamada");
-        RemoteObjectLight[] res = sbr.getObjectChildren(oid,objectClass);
+        RemoteObjectLight[] res = sbr.getObjectChildren(oid,objectClassId);
         if(res == null)
             this.lastErr = "Error en el backendBean";
         return res;
@@ -306,12 +306,6 @@ public class KuwaibaWebservice {
         return sbr.getDummyRootId();
     }
 
-
-    @WebMethod(operationName = "getDummyRootClass")
-    public String getDummyRootClass() {
-        return sbr.getDummyRootClass().getSimpleName();
-    }
-
     /**
      * Copy objects from its current parent to a target.
      * Note: This method does *not* check if the parent change is possible according to the container hierarchy
@@ -374,7 +368,6 @@ public class KuwaibaWebservice {
 
         for(int i = 0; i<mappedValues.length; i++)
             mappedValues[i] = MetadataUtils.getRealValue(paramTypes[i], paramValues[i]);
-
 
         RemoteObjectLight[] res = sbr.searchForObjects(toBeSearched,paramNames, mappedValues);
         if (res == null)
