@@ -76,11 +76,15 @@ public class CommunicationsStub {
             
             if (cache.getRootId()==null)
                 cache.setRootId(port.getDummyRootId());
-            if (cache.getRootClass()==null)
-                cache.setRootClass(port.getDummyRootClass());
+            if (cache.getMetaForClass("DummyRoot")==null){
+                cache.addMeta(
+                        new LocalClassMetadataImpl[]{new LocalClassMetadataImpl(
+                                                            port.getMetadataForClass("DummyRoot"))});
+
+            }
 
             List<RemoteObjectLight> result = port.getObjectChildren(cache.getRootId(),
-                                                                    cache.getRootClass());
+                                                                    cache.getMetaForClass("DummyRoot").getId());
             if(result ==null){
                 error = port.getLastErr();
                 return null;
@@ -105,8 +109,8 @@ public class CommunicationsStub {
      * Retrieves a given object's children
      * @return an array of local objects representing the object's children
      */
-    public List<LocalObjectLight> getObjectChildren(Long oid, String objectClass){
-        List <RemoteObjectLight> children = port.getObjectChildren(oid, objectClass);
+    public List<LocalObjectLight> getObjectChildren(Long oid, Long objectClassId){
+        List <RemoteObjectLight> children = port.getObjectChildren(oid, objectClassId);
         List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
         
         for (RemoteObjectLight rol : children)
@@ -377,9 +381,8 @@ public class CommunicationsStub {
     }
 
     public String getRootClass(){
-        if (cache.getRootClass() == null)
-            cache.setRootClass(port.getDummyRootClass());
-        return cache.getRootClass();
+        LocalClassMetadata lcm = getMetaForClass("DummyRoot");
+        return lcm.getClassName();
     }
 
     /*
@@ -469,7 +472,7 @@ public class CommunicationsStub {
     public void resetCache(){
 
         //Set the new values
-        cache.setRootClass(port.getDummyRootClass());
+ //       cache.setRootClass(port.getDummyRootClass());
         cache.setRootId(port.getDummyRootId());
 
         //Wipe out the dictionaries
