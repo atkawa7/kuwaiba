@@ -35,24 +35,26 @@ import javax.persistence.GenerationType;
  * @author Charles Bedon <charles.bedon@zoho.com>
  */
 @Entity
-@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS) //Por defecto el valor es SINGLE_TABLE, con lo cual, todas las subclases se mapena en la misma tabla
-@Table(name="RootObject") //Esto le dice con qué nombre crear la tabla. El defaul, es decir, si uno no usa esta anotación es el mismo nombre de la tabla
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS) //Default is SINGLE_TABLE, so all data will be stored in a single table
+@Table(name="RootObject") //How to map the table name
 public abstract class RootObject implements Serializable, Cloneable {
 
     public static final Long PARENT_ROOT = new Long(0); // This is the id for the single instance of the root object
     public static final Class ROOT_CLASS = DummyRoot.class; // this is the class that represents the root object
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE) //Esto le dice cómo generar la llave primaria (SEQUENCE lo hacecustomizable, uno le puede decir cómo la genere)
+    @GeneratedValue(strategy = GenerationType.TABLE) //How to generate the primary key (SEQUENCE makes it customizable)
     @NoCopy
-    protected Long id; //Llave primaria
+    protected Long id; //Primary key
     @Column(nullable=false)
-    protected String name = ""; //Nombre
+    protected String name = ""; //Name
     @Column(nullable=false)
     @NoCopy
-    protected Boolean isLocked= false; //indica si un objeto está bloqueado para sólo lectura
+    protected Boolean isLocked= false; //Is this object locked read-only?
     @NoCopy
     protected Long parent = null;
+
+    public RootObject(){}
 
     public Long getParent() {
         return parent;

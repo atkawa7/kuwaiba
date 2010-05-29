@@ -47,6 +47,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import util.HierarchyUtils;
@@ -141,15 +142,10 @@ public class BackendBean implements BackendBeanRemote {
         return RootObject.PARENT_ROOT;
     }
 
-    /*
-     * Return the class used to represent the root node
-     */
-    public Class getDummyRootClass(){
-        return RootObject.ROOT_CLASS;
-    }
-
     public RemoteTreeNode getObjectInmediateHierarchy(Long oid, String objectClass) {
-        if (em != null){
+        return null;
+
+/*        if (em != null){
             String sentence = "SELECT x from "+ objectClass +" x WHERE x.id="+oid.toString();
             Query query = em.createQuery(sentence);
             
@@ -163,27 +159,30 @@ public class BackendBean implements BackendBeanRemote {
         else {
             this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return null;
-        }
+        }*/
     }
 
-    public RemoteObjectLight[] getObjectChildren(Long oid, String objectClass) {
+    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId) {
         System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_GETOBJECT"));
         if (em != null){
-            String sentence;
-            Query query;
-            List partialResult;
+
+            
+            ClassMetadata objectClass = em.find(ClassMetadata.class, objectClassId);
+
             List result = new ArrayList();
-            //Find out which class instances can be put into objectClass instances
-            sentence = "SELECT x.possibleChildren FROM ClassMetadata x WHERE x.name='"+
-                    objectClass+"'";
-            query = em.createQuery(sentence);
-            partialResult = query.getResultList();//Instances of this class can
-                                                  //be contained within the instances of the given class
-            for (Object res : partialResult){
-                String perClassQuery = "SELECT x FROM "+((ClassMetadata)res).getName()+" x WHERE x.parent="
-                        +String.valueOf(oid)+" ORDER BY x.name";
-                query = em.createQuery(perClassQuery);
-                result.addAll(query.getResultList());
+            CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+            Query subQuery=null;
+
+            for (ClassMetadata possibleChildren : objectClass.getPossibleChildren()){
+                try {
+                    CriteriaQuery query = criteriaBuilder.createQuery();
+                    Root entity = query.from(Class.forName(possibleChildren.getPackageInfo().getName() + "." + possibleChildren.getName()));
+                    query.where(criteriaBuilder.equal(entity.get("parent"),oid));
+                    subQuery = em.createQuery(query);
+                    result.addAll(subQuery.getResultList());
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
             return RemoteObjectLight.toArray(result);
@@ -611,55 +610,22 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
-    /*
-    public RemoteObjectLight[] searchForObjects(String className, String[] paramNames, String[] paramValues) {
-        if (em != null){
-            Query query;
-            RemoteObjectLight[] res;
-            String sentence ="SELECT x FROM "+className+" x WHERE ";
-            if (paramNames.length == 0) //Retrive them all
-                sentence += "1=1";
-            else
-                for (int i = 0; i < paramNames.length ; i++){
-                    if (paramValues[i].contains("\'")) //This is really ugly, but we ran out of time for the alpha release. I'll fix it ASAP
-                        //LIKE statement is case sesitive, so we have to lower both things before to compare them
-                        sentence += "lower(x."+paramNames[i]+") LIKE '%"+paramValues[i].substring(1, paramValues[i].length()-1).toLowerCase()+"%'";
-                    else
-                        sentence += "x."+paramNames[i]+"="+paramValues[i];
-                    if ((i+1) != paramNames.length)
-                        sentence += " AND ";
-                }
-            
-            System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_EXECUTINGSQL")+ sentence);
-
-            query = em.createQuery(sentence);
-            List<Object> result = query.getResultList();
-            res = new RemoteObjectLight[result.size()];
-
-            int i = 0;
-            for (Object obj: result){
-                res[i] = new RemoteObjectLight(obj);
-                i++;
-            }
-            return res;
-        }
-        else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
-            return null;
-        }
-    }*/
     public RemoteObjectLight[] searchForObjects(Class searchedClass, String[] paramNames,
             Object[] paramValues) {
         if (em != null){
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery query = cb.createQuery();
             Root entity = query.from(searchedClass);
-            for (int i = 0; i< paramNames.length; i++)
+            Predicate predicate = null;
+            for (int i = 0; i< paramNames.length; i++){
                 if (paramValues[i] instanceof String)
-                    query.where(cb.like(entity.get(paramNames[i]),"%"+paramValues[i]+"%"));
+                    predicate = (predicate == null)?cb.like(cb.lower(entity.get(paramNames[i])),"%"+((String)paramValues[i]).toLowerCase()+"%"):
+                                            cb.and(cb.like(cb.lower(entity.get(paramNames[i])),"%"+((String)paramValues[i]).toLowerCase()+"%"),predicate);
                 else
-                    query.where(cb.equal(entity.get(paramNames[i]),paramValues[i]));
-
+                    predicate = (predicate == null)?cb.equal(entity.get(paramNames[i]),paramValues[i]):
+                        cb.and(cb.equal(entity.get(paramNames[i]),paramValues[i]),predicate);
+            }
+            query.where(predicate);
             List<Object> result = em.createQuery(query).getResultList();
             RemoteObjectLight[] res = new RemoteObjectLight[result.size()];
 
@@ -675,4 +641,6 @@ public class BackendBean implements BackendBeanRemote {
             return null;
         }
     }
+
+
 }

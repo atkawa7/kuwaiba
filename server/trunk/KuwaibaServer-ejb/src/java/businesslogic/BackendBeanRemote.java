@@ -21,6 +21,7 @@ import core.toserialize.ClassInfo;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectLight;
 import core.toserialize.RemoteTreeNode;
+import entity.core.metamodel.ClassMetadata;
 import javax.ejb.Remote;
 
 /**
@@ -34,13 +35,12 @@ public interface BackendBeanRemote {
     public void createInitialDataset(); //just for testing purposes
     
     public Long getDummyRootId();
-    public Class getDummyRootClass();
     public RemoteTreeNode getObjectInmediateHierarchy(java.lang.Long oid, String objectClass);
     public core.toserialize.RemoteObject getObjectInfo(java.lang.String objectClass, java.lang.Long oid);
     public boolean updateObject(ObjectUpdate obj) throws core.exceptions.ObjectNotFoundException;
     public java.lang.String getError();
     public boolean setObjectLock(java.lang.Long oid, java.lang.String objectClass, java.lang.Boolean value);
-    public RemoteObjectLight[] getObjectChildren(Long oid, String objectClass);
+    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId);
     public RemoteObjectLight createObject(String objectClass, Long parentOid, String template);
     public ClassInfo[] getMetadata();
     public ClassInfo getMetadataForClass(String className);
