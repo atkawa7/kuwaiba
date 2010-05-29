@@ -620,6 +620,12 @@
 <message name="createObjectResponse">
 <part name="parameters" element="tns:createObjectResponse" />
 </message>
+<message name="copyObjects">
+<part name="parameters" element="tns:copyObjects" />
+</message>
+<message name="copyObjectsResponse">
+<part name="parameters" element="tns:copyObjectsResponse" />
+</message>
 <message name="createSession">
 <part name="parameters" element="tns:createSession" />
 </message>
@@ -740,12 +746,6 @@
 <message name="getDummyRootClassResponse">
 <part name="parameters" element="tns:getDummyRootClassResponse" />
 </message>
-<message name="copyObjects">
-<part name="parameters" element="tns:copyObjects" />
-</message>
-<message name="copyObjectsResponse">
-<part name="parameters" element="tns:copyObjectsResponse" />
-</message>
 <message name="moveObjects">
 <part name="parameters" element="tns:moveObjects" />
 </message>
@@ -766,6 +766,10 @@
 <operation name="createObject">
 <input wsam:Action="http://webservice/KuwaibaWebservice/createObjectRequest" message="tns:createObject" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/createObjectResponse" message="tns:createObjectResponse" />
+</operation>
+<operation name="copyObjects">
+<input wsam:Action="http://webservice/KuwaibaWebservice/copyObjectsRequest" message="tns:copyObjects" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/copyObjectsResponse" message="tns:copyObjectsResponse" />
 </operation>
 <operation name="createSession">
 <input wsam:Action="http://webservice/KuwaibaWebservice/createSessionRequest" message="tns:createSession" />
@@ -847,10 +851,6 @@
 <input wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootClassRequest" message="tns:getDummyRootClass" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootClassResponse" message="tns:getDummyRootClassResponse" />
 </operation>
-<operation name="copyObjects">
-<input wsam:Action="http://webservice/KuwaibaWebservice/copyObjectsRequest" message="tns:copyObjects" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/copyObjectsResponse" message="tns:copyObjectsResponse" />
-</operation>
 <operation name="moveObjects">
 <input wsam:Action="http://webservice/KuwaibaWebservice/moveObjectsRequest" message="tns:moveObjects" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/moveObjectsResponse" message="tns:moveObjectsResponse" />
@@ -881,6 +881,17 @@
 </input>
 <output>
 <wsp:PolicyReference URI="#MainWSPortBinding_createObject_Output_Policy" />
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="copyObjects">
+<soap:operation soapAction="" />
+<input>
+<wsp:PolicyReference URI="#MainWSPortBinding_copyObjects_Input_Policy" />
+<soap:body use="literal" />
+</input>
+<output>
+<wsp:PolicyReference URI="#MainWSPortBinding_copyObjects_Output_Policy" />
 <soap:body use="literal" />
 </output>
 </operation>
@@ -1079,17 +1090,6 @@
 <soap:body use="literal" />
 </input>
 <output>
-<soap:body use="literal" />
-</output>
-</operation>
-<operation name="copyObjects">
-<soap:operation soapAction="" />
-<input>
-<wsp:PolicyReference URI="#MainWSPortBinding_copyObjects_Input_Policy" />
-<soap:body use="literal" />
-</input>
-<output>
-<wsp:PolicyReference URI="#MainWSPortBinding_copyObjects_Output_Policy" />
 <soap:body use="literal" />
 </output>
 </operation>

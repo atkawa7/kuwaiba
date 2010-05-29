@@ -184,7 +184,7 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
                     //since the server should check for these characters in order to escape them
                     //to avoid SQL injection
                     values.add(((JTextField)component).getText());
-                    com.getMetaForClass(selectedClass.getClassName()).getTypeForAttribute(component.getName());
+                    types.add(com.getMetaForClass(selectedClass.getClassName()).getTypeForAttribute(component.getName()));
                     continue;
                 }
                 if (component instanceof JCheckBox){

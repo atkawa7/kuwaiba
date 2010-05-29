@@ -62,8 +62,10 @@ public class ObjectChildren extends Array{
         super.addNotify();
         //The tree root is not an AbstractNode, but a RootObjectNode
         if (this.getNode() instanceof ObjectNode){
+            CommunicationsStub com = CommunicationsStub.getInstance();
             LocalObjectLight node = ((ObjectNode)this.getNode()).getObject();
-            List <LocalObjectLight> children = CommunicationsStub.getInstance().getObjectChildren(node.getOid(),node.getClassName());
+            List <LocalObjectLight> children = com.getObjectChildren(node.getOid(),
+                    com.getMetaForClass(node.getClassName()).getId());
             keys.addAll(children);
             initCollection();
             refresh();

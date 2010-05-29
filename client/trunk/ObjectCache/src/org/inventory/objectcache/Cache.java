@@ -39,7 +39,7 @@ public class Cache{
     private Dictionary<String,List<LocalClassMetadataLight>> possibleChildrenIndex; //Cache for possible children
     private Dictionary<String,List<LocalObjectListItem>> listIndex; //Cache for list-type attributes
     private Long rootId = null;
-    private String rootClass = null;
+    private Long rootClassId = null;
 
     private Cache(){
         this.objectIndex = new ArrayList<LocalObject>();
@@ -66,12 +66,12 @@ public class Cache{
         return rootId;
     }
 
-    public void setRootClass(String _rootClass){
-        this.rootClass = _rootClass;
+    public void setRootClass(Long _rootClassId){
+        this.rootClassId = _rootClassId;
     }
 
-    public String getRootClass(){
-        return rootClass;
+    public Long getRootClass(){
+        return rootClassId;
     }
 
     public void addObject(LocalObject lo) {
