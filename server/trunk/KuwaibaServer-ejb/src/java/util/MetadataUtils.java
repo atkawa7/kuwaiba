@@ -18,6 +18,7 @@
 package util;
 
 import core.toserialize.ObjectList;
+import entity.multiple.GenericObjectList;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,6 +30,8 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
+import javax.persistence.EntityManager;
+
 
 /**
  * Class for manipulating method and class names and stuff related to filtering data
@@ -128,7 +131,7 @@ public class MetadataUtils {
             return ObjectList.class;
     }
 
-    public static Object getRealValue (String type, String valueAsString){
+    public static Object getRealValue (String type, String valueAsString, EntityManager em){
         try{
             if (type.equals("Boolean"))
                 return Boolean.valueOf(valueAsString);
@@ -151,7 +154,20 @@ public class MetadataUtils {
                 return Timestamp.valueOf(valueAsString);
             if (type.equals("Time"))
                 return Time.valueOf(valueAsString);
-            return Long.valueOf(valueAsString); //An Id for an ObjectList
+            //In any other case we try to find an ObjectListItem
+            try{
+
+                //Class itemClass = Class.forName(type);
+                Class itemClass = entity.multiple.GenericObjectList.class; //Just by now
+                Object item = em.find(itemClass, Long.valueOf(valueAsString));
+                if (item == null) //TODO Make this return safer
+                    return valueAsString;
+                return item;
+            }catch(Exception e){
+                e.printStackTrace();
+                return valueAsString;
+            }
+            
         }catch (Exception e){
             return valueAsString; //In case of error,
         }

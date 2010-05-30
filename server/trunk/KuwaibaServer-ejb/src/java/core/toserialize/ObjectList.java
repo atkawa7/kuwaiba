@@ -7,14 +7,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
- * Esta clase representa listas de enumeraciones o relaciones ()
+ * This class represents a list type attribute (pacckeing many list items)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ObjectList {
     private String className;
-    private Hashtable<Long,String> list; //Se deberian cambiar por RemoteObjects?
+    private Hashtable<Long,String> list; //Or maybe RemoteObjects?
 
     public ObjectList() {
     }

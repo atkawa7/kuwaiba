@@ -211,7 +211,7 @@ public class KuwaibaWebservice {
             (@WebParam(name = "objectClass")String objectClass,
              @WebParam(name = "template")String template,
              @WebParam(name = "parentOid")Long parentOid) {
-        //TODO write your implementation code here:
+        
         return sbr.createObject(objectClass,parentOid,template);
     }
 
@@ -364,12 +364,7 @@ public class KuwaibaWebservice {
             return null;
         }
 
-        Object[] mappedValues = new Object[paramNames.length];
-
-        for(int i = 0; i<mappedValues.length; i++)
-            mappedValues[i] = MetadataUtils.getRealValue(paramTypes[i], paramValues[i]);
-
-        RemoteObjectLight[] res = sbr.searchForObjects(toBeSearched,paramNames, mappedValues);
+        RemoteObjectLight[] res = sbr.searchForObjects(toBeSearched,paramNames, paramTypes,paramValues);
         if (res == null)
             this.lastErr = sbr.getError();
         return res;

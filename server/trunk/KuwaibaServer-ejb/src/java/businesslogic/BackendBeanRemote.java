@@ -21,8 +21,8 @@ import core.toserialize.ClassInfo;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectLight;
 import core.toserialize.RemoteTreeNode;
-import entity.core.metamodel.ClassMetadata;
 import javax.ejb.Remote;
+import javax.persistence.EntityManager;
 
 /**
  * Interface exposing the methods within BackEndbean
@@ -33,7 +33,8 @@ import javax.ejb.Remote;
 public interface BackendBeanRemote {
 
     public void createInitialDataset(); //just for testing purposes
-    
+
+    public EntityManager getEntityManager();
     public Long getDummyRootId();
     public RemoteTreeNode getObjectInmediateHierarchy(java.lang.Long oid, String objectClass);
     public core.toserialize.RemoteObject getObjectInfo(java.lang.String objectClass, java.lang.Long oid);
@@ -55,5 +56,5 @@ public interface BackendBeanRemote {
     public ClassInfoLight[] getLightMetadata();
     public boolean moveObjects(Long targetOid, Long[] objectOids, String[] objectClasses);
     public RemoteObjectLight[] copyObjects(Long targetOid, Long[] templateOids, String[] objectClasses);
-    public RemoteObjectLight[] searchForObjects(java.lang.Class searchedClass, String[] paramNames, Object[] paramValues);
+    public RemoteObjectLight[] searchForObjects(java.lang.Class searchedClass, String[] paramNames, String [] paramTypes, String[] paramValues);
 }

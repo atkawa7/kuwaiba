@@ -611,19 +611,25 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     public RemoteObjectLight[] searchForObjects(Class searchedClass, String[] paramNames,
-            Object[] paramValues) {
+            String[] paramTypes, String[] paramValues) {
         if (em != null){
+
+            Object[] mappedValues = new Object[paramNames.length];
+
+            for(int i = 0; i<mappedValues.length; i++)
+                mappedValues[i] = MetadataUtils.getRealValue(paramTypes[i], paramValues[i],em);
+
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery query = cb.createQuery();
             Root entity = query.from(searchedClass);
             Predicate predicate = null;
             for (int i = 0; i< paramNames.length; i++){
-                if (paramValues[i] instanceof String)
-                    predicate = (predicate == null)?cb.like(cb.lower(entity.get(paramNames[i])),"%"+((String)paramValues[i]).toLowerCase()+"%"):
-                                            cb.and(cb.like(cb.lower(entity.get(paramNames[i])),"%"+((String)paramValues[i]).toLowerCase()+"%"),predicate);
+                if (mappedValues[i] instanceof String)
+                    predicate = (predicate == null)?cb.like(cb.lower(entity.get(paramNames[i])),"%"+((String)mappedValues[i]).toLowerCase()+"%"):
+                                            cb.and(cb.like(cb.lower(entity.get(paramNames[i])),"%"+((String)mappedValues[i]).toLowerCase()+"%"),predicate);
                 else
-                    predicate = (predicate == null)?cb.equal(entity.get(paramNames[i]),paramValues[i]):
-                        cb.and(cb.equal(entity.get(paramNames[i]),paramValues[i]),predicate);
+                    predicate = (predicate == null)?cb.equal(entity.get(paramNames[i]),mappedValues[i]):
+                        cb.and(cb.equal(entity.get(paramNames[i]),mappedValues[i]),predicate);
             }
             query.where(predicate);
             List<Object> result = em.createQuery(query).getResultList();
@@ -642,5 +648,7 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
-
+    public EntityManager getEntityManager(){
+        return em;
+    }
 }
