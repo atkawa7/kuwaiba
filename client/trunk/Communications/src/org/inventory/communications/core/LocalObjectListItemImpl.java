@@ -10,12 +10,14 @@ public class LocalObjectListItemImpl implements LocalObjectListItem{
     private Long id;
     private String name;
     private String displayName;
+    private String className;
 
     public LocalObjectListItemImpl(){
     }
 
-    public LocalObjectListItemImpl(Long _id, String _name, String _displayName){
+    public LocalObjectListItemImpl(Long _id, String _className,String _name, String _displayName){
         this.id = _id;
+        this.className = _className;
         this.name = _name;
         this.displayName = _displayName;
     }
@@ -44,12 +46,26 @@ public class LocalObjectListItemImpl implements LocalObjectListItem{
         this.name = name;
     }
 
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public String getClassName(){
+        return this.className;
+    }
+
     @Override
     public String toString(){
         return this.displayName;
     }
 
-    public LocalObjectListItem getNullValue() {
-        return new LocalObjectListItemImpl(LocalObjectListItemImpl.NULL_ID,"NULL","None");
+    public static LocalObjectListItem getNullValue() {
+        return new LocalObjectListItemImpl(LocalObjectListItemImpl.NULL_ID,null,"NULL","None");
     }
+
+    //Workaround
+    public LocalObjectListItem getNull(){
+        return LocalObjectListItemImpl.getNullValue();
+    }
+
 }

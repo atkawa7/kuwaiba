@@ -304,11 +304,11 @@ public class CommunicationsStub {
         List<LocalObjectListItem> loli = new ArrayList<LocalObjectListItem>();
         //The +1 represents the empty room left for the "null" value
         res = new LocalObjectListItemImpl[remoteList.getList().getEntry().size() + 1];
-        res[0] = new LocalObjectListItemImpl(LocalObjectListItem.NULL_ID,"",java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("NONE"));
+        res[0] = LocalObjectListItemImpl.getNullValue();
         loli.add(res[0]);
         int i = 1;
         for(Entry entry : remoteList.getList().getEntry()){
-            res[i] = new LocalObjectListItemImpl(entry.getKey(),entry.getValue(),entry.getValue());
+            res[i] = new LocalObjectListItemImpl(entry.getKey(),className,entry.getValue(),entry.getValue());
             loli.add(res[i]);
             i++;
         }

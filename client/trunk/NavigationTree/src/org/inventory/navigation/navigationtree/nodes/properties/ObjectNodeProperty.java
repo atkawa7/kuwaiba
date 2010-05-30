@@ -61,7 +61,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
             this.value = _value;
         else
             //If it is a null value, we create a dummy null value from the generic method available in the interface
-            this.value = Lookup.getDefault().lookup(LocalObjectListItem.class).getNullValue();
+            this.value = Lookup.getDefault().lookup(LocalObjectListItem.class).getNull();
         this.list = _list;
         this.node = _node;
         this.getPropertyEditor().addPropertyChangeListener(this);

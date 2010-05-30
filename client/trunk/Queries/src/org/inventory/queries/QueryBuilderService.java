@@ -193,8 +193,11 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
                     continue;
                 }
                 if (component instanceof JComboBox){
-                    values.add(((LocalObjectListItem)((JComboBox)component).getSelectedItem()).getId().toString());
-                    types.add("Long");
+                    LocalObjectListItem item =(LocalObjectListItem)((JComboBox)component).getSelectedItem();
+                    //LocalClassMetadata itemClass = com.getMetaForClass(item.getClassName());
+                    values.add(item.getId().toString());
+                    //types.add(itemClass.getPackageName()+"."+itemClass.getClassName());
+                    types.add(item.getClassName());
                     continue;
                 }
             }
