@@ -16,21 +16,15 @@
  */
 package entity.multiple.companies;
 
-import entity.multiple.GenericObjectList;
 import java.io.Serializable;
 import javax.persistence.Entity;
 
 
 /**
- *
+ * Represents a simple vendor
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Vendor extends GenericObjectList implements Serializable {
-
-    @Override
-    public String toString() {
-        return "entity.multichoice.companies.Vendor[id=" + id + "]";
-    }
+public class Vendor extends EquipmentProvider implements Serializable {
 
 }
