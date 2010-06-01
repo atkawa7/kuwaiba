@@ -19,6 +19,7 @@ import core.annotations.NoCopy;
 import java.io.Serializable;
 
 //Annotations
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Entity;
@@ -27,6 +28,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 /**
@@ -52,6 +55,9 @@ public abstract class RootObject implements Serializable, Cloneable {
     protected Boolean isLocked= false; //Is this object locked read-only?
     @NoCopy
     protected Long parent = null;
+    @NoCopy
+    @Temporal(value=TemporalType.DATE)
+    protected Date creationDate;   //When was the object created?
 
     public RootObject(){}
 
@@ -111,9 +117,7 @@ public abstract class RootObject implements Serializable, Cloneable {
     }
 
     //@Override
-    //TODO: Verificar si efectivamente es necesario
     public boolean equals(RootObject object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof RootObject)) {
             return false;
         }

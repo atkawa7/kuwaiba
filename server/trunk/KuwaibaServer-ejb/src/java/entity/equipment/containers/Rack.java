@@ -13,16 +13,39 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package entity.multiple.types.parts;
+package entity.equipment.containers;
 
+import entity.multiple.companies.EquipmentProvider;
+import entity.multiple.companies.Vendor;
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
- * Represents a connector type, like RJ45, RJ11, FC/PC, etc
+ * Represents a simple rack
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class PortType extends GenericType implements Serializable {
+public class Rack extends GenericContainer implements Serializable {
+    @Column(length=3)
+    protected Integer rackUnits;
+    @ManyToOne
+    protected EquipmentProvider vendor;
 
+    public Integer getRackUnits() {
+        return rackUnits;
+    }
+
+    public void setRackUnits(Integer rackUnits) {
+        this.rackUnits = rackUnits;
+    }
+
+    public EquipmentProvider getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(Vendor vendor) {
+        this.vendor = vendor;
+    }
 }

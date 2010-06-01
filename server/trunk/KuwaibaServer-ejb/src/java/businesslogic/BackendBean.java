@@ -19,7 +19,6 @@ import core.toserialize.ClassInfo;
 import core.toserialize.ObjectList;
 import core.toserialize.RemoteObject;
 import core.toserialize.RemoteObjectLight;
-import core.toserialize.RemoteTreeNode;
 import core.annotations.Administrative;
 import core.annotations.Metadata;
 import core.exceptions.ObjectNotFoundException;
@@ -139,26 +138,6 @@ public class BackendBean implements BackendBeanRemote {
      */
     public Long getDummyRootId(){
         return RootObject.PARENT_ROOT;
-    }
-
-    public RemoteTreeNode getObjectInmediateHierarchy(Long oid, String objectClass) {
-        return null;
-
-/*        if (em != null){
-            String sentence = "SELECT x from "+ objectClass +" x WHERE x.id="+oid.toString();
-            Query query = em.createQuery(sentence);
-            
-            List result = query.getResultList();
-            if (result.size()==0){
-                this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NOSUCHOBJECT")+objectClass+java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_WHICHID")+oid.toString();
-                return null;
-            }else
-                return new RemoteTreeNode(result.iterator().next(),new Object[0]);
-        }
-        else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
-            return null;
-        }*/
     }
 
     public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId) {

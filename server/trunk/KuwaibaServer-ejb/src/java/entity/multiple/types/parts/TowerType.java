@@ -16,7 +16,6 @@
 
 package entity.multiple.types.parts;
 
-import entity.multiple.GenericObjectList;
 import java.io.Serializable;
 import javax.persistence.Entity;
 
@@ -26,5 +25,5 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class TowerType extends GenericObjectList implements Serializable {
+public class TowerType extends GenericType implements Serializable {
 }

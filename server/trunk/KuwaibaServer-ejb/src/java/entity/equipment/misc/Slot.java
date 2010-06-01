@@ -13,16 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package entity.multiple.types.parts;
+package entity.equipment.misc;
 
+import entity.core.RootObject;
 import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- * Represents a connector type, like RJ45, RJ11, FC/PC, etc
+ * Represents a slot where a board can be fit
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class PortType extends GenericType implements Serializable {
+public class Slot extends RootObject implements Serializable{
 
 }

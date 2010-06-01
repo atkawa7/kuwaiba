@@ -35,7 +35,6 @@ public interface BackendBeanRemote {
 
     public EntityManager getEntityManager();
     public Long getDummyRootId();
-    public RemoteTreeNode getObjectInmediateHierarchy(java.lang.Long oid, String objectClass);
     public core.toserialize.RemoteObject getObjectInfo(java.lang.String objectClass, java.lang.Long oid);
     public boolean updateObject(ObjectUpdate obj) throws core.exceptions.ObjectNotFoundException;
     public java.lang.String getError();

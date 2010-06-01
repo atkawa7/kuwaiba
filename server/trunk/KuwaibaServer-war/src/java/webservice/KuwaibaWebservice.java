@@ -17,11 +17,9 @@ package webservice;
 
 import core.toserialize.ClassInfo;
 import core.toserialize.ObjectList;
-import core.toserialize.RemoteTreeNode;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.RemoteObject;
 import core.toserialize.RemoteObjectLight;
-import core.toserialize.RemoteTreeNodeLight;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -31,7 +29,6 @@ import javax.jws.WebService;
 import businesslogic.BackendBeanRemote;
 import core.exceptions.ObjectNotFoundException;
 import core.toserialize.ClassInfoLight;
-import util.MetadataUtils;
 
 /**
  * Represents the main webservice
@@ -41,17 +38,13 @@ import util.MetadataUtils;
 public class KuwaibaWebservice {
     @EJB
     private BackendBeanRemote sbr;
-
-    /*TODO: *Todas las sesiones deberían ver esta misma variable
-            *Hacerlo sincronizado, para que si hay varios hilos(del mismo cliente) que generan
-     *       errores no vaya a sobreescribir
-     */
     /*
      * Contains the last error or notification
+     * TODO: This should be a per-session variable
      */
     private String lastErr ="No error specified";
 
-    /*
+    /**
      * Authenticates the user
      * @param username user login
      * @param password user password
@@ -61,7 +54,7 @@ public class KuwaibaWebservice {
     public boolean createSession(@WebParam(name = "username") String username, @WebParam(name = "password") String password){
         if(username.equalsIgnoreCase("test") && password.equals("test"))
             return true;
-        this.lastErr="Usuario o contraseña incorrecta";
+        this.lastErr="User or password incorrect";
         return false;
     }
 
@@ -72,38 +65,6 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "closeSession")
     public boolean closeSession(){
         return true;
-    }
-
-    @WebMethod(operationName = "getTreeNode")
-    public RemoteTreeNode getTreeNode(@WebParam(name = "oid")Long oid, @WebParam(name = "objectclass")String objectClass){
-        System.out.println("[getTreeNode]: Llamada");
-        Class objClass = null;
-        try{
-            objClass= Class.forName("entity.equipment.applicationlayer." + objectClass);
-        }catch (ClassNotFoundException e){
-            this.lastErr = "La clase especificada no existe";
-            return null;
-        }
-        RemoteTreeNode res = sbr.getObjectInmediateHierarchy(oid, objectClass);
-        if(res == null)
-            this.lastErr = "Error en el backendBean";
-        return res;
-    }
-
-    @WebMethod(operationName = "getTreeNodeLight")
-    public RemoteTreeNodeLight getTreeNodeLight(@WebParam(name = "oid")Long oid, @WebParam(name = "objectclass")String objectClass){
-        System.out.println("[getTreeNodeLight]: Llamada");
-        Class objClass = null;
-        try{
-            objClass= Class.forName("entity.equipment.applicationlayer." + objectClass);
-        }catch (ClassNotFoundException e){
-            this.lastErr = "La clase especificada no existe";
-            return null;
-        }
-        RemoteTreeNode res = sbr.getObjectInmediateHierarchy(oid, objectClass);
-        if(res == null)
-            this.lastErr = "Error en el backendBean";
-        return null;
     }
 
     @WebMethod(operationName = "getObjectChildren")
@@ -141,21 +102,15 @@ public class KuwaibaWebservice {
     }
 
     /**
-     * Fija el lock del objeto (lo ancla o lo libera)
-     * @return Si pudo o no hacerlo
+     * Sets an object's lock
+     * @return Error or success
      */
     @WebMethod(operationName = "setObjectLock")
     public Boolean setObjectLock(@WebParam(name = "oid")Long oid, 
             @WebParam(name = "objectclass")String objectclass,
             @WebParam(name = "value")Boolean value) {
         System.out.println("[setObjectLock]: Llamado oid="+oid+" objectClass="+objectclass);
-        /*Class objClass = null;
-        try{
-            objClass= Class.forName("entity.equipment.applicationlayer." + objectClass);
-        }catch (ClassNotFoundException e){
-            this.lastErr = "La clase especificada no existe";
-            return null;
-        }*/
+
         Boolean res = sbr.setObjectLock(oid, objectclass, value);
         if(!res)
             this.lastErr = "Error en el backendBean";
