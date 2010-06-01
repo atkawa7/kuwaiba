@@ -13,5 +13,5 @@ import javax.persistence.Entity;
  * @author dib
  */
 @Entity
-public class SimpleSwitch extends GenericDataLinkElement implements Serializable {
+public class Switch extends GenericDataLinkElement implements Serializable {
 }

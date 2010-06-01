@@ -12,19 +12,15 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 package util;
 
 import core.annotations.Dummy;
-import entity.core.RootObject;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
 import entity.core.metamodel.PackageMetadata;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
@@ -34,7 +30,7 @@ import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
 
 /**
- *
+ * Provide mesicelaneous methods to manipulate the class hierarchy
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class HierarchyUtils {
@@ -97,7 +93,8 @@ public class HierarchyUtils {
         try{
             pm = (PackageMetadata)query.getSingleResult();
         }catch(NoResultException nre){ // if the packagemetadata has not been create yet, we do
-            pm = new PackageMetadata(entity.getJavaType().getPackage().getName(),"");
+            pm = new PackageMetadata(entity.getJavaType().getPackage().getName(),
+                    entity.getJavaType().getPackage().getName(),"");
             em.persist(pm);
         }
 

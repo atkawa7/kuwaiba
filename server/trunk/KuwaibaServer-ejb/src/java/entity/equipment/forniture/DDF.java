@@ -14,27 +14,18 @@
  *  limitations under the License.
  */
 
-package entity.multiple.people;
+package entity.equipment.forniture;
 
-import entity.multiple.companies.GenericCompany;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 /**
- * Represents indivuals working for others companies provinding support services
+ * Represents a digital distribution frame
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class ExternalSupportStaff extends GenericPerson implements Serializable {
-    @ManyToOne
-    protected GenericCompany company; //The employer
-
-    public GenericCompany getCompany() {
-        return company;
-    }
-
-    public void setCompany(GenericCompany company) {
-        this.company = company;
-    }
+public class DDF extends GenericDistributionFrame implements Serializable {
 }

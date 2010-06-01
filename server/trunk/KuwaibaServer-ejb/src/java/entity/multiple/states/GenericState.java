@@ -14,27 +14,30 @@
  *  limitations under the License.
  */
 
-package entity.multiple.people;
+package entity.multiple.states;
 
-import entity.multiple.companies.GenericCompany;
+import entity.multiple.GenericObjectList;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+
 
 /**
- * Represents indivuals working for others companies provinding support services
+ * Simple state. States are cycled depending on rules, implementing a simple state machine
+ * that's why there is next states defined
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class ExternalSupportStaff extends GenericPerson implements Serializable {
-    @ManyToOne
-    protected GenericCompany company; //The employer
+public abstract class GenericState extends GenericObjectList implements Serializable {
+    protected Long nextState; //Id of the next state. I prefer to handle the relations
+                              //within the same table using plain Longs values rather than a relationship
+                              //to a GenericState
 
-    public GenericCompany getCompany() {
-        return company;
+    public Long getNextState() {
+        return nextState;
     }
 
-    public void setCompany(GenericCompany company) {
-        this.company = company;
+    public void setNextState(Long nextState) {
+        this.nextState = nextState;
     }
+
 }

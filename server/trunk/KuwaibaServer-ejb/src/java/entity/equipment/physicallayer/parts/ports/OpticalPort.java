@@ -14,27 +14,16 @@
  *  limitations under the License.
  */
 
-package entity.multiple.people;
+package entity.equipment.physicallayer.parts.ports;
 
-import entity.multiple.companies.GenericCompany;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 
 /**
- * Represents indivuals working for others companies provinding support services
+ * Represents an optical interface
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class ExternalSupportStaff extends GenericPerson implements Serializable {
-    @ManyToOne
-    protected GenericCompany company; //The employer
+public class OpticalPort extends GenericCommunicationsPort implements Serializable {
 
-    public GenericCompany getCompany() {
-        return company;
-    }
-
-    public void setCompany(GenericCompany company) {
-        this.company = company;
-    }
 }

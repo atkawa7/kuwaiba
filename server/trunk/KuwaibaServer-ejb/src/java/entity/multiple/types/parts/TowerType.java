@@ -14,27 +14,17 @@
  *  limitations under the License.
  */
 
-package entity.multiple.people;
+package entity.multiple.types.parts;
 
-import entity.multiple.companies.GenericCompany;
+import entity.multiple.GenericObjectList;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+
 
 /**
- * Represents indivuals working for others companies provinding support services
+ * Represents the possible tower types, this is, masts, electrical, normals
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class ExternalSupportStaff extends GenericPerson implements Serializable {
-    @ManyToOne
-    protected GenericCompany company; //The employer
-
-    public GenericCompany getCompany() {
-        return company;
-    }
-
-    public void setCompany(GenericCompany company) {
-        this.company = company;
-    }
+public class TowerType extends GenericObjectList implements Serializable {
 }

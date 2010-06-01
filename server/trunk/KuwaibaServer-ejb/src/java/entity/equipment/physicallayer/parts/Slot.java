@@ -9,5 +9,6 @@ import javax.persistence.Entity;
  */
 @Entity
 public class Slot extends GenericPart implements Serializable{
-
+    private boolean vendor; //Reuse the field as private to hide it. Uses a boolean to save diskspace
+    private boolean conditions; //same here
 }

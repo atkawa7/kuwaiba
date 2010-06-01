@@ -12,12 +12,13 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 package entity.location;
 
+import entity.multiple.companies.LocationOwner;
 import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
  * Represents a simple building
@@ -26,6 +27,9 @@ import javax.persistence.Entity;
 @Entity
 public class Building extends GenericLocation implements Serializable {
     protected String address;
+    @ManyToOne
+    protected LocationOwner owner;
+    protected String phoneNumber;
 
     public String getAddress() {
         return address;
@@ -33,5 +37,21 @@ public class Building extends GenericLocation implements Serializable {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public LocationOwner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(LocationOwner owner) {
+        this.owner = owner;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

@@ -12,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 
 package entity.location;
@@ -21,7 +20,8 @@ import entity.multiple.people.Employee;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
+
 
 /**
  * A Warehouse is a place where you store spare parts and new and obsolete equipment
@@ -29,7 +29,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class Warehouse extends GenericLocation implements Serializable{
-    @OneToMany
+    @ManyToMany
     @JoinColumn(name="responsibles_id")
     protected Employee resposibles;
 }

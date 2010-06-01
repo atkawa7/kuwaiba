@@ -12,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 
 package entity.multiple.companies;
@@ -22,7 +21,7 @@ import javax.persistence.Entity;
 
 /**
  * Represents a company that provides equipment. They can be the manufacturers
- * or the resellers, depending on the buying process. Companies providing support
+ * or resellers, depending on the buying process. Companies providing support
  * services for equipment should be included here
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */

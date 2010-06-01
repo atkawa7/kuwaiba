@@ -12,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 
 package entity.qos;
@@ -22,7 +21,7 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- * 
+ * Represents a Service Level Agreement (Operation Level Agreements can use this class as well)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity

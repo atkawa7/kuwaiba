@@ -14,27 +14,17 @@
  *  limitations under the License.
  */
 
-package entity.multiple.people;
+package entity.multiple.companies;
 
-import entity.multiple.companies.GenericCompany;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+
 
 /**
- * Represents indivuals working for others companies provinding support services
+ * Represents the owner of a given location (building, facility, shelter, etc)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class ExternalSupportStaff extends GenericPerson implements Serializable {
-    @ManyToOne
-    protected GenericCompany company; //The employer
+public class LocationOwner extends GenericCompany implements Serializable {
 
-    public GenericCompany getCompany() {
-        return company;
-    }
-
-    public void setCompany(GenericCompany company) {
-        this.company = company;
-    }
 }

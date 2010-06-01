@@ -12,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 
 package entity.multiple.companies;
@@ -30,4 +29,29 @@ public abstract class GenericCompany extends GenericObjectList implements Serial
     protected String corporativeId;
     protected String phoneNumber; //The normal one
     protected String supportPhoneNumber; //This is used for providing support
+
+    public String getCorporativeId() {
+        return corporativeId;
+    }
+
+    public void setCorporativeId(String corporativeId) {
+        this.corporativeId = corporativeId;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getSupportPhoneNumber() {
+        return supportPhoneNumber;
+    }
+
+    public void setSupportPhoneNumber(String supportPhoneNumber) {
+        this.supportPhoneNumber = supportPhoneNumber;
+    }
+
 }

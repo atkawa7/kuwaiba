@@ -1,29 +1,46 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package entity.core;
 
 import entity.multiple.companies.Vendor;
+import entity.multiple.misc.EnvironmentalCondition;
+import entity.multiple.states.OperationalState;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-//import javax.persistence.Table;
-//import javax.persistence.Column;
+import javax.persistence.ManyToOne;
+
 
 
 /**
+ * Represents a configuration item according to ITIL. Descendants are every element
+ * suceptible to be configured (equipment, ports, etc)
  *
- * @author dib
+ * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-//@Table (name="Nombre_de_tabla")
-public abstract class ConfigurationItem extends RootObject implements Serializable  { //El problema con colocarlo a heredar de root object es que no crea una tabla para ella sola, sino que crea una llamada rootobject que usa los campos personalizados
-    //@Column(name="serialNumber")
+public abstract class ConfigurationItem extends RootObject implements Serializable  {
+   
     protected String serialNumber;
-    @OneToOne
+    @ManyToOne
     protected Vendor vendor;
+    @ManyToOne
+    protected EnvironmentalCondition conditions;
+    @ManyToOne
+    protected OperationalState state;
 
     public Vendor getVendor() {
         return vendor;
@@ -39,6 +56,22 @@ public abstract class ConfigurationItem extends RootObject implements Serializab
 
     public void setSerialNumber(String serialNumber){
             this.serialNumber =serialNumber;
+    }
+
+    public EnvironmentalCondition getConditions() {
+        return conditions;
+    }
+
+    public void setConditions(EnvironmentalCondition conditions) {
+        this.conditions = conditions;
+    }
+
+    public OperationalState getState() {
+        return state;
+    }
+
+    public void setState(OperationalState state) {
+        this.state = state;
     }
 
     @Override

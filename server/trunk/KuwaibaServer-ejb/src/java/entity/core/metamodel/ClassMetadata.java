@@ -12,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 package entity.core.metamodel;
 
@@ -67,6 +66,7 @@ public class ClassMetadata implements Serializable {
     private Boolean isDummy=false;      //Is this a dummy class as described in the Dummy annotation?
     private byte[] smallIcon;
     private byte[] icon;
+    private Integer color;              //Color assigned to the instances when displayed
 
     /*
      * Note: In the container hierarchy there must be a dummy class to represent
