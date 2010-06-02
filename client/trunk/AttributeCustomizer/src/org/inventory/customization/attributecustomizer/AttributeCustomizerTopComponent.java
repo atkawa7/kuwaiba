@@ -24,14 +24,14 @@ public final class AttributeCustomizerTopComponent extends TopComponent
 
     private static AttributeCustomizerTopComponent instance;
     /** path to the icon used by the component and its open action */
-    static final String ICON_PATH = "org/inventory/customization/attributecustomizer/res/3d.png";
+    static final String ICON_PATH = "org/inventory/customization/attributecustomizer/res/icon.png";
     private static final String PREFERRED_ID = "AttributeCustomizerTopComponent";
     private CommunicationsStub com = CommunicationsStub.getInstance();
     private ExplorerManager em = new ExplorerManager();
 
     public AttributeCustomizerTopComponent() {
         initComponents();
-        setDisplayName("Editor de Atributos");
+        setDisplayName("Attribute Editor");
         setName(NbBundle.getMessage(AttributeCustomizerTopComponent.class, "CTL_AttributeCustomizerTopComponent"));
         setToolTipText(NbBundle.getMessage(AttributeCustomizerTopComponent.class, "HINT_AttributeCustomizerTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));

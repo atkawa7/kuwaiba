@@ -12,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 package org.inventory.navigation.navigationtree.nodes;
 
@@ -112,8 +111,8 @@ public class ObjectNode extends AbstractNode{
 
                 ObjectNodeProperty property = null;
 
-                if (meta.isMultiple(lam.getName())){
-                    //TODO take this from the local cache
+                if (lam.getType().equals(LocalObjectListItem.class)){
+
                     LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName());
                     LocalObjectListItem val = null;
 

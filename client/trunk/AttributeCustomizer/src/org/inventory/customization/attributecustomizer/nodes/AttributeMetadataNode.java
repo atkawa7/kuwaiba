@@ -44,12 +44,12 @@ public class AttributeMetadataNode extends AbstractNode{
             s.put(ss);
         }
 
-        ss.put(new ClassCustomizerNodeProperty("name",lam.getName(),"Nombre","Nombre del atributo"));
-        ss.put(new ClassCustomizerNodeProperty("type",lam.getType(),"Tipo de dato","Tipo de dato del atributo"));
-        ss.put(new ClassCustomizerNodeProperty("displayName",lam.getDisplayName(),"Etiqueta","Nombre de despliegue en la interfaz"));
+        ss.put(new ClassCustomizerNodeProperty("name",lam.getName(),"Name","Nombre del atributo"));
+        ss.put(new ClassCustomizerNodeProperty("type",lam.getType(),"Type","Tipo de dato del atributo"));
+        ss.put(new ClassCustomizerNodeProperty("displayName",lam.getDisplayName(),"Label","Nombre de despliegue en la interfaz"));
         ss.put(new ClassCustomizerNodeProperty("isVisible",lam.getIsVisible(),"Visible","Se debe mostrar en la interfaz?"));
-        ss.put(new ClassCustomizerNodeProperty("isAdministrative",lam.getIsAdministrative(),"Administrativo","Es un atributo administrativo?"));
-        ss.put(new ClassCustomizerNodeProperty("description",lam.getDescription(),"Descripción","Descripción de atributo"));
+        ss.put(new ClassCustomizerNodeProperty("isAdministrative",lam.getIsAdministrative(),"Administrative","Es un atributo administrativo?"));
+        ss.put(new ClassCustomizerNodeProperty("description",lam.getDescription(),"Description","Descripción de atributo"));
         return s;
     }
 }
