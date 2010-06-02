@@ -8,5 +8,5 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class GenericCommunicationsPort extends GenericPort implements Serializable {
+public abstract class GenericCommunicationsPort extends GenericPort implements Serializable {
 }

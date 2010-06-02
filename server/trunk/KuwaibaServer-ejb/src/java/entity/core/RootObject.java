@@ -101,6 +101,15 @@ public abstract class RootObject implements Serializable, Cloneable {
         return hash;
     }
 
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

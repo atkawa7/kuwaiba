@@ -609,7 +609,8 @@ public class BackendBean implements BackendBeanRemote {
                     predicate = (predicate == null)?cb.equal(entity.get(paramNames[i]),mappedValues[i]):
                         cb.and(cb.equal(entity.get(paramNames[i]),mappedValues[i]),predicate);
             }
-            query.where(predicate);
+            if (predicate != null)
+                query.where(predicate);
             List<Object> result = em.createQuery(query).getResultList();
             RemoteObjectLight[] res = new RemoteObjectLight[result.size()];
 

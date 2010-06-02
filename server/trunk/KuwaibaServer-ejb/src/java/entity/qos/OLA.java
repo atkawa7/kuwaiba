@@ -14,32 +14,15 @@
  *  limitations under the License.
  */
 
-package entity.location;
+package entity.qos;
 
-import entity.multiple.people.Employee;
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-
 
 /**
- * A Warehouse is a place where you store spare parts and new and obsolete equipment
+ * Reoresents an Operation Level Agreement
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Warehouse extends GenericLocation implements Serializable{
-    @ManyToMany
-    @JoinColumn(name="responsibles_id")
-    protected List<Employee> resposibles;
-
-    public List<Employee> getResposibles() {
-        return resposibles;
-    }
-
-    public void setResposibles(List<Employee> resposibles) {
-        this.resposibles = resposibles;
-    }
-    
+public class OLA extends SLA implements Serializable {
 }

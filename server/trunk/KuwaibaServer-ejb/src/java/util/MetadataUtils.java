@@ -17,6 +17,7 @@
 package util;
 
 import core.toserialize.ObjectList;
+import entity.core.RootObject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,16 +37,18 @@ import javax.persistence.EntityManager;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class MetadataUtils {
-     /*
-     * TODO: Why the call to isPrivate or isProtected didn't work?
+    /**
+     * Retrieves recursively through the class hierarchy the <b>protected</b> attributes of a given class
+     * @param aClass The class to be tested
+     * @param attributesSoFar initially an empty list which will be used by the recursive algorythm to put the attributes found
+     * @return A list with the protected attributes
      */
     public static List<Field> getAllAttributes(Class<?> aClass, List<Field> attributesSoFar){
         for (Field f : aClass.getDeclaredFields())
-            if(!(Modifier.toString(f.getModifiers()).startsWith("private") ||
-                    Modifier.toString(f.getModifiers()).startsWith("protected transient")))
+            if (Modifier.isProtected(f.getModifiers()) && !Modifier.isTransient(f.getModifiers()))
                 attributesSoFar.add(f);
 
-        if (aClass.getSuperclass() != null)
+        if (aClass != RootObject.class && aClass.getSuperclass() != null) //At least for this application
             getAllAttributes(aClass.getSuperclass(), attributesSoFar);
         return attributesSoFar;
     }

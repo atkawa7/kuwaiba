@@ -21,7 +21,7 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- * Represents a Service Level Agreement (Operation Level Agreements can use this class as well)
+ * Represents a Service Level Agreement
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity

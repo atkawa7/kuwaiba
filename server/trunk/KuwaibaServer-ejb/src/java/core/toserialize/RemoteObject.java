@@ -12,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 package core.toserialize;
 
@@ -27,18 +26,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import util.MetadataUtils;
 
 /**
- * Esta clase representa un objeto extraído de la base de datos, es lo que se
+ * Instances of this class are proxies that represents the entities in the database
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-@XmlAccessorType(XmlAccessType.FIELD) //Esta anotación le dice al serializador que incluya TODOS
-                                      //los atributos sin importar su acceso (public, private, etc)
-                                      //Por defecto, él coge sólo los public
+@XmlAccessorType(XmlAccessType.FIELD) //This annotation tell the serializerto include all fiels
+                                      //no matter its modifier. Default takes only public ones
 public class RemoteObject extends RemoteObjectLight {
-    private String[] attributes; //Aunque esta info se encuentra en los meta de la
-                                 //clase, pero no sabemos si la saca en desorden de la bd
-                                 //así que mejor nos curamos y trasteamos con los nombres también
+    private String[] attributes; //This information is already in the meta, but we don't know
+                                 //if its sorted correctly there, so we take it too here
     private String[] values;
-    //La información de types ya se encuentra en el meta de la clase
+
 
     public RemoteObject(){}
 
