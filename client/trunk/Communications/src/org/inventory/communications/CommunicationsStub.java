@@ -179,6 +179,8 @@ public class CommunicationsStub {
      * @return The error string
      */
     public String getError() {
+        if (error == null)
+            error = "No network connection";
         return error;
     }
 

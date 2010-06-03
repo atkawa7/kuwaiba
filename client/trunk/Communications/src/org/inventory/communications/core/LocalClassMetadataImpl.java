@@ -1,25 +1,31 @@
+/*
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.inventory.communications.core;
 
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.webservice.ClassInfo;
 
 /**
- * Representa la información meta asociada a una clase para ser usada por los componentes locales
+ * It's a proxy class, whose instances represent the metadata information associated to a class
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         implements LocalClassMetadata{
 
-    private String [] attributeNames; //En algún momento pensé que el displayName
-                                      //de los atributos se podía fijar de una vez en el
-                                      //RemoteObject que se devolvía, pero lo deseché
-                                      //debido a que igual el meta contiene la información
-                                      //de cuáles atributos se muestran, cuáles son administrativos, etc
-                                      //definitivamente lo más ordenado es dejar eso en el meta
+    private String [] attributeNames; 
     private String [] attributeTypes;
     private String [] attributeDisplayNames;
     private Boolean [] attributesIsVisible;
@@ -29,6 +35,7 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
 
     public LocalClassMetadataImpl(ClassInfo cm){
         super(cm.getId(),cm.getClassName(),cm.getPackage());
+        this.isAbstract = cm.isIsAbstract();
         this.attributeNames = cm.getAttributeNames().toArray(new String[0]);
         this.attributeTypes = cm.getAttributeTypes().toArray(new String[0]);
         this.attributeDisplayNames = cm.getAttributeDisplayNames().toArray(new String[0]);

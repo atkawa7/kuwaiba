@@ -1,10 +1,10 @@
-package org.inventory.customization.attributecustomizer.nodes.reflection;
+package org.inventory.customization.attributecustomizer.nodes;
 
 import java.lang.reflect.InvocationTargetException;
 import org.openide.nodes.PropertySupport;
 
 /**
- * Representa cada propiedad asociada al metadata de una clase
+ * Property associate to each attribute
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class ClassCustomizerNodeProperty extends PropertySupport.ReadWrite{
@@ -23,5 +23,13 @@ public class ClassCustomizerNodeProperty extends PropertySupport.ReadWrite{
     @Override
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         //this.lcm = t;
+    }
+
+    @Override
+    public boolean canWrite(){
+        if (getName().equals("name") || getName().equals("type"))
+            return false;
+        else
+            return true;
     }
 }

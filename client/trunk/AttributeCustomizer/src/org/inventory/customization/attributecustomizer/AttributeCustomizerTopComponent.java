@@ -1,10 +1,26 @@
+/*
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.inventory.customization.attributecustomizer;
 
 import org.inventory.customization.attributecustomizer.nodes.ClassMetadataChildren;
 import java.awt.BorderLayout;
 import java.util.logging.Logger;
-import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
+import org.inventory.core.services.interfaces.LocalClassMetadataLight;
+import org.inventory.core.services.interfaces.NotificationUtil;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -13,6 +29,7 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.TreeTableView;
 import org.openide.nodes.AbstractNode;
+import org.openide.util.Lookup;
 
 /**
  * This component is used to cutomiza the way the attributes are shown in the interface
@@ -26,12 +43,13 @@ public final class AttributeCustomizerTopComponent extends TopComponent
     /** path to the icon used by the component and its open action */
     static final String ICON_PATH = "org/inventory/customization/attributecustomizer/res/icon.png";
     private static final String PREFERRED_ID = "AttributeCustomizerTopComponent";
-    private CommunicationsStub com = CommunicationsStub.getInstance();
+    
     private ExplorerManager em = new ExplorerManager();
+    private AttributeCustomizerService acs;
+    private NotificationUtil nu;
 
     public AttributeCustomizerTopComponent() {
         initComponents();
-        setDisplayName("Attribute Editor");
         setName(NbBundle.getMessage(AttributeCustomizerTopComponent.class, "CTL_AttributeCustomizerTopComponent"));
         setToolTipText(NbBundle.getMessage(AttributeCustomizerTopComponent.class, "HINT_AttributeCustomizerTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
@@ -96,13 +114,15 @@ public final class AttributeCustomizerTopComponent extends TopComponent
     }// </editor-fold>//GEN-END:initComponents
 
     private void initCustomComponents() {
-        LocalClassMetadata[] allMeta = com.getAllMeta();
+        acs = new AttributeCustomizerService(this);
+        LocalClassMetadataLight[] allMeta = acs.getInstanceableMeta();
 
         em.setRootContext(new AbstractNode(new ClassMetadataChildren(allMeta)));
 
         tblClassCustomizerMain = new TreeTableView();
         tblClassCustomizerMain.setRootVisible(false);
 
+        if (allMeta.length !=0)
         tblClassCustomizerMain.setProperties(em.getRootContext().getChildren().
                 getNodes()[0].getChildren().getNodes()[0].getPropertySets()[0].
                 getProperties());
@@ -155,7 +175,6 @@ public final class AttributeCustomizerTopComponent extends TopComponent
 
     @Override
     public void componentOpened() {
-        // TODO add custom code on component opening
     }
 
     @Override
@@ -190,5 +209,11 @@ public final class AttributeCustomizerTopComponent extends TopComponent
 
     public ExplorerManager getExplorerManager() {
         return em;
+    }
+
+    public NotificationUtil getNotifier(){
+        if (nu == null)
+            nu = Lookup.getDefault().lookup(NotificationUtil.class);
+        return nu;
     }
 }
