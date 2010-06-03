@@ -323,4 +323,26 @@ public class KuwaibaWebservice {
             this.lastErr = sbr.getError();
         return res;
     }
+
+    /**
+     * Sets the value of a property associated to an attribute. So far there are only
+     * 4 possible properties:
+     * -displayName
+     * -isVisible
+     * -isAdministrative
+     * -description
+     * @param classid The id of the class associated to the attribute
+     * @param attributeName The name of the attribute
+     * @param propertyName The name of the property
+     * @param propertyValue The value of the property
+     * @return Success or failure
+     */
+    @WebMethod(operationName = "setAttributePropertyValue")
+    public Boolean setAttributePropertyValue(@WebParam(name = "classId")
+    Long classId, @WebParam(name = "attributeName")
+    String attributeName, @WebParam(name = "propertyName")
+    String propertyName, @WebParam(name = "propertyValue")
+    String propertyValue) {
+        return sbr.setAttributePropertyValue(classId, attributeName, propertyName, propertyValue);
+    }
 }

@@ -27,6 +27,7 @@ import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectUpdate;
 import entity.core.DummyRoot;
 import entity.core.RootObject;
+import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
 import entity.location.Country;
 import entity.location.StateObject;
@@ -57,9 +58,9 @@ import util.MetadataUtils;
  */
 @Stateful
 public class BackendBean implements BackendBeanRemote {
-    //En una aplicación J2EE el EM se inserta automáticamente, para eso es la anotación
-    //y no es necesario instanciarlo, porque el container lo maneja, sin embargo en una aplicación
-    //J2SE o que use un contenedor no J2EE como Tomcat o Jetty, toca hacerlo manualmente, probablemente con un EM Factory
+    //We use cointainer managed persistance, which means that we don't handle the
+    //access to the database directly, but we use a persistemce unit set by the
+    //application server. If we'd like to do it manually, er show use a EntityManagerFactory
     @PersistenceContext
     private EntityManager em;
     private String error;
@@ -627,7 +628,41 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
-    public EntityManager getEntityManager(){
-        return em;
+    public Boolean setAttributePropertyValue(Long classId, String attributeName, String propertyName, String propertyValue) {
+        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_SETATTRIBUTEPROPERTYVALUE"));
+        if (em != null){
+            ClassMetadata myClass = em.find(ClassMetadata.class, classId);
+            if (myClass == null){
+                error = "Class with Id "+classId+" not found";
+                return false;
+            }
+
+            for (AttributeMetadata att : myClass.getAttributes())
+                if(att.getName().equals(attributeName)){
+                    if (propertyName.equals("displayName"))
+                        att.setDisplayName(propertyValue);
+                    else
+                        if (propertyName.equals("description"))
+                            att.setDescription(propertyValue);
+                        else
+                            if (propertyName.equals("isVisible"))
+                                att.setIsVisible(Boolean.valueOf(propertyValue));
+                            else
+                                if (propertyName.equals("isAdministrative"))
+                                    att.setIsAdministrative(Boolean.valueOf(propertyValue));
+                                else{
+                                    error = "Property "+propertyName+" not supported";
+                                    return false;
+                                }
+                    em.merge(att);
+                    return true;
+                }
+            error = "Attribute "+attributeName+" in class with id "+classId+" not found";
+            return false;
+        }
+        else {
+            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            return false;
+        }
     }
 }
