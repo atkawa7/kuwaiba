@@ -12,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 package entity.equipment.networklayer;
 
@@ -21,10 +20,18 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- *
- * @author dib
+ * This class is the root for all layer 3 elements
+ * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
 public abstract class GenericNetworkElement extends ConfigurationItem implements Serializable {
+    protected String ipAddress;
 
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
 }

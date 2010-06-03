@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package core.toserialize;
 
 import entity.core.metamodel.AttributeMetadata;
@@ -15,12 +30,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ClassInfo extends ClassInfoLight{
     
-    private String [] attributeNames; //En algún momento pensé que el displayName
-                                      //de los atributos se podía fijar de una vez en el
-                                      //RemoteObject que se devolvía, pero lo deseché
-                                      //debido a que igual el meta contiene la información
-                                      //de cuáles atributos se muestran, cuáles son administrativos, etc
-                                      //definitivamente lo más ordenado es dejar eso en el meta
+    private String [] attributeNames; 
     private String [] attributeTypes;
     private String [] attributeDisplayNames;
     private Boolean [] attributesIsVisible;
@@ -31,7 +41,7 @@ public class ClassInfo extends ClassInfoLight{
     public ClassInfo(){}
     public ClassInfo(ClassMetadata myClass){
         super(myClass.getId(),myClass.getIsAbstract(),myClass.getName(),myClass.getPackageInfo().getName());
-        
+        this.isAbstract = myClass.getIsAbstract();
         List<AttributeMetadata> ar = myClass.getAttributes();
         this.attributeNames = new String[ar.size()];
         this.attributeTypes = new String[this.attributeNames.length];
