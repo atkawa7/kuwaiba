@@ -12,15 +12,18 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 package org.inventory.core.services.interfaces;
 
 /**
- *
+ * Proxy class to represent a class attribute
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public interface LocalAttributeMetadata {
+    public Long getId();
+
+    public void setId(Long id);
+
     public String getDescription();
 
     public void setDescription(String description);

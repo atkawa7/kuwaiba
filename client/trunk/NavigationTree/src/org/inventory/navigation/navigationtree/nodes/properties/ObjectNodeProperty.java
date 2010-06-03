@@ -75,7 +75,6 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         try{
             LocalObject update = Lookup.getDefault().lookup(LocalObject.class);
-            value = t;
 
             if (t instanceof LocalObjectListItem)
                 update.setLocalObject(node.getObject().getClassName(),
@@ -86,7 +85,8 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
             update.setOid(node.getObject().getOid());
             if(!CommunicationsStub.getInstance().saveObject(update))
                 System.out.println("[saveObject]: Error "+ CommunicationsStub.getInstance().getError());
-            
+            else
+                value = t;
         }catch(Exception e){
             e.printStackTrace();
         }

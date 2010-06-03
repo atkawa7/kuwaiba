@@ -12,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 package org.inventory.communications.core;
 
@@ -29,6 +28,7 @@ import org.inventory.core.services.interfaces.LocalObjectListItem;
 public class LocalAttributeMetadataImpl
         implements LocalAttributeMetadata{
     private String name;
+    private Long id;
     private Class type;
     private String displayName;
     private Boolean isVisible;
@@ -137,5 +137,13 @@ public class LocalAttributeMetadataImpl
      */
     public String getListAttributeClassName(){
         return listAttributeClassName;
+    }
+
+    public Long getId(){
+        return id;
+    }
+
+    public void setId(Long _id){
+        this.id =_id;
     }
 }

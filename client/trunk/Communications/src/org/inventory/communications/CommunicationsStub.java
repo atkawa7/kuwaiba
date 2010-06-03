@@ -523,4 +523,9 @@ public class CommunicationsStub {
             }
         }
     }
+
+    public boolean setAttributePropertyValue(Long classId, String attributeName,
+            String propertyName, String propertyType) {
+        return port.setAttributePropertyValue(classId, attributeName, propertyName, propertyType);
+    }
 }
