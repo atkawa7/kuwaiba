@@ -82,36 +82,41 @@ public final class ClassManagerTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        txtIcon = new javax.swing.JTextField();
-        txtSmallIcon = new javax.swing.JTextField();
+        jToolBar1 = new javax.swing.JToolBar();
         btnSave = new javax.swing.JButton();
-        lblIcon = new javax.swing.JLabel();
-        cmbClass = new javax.swing.JComboBox();
-        lblSmallIcon = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel2 = new javax.swing.JPanel();
         txtDisplayName = new javax.swing.JTextField();
         lblDisplayName = new javax.swing.JLabel();
+        cmbClass = new javax.swing.JComboBox();
+        lblSmallIcon = new javax.swing.JLabel();
+        btnSmallIconChooser = new javax.swing.JButton();
         lblClass = new javax.swing.JLabel();
         btnIconChooser = new javax.swing.JButton();
-        btnSmallIconChooser = new javax.swing.JButton();
-        lblDescription = new javax.swing.JLabel();
+        txtIcon = new javax.swing.JTextField();
+        txtSmallIcon = new javax.swing.JTextField();
         txtDescription = new javax.swing.JTextField();
+        lblIcon = new javax.swing.JLabel();
+        lblDescription = new javax.swing.JLabel();
 
-        txtIcon.setText(org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.txtIcon.text")); // NOI18N
-        txtIcon.setEnabled(false);
+        setLayout(new java.awt.BorderLayout());
 
-        txtSmallIcon.setText(org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.txtSmallIcon.text")); // NOI18N
-        txtSmallIcon.setEnabled(false);
+        jToolBar1.setRollover(true);
 
+        btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/classmanager/res/save.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.btnSave.text")); // NOI18N
+        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.btnSave.toolTipText")); // NOI18N
+        btnSave.setFocusable(false);
+        btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSaveActionPerformed(evt);
             }
         });
+        jToolBar1.add(btnSave);
 
-        org.openide.awt.Mnemonics.setLocalizedText(lblIcon, org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.lblIcon.text")); // NOI18N
-
-        org.openide.awt.Mnemonics.setLocalizedText(lblSmallIcon, org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.lblSmallIcon.text")); // NOI18N
+        add(jToolBar1, java.awt.BorderLayout.PAGE_START);
 
         txtDisplayName.setText(org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.txtDisplayName.text")); // NOI18N
         txtDisplayName.addActionListener(new java.awt.event.ActionListener() {
@@ -122,6 +127,15 @@ public final class ClassManagerTopComponent extends TopComponent {
 
         org.openide.awt.Mnemonics.setLocalizedText(lblDisplayName, org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.lblDisplayName.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(lblSmallIcon, org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.lblSmallIcon.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(btnSmallIconChooser, org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.btnSmallIconChooser.text")); // NOI18N
+        btnSmallIconChooser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSmallIconChooserActionPerformed(evt);
+            }
+        });
+
         org.openide.awt.Mnemonics.setLocalizedText(lblClass, org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.lblClass.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(btnIconChooser, org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.btnIconChooser.text")); // NOI18N
@@ -131,79 +145,78 @@ public final class ClassManagerTopComponent extends TopComponent {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(btnSmallIconChooser, org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.btnSmallIconChooser.text")); // NOI18N
-        btnSmallIconChooser.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSmallIconChooserActionPerformed(evt);
-            }
-        });
+        txtIcon.setText(org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.txtIcon.text")); // NOI18N
+        txtIcon.setEnabled(false);
 
-        org.openide.awt.Mnemonics.setLocalizedText(lblDescription, org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.lblDescription.text")); // NOI18N
+        txtSmallIcon.setText(org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.txtSmallIcon.text")); // NOI18N
+        txtSmallIcon.setEnabled(false);
 
         txtDescription.setText(org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.txtDescription.text")); // NOI18N
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        org.openide.awt.Mnemonics.setLocalizedText(lblIcon, org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.lblIcon.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(lblDescription, org.openide.util.NbBundle.getMessage(ClassManagerTopComponent.class, "ClassManagerTopComponent.lblDescription.text")); // NOI18N
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblClass)
                     .addComponent(lblDisplayName)
                     .addComponent(lblDescription)
                     .addComponent(lblSmallIcon)
                     .addComponent(lblIcon))
                 .addGap(34, 34, 34)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(txtIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnIconChooser))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtSmallIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(txtSmallIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSmallIconChooser))
-                    .addComponent(txtDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
-                    .addComponent(txtDisplayName, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
-                    .addComponent(cmbClass, 0, 271, Short.MAX_VALUE))
-                .addGap(33, 33, 33))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(186, 186, 186)
-                .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(191, Short.MAX_VALUE))
+                    .addComponent(txtDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
+                    .addComponent(txtDisplayName, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
+                    .addComponent(cmbClass, 0, 434, Short.MAX_VALUE))
+                .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblClass)
                     .addComponent(cmbClass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblDisplayName)
                     .addComponent(txtDisplayName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblDescription)
                     .addComponent(txtDescription, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(lblSmallIcon)
                         .addComponent(txtSmallIcon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(btnSmallIconChooser))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txtIcon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(lblIcon))
                     .addComponent(btnIconChooser))
-                .addGap(18, 18, 18)
-                .addComponent(btnSave)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(170, Short.MAX_VALUE))
         );
+
+        jScrollPane1.setViewportView(jPanel2);
+
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtDisplayNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDisplayNameActionPerformed
@@ -257,8 +270,11 @@ public final class ClassManagerTopComponent extends TopComponent {
     }//GEN-LAST:event_btnIconChooserActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        cms.saveProperties((LocalClassMetadataLight)cmbClass.getSelectedItem(),
-                txtDisplayName.getText().trim(),txtDescription.getText().trim(),smallIcon,icon);
+        if(cms.saveProperties((LocalClassMetadataLight)cmbClass.getSelectedItem(),
+                txtDisplayName.getText().trim(),txtDescription.getText().trim(),smallIcon,icon))
+            getNotifier().showSimplePopup("Class Properties Modification", NotificationUtil.INFO, "Operation completed successfully");
+        else
+            getNotifier().showSimplePopup("Class Properties Modification", NotificationUtil.ERROR, "Operation completed with errors. Check log for details");
     }//GEN-LAST:event_btnSaveActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -266,6 +282,9 @@ public final class ClassManagerTopComponent extends TopComponent {
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnSmallIconChooser;
     private javax.swing.JComboBox cmbClass;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JToolBar jToolBar1;
     private javax.swing.JLabel lblClass;
     private javax.swing.JLabel lblDescription;
     private javax.swing.JLabel lblDisplayName;

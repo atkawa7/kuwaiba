@@ -23,7 +23,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 import javax.imageio.ImageIO;
+import org.inventory.core.services.interfaces.LocalObjectListItem;
 
 /**
  * Class with utility methods
@@ -48,6 +52,72 @@ public class Utils {
             return bas.toByteArray();
         } catch (IOException ex) {
             return null;
+        }
+    }
+
+        /*
+     * Finds the real type for a given type provided as a string
+     * Possible types:
+     * -A string --> String
+     * -A boolean --> Boolean
+     * -A number --> Float, Integer, Long
+     * -A Date --> Date, Time, Timestamp(?) --> Check this possibilities in the server
+     * -A reference to any other object --> LocalObjectListItem
+     *
+     * If you're porting the client to other language you should map the types
+     * as supported by such language.
+     */
+    public static Class getRealType(String typeAsString){
+        if (typeAsString.equals("String"))
+            return String.class;
+        if (typeAsString.equals("Integer"))
+            return Integer.class;
+        if (typeAsString.equals("Float"))
+            return Float.class;
+        if (typeAsString.equals("Long"))
+            return Long.class;
+        if (typeAsString.equals("Date"))
+            return Date.class;
+        if (typeAsString.equals("Time"))
+            return Time.class;
+        if (typeAsString.equals("Timestamp"))
+            return Timestamp.class;
+        if (typeAsString.equals("Boolean"))
+            return Boolean.class;
+        else
+            return LocalObjectListItem.class;
+    }
+
+    public static Object getRealValue (String type, String valueAsString){
+        if (valueAsString == null)
+            return null;
+        try{
+            if (type.equals("Boolean"))
+                return Boolean.valueOf(valueAsString);
+
+            if (type.equals("String"))
+                return valueAsString;
+
+            if (type.equals("Integer"))
+                return Integer.valueOf(valueAsString);
+
+            if (type.equals("Float"))
+                return Float.valueOf(valueAsString);
+
+            if (type.equals("Long"))
+                return Long.valueOf(valueAsString);
+
+            if (type.equals("Date"))
+                return new Date(Long.valueOf(valueAsString));
+            if (type.equals("Timestamp"))
+                return Timestamp.valueOf(valueAsString);
+            if (type.equals("Time"))
+                return Time.valueOf(valueAsString);
+            //In any other case we treat it as a LocalObjectListItem, returning its id
+            return Long.valueOf(valueAsString);
+
+        }catch(Exception e){
+            return valueAsString;
         }
     }
 }

@@ -82,17 +82,19 @@ public class ClassManagerService extends FileFilter implements ActionListener{
         return "Image Files";
     }
 
-    void saveProperties(LocalClassMetadataLight modifiedClass, String displayName,
+    public boolean saveProperties(LocalClassMetadataLight modifiedClass, String displayName,
             String description, byte[] smallIcon, byte[] icon) {
+        boolean res =true;
         CommunicationsStub com = CommunicationsStub.getInstance();
         if (!displayName.equals(""))
-            com.setClassPlainAttribute(modifiedClass.getId(), "displayName", displayName);
+            res = res&&com.setClassPlainAttribute(modifiedClass.getId(), "displayName", displayName);
         if (!description.equals(""))
-            com.setClassPlainAttribute(modifiedClass.getId(), "description", description);
+            res = res&&com.setClassPlainAttribute(modifiedClass.getId(), "description", description);
         if (smallIcon != null)
-            com.setClassIcon(modifiedClass.getId(), "smallIcon", smallIcon);
+            res = res&&com.setClassIcon(modifiedClass.getId(), "smallIcon", smallIcon);
         if (icon != null)
-            com.setClassIcon(modifiedClass.getId(), "icon", icon);
+            res = res&&com.setClassIcon(modifiedClass.getId(), "icon", icon);
+        return res;
     }
 
     List<LocalClassMetadataLight> getAllMeta() {

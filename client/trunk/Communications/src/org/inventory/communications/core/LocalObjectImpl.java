@@ -12,13 +12,13 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 package org.inventory.communications.core;
 
 import java.util.HashMap;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalObject;
+import org.inventory.core.services.utils.Utils;
 import org.inventory.webservice.RemoteObject;
 
 /**
@@ -43,8 +43,12 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
         this.attributes = dict;
     }
 
-    //lcmdt puede ser nulo, en los casos en los que no se crea un objeto para
-    //desplegarlo, sino para un ObjectUpdate, en cuyo caso, la meta no es necesaria
+    /**
+     * This constructor takes a semideserialized remote object and converts it to a proxy local object
+     * using the metadata
+     * @param ro
+     * @param lcmdt
+     */
     public LocalObjectImpl(RemoteObject ro, LocalClassMetadata lcmdt){
         this.className = ro.getClassName();
         this.myMetadata = lcmdt;
@@ -53,28 +57,8 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
         String[] atts = ro.getAttributes().toArray(new String[0]);
         String[] vals = ro.getValues().toArray(new String[0]);
 
-        //Por alguna razón que desconozco un ciclo (atts.iterator.next()) nunca avanzaba y la vaina se quedaba en eun ciclo infinito
-        for (int i =0; i<atts.length; i++){
-            Object value;
-            try{
-                if (vals[i] == null) value = null;
-                else
-                    if (this.myMetadata.getTypeForAttribute(atts[i]).equals("String"))
-                        value = vals[i];
-                    else{
-                        if(this.myMetadata.isMultiple(atts[i]))
-                            value = Long.valueOf(vals[i]);
-                        else
-                            value = Class.forName("java.lang."+this.getObjectMetadata().
-                                getTypeForAttribute(atts[i])).getMethod("valueOf", String.class).
-                                invoke(null, vals[i]);
-                    }
-            }catch(Exception e){
-                value = vals[i];
-                e.printStackTrace();
-            }
-            attributes.put(atts[i], value);
-        }
+        for (int i =0; i<atts.length; i++)
+            attributes.put(atts[i], Utils.getRealValue(lcmdt.getTypeForAttribute(atts[i]), vals[i]));
     }
 
     public LocalClassMetadata getObjectMetadata() {

@@ -20,6 +20,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.core.services.utils.Utils;
 
 /**
  * Represents the metadata associated to a single attribute
@@ -41,7 +42,7 @@ public class LocalAttributeMetadataImpl
     public LocalAttributeMetadataImpl(String _name, String _type, String _displayName,
             Boolean _isVisible, Boolean _isAdministrative, String _description){
         this.name = _name;
-        this.type = getRealType(_type);
+        this.type = Utils.getRealType(_type);
         this.displayName = _displayName;
         this.isVisible = _isVisible;
         this.isAdministrative = _isAdministrative;
@@ -97,39 +98,6 @@ public class LocalAttributeMetadataImpl
 
     public void setType(Class type) {
         this.type = type;
-    }
-
-    /*
-     * Finds the real type for a given type provided as a string
-     * Possible types:
-     * -A string --> String
-     * -A boolean --> Boolean
-     * -A number --> Float, Integer, Long
-     * -A Date --> Date, Time, Timestamp(?) --> Check this possibilities in the server
-     * -A reference to any other object --> LocalObjectListItem
-     *
-     * If you're porting the client to other language you should map the types
-     * as supported by such language.
-     */
-    public static Class getRealType(String typeAsString){
-        if (typeAsString.equals("String"))
-            return String.class;
-        if (typeAsString.equals("Integer"))
-            return Integer.class;
-        if (typeAsString.equals("Float"))
-            return Float.class;
-        if (typeAsString.equals("Long"))
-            return Long.class;
-        if (typeAsString.equals("Date"))
-            return Date.class;
-        if (typeAsString.equals("Time"))
-            return Time.class;
-        if (typeAsString.equals("Timestamp"))
-            return Timestamp.class;
-        if (typeAsString.equals("Boolean"))
-            return Boolean.class;
-        else
-            return LocalObjectListItem.class;
     }
 
     /*
