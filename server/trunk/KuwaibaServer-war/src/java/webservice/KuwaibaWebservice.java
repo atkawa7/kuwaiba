@@ -345,4 +345,34 @@ public class KuwaibaWebservice {
     String propertyValue) {
         return sbr.setAttributePropertyValue(classId, attributeName, propertyName, propertyValue);
     }
+
+    /**
+     * Sets the string attributes in a class meta data (by now only the display name and description)
+     * @param classId Class to be modified
+     * @param attributeName attribute to be modified
+     * @param attributeValue value for such attribute
+     * @return success or failure
+     */
+    @WebMethod(operationName = "setClassPlainAttribute")
+    public Boolean setClassPlainAttribute(@WebParam(name = "classId")
+    Long classId, @WebParam(name = "attributeName")
+    String attributeName, @WebParam(name = "attributeValue")
+    String attributeValue) {
+        return sbr.setClassPlainAttribute(classId,attributeName,attributeValue);
+    }
+
+    /**
+     * Sets the image (icons) attributes in a class meta data (smallIcon and Icon)
+     * @param classId Class to be modified
+     * @param attributeName attribute to be modified
+     * @param attributeValue value for such attribute
+     * @return success or failure
+     */
+    @WebMethod(operationName = "setClassIcon")
+    public Boolean setClassIcon(@WebParam(name = "classId")
+    Long classId, @WebParam(name = "iconAttribute")
+    String iconAttribute, @WebParam(name = "iconImage")
+    byte[] iconImage) {
+        return sbr.setClassIcon(classId, iconAttribute, iconImage);
+    }
 }

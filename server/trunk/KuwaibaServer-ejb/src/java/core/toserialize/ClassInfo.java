@@ -35,13 +35,15 @@ public class ClassInfo extends ClassInfoLight{
     private String [] attributeDisplayNames;
     private Boolean [] attributesIsVisible;
     private Boolean [] attributesIsAdministrative;
-    private Boolean [] attributesIsMultiple; //Si el attributo es una relación o una enumeración
+    private Boolean [] attributesIsMultiple; //if the attribute is a list
     private String [] attributesDescription;
+    protected byte[] icon;
 
     public ClassInfo(){}
     public ClassInfo(ClassMetadata myClass){
-        super(myClass.getId(),myClass.getIsAbstract(),myClass.getName(),myClass.getPackageInfo().getName());
+        super(myClass.getId(),myClass.getIsAbstract(),myClass.getSmallIcon(),myClass.getName(),myClass.getPackageInfo().getName());
         this.isAbstract = myClass.getIsAbstract();
+        this.icon = myClass.getIcon();
         List<AttributeMetadata> ar = myClass.getAttributes();
         this.attributeNames = new String[ar.size()];
         this.attributeTypes = new String[this.attributeNames.length];
@@ -121,5 +123,13 @@ public class ClassInfo extends ClassInfoLight{
 
     public void setAttributesIsMultiple(Boolean[] attributesIsMultiple) {
         this.attributesIsMultiple = attributesIsMultiple;
+    }
+
+    public byte[] getIcon() {
+        return icon;
+    }
+
+    public void setIcon(byte[] icon) {
+        this.icon = icon;
     }
 }

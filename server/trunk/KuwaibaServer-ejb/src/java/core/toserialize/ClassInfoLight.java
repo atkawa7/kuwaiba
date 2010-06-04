@@ -30,11 +30,13 @@ public class ClassInfoLight {
     protected Boolean isAbstract;
     protected String className;
     protected String _package;
+    protected byte[] smallIcon;
 
     public ClassInfoLight(){}
 
-    public ClassInfoLight(Long _id, Boolean _isAbstract ,String _className, String _packageName){
+    public ClassInfoLight(Long _id, Boolean _isAbstract, byte[] _smallIcon, String _className, String _packageName){
         this.id = _id;
+        this.smallIcon=_smallIcon;
         this.isAbstract = _isAbstract;
         this.className = _className;
         this._package = _packageName;
@@ -45,6 +47,7 @@ public class ClassInfoLight {
         this.isAbstract = cm.getIsAbstract();
         this.className = cm.getName();
         this._package = cm.getPackageInfo().getName();
+        this.smallIcon = cm.getSmallIcon();
     }
 
     public String getClassName() {
@@ -79,4 +82,11 @@ public class ClassInfoLight {
         this.isAbstract = isAbstract;
     }
 
+    public byte[] getSmallIcon() {
+        return smallIcon;
+    }
+
+    public void setSmallIcon(byte[] smallIcon) {
+        this.smallIcon = smallIcon;
+    }
 }

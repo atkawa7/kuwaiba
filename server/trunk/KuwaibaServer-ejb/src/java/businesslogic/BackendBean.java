@@ -299,6 +299,7 @@ public class BackendBean implements BackendBeanRemote {
                      for (Object obj : partialResult)
                          res.add(new ClassInfoLight(((ClassMetadata)obj).getId(),
                                                       ((ClassMetadata)obj).getIsAbstract(),
+                                                      ((ClassMetadata)obj).getSmallIcon(),
                                                       ((ClassMetadata)obj).getName(),
                                                       ((ClassMetadata)obj).getPackageInfo().getName()));
                  myClass = myClass.getSuperclass();
@@ -514,7 +515,7 @@ public class BackendBean implements BackendBeanRemote {
             ClassInfoLight[] cml = new ClassInfoLight[cr.size()];
             int i=0;
             for (ClassMetadata myClass : cr){
-                cml[i] = new ClassInfoLight(myClass.getId(),myClass.getIsAbstract(),
+                cml[i] = new ClassInfoLight(myClass.getId(),myClass.getIsAbstract(),myClass.getSmallIcon(),
                         myClass.getName(),myClass.getPackageInfo().getName());
                 i++;
             }
@@ -661,6 +662,56 @@ public class BackendBean implements BackendBeanRemote {
             return false;
         }
         else {
+            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            return false;
+        }
+    }
+
+    public Boolean setClassPlainAttribute(Long classId, String attributeName, String attributeValue) {
+        if(em !=null){
+            ClassMetadata myClass = em.find(ClassMetadata.class, classId);
+            if (em ==null){
+                error = "Class with id "+classId+" not found";
+                return false;
+            }
+            if (attributeName.equals("displayName"))
+                myClass.setDisplayName(attributeValue);
+            else
+                if (attributeName.equals("description"))
+                    myClass.setDescription(attributeValue);
+                else{
+                    error = "Attribute "+attributeName+" in class with id "+classId+" not found";
+                    return false;
+                }
+
+            em.merge(myClass);
+            return true;
+        }else {
+            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            return false;
+        }
+    }
+
+    public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) {
+        if(em !=null){
+            ClassMetadata myClass = em.find(ClassMetadata.class, classId);
+            if (em ==null){
+                error = "Class with id "+classId+" not found";
+                return false;
+            }
+            if (attributeName.equals("smallIcon"))
+                myClass.setSmallIcon(iconImage);
+            else
+                if (attributeName.equals("icon"))
+                    myClass.setIcon(iconImage);
+                else{
+                    error = "Attribute "+attributeName+" in class with id "+classId+" not found";
+                    return false;
+                }
+
+            em.merge(myClass);
+            return true;
+        }else {
             this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return false;
         }

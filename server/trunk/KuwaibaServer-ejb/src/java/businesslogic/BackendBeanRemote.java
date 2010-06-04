@@ -53,4 +53,6 @@ public interface BackendBeanRemote {
     public RemoteObjectLight[] copyObjects(Long targetOid, Long[] templateOids, String[] objectClasses);
     public RemoteObjectLight[] searchForObjects(java.lang.Class searchedClass, String[] paramNames, String [] paramTypes, String[] paramValues);
     public Boolean setAttributePropertyValue(Long classId, String attributeName, String propertyName, String propertyValue);
+    public Boolean setClassPlainAttribute(Long classId, String attributeName, String attributeValue);
+    public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage);
 }
