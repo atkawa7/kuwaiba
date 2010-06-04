@@ -30,16 +30,21 @@ public class ClassInfoLight {
     protected Boolean isAbstract;
     protected String className;
     protected String _package;
+    protected String displayName;
+    protected String description;
     protected byte[] smallIcon;
 
     public ClassInfoLight(){}
 
-    public ClassInfoLight(Long _id, Boolean _isAbstract, byte[] _smallIcon, String _className, String _packageName){
+    public ClassInfoLight(Long _id, Boolean _isAbstract, byte[] _smallIcon, 
+            String _className, String _packageName, String _displayName, String _description){
         this.id = _id;
         this.smallIcon=_smallIcon;
         this.isAbstract = _isAbstract;
         this.className = _className;
         this._package = _packageName;
+        this.description = _description;
+        this.displayName = _displayName;
     }
 
     public ClassInfoLight(ClassMetadata cm) {
@@ -47,6 +52,8 @@ public class ClassInfoLight {
         this.isAbstract = cm.getIsAbstract();
         this.className = cm.getName();
         this._package = cm.getPackageInfo().getName();
+        this.displayName = cm.getDisplayName();
+        this.displayName = cm.getDescription();
         this.smallIcon = cm.getSmallIcon();
     }
 
@@ -80,6 +87,22 @@ public class ClassInfoLight {
 
     public void setIsAbstract(Boolean isAbstract) {
         this.isAbstract = isAbstract;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public byte[] getSmallIcon() {

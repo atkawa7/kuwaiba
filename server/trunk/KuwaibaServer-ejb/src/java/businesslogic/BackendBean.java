@@ -301,7 +301,9 @@ public class BackendBean implements BackendBeanRemote {
                                                       ((ClassMetadata)obj).getIsAbstract(),
                                                       ((ClassMetadata)obj).getSmallIcon(),
                                                       ((ClassMetadata)obj).getName(),
-                                                      ((ClassMetadata)obj).getPackageInfo().getName()));
+                                                      ((ClassMetadata)obj).getPackageInfo().getName(),
+                                                      ((ClassMetadata)obj).getDisplayName(),
+                                                      ((ClassMetadata)obj).getDescription()));
                  myClass = myClass.getSuperclass();
              }
              return res.toArray(new ClassInfoLight[0]);
@@ -515,8 +517,9 @@ public class BackendBean implements BackendBeanRemote {
             ClassInfoLight[] cml = new ClassInfoLight[cr.size()];
             int i=0;
             for (ClassMetadata myClass : cr){
-                cml[i] = new ClassInfoLight(myClass.getId(),myClass.getIsAbstract(),myClass.getSmallIcon(),
-                        myClass.getName(),myClass.getPackageInfo().getName());
+                cml[i] = new ClassInfoLight(myClass.getId(),myClass.getIsAbstract(),
+                        myClass.getSmallIcon(), myClass.getName(),myClass.getPackageInfo().getName(),
+                        myClass.getDisplayName(),myClass.getDescription());
                 i++;
             }
             return cml;

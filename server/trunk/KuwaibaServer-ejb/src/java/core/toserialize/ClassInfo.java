@@ -41,7 +41,8 @@ public class ClassInfo extends ClassInfoLight{
 
     public ClassInfo(){}
     public ClassInfo(ClassMetadata myClass){
-        super(myClass.getId(),myClass.getIsAbstract(),myClass.getSmallIcon(),myClass.getName(),myClass.getPackageInfo().getName());
+        super(myClass.getId(),myClass.getIsAbstract(),myClass.getSmallIcon(),myClass.getName(),
+                myClass.getPackageInfo().getName(),myClass.getDisplayName(),myClass.getDescription());
         this.isAbstract = myClass.getIsAbstract();
         this.icon = myClass.getIcon();
         List<AttributeMetadata> ar = myClass.getAttributes();
