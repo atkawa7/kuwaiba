@@ -16,15 +16,18 @@
 
 package org.inventory.customization.classmanager;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.imageio.ImageIO;
+import javax.swing.JComboBox;
 import javax.swing.filechooser.FileFilter;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 
@@ -32,7 +35,7 @@ import org.inventory.core.services.interfaces.NotificationUtil;
  * This class provides the business logic to the associated TopComponent
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ClassManagerService extends FileFilter{
+public class ClassManagerService extends FileFilter implements ActionListener{
 
     public final String jpeg = "jpeg";
     public final String jpg = "jpg";
@@ -54,17 +57,6 @@ public class ClassManagerService extends FileFilter{
             ext = s.substring(i+1).toLowerCase();
         }
         return ext;
-    }
-
-    public byte[] getByteArrayFromImage(File f){
-        try {
-            BufferedImage img = ImageIO.read(f);
-            ByteArrayOutputStream bas = new ByteArrayOutputStream();
-            ImageIO.write(img, "image", bas);
-            return bas.toByteArray();
-        } catch (IOException ex) {
-            return null;
-        }
     }
 
     @Override
@@ -115,5 +107,15 @@ public class ClassManagerService extends FileFilter{
             if (!(myLight.getIsAbstract() || myLight.getClassName().equals(CommunicationsStub.getInstance().getRootClass())))
                 res.add(myLight);
         return res;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        LocalClassMetadataLight myClass = (LocalClassMetadataLight)((JComboBox)e.getSource()).getSelectedItem();
+        if (myClass == null)
+            return;
+        cmstc.getTxtDisplayName().setText(myClass.getDisplayName()==null?"":myClass.getDisplayName());
+        cmstc.getTxtDescription().setText(myClass.getDescription()==null?"":myClass.getDescription());
+        cmstc.getTxtSmallIcon().setText("");
+        cmstc.getTxtIcon().setText("");
     }
 }

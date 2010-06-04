@@ -19,9 +19,12 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JTextField;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.services.utils.Utils;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -67,6 +70,8 @@ public final class ClassManagerTopComponent extends TopComponent {
         List<LocalClassMetadataLight> lcml = cms.getAllMeta();
         for (LocalClassMetadataLight lcm : lcml)
             cmbClass.addItem(lcm);
+        cmbClass.addActionListener(cms);
+        cmbClass.setSelectedIndex(-1);
     }
 
     /** This method is called from within the constructor to
@@ -212,13 +217,14 @@ public final class ClassManagerTopComponent extends TopComponent {
             if (mySmallIcon == null)
                 getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "Image in "+fChooser.getSelectedFile().getAbsolutePath()+" couldn't be loaded");
             else{
-                if(mySmallIcon.getHeight(null) > 16) //We don't accept images of more tha 16x16 pixels
-                    getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The height if the given image is bigger tha 16 pixels");
+                //This image trick if useful because for some 8bits gif, the getHeight/Width returns -1
+                if((new ImageIcon(mySmallIcon)).getIconHeight() > 16) //We don't accept images of more tha 16x16 pixels
+                    getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The height if the given image exceeds 16 pixels");
                 else{
-                    if(mySmallIcon.getWidth(null) > 16) //We don't accept images of more tha 16x16 pixels
-                        getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The widtth if the given image is bigger tha 16 pixels");
+                    if((new ImageIcon(mySmallIcon)).getIconWidth() > 16) //We don't accept images of more tha 16x16 pixels
+                        getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The widtth if the given image exceeds 16 pixels");
                     else{
-                        smallIcon = cms.getByteArrayFromImage(fChooser.getSelectedFile());
+                        smallIcon = Utils.getByteArrayFromImage(fChooser.getSelectedFile(),cms.getExtension(fChooser.getSelectedFile()));
                         if (smallIcon == null)
                             getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The file couldn't be converted");
                     }
@@ -229,7 +235,6 @@ public final class ClassManagerTopComponent extends TopComponent {
 
     private void btnIconChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIconChooserActionPerformed
         if (fChooser.showOpenDialog(WindowManager.getDefault().getMainWindow()) == JFileChooser.APPROVE_OPTION){
-            txtIcon.setText(fChooser.getSelectedFile().getAbsolutePath());
             Image mySmallIcon = Toolkit.getDefaultToolkit().createImage(fChooser.getSelectedFile().getAbsolutePath());
             if (mySmallIcon == null)
                 getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "Image in "+fChooser.getSelectedFile().getAbsolutePath()+" couldn't be loaded");
@@ -240,9 +245,11 @@ public final class ClassManagerTopComponent extends TopComponent {
                     if(mySmallIcon.getWidth(null) > 48) //We don't accept images of more tha 48x48 pixels
                         getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The widtth if the given image is bigger tha 16 pixels");
                     else{
-                        icon = cms.getByteArrayFromImage(fChooser.getSelectedFile());
+                        icon = Utils.getByteArrayFromImage(fChooser.getSelectedFile(),cms.getExtension(fChooser.getSelectedFile()));
                         if (icon == null)
                             getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The file couldn't be converted");
+                        else
+                            txtIcon.setText(fChooser.getSelectedFile().getAbsolutePath());
                     }
                 }
             }
@@ -344,5 +351,21 @@ public final class ClassManagerTopComponent extends TopComponent {
         if (nu == null)
             nu = Lookup.getDefault().lookup(NotificationUtil.class);
         return nu;
+    }
+
+    public JTextField getTxtDescription() {
+        return txtDescription;
+    }
+
+    public JTextField getTxtDisplayName() {
+        return txtDisplayName;
+    }
+
+    public JTextField getTxtIcon() {
+        return txtIcon;
+    }
+
+    public JTextField getTxtSmallIcon() {
+        return txtSmallIcon;
     }
 }

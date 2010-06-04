@@ -42,7 +42,6 @@ import org.openide.nodes.Node;
 import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
-import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.PasteType;
@@ -93,7 +92,9 @@ public class ObjectNode extends AbstractNode{
     public String getDisplayName(){
         String displayName = (object.getDisplayname().equals("") ||
                                     object.getDisplayname().equals(null))?java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_NONAME"):object.getDisplayname();
-        return displayName + " ["+object.getClassName()+"]";
+        String className = CommunicationsStub.getInstance().getMetaForClass(object.getClassName()).getDisplayName();
+        //return displayName + " ["+object.getClassName()+"]";
+        return displayName + " ["+className+"]";
     }
 
     @Override
@@ -272,5 +273,10 @@ public class ObjectNode extends AbstractNode{
         if (icon==null)
             return super.getIcon(i);
         return icon;
+    }
+
+    @Override
+    public Image getOpenedIcon(int i){
+        return getIcon(i);
     }
 }

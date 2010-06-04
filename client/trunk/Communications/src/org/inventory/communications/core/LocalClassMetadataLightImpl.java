@@ -37,11 +37,14 @@ public class LocalClassMetadataLightImpl
     protected Long id;
     protected Boolean isAbstract;
     protected String className;
+    protected String displayName;
+    protected String description;
     protected String packageName;
     protected Image smallIcon;
 
     public LocalClassMetadataLightImpl(ClassInfo ci){
-        this (ci.getId(),ci.getClassName(),ci.getPackage(),ci.getSmallIcon());
+        this (ci.getId(),ci.getClassName(),ci.getPackage(),ci.getDisplayName(),
+                ci.getDescription(),ci.getSmallIcon());
     }
 
     public LocalClassMetadataLightImpl(ClassInfoLight cil){
@@ -49,13 +52,18 @@ public class LocalClassMetadataLightImpl
         this.isAbstract = cil.isIsAbstract();
         this.className = cil.getClassName();
         this.packageName = cil.getPackage();
+        this.displayName = cil.getDisplayName();
+        this.description = cil.getDescription();
         this.smallIcon = cil.getSmallIcon()==null?null:Utils.getImageFromByteArray(cil.getSmallIcon());
     }
 
-    public LocalClassMetadataLightImpl(Long _id, String _className, String _packageName, byte[] _smallIcon){
+    public LocalClassMetadataLightImpl(Long _id, String _className, String _packageName,
+            String _displayName, String _description, byte[] _smallIcon){
         this.id=_id;
         this.className = _className;
         this.packageName = _packageName;
+        this.displayName = _displayName;
+        this.description = _description;
         this.smallIcon = _smallIcon==null?null:Utils.getImageFromByteArray(_smallIcon);
     }
 
@@ -86,6 +94,8 @@ public class LocalClassMetadataLightImpl
     */
    @Override
    public boolean equals(Object obj){
+        if (obj == null)
+           return false;
         if (obj.getClass().equals(this.getClass()))
             return this.getId().equals(((LocalClassMetadataLightImpl)obj).getId());
         else
@@ -99,7 +109,15 @@ public class LocalClassMetadataLightImpl
         hash = 41 * hash + (this.className != null ? this.className.hashCode() : 0);
         return hash;
     }
-
+    
+    public String getDisplayName(){
+        return displayName;
+    }
+    
+    public String getDescription(){
+        return description;
+    }
+    
     public Image getSmallIcon() {
         return smallIcon;
     }
