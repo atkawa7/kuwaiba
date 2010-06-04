@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -65,7 +66,10 @@ public class RemoteObject extends RemoteObjectLight {
                                                             //esta clase debe ser "stand-alone"
                         values[i]=String.valueOf(((GenericObjectList)value).getId());
                     else
-                        values[i]=value.toString();
+                        if (value instanceof Date)
+                            values[i] = String.valueOf(((Date)value).getTime());
+                        else
+                            values[i]=value.toString();
                 }
             } catch (NoSuchMethodException nsme){
                 System.out.println("NoSuchM:"+nsme.getMessage());
