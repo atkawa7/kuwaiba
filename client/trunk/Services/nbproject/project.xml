@@ -7,8 +7,8 @@
             <suite-component/>
             <module-dependencies/>
             <public-packages>
-                <package>org.inventory.core.services</package>
                 <package>org.inventory.core.services.interfaces</package>
+                <package>org.inventory.core.services.utils</package>
             </public-packages>
         </data>
     </configuration>

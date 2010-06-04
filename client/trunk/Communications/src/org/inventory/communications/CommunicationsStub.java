@@ -528,4 +528,18 @@ public class CommunicationsStub {
             String propertyName, String propertyType) {
         return port.setAttributePropertyValue(classId, attributeName, propertyName, propertyType);
     }
+
+    public boolean setClassPlainAttribute(Long classId, String attributeName, String attributeValue){
+        boolean res = port.setClassPlainAttribute(classId, attributeName, attributeValue);
+        if(!res)
+            error = port.getLastErr();
+        return res;
+    }
+
+    public boolean setClassIcon(Long classId, String attributeName, byte[] attributeValue){
+        boolean res = port.setClassIcon(classId, attributeName, attributeValue);
+        if(!res)
+            error = port.getLastErr();
+        return res;
+    }
 }

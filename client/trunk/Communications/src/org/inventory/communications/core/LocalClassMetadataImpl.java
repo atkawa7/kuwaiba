@@ -15,7 +15,9 @@
  */
 package org.inventory.communications.core;
 
+import java.awt.Image;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
+import org.inventory.core.services.utils.Utils;
 import org.inventory.webservice.ClassInfo;
 
 /**
@@ -25,6 +27,7 @@ import org.inventory.webservice.ClassInfo;
 public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         implements LocalClassMetadata{
 
+    private Image icon;
     private String [] attributeNames; 
     private String [] attributeTypes;
     private String [] attributeDisplayNames;
@@ -34,8 +37,9 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
     private String [] attributesDescription;
 
     public LocalClassMetadataImpl(ClassInfo cm){
-        super(cm.getId(),cm.getClassName(),cm.getPackage());
+        super(cm.getId(),cm.getClassName(),cm.getPackage(),cm.getSmallIcon());
         this.isAbstract = cm.isIsAbstract();
+        this.icon = cm.getIcon()==null?null:Utils.getImageFromByteArray(cm.getIcon());
         this.attributeNames = cm.getAttributeNames().toArray(new String[0]);
         this.attributeTypes = cm.getAttributeTypes().toArray(new String[0]);
         this.attributeDisplayNames = cm.getAttributeDisplayNames().toArray(new String[0]);
@@ -154,6 +158,10 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
                                     attributesIsAdministrative[i],
                                     attributesDescription[i]);
         return res;
+    }
+
+    public Image getIcon() {
+        return icon;
     }
 
     @Override

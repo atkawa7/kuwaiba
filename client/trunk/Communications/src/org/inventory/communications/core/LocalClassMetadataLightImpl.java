@@ -12,15 +12,16 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 package org.inventory.communications.core;
 
+import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
+import org.inventory.core.services.utils.Utils;
 import org.inventory.webservice.ClassInfo;
 import org.inventory.webservice.ClassInfoLight;
 
@@ -30,15 +31,17 @@ import org.inventory.webservice.ClassInfoLight;
  * metadata is not necessary (ie. Container Hierarchy Manager)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class LocalClassMetadataLightImpl implements LocalClassMetadataLight,Transferable{
+public class LocalClassMetadataLightImpl
+        implements LocalClassMetadataLight,Transferable{
 
     protected Long id;
     protected Boolean isAbstract;
     protected String className;
     protected String packageName;
+    protected Image smallIcon;
 
     public LocalClassMetadataLightImpl(ClassInfo ci){
-        this (ci.getId(),ci.getClassName(),ci.getPackage());
+        this (ci.getId(),ci.getClassName(),ci.getPackage(),ci.getSmallIcon());
     }
 
     public LocalClassMetadataLightImpl(ClassInfoLight cil){
@@ -46,12 +49,14 @@ public class LocalClassMetadataLightImpl implements LocalClassMetadataLight,Tran
         this.isAbstract = cil.isIsAbstract();
         this.className = cil.getClassName();
         this.packageName = cil.getPackage();
+        this.smallIcon = cil.getSmallIcon()==null?null:Utils.getImageFromByteArray(cil.getSmallIcon());
     }
 
-    public LocalClassMetadataLightImpl(Long _id, String _className, String _packageName){
+    public LocalClassMetadataLightImpl(Long _id, String _className, String _packageName, byte[] _smallIcon){
         this.id=_id;
         this.className = _className;
         this.packageName = _packageName;
+        this.smallIcon = _smallIcon==null?null:Utils.getImageFromByteArray(_smallIcon);
     }
 
     public String getClassName() {
@@ -75,8 +80,6 @@ public class LocalClassMetadataLightImpl implements LocalClassMetadataLight,Tran
         return isAbstract;
     }
 
-
-
    /*
     * The equals method is overwritten in order to make the comparison based on the id, which is
     * the actual unique identifier (this is used when filtering the list of possible children in the Hierarchy Manager)
@@ -95,6 +98,10 @@ public class LocalClassMetadataLightImpl implements LocalClassMetadataLight,Tran
         hash = 41 * hash + (this.id != null ? this.id.hashCode() : 0);
         hash = 41 * hash + (this.className != null ? this.className.hashCode() : 0);
         return hash;
+    }
+
+    public Image getSmallIcon() {
+        return smallIcon;
     }
 
     public DataFlavor[] getTransferDataFlavors() {

@@ -16,7 +16,7 @@
 
 package org.inventory.customization.attributecustomizer.nodes;
 
-import org.inventory.customization.attributecustomizer.nodes.properties.ClassCustomizerNodeProperty;
+import org.inventory.customization.attributecustomizer.nodes.properties.AttributeCustomizerNodeProperty;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
@@ -53,12 +53,12 @@ public class AttributeMetadataNode extends AbstractNode{
             s.put(ss);
         }
 
-        ss.put(new ClassCustomizerNodeProperty("name",object.getName(),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_NAME"),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_NAMEDESCRIPTION"),this));
-        ss.put(new ClassCustomizerNodeProperty("type",object.getType(),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_TYPE"),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_TYPEDESCRIPTION"),this));
-        ss.put(new ClassCustomizerNodeProperty("displayName",object.getDisplayName(),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_LABEL"),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_LABELDESCRIPTION"),this));
-        ss.put(new ClassCustomizerNodeProperty("isVisible",object.getIsVisible(),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_VISIBLE"),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_VISIBLEDESCRIPTION"),this));
-        ss.put(new ClassCustomizerNodeProperty("isAdministrative",object.getIsAdministrative(),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_ADMINISTRATIVE"),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_ADMINISTRATIVEDESCRIPTION"),this));
-        ss.put(new ClassCustomizerNodeProperty("description",object.getDescription(),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_DESCRIPTION"),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_DESCRIPTIONDESCRIPTION"),this));
+        ss.put(new AttributeCustomizerNodeProperty("name",object.getName(),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_NAME"),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_NAMEDESCRIPTION"),this));
+        ss.put(new AttributeCustomizerNodeProperty("type",object.getType(),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_TYPE"),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_TYPEDESCRIPTION"),this));
+        ss.put(new AttributeCustomizerNodeProperty("displayName",object.getDisplayName(),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_LABEL"),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_LABELDESCRIPTION"),this));
+        ss.put(new AttributeCustomizerNodeProperty("isVisible",object.getIsVisible(),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_VISIBLE"),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_VISIBLEDESCRIPTION"),this));
+        ss.put(new AttributeCustomizerNodeProperty("isAdministrative",object.getIsAdministrative(),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_ADMINISTRATIVE"),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_ADMINISTRATIVEDESCRIPTION"),this));
+        ss.put(new AttributeCustomizerNodeProperty("description",object.getDescription(),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_DESCRIPTION"),java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_DESCRIPTIONDESCRIPTION"),this));
         return s;
    }
    public LocalAttributeMetadata getObject(){

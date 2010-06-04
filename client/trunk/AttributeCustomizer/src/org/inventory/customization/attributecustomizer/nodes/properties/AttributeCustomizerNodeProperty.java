@@ -12,11 +12,11 @@ import org.openide.util.Lookup;
  * Property associate to each attribute
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ClassCustomizerNodeProperty extends PropertySupport.ReadWrite{
+public class AttributeCustomizerNodeProperty extends PropertySupport.ReadWrite{
     private Object value;
     private AttributeMetadataNode node;
 
-    public ClassCustomizerNodeProperty(String _name, Object _value,
+    public AttributeCustomizerNodeProperty(String _name, Object _value,
             String _displayName,String _toolTextTip, AttributeMetadataNode _node) {
         super(_name,_value.getClass(),_displayName,_toolTextTip);
         this.value = _value;

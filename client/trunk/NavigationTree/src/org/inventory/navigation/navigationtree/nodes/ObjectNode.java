@@ -15,6 +15,7 @@
  */
 package org.inventory.navigation.navigationtree.nodes;
 
+import java.awt.Image;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
 import java.io.IOException;
@@ -41,6 +42,7 @@ import org.openide.nodes.Node;
 import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
+import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.PasteType;
@@ -63,15 +65,15 @@ public class ObjectNode extends AbstractNode{
     private Edit editAction;
 
     private Sheet sheet;
-
-    private String prueba="prueba";
+    private Image icon;
 
     public ObjectNode(LocalObjectLight _lol){
         super(new ObjectChildren(), Lookups.singleton(_lol));
         this.object = _lol;
+        
+        com = CommunicationsStub.getInstance();
 
-        com= CommunicationsStub.getInstance();
-
+        icon = (com.getMetaForClass(_lol.getClassName())).getSmallIcon();
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_EXPLORE"));
 
         createAction = new Create(this);
@@ -263,5 +265,12 @@ public class ObjectNode extends AbstractNode{
     @Override
     public boolean canDestroy(){
         return true;
+    }
+
+    @Override
+    public Image getIcon(int i){
+        if (icon==null)
+            return super.getIcon(i);
+        return icon;
     }
 }
