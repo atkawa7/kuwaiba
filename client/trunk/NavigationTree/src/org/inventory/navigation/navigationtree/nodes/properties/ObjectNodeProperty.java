@@ -19,6 +19,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Date;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
@@ -116,5 +117,13 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
             return;
         } 
 
+    }
+
+    @Override
+    public boolean canWrite(){
+        //Dates are read only  by now until we integrate a date picker
+        if (getValueType().equals(Date.class))
+            return false;
+        return true;
     }
 }

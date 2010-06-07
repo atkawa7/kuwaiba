@@ -24,6 +24,10 @@
 
 <xs:element name="getDummyRootIdResponse" type="tns:getDummyRootIdResponse" />
 
+<xs:element name="getInstanceableListTypes" type="tns:getInstanceableListTypes" />
+
+<xs:element name="getInstanceableListTypesResponse" type="tns:getInstanceableListTypesResponse" />
+
 <xs:element name="getLastErr" type="tns:getLastErr" />
 
 <xs:element name="getLastErrResponse" type="tns:getLastErrResponse" />
@@ -277,6 +281,16 @@
 <xs:complexType name="searchForObjectsResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getInstanceableListTypes">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getInstanceableListTypesResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 

@@ -2,6 +2,8 @@ package org.inventory.customization.attributecustomizer.nodes.properties;
 
 import java.lang.reflect.InvocationTargetException;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.interfaces.LocalClassMetadata;
+import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.customization.attributecustomizer.nodes.AttributeMetadataNode;
 import org.inventory.customization.attributecustomizer.nodes.ClassMetadataNode;
@@ -32,11 +34,12 @@ public class AttributeCustomizerNodeProperty extends PropertySupport.ReadWrite{
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         CommunicationsStub com = CommunicationsStub.getInstance();
-        if(com.setAttributePropertyValue(((ClassMetadataNode)node.getParentNode()).getObject().getId(),
+        LocalClassMetadataLight myClass = ((ClassMetadataNode)node.getParentNode()).getObject();
+        if(com.setAttributePropertyValue(myClass.getId(),
                 node.getObject().getName(),getName(),t.toString())){
             this.value = t;
             //Refresh the cache
-            com.refreshCache(true, false, false, false);
+            com.getMetaForClass(myClass.getClassName(), true);
             nu.showSimplePopup("Attribute Property Update", NotificationUtil.INFO, "Attribute modified successfully");
         }else
             nu.showSimplePopup("Attribute Property Update", NotificationUtil.ERROR, com.getError());

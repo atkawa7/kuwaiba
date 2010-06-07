@@ -29,7 +29,7 @@ import org.openide.nodes.Node;
  */
 public class ObjectChildren extends Array{
 
-    private List<LocalObjectLight> keys;
+    protected List<LocalObjectLight> keys;
     public ObjectChildren(LocalObjectLight[] _lols){
         keys = new ArrayList<LocalObjectLight>();
         for (LocalObjectLight lol : _lols)
@@ -64,7 +64,7 @@ public class ObjectChildren extends Array{
             CommunicationsStub com = CommunicationsStub.getInstance();
             LocalObjectLight node = ((ObjectNode)this.getNode()).getObject();
             List <LocalObjectLight> children = com.getObjectChildren(node.getOid(),
-                    com.getMetaForClass(node.getClassName()).getId());
+                    com.getMetaForClass(node.getClassName(),false).getId());
             keys.addAll(children);
             initCollection();
             refresh();

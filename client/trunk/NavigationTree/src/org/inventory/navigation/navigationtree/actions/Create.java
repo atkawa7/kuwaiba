@@ -12,7 +12,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 package org.inventory.navigation.navigationtree.actions;
 
@@ -76,7 +75,7 @@ public final class Create extends AbstractAction implements Popup{
             items = CommunicationsStub.getInstance().getRootPossibleChildren();
         else
             items = CommunicationsStub.getInstance().
-                    getPossibleChildren(((ObjectNode)node).getObject().getPackageName()+"."+((ObjectNode)node).getObject().getClassName());
+                    getPossibleChildren(((ObjectNode)node).getObject().getPackageName()+"."+((ObjectNode)node).getObject().getClassName(),false);
 
         if (items.size() == 0) mnuPossibleChildren.setEnabled(false);
             else

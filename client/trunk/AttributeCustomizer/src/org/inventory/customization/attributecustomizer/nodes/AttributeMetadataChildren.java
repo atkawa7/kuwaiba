@@ -47,7 +47,7 @@ public class AttributeMetadataChildren extends Children.Array{
 
     @Override
     public void addNotify(){
-        LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(lcml.getClassName());
+        LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(lcml.getClassName(),true);
         for (LocalAttributeMetadata lam : lcm.getAttributes())
             keys.add(lam);
         initCollection();

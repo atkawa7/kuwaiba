@@ -1,9 +1,25 @@
+/*
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.inventory.customization.listmanager;
 
 import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
-import org.openide.util.LookupEvent;
+import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.customization.listmanager.nodes.ListTypeChildren;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -12,9 +28,9 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerManager.Provider;
 import org.openide.explorer.ExplorerUtils;
-import org.openide.util.Lookup.Result;
-import org.openide.util.LookupListener;
-import org.openide.util.Utilities;
+import org.openide.explorer.view.BeanTreeView;
+import org.openide.nodes.AbstractNode;
+import org.openide.util.Lookup;
 
 /**
  * Administration frontend for list-type attributes
@@ -22,24 +38,38 @@ import org.openide.util.Utilities;
 @ConvertAsProperties(dtd = "-//org.inventory.customization.listmanager//ListManager//EN",
 autostore = false)
 public final class ListManagerTopComponent extends TopComponent
-        implements Provider, LookupListener{
+        implements Provider{
 
     private static ListManagerTopComponent instance;
     /** path to the icon used by the component and its open action */
     static final String ICON_PATH = "org/inventory/customization/listmanager/res/icon.png";
+    static final String ROOT_ICON_PATH = "org/inventory/customization/listmanager/res/root.png";
     private static final String PREFERRED_ID = "ListManagerTopComponent";
 
     private final ExplorerManager em = new ExplorerManager();
+    private BeanTreeView bt;
+    private ListManagerService lms;
+    private NotificationUtil nu = null;
 
     public ListManagerTopComponent() {
         initComponents();
+        initCustomComponents();
         setName(NbBundle.getMessage(ListManagerTopComponent.class, "CTL_ListManagerTopComponent"));
         setToolTipText(NbBundle.getMessage(ListManagerTopComponent.class, "HINT_ListManagerTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         associateLookup(ExplorerUtils.createLookup(em, new ActionMap()));
-        Result result = Utilities.actionsGlobalContext().
-                lookupResult(LocalClassMetadataLight.class);
-        result.addLookupListener(this);
+        
+    }
+
+    public void initCustomComponents(){
+        bt = new BeanTreeView();
+        lms = new ListManagerService(this);
+        AbstractNode root = new AbstractNode(new ListTypeChildren(lms.getInstanceableListTypes()));
+        root.setIconBaseWithExtension(ROOT_ICON_PATH);
+        em.setRootContext(root);
+        em.getRootContext().setDisplayName("Available List Types");
+
+        add(bt);
     }
 
     /** This method is called from within the constructor to
@@ -50,16 +80,7 @@ public final class ListManagerTopComponent extends TopComponent
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -139,7 +160,9 @@ public final class ListManagerTopComponent extends TopComponent
         return em;
     }
 
-    public void resultChanged(LookupEvent le) {
-        System.out.println("sisas!!");
+    public NotificationUtil getNotifier(){
+        if (nu == null)
+            nu = Lookup.getDefault().lookup(NotificationUtil.class);
+        return nu;
     }
 }

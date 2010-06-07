@@ -32,12 +32,14 @@ import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.navigation.navigationtree.actions.Create;
 import org.inventory.navigation.navigationtree.actions.Delete;
 import org.inventory.navigation.navigationtree.actions.Edit;
+import org.inventory.navigation.navigationtree.actions.Refresh;
 import org.inventory.navigation.navigationtree.nodes.properties.ObjectNodeProperty;
 import org.openide.actions.CopyAction;
 import org.openide.actions.CutAction;
 import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.actions.PasteAction;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.Sheet;
@@ -53,31 +55,47 @@ import org.openide.util.lookup.Lookups;
  */
 public class ObjectNode extends AbstractNode{
     
-    private LocalObjectLight object;
+    protected LocalObjectLight object;
     //There can be only one instance for OpenLocalExplorerAction, this attribute is a kind of singleton
-    private static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
+    protected static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
 
-    private CommunicationsStub com;
+    protected CommunicationsStub com;
 
-    private Create createAction;
-    private Delete deleteAction;
-    private Edit editAction;
+    protected Create createAction;
+    protected Delete deleteAction;
+    protected Refresh refreshAction;
+    protected Edit editAction;
 
-    private Sheet sheet;
-    private Image icon;
+    protected Sheet sheet;
+    protected Image icon;
 
+    public ObjectNode(LocalObjectLight _lol, boolean isLeaf){
+        super(Children.LEAF, Lookups.singleton(_lol));
+        this.object = _lol;
+
+        com = CommunicationsStub.getInstance();
+
+        icon = (com.getMetaForClass(_lol.getClassName(),false)).getSmallIcon();
+
+        explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_EXPLORE"));
+        editAction = new Edit(this);
+        deleteAction = new Delete(this);
+        refreshAction = new Refresh(this);
+    }
+    
     public ObjectNode(LocalObjectLight _lol){
         super(new ObjectChildren(), Lookups.singleton(_lol));
         this.object = _lol;
         
         com = CommunicationsStub.getInstance();
 
-        icon = (com.getMetaForClass(_lol.getClassName())).getSmallIcon();
+        icon = (com.getMetaForClass(_lol.getClassName(),false)).getSmallIcon();
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_EXPLORE"));
 
         createAction = new Create(this);
         deleteAction = new Delete(this);
         editAction = new Edit(this);
+        refreshAction = new Refresh(this);
     }
 
     /*
@@ -92,8 +110,8 @@ public class ObjectNode extends AbstractNode{
     public String getDisplayName(){
         String displayName = (object.getDisplayname().equals("") ||
                                     object.getDisplayname().equals(null))?java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_NONAME"):object.getDisplayname();
-        String className = CommunicationsStub.getInstance().getMetaForClass(object.getClassName()).getDisplayName();
-        //return displayName + " ["+object.getClassName()+"]"; Just to test!!!!
+        String className = CommunicationsStub.getInstance().getMetaForClass(object.getClassName(),false).getDisplayName();
+        //return displayName + " ["+object.getClassName()+"]"; TODO: Just to test!!!!
         return displayName + " ["+(className==null?object.getClassName():className)+"]";
     }
 
@@ -104,7 +122,7 @@ public class ObjectNode extends AbstractNode{
         Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
         Set administrativePropertySet = Sheet.createPropertiesSet(); //Administrative attributes category
 
-        LocalClassMetadata meta = com.getMetaForClass(object.getClassName());
+        LocalClassMetadata meta = com.getMetaForClass(object.getClassName(),false);
 
         LocalObject lo = com.getObjectInfo(object.getClassName(), object.getOid(), meta);
 
@@ -116,7 +134,7 @@ public class ObjectNode extends AbstractNode{
 
                 if (lam.getType().equals(LocalObjectListItem.class)){
 
-                    LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName());
+                    LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(),false);
                     LocalObjectListItem val = null;
 
                     for (LocalObjectListItem loli : list)
@@ -166,11 +184,17 @@ public class ObjectNode extends AbstractNode{
         return sheet;
     }
 
+    public void refresh(){
+        //We force to get the attributes again
+        setSheet(createSheet());
+    }
+
     //This method is called for the very first time when the first context menu is created, and
     //called everytime
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{createAction, 
+        return new Action[]{createAction,
+                            refreshAction,
                             editAction,
                             deleteAction,
                             null,
@@ -206,7 +230,7 @@ public class ObjectNode extends AbstractNode{
                 try{
                     NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
                     LocalObjectLight obj = dropNode.getObject();
-                    for(LocalClassMetadataLight lcml : com.getPossibleChildren(object.getPackageName()+"."+object.getClassName())){
+                    for(LocalClassMetadataLight lcml : com.getPossibleChildren(object.getPackageName()+"."+object.getClassName(),false)){
                         if(lcml.getClassName().equals(obj.getClassName()))
                             canMove = true;
                     }

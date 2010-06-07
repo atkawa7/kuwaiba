@@ -103,6 +103,10 @@ public class Cache{
         return this.metadataIndex.get(className);
     }
 
+    public LocalClassMetadataLight getLightMetaForClass(String className) {
+        return this.lightMetadataIndex.get(className);
+    }
+
     public void addMeta(LocalClassMetadata[] all){
          for (LocalClassMetadata lcmi : all)
             this.metadataIndex.put(lcmi.getClassName(), lcmi);

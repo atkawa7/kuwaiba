@@ -73,7 +73,7 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
 
     public void valueChanged(ListSelectionEvent e) {
         LocalClassMetadataLight item = (LocalClassMetadataLight)((JList)e.getSource()).getSelectedValue();
-        this.currentLocalClassMetadata = com.getMetaForClass(item.getClassName());
+        this.currentLocalClassMetadata = com.getMetaForClass(item.getClassName(),false);
 
         if (this.enablers == null)
             this.enablers = new ArrayList<JCheckBox>();
@@ -107,7 +107,7 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
                 }
                 else{
                     if(lam.getType().equals(LocalObjectListItem.class)){
-                        LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName());
+                        LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(),false);
 
                         JComboBox cmbValue = new JComboBox(list);
 
@@ -183,7 +183,7 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
                     //since the server should check for these characters in order to escape them
                     //to avoid SQL injection
                     values.add(((JTextField)component).getText());
-                    types.add(com.getMetaForClass(selectedClass.getClassName()).getTypeForAttribute(component.getName()));
+                    types.add(com.getMetaForClass(selectedClass.getClassName(),false).getTypeForAttribute(component.getName()));
                     continue;
                 }
                 if (component instanceof JCheckBox){
