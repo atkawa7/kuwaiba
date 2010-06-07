@@ -18,7 +18,6 @@ package org.inventory.customization.attributecustomizer;
 import org.inventory.customization.attributecustomizer.nodes.ClassMetadataChildren;
 import java.awt.BorderLayout;
 import java.util.logging.Logger;
-import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.openide.util.NbBundle;

@@ -44,6 +44,7 @@ import org.openide.nodes.Node;
 import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
+import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.PasteType;
@@ -54,7 +55,8 @@ import org.openide.util.lookup.Lookups;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class ObjectNode extends AbstractNode{
-    
+
+    public static final String GENERIC_ICON_PATH="org/inventory/navigation/navigationtree/res/default.png";
     protected LocalObjectLight object;
     //There can be only one instance for OpenLocalExplorerAction, this attribute is a kind of singleton
     protected static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
@@ -295,7 +297,8 @@ public class ObjectNode extends AbstractNode{
     @Override
     public Image getIcon(int i){
         if (icon==null)
-            return super.getIcon(i);
+            //TODO: Inefficient, create only one instance to save memory
+            return ImageUtilities.loadImage(GENERIC_ICON_PATH);
         return icon;
     }
 
