@@ -64,6 +64,8 @@ public class ClassMetadata implements Serializable {
     private Boolean isAccountable=true;      //Indicates if the instance of this class is a physical active
     @Column(nullable=false)
     private Boolean isDummy=false;      //Is this a dummy class as described in the Dummy annotation?
+    @Column(nullable=false)
+    private Boolean isAdministrative = false; //Is this an class used for representing objects not related to the inventory itself, but for holding auxiliar information (marked with the annotation Administrative)
     private byte[] smallIcon;
     private byte[] icon;
     private Integer color;              //Color assigned to the instances when displayed
@@ -90,13 +92,15 @@ public class ClassMetadata implements Serializable {
     }
 
     public ClassMetadata(String _name, PackageMetadata _myPackage, String _description,
-            Boolean _isCustom, Boolean _isAbstract, Boolean _isDummy,List<ClassMetadata> _children, List <AttributeMetadata> _attributes, Long _parent){
+            Boolean _isCustom, Boolean _isAbstract, Boolean _isDummy, Boolean _isAdministrative,
+            List<ClassMetadata> _children, List <AttributeMetadata> _attributes, Long _parent){
         this.name = _name;
         this.packageInfo = _myPackage;
         this.description = _description;
         this.isCustom = _isCustom;
         this.isAbstract = _isAbstract;
         this.isDummy = _isDummy;
+        this.isAdministrative =_isAdministrative;
         this.possibleChildren = _children;
         this.attributes = _attributes;
         this.parent = _parent;
@@ -240,4 +244,11 @@ public class ClassMetadata implements Serializable {
         this.isDummy = isDummy;
     }
 
+    public Boolean getIsAdministrative() {
+        return isAdministrative;
+    }
+
+    public void setIsAdministrative(Boolean isAdministrative) {
+        this.isAdministrative = isAdministrative;
+    }
 }

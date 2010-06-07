@@ -19,7 +19,6 @@ import core.toserialize.ClassInfo;
 import core.toserialize.ObjectList;
 import core.toserialize.RemoteObject;
 import core.toserialize.RemoteObjectLight;
-import core.annotations.Administrative;
 import core.annotations.Metadata;
 import core.exceptions.ObjectNotFoundException;
 import core.todeserialize.ObjectUpdate;
@@ -122,8 +121,7 @@ public class BackendBean implements BackendBeanRemote {
             Dictionary<String, EntityType> alreadyPersisted = new Hashtable<String, EntityType>();
 
             for (EntityType entity : ent){
-                if(entity.getJavaType().getAnnotation(Metadata.class)!=null ||
-                        entity.getJavaType().getAnnotation(Administrative.class)!=null)
+                if(entity.getJavaType().getAnnotation(Metadata.class)!=null)
                         continue;
                 if (alreadyPersisted.get(entity.getJavaType().getSimpleName())!=null)
                     continue;
@@ -325,10 +323,9 @@ public class BackendBean implements BackendBeanRemote {
             try{
       
                 newObject = Class.forName(objectClass).newInstance();
-                //Recordar que invoke recibe como parámetros null y los parámtros del método si es estático
-                //y el objetos y los parámetros del método si es 
-                newObject.getClass().getMethod("setParent", Long.class).
-                        invoke(newObject, parentOid);
+                if (parentOid != null)
+                    newObject.getClass().getMethod("setParent", Long.class).
+                            invoke(newObject, parentOid);
                 em.persist(newObject);
             }catch(Exception e){
                 this.error = e.getMessage();
@@ -346,7 +343,7 @@ public class BackendBean implements BackendBeanRemote {
     public ClassInfo[] getMetadata(){
         System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_GETMETADATA"));
         if (em != null){
-            String sentence = "SELECT x FROM ClassMetadata x ORDER BY x.name";
+            String sentence = "SELECT x FROM ClassMetadata x WHERE x.isAdministrative=false ORDER BY x.name ";
             Query q = em.createQuery(sentence);
             List<ClassMetadata> cr = q.getResultList();
             ClassInfo[] cm = new ClassInfo[cr.size()];
@@ -717,6 +714,25 @@ public class BackendBean implements BackendBeanRemote {
         }else {
             this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return false;
+        }
+    }
+
+    public ClassInfoLight[] getInstanceableListTypes() {
+        if (em != null){
+            Long id = (Long) em.createQuery("SELECT x.id FROM ClassMetadata x WHERE x.name ='GenericObjectList' ORDER BY x.name").getSingleResult();
+            List<ClassMetadata> listTypes =HierarchyUtils.getInstanceableSubclasses(id, em);
+            ClassInfoLight[] res = new ClassInfoLight[listTypes.size()];
+
+            int i=0;
+            for (ClassMetadata cm : listTypes){
+                res[i] = new ClassInfoLight(cm);
+                i++;
+            }
+            return res;
+
+        }else {
+            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            return null;
         }
     }
 }

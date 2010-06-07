@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
- *
+ * 
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *
+ * 
  *       http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,23 +14,16 @@
  *  limitations under the License.
  */
 
-package entity.core;
+package entity.equipment.applicationlayer;
 
-import core.annotations.Administrative;
 import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- * Thios class is the root of all non-operative elements
+ * A simple laptop
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Administrative
-public abstract class AdministrativeItem extends RootObject implements Serializable {
-    
-    @Override
-    public String toString() {
-        return "entity.core.AdministrativeItem[id=" + id + "]";
-    }
+public class Laptop extends GenericApplicationElement implements Serializable {
 
 }

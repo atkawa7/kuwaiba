@@ -150,7 +150,7 @@ public class MetadataUtils {
                 return Long.valueOf(valueAsString);
 
             if (type.equals("Date"))
-                return Date.valueOf(valueAsString);
+                return new Date(Long.valueOf(valueAsString));
             if (type.equals("Timestamp"))
                 return Timestamp.valueOf(valueAsString);
             if (type.equals("Time"))

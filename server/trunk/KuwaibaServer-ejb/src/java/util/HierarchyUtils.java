@@ -15,6 +15,7 @@
  */
 package util;
 
+import core.annotations.Administrative;
 import core.annotations.Dummy;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
@@ -115,7 +116,8 @@ public class HierarchyUtils {
                                              pm,
                                              java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CLASS")+" "+entity.getJavaType().getSimpleName(),
                                              false,Modifier.isAbstract(entity.getJavaType().getModifiers()),
-                                             (entity.getJavaType().getAnnotation(Dummy.class)!=null),
+                                             entity.getJavaType().getAnnotation(Dummy.class)!=null,
+                                             entity.getJavaType().getAnnotation(Administrative.class)!=null,
                                              null,atts,parentId
                                              );
 

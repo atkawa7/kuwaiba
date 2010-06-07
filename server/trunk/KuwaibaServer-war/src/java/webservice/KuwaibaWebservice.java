@@ -375,4 +375,15 @@ public class KuwaibaWebservice {
     byte[] iconImage) {
         return sbr.setClassIcon(classId, iconAttribute, iconImage);
     }
+
+    /**
+     * Returns the list type attributes
+     */
+    @WebMethod(operationName = "getInstanceableListTypes")
+    public ClassInfoLight[] getInstanceableListTypes() {
+        ClassInfoLight[] res = sbr.getInstanceableListTypes();
+        if (res==null)
+            lastErr = sbr.getError();
+        return res;
+    }
 }

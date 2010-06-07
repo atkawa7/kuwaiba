@@ -30,7 +30,7 @@ import util.MetadataUtils;
  * Instances of this class are proxies that represents the entities in the database
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-@XmlAccessorType(XmlAccessType.FIELD) //This annotation tell the serializerto include all fiels
+@XmlAccessorType(XmlAccessType.FIELD) //This annotation tell the serializer to include all fiels
                                       //no matter its modifier. Default takes only public ones
 public class RemoteObject extends RemoteObjectLight {
     private String[] attributes; //This information is already in the meta, but we don't know
@@ -60,10 +60,8 @@ public class RemoteObject extends RemoteObjectLight {
                 Object value = m.invoke(object, new Object[]{});
                 if (value == null)  values[i]=null;
                 else{
-                    //Si el atributo es una relación o una enumeración la cosa se pone peluda
-                    if(value instanceof GenericObjectList) //TODO: En contrar una forma de averiguar esto sin
-                                                            //hacer referencia a una clase externa, 
-                                                            //esta clase debe ser "stand-alone"
+                    //If this attribute is a list type, get the id
+                    if(value instanceof GenericObjectList) 
                         values[i]=String.valueOf(((GenericObjectList)value).getId());
                     else
                         if (value instanceof Date)
