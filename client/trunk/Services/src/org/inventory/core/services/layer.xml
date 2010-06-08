@@ -3,10 +3,10 @@
 <filesystem>
     <folder name="Actions">
         <folder name="View">
-            <file name="org-inventory-core-services-actions-Refresh.instance">
+            <file name="org-inventory-core-services-actions-Refresh.instance_hidden">
                 <attr name="delegate" newvalue="org.inventory.core.services.actions.Refresh"/>
                 <attr name="displayName" bundlevalue="org.inventory.core.services.actions.Bundle#CTL_Refresh"/>
-                <attr name="iconBase" stringvalue="org/inventory/core/services/res/view-refresh.png"/>
+                <attr name="iconBase" stringvalue="org/inventory/core/services/res/view-refresh24.png"/>
                 <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
                 <attr name="noIconInMenu" boolvalue="false"/>
             </file>

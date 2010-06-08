@@ -17,7 +17,6 @@ package org.inventory.customization.listmanager;
 
 import java.util.logging.Logger;
 import javax.swing.ActionMap;
-import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.customization.listmanager.nodes.ListTypeChildren;
 import org.openide.util.NbBundle;
@@ -128,7 +127,7 @@ public final class ListManagerTopComponent extends TopComponent
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        lms.refreshLists();
     }
 
     void writeProperties(java.util.Properties p) {

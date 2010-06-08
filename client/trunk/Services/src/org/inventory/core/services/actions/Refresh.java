@@ -17,14 +17,21 @@ package org.inventory.core.services.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.AbstractAction;
+
 
 /**
  * Refreshes the focused component
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public final class Refresh implements ActionListener {
+public final class Refresh extends AbstractAction implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
-        // TODO implement action body
+
+    }
+
+    @Override
+    public boolean isEnabled (){
+        return false;
     }
 }

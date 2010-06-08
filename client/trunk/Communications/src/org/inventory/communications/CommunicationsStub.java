@@ -195,9 +195,12 @@ public class CommunicationsStub {
      * @param className
      * @return allPosible children
      */
-    public List<LocalClassMetadataLight> getPossibleChildren(String className) {
+    public List<LocalClassMetadataLight> getPossibleChildren(String className, boolean ignoreCache) {
 
-        List<LocalClassMetadataLight> resAsLocal = cache.getPossibleChildrenCached(className);
+        List<LocalClassMetadataLight> resAsLocal = null;
+        if (!ignoreCache)
+                resAsLocal = cache.getPossibleChildrenCached(className);
+
         if (resAsLocal == null){
             resAsLocal = new ArrayList<LocalClassMetadataLight>();
             List<ClassInfoLight> resAsRemote = port.getPossibleChildren(className);
@@ -233,7 +236,12 @@ public class CommunicationsStub {
     }
 
     public LocalObjectLight createObject(String objectClass, Long parentOid, String template){
-        return new LocalObjectLightImpl(port.createObject(objectClass, template,parentOid));
+        RemoteObjectLight myObject = port.createObject(objectClass, template,parentOid);
+        if (myObject == null){
+            this.error = port.getLastErr();
+            return null;
+        }
+        return new LocalObjectLightImpl(myObject);
     }
 
     /**
@@ -268,10 +276,13 @@ public class CommunicationsStub {
      * @param className the object class
      * @return the metadata information
      */
-    public LocalClassMetadata getMetaForClass(String className){
-        LocalClassMetadata res = cache.getMetaForClass(className);
-        if (res != null)
-            return res;
+    public LocalClassMetadata getMetaForClass(String className, boolean ignoreCache){
+        LocalClassMetadata res;
+        if (!ignoreCache){
+            res = cache.getMetaForClass(className);
+            if (res != null)
+                return res;
+        }
 
         ClassInfo cm = port.getMetadataForClass(className);
         if (cm ==null){
@@ -285,15 +296,42 @@ public class CommunicationsStub {
     }
 
     /**
+     * Retrieves the metadata for a given class
+     * @param className the object class
+     * @return the metadata information
+     */
+    public LocalClassMetadataLight getLightMetaForClass(String className, boolean ignoreCache){
+        LocalClassMetadataLight res;
+        if (!ignoreCache){
+            res = cache.getLightMetaForClass(className);
+            if (res != null)
+                return res;
+        }
+
+        ClassInfo cm = port.getMetadataForClass(className);
+        if (cm ==null){
+            this.error = port.getLastErr();
+            return null;
+        }
+
+        res = new LocalClassMetadataLightImpl(cm);
+        cache.addLightMeta(new LocalClassMetadataLight[]{res});
+        return res;
+    }
+
+    /**
      * Retrieves a List type attribute.
      * @param className attribute class (usually descendant of GenericListType)
      * @return 
      */
-    public LocalObjectListItem[] getList(String className){
+    public LocalObjectListItem[] getList(String className, boolean ignoreCache){
+        LocalObjectListItem[] res;
 
-        LocalObjectListItem[] res = cache.getListCached(className);
-        if (res != null)
-            return res;
+        if (!ignoreCache){
+            res = cache.getListCached(className);
+            if (res != null)
+                return res;
+        }
 
         ObjectList remoteList = port.getMultipleChoice(className);
         
@@ -382,7 +420,7 @@ public class CommunicationsStub {
     }
 
     public String getRootClass(){
-        LocalClassMetadata lcm = getMetaForClass("DummyRoot");
+        LocalClassMetadata lcm = getMetaForClass("DummyRoot",false);
         return lcm.getClassName();
     }
 
@@ -473,7 +511,6 @@ public class CommunicationsStub {
     public void resetCache(){
 
         //Set the new values
- //       cache.setRootClass(port.getDummyRootClass());
         cache.setRootId(port.getDummyRootId());
 
         //Wipe out the dictionaries
@@ -509,7 +546,7 @@ public class CommunicationsStub {
             while(em.hasMoreElements()){
                 String item = (String) em.nextElement();
                 myLocalList.remove(item);
-                getList(item);
+                getList(item,true);
             }
         }
         if (refreshPossibleChildren){
@@ -519,11 +556,11 @@ public class CommunicationsStub {
             while(em.hasMoreElements()){
                 String item = (String) em.nextElement();
                 myLocalPossibleChildren.remove(item);
-                getPossibleChildren(item);
+                getPossibleChildren(item,true);
             }
         }
     }
-
+    
     public boolean setAttributePropertyValue(Long classId, String attributeName,
             String propertyName, String propertyType) {
         return port.setAttributePropertyValue(classId, attributeName, propertyName, propertyType);
@@ -540,6 +577,25 @@ public class CommunicationsStub {
         boolean res = port.setClassIcon(classId, attributeName, attributeValue);
         if(!res)
             error = port.getLastErr();
+        return res;
+    }
+
+    /**
+     * Retrives the list types
+     * @return an array with all possible instanceable list types
+     */
+    public LocalClassMetadataLight[] getInstanceableListTypes() {
+        List<ClassInfoLight> listTypes = port.getInstanceableListTypes();
+        if (listTypes==null){
+            error = port.getLastErr();
+            return null;
+        }
+        LocalClassMetadataLight[] res = new LocalClassMetadataLight[listTypes.size()];
+        int i = 0;
+        for (ClassInfoLight cil : listTypes){
+            res[i] = new LocalClassMetadataLightImpl(cil);
+            i++;
+        }
         return res;
     }
 }

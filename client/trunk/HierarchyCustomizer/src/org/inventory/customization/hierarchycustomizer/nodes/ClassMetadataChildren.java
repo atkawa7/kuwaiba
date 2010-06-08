@@ -39,6 +39,7 @@ public class ClassMetadataChildren extends Array{
 
     public ClassMetadataChildren(){
         this.main = false;
+        this.keys= new ArrayList<LocalClassMetadataLight>();
     }
 
     @Override
