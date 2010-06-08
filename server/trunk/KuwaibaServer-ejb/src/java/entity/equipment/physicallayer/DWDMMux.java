@@ -25,5 +25,4 @@ import javax.persistence.Entity;
  */
 @Entity
 public class DWDMMux extends GenericPhysicalElement implements Serializable {
-
 }

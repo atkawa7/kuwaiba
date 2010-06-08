@@ -19,8 +19,8 @@ import core.annotations.NoCopy;
 import java.io.Serializable;
 
 //Annotations
-import java.util.Calendar;
 import java.util.Date;
+import java.util.Calendar;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Entity;
@@ -57,7 +57,7 @@ public abstract class RootObject implements Serializable, Cloneable {
     @NoCopy
     protected Long parent = null;
     @NoCopy
-    @Temporal(value=TemporalType.TIME)
+    @Temporal(value=TemporalType.TIMESTAMP)
     protected Date creationDate = Calendar.getInstance().getTime();   //When was the object created?
 
     public RootObject(){}
