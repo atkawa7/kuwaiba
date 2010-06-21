@@ -18,16 +18,12 @@ package org.inventory.customization.classmanager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.filechooser.FileFilter;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 
