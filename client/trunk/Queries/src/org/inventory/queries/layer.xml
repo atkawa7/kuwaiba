@@ -2,21 +2,40 @@
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
     <folder name="Actions">
-        <folder name="Window">
-            <file name="org-inventory-queries-QueryBuilderAction.instance">
-                <attr name="component" methodvalue="org.inventory.queries.QueryBuilderTopComponent.findInstance"/>
-                <attr name="displayName" bundlevalue="org.inventory.queries.Bundle#CTL_QueryBuilderAction"/>
+        <folder name="Edit">
+            <file name="org-inventory-queries-actions-ShowQueryBuilder.instance">
+                <attr name="delegate" newvalue="org.inventory.queries.actions.ShowQueryBuilder"/>
+                <attr name="displayName" bundlevalue="org.inventory.queries.Bundle#CTL_ShowQueryBuilder"/>
+                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
                 <attr name="iconBase" stringvalue="org/inventory/queries/res/icon.png"/>
-                <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
             </file>
+        </folder>
+        <folder name="Window">
+
         </folder>
     </folder>
     <folder name="Menu">
+        <folder name="Edit">
+            <file name="org-inventory-queries-actions-ShowQueryBuilder-separatorBefore.instance">
+                <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                <attr name="position" intvalue="0"/>
+            </file>
+            <file name="org-inventory-queries-actions-ShowQueryBuilder.shadow">
+                <attr name="originalFile" stringvalue="Actions/Edit/org-inventory-queries-actions-ShowQueryBuilder.instance"/>
+                <attr name="position" intvalue="100"/>
+            </file>
+        </folder>
         <folder name="Window">
             <file name="QueryBuilderAction.shadow">
                 <attr name="originalFile" stringvalue="Actions/Window/org-inventory-queries-QueryBuilderAction.instance"/>
             </file>
         </folder>
+    </folder>
+    <folder name="Shortcuts">
+        <file name="D-F.shadow">
+            <attr name="originalFile" stringvalue="Actions/Edit/org-inventory-queries-actions-ShowQueryBuilder.instance"/>
+        </file>
     </folder>
     <folder name="Windows2">
         <folder name="Components">

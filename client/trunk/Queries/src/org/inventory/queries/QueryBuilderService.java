@@ -48,15 +48,16 @@ import org.openide.util.Lookup;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class QueryBuilderService implements ListSelectionListener,ItemListener{
-    private QueryBuilderTopComponent qbtc;
+
+    private QueryBuilderFrame qtf;
     private CommunicationsStub com;
     private NotificationUtil nu;
     private LocalClassMetadata currentLocalClassMetadata = null;
     private List<JCheckBox> enablers;
 
-    public QueryBuilderService(QueryBuilderTopComponent _qbtc){
-        this.qbtc = _qbtc;
-        com = CommunicationsStub.getInstance();   
+    QueryBuilderService(QueryBuilderFrame _qtf) {
+        this.qtf = _qtf;
+        com = CommunicationsStub.getInstance();
     }
 
     public void initComponents(){
@@ -67,8 +68,8 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/queries/Bundle").getString("LBL_TITLE_CREATION"),
                     NotificationUtil.ERROR, com.getError());
         else
-            qbtc.getList().setListData(lcml);
-        qbtc.getList().addListSelectionListener(this);
+            qtf.getList().setListData(lcml);
+        qtf.getList().addListSelectionListener(this);
     }
 
     public void valueChanged(ListSelectionEvent e) {
@@ -81,17 +82,17 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
             this.enablers.removeAll(enablers);
 
         //Clean up the panel
-        qbtc.getLeftPanel().removeAll();
+        qtf.getLeftPanel().removeAll();
 
         //For more information on how to use GroupLayouts refer to http://java.sun.com/javase/6/docs/api/javax/swing/GroupLayout.html
-        SequentialGroup hGroup = ((GroupLayout)qbtc.getLeftPanel().getLayout()).createSequentialGroup();
-        SequentialGroup vGroup = ((GroupLayout)qbtc.getLeftPanel().getLayout()).createSequentialGroup();
-        ((GroupLayout)qbtc.getLeftPanel().getLayout()).setAutoCreateGaps(true);
-        ((GroupLayout)qbtc.getLeftPanel().getLayout()).setAutoCreateContainerGaps(true);
+        SequentialGroup hGroup = ((GroupLayout)qtf.getLeftPanel().getLayout()).createSequentialGroup();
+        SequentialGroup vGroup = ((GroupLayout)qtf.getLeftPanel().getLayout()).createSequentialGroup();
+        ((GroupLayout)qtf.getLeftPanel().getLayout()).setAutoCreateGaps(true);
+        ((GroupLayout)qtf.getLeftPanel().getLayout()).setAutoCreateContainerGaps(true);
 
-        ParallelGroup labels = ((GroupLayout)qbtc.getLeftPanel().getLayout()).createParallelGroup();
-        ParallelGroup values = ((GroupLayout)qbtc.getLeftPanel().getLayout()).createParallelGroup();
-        ParallelGroup checkboxes = ((GroupLayout)qbtc.getLeftPanel().getLayout()).createParallelGroup();
+        ParallelGroup labels = ((GroupLayout)qtf.getLeftPanel().getLayout()).createParallelGroup();
+        ParallelGroup values = ((GroupLayout)qtf.getLeftPanel().getLayout()).createParallelGroup();
+        ParallelGroup checkboxes = ((GroupLayout)qtf.getLeftPanel().getLayout()).createParallelGroup();
 
         for (LocalAttributeMetadata lam : currentLocalClassMetadata.getAttributes()){
             if (lam.getIsVisible()){
@@ -140,7 +141,7 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
                 checkboxes.addComponent(newCheckBox);
                 enablers.add(newCheckBox);
                 
-                vGroup.addGroup(((GroupLayout)qbtc.getLeftPanel().getLayout()).createParallelGroup(Alignment.BASELINE).
+                vGroup.addGroup(((GroupLayout)qtf.getLeftPanel().getLayout()).createParallelGroup(Alignment.BASELINE).
                         addComponent(newCheckBox).addComponent(lblAttribute).addComponent(component));
             }
         }
@@ -149,10 +150,10 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
         hGroup.addGroup(labels);
         hGroup.addGroup(values);
         //Vertical *AND* Horizontal groups must be created, or an IllegalStateException will be raised
-        ((GroupLayout)qbtc.getLeftPanel().getLayout()).setHorizontalGroup(hGroup);
-        ((GroupLayout)qbtc.getLeftPanel().getLayout()).setVerticalGroup(vGroup);
-        qbtc.getLeftPanel().revalidate();
-        qbtc.getLeftPanel().repaint();
+        ((GroupLayout)qtf.getLeftPanel().getLayout()).setHorizontalGroup(hGroup);
+        ((GroupLayout)qtf.getLeftPanel().getLayout()).setVerticalGroup(vGroup);
+        qtf.getLeftPanel().revalidate();
+        qtf.getLeftPanel().repaint();
     }
 
     public void itemStateChanged(ItemEvent e) {
@@ -172,7 +173,7 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
         types= new ArrayList<String>();
         atts= new ArrayList<String>();
         values= new ArrayList<String>();
-        LocalClassMetadataLight selectedClass = (LocalClassMetadataLight)qbtc.getList().getSelectedValue();
+        LocalClassMetadataLight selectedClass = (LocalClassMetadataLight)qtf.getList().getSelectedValue();
 
         for (JCheckBox checkbox : enablers){
             if (checkbox.isSelected()){
