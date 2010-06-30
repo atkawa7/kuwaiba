@@ -34,14 +34,15 @@ public class QueryBuilderFrame extends JFrame {
         initComponents();
         initCustomComponents();
         qbs = new QueryBuilderService(this);
-        this.setSize(800, 500);
         qbs.initComponents();
     }
 
     public final void initCustomComponents(){
+        this.setSize(800, 500);
         pnlMainQueryBuilder.setDividerLocation(0.7);
         GroupLayout layout = new GroupLayout(pnlLeftPanel);
         pnlLeftPanel.setLayout(layout);
+        this.setLocationRelativeTo(getRootPane());
     }
 
     /** This method is called from within the constructor to

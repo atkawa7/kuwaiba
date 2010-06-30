@@ -585,11 +585,19 @@ public class CommunicationsStub {
      * @return an array with all possible instanceable list types
      */
     public LocalClassMetadataLight[] getInstanceableListTypes() {
-        List<ClassInfoLight> listTypes = port.getInstanceableListTypes();
-        if (listTypes==null){
-            error = port.getLastErr();
+        List<ClassInfoLight> listTypes;
+        try{
+            listTypes = port.getInstanceableListTypes();
+            if (listTypes==null){
+              error = port.getLastErr();
+                return null;
+            }
+        }catch(Exception cte){
+            listTypes = null;
+            this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
             return null;
         }
+        
         LocalClassMetadataLight[] res = new LocalClassMetadataLight[listTypes.size()];
         int i = 0;
         for (ClassInfoLight cil : listTypes){

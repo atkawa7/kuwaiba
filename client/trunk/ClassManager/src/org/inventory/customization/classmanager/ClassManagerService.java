@@ -28,7 +28,7 @@ import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 
 /**
- * This class provides the business logic to the associated TopComponent
+ * This class provides the business logic to the associated component
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class ClassManagerService extends FileFilter implements ActionListener{
@@ -38,10 +38,10 @@ public class ClassManagerService extends FileFilter implements ActionListener{
     public final String gif = "gif";
     public final String png = "png";
 
-    private ClassManagerTopComponent cmstc;
+    private ClassManagerFrame cmf;
 
-    ClassManagerService(ClassManagerTopComponent _cmstc) {
-        this.cmstc = _cmstc;
+    ClassManagerService(ClassManagerFrame _cmf) {
+        this.cmf = _cmf;
     }
 
     public String getExtension(File f) {
@@ -97,7 +97,7 @@ public class ClassManagerService extends FileFilter implements ActionListener{
         List<LocalClassMetadataLight> res = new ArrayList<LocalClassMetadataLight>();
         LocalClassMetadataLight[] allMeta = CommunicationsStub.getInstance().getAllLightMeta();
         if (allMeta == null){
-            cmstc.getNotifier().showSimplePopup("Class List", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            cmf.getNotifier().showSimplePopup("Class List", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
             return res;
         }
 
@@ -111,9 +111,9 @@ public class ClassManagerService extends FileFilter implements ActionListener{
         LocalClassMetadataLight myClass = (LocalClassMetadataLight)((JComboBox)e.getSource()).getSelectedItem();
         if (myClass == null)
             return;
-        cmstc.getTxtDisplayName().setText(myClass.getDisplayName()==null?"":myClass.getDisplayName());
-        cmstc.getTxtDescription().setText(myClass.getDescription()==null?"":myClass.getDescription());
-        cmstc.getTxtSmallIcon().setText("");
-        cmstc.getTxtIcon().setText("");
+        cmf.getTxtDisplayName().setText(myClass.getDisplayName()==null?"":myClass.getDisplayName());
+        cmf.getTxtDescription().setText(myClass.getDescription()==null?"":myClass.getDescription());
+        cmf.getTxtSmallIcon().setText("");
+        cmf.getTxtIcon().setText("");
     }
 }
