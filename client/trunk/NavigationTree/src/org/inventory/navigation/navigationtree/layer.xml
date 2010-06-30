@@ -13,24 +13,22 @@
     </folder>
     <file name="Debugger_hidden"/>
     <folder name="Menu">
-        <folder name="File">
-        </folder>
         <folder name="Tools">
             <file name="NavigationTreeAction.shadow">
                     <attr name="originalFile" stringvalue="Actions/Tools/org-inventory-navigation-navigationtree-NavigationTreeAction.instance"/>
             </file>
-        </folder>
-        
+        </folder>     
     </folder>
     <folder name="Toolbars">
-        <folder name="File">
-
+        <folder name="Tools">
+            <file name="org-inventory-navigation-navigationtree-NavigationTreeAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Tools/org-inventory-navigation-navigationtree-NavigationTreeAction.instance" />
+            </file>
         </folder>
-        <file name="UndoRedo_hidden"/>
     </folder>
 
     <folder name="Shortcuts">
-        <file name="D-T.shadow">
+        <file name="D-N.shadow">
             <attr name="originalFile" stringvalue="Actions/Tools/org-inventory-navigation-navigationtree-NavigationTreeAction.instance"/>
         </file>
     </folder>

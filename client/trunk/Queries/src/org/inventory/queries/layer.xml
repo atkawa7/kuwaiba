@@ -4,7 +4,7 @@
     <folder name="Actions">
         <folder name="Edit">
             <file name="org-inventory-queries-actions-ShowQueryBuilder.instance">
-                <attr name="delegate" methodvalue="org.inventory.queries.actions.ShowQueryBuilder"/>
+                <attr name="delegate" newvalue="org.inventory.queries.actions.ShowQueryBuilder"/>
                 <attr name="displayName" bundlevalue="org.inventory.queries.Bundle#CTL_ShowQueryBuilder"/>
                 <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
                 <attr name="iconBase" stringvalue="org/inventory/queries/res/icon.png"/>
@@ -16,12 +16,28 @@
         <folder name="Edit">
             <file name="org-inventory-queries-actions-ShowQueryBuilder.shadow">
                 <attr name="originalFile" stringvalue="Actions/Edit/org-inventory-queries-actions-ShowQueryBuilder.instance"/>
-                <attr name="position" intvalue="0"/>
-            </file>
-            <file name="org-inventory-queries-actions-ShowQueryBuilder-separatorAfter.instance">
-                <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
                 <attr name="position" intvalue="100"/>
             </file>
+            <file name="org-openide-actions-FindAction.shadow_hidden"/>
+            <file name="org-openide-actions-ReplaceAction.shadow_hidden"/>
+        </folder>
+        <folder name="File">
+            <file name="org-openide-actions-SaveAllAction.shadow_hidden"/>
+        </folder>
+        <folder name="GoTo_hidden"/>
+        <folder name="Navigate_hidden"/>
+        <folder name="View">
+            <file name="Separator1.instance_hidden"/>
+            <file name="org-netbeans-core-actions-HTMLViewAction.shadow_hidden"/>
+            <file name="org-netbeans-core-actions-LogAction.shadow_hidden"/>
+            <file name="org-netbeans-core-multiview-EditorsAction.instance_hidden"/>
+        </folder>
+        <folder name="Window">
+            <file name="CloneDocumentAction.shadow_hidden"/>
+            <file name="DocumentsAction.shadow_hidden"/>
+            <file name="ProgressListAction.shadow_hidden"/>
+            <file name="Separator3.instance_hidden"/>
+            <file name="SwitchToRecentDocumentAction.shadow_hidden"/>
         </folder>
     </folder>
     <folder name="Shortcuts">
@@ -29,14 +45,14 @@
             <attr name="originalFile" stringvalue="Actions/Edit/org-inventory-queries-actions-ShowQueryBuilder.instance"/>
         </file>
     </folder>
-    <folder name="Windows2">
-        <folder name="Components">
-            <file name="QueryBuilderTopComponent.settings" url="QueryBuilderTopComponentSettings.xml"/>
+    <folder name="Toolbars">
+        <folder name="Edit">
+            <file name="org-inventory-queries-actions-ShowQueryBuilder.shadow">
+                <attr name="originalFile" stringvalue="Actions/Edit/org-inventory-queries-actions-ShowQueryBuilder.instance"/>
+                <attr name="displayName" bundlevalue="org.inventory.queries.Bundle#CTL_ShowQueryBuilder"/>
+            </file>
         </folder>
-        <folder name="Modes">
-            <folder name="output">
-                <file name="QueryBuilderTopComponent.wstcref" url="QueryBuilderTopComponentWstcref.xml"/>
-            </folder>
-        </folder>
+        <folder name="File_hidden"/>
+        <folder name="UndoRedo_hidden"/>
     </folder>
 </filesystem>

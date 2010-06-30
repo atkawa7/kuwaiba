@@ -37,4 +37,11 @@
             <attr name="originalFile" stringvalue="Actions/Tools/Administrative/org-inventory-customization-listmanager-ListManagerAction.instance" />
         </file>
     </folder>
+    <folder name="Toolbars">
+        <folder name="Tools">
+            <file name="org-inventory-customization-listmanager-ListManagerAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Tools/Administrative/org-inventory-customization-listmanager-ListManagerAction.instance" />
+            </file>
+        </folder>
+    </folder>
 </filesystem>

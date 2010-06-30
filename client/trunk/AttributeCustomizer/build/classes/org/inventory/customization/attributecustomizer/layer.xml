@@ -37,4 +37,11 @@
             </folder>
         </folder>
     </folder>
+    <folder name="Toolbars">
+        <folder name="Tools">
+            <file name="org-inventory-customization-attributecustomizer-AttributeCustomizerAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Tools/Administrative/org-inventory-customization-attributecustomizer-AttributeCustomizerAction.instance" />
+            </file>
+        </folder>
+    </folder>
 </filesystem>

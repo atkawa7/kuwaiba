@@ -30,4 +30,12 @@
             <attr name="originalFile" stringvalue="Actions/Tools/Administrative/org-inventory-customization-classmanager-actions-ShowClassManager.instance"/>
         </file>
     </folder>
+    <folder name="Toolbars">
+        <folder name="Tools">
+            <file name="org-inventory-customization-classmanager-actions-ShowClassManager.shadow">
+                <attr name="originalFile" stringvalue="Actions/Tools/Administrative/org-inventory-customization-classmanager-actions-ShowClassManager.instance" />
+                <attr name="iconBase" stringvalue="org/inventory/customization/classmanager/res/icon-32.png" />
+            </file>
+        </folder>
+    </folder>
 </filesystem>

@@ -37,4 +37,11 @@
             <attr name="originalFile" stringvalue="Actions/Tools/Administrative/org-inventory-customization-hierarchycustomizer-HierarchyCustomizerAction.instance"/>
         </file>
     </folder>
+    <folder name="Toolbars">
+        <folder name="Tools">
+            <file name="org-inventory-customization-hierarchycustomizer-HierarchyCustomizerAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Tools/Administrative/org-inventory-customization-hierarchycustomizer-HierarchyCustomizerAction.instance" />
+            </file>
+        </folder>
+    </folder>
 </filesystem>
