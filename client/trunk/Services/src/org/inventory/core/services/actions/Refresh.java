@@ -29,9 +29,4 @@ public final class Refresh extends AbstractAction implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
     }
-
-    @Override
-    public boolean isEnabled (){
-        return false;
-    }
 }

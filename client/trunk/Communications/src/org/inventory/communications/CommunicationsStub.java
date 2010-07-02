@@ -67,6 +67,34 @@ public class CommunicationsStub {
     }
 
     /**
+     * This method closes a current session
+     * @return Success or failure
+     */
+    public boolean closeSession(){
+        try{
+            return port.closeSession();
+        }catch(Exception e){
+            this.error = this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @param user The user for this session
+     * @param password The password for the user
+     * @return Success or failure
+     */
+    public boolean createSession(String user, String password){
+        try{
+            return port.createSession(user, password);
+        }catch(Exception e){
+            this.error = this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
+            return false;
+        }
+    }
+
+    /**
      * Retrieves the root node's children
      * @return an array of local objects representing the root node's children
      */

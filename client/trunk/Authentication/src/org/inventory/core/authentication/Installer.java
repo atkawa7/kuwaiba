@@ -15,10 +15,7 @@
  */
 package org.inventory.core.authentication;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import org.openide.DialogDisplayer;
-import org.openide.LifecycleManager;
 import org.openide.NotifyDescriptor;
 import org.openide.modules.ModuleInstall;
 
@@ -33,16 +30,7 @@ public class Installer extends ModuleInstall {
         NotifyDescriptor nd = new NotifyDescriptor.Message(
               pnlAuthentication,NotifyDescriptor.PLAIN_MESSAGE);
         nd.setOptions(pnlAuthentication.getOptions());
+        nd.setTitle("Login Window");
         DialogDisplayer.getDefault().notifyLater(nd);
-
-        nd.addPropertyChangeListener(new PropertyChangeListener(){
-        @Override
-        public void propertyChange(PropertyChangeEvent evt){
-            if(NotifyDescriptor.CLOSED_OPTION.equals(evt.getNewValue())){
-               LifecycleManager.getDefault().exit();
-            }
-         }
-      });
-
     }
 }

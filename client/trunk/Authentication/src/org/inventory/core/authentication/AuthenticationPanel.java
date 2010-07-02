@@ -16,7 +16,10 @@
 
 package org.inventory.core.authentication;
 
+import org.inventory.communications.CommunicationsStub;
+import org.openide.DialogDisplayer;
 import org.openide.LifecycleManager;
+import org.openide.NotifyDescriptor;
 
 /**
  *
@@ -43,9 +46,9 @@ public class AuthenticationPanel extends javax.swing.JPanel {
         lblUser = new javax.swing.JLabel();
         lblPassword = new javax.swing.JLabel();
         txtUser = new javax.swing.JTextField();
-        txtPassword = new javax.swing.JTextField();
         btnLogin = new javax.swing.JButton();
         btnExit = new javax.swing.JButton();
+        txtPassword = new javax.swing.JPasswordField();
         pnlConnectionSettings = new javax.swing.JPanel();
         txtServerAddress = new javax.swing.JTextField();
         lblServerPort = new javax.swing.JLabel();
@@ -60,9 +63,12 @@ public class AuthenticationPanel extends javax.swing.JPanel {
 
         txtUser.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.txtUser.text")); // NOI18N
 
-        txtPassword.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.txtPassword.text")); // NOI18N
-
         btnLogin.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.btnLogin.text")); // NOI18N
+        btnLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoginActionPerformed(evt);
+            }
+        });
 
         btnExit.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.btnExit.text")); // NOI18N
         btnExit.addActionListener(new java.awt.event.ActionListener() {
@@ -71,27 +77,30 @@ public class AuthenticationPanel extends javax.swing.JPanel {
             }
         });
 
+        txtPassword.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.txtPassword.text")); // NOI18N
+
         javax.swing.GroupLayout pnlLoginLayout = new javax.swing.GroupLayout(pnlLogin);
         pnlLogin.setLayout(pnlLoginLayout);
         pnlLoginLayout.setHorizontalGroup(
             pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlLoginLayout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlLoginLayout.createSequentialGroup()
-                        .addComponent(lblUser)
-                        .addGap(39, 39, 39)
-                        .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlLoginLayout.createSequentialGroup()
-                        .addComponent(lblPassword)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(19, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlLoginLayout.createSequentialGroup()
-                .addContainerGap(253, Short.MAX_VALUE)
-                .addComponent(btnLogin)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnExit)
+                .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlLoginLayout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlLoginLayout.createSequentialGroup()
+                                .addComponent(lblUser)
+                                .addGap(39, 39, 39)
+                                .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlLoginLayout.createSequentialGroup()
+                                .addComponent(lblPassword)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE))))
+                    .addGroup(pnlLoginLayout.createSequentialGroup()
+                        .addContainerGap(257, Short.MAX_VALUE)
+                        .addComponent(btnLogin)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnExit)))
                 .addGap(25, 25, 25))
         );
         pnlLoginLayout.setVerticalGroup(
@@ -145,7 +154,7 @@ public class AuthenticationPanel extends javax.swing.JPanel {
                         .addComponent(btnTestConnection)
                         .addGap(18, 18, 18)
                         .addComponent(btnSaveConfiguration)))
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
         pnlConnectionSettingsLayout.setVerticalGroup(
             pnlConnectionSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -171,15 +180,13 @@ public class AuthenticationPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pnlTabsMain, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                .addComponent(pnlTabsMain)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 227, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(pnlTabsMain, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
@@ -190,6 +197,16 @@ public class AuthenticationPanel extends javax.swing.JPanel {
     private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
         LifecycleManager.getDefault().exit();
 }//GEN-LAST:event_btnExitActionPerformed
+
+    private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
+        if (!CommunicationsStub.getInstance().createSession(txtUser.getText(), new String(txtPassword.getPassword()))){
+            NotifyDescriptor nd = new NotifyDescriptor.Message(
+              this,NotifyDescriptor.PLAIN_MESSAGE);
+            nd.setOptions(this.getOptions());
+            nd.setTitle("Login Window");
+            DialogDisplayer.getDefault().notifyLater(nd);
+        }
+    }//GEN-LAST:event_btnLoginActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -204,7 +221,7 @@ public class AuthenticationPanel extends javax.swing.JPanel {
     private javax.swing.JPanel pnlConnectionSettings;
     private javax.swing.JPanel pnlLogin;
     private javax.swing.JTabbedPane pnlTabsMain;
-    private javax.swing.JTextField txtPassword;
+    private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtServerAddress;
     private javax.swing.JTextField txtServerPort;
     private javax.swing.JTextField txtUser;
