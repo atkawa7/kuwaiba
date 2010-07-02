@@ -14,22 +14,21 @@
  *  limitations under the License.
  */
 
-package entity.equipment.containers;
+package entity.multiple.views;
 
-import entity.core.RootObject;
+import core.annotations.Administrative;
+import entity.core.AdministrativeItem;
 import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- * This class represents a generic equipment that can be used to contain parts
+ * Instances of this class are the different types of view available for a given class.
+ * The default view is a  Explorer View
+ *
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericContainer extends RootObject implements Serializable {
-
-    @Override
-    public String toString() {
-        return "entity.equipment.forniture.GenericForniture[id=" + id + "]";
-    }
-
+@Administrative
+public class ViewType extends AdministrativeItem implements Serializable {
+    protected String filter; //This one tells what elements should be included into the view
 }

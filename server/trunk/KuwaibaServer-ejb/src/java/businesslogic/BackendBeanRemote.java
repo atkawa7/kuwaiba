@@ -56,4 +56,5 @@ public interface BackendBeanRemote {
     public Boolean setClassPlainAttribute(Long classId, String attributeName, String attributeValue);
     public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage);
     public ClassInfoLight[] getInstanceableListTypes();
+    public boolean createSession(String username, String password);
 }

@@ -24,6 +24,7 @@ import core.exceptions.ObjectNotFoundException;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectUpdate;
+import entity.config.User;
 import entity.core.DummyRoot;
 import entity.core.RootObject;
 import entity.core.metamodel.AttributeMetadata;
@@ -329,7 +330,6 @@ public class BackendBean implements BackendBeanRemote {
                 em.persist(newObject);
             }catch(Exception e){
                 this.error = e.getMessage();
-                e.printStackTrace();
                 return null;
             }
             return new RemoteObjectLight(newObject);
@@ -733,6 +733,29 @@ public class BackendBean implements BackendBeanRemote {
         }else {
             this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return null;
+        }
+    }
+
+    @Override
+    public boolean createSession(String username, String password) {
+        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_CREATESESSION"));
+        if (em != null){
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery cQuery = cb.createQuery();
+            Root entity = cQuery.from(User.class);
+            Predicate predicate = cb.equal(entity.get("username"), username);
+            predicate = cb.and(cb.equal(entity.get("password"), MetadataUtils.
+                    getMD5Hash(password)),predicate);
+            cQuery.where(predicate);
+            if (!em.createQuery(cQuery).getResultList().isEmpty())
+                return true;
+            else{
+                this.error = "Login or password incorrect";
+                return false;
+            }
+        }else{
+            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            return false;
         }
     }
 }

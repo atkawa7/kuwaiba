@@ -27,6 +27,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import businesslogic.BackendBeanRemote;
+//import com.sun.xml.internal.ws.developer.Stateful;
 import core.exceptions.ObjectNotFoundException;
 import core.toserialize.ClassInfoLight;
 
@@ -34,7 +35,8 @@ import core.toserialize.ClassInfoLight;
  * Represents the main webservice
  * @author Charles Edward Bedón Cortázar <charles.bedon@zoho.com>
  */
-@WebService()
+@WebService
+//@Stateful
 public class KuwaibaWebservice {
     @EJB
     private BackendBeanRemote sbr;
@@ -52,9 +54,9 @@ public class KuwaibaWebservice {
      **/
     @WebMethod(operationName = "createSession")
     public boolean createSession(@WebParam(name = "username") String username, @WebParam(name = "password") String password){
-        if(username.equalsIgnoreCase("test") && password.equals("test"))
+        if(sbr.createSession(username,password))
             return true;
-        this.lastErr="User or password incorrect";
+        this.lastErr=sbr.getError();
         return false;
     }
 

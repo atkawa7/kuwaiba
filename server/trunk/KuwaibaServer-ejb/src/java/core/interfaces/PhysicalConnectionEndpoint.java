@@ -14,22 +14,15 @@
  *  limitations under the License.
  */
 
-package entity.equipment.containers;
+package core.interfaces;
 
-import entity.core.RootObject;
-import java.io.Serializable;
-import javax.persistence.Entity;
+import java.util.List;
 
 /**
- * This class represents a generic equipment that can be used to contain parts
+ * Classes implementing this interface can be endpoints of a physical connection
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-@Entity
-public abstract class GenericContainer extends RootObject implements Serializable {
-
-    @Override
-    public String toString() {
-        return "entity.equipment.forniture.GenericForniture[id=" + id + "]";
-    }
-
+public interface PhysicalConnectionEndpoint {
+    public List<PhysicallyConnectable> getConnectedElements();
+    public void addConnectedElement(PhysicallyConnectable element);
 }

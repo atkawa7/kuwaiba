@@ -13,32 +13,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package entity.config;
+package entity.multiple.views;
 
-import core.annotations.Administrative;
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
 
 /**
- * This class represents a group of users. Those users will have the same privileges
- * @author Charles Edward Bedón Cortázar <charles.bedon@zoho.com>
+ * This class represents what a view should show (all children, a query, etc)
+ * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Administrative
-@Table(name="Groups")
-public class UserGroup implements Serializable { //Group es una plabra de servada de JavaQL
-    
+public class ViewFilter implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
 
     public Long getId() {
         return id;
@@ -46,17 +38,6 @@ public class UserGroup implements Serializable { //Group es una plabra de servad
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @ManyToMany(mappedBy = "groups")
-    protected List<User> users;
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
     }
 
     @Override
@@ -69,10 +50,10 @@ public class UserGroup implements Serializable { //Group es una plabra de servad
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UserGroup)) {
+        if (!(object instanceof ViewFilter)) {
             return false;
         }
-        UserGroup other = (UserGroup) object;
+        ViewFilter other = (ViewFilter) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -81,7 +62,7 @@ public class UserGroup implements Serializable { //Group es una plabra de servad
 
     @Override
     public String toString() {
-        return "entity.config.Groups[id=" + id + "]";
+        return "entity.multiple.views.ViewFilter[id=" + id + "]";
     }
 
 }

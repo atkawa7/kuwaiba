@@ -14,22 +14,17 @@
  *  limitations under the License.
  */
 
-package entity.equipment.containers;
+package entity.connections.logical;
 
-import entity.core.RootObject;
+import entity.connections.GenericConnection;
 import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- * This class represents a generic equipment that can be used to contain parts
+ * This class represents a generic logical connection
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericContainer extends RootObject implements Serializable {
-
-    @Override
-    public String toString() {
-        return "entity.equipment.forniture.GenericForniture[id=" + id + "]";
-    }
+public abstract class GenericLogicalConnection extends GenericConnection implements Serializable {
 
 }

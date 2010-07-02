@@ -14,22 +14,17 @@
  *  limitations under the License.
  */
 
-package entity.equipment.containers;
+package entity.multiple.types.containers;
 
-import entity.core.RootObject;
+import entity.multiple.types.parts.GenericType;
 import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- * This class represents a generic equipment that can be used to contain parts
+ * Instances of this class represent a type of conduit, this is
+ * cable ditches, cable racks, pipes or even cable trays
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericContainer extends RootObject implements Serializable {
-
-    @Override
-    public String toString() {
-        return "entity.equipment.forniture.GenericForniture[id=" + id + "]";
-    }
-
+public class ConduitType extends GenericType implements Serializable {
 }
