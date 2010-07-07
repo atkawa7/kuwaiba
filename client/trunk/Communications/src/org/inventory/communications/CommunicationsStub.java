@@ -41,8 +41,8 @@ import org.inventory.webservice.RemoteObjectLight;
 
 /**
  * Singleton class that provides communication and caching services to the rest of the modules
- * TODO: Make it a thread to support simlutaneous operations
- * TODO: Use the cachin mechanism within this class, in order to avoid the other classes
+ * TODO: Make it a thread to support simultaneous operations
+ * TODO: Use the caching mechanism within this class, in order to avoid the other classes
  * to call it by themselves
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
