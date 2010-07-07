@@ -19,6 +19,8 @@ import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfo;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectLight;
+import core.toserialize.View;
+import java.util.List;
 import javax.ejb.Remote;
 
 /**
@@ -36,7 +38,7 @@ public interface BackendBeanRemote {
     public boolean updateObject(ObjectUpdate obj) throws core.exceptions.ObjectNotFoundException;
     public java.lang.String getError();
     public boolean setObjectLock(java.lang.Long oid, java.lang.String objectClass, java.lang.Boolean value);
-    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId);
+    public List getObjectChildren(Long oid, Long objectClassId);
     public RemoteObjectLight createObject(String objectClass, Long parentOid, String template);
     public ClassInfo[] getMetadata();
     public ClassInfo getMetadataForClass(String className);
@@ -57,4 +59,7 @@ public interface BackendBeanRemote {
     public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage);
     public ClassInfoLight[] getInstanceableListTypes();
     public boolean createSession(String username, String password);
+    public View getDefaultView(Long oid, Class className);
+    public View getRoomView(Long oid);
+    public View getRackView(Long oid);
 }

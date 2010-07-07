@@ -30,6 +30,10 @@ import businesslogic.BackendBeanRemote;
 //import com.sun.xml.internal.ws.developer.Stateful;
 import core.exceptions.ObjectNotFoundException;
 import core.toserialize.ClassInfoLight;
+import core.toserialize.View;
+import entity.core.ConfigurationItem;
+import java.util.List;
+import util.HierarchyUtils;
 
 /**
  * Represents the main webservice
@@ -72,10 +76,10 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "getObjectChildren")
     public RemoteObjectLight[] getObjectChildren(@WebParam(name = "oid") Long oid, @WebParam(name = "objectClassId") Long objectClassId){
         System.out.println("[getObjectChildren]: Llamada");
-        RemoteObjectLight[] res = sbr.getObjectChildren(oid,objectClassId);
+        List res = sbr.getObjectChildren(oid,objectClassId);
         if(res == null)
             this.lastErr = "Error en el backendBean";
-        return res;
+        return RemoteObjectLight.toArray(res);
     }
 
     @WebMethod(operationName = "getObjectInfo")
@@ -386,6 +390,63 @@ public class KuwaibaWebservice {
         ClassInfoLight[] res = sbr.getInstanceableListTypes();
         if (res==null)
             lastErr = sbr.getError();
+        return res;
+    }
+
+    /**
+     * Views
+     */
+    
+    /**
+     * This method generates/retrieves the 
+     * @param oid Object id for the object
+     * @param className
+     * @return a view object associated to the given object
+     */
+    @WebMethod(operationName = "getDefaultView")
+    public View getDefaultView(@WebParam(name="oid")Long oid,
+            @WebParam(name="className")String className){
+        View res=null;
+        try{
+            Class myClass = Class.forName(className);
+            if (!HierarchyUtils.isSubclass(myClass, ConfigurationItem.class))
+                this.lastErr = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NOVIEWS") + className;
+            else
+                res = sbr.getDefaultView(oid, myClass);
+        if(res == null)
+            this.lastErr = sbr.getError();
+        }catch (ClassNotFoundException cnfe){
+            this.lastErr = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CLASSNOTFOUND")+className;
+            return null;
+        }
+        return res;
+    }
+
+    /**
+     *
+     * @param oid The oid for the related Room instance
+     * @return a view object associated to the given Room
+     */
+    @WebMethod(operationName = "getRoomView")
+    public View getRoomView(@WebParam(name="oid")Long oid){
+        View res = sbr.getRoomView(oid);
+        if(res == null)
+            this.lastErr = sbr.getError();
+
+        return res;
+    }
+
+    /**
+     *
+     * @param oid The oid for the related Room instance
+     * @return a view object associated to the given Room
+     */
+    @WebMethod(operationName = "getRackView")
+    public View getRackView(@WebParam(name="oid")Long oid){
+        View res = sbr.getRackView(oid);
+        if(res == null)
+            this.lastErr = sbr.getError();
+
         return res;
     }
 }

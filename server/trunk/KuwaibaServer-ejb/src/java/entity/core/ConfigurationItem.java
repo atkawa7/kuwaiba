@@ -19,7 +19,7 @@ package entity.core;
 import entity.multiple.companies.Vendor;
 import entity.multiple.misc.EnvironmentalCondition;
 import entity.multiple.states.OperationalState;
-import entity.multiple.views.View;
+import entity.multiple.views.ObjectView;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Entity;
@@ -38,7 +38,7 @@ import javax.persistence.ManyToOne;
 public abstract class ConfigurationItem extends RootObject implements Serializable  {
 
     @ManyToMany(mappedBy = "elements")
-    protected List<View> views;
+    protected List<ObjectView> views;
    
     protected String serialNumber;
     @ManyToOne
@@ -80,11 +80,11 @@ public abstract class ConfigurationItem extends RootObject implements Serializab
         this.state = state;
     }
 
-    public List<View> getViews() {
+    public List<ObjectView> getViews() {
         return views;
     }
 
-    public void setViews(List<View> views) {
+    public void setViews(List<ObjectView> views) {
         this.views = views;
     }
 

@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 public class ClassInfoLight {
     protected Long id;
     protected Boolean isAbstract;
+    protected Boolean isPhysicallyConnectable;
+    protected Boolean isLogicallyConnectable;
     protected String className;
     protected String _package;
     protected String displayName;
@@ -36,20 +38,11 @@ public class ClassInfoLight {
 
     public ClassInfoLight(){}
 
-    public ClassInfoLight(Long _id, Boolean _isAbstract, byte[] _smallIcon, 
-            String _className, String _packageName, String _displayName, String _description){
-        this.id = _id;
-        this.smallIcon=_smallIcon;
-        this.isAbstract = _isAbstract;
-        this.className = _className;
-        this._package = _packageName;
-        this.description = _description;
-        this.displayName = _displayName;
-    }
-
     public ClassInfoLight(ClassMetadata cm) {
         this.id = cm.getId();
         this.isAbstract = cm.getIsAbstract();
+        this.isLogicallyConnectable = cm.getIsLogicallyConnectable();
+        this.isPhysicallyConnectable = cm.getIsLogicallyConnectable();
         this.className = cm.getName();
         this._package = cm.getPackageInfo().getName();
         this.displayName = cm.getDisplayName();
@@ -65,7 +58,7 @@ public class ClassInfoLight {
         this.className = className;
     }
 
-        public Long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -111,5 +104,21 @@ public class ClassInfoLight {
 
     public void setSmallIcon(byte[] smallIcon) {
         this.smallIcon = smallIcon;
+    }
+
+    public Boolean getIsLogicalConnectable() {
+        return isLogicallyConnectable;
+    }
+
+    public void setIsLogicalConnectable(Boolean isLogicalConnectable) {
+        this.isLogicallyConnectable = isLogicalConnectable;
+    }
+
+    public Boolean getIsPhysicalConnectable() {
+        return isPhysicallyConnectable;
+    }
+
+    public void setIsPhysicalConnectable(Boolean isPhysicalConnectable) {
+        this.isPhysicallyConnectable = isPhysicalConnectable;
     }
 }

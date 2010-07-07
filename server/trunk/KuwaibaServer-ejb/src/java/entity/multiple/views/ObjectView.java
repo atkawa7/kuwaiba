@@ -20,6 +20,8 @@ import core.annotations.Administrative;
 import entity.core.AdministrativeItem;
 import entity.core.ConfigurationItem;
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -33,12 +35,20 @@ import javax.persistence.Table;
 @Entity
 @Administrative
 @Table(name="ElementViews") //"View" is a reserved keyword
-public class View extends AdministrativeItem implements Serializable {
-    
+public class ObjectView extends AdministrativeItem implements Serializable {
+    protected byte[] backgroundImage; //Image used for background
     protected byte[] svgFile; //The file containing how the elements should be rendered
 
     @ManyToMany
     protected List<ConfigurationItem> elements;
+
+    public ObjectView(){}
+    public ObjectView(List elements){
+        elements = new ArrayList<ConfigurationItem>();
+        for(Object element : elements){
+            elements.add((ConfigurationItem)element);
+        }
+    }
 
     public List<ConfigurationItem> getElements() {
         return elements;
@@ -54,5 +64,13 @@ public class View extends AdministrativeItem implements Serializable {
 
     public void setSvgFile(byte[] svgFile) {
         this.svgFile = svgFile;
+    }
+
+    public byte[] getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(byte[] backgroundImage) {
+        this.backgroundImage = backgroundImage;
     }
 }

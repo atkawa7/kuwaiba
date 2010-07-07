@@ -60,6 +60,8 @@ public class ClassMetadata implements Serializable {
     private Boolean isCustom=false;       //Shows if this is a core class (the ones provided in the official release) or a custom one
     @Column(nullable=false)
     private Boolean isAbstract=false;     //Indicates if a class can have instances by itself (base classes like GenericXXX or RootObject are used only for object orientation)
+    private Boolean isPhysicallyConnectable=false; //Is this class implementing the PhysicallyConnectable interface
+    private Boolean isLogicallyConnectable=false; //Is this class implementing the LocallyConnectable interface
     @Column(nullable=false)
     private Boolean isAccountable=true;      //Indicates if the instance of this class is a physical active
     @Column(nullable=false)
@@ -250,5 +252,21 @@ public class ClassMetadata implements Serializable {
 
     public void setIsAdministrative(Boolean isAdministrative) {
         this.isAdministrative = isAdministrative;
+    }
+
+    public Boolean getIsLogicallyConnectable() {
+        return isLogicallyConnectable;
+    }
+
+    public void setIsLogicallyConnectable(Boolean isLogicallyConnectable) {
+        this.isLogicallyConnectable = isLogicallyConnectable;
+    }
+
+    public Boolean getIsPhysicallyConnectable() {
+        return isPhysicallyConnectable;
+    }
+
+    public void setIsPhysicallyConnectable(Boolean isPhysicallyConnectable) {
+        this.isPhysicallyConnectable = isPhysicallyConnectable;
     }
 }

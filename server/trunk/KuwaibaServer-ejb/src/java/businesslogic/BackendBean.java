@@ -24,7 +24,9 @@ import core.exceptions.ObjectNotFoundException;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectUpdate;
+import core.toserialize.View;
 import entity.config.User;
+import entity.core.ConfigurationItem;
 import entity.core.DummyRoot;
 import entity.core.RootObject;
 import entity.core.metamodel.AttributeMetadata;
@@ -32,6 +34,7 @@ import entity.core.metamodel.ClassMetadata;
 import entity.location.Country;
 import entity.location.StateObject;
 import entity.multiple.GenericObjectList;
+import entity.multiple.views.ObjectView;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -43,6 +46,7 @@ import javax.ejb.Stateful;
 //import javax.ejb.Stateless;
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -140,7 +144,7 @@ public class BackendBean implements BackendBeanRemote {
         return RootObject.PARENT_ROOT;
     }
 
-    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId) {
+    public List getObjectChildren(Long oid, Long objectClassId) {
         System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_GETOBJECT"));
         if (em != null){
 
@@ -163,7 +167,7 @@ public class BackendBean implements BackendBeanRemote {
                 }
             }
 
-            return RemoteObjectLight.toArray(result);
+            return result;
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
@@ -296,13 +300,7 @@ public class BackendBean implements BackendBeanRemote {
                  List partialResult = query.getResultList();
                  if (partialResult!=null)
                      for (Object obj : partialResult)
-                         res.add(new ClassInfoLight(((ClassMetadata)obj).getId(),
-                                                      ((ClassMetadata)obj).getIsAbstract(),
-                                                      ((ClassMetadata)obj).getSmallIcon(),
-                                                      ((ClassMetadata)obj).getName(),
-                                                      ((ClassMetadata)obj).getPackageInfo().getName(),
-                                                      ((ClassMetadata)obj).getDisplayName(),
-                                                      ((ClassMetadata)obj).getDescription()));
+                         res.add(new ClassInfoLight((ClassMetadata)obj));
                  myClass = myClass.getSuperclass();
              }
              return res.toArray(new ClassInfoLight[0]);
@@ -514,9 +512,7 @@ public class BackendBean implements BackendBeanRemote {
             ClassInfoLight[] cml = new ClassInfoLight[cr.size()];
             int i=0;
             for (ClassMetadata myClass : cr){
-                cml[i] = new ClassInfoLight(myClass.getId(),myClass.getIsAbstract(),
-                        myClass.getSmallIcon(), myClass.getName(),myClass.getPackageInfo().getName(),
-                        myClass.getDisplayName(),myClass.getDescription());
+                cml[i] = new ClassInfoLight(myClass);
                 i++;
             }
             return cml;
@@ -750,12 +746,54 @@ public class BackendBean implements BackendBeanRemote {
             if (!em.createQuery(cQuery).getResultList().isEmpty())
                 return true;
             else{
-                this.error = "Login or password incorrect";
+                this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_BADLOGIN");
                 return false;
             }
         }else{
             this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return false;
         }
+    }
+
+    /**
+     * The default view is composed of only the direct children of a
+     * @param oid View owner oid
+     * @param className object's class
+     * @return A view object representing the default view (the direct children)
+     */
+    @Override
+    public View getDefaultView(Long oid, Class className) {
+        if(em != null){
+            ConfigurationItem object = (ConfigurationItem)em.find(className, oid);
+            List<ObjectView> views = object.getViews();
+            if (views == null){
+                try{
+                    Long classOid = (Long)em.createQuery("SELECT oid FROM ClassMetadata WHERE name='"+
+                            className.getSimpleName()+"'").getSingleResult();
+                     List elements = getObjectChildren(oid, classOid);
+                     ObjectView view = new ObjectView(elements);
+                     em.persist(view);
+                     return new View(view);
+                }catch(NoResultException nre){
+                    this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CLASSNOTFOUND");
+                    return null;
+                }
+            }
+            else
+                return new View(object.getViews().get(0));
+        }else{
+            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            return null;
+        }
+    }
+
+    @Override
+    public View getRoomView(Long oid) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public View getRackView(Long oid) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
