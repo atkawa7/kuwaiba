@@ -20,6 +20,10 @@
 
 <xs:element name="createSessionResponse" type="tns:createSessionResponse" />
 
+<xs:element name="getDefaultView" type="tns:getDefaultView" />
+
+<xs:element name="getDefaultViewResponse" type="tns:getDefaultViewResponse" />
+
 <xs:element name="getDummyRootId" type="tns:getDummyRootId" />
 
 <xs:element name="getDummyRootIdResponse" type="tns:getDummyRootIdResponse" />
@@ -64,6 +68,14 @@
 
 <xs:element name="getPossibleChildrenResponse" type="tns:getPossibleChildrenResponse" />
 
+<xs:element name="getRackView" type="tns:getRackView" />
+
+<xs:element name="getRackViewResponse" type="tns:getRackViewResponse" />
+
+<xs:element name="getRoomView" type="tns:getRoomView" />
+
+<xs:element name="getRoomViewResponse" type="tns:getRoomViewResponse" />
+
 <xs:element name="getRootPossibleChildren" type="tns:getRootPossibleChildren" />
 
 <xs:element name="getRootPossibleChildrenResponse" type="tns:getRootPossibleChildrenResponse" />
@@ -103,6 +115,36 @@
 <xs:element name="updateObject" type="tns:updateObject" />
 
 <xs:element name="updateObjectResponse" type="tns:updateObjectResponse" />
+
+<xs:complexType name="getRackView">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getRackViewResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:view" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="view">
+<xs:sequence>
+<xs:element name="elements" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="background" type="xs:base64Binary" minOccurs="0" />
+<xs:element name="svgFile" type="xs:base64Binary" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteObjectLight">
+<xs:sequence>
+<xs:element name="displayName" type="xs:string" minOccurs="0" />
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="className" type="xs:string" minOccurs="0" />
+<xs:element name="packageName" type="xs:string" minOccurs="0" />
+<xs:element name="hasChildren" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
 
 <xs:complexType name="closeSession">
 <xs:sequence />
@@ -144,6 +186,8 @@
 <xs:sequence>
 <xs:element name="id" type="xs:long" minOccurs="0" />
 <xs:element name="isAbstract" type="xs:boolean" minOccurs="0" />
+<xs:element name="isPhysicallyConnectable" type="xs:boolean" minOccurs="0" />
+<xs:element name="isLogicallyConnectable" type="xs:boolean" minOccurs="0" />
 <xs:element name="className" type="xs:string" minOccurs="0" />
 <xs:element name="_package" type="xs:string" minOccurs="0" />
 <xs:element name="displayName" type="xs:string" minOccurs="0" />
@@ -163,16 +207,6 @@
 <xs:complexType name="copyObjectsResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="remoteObjectLight">
-<xs:sequence>
-<xs:element name="displayName" type="xs:string" minOccurs="0" />
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="className" type="xs:string" minOccurs="0" />
-<xs:element name="packageName" type="xs:string" minOccurs="0" />
-<xs:element name="hasChildren" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -266,6 +300,19 @@
 <xs:complexType name="removeObjectResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getDefaultView">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="className" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getDefaultViewResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:view" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -502,6 +549,18 @@
 <xs:complexType name="updateObjectResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getRoomView">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getRoomViewResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:view" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 </xs:schema>

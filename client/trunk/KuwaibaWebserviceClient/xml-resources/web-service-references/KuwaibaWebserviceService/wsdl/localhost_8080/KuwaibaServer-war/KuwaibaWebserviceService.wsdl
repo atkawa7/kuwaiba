@@ -916,6 +916,24 @@
 <message name="getInstanceableListTypesResponse">
 <part name="parameters" element="tns:getInstanceableListTypesResponse" />
 </message>
+<message name="getDefaultView">
+<part name="parameters" element="tns:getDefaultView" />
+</message>
+<message name="getDefaultViewResponse">
+<part name="parameters" element="tns:getDefaultViewResponse" />
+</message>
+<message name="getRoomView">
+<part name="parameters" element="tns:getRoomView" />
+</message>
+<message name="getRoomViewResponse">
+<part name="parameters" element="tns:getRoomViewResponse" />
+</message>
+<message name="getRackView">
+<part name="parameters" element="tns:getRackView" />
+</message>
+<message name="getRackViewResponse">
+<part name="parameters" element="tns:getRackViewResponse" />
+</message>
 <portType name="KuwaibaWebservice">
 <operation name="getMetadata">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getMetadataRequest" message="tns:getMetadata" />
@@ -1020,6 +1038,18 @@
 <operation name="getInstanceableListTypes">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getInstanceableListTypesRequest" message="tns:getInstanceableListTypes" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getInstanceableListTypesResponse" message="tns:getInstanceableListTypesResponse" />
+</operation>
+<operation name="getDefaultView">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getDefaultViewRequest" message="tns:getDefaultView" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getDefaultViewResponse" message="tns:getDefaultViewResponse" />
+</operation>
+<operation name="getRoomView">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getRoomViewRequest" message="tns:getRoomView" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getRoomViewResponse" message="tns:getRoomViewResponse" />
+</operation>
+<operation name="getRackView">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getRackViewRequest" message="tns:getRackView" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getRackViewResponse" message="tns:getRackViewResponse" />
 </operation>
 </portType>
 <binding name="KuwaibaWebservicePortBinding" type="tns:KuwaibaWebservice">
@@ -1289,6 +1319,33 @@
 </input>
 <output>
 <wsp:PolicyReference URI="#MainWSPortBinding_getInstanceableListTypes_Output_Policy" />
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getDefaultView">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getRoomView">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getRackView">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
 <soap:body use="literal" />
 </output>
 </operation>
