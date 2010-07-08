@@ -37,7 +37,7 @@ import javax.persistence.ManyToOne;
 @Entity
 public abstract class ConfigurationItem extends RootObject implements Serializable  {
 
-    @ManyToMany(mappedBy = "elements")
+    @ManyToMany//(mappedBy = "elements")
     protected List<ObjectView> views;
    
     protected String serialNumber;

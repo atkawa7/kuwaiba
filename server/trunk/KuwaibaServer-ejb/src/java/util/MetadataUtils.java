@@ -180,8 +180,7 @@ public class MetadataUtils {
      * Given a plain string, it calculate the MD5 hash. This method is used when authenticating users
      * Thanks to cholland for the code snippet at http://snippets.dzone.com/posts/show/3686
      * @param pass
-     * @return
-     * @throws NoSuchAlgorithmException
+     * @return the MD5 hash for the given string
      */
     public static String getMD5Hash(String pass) {
         try{

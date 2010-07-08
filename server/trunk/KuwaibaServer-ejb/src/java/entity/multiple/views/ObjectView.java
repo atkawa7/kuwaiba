@@ -20,7 +20,6 @@ import core.annotations.Administrative;
 import entity.core.AdministrativeItem;
 import entity.core.ConfigurationItem;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
@@ -39,7 +38,7 @@ public class ObjectView extends AdministrativeItem implements Serializable {
     protected byte[] backgroundImage; //Image used for background
     protected byte[] svgFile; //The file containing how the elements should be rendered
 
-    @ManyToMany
+    @ManyToMany//(mappedBy = "views")
     protected List<ConfigurationItem> elements;
 
     public ObjectView(){}

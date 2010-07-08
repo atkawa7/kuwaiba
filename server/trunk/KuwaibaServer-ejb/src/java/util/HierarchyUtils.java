@@ -69,10 +69,10 @@ public class HierarchyUtils {
 
 
      /**
-     * This method tries to persists a class and all superclasses not  already persisted
-     * @param aClass The class to be persisted (with its superclasses)
-     * @param alreadyPersisted The list of classes already persisted
+     * Creates a class metadata record for a given entity class
+     * @param entity The class to be persisted (with its superclasses)
      * @param em The current entity manager
+     * @return the new class id
      */
     public static Long persistClass(EntityType entity, EntityManager em){
 
