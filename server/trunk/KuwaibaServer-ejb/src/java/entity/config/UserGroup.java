@@ -32,12 +32,14 @@ import javax.persistence.Table;
 @Entity
 @Administrative
 @Table(name="Groups")
-public class UserGroup implements Serializable { //Group es una plabra de servada de JavaQL
+public class UserGroup implements Serializable { //Group is a keyword in JPQL
     
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String name;
+    private String description;
 
 
     public Long getId() {
@@ -57,6 +59,22 @@ public class UserGroup implements Serializable { //Group es una plabra de servad
 
     public void setUsers(List<User> users) {
         this.users = users;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

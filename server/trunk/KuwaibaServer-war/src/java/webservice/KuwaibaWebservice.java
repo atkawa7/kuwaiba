@@ -30,7 +30,11 @@ import businesslogic.BackendBeanRemote;
 //import com.sun.xml.internal.ws.developer.Stateful;
 import core.exceptions.ObjectNotFoundException;
 import core.toserialize.ClassInfoLight;
+import core.toserialize.UserGroupInfo;
+import core.toserialize.UserInfo;
 import core.toserialize.View;
+import entity.config.User;
+import entity.config.UserGroup;
 import entity.core.ConfigurationItem;
 import java.util.List;
 import util.HierarchyUtils;
@@ -311,7 +315,8 @@ public class KuwaibaWebservice {
             @WebParam(name="paramValues")String[] paramValues){
 
         if (paramNames.length != paramValues.length || paramTypes.length != paramValues.length){
-            this.lastErr = "The array sizes don't match (paramNames,paramValues, paramTypes)";
+            this.lastErr = java.util.ResourceBundle.
+                    getBundle("internationalization/Bundle").getString("LBL_ARRAYSIZESDONTMATCH")+"paramNames,paramValues, paramTypes";
             return null;
         }
 
@@ -410,13 +415,13 @@ public class KuwaibaWebservice {
         try{
             Class myClass = Class.forName(className);
             if (!HierarchyUtils.isSubclass(myClass, ConfigurationItem.class))
-                this.lastErr = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NOVIEWS") + className;
+                this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOVIEWS") + className;
             else
                 res = sbr.getDefaultView(oid, myClass);
         if(res == null)
             this.lastErr = sbr.getError();
         }catch (ClassNotFoundException cnfe){
-            this.lastErr = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CLASSNOTFOUND")+className;
+            this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+className;
             return null;
         }
         return res;
@@ -437,7 +442,8 @@ public class KuwaibaWebservice {
     }
 
     /**
-     *
+     * Get the view of a simple rack. This is nothing but the rack and its children
+     * placed within depending on the "rackUnits" attributes
      * @param oid The oid for the related Room instance
      * @return a view object associated to the given Room
      */
@@ -447,6 +453,120 @@ public class KuwaibaWebservice {
         if(res == null)
             this.lastErr = sbr.getError();
 
+        return res;
+    }
+
+    /**
+     * User Management
+     */
+
+    /**
+     * Retrieves all users
+     * @return An user list
+     */
+    @WebMethod(operationName = "getUsers")
+    public UserInfo[] getUsers(){
+        User[] entityUsers = sbr.getUsers();
+        if (entityUsers == null){
+            this.lastErr = sbr.getError();
+            return null;
+        }
+        UserInfo[] res = new UserInfo[entityUsers.length];
+        for (int i = 0; i<entityUsers.length;i++)
+            res[i] = new UserInfo(entityUsers[i]);
+
+        return res;
+    }
+
+    /**
+     * Retrieves all groups
+     * @return A group list
+     */
+    @WebMethod(operationName = "getGroups")
+    public UserGroupInfo[] getGroups(){
+        UserGroup[] entityGroups = sbr.getGroups();
+        if (entityGroups == null){
+            this.lastErr = sbr.getError();
+            return null;
+        }
+        UserGroupInfo[] res = new UserGroupInfo[entityGroups.length];
+        for (int i = 0; i<entityGroups.length;i++)
+            res[i] = new UserGroupInfo(entityGroups[i]);
+
+        return res;
+    }
+
+    /**
+     * Set properties for a given user (username, name, etc)
+     * @param oid User oid
+     * @param propertiesNames Array with the names of the properties to be set
+     * @param propertiesValues Array with the values of the properties to be set
+     * @return Success or failure
+     */
+    @WebMethod(operationName = "setUserProperties")
+    public Boolean setUserProperties(@WebParam(name="oid")Long oid,
+            @WebParam(name="propertiesNames")String[] propertiesNames,
+            @WebParam(name="propertiesValues")String[] propertiesValues){
+        if (propertiesNames.length != propertiesValues.length){
+            this.lastErr = java.util.ResourceBundle.
+                    getBundle("internationalization/Bundle").getString("LBL_ARRAYSIZESDONTMATCH")+ "propertiesNames, propertiesValues";
+            return false;
+        }
+        Boolean res = sbr.setUserProperties(oid, propertiesNames,propertiesValues);
+        if(!res)
+            this.lastErr = sbr.getError();
+        return res;
+    }
+
+    /**
+     * Set properties for a given group (name, description)
+     * @param oid Group oid
+     * @param propertiesNames Array with the names of the properties to be set
+     * @param propertiesValues Array with the values of the properties to be set
+     * @return Success or failure
+     */
+    @WebMethod(operationName = "setGroupProperties")
+    public Boolean setGroupProperties(@WebParam(name="oid")Long oid,
+            @WebParam(name="propertiesNames")String[] propertiesNames,
+            @WebParam(name="propertiesValues")String[] propertiesValues){
+        if (propertiesNames.length != propertiesValues.length){
+            this.lastErr = java.util.ResourceBundle.
+                    getBundle("internationalization/Bundle").getString("LBL_ARRAYSIZESDONTMATCH")+ "propertiesNames, propertiesValues";
+            return false;
+        }
+        Boolean res = sbr.setGroupProperties(oid, propertiesNames,propertiesValues);
+        if(!res)
+            this.lastErr = sbr.getError();
+        return res;
+    }
+
+    /**
+     * Adds users to a group
+     * @param usersOids An array with The users oids
+     * @param groupOid The group's oid
+     * @return Success or failure
+     */
+    @WebMethod(operationName = "addUsersToGroup")
+    public Boolean addUsersToGroup(@WebParam(name="usersOids")Long[] usersOids,
+            @WebParam(name="groupOid")Long groupOid){
+        Boolean res = sbr.addUsersToGroup(usersOids, groupOid);
+        if(!res)
+            this.lastErr = sbr.getError();
+        return res;
+    }
+
+    /**
+     * Removes users from a group
+     * @param usersOids An array with The users oids
+     * @param groupOid The group's oid
+     * @return Success or failure
+     */
+    @WebMethod(operationName = "removeUsersFromGroup")
+    public Boolean removeUserfromGroup(@WebParam(name="usersOids")Long[] usersOids,
+            @WebParam(name="groupOid")Long groupOid){
+        Boolean res = sbr.removeUsersFromGroup(usersOids, groupOid);
+        if(!res)
+            this.lastErr = sbr.getError();
         return res;
     }
 }

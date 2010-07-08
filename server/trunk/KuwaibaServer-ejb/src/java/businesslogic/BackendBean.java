@@ -26,6 +26,7 @@ import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectUpdate;
 import core.toserialize.View;
 import entity.config.User;
+import entity.config.UserGroup;
 import entity.core.ConfigurationItem;
 import entity.core.DummyRoot;
 import entity.core.RootObject;
@@ -133,7 +134,7 @@ public class BackendBean implements BackendBeanRemote {
                 HierarchyUtils.persistClass(entity,em);
             }
         }
-        else this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+        else this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
 
     }
 
@@ -145,7 +146,7 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     public List getObjectChildren(Long oid, Long objectClassId) {
-        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_GETOBJECT"));
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETOBJECT"));
         if (em != null){
 
             
@@ -170,31 +171,31 @@ public class BackendBean implements BackendBeanRemote {
             return result;
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return null;
         }
     }
 
     public RemoteObject getObjectInfo(String objectClass,Long oid){
-        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_GETOBJECTINFO"));
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETOBJECTINFO"));
         if (em != null){
             String sentence = "SELECT x from "+objectClass+" x WHERE x.id="+String.valueOf(oid);
             Query query = em.createQuery(sentence);
             Object result = query.getSingleResult();
             if (result==null){
-                this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NOSUCHOBJECT")+objectClass+java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_WHICHID")+oid.toString();
+                this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT")+objectClass+java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid.toString();
                 return null;
             }else
                 return new RemoteObject(result);
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return null;
         }
     }
 
     public boolean updateObject(ObjectUpdate _obj) throws ObjectNotFoundException{
-        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_UPDATEOBJECT"));
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_UPDATEOBJECT"));
 
         if (em != null){
             Set <EntityType<?>> set = em.getMetamodel().getEntities();
@@ -216,7 +217,7 @@ public class BackendBean implements BackendBeanRemote {
             }
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return false;
         }
     }
@@ -227,13 +228,13 @@ public class BackendBean implements BackendBeanRemote {
             String sentence = "UPDATE x "+myClassName+" x SET isLocked="+value.toString()+" WHERE x.id="+String.valueOf(oid);
             Query query = em.createQuery(sentence);
             if (query.executeUpdate()==0){
-                this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NOSUCHOBJECT")+objectClass+java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_WHICHID")+oid.toString();
+                this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT")+objectClass+java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid.toString();
                 return false;
             }else
                 return true;
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return false;
         }
     }
@@ -243,7 +244,7 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     public ClassInfoLight[] getPossibleChildren(Class parentClass) {
-        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_GETPOSSIBLECHILDREN"));
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETPOSSIBLECHILDREN"));
         List<ClassInfoLight> res = new ArrayList();
         if (em != null){
             String sentence;
@@ -280,13 +281,13 @@ public class BackendBean implements BackendBeanRemote {
             return res.toArray(new ClassInfoLight[0]);
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return null;
         }
     }
 
     public ClassInfoLight[] getPossibleChildrenNoRecursive(Class parentClass) {
-        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_GETPOSSIBLECHILDRENNORECURSIVE"));
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETPOSSIBLECHILDRENNORECURSIVE"));
         List<ClassInfoLight> res = new ArrayList();
          if (em != null){
              String sentence;
@@ -316,7 +317,7 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     public RemoteObjectLight createObject(String objectClass, Long parentOid, String template){
-        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_CREATEOBJECT"));
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_CREATEOBJECT"));
         Object newObject = null;
         if (em != null){
             try{
@@ -333,13 +334,13 @@ public class BackendBean implements BackendBeanRemote {
             return new RemoteObjectLight(newObject);
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return null;
         }
     }
 
     public ClassInfo[] getMetadata(){
-        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_GETMETADATA"));
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETMETADATA"));
         if (em != null){
             String sentence = "SELECT x FROM ClassMetadata x WHERE x.isAdministrative=false ORDER BY x.name ";
             Query q = em.createQuery(sentence);
@@ -353,13 +354,13 @@ public class BackendBean implements BackendBeanRemote {
             return cm;
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NOSUCHOBJECT");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT");
             return null;
         }
     }
 
     public ClassInfo getMetadataForClass(String className){
-        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_GETMETADATAFORCLASS"));
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETMETADATAFORCLASS"));
         if (em != null){
             String sentence = "SELECT x FROM ClassMetadata x WHERE x.name='"+className+"'";
             Query q = em.createQuery(sentence);
@@ -373,13 +374,13 @@ public class BackendBean implements BackendBeanRemote {
             return new ClassInfo(res);
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return null;
         }
     }
 
     public ObjectList getMultipleChoice(String className){
-        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_GETMULTIPLECHOICE"));
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETMULTIPLECHOICE"));
         if (em != null){
             /*Maybe later, I can fix the method to avoid the cast
              try{
@@ -395,7 +396,7 @@ public class BackendBean implements BackendBeanRemote {
             return new ObjectList(className,list);
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return null;
         }
     }
@@ -408,7 +409,7 @@ public class BackendBean implements BackendBeanRemote {
      * @return success or failure
      */
     public Boolean addPossibleChildren(Long parentClassId, Long[] _possibleChildren) {
-        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_ADDPOSSIBLECHILDREN"));
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_ADDPOSSIBLECHILDREN"));
 
         if (em != null){
             ClassMetadata parentClass;
@@ -428,7 +429,7 @@ public class BackendBean implements BackendBeanRemote {
             em.merge(parentClass);
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return false;
         }
         return true;
@@ -443,7 +444,7 @@ public class BackendBean implements BackendBeanRemote {
      * @return success or failure
      */
     public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) {
-        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_REMOVEPOSSIBLECHILDREN"));
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_REMOVEPOSSIBLECHILDREN"));
 
         if (em != null){
             ClassMetadata parent = em.find(ClassMetadata.class, parentClassId);
@@ -457,32 +458,32 @@ public class BackendBean implements BackendBeanRemote {
            em.merge(parent);
            return true;
         }else{
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return false;
         }
         
     }
 
     public boolean removeObject(Class className, Long oid){
-        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_REMOVEOBJECT"));
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_REMOVEOBJECT"));
 
         if (em != null){
             //TODO ¿Será que se deja una relación del objeto a su metadata para
             //hacer más rápida la búsqueda en estos casos?
             RootObject obj = (RootObject)em.find(className, oid);
             if(obj.getIsLocked()){
-                this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_OBJECTLOCKED");
+                this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_OBJECTLOCKED");
                 return false;
             }
             try{
                 String sentence = "SELECT x FROM ClassMetadata x WHERE x.name ='"+
                         className.getSimpleName()+"'";
-                System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_EXECUTINGSQL")+sentence);
+                System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_EXECUTINGSQL")+sentence);
                 Query query = em.createQuery(sentence);
                 ClassMetadata myClass = (ClassMetadata)query.getSingleResult();
                 for (ClassMetadata possibleChild : myClass.getPossibleChildren()){
                     sentence = "SELECT x FROM "+possibleChild.getName()+" x WHERE x.parent="+obj.getId();
-                    System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_EXECUTINGSQL")+sentence);
+                    System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_EXECUTINGSQL")+sentence);
                     query = em.createQuery(sentence);
                     for (Object removable : query.getResultList()){
                         //TODO Código de verificación de integridad
@@ -497,14 +498,14 @@ public class BackendBean implements BackendBeanRemote {
             }
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return false;
         }
         return true;
     }
 
     public ClassInfoLight[] getLightMetadata() {
-        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_GETLIGHTMETADATA"));
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETLIGHTMETADATA"));
         if (em != null){
             String sentence = "SELECT x FROM ClassMetadata x ORDER BY x.name";
             Query q = em.createQuery(sentence);
@@ -518,7 +519,7 @@ public class BackendBean implements BackendBeanRemote {
             return cml;
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return null;
         }
     }
@@ -538,12 +539,12 @@ public class BackendBean implements BackendBeanRemote {
                 }
                 return true;
             }else{
-                this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NOTMATCHINGARRAYSIZES")+"(objectOids, objectClasses)";
+                this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOTMATCHINGARRAYSIZES")+"(objectOids, objectClasses)";
                 return false;
             }
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return false;
         }
     }
@@ -576,12 +577,12 @@ public class BackendBean implements BackendBeanRemote {
                 }
                 return res;
             }else{
-                this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NOTMATCHINGARRAYSIZES")+" (objectOids, objectClasses)";
+                this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOTMATCHINGARRAYSIZES")+" (objectOids, objectClasses)";
                 return null;
             }
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return null;
         }
     }
@@ -620,13 +621,13 @@ public class BackendBean implements BackendBeanRemote {
             return res;
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return null;
         }
     }
 
     public Boolean setAttributePropertyValue(Long classId, String attributeName, String propertyName, String propertyValue) {
-        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_SETATTRIBUTEPROPERTYVALUE"));
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_SETATTRIBUTEPROPERTYVALUE"));
         if (em != null){
             ClassMetadata myClass = em.find(ClassMetadata.class, classId);
             if (myClass == null){
@@ -658,7 +659,7 @@ public class BackendBean implements BackendBeanRemote {
             return false;
         }
         else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return false;
         }
     }
@@ -683,7 +684,7 @@ public class BackendBean implements BackendBeanRemote {
             em.merge(myClass);
             return true;
         }else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return false;
         }
     }
@@ -708,7 +709,7 @@ public class BackendBean implements BackendBeanRemote {
             em.merge(myClass);
             return true;
         }else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return false;
         }
     }
@@ -727,14 +728,14 @@ public class BackendBean implements BackendBeanRemote {
             return res;
 
         }else {
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return null;
         }
     }
 
     @Override
     public boolean createSession(String username, String password) {
-        System.out.println(java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CALL_CREATESESSION"));
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_CREATESESSION"));
         if (em != null){
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery cQuery = cb.createQuery();
@@ -746,11 +747,11 @@ public class BackendBean implements BackendBeanRemote {
             if (!em.createQuery(cQuery).getResultList().isEmpty())
                 return true;
             else{
-                this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_BADLOGIN");
+                this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_BADLOGIN");
                 return false;
             }
         }else{
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return false;
         }
     }
@@ -768,21 +769,21 @@ public class BackendBean implements BackendBeanRemote {
             List<ObjectView> views = object.getViews();
             if (views == null){
                 try{
-                    Long classOid = (Long)em.createQuery("SELECT oid FROM ClassMetadata WHERE name='"+
+                    Long classOid = (Long)em.createQuery("SELECT oid FROM ClassMetadata x WHERE x.name='"+
                             className.getSimpleName()+"'").getSingleResult();
                      List elements = getObjectChildren(oid, classOid);
                      ObjectView view = new ObjectView(elements);
                      em.persist(view);
                      return new View(view);
                 }catch(NoResultException nre){
-                    this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CLASSNOTFOUND");
+                    this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND");
                     return null;
                 }
             }
             else
                 return new View(object.getViews().get(0));
         }else{
-            this.error = java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return null;
         }
     }
@@ -794,6 +795,48 @@ public class BackendBean implements BackendBeanRemote {
 
     @Override
     public View getRackView(Long oid) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public User[] getUsers() {
+        if (em != null){
+            List<Object> users = em.createQuery("SELECT * FROM User x").getResultList();
+            return users.toArray(new User[0]);
+        }else{
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            return null;
+        }
+    }
+
+    @Override
+    public UserGroup[] getGroups() {
+        if (em != null){
+            List<Object> groups = em.createQuery("SELECT * FROM UserGroup x").getResultList();
+            return groups.toArray(new UserGroup[0]);
+        }else{
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            return null;
+        }
+    }
+
+    @Override
+    public Boolean setUserProperties(Long oid, String[] propertiesNames, String[] propertiesValues) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Boolean setGroupProperties(Long oid, String[] propertiesNames, String[] propertiesValues) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Boolean removeUsersFromGroup(Long[] usersOids, Long groupOid) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Boolean addUsersToGroup(Long[] usersOids, Long groupOid) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }
