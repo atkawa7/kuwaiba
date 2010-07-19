@@ -24,11 +24,15 @@ import org.inventory.communications.core.LocalClassMetadataLightImpl;
 import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.communications.core.LocalObjectLightImpl;
 import org.inventory.communications.core.LocalObjectListItemImpl;
+import org.inventory.communications.core.LocalUserGroupObjectImpl;
+import org.inventory.communications.core.LocalUserObjectImpl;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.core.services.interfaces.LocalUserGroupObject;
+import org.inventory.core.services.interfaces.LocalUserObject;
 import org.inventory.objectcache.Cache;
 import org.inventory.webservice.ClassInfo;
 import org.inventory.webservice.ClassInfoLight;
@@ -38,6 +42,8 @@ import org.inventory.webservice.ObjectList;
 import org.inventory.webservice.ObjectList.List.Entry;
 import org.inventory.webservice.ObjectUpdate;
 import org.inventory.webservice.RemoteObjectLight;
+import org.inventory.webservice.UserGroupInfo;
+import org.inventory.webservice.UserInfo;
 
 /**
  * Singleton class that provides communication and caching services to the rest of the modules
@@ -633,5 +639,58 @@ public class CommunicationsStub {
             i++;
         }
         return res;
+    }
+
+    /**
+     * User management
+     */
+
+    /**
+     * Retrieves the user list
+     * @return An array of LocalUserObject
+     */
+    public LocalUserObject[] getUsers() {
+        try{
+            List<UserInfo> users = port.getUsers();
+            if (users == null){
+                this.error = port.getLastErr();
+                return null;
+            }
+            LocalUserObject[] localUsers = new LocalUserObject[users.size()];
+
+            int i = 0;
+            for (UserInfo user : users){
+                localUsers[i] = (LocalUserObject) new LocalUserObjectImpl(user);
+                i++;
+            }
+            return localUsers;
+        }catch (Exception e){
+            this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
+            return null;
+        }
+    }
+    /**
+     * Retrieves the group list
+     * @return An array of LocalUserObject
+     */
+    public LocalUserGroupObject[] getGroups() {
+        try{
+            List<UserGroupInfo> groups = port.getGroups();
+            if (groups == null){
+                this.error = port.getLastErr();
+                return null;
+            }
+            LocalUserGroupObject[] localGroups = new LocalUserGroupObject[groups.size()];
+
+            int i = 0;
+            for (UserGroupInfo group : groups){
+                localGroups[i] = (LocalUserGroupObject) new LocalUserGroupObjectImpl(group);
+                i++;
+            }
+            return localGroups;
+        }catch (Exception e){
+            this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
+            return null;
+        }
     }
 }

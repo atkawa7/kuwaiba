@@ -111,7 +111,7 @@ public class ObjectNode extends AbstractNode{
     @Override
     public String getDisplayName(){
         String displayName = (object.getDisplayname().equals("") ||
-                                    object.getDisplayname().equals(null))?java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_NONAME"):object.getDisplayname();
+                                    object.getDisplayname() == null)?java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_NONAME"):object.getDisplayname();
         String className = CommunicationsStub.getInstance().getMetaForClass(object.getClassName(),false).getDisplayName();
         //return displayName + " ["+object.getClassName()+"]"; TODO: Just to test!!!!
         return displayName + " ["+(className==null?object.getClassName():className)+"]";

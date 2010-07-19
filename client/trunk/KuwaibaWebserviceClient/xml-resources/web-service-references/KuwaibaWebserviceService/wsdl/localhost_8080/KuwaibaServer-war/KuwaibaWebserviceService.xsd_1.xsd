@@ -4,6 +4,10 @@
 
 <xs:element name="addPossibleChildrenResponse" type="tns:addPossibleChildrenResponse" />
 
+<xs:element name="addUsersToGroup" type="tns:addUsersToGroup" />
+
+<xs:element name="addUsersToGroupResponse" type="tns:addUsersToGroupResponse" />
+
 <xs:element name="closeSession" type="tns:closeSession" />
 
 <xs:element name="closeSessionResponse" type="tns:closeSessionResponse" />
@@ -27,6 +31,10 @@
 <xs:element name="getDummyRootId" type="tns:getDummyRootId" />
 
 <xs:element name="getDummyRootIdResponse" type="tns:getDummyRootIdResponse" />
+
+<xs:element name="getGroups" type="tns:getGroups" />
+
+<xs:element name="getGroupsResponse" type="tns:getGroupsResponse" />
 
 <xs:element name="getInstanceableListTypes" type="tns:getInstanceableListTypes" />
 
@@ -80,6 +88,10 @@
 
 <xs:element name="getRootPossibleChildrenResponse" type="tns:getRootPossibleChildrenResponse" />
 
+<xs:element name="getUsers" type="tns:getUsers" />
+
+<xs:element name="getUsersResponse" type="tns:getUsersResponse" />
+
 <xs:element name="moveObjects" type="tns:moveObjects" />
 
 <xs:element name="moveObjectsResponse" type="tns:moveObjectsResponse" />
@@ -91,6 +103,10 @@
 <xs:element name="removePossibleChildren" type="tns:removePossibleChildren" />
 
 <xs:element name="removePossibleChildrenResponse" type="tns:removePossibleChildrenResponse" />
+
+<xs:element name="removeUsersFromGroup" type="tns:removeUsersFromGroup" />
+
+<xs:element name="removeUsersFromGroupResponse" type="tns:removeUsersFromGroupResponse" />
 
 <xs:element name="searchForObjects" type="tns:searchForObjects" />
 
@@ -108,9 +124,17 @@
 
 <xs:element name="setClassPlainAttributeResponse" type="tns:setClassPlainAttributeResponse" />
 
+<xs:element name="setGroupProperties" type="tns:setGroupProperties" />
+
+<xs:element name="setGroupPropertiesResponse" type="tns:setGroupPropertiesResponse" />
+
 <xs:element name="setObjectLock" type="tns:setObjectLock" />
 
 <xs:element name="setObjectLockResponse" type="tns:setObjectLockResponse" />
+
+<xs:element name="setUserProperties" type="tns:setUserProperties" />
+
+<xs:element name="setUserPropertiesResponse" type="tns:setUserPropertiesResponse" />
 
 <xs:element name="updateObject" type="tns:updateObject" />
 
@@ -153,6 +177,45 @@
 <xs:complexType name="closeSessionResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getGroups">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getGroupsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:userGroupInfo" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="userGroupInfo">
+<xs:complexContent>
+<xs:extension base="tns:userGroupInfoLight">
+<xs:sequence>
+<xs:element name="members" type="tns:userInfo" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="creationDate" type="xs:long" minOccurs="0" />
+<xs:element name="description" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="userGroupInfoLight">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="name" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="userInfo">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="userName" type="xs:string" minOccurs="0" />
+<xs:element name="firstName" type="xs:string" minOccurs="0" />
+<xs:element name="lastName" type="xs:string" minOccurs="0" />
+<xs:element name="groups" type="tns:userGroupInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -247,6 +310,16 @@
 <xs:complexType name="setAttributePropertyValueResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getUsers">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getUsersResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:userInfo" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -367,6 +440,20 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="setGroupProperties">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="propertiesNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="propertiesValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setGroupPropertiesResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="getMultipleChoice">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0" />
@@ -396,6 +483,19 @@
 </xs:sequence>
 </xs:complexType>
 </xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addUsersToGroup">
+<xs:sequence>
+<xs:element name="usersOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="groupOid" type="xs:long" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addUsersToGroupResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -444,6 +544,19 @@
 </xs:complexType>
 
 <xs:complexType name="setClassIconResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removeUsersFromGroup">
+<xs:sequence>
+<xs:element name="usersOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="groupOid" type="xs:long" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removeUsersFromGroupResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
@@ -518,6 +631,20 @@
 <xs:complexType name="getLightMetadataResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setUserProperties">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="propertiesNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="propertiesValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setUserPropertiesResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 

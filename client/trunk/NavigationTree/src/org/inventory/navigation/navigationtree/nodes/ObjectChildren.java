@@ -16,6 +16,7 @@
 package org.inventory.navigation.navigationtree.nodes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
@@ -32,8 +33,7 @@ public class ObjectChildren extends Array{
     protected List<LocalObjectLight> keys;
     public ObjectChildren(LocalObjectLight[] _lols){
         keys = new ArrayList<LocalObjectLight>();
-        for (LocalObjectLight lol : _lols)
-            keys.add(lol);
+        keys.addAll(Arrays.asList(_lols));
     }
 
     /*
