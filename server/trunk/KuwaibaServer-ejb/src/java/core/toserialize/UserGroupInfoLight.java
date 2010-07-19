@@ -27,10 +27,20 @@ import javax.xml.bind.annotation.XmlAccessorType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserGroupInfoLight {
+    /**
+     * Object id
+     */
     protected Long oid;
+    /**
+     * Group's name
+     */
     protected String name;
 
+    public UserGroupInfoLight(){}
+
     public UserGroupInfoLight(UserGroup group){
+        this.oid = group.getId();
+        this.name = group.getName();
     }
 
     public Long getOid() {

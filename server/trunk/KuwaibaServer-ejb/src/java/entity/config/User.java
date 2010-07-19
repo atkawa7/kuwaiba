@@ -17,6 +17,8 @@ package entity.config;
 
 import core.annotations.Administrative;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,6 +28,9 @@ import javax.persistence.Table;
 
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *This class represents a single user
@@ -42,13 +47,17 @@ public class User implements Serializable {
     @Column(unique=true,nullable=false)
     private String username;
     private String password;
+    private Boolean isEnabled;
+    @Temporal(value=TemporalType.TIMESTAMP)
+    private Date creationDate;
     private String firstName;
     private String lastName;
     private String phone;
     private String cellphone;
     private String position;
     @ManyToMany
-    private List<UserGroup> groups;
+    @JoinColumn(nullable=true)
+    private List<UserGroup> groups = new ArrayList<UserGroup>();
     
 
     public Long getId() {
@@ -121,6 +130,22 @@ public class User implements Serializable {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Boolean getIsEnabled() {
+        return isEnabled;
+    }
+
+    public void setIsEnabled(Boolean enabled) {
+        this.isEnabled = enabled;
     }
 
     @Override

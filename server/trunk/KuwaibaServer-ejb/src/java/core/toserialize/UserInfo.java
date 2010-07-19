@@ -32,6 +32,11 @@ public class UserInfo {
     private String userName;
     private String firstName;
     private String lastName;
+    /**
+     * Is this user enabled
+     */
+    protected Boolean isEnabled;
+
     private UserGroupInfoLight[] groups;
     //private PrivilegeInfo[] privileges;
 
@@ -39,6 +44,7 @@ public class UserInfo {
     public UserInfo(User _user){
         this.oid = _user.getId();
         this.userName = _user.getUsername();
+        this.isEnabled = _user.getIsEnabled();
         this.firstName = _user.getFirstName();
         this.lastName = _user.getLastName();
         List<UserGroup> entityGroups = _user.getGroups();
@@ -94,4 +100,11 @@ public class UserInfo {
         this.oid = oid;
     }
 
+    public Boolean getIsEnabled() {
+        return isEnabled;
+    }
+
+    public void setIsEnabled(Boolean isEnabled) {
+        this.isEnabled = isEnabled;
+    }
 }

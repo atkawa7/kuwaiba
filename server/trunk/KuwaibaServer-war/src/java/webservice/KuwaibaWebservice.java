@@ -466,16 +466,12 @@ public class KuwaibaWebservice {
      */
     @WebMethod(operationName = "getUsers")
     public UserInfo[] getUsers(){
-        User[] entityUsers = sbr.getUsers();
+        UserInfo[] entityUsers = sbr.getUsers();
         if (entityUsers == null){
             this.lastErr = sbr.getError();
             return null;
         }
-        UserInfo[] res = new UserInfo[entityUsers.length];
-        for (int i = 0; i<entityUsers.length;i++)
-            res[i] = new UserInfo(entityUsers[i]);
-
-        return res;
+        return entityUsers;
     }
 
     /**

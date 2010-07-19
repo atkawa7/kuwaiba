@@ -114,7 +114,7 @@ public class HierarchyUtils {
 
         ClassMetadata cm = new ClassMetadata(entity.getJavaType().getSimpleName(),
                                              pm,
-                                             java.util.ResourceBundle.getBundle("internacionalization/Bundle").getString("LBL_CLASS")+" "+entity.getJavaType().getSimpleName(),
+                                             java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASS")+" "+entity.getJavaType().getSimpleName(),
                                              false,Modifier.isAbstract(entity.getJavaType().getModifiers()),
                                              entity.getJavaType().getAnnotation(Dummy.class)!=null,
                                              entity.getJavaType().getAnnotation(Administrative.class)!=null,

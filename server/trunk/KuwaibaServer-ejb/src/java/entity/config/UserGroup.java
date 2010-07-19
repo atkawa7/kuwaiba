@@ -17,13 +17,19 @@ package entity.config;
 
 import core.annotations.Administrative;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * This class represents a group of users. Those users will have the same privileges
@@ -39,8 +45,13 @@ public class UserGroup implements Serializable { //Group is a keyword in JPQL
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    @Temporal(value=TemporalType.TIMESTAMP)
+    private Date creationDate;
     private String description;
-
+    
+    @ManyToMany(mappedBy = "groups")
+    @JoinColumn(nullable=true)
+    protected List<User> users = new ArrayList<User>();
 
     public Long getId() {
         return id;
@@ -49,9 +60,6 @@ public class UserGroup implements Serializable { //Group is a keyword in JPQL
     public void setId(Long id) {
         this.id = id;
     }
-
-    @ManyToMany(mappedBy = "groups")
-    protected List<User> users;
 
     public List<User> getUsers() {
         return users;
@@ -102,4 +110,11 @@ public class UserGroup implements Serializable { //Group is a keyword in JPQL
         return "entity.config.Groups[id=" + id + "]";
     }
 
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
 }

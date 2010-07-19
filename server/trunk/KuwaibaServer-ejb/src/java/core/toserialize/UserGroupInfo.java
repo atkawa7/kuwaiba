@@ -16,6 +16,7 @@
 
 package core.toserialize;
 
+import entity.config.User;
 import entity.config.UserGroup;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,10 +27,39 @@ import javax.xml.bind.annotation.XmlAccessorType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserGroupInfo extends UserGroupInfoLight{
-    private UserInfo[] members;
+    protected UserInfo[] members;
+    /**
+     * Object's creation date. Since there's no a seamlessly map for java.util.Date
+     * (xsd:date has less information than Date, so it's mapped into Calendar), we use a Long instead (a timestamp)
+     */
+    protected Long creationDate;
+    protected String description;
     //private PrivilegeInfo privileges;
 
+    public UserGroupInfo(){}
     public UserGroupInfo(UserGroup group){
         super (group);
+        this.members = new UserInfo[group.getUsers().size()];
+        this.description = group.getDescription();
+        this.creationDate = group.getCreationDate().getTime();
+        int i = 0;
+        for (User member : group.getUsers())
+            this.members[i] = new UserInfo(member);
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public UserInfo[] getMembers() {
+        return members;
+    }
+
+    public Long getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Long creationDate) {
+        this.creationDate = creationDate;
     }
 }

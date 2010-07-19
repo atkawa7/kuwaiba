@@ -24,6 +24,7 @@ import core.exceptions.ObjectNotFoundException;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectUpdate;
+import core.toserialize.UserInfo;
 import core.toserialize.View;
 import entity.config.User;
 import entity.config.UserGroup;
@@ -799,10 +800,18 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     @Override
-    public User[] getUsers() {
+    public UserInfo[] getUsers() {
         if (em != null){
-            List<Object> users = em.createQuery("SELECT * FROM User x").getResultList();
-            return users.toArray(new User[0]);
+            UserInfo[] res;
+            List<Object> users = em.createQuery("SELECT x FROM User x").getResultList();
+
+            res = new UserInfo[users.size()];
+            int i = 0;
+            for(Object user: users){
+                res[i] = new UserInfo((User)user);
+                i++;
+            }
+            return res;
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return null;
@@ -812,7 +821,7 @@ public class BackendBean implements BackendBeanRemote {
     @Override
     public UserGroup[] getGroups() {
         if (em != null){
-            List<Object> groups = em.createQuery("SELECT * FROM UserGroup x").getResultList();
+            List<Object> groups = em.createQuery("SELECT x FROM UserGroup x JOIN FETCH x.users").getResultList();
             return groups.toArray(new UserGroup[0]);
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
@@ -820,9 +829,21 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    //Use updateObject instead
     @Override
     public Boolean setUserProperties(Long oid, String[] propertiesNames, String[] propertiesValues) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        /*User user = em.find(User.class, oid);
+        if (user == null){
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_USERNOTFOUND")+oid.toString();
+            return false;
+        }
+
+        updateObject(new ObjectUpdate());
+        //We can change username, firstName, lastName
+        for (int i = 0; i<propertiesNames.length; i++){
+
+        }*/
+        return true;
     }
 
     @Override
@@ -832,11 +853,54 @@ public class BackendBean implements BackendBeanRemote {
 
     @Override
     public Boolean removeUsersFromGroup(Long[] usersOids, Long groupOid) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        UserGroup group = em.find(UserGroup.class, groupOid);
+        if (group == null){
+            this.error = this.error = java.util.ResourceBundle.
+                    getBundle("internationalization/Bundle").
+                    getString("LBL_NOSUCHOBJECT")+" UserGroup "+java.util.ResourceBundle.
+                    getBundle("internationalization/Bundle").getString("LBL_WHICHID")+groupOid;
+            return false;
+        }
+
+        User user=null;
+
+        for (Long oid : usersOids){
+            user = em.find(User.class,oid);
+            group.getUsers().remove(user);
+            //TODO: This is redundant if a bidirectional relationship is defined
+            user.getGroups().remove(group);
+            em.merge(user);
+        }
+
+        em.merge(group);
+
+        return true;
     }
 
     @Override
     public Boolean addUsersToGroup(Long[] usersOids, Long groupOid) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        UserGroup group = em.find(UserGroup.class, groupOid);
+        if (group == null){
+            this.error = this.error = java.util.ResourceBundle.
+                    getBundle("internationalization/Bundle").
+                    getString("LBL_NOSUCHOBJECT")+" UserGroup "+java.util.ResourceBundle.
+                    getBundle("internationalization/Bundle").getString("LBL_WHICHID")+groupOid;
+            return false;
+        }
+
+        User user=null;
+
+        for (Long oid : usersOids){
+            user = em.find(User.class,oid);
+            if (!group.getUsers().contains(user))
+                group.getUsers().add(user);
+            //TODO: This is redundant if a bidirectional relationship is defined
+            user.getGroups().remove(group);
+            em.merge(user);
+        }
+
+        em.merge(group);
+
+        return true;
     }
 }
