@@ -70,4 +70,6 @@ public interface BackendBeanRemote {
     public Boolean setGroupProperties(Long oid, String[] propertiesNames, String[] propertiesValues);
     public Boolean removeUsersFromGroup(Long[] usersOids, Long groupOid);
     public Boolean addUsersToGroup(Long[] usersOids, Long groupOid);
+    public UserInfo createUser();
+    public Boolean removeUsers(java.lang.Long[] oids);
 }

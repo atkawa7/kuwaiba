@@ -28,13 +28,29 @@ import javax.xml.bind.annotation.XmlAccessorType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserInfo {
-    private Long oid;
-    private String userName;
-    private String firstName;
-    private String lastName;
     /**
-     * Is this user enabled
+     * User's oid
      */
+    private Long oid;
+   /**
+    * User's login name
+    */
+    private String userName;
+   /**
+    * User's first name
+    */
+    private String firstName;
+   /**
+    * User's last name
+    */
+    private String lastName;
+   /**
+    * User's creation date
+    */
+    private Long creationDate;
+   /**
+    * Indicates if this account is enabled
+    */
     protected Boolean isEnabled;
 
     private UserGroupInfoLight[] groups;
@@ -42,11 +58,16 @@ public class UserInfo {
 
     public UserInfo(){}
     public UserInfo(User _user){
+
         this.oid = _user.getId();
         this.userName = _user.getUsername();
         this.isEnabled = _user.getIsEnabled();
         this.firstName = _user.getFirstName();
         this.lastName = _user.getLastName();
+        if (_user.getCreationDate() == null)
+            this.creationDate = null;
+        else
+            this.creationDate = _user.getCreationDate().getTime();
         List<UserGroup> entityGroups = _user.getGroups();
         if (entityGroups == null)
             this.groups = null;
@@ -107,4 +128,14 @@ public class UserInfo {
     public void setIsEnabled(Boolean isEnabled) {
         this.isEnabled = isEnabled;
     }
+
+    public Long getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Long creationDate) {
+        this.creationDate = creationDate;
+    }
+
+
 }

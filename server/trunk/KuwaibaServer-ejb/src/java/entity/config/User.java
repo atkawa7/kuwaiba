@@ -18,6 +18,7 @@ package entity.config;
 import core.annotations.Administrative;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -44,12 +45,15 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
+    /**
+     * User's username
+     */
     @Column(unique=true,nullable=false)
     private String username;
     private String password;
     private Boolean isEnabled;
     @Temporal(value=TemporalType.TIMESTAMP)
-    private Date creationDate;
+    private Date creationDate = Calendar.getInstance().getTime();
     private String firstName;
     private String lastName;
     private String phone;
@@ -58,7 +62,8 @@ public class User implements Serializable {
     @ManyToMany
     @JoinColumn(nullable=true)
     private List<UserGroup> groups = new ArrayList<UserGroup>();
-    
+
+
 
     public Long getId() {
         return id;

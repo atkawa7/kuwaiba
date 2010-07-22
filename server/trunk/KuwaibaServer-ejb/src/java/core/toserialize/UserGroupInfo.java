@@ -33,6 +33,9 @@ public class UserGroupInfo extends UserGroupInfoLight{
      * (xsd:date has less information than Date, so it's mapped into Calendar), we use a Long instead (a timestamp)
      */
     protected Long creationDate;
+    /**
+     * Group's description
+     */
     protected String description;
     //private PrivilegeInfo privileges;
 

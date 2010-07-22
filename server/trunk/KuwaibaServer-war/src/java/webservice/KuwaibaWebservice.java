@@ -493,6 +493,30 @@ public class KuwaibaWebservice {
     }
 
     /**
+     * Creates a new user
+     * @return The newly created user
+     */
+    @WebMethod(operationName = "createUser")
+    public UserInfo createUser(){
+        UserInfo res = sbr.createUser();
+        if(res ==null)
+            this.lastErr = sbr.getError();
+        return res;
+    }
+
+    /**
+     * Creates a new user
+     * @return The newly created user
+     */
+    @WebMethod(operationName = "removeUsers")
+    public Boolean removeUsers(Long[] oids){
+        Boolean res = sbr.removeUsers(oids);
+        if(!res)
+            this.lastErr = sbr.getError();
+        return res;
+    }
+
+    /**
      * Set properties for a given user (username, name, etc)
      * @param oid User oid
      * @param propertiesNames Array with the names of the properties to be set

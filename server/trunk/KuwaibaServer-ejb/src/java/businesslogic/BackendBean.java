@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -195,6 +196,7 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    @Override
     public boolean updateObject(ObjectUpdate _obj) throws ObjectNotFoundException{
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_UPDATEOBJECT"));
 
@@ -240,10 +242,12 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    @Override
      public String getError(){
         return this.error;
     }
 
+    @Override
     public ClassInfoLight[] getPossibleChildren(Class parentClass) {
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETPOSSIBLECHILDREN"));
         List<ClassInfoLight> res = new ArrayList();
@@ -322,7 +326,6 @@ public class BackendBean implements BackendBeanRemote {
         Object newObject = null;
         if (em != null){
             try{
-      
                 newObject = Class.forName(objectClass).newInstance();
                 if (parentOid != null)
                     newObject.getClass().getMethod("setParent", Long.class).
@@ -901,6 +904,47 @@ public class BackendBean implements BackendBeanRemote {
 
         em.merge(group);
 
+        return true;
+    }
+
+    @Override
+    public UserInfo createUser() {
+        User newUser = new User();
+        try{
+            Random random = new Random();
+            newUser.setUsername("user"+random.nextInt(10000));
+            em.persist(newUser);
+        }catch(Exception e){
+            this.error = e.getMessage();
+            return null;
+        }
+        return new UserInfo(newUser);
+    }
+
+    /**
+     * Removes a list of users
+     * TODO: Check existing sessions and historic entries associated to this user
+     * @param oids Oids for the users to be deleted
+     * @return Success or failure
+     */
+    @Override
+    public Boolean removeUsers(Long[] oids) {
+        try{
+            for (Long oid :oids){
+                User anUser = em.find(User.class, oid);
+                List<UserGroup> groups = anUser.getGroups();
+                if (groups != null){
+                    for (UserGroup group : groups){
+                        group.getUsers().remove(anUser);
+                        anUser.getGroups().remove(group);
+                    }
+                }
+                em.remove(anUser);
+            }
+        }catch(Exception e){
+            this.error = e.getMessage();
+            return false;
+        }
         return true;
     }
 }
