@@ -20,6 +20,7 @@ import java.awt.BorderLayout;
 import java.util.logging.Logger;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.usermanager.actions.AddUser;
+import org.inventory.core.usermanager.actions.UpdateList;
 import org.openide.explorer.ExplorerManager;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
@@ -64,13 +65,15 @@ public final class UserManagerTopComponent extends TopComponent
 
     public void initCustomComponents(){
         this.ums = new UserManagerService(this);
-        this.tblUsers = new TableView(ums.populateUsersList());
+        ums.populateUsersList();
+
         //this.tblGroups = new TableView();
         
         pnlUsers.add(tblUsers,BorderLayout.CENTER);
        // pnlUsers.add(tblGroups);
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
-        btnAddUser.addActionListener(new AddUser());
+        btnAddUser.addActionListener(new AddUser(em.getRootContext(),ums));
+        btnRefresh.addActionListener(new UpdateList(pnlTabbedMain, ums));
     }
 
     /** This method is called from within the constructor to
@@ -281,5 +284,9 @@ public final class UserManagerTopComponent extends TopComponent
         if(this.nu == null)
             this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
         return this.nu;
+    }
+
+    void setTblUsers(TableView tableView) {
+        this.tblUsers = tableView;
     }
 }

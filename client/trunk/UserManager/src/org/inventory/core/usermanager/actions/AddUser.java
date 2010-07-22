@@ -18,8 +18,14 @@ package org.inventory.core.usermanager.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
-
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.interfaces.LocalUserObject;
+import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.usermanager.UserManagerService;
+import org.inventory.core.usermanager.nodes.UserChildren;
+import org.inventory.core.usermanager.nodes.UserNode;
+import org.openide.nodes.Node;
+import org.openide.util.Lookup;
 
 /**
  * This action adds an user
@@ -27,11 +33,43 @@ import javax.swing.JOptionPane;
  */
 public class AddUser extends AbstractAction{
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        JOptionPane.showMessageDialog(null, "Hola");
+    /**
+     * Used to add the new user node if the add is successful
+     */
+    private Node rootNode;
+    
+    /**
+     * The object used for making the invocations to the web service
+     */
+    private CommunicationsStub com;
+
+    /**
+     * Reference to the notification system
+     */
+    private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
+
+    /**
+     * Reference to the UserManagerService useful to refresh the UI.
+     * For some reason the calling to the method add() to add a node to the table doesn't
+     * show the new node
+     */
+    private UserManagerService ums;
+
+    public AddUser(Node _rootNode, UserManagerService _ums){
+        this.rootNode = _rootNode;
+        this.com = CommunicationsStub.getInstance();
+        this.ums = _ums;
     }
 
-
-
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        LocalUserObject luo = com.addUser();
+        if (luo == null)
+            nu.showSimplePopup("User Creation", NotificationUtil.ERROR, com.getError());
+        else{
+            ((UserChildren)rootNode.getChildren()).add(new Node[]{new UserNode(luo)});
+            ums.refreshUserList();
+            nu.showSimplePopup("User Creation", NotificationUtil.INFO, "User created successfully");
+        }
+    }
 }

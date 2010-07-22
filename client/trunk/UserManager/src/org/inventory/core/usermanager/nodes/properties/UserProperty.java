@@ -17,6 +17,10 @@
 package org.inventory.core.usermanager.nodes.properties;
 
 import java.lang.reflect.InvocationTargetException;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObjectImpl;
+import org.inventory.core.services.interfaces.LocalObject;
+import org.inventory.core.services.interfaces.LocalUserObject;
 import org.openide.nodes.PropertySupport.ReadWrite;
 
 /**
@@ -25,11 +29,22 @@ import org.openide.nodes.PropertySupport.ReadWrite;
  */
 public class UserProperty extends ReadWrite{
 
-    private Object object;
+    /**
+     * Current value
+     */
+    private Object value;
 
-    public UserProperty(String _name,String _displayName,String _toolTextTip,Object _value){
+    private LocalUserObject object;
+    /**
+     * Reference to the communication component
+     */
+    private CommunicationsStub com;
+
+    public UserProperty(String _name,String _displayName,String _toolTextTip,Object _value, LocalUserObject _user){
         super(_name,_value.getClass(),_displayName,_toolTextTip);
-        this.object = _value;
+        this.object = _user;
+        this.value = _value;
+        this.com = CommunicationsStub.getInstance();
     }
 
     @Override
@@ -39,9 +54,18 @@ public class UserProperty extends ReadWrite{
 
     @Override
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        LocalObject update = new LocalObjectImpl();
+        update.setLocalObject("entity.config.User", new String[]{this.getName()}, new Object[]{t});
+        if(com.saveObject(update))
+            this.value = t;
+        //else
+            
     }
 
+    /**
+     * Can this property to be written?
+     * @return A boolean meaning this property can be written or not
+     */
     @Override
     public boolean canWrite(){
         return true;

@@ -24,6 +24,10 @@
 
 <xs:element name="createSessionResponse" type="tns:createSessionResponse" />
 
+<xs:element name="createUser" type="tns:createUser" />
+
+<xs:element name="createUserResponse" type="tns:createUserResponse" />
+
 <xs:element name="getDefaultView" type="tns:getDefaultView" />
 
 <xs:element name="getDefaultViewResponse" type="tns:getDefaultViewResponse" />
@@ -104,9 +108,13 @@
 
 <xs:element name="removePossibleChildrenResponse" type="tns:removePossibleChildrenResponse" />
 
+<xs:element name="removeUsers" type="tns:removeUsers" />
+
 <xs:element name="removeUsersFromGroup" type="tns:removeUsersFromGroup" />
 
 <xs:element name="removeUsersFromGroupResponse" type="tns:removeUsersFromGroupResponse" />
+
+<xs:element name="removeUsersResponse" type="tns:removeUsersResponse" />
 
 <xs:element name="searchForObjects" type="tns:searchForObjects" />
 
@@ -139,6 +147,18 @@
 <xs:element name="updateObject" type="tns:updateObject" />
 
 <xs:element name="updateObjectResponse" type="tns:updateObjectResponse" />
+
+<xs:complexType name="removeUsers">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removeUsersResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
 
 <xs:complexType name="getRackView">
 <xs:sequence>
@@ -215,6 +235,7 @@
 <xs:element name="userName" type="xs:string" minOccurs="0" />
 <xs:element name="firstName" type="xs:string" minOccurs="0" />
 <xs:element name="lastName" type="xs:string" minOccurs="0" />
+<xs:element name="isEnabled" type="xs:boolean" minOccurs="0" />
 <xs:element name="groups" type="tns:userGroupInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
@@ -283,6 +304,16 @@
 <xs:complexType name="addPossibleChildrenResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createUser">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="createUserResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:userInfo" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 

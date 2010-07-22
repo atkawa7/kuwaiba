@@ -16,6 +16,7 @@
 package org.inventory.communications;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.List;
@@ -692,5 +693,30 @@ public class CommunicationsStub {
             this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
             return null;
         }
+    }
+
+    /**
+     * Creates a new user
+     * @return The newly created user
+     */
+    public LocalUserObject addUser(){
+        UserInfo newUser = port.createUser();
+        if (newUser == null){
+            this.error = port.getLastErr();
+            return null;
+        }
+        return new LocalUserObjectImpl(newUser);
+    }
+
+    /**
+     * Removes a list of users
+     * @param oids oids for the users to be deleted
+     * @return success or failure
+     */
+    public boolean removeUsers(Long[] oids){
+        Boolean res = port.removeUsers(Arrays.asList(oids));
+        if(!res)
+            this.error = port.getLastErr();
+        return res;
     }
 }

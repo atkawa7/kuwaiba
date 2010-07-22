@@ -16,6 +16,7 @@
 
 package org.inventory.communications.core;
 
+import java.util.Date;
 import org.inventory.core.services.interfaces.LocalUserGroupObjectLight;
 import org.inventory.core.services.interfaces.LocalUserObject;
 import org.inventory.webservice.UserGroupInfoLight;
@@ -31,6 +32,7 @@ public class LocalUserObjectImpl implements LocalUserObject {
     private String userName;
     private String firstName;
     private String lastName;
+    private Date creationDate;
     private LocalUserGroupObjectLight[] groups;
 
 
@@ -39,6 +41,7 @@ public class LocalUserObjectImpl implements LocalUserObject {
         this.userName = user.getUserName();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
+        //this.creationDate = user.getCreationDate();
         if (user.getGroups() == null)
             this.groups = null;
         else{

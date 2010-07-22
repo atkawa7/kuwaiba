@@ -21,7 +21,9 @@ import org.inventory.core.services.interfaces.LocalUserObject;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.usermanager.nodes.UserChildren;
 import org.openide.explorer.view.NodeTableModel;
+import org.openide.explorer.view.TableView;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Node;
 
 /**
  * Provides the logic to the associated TopComponent
@@ -31,6 +33,8 @@ public class UserManagerService {
     private UserManagerTopComponent umtc;
     private CommunicationsStub com = CommunicationsStub.getInstance();
 
+    private NodeTableModel usersTableModel;
+
     public UserManagerService(UserManagerTopComponent _umtc){
         this.umtc = _umtc;
     }
@@ -39,8 +43,8 @@ public class UserManagerService {
      * Populates the initial users list
      * @return A NodeTableModel containing the users available at the moment
      */
-    public NodeTableModel populateUsersList() {
-        NodeTableModel tableModel = new NodeTableModel();
+    public void populateUsersList() {
+        usersTableModel = new NodeTableModel();
         LocalUserObject[] users = com.getUsers();
         if (users == null){
             umtc.getNotifier().showSimplePopup(
@@ -49,10 +53,20 @@ public class UserManagerService {
             users = new LocalUserObject[0];
         }
         AbstractNode root = new AbstractNode(new UserChildren(users));
-        tableModel.setNodes(root.getChildren().getNodes());
-        tableModel.setProperties(root.getChildren().getNodes()[0].getPropertySets()[0].
+        usersTableModel.setNodes(root.getChildren().getNodes());
+        usersTableModel.setProperties(root.getChildren().getNodes()[0].getPropertySets()[0].
                 getProperties());
         umtc.getExplorerManager().setRootContext(root);
-        return tableModel;
+        umtc.setTblUsers(new TableView(usersTableModel));
+        umtc.revalidate();
+    }
+
+    /**
+     * Refreshes the list (but without fetching the user list from the server).
+     * For some reason the call to method "add" in AddUser doesn't add the node
+     */
+    public void refreshUserList(){
+        usersTableModel.setNodes(umtc.getExplorerManager().getRootContext().getChildren().getNodes());
+        umtc.revalidate();
     }
 }

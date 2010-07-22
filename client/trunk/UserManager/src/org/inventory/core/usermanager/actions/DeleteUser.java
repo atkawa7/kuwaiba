@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 zim.
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,22 +15,52 @@
  */
 package org.inventory.core.usermanager.actions;
 
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.util.List;
-import org.inventory.core.services.interfaces.LocalUserObject;
+import javax.swing.AbstractAction;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.usermanager.UserManagerService;
+import org.inventory.core.usermanager.nodes.UserNode;
+import org.openide.nodes.Node;
+import org.openide.util.Lookup;
 
-public final class DeleteUser implements ActionListener {
+public class DeleteUser extends AbstractAction {
+    /**
+     * Node to be deleted
+     */
+    private UserNode node;
 
-    private final List<LocalUserObject> context;
+    /**
+     * The object used for making the invocations to the web service
+     */
+    private CommunicationsStub com;
 
-    public DeleteUser(List<LocalUserObject> context) {
-        this.context = context;
+    /**
+     * Reference to the notification system
+     */
+    private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
+
+    /**
+     * Reference to the UserManagerService useful to refresh the UI.
+     * For some reason the calling to the method add() to add a node to the table doesn't
+     * show the new node
+     */
+    private UserManagerService ums;
+
+    public DeleteUser(UserNode userNode){
+        com = CommunicationsStub.getInstance();
+        this.node = userNode;
+        putValue(NAME, "Delete");
     }
+    
 
+    @Override
     public void actionPerformed(ActionEvent ev) {
-        for (LocalUserObject localUserObject : context) {
-            // TODO use localUserObject
+        if(com.removeUsers(new Long[]{this.node.getObject().getOid()})){
+            nu.showSimplePopup("User removal", NotificationUtil.INFO, "The user was deleted successfully");
+            node.getParentNode().getChildren().remove(new Node[]{node});
         }
+        else
+            nu.showSimplePopup("User removal", NotificationUtil.ERROR, com.getError());
     }
 }
