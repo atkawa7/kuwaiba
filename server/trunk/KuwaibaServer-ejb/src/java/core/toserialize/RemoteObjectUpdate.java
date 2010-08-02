@@ -17,62 +17,34 @@
 package core.toserialize;
 
 import core.todeserialize.ObjectUpdate;
-import entity.multiple.GenericObjectList;
-import entity.relations.GenericRelation;
-import java.util.Set;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.EntityType;
-import util.HierarchyUtils;
+import java.lang.reflect.Field;
+import javax.persistence.EntityManager;
+import util.MetadataUtils;
 
 /**
- * Representa una actualización, pero deserializada (desde el punto de vista de aplicación)
+ * Represents an object's update, but deserialized (from the application's point of view)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class RemoteObjectUpdate {
     private Class objectClass = null;
     private Long oid;
-    private Attribute[] updatedAttributes;
+    private Field[] updatedAttributes;
     private Object[] newValues;
 
-    public RemoteObjectUpdate(ObjectUpdate object, Set<EntityType<?>> classSpace)
-            throws ClassNotFoundException{
+    public RemoteObjectUpdate(ObjectUpdate object, EntityManager em)
+            throws ClassNotFoundException,NoSuchFieldException{
 
-        EntityType ent = null;
-
+        this.objectClass = Class.forName(object.getClassname());
         this.oid=object.getOid();
-
-        for(EntityType entity : classSpace)
-                            if(entity.getJavaType().getSimpleName().equals(object.getClassname())){
-                                this.objectClass = entity.getJavaType();
-                                ent =entity;
-                                break;
-                            }
-                
-        if(objectClass == null)
-            throw new ClassNotFoundException("No se encontró la clase "+object.getClassname());
-
+               
         newValues = new Object[object.getUpdatedAttributes().length];
-        updatedAttributes = new Attribute[object.getUpdatedAttributes().length];
+        updatedAttributes = new Field[object.getUpdatedAttributes().length];
         
-        for (int i = 0; i < object.getNewValues().length;i++){
-            updatedAttributes[i] = ent.getAttribute(object.getUpdatedAttributes()[i]);
-            if (updatedAttributes[i].getJavaType().equals(String.class))
-                this.newValues[i] = object.getNewValues()[i];
-            else
-                if(updatedAttributes[i].getJavaType().equals(Boolean.class))
-                    this.newValues[i] = Boolean.valueOf(object.getNewValues()[i]);
-                else
-                    if(updatedAttributes[i].getJavaType().equals(Long.class))
-                        this.newValues[i] = Long.valueOf(object.getNewValues()[i]);
-                    else
-                        if(updatedAttributes[i].getJavaType().equals(Integer.class))
-                            this.newValues[i] = Integer.valueOf(object.getNewValues()[i]);
-                        else
-                            if(HierarchyUtils.
-                                    isSubclass(updatedAttributes[i].getJavaType(),GenericObjectList.class) ||
-                               HierarchyUtils.
-                                    isSubclass(updatedAttributes[i].getJavaType(),GenericRelation.class))
-                                this.newValues[i] = Long.valueOf(object.getNewValues()[i]);
+        for (int i = 0; i < newValues.length;i++){
+            updatedAttributes[i] = this.objectClass.getDeclaredField(object.getUpdatedAttributes()[i]);
+            //This is a dumb reprocess, polish so we don't have to convert the types into strings again
+            newValues[i] = MetadataUtils.getRealValue(updatedAttributes[i].getType().getSimpleName(),
+                    object.getNewValues()[i], em);
         }
     }
 
@@ -88,28 +60,28 @@ public class RemoteObjectUpdate {
         return oid;
     }
 
-    public Attribute[] getUpdatedAttributes() {
+    public Field[] getUpdatedAttributes() {
         return updatedAttributes;
     }
 
-     /*
-     * Genera el texto de la consulta que actualiza el objeto asociado
-     * @return El texto del query para ser ejecutado
+     /**
+     * Generates a native SQL Query to be executed in order to perform the update
+     * @return The native SQL text to update a given object
      */
-    public String generateQueryText(){
+/*    public String generateQueryText(){
     String query="UPDATE "+this.objectClass.getSimpleName()+" obj SET ";
     for (int i=0; i<this.updatedAttributes.length;i++){
         String value = "";
         String att="";
-        if(this.updatedAttributes[i].getJavaType().equals(String.class))
+        if(this.updatedAttributes[i].getType().equals(String.class))
             value="'"+(String)this.newValues[i]+"'";
         else
             value = this.newValues[i].toString();
-        if (HierarchyUtils.isSubclass(updatedAttributes[i].getJavaType(),GenericObjectList.class) ||
+        if (HierarchyUtils.isSubclass(updatedAttributes[i].getType(),GenericObjectList.class) ||
                            HierarchyUtils.
-                                isSubclass(updatedAttributes[i].getJavaType(),GenericRelation.class)){
+                                isSubclass(updatedAttributes[i].getType(),GenericRelation.class)){
             att= this.updatedAttributes[i].getName()+"_id";
-            if (value.equals("0")) //Si es relación, y el id es 0, es porque en la lista se escogió "<ninguno>"
+            if (value.equals("0")) //If this is a relationship and the id is 0 its because the user chose "None". This is, a NULL value
                 value="NULL";
         }
         else
@@ -120,4 +92,6 @@ public class RemoteObjectUpdate {
     query +=" WHERE obj.id="+this.oid;
     return query;
     }
+ *
+ */
 }

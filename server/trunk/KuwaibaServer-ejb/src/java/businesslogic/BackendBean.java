@@ -46,7 +46,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateful;
-//import javax.ejb.Stateless;
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -72,6 +71,7 @@ public class BackendBean implements BackendBeanRemote {
     private EntityManager em;
     private String error;
 
+    @Override
     public void createInitialDataset() {
         String[] countryNames = new String[]{"Colombia","Brazil","England","Germany","United States"};
 
@@ -105,10 +105,11 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
-    /*
+    /**
      * This method resets class metadata information
      *
      */
+    @Override
     public void buildMetaModel(){
         
         if (em != null){
@@ -140,18 +141,26 @@ public class BackendBean implements BackendBeanRemote {
 
     }
 
-    /*
+    /**
      * Returns the id that will be use to reference the root object
+     * @return the id assigned to the dummy root
      */
+    @Override
     public Long getDummyRootId(){
         return RootObject.PARENT_ROOT;
     }
 
+    /**
+     * Retrieves a given object's children
+     * @param oid Parent object oid
+     * @param objectClassId Parent object's class oid
+     * @return a list of objects or null if an error ocurred
+     */
+    @Override
     public List getObjectChildren(Long oid, Long objectClassId) {
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETOBJECT"));
         if (em != null){
-
-            
+           
             ClassMetadata objectClass = em.find(ClassMetadata.class, objectClassId);
 
             List result = new ArrayList();
@@ -178,6 +187,7 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    @Override
     public RemoteObject getObjectInfo(String objectClass,Long oid){
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETOBJECTINFO"));
         if (em != null){
@@ -196,25 +206,31 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    /**
+     *
+     * @param _obj
+     * @return
+     * @throws ObjectNotFoundException if the oid provided doesn't exist
+     */
     @Override
-    public boolean updateObject(ObjectUpdate _obj) throws ObjectNotFoundException{
+    public boolean updateObject(ObjectUpdate _obj){
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_UPDATEOBJECT"));
 
         if (em != null){
-            Set <EntityType<?>> set = em.getMetamodel().getEntities();
             RemoteObjectUpdate obj;
             try {
-                obj = new RemoteObjectUpdate(_obj, set);
+                obj = new RemoteObjectUpdate(_obj,em);
 
-                /*Object myObject = em.find(obj.getObjectClass(), obj.getOid());
+                Object myObject = em.find(obj.getObjectClass(), obj.getOid());
                 if(myObject == null)
-                throw new ObjectNotFoundException();*/
-                String sentence = obj.generateQueryText();
-                Logger.getLogger(BackendBean.class.getName()).log(Level.INFO, sentence);
-                Query query = em.createNativeQuery(sentence);
-                query.executeUpdate();
+                    throw new ObjectNotFoundException();
+                for (int i = 0; i< obj.getNewValues().length; i++)
+                    myObject.getClass().getDeclaredMethod("set"+MetadataUtils.capitalize(obj.getUpdatedAttributes()[i].getName()),
+                            obj.getNewValues()[i].getClass()).invoke(myObject, obj.getNewValues()[i]);
+
+                em.merge(myObject);
                 return true;
-            } catch (ClassNotFoundException ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, ex.getMessage());
                 return false;
             }
@@ -225,6 +241,14 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    /**
+     *
+     * @param oid
+     * @param objectClass
+     * @param value
+     * @return
+     */
+    @Override
     public boolean setObjectLock(Long oid, String objectClass, Boolean value){
         if (em != null){
             String myClassName = objectClass.substring(objectClass.lastIndexOf("."));
@@ -242,11 +266,20 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
      public String getError(){
         return this.error;
     }
 
+    /**
+     *
+     * @param parentClass
+     * @return
+     */
     @Override
     public ClassInfoLight[] getPossibleChildren(Class parentClass) {
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETPOSSIBLECHILDREN"));
@@ -291,6 +324,12 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    /**
+     *
+     * @param parentClass
+     * @return
+     */
+    @Override
     public ClassInfoLight[] getPossibleChildrenNoRecursive(Class parentClass) {
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETPOSSIBLECHILDRENNORECURSIVE"));
         List<ClassInfoLight> res = new ArrayList();
@@ -312,15 +351,28 @@ public class BackendBean implements BackendBeanRemote {
              return res.toArray(new ClassInfoLight[0]);
           }
           else {
-              this.error = "El EntityManager no existe";
+              this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
               return null;
           }
     }
 
+    /**
+     *
+     * @return
+     */
+    @Override
     public ClassInfoLight[] getRootPossibleChildren(){
         return getPossibleChildren(RootObject.ROOT_CLASS);
     }
 
+    /**
+     *
+     * @param objectClass
+     * @param parentOid
+     * @param template
+     * @return
+     */
+    @Override
     public RemoteObjectLight createObject(String objectClass, Long parentOid, String template){
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_CREATEOBJECT"));
         Object newObject = null;
@@ -343,6 +395,7 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    @Override
     public ClassInfo[] getMetadata(){
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETMETADATA"));
         if (em != null){
@@ -363,6 +416,7 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    @Override
     public ClassInfo getMetadataForClass(String className){
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETMETADATAFORCLASS"));
         if (em != null){
@@ -383,6 +437,12 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    /**
+     *
+     * @param className
+     * @return
+     */
+    @Override
     public ObjectList getMultipleChoice(String className){
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETMULTIPLECHOICE"));
         if (em != null){
@@ -405,13 +465,14 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
-    /*
+    /**
      * Adds to a given class a list of possible children classes whose instances can be contained
      *
      * @param parentClassId Id of the class whos instances can contain the instances of the next param
      * @param _possibleChildren ids of the candidates to be contained
      * @return success or failure
      */
+    @Override
     public Boolean addPossibleChildren(Long parentClassId, Long[] _possibleChildren) {
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_ADDPOSSIBLECHILDREN"));
 
@@ -439,7 +500,7 @@ public class BackendBean implements BackendBeanRemote {
         return true;
     }
 
-    /*
+    /**
      * The opposite of addPossibleChildren. It removes the given possible children
      * TODO: Make this method safe. This is, check if there's already intances of the given
      * "children to be deleted" with parentClass as their parent
@@ -447,6 +508,7 @@ public class BackendBean implements BackendBeanRemote {
      * @param childrenTBeRemoved ids of the candidates to be deleted
      * @return success or failure
      */
+    @Override
     public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) {
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_REMOVEPOSSIBLECHILDREN"));
 
@@ -468,6 +530,13 @@ public class BackendBean implements BackendBeanRemote {
         
     }
 
+    /**
+     *
+     * @param className
+     * @param oid
+     * @return
+     */
+    @Override
     public boolean removeObject(Class className, Long oid){
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_REMOVEOBJECT"));
 
@@ -508,6 +577,7 @@ public class BackendBean implements BackendBeanRemote {
         return true;
     }
 
+    @Override
     public ClassInfoLight[] getLightMetadata() {
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETLIGHTMETADATA"));
         if (em != null){
@@ -533,6 +603,7 @@ public class BackendBean implements BackendBeanRemote {
      * and efficiente. maybe requesting for a RemoteObjectLight[] would be better.
      * We'll try that when we do some code cleanup
      */
+    @Override
     public boolean moveObjects(Long targetOid, Long[] objectOids, String[] objectClasses){
         if (em != null){
             if (objectOids.length == objectClasses.length){
@@ -559,6 +630,7 @@ public class BackendBean implements BackendBeanRemote {
      * We'll try that when we do some code cleanup
      * @param targetOid the new parent
      */
+    @Override
     public RemoteObjectLight[] copyObjects(Long targetOid, Long[] templateOids, String[] objectClasses){
         if (em != null){
             if (templateOids.length == objectClasses.length){
@@ -591,6 +663,7 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    @Override
     public RemoteObjectLight[] searchForObjects(Class searchedClass, String[] paramNames,
             String[] paramTypes, String[] paramValues) {
         if (em != null){
@@ -630,6 +703,7 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    @Override
     public Boolean setAttributePropertyValue(Long classId, String attributeName, String propertyName, String propertyValue) {
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_SETATTRIBUTEPROPERTYVALUE"));
         if (em != null){
@@ -668,6 +742,7 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    @Override
     public Boolean setClassPlainAttribute(Long classId, String attributeName, String attributeValue) {
         if(em !=null){
             ClassMetadata myClass = em.find(ClassMetadata.class, classId);
@@ -693,6 +768,7 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    @Override
     public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) {
         if(em !=null){
             ClassMetadata myClass = em.find(ClassMetadata.class, classId);
@@ -718,6 +794,7 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    @Override
     public ClassInfoLight[] getInstanceableListTypes() {
         if (em != null){
             Long id = (Long) em.createQuery("SELECT x.id FROM ClassMetadata x WHERE x.name ='GenericObjectList' ORDER BY x.name").getSingleResult();

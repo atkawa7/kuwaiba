@@ -37,7 +37,7 @@ public interface BackendBeanRemote {
 
     public Long getDummyRootId();
     public core.toserialize.RemoteObject getObjectInfo(String objectClass, Long oid);
-    public boolean updateObject(ObjectUpdate obj) throws core.exceptions.ObjectNotFoundException;
+    public boolean updateObject(ObjectUpdate obj);
     public java.lang.String getError();
     public boolean setObjectLock(Long oid, String objectClass, Boolean value);
     public List getObjectChildren(Long oid, Long objectClassId);

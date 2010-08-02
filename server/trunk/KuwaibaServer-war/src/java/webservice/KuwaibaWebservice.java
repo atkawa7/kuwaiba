@@ -93,13 +93,8 @@ public class KuwaibaWebservice {
 
     @WebMethod(operationName = "updateObject")
     public boolean updateObject(@WebParam(name = "objectupdate")ObjectUpdate update){
-        boolean res=false;
-        try{
-            res = sbr.updateObject(update);
-        }catch(ObjectNotFoundException oe){
-            return false;
-        }
-
+        boolean res;
+        res = sbr.updateObject(update);
         return res;
     }
 
