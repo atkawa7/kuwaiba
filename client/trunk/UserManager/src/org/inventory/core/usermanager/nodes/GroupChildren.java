@@ -16,20 +16,35 @@
 
 package org.inventory.core.usermanager.nodes;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import org.inventory.core.services.interfaces.LocalUserGroupObject;
-import org.openide.nodes.AbstractNode;
-import org.openide.nodes.Children;
-import org.openide.util.lookup.Lookups;
+import org.openide.nodes.Children.Array;
+import org.openide.nodes.Node;
 
 /**
- * Node representing a group of users
+ * Represents a the list of groups
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class GroupNode extends AbstractNode{
+public class GroupChildren extends Array{
+    private List<LocalUserGroupObject> list;
 
-    public GroupNode(LocalUserGroupObject group) {
-        super (Children.LEAF, Lookups.singleton(group));
+    public GroupChildren(LocalUserGroupObject[] _list){
+        this.list = new ArrayList<LocalUserGroupObject>();
+        this.list.addAll(Arrays.asList(_list));
     }
 
+    @Override
+    protected Collection<Node> initCollection(){
+        List<Node> myNodes = new ArrayList<Node>();
+        for (LocalUserGroupObject group: list)
+            myNodes.add(new GroupNode(group));
+        return myNodes;
+    }
 
+    public List<LocalUserGroupObject> getList(){
+        return list;
+    }
 }

@@ -16,12 +16,18 @@
 
 package org.inventory.core.usermanager.nodes.properties;
 
+import java.beans.PropertyEditorSupport;
 import java.lang.reflect.InvocationTargetException;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalUserObject;
+import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.services.utils.Utils;
+import org.inventory.core.usermanager.nodes.customeditor.GroupsEditorSupport;
+import org.inventory.core.usermanager.nodes.customeditor.PasswordEditorSupport;
 import org.openide.nodes.PropertySupport.ReadWrite;
+import org.openide.util.Lookup;
 
 /**
  * Represents a single user's property
@@ -49,17 +55,26 @@ public class UserProperty extends ReadWrite{
 
     @Override
     public Object getValue() throws IllegalAccessException, InvocationTargetException {
-        return object;
+        return value;
     }
 
     @Override
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         LocalObject update = new LocalObjectImpl();
-        update.setLocalObject("entity.config.User", new String[]{this.getName()}, new Object[]{t});
-        if(com.saveObject(update))
-            this.value = t;
-        //else
-            
+        //The password is hashed before setting it
+        Object newValue = this.getName().equals("password")?Utils.getMD5Hash((String)t):t;
+
+        update.setLocalObject("entity.config.User", 
+                new String[]{this.getName()}, new Object[]{newValue});
+        update.setOid(this.object.getOid());
+        if(com.saveObject(update)){
+            if(!this.getName().equals("password"))
+                this.value = t;
+        }
+        else{
+            NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
+            nu.showSimplePopup("User Update", NotificationUtil.ERROR, com.getError());
+        }
     }
 
     /**
@@ -69,5 +84,14 @@ public class UserProperty extends ReadWrite{
     @Override
     public boolean canWrite(){
         return true;
+    }
+
+    @Override
+    public PropertyEditorSupport getPropertyEditor(){
+        if (this.getName().equals("password"))
+            return new PasswordEditorSupport();
+        if (this.getName().equals("groups"))
+            return new GroupsEditorSupport();
+        return null;
     }
 }

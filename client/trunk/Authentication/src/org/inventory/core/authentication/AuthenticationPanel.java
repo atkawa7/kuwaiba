@@ -16,6 +16,10 @@
 
 package org.inventory.core.authentication;
 
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import org.inventory.communications.CommunicationsStub;
 import org.openide.DialogDisplayer;
 import org.openide.LifecycleManager;

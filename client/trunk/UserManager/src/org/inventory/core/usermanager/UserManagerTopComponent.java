@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 zim.
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -66,9 +66,7 @@ public final class UserManagerTopComponent extends TopComponent
     public void initCustomComponents(){
         this.ums = new UserManagerService(this);
         ums.populateUsersList();
-
-        //this.tblGroups = new TableView();
-        
+      
         pnlUsers.add(tblUsers,BorderLayout.CENTER);
        // pnlUsers.add(tblGroups);
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
@@ -88,9 +86,7 @@ public final class UserManagerTopComponent extends TopComponent
         btnAddUser = new javax.swing.JButton();
         btnAddGroup = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
-        btnDelete = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
-        txtSearch = new javax.swing.JTextField();
         pnlTabbedMain = new javax.swing.JTabbedPane();
         pnlTabUsers = new javax.swing.JPanel();
         pnlScrollUsers = new javax.swing.JScrollPane();
@@ -127,14 +123,6 @@ public final class UserManagerTopComponent extends TopComponent
         btnEdit.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         barMain.add(btnEdit);
 
-        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/usermanager/res/delete.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnDelete, org.openide.util.NbBundle.getMessage(UserManagerTopComponent.class, "UserManagerTopComponent.btnDelete.text")); // NOI18N
-        btnDelete.setToolTipText(org.openide.util.NbBundle.getMessage(UserManagerTopComponent.class, "UserManagerTopComponent.btnDelete.toolTipText")); // NOI18N
-        btnDelete.setFocusable(false);
-        btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        barMain.add(btnDelete);
-
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/usermanager/res/refresh.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(UserManagerTopComponent.class, "UserManagerTopComponent.btnRefresh.text")); // NOI18N
         btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(UserManagerTopComponent.class, "UserManagerTopComponent.btnRefresh.toolTipText")); // NOI18N
@@ -143,10 +131,13 @@ public final class UserManagerTopComponent extends TopComponent
         btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         barMain.add(btnRefresh);
 
-        txtSearch.setText(org.openide.util.NbBundle.getMessage(UserManagerTopComponent.class, "UserManagerTopComponent.txtSearch.text")); // NOI18N
-        barMain.add(txtSearch);
-
         add(barMain, java.awt.BorderLayout.PAGE_START);
+
+        pnlTabbedMain.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                pnlTabbedMainFocusGained(evt);
+            }
+        });
 
         pnlTabUsers.setLayout(new java.awt.BorderLayout());
 
@@ -179,12 +170,21 @@ public final class UserManagerTopComponent extends TopComponent
         add(pnlTabbedMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * This is the callback method to attend the focus of the "Groups" tab. At the beginning,
+     * the panel is empty, but when focused for the very first time, the groups list should be populated
+     * @param evt
+     */
+    private void pnlTabbedMainFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_pnlTabbedMainFocusGained
+        if (tblGroups == null)
+            ums.populateGroupsList();
+    }//GEN-LAST:event_pnlTabbedMainFocusGained
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
     private javax.swing.JButton btnAddGroup;
     private javax.swing.JButton btnAddUser;
-    private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JPanel pnlGroups;
@@ -194,7 +194,6 @@ public final class UserManagerTopComponent extends TopComponent
     private javax.swing.JPanel pnlTabUsers;
     private javax.swing.JTabbedPane pnlTabbedMain;
     private javax.swing.JPanel pnlUsers;
-    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -288,5 +287,9 @@ public final class UserManagerTopComponent extends TopComponent
 
     void setTblUsers(TableView tableView) {
         this.tblUsers = tableView;
+    }
+
+    void setTblGroups(TableView tableView){
+        this.tblGroups = tableView;
     }
 }

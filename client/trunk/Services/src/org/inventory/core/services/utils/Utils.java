@@ -23,6 +23,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -118,6 +121,24 @@ public class Utils {
 
         }catch(Exception e){
             return valueAsString;
+        }
+    }
+
+        /**
+     * Given a plain string, it calculate the MD5 hash. This method is used when authenticating users
+     * Thanks to cholland for the code snippet at http://snippets.dzone.com/posts/show/3686
+     * @param pass
+     * @return the MD5 hash for the given string
+     */
+    public static String getMD5Hash(String pass) {
+        try{
+		MessageDigest m = MessageDigest.getInstance("MD5");
+		byte[] data = pass.getBytes();
+		m.update(data,0,data.length);
+		BigInteger i = new BigInteger(1,m.digest());
+		return String.format("%1$032X", i);
+        }catch(NoSuchAlgorithmException nsa){
+            return null;
         }
     }
 }

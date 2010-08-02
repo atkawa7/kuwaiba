@@ -14,22 +14,23 @@
  * 
  */
 
-package org.inventory.core.usermanager.nodes;
+package org.inventory.core.usermanager.nodes.customeditor;
 
-import org.inventory.core.services.interfaces.LocalUserGroupObject;
-import org.openide.nodes.AbstractNode;
-import org.openide.nodes.Children;
-import org.openide.util.lookup.Lookups;
+import java.awt.Component;
+import java.beans.PropertyEditorSupport;
 
 /**
- * Node representing a group of users
+ * This is the editor for changing the groups for a given object
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class GroupNode extends AbstractNode{
-
-    public GroupNode(LocalUserGroupObject group) {
-        super (Children.LEAF, Lookups.singleton(group));
+public class GroupsEditorSupport extends PropertyEditorSupport{
+    @Override
+    public Component getCustomEditor(){
+        return new SetGroupsPanel();
     }
 
-
+    @Override
+    public boolean supportsCustomEditor(){
+        return true;
+    }
 }

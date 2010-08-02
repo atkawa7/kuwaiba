@@ -78,10 +78,10 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
             LocalObject update = Lookup.getDefault().lookup(LocalObject.class);
 
             if (t instanceof LocalObjectListItem)
-                update.setLocalObject(node.getObject().getClassName(),
+                update.setLocalObject(node.getObject().getPackageName()+"."+node.getObject().getClassName(),
                     new String[]{this.getName()}, new Object[]{((LocalObjectListItem)t).getId()});
             else
-                update.setLocalObject(node.getObject().getClassName(),
+                update.setLocalObject(node.getObject().getPackageName()+"."+node.getObject().getClassName(),
                     new String[]{this.getName()}, new Object[]{t});
             update.setOid(node.getObject().getOid());
             if(!CommunicationsStub.getInstance().saveObject(update))

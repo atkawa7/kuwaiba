@@ -25,6 +25,8 @@ import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.core.services.interfaces.LocalUserGroupObject;
+import org.inventory.core.services.interfaces.LocalUserObject;
 
 /**
  * This class implements the local caching functionality
@@ -33,13 +35,21 @@ import org.inventory.core.services.interfaces.LocalObjectListItem;
  */
 public class Cache{
     private static Cache instance;
-    private List<LocalObject> objectIndex; //Cache for objects (LocalObjects)
+    private List<LocalObject> objectIndex; //Cache for objects (LocalObjects) --> Not used so far
     private Dictionary<String,LocalClassMetadata> metadataIndex; //Cache for metadata (the complete metadata information)
     private Dictionary<String,LocalClassMetadataLight> lightMetadataIndex; //Cache for lightmetadata (usually for administrative purposes)
     private Dictionary<String,List<LocalClassMetadataLight>> possibleChildrenIndex; //Cache for possible children
     private Dictionary<String,List<LocalObjectListItem>> listIndex; //Cache for list-type attributes
     private Long rootId = null;
     private Long rootClassId = null;
+    /**
+     * Information about the current logged user
+     */
+    private LocalUserObject currentUserInfo;
+    /**
+     * Information about the groups the current user belongs to
+     */
+    private LocalUserGroupObject[] currentUserGroupInfo;
 
     private Cache(){
         this.objectIndex = new ArrayList<LocalObject>();
@@ -188,5 +198,21 @@ public class Cache{
 
     public Dictionary<String, List<LocalObjectListItem>> getAllList() {
         return listIndex;
+    }
+
+    /**
+     * Retrieves cached information about the current logged user
+     * @return A LocalUserObject instance
+     */
+    public LocalUserObject getCurrentUserInfo(){
+        return this.currentUserInfo;
+    }
+
+    /**
+     * Get cached information about the groups the current user belongs to
+     * @return
+     */
+    public LocalUserGroupObject[] getCurrentGroupsInfo(){
+        return this.currentUserGroupInfo;
     }
 }
