@@ -24,6 +24,7 @@ import core.exceptions.ObjectNotFoundException;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectUpdate;
+import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.View;
 import entity.config.User;
@@ -899,10 +900,17 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     @Override
-    public UserGroup[] getGroups() {
+    public UserGroupInfo[] getGroups() {
         if (em != null){
-            List<Object> groups = em.createQuery("SELECT x FROM UserGroup x JOIN FETCH x.users").getResultList();
-            return groups.toArray(new UserGroup[0]);
+            List<UserGroup> groups = em.createQuery("SELECT x FROM UserGroup x").getResultList();
+            UserGroupInfo[] res = new UserGroupInfo[groups.size()];
+            int i = 0;
+            for (UserGroup group : groups){
+                res[i] = new UserGroupInfo(group);
+                i++;
+            }
+                
+            return res;
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             return null;

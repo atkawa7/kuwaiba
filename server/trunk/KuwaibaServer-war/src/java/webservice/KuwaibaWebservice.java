@@ -475,16 +475,10 @@ public class KuwaibaWebservice {
      */
     @WebMethod(operationName = "getGroups")
     public UserGroupInfo[] getGroups(){
-        UserGroup[] entityGroups = sbr.getGroups();
-        if (entityGroups == null){
+        UserGroupInfo[] groups = sbr.getGroups();
+        if (groups == null)
             this.lastErr = sbr.getError();
-            return null;
-        }
-        UserGroupInfo[] res = new UserGroupInfo[entityGroups.length];
-        for (int i = 0; i<entityGroups.length;i++)
-            res[i] = new UserGroupInfo(entityGroups[i]);
-
-        return res;
+        return groups;
     }
 
     /**

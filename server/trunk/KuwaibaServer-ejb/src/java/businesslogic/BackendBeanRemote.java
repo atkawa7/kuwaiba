@@ -19,9 +19,9 @@ import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfo;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectLight;
+import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.View;
-import entity.config.UserGroup;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -65,7 +65,7 @@ public interface BackendBeanRemote {
     public View getRoomView(Long oid);
     public View getRackView(Long oid);
     public UserInfo[] getUsers();
-    public UserGroup[] getGroups();
+    public UserGroupInfo[] getGroups();
     public Boolean setUserProperties(Long oid, String[] propertiesNames, String[] propertiesValues);
     public Boolean setGroupProperties(Long oid, String[] propertiesNames, String[] propertiesValues);
     public Boolean removeUsersFromGroup(Long[] usersOids, Long groupOid);

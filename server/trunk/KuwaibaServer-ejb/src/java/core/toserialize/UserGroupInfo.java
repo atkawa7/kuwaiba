@@ -44,7 +44,10 @@ public class UserGroupInfo extends UserGroupInfoLight{
         super (group);
         this.members = new UserInfo[group.getUsers().size()];
         this.description = group.getDescription();
-        this.creationDate = group.getCreationDate().getTime();
+        if (group.getCreationDate() != null)
+            this.creationDate = group.getCreationDate().getTime();
+        else
+            this.creationDate = null;
         int i = 0;
         for (User member : group.getUsers())
             this.members[i] = new UserInfo(member);
