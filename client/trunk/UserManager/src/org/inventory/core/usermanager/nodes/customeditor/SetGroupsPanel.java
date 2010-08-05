@@ -16,15 +16,22 @@
 
 package org.inventory.core.usermanager.nodes.customeditor;
 
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.ParallelGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import org.inventory.core.services.interfaces.LocalUserGroupObjectLight;
+
 /**
- *
+ * This panel shows the list of groups available and
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class SetGroupsPanel extends javax.swing.JPanel {
+public final class SetGroupsPanel extends javax.swing.JPanel {
 
     /** Creates new form SetGroupsPanel */
-    public SetGroupsPanel() {
+    public SetGroupsPanel(LocalUserGroupObjectLight[] allGroups, LocalUserGroupObjectLight[] myGroups) {
         initComponents();
+        initCustomComponents(allGroups, myGroups);
     }
 
     /** This method is called from within the constructor to
@@ -45,11 +52,11 @@ public class SetGroupsPanel extends javax.swing.JPanel {
         pnlMain.setLayout(pnlMainLayout);
         pnlMainLayout.setHorizontalGroup(
             pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 267, Short.MAX_VALUE)
+            .addGap(0, 382, Short.MAX_VALUE)
         );
         pnlMainLayout.setVerticalGroup(
             pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 347, Short.MAX_VALUE)
+            .addGap(0, 366, Short.MAX_VALUE)
         );
 
         pnlScrollMain.setViewportView(pnlMain);
@@ -62,5 +69,37 @@ public class SetGroupsPanel extends javax.swing.JPanel {
     private javax.swing.JPanel pnlMain;
     private javax.swing.JScrollPane pnlScrollMain;
     // End of variables declaration//GEN-END:variables
+
+    public void initCustomComponents(LocalUserGroupObjectLight[] allGroups, LocalUserGroupObjectLight[] myGroups) {
+        GroupLayout layout = new GroupLayout(this);
+        this.setLayout(layout);
+        GroupLayout.SequentialGroup hGroup = ((GroupLayout)this.getLayout()).createSequentialGroup();
+        GroupLayout.SequentialGroup vGroup = ((GroupLayout)this.getLayout()).createSequentialGroup();
+        ((GroupLayout)this.getLayout()).setAutoCreateContainerGaps(true);
+        ((GroupLayout)this.getLayout()).setAutoCreateGaps(true);
+        ParallelGroup labels = ((GroupLayout)this.getLayout()).createParallelGroup();
+        ParallelGroup checkboxes = ((GroupLayout)this.getLayout()).createParallelGroup();
+        for(LocalUserGroupObjectLight group : allGroups){
+            JCheckBox checkbox = new JCheckBox();
+            JLabel label = new JLabel(group.getName());
+     
+            labels.addComponent(label);
+            checkboxes.addComponent(checkbox);
+
+            for(LocalUserGroupObjectLight myGroup : myGroups){
+                if(myGroup.getOid().equals(group.getOid())){
+                    checkbox.setSelected(true);
+                    break;
+                }
+            }
+
+            vGroup.addGroup(((GroupLayout)this.getLayout()).createParallelGroup(
+                    GroupLayout.Alignment.BASELINE).addComponent(checkbox).addComponent(label));
+        }
+        hGroup.addGroup(checkboxes);
+        hGroup.addGroup(labels);
+        ((GroupLayout)this.getLayout()).setHorizontalGroup(hGroup);
+        ((GroupLayout)this.getLayout()).setVerticalGroup(vGroup);
+    }
 
 }

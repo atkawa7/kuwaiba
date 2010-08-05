@@ -43,6 +43,16 @@ public class UserManagerService {
      */
     private NodeTableModel groupsTableModel;
 
+    /**
+     * Reference to the user's list root node
+     */
+    private AbstractNode usersRoot;
+    /**
+     * Reference to the user's list root node
+     */
+    private AbstractNode groupsRoot;
+
+
     public UserManagerService(UserManagerTopComponent _umtc){
         this.umtc = _umtc;
     }
@@ -59,11 +69,12 @@ public class UserManagerService {
                     getString("LBL_USERMANAGEMENT"), NotificationUtil.ERROR, com.getError());
             users = new LocalUserObject[0];
         }
-        AbstractNode root = new AbstractNode(new UserChildren(users));
-        usersTableModel.setNodes(root.getChildren().getNodes());
-        usersTableModel.setProperties(root.getChildren().getNodes()[0].getPropertySets()[0].
+        usersRoot = new AbstractNode(new UserChildren(users));
+        usersTableModel.setNodes(usersRoot.getChildren().getNodes());
+        if (usersRoot.getChildren().getNodesCount() != 0)
+            usersTableModel.setProperties(usersRoot.getChildren().getNodes()[0].getPropertySets()[0].
                 getProperties());
-        umtc.getExplorerManager().setRootContext(root);
+        umtc.getExplorerManager().setRootContext(usersRoot);
         umtc.setTblUsers(new TableView(usersTableModel));
     }
 
@@ -79,12 +90,13 @@ public class UserManagerService {
                     getString("LBL_USERMANAGEMENT"), NotificationUtil.ERROR, com.getError());
             groups = new LocalUserGroupObject[0];
         }
-        AbstractNode root = new AbstractNode(new GroupChildren(groups));
-        groupsTableModel.setNodes(root.getChildren().getNodes());
-        groupsTableModel.setProperties(root.getChildren().getNodes()[0].getPropertySets()[0].
+        groupsRoot = new AbstractNode(new GroupChildren(groups));
+        groupsTableModel.setNodes(groupsRoot.getChildren().getNodes());
+        if (usersRoot.getChildren().getNodesCount() != 0)
+            groupsTableModel.setProperties(groupsRoot.getChildren().getNodes()[0].getPropertySets()[0].
                 getProperties());
-        umtc.getExplorerManager().setRootContext(root);
-        umtc.setTblUsers(new TableView(groupsTableModel));
+        umtc.getExplorerManager().setRootContext(groupsRoot);
+        umtc.setTblGroups(new TableView(groupsTableModel));
     }
 
     /**
@@ -94,5 +106,24 @@ public class UserManagerService {
     public void refreshUserList(){
         usersTableModel.setNodes(umtc.getExplorerManager().getRootContext().getChildren().getNodes());
         umtc.revalidate();
+    }
+
+    public void refreshGroupsList(){
+        groupsTableModel.setNodes(umtc.getExplorerManager().getRootContext().getChildren().getNodes());
+        umtc.revalidate();
+    }
+
+    /**
+     * Set the root context to the user's root node
+     */
+    public void setRootToUsers(){
+        this.umtc.getExplorerManager().setRootContext(usersRoot);
+    }
+
+    /**
+     * Set the root context to the group's root node
+     */
+    public void setRootToGroups(){
+        this.umtc.getExplorerManager().setRootContext(groupsRoot);
     }
 }

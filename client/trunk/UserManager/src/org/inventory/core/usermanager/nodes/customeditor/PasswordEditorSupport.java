@@ -50,7 +50,7 @@ public class PasswordEditorSupport extends PropertyEditorSupport{
     }
 
     @Override
-    public Object getValue(){
+    public String getAsText(){
         return "****";
     }
 }

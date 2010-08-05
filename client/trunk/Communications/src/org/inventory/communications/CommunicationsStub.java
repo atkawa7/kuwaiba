@@ -690,7 +690,8 @@ public class CommunicationsStub {
             }
             return localGroups;
         }catch (Exception e){
-            this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
+            //this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
+            this.error = e.getMessage();
             return null;
         }
     }

@@ -30,7 +30,7 @@
     <folder name="Toolbars">
         <folder name="Tools">
                 <file name="org-inventory-core-usermanager-UserManagerAction.shadow">
-                    <attr name="originalFile" stringvalue="org-inventory-core-usermanager-UserManagerAction.instance"/>
+                    <attr name="originalFile" stringvalue="Actions/Tools/Administrative/org-inventory-core-usermanager-UserManagerAction.instance"/>
                 </file>
         </folder>
     </folder>

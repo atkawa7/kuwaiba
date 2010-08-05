@@ -21,34 +21,33 @@ import java.lang.reflect.InvocationTargetException;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.core.services.interfaces.LocalObject;
-import org.inventory.core.services.interfaces.LocalUserObject;
+import org.inventory.core.services.interfaces.LocalUserGroupObject;
 import org.inventory.core.services.interfaces.NotificationUtil;
-import org.inventory.core.services.utils.Utils;
 import org.inventory.core.usermanager.nodes.customeditor.GroupsEditorSupport;
 import org.inventory.core.usermanager.nodes.customeditor.PasswordEditorSupport;
 import org.openide.nodes.PropertySupport.ReadWrite;
 import org.openide.util.Lookup;
 
 /**
- * Represents a single user's property
+ * Represents a single group's property
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class UserProperty extends ReadWrite{
+public class UserGroupProperty extends ReadWrite{
 
     /**
      * Current value
      */
     private Object value;
 
-    private LocalUserObject object;
+    private LocalUserGroupObject object;
     /**
      * Reference to the communication component
      */
     private CommunicationsStub com;
 
-    public UserProperty(String _name,String _displayName,String _toolTextTip,Object _value, LocalUserObject _user){
+    public UserGroupProperty(String _name,String _displayName,String _toolTextTip,Object _value, LocalUserGroupObject _group){
         super(_name,_value.getClass(),_displayName,_toolTextTip);
-        this.object = _user;
+        this.object = _group;
         this.value = _value;
         this.com = CommunicationsStub.getInstance();
     }
@@ -61,11 +60,9 @@ public class UserProperty extends ReadWrite{
     @Override
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         LocalObject update = new LocalObjectImpl();
-        //The password is hashed before setting it
-        Object newValue = this.getName().equals("password")?Utils.getMD5Hash((String)t):t;
 
-        update.setLocalObject("entity.config.User", 
-                new String[]{this.getName()}, new Object[]{newValue});
+        update.setLocalObject("entity.config.UserGroup",
+                new String[]{this.getName()}, new Object[]{t});
         update.setOid(this.object.getOid());
         if(com.saveObject(update)){
             if(!this.getName().equals("password"))
@@ -84,14 +81,5 @@ public class UserProperty extends ReadWrite{
     @Override
     public boolean canWrite(){
         return true;
-    }
-
-    @Override
-    public PropertyEditorSupport getPropertyEditor(){
-        if (this.getName().equals("password"))
-            return new PasswordEditorSupport();
-        if (this.getName().equals("groups"))
-            return new GroupsEditorSupport(com.getGroups(),object.getGroups());
-        return null;
     }
 }

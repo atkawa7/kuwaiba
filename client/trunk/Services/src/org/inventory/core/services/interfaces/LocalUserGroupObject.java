@@ -16,10 +16,13 @@
 
 package org.inventory.core.services.interfaces;
 
+import java.util.Date;
+
 /**
  * Local representation of an application users group
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public interface LocalUserGroupObject {
-
+public interface LocalUserGroupObject extends LocalUserGroupObjectLight {
+    public String getDescription();
+    public Date getCreationDate();
 }

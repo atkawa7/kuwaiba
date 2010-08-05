@@ -18,19 +18,30 @@ package org.inventory.core.usermanager.nodes.customeditor;
 
 import java.awt.Component;
 import java.beans.PropertyEditorSupport;
+import org.inventory.core.services.interfaces.LocalUserGroupObjectLight;
 
 /**
- * This is the editor for changing the groups for a given object
+ * This is the editor for changing the groups for a given users
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class GroupsEditorSupport extends PropertyEditorSupport{
+
+    private LocalUserGroupObjectLight[] allGroups;
+    private LocalUserGroupObjectLight[] myGroups;
+
+    public GroupsEditorSupport(LocalUserGroupObjectLight[] _allGroups, LocalUserGroupObjectLight[] _myGroups){
+        this.allGroups = _allGroups;
+        this.myGroups = _myGroups;
+    }
+
     @Override
     public Component getCustomEditor(){
-        return new SetGroupsPanel();
+        return new SetGroupsPanel(allGroups,myGroups);
     }
 
     @Override
     public boolean supportsCustomEditor(){
         return true;
     }
+
 }

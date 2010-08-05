@@ -21,6 +21,6 @@ package org.inventory.core.services.interfaces;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public interface LocalUserGroupObjectLight {
-    public Long getId();
+    public Long getOid();
     public String getName();
 }

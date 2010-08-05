@@ -24,21 +24,24 @@ import org.inventory.webservice.UserGroupInfoLight;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class LocalUserGroupObjectLightImpl implements LocalUserGroupObjectLight{
-    protected  Long id;
+    protected  Long oid;
     protected  String name;
 
+    public LocalUserGroupObjectLightImpl(){
+    }
+    
     public LocalUserGroupObjectLightImpl(UserGroupInfoLight user){
-        this.id = user.getOid();
+        this.oid = user.getOid();
         this.name = user.getName();
     }
 
     public LocalUserGroupObjectLightImpl(Long _oid, String _name){
-        this.id = _oid;
+        this.oid = _oid;
         this.name = _name;
     }
 
-    public Long getId() {
-        return id;
+    public Long getOid() {
+        return oid;
     }
 
     public String getName() {

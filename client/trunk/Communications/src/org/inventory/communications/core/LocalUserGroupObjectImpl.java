@@ -37,7 +37,13 @@ public class LocalUserGroupObjectImpl extends LocalUserGroupObjectLightImpl impl
     public LocalUserGroupObjectImpl(UserGroupInfo group) {
         super(group.getOid(),group.getName());
         this.description = group.getDescription();
-        this.creationDate = new Date(group.getCreationDate());
+        if (group.getCreationDate() == null)
+            this.creationDate = null;
+        else
+            this.creationDate = new Date(group.getCreationDate());
+    }
+
+    public LocalUserGroupObjectImpl() {
     }
 
     public Date getCreationDate() {

@@ -17,8 +17,10 @@
 package org.inventory.core.usermanager.nodes;
 
 import org.inventory.core.services.interfaces.LocalUserGroupObject;
+import org.inventory.core.usermanager.nodes.properties.UserGroupProperty;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
+import org.openide.nodes.Sheet;
 import org.openide.util.lookup.Lookups;
 
 /**
@@ -27,9 +29,32 @@ import org.openide.util.lookup.Lookups;
  */
 public class GroupNode extends AbstractNode{
 
+    public static final String PROP_GROUPSNAME="name";
+    public static final String PROP_DESCRIPTION="description";
+    public static final String PROP_CREATIONDATE="creationDate";
+
+    public LocalUserGroupObject object;
+
     public GroupNode(LocalUserGroupObject group) {
         super (Children.LEAF, Lookups.singleton(group));
+        object = group;
     }
 
+    @Override
+    public Sheet createSheet(){
+        Sheet sheet = Sheet.createDefault();
+        Sheet.Set set = sheet.get(Sheet.PROPERTIES);
 
+        if (set == null) {
+            set = Sheet.createPropertiesSet();
+            sheet.put(set);
+        }
+
+        set.put(new UserGroupProperty(PROP_GROUPSNAME, "Name", "Group's name", object.getName(), object));
+        set.put(new UserGroupProperty(PROP_CREATIONDATE, "Creation Date", "Group's creation date",
+                object.getCreationDate()==null?"":object.getCreationDate(), object));
+        set.put(new UserGroupProperty(PROP_DESCRIPTION, "Description", "Group's description",
+                object.getDescription()==null?"":object.getDescription(), object));
+        return sheet;
+    }
 }

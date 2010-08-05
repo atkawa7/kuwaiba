@@ -18,6 +18,9 @@ package org.inventory.core.usermanager;
 
 import java.awt.BorderLayout;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.usermanager.actions.AddUser;
 import org.inventory.core.usermanager.actions.UpdateList;
@@ -30,6 +33,7 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.explorer.ExplorerManager.Provider;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.TableView;
+import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
 /**
@@ -49,8 +53,8 @@ public final class UserManagerTopComponent extends TopComponent
     private static final String PREFERRED_ID = "UserManagerTopComponent";
 
     private ExplorerManager em = new ExplorerManager();
-    private TableView tblUsers;
-    private TableView tblGroups;
+    private TableView tblUsers = null;
+    private TableView tblGroups = null;
     private UserManagerService ums;
     private NotificationUtil nu = null;
 
@@ -72,6 +76,24 @@ public final class UserManagerTopComponent extends TopComponent
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
         btnAddUser.addActionListener(new AddUser(em.getRootContext(),ums));
         btnRefresh.addActionListener(new UpdateList(pnlTabbedMain, ums));
+        pnlTabbedMain.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                switch(pnlTabbedMain.getSelectedIndex()){
+                    case 0: //The users tab
+                        ums.setRootToUsers();
+                        break;
+                    case 1: //The groups tab
+                       if (tblGroups == null){
+                            ums.populateGroupsList();
+                            pnlGroups.add(tblGroups,BorderLayout.CENTER);
+                            pnlGroups.revalidate();
+                        }
+                       ums.setRootToGroups();
+                }
+            }
+        });
     }
 
     /** This method is called from within the constructor to
@@ -150,17 +172,12 @@ public final class UserManagerTopComponent extends TopComponent
 
         pnlTabGroups.setLayout(new java.awt.BorderLayout());
 
-        javax.swing.GroupLayout pnlGroupsLayout = new javax.swing.GroupLayout(pnlGroups);
-        pnlGroups.setLayout(pnlGroupsLayout);
-        pnlGroupsLayout.setHorizontalGroup(
-            pnlGroupsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 563, Short.MAX_VALUE)
-        );
-        pnlGroupsLayout.setVerticalGroup(
-            pnlGroupsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 294, Short.MAX_VALUE)
-        );
-
+        pnlGroups.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                pnlGroupsFocusGained(evt);
+            }
+        });
+        pnlGroups.setLayout(new java.awt.BorderLayout());
         pnlScrollGroups.setViewportView(pnlGroups);
 
         pnlTabGroups.add(pnlScrollGroups, java.awt.BorderLayout.CENTER);
@@ -176,9 +193,12 @@ public final class UserManagerTopComponent extends TopComponent
      * @param evt
      */
     private void pnlTabbedMainFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_pnlTabbedMainFocusGained
-        if (tblGroups == null)
-            ums.populateGroupsList();
+
     }//GEN-LAST:event_pnlTabbedMainFocusGained
+
+    private void pnlGroupsFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_pnlGroupsFocusGained
+    
+    }//GEN-LAST:event_pnlGroupsFocusGained
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
