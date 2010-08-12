@@ -71,5 +71,9 @@ public interface BackendBeanRemote {
     public Boolean removeUsersFromGroup(Long[] usersOids, Long groupOid);
     public Boolean addUsersToGroup(Long[] usersOids, Long groupOid);
     public UserInfo createUser();
-    public Boolean removeUsers(java.lang.Long[] oids);
+    public Boolean deleteUsers(java.lang.Long[] oids);
+    public Boolean addGroupsToUser(Long[] groupsOids, Long userOid);
+    public Boolean removeGroupsFromUser(Long[] groupsOids, Long userOid);
+    public UserGroupInfo createGroup();
+    public Boolean deleteGroups(Long[] oids);
 }

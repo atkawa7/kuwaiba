@@ -28,13 +28,11 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import businesslogic.BackendBeanRemote;
 //import com.sun.xml.internal.ws.developer.Stateful;
-import core.exceptions.ObjectNotFoundException;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.View;
-import entity.config.User;
-import entity.config.UserGroup;
+
 import entity.core.ConfigurationItem;
 import java.util.List;
 import util.HierarchyUtils;
@@ -53,6 +51,16 @@ public class KuwaibaWebservice {
      * TODO: This should be a per-session variable
      */
     private String lastErr ="No error specified";
+
+
+    /**
+     * This method is useful to test if the server is actually running. By now, it always says "true"
+     * @return a boolean showing if the server up or down
+     */
+    @WebMethod(operationName = "getServerStatus")
+    public boolean getServerStatus(){
+        return true;
+    }
 
     /**
      * Authenticates the user
@@ -494,12 +502,36 @@ public class KuwaibaWebservice {
     }
 
     /**
-     * Creates a new user
-     * @return The newly created user
+     * Deletes an user
+     * @return Success or failure
      */
-    @WebMethod(operationName = "removeUsers")
-    public Boolean removeUsers(Long[] oids){
-        Boolean res = sbr.removeUsers(oids);
+    @WebMethod(operationName = "deleteUsers")
+    public Boolean deleteUsers(Long[] oids){
+        Boolean res = sbr.deleteUsers(oids);
+        if(!res)
+            this.lastErr = sbr.getError();
+        return res;
+    }
+
+    /**
+     * Creates a new group
+     * @return The newly created group
+     */
+    @WebMethod(operationName = "createGroup")
+    public UserGroupInfo createGroup(){
+        UserGroupInfo res = sbr.createGroup();
+        if(res ==null)
+            this.lastErr = sbr.getError();
+        return res;
+    }
+
+    /**
+     * Deletes a list of groups
+     * @return Success or failure
+     */
+    @WebMethod(operationName = "deleteGroups")
+    public Boolean deleteGroups(Long[] oids){
+        Boolean res = sbr.deleteGroups(oids);
         if(!res)
             this.lastErr = sbr.getError();
         return res;
@@ -574,6 +606,36 @@ public class KuwaibaWebservice {
     public Boolean removeUserfromGroup(@WebParam(name="usersOids")Long[] usersOids,
             @WebParam(name="groupOid")Long groupOid){
         Boolean res = sbr.removeUsersFromGroup(usersOids, groupOid);
+        if(!res)
+            this.lastErr = sbr.getError();
+        return res;
+    }
+
+    /**
+     * Assigns groups to a user
+     * @param groupsOids An array with The groups oids
+     * @param userOid The user's oid
+     * @return Success or failure
+     */
+    @WebMethod(operationName = "addGroupsToUser")
+    public Boolean addGroupsToUser(@WebParam(name="groupsOids")Long[] groupsOids,
+            @WebParam(name="userOid")Long userOid){
+        Boolean res = sbr.addGroupsToUser(groupsOids, userOid);
+        if(!res)
+            this.lastErr = sbr.getError();
+        return res;
+    }
+
+    /**
+     * Removes groups from a user
+     * @param groupsOids An array with The groups oids
+     * @param groupOid The user's oid
+     * @return Success or failure
+     */
+    @WebMethod(operationName = "removeGroupsFromUser")
+    public Boolean removeGroupsFromUser(@WebParam(name="groupsOids")Long[] groupsOids,
+            @WebParam(name="userOid")Long userOid){
+        Boolean res = sbr.removeGroupsFromUser(groupsOids, userOid);
         if(!res)
             this.lastErr = sbr.getError();
         return res;

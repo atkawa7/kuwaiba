@@ -982,13 +982,13 @@ public class BackendBean implements BackendBeanRemote {
             user = em.find(User.class,oid);
             if (!group.getUsers().contains(user))
                 group.getUsers().add(user);
-            //TODO: This is redundant if a bidirectional relationship is defined
-            user.getGroups().remove(group);
+            if (!user.getGroups().contains(group))
+                //TODO: This is redundant if a bidirectional relationship is defined
+                user.getGroups().add(group);
             em.merge(user);
         }
 
         em.merge(group);
-
         return true;
     }
 
@@ -1013,7 +1013,7 @@ public class BackendBean implements BackendBeanRemote {
      * @return Success or failure
      */
     @Override
-    public Boolean removeUsers(Long[] oids) {
+    public Boolean deleteUsers(Long[] oids) {
         try{
             for (Long oid :oids){
                 User anUser = em.find(User.class, oid);
@@ -1030,6 +1030,109 @@ public class BackendBean implements BackendBeanRemote {
             this.error = e.getMessage();
             return false;
         }
+        return true;
+    }
+
+    @Override
+    public UserGroupInfo createGroup() {
+        UserGroup newGroup = new UserGroup();
+        try{
+            Random random = new Random();
+            newGroup.setName("group"+random.nextInt(10000));
+            em.persist(newGroup);
+        }catch(Exception e){
+            this.error = e.getMessage();
+            return null;
+        }
+        return new UserGroupInfo(newGroup);
+    }
+
+    /**
+     * Deletes a list of groups
+     * TODO: Check existing sessions and historic entries associated to this user
+     * @param oids Oids for the groups to be deleted
+     * @return Success or failure
+     */
+    @Override
+    public Boolean deleteGroups(Long[] oids) {
+        try{
+            for (Long oid :oids){
+                UserGroup aGroup = em.find(UserGroup.class, oid);
+                List<User> users = aGroup.getUsers();
+                if (users != null){
+                    for (User user : users){
+                        user.getGroups().remove(aGroup);
+                        aGroup.getUsers().remove(user);
+                    }
+                }
+                em.remove(aGroup);
+            }
+        }catch(Exception e){
+            this.error = e.getMessage();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Boolean addGroupsToUser(Long[] groupsOids, Long userOid) {
+        User user = em.find(User.class, userOid);
+        if (user == null){
+            this.error = this.error = java.util.ResourceBundle.
+                    getBundle("internationalization/Bundle").
+                    getString("LBL_NOSUCHOBJECT")+" User "+java.util.ResourceBundle.
+                    getBundle("internationalization/Bundle").getString("LBL_WHICHID")+userOid;
+            return false;
+        }
+
+        UserGroup group = null;
+
+        for (Long oid : groupsOids){
+            group = em.find(UserGroup.class,oid);
+            if (group.getUsers() != null)
+                if (!group.getUsers().contains(user)) //Ignores the addition if the user already belongs to the group
+                    group.getUsers().add(user);
+
+            if(user.getGroups() != null)
+                if(!user.getGroups().contains(group))
+                    //TODO: This is redundant if a bidirectional relationship is defined
+                    user.getGroups().add(group);
+
+            em.merge(group);
+        }
+
+        em.merge(user);
+
+        return true;
+
+    }
+
+    @Override
+    public Boolean removeGroupsFromUser(Long[] groupsOids, Long userOid) {
+        User user = em.find(User.class, userOid);
+        if (user == null){
+            this.error = this.error = java.util.ResourceBundle.
+                    getBundle("internationalization/Bundle").
+                    getString("LBL_NOSUCHOBJECT")+" User "+java.util.ResourceBundle.
+                    getBundle("internationalization/Bundle").getString("LBL_WHICHID")+userOid;
+            return false;
+        }
+
+        UserGroup group = null;
+
+        for (Long oid : groupsOids){
+            group = em.find(UserGroup.class,oid);
+            if (group.getUsers() != null)
+                group.getUsers().remove(user); //No matter if the user is not included, since the method call will not throw any exception
+            if (user.getGroups() != null)
+                //TODO: This is redundant if a bidirectional relationship is defined
+                user.getGroups().remove(group);
+
+            em.merge(group);
+        }
+
+        em.merge(user);
+
         return true;
     }
 }
