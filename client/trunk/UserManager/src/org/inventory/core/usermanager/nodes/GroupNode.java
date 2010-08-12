@@ -16,12 +16,16 @@
 
 package org.inventory.core.usermanager.nodes;
 
+import javax.swing.Action;
 import org.inventory.core.services.interfaces.LocalUserGroupObject;
+import org.inventory.core.usermanager.UserManagerTopComponent;
+import org.inventory.core.usermanager.actions.Delete;
 import org.inventory.core.usermanager.nodes.properties.UserGroupProperty;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Sheet;
 import org.openide.util.lookup.Lookups;
+import org.openide.windows.WindowManager;
 
 /**
  * Node representing a group of users
@@ -56,5 +60,15 @@ public class GroupNode extends AbstractNode{
         set.put(new UserGroupProperty(PROP_DESCRIPTION, "Description", "Group's description",
                 object.getDescription()==null?"":object.getDescription(), object));
         return sheet;
+    }
+
+    @Override
+    public Action[] getActions(boolean context){
+        UserManagerTopComponent tc =(UserManagerTopComponent)WindowManager.getDefault().findTopComponent("UserManagerTopComponent");
+        return new Action[]{new Delete(this,tc.getUserManagerServiceInstance())};
+    }
+
+    public LocalUserGroupObject getObject(){
+        return this.object;
     }
 }

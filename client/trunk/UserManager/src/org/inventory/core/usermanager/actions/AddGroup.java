@@ -18,19 +18,54 @@ package org.inventory.core.usermanager.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.interfaces.LocalUserGroupObject;
+import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.usermanager.UserManagerService;
+import org.inventory.core.usermanager.nodes.GroupChildren;
+import org.inventory.core.usermanager.nodes.GroupNode;
+import org.openide.nodes.Node;
+import org.openide.util.Lookup;
 
 
 /**
- * This action adds an user
+ * This action adds a group
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class AddGroup extends AbstractAction{
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    /**
+     * The object used for making the invocations to the web service
+     */
+    private CommunicationsStub com;
+
+    /**
+     * Reference to the notification system
+     */
+    private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
+
+    /**
+     * Reference to the UserManagerService useful to refresh the UI.
+     * For some reason the calling to the method add() to add a node to the table doesn't
+     * show the new node
+     */
+    private UserManagerService ums;
+
+    public AddGroup(UserManagerService _ums){
+        this.ums = _ums;
+        this.com = CommunicationsStub.getInstance();
     }
 
-
-
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        LocalUserGroupObject lugo = com.addGroup();
+        if (lugo == null)
+            nu.showSimplePopup("Group Creation", NotificationUtil.ERROR, com.getError());
+        else{
+            ums.populateGroupsList();
+            ((GroupChildren)ums.getGroupsRoot().getChildren()).add(new Node[]{new GroupNode(lugo)});
+            ums.refreshGroupsList();
+            nu.showSimplePopup("Group Creation", NotificationUtil.INFO, "Group created successfully");
+        }
+    }
 }

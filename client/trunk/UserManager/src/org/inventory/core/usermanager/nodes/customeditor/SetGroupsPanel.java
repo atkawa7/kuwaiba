@@ -16,22 +16,44 @@
 
 package org.inventory.core.usermanager.nodes.customeditor;
 
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.ParallelGroup;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.Border;
 import org.inventory.core.services.interfaces.LocalUserGroupObjectLight;
+import org.openide.explorer.propertysheet.PropertyEnv;
 
 /**
  * This panel shows the list of groups available and
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public final class SetGroupsPanel extends javax.swing.JPanel {
+public final class SetGroupsPanel extends JPanel{
+
+    /**
+     * Reference to the PropertyEnv provided by property editor
+     */
+    private PropertyEnv env;
+
+    /**
+     * Groups the current user belongs to before to make any changes
+     */
+    private LocalUserGroupObjectLight[] myGroups;
+    
+    private JCheckBox[] checkBoxes;
 
     /** Creates new form SetGroupsPanel */
-    public SetGroupsPanel(LocalUserGroupObjectLight[] allGroups, LocalUserGroupObjectLight[] myGroups) {
+    public SetGroupsPanel(LocalUserGroupObjectLight[] _allGroups,
+            LocalUserGroupObjectLight[] _myGroups, PropertyEnv _env) {
         initComponents();
-        initCustomComponents(allGroups, myGroups);
+        this.myGroups = _myGroups;
+        this.checkBoxes = new JCheckBox[_allGroups.length];
+        initCustomComponents(_allGroups);
+        this.env = _env;
+        _env.setState(PropertyEnv.STATE_NEEDS_VALIDATION);
     }
 
     /** This method is called from within the constructor to
@@ -48,17 +70,7 @@ public final class SetGroupsPanel extends javax.swing.JPanel {
 
         setLayout(new java.awt.BorderLayout());
 
-        javax.swing.GroupLayout pnlMainLayout = new javax.swing.GroupLayout(pnlMain);
-        pnlMain.setLayout(pnlMainLayout);
-        pnlMainLayout.setHorizontalGroup(
-            pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 382, Short.MAX_VALUE)
-        );
-        pnlMainLayout.setVerticalGroup(
-            pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 366, Short.MAX_VALUE)
-        );
-
+        pnlMain.setLayout(new java.awt.BorderLayout());
         pnlScrollMain.setViewportView(pnlMain);
 
         add(pnlScrollMain, java.awt.BorderLayout.CENTER);
@@ -70,36 +82,84 @@ public final class SetGroupsPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane pnlScrollMain;
     // End of variables declaration//GEN-END:variables
 
-    public void initCustomComponents(LocalUserGroupObjectLight[] allGroups, LocalUserGroupObjectLight[] myGroups) {
-        GroupLayout layout = new GroupLayout(this);
-        this.setLayout(layout);
-        GroupLayout.SequentialGroup hGroup = ((GroupLayout)this.getLayout()).createSequentialGroup();
-        GroupLayout.SequentialGroup vGroup = ((GroupLayout)this.getLayout()).createSequentialGroup();
-        ((GroupLayout)this.getLayout()).setAutoCreateContainerGaps(true);
-        ((GroupLayout)this.getLayout()).setAutoCreateGaps(true);
-        ParallelGroup labels = ((GroupLayout)this.getLayout()).createParallelGroup();
-        ParallelGroup checkboxes = ((GroupLayout)this.getLayout()).createParallelGroup();
-        for(LocalUserGroupObjectLight group : allGroups){
-            JCheckBox checkbox = new JCheckBox();
-            JLabel label = new JLabel(group.getName());
-     
-            labels.addComponent(label);
-            checkboxes.addComponent(checkbox);
+    public void initCustomComponents(LocalUserGroupObjectLight[] allGroups) {
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        Border border = BorderFactory.createTitledBorder("Available groups");
+        panel.setBorder(border);
+        //panel.setLayout(new BorderLayout());
 
+        int i = 0;
+        for(LocalUserGroupObjectLight group : allGroups){
+            JCheckBox checkbox = new JCheckBox(group.getName());
             for(LocalUserGroupObjectLight myGroup : myGroups){
                 if(myGroup.getOid().equals(group.getOid())){
                     checkbox.setSelected(true);
                     break;
                 }
             }
-
-            vGroup.addGroup(((GroupLayout)this.getLayout()).createParallelGroup(
-                    GroupLayout.Alignment.BASELINE).addComponent(checkbox).addComponent(label));
+            //So we can reference the checkbox and compare its value with the content of myGroups
+            checkbox.putClientProperty("object", group);
+            
+            checkbox.setName(String.valueOf(group.getOid()));
+            panel.add(checkbox);
+            checkBoxes[i] = checkbox;
+            i++;
         }
-        hGroup.addGroup(checkboxes);
-        hGroup.addGroup(labels);
-        ((GroupLayout)this.getLayout()).setHorizontalGroup(hGroup);
-        ((GroupLayout)this.getLayout()).setVerticalGroup(vGroup);
+        this.add(panel);
     }
 
+    /**
+     * Returns the groups to be added to the current user
+     * @return An array with groups to be added to the current user
+     */
+    public List<Long> toBeAdded(){
+        List<Long> res = new ArrayList<Long>();
+        for (JCheckBox checkbox : checkBoxes){
+            Long oid = Long.valueOf(checkbox.getName());
+            if (checkbox.isSelected()){
+                boolean isPresent = false;
+                for (LocalUserGroupObjectLight group : myGroups){
+                    if (group.getOid().equals(oid)){
+                        isPresent = true;
+                        break;
+                    }
+                }
+                if (!isPresent)
+                    res.add(oid);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * Returns the groups to be added to the current user
+     * @return An array with groups to be added to the current user
+     */
+    public List<Long> toBeDeleted(){
+        List<Long> res = new ArrayList<Long>();
+        for (JCheckBox checkbox : checkBoxes){
+            Long oid = Long.valueOf(checkbox.getName());
+            if (!checkbox.isSelected()){
+                boolean isPresent = false;
+                for (LocalUserGroupObjectLight group : myGroups){
+                    if (group.getOid().equals(oid)){
+                        isPresent = true;
+                        break;
+                    }
+                }
+                if (isPresent)
+                    res.add(oid);
+            }
+        }
+        return res;
+    }
+
+    public LocalUserGroupObjectLight[] getSelectedGroups() {
+        List<LocalUserGroupObjectLight> groupList = new ArrayList<LocalUserGroupObjectLight>();
+        for(JCheckBox checkbox : checkBoxes)
+           if  (checkbox.isSelected())
+               groupList.add((LocalUserGroupObjectLight)checkbox.getClientProperty("object"));
+
+        return groupList.toArray(new LocalUserGroupObjectLight[0]);
+    }
 }

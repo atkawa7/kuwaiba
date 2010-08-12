@@ -45,8 +45,12 @@ public class UpdateList extends AbstractAction{
     public void actionPerformed(ActionEvent e) {
         switch(tabbedPanel.getSelectedIndex()){
             case 0:
-                //The user list is focused
+                //The users list is focused
                 ums.populateUsersList();
+                break;
+            case 1:
+                //The groups list is focused
+                ums.populateGroupsList();
                 break;
         }
     }

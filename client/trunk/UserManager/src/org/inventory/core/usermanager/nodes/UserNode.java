@@ -17,14 +17,15 @@
 package org.inventory.core.usermanager.nodes;
 
 import javax.swing.Action;
-import org.inventory.core.services.interfaces.LocalUserGroupObjectLight;
 import org.inventory.core.services.interfaces.LocalUserObject;
-import org.inventory.core.usermanager.actions.DeleteUser;
+import org.inventory.core.usermanager.UserManagerTopComponent;
+import org.inventory.core.usermanager.actions.Delete;
 import org.inventory.core.usermanager.nodes.properties.UserProperty;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Sheet;
 import org.openide.util.lookup.Lookups;
+import org.openide.windows.WindowManager;
 
 /**
  * This node wraps an LocalUserObject instance
@@ -59,21 +60,9 @@ public class UserNode extends AbstractNode{
         ss.put(new UserProperty(PROP_USERNAME, "Username", "User name used in the login process", object.getUserName(),this.object));
         ss.put(new UserProperty(PROP_LASTNAME, "Last Name", "User's last name", object.getLastName()==null?"":object.getLastName(),this.object));
         ss.put(new UserProperty(PROP_FIRSTNAME, "First Name", "User's first name", object.getFirstName()==null?"":object.getFirstName(),this.object));
-        ss.put(new UserProperty(PROP_GROUPS, "Groups", "Groups this user belongs to", getGroupsAsString(object.getGroups()),this.object));
+        ss.put(new UserProperty(PROP_GROUPS, "Groups", "Groups this user belongs to", "",this.object));
         ss.put(new UserProperty(PROP_PASSWORD, "Password", "User's password", "****",this.object));
         return s;      
-    }
-
-
-    private String getGroupsAsString(LocalUserGroupObjectLight[] _groups){
-        if (_groups == null)
-            return "";
-        if (_groups.length == 0)
-            return "";
-        String res = "";
-        for (LocalUserGroupObjectLight group : _groups)
-            res += group.getName()+",";
-        return res.substring(0, res.length() - 1);
     }
 
     public LocalUserObject getObject(){
@@ -82,6 +71,7 @@ public class UserNode extends AbstractNode{
 
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{new DeleteUser(this)};
+        UserManagerTopComponent tc =(UserManagerTopComponent)WindowManager.getDefault().findTopComponent("UserManagerTopComponent");
+        return new Action[]{new Delete(this,tc.getUserManagerServiceInstance())};
     }
 }

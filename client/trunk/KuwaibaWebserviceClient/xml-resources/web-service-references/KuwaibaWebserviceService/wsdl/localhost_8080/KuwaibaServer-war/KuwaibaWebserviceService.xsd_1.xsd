@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.2-hudson-752-. --><xs:schema xmlns:tns="http://webservice/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://webservice/">
 
+<xs:element name="addGroupsToUser" type="tns:addGroupsToUser" />
+
+<xs:element name="addGroupsToUserResponse" type="tns:addGroupsToUserResponse" />
+
 <xs:element name="addPossibleChildren" type="tns:addPossibleChildren" />
 
 <xs:element name="addPossibleChildrenResponse" type="tns:addPossibleChildrenResponse" />
@@ -16,6 +20,10 @@
 
 <xs:element name="copyObjectsResponse" type="tns:copyObjectsResponse" />
 
+<xs:element name="createGroup" type="tns:createGroup" />
+
+<xs:element name="createGroupResponse" type="tns:createGroupResponse" />
+
 <xs:element name="createObject" type="tns:createObject" />
 
 <xs:element name="createObjectResponse" type="tns:createObjectResponse" />
@@ -27,6 +35,14 @@
 <xs:element name="createUser" type="tns:createUser" />
 
 <xs:element name="createUserResponse" type="tns:createUserResponse" />
+
+<xs:element name="deleteGroups" type="tns:deleteGroups" />
+
+<xs:element name="deleteGroupsResponse" type="tns:deleteGroupsResponse" />
+
+<xs:element name="deleteUsers" type="tns:deleteUsers" />
+
+<xs:element name="deleteUsersResponse" type="tns:deleteUsersResponse" />
 
 <xs:element name="getDefaultView" type="tns:getDefaultView" />
 
@@ -92,6 +108,10 @@
 
 <xs:element name="getRootPossibleChildrenResponse" type="tns:getRootPossibleChildrenResponse" />
 
+<xs:element name="getServerStatus" type="tns:getServerStatus" />
+
+<xs:element name="getServerStatusResponse" type="tns:getServerStatusResponse" />
+
 <xs:element name="getUsers" type="tns:getUsers" />
 
 <xs:element name="getUsersResponse" type="tns:getUsersResponse" />
@@ -99,6 +119,10 @@
 <xs:element name="moveObjects" type="tns:moveObjects" />
 
 <xs:element name="moveObjectsResponse" type="tns:moveObjectsResponse" />
+
+<xs:element name="removeGroupsFromUser" type="tns:removeGroupsFromUser" />
+
+<xs:element name="removeGroupsFromUserResponse" type="tns:removeGroupsFromUserResponse" />
 
 <xs:element name="removeObject" type="tns:removeObject" />
 
@@ -108,13 +132,9 @@
 
 <xs:element name="removePossibleChildrenResponse" type="tns:removePossibleChildrenResponse" />
 
-<xs:element name="removeUsers" type="tns:removeUsers" />
-
 <xs:element name="removeUsersFromGroup" type="tns:removeUsersFromGroup" />
 
 <xs:element name="removeUsersFromGroupResponse" type="tns:removeUsersFromGroupResponse" />
-
-<xs:element name="removeUsersResponse" type="tns:removeUsersResponse" />
 
 <xs:element name="searchForObjects" type="tns:searchForObjects" />
 
@@ -147,18 +167,6 @@
 <xs:element name="updateObject" type="tns:updateObject" />
 
 <xs:element name="updateObjectResponse" type="tns:updateObjectResponse" />
-
-<xs:complexType name="removeUsers">
-<xs:sequence>
-<xs:element name="arg0" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="removeUsersResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
 
 <xs:complexType name="getRackView">
 <xs:sequence>
@@ -200,6 +208,16 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getServerStatus">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getServerStatusResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="getGroups">
 <xs:sequence />
 </xs:complexType>
@@ -235,6 +253,7 @@
 <xs:element name="userName" type="xs:string" minOccurs="0" />
 <xs:element name="firstName" type="xs:string" minOccurs="0" />
 <xs:element name="lastName" type="xs:string" minOccurs="0" />
+<xs:element name="creationDate" type="xs:long" minOccurs="0" />
 <xs:element name="isEnabled" type="xs:boolean" minOccurs="0" />
 <xs:element name="groups" type="tns:userGroupInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
@@ -249,6 +268,19 @@
 </xs:complexType>
 
 <xs:complexType name="moveObjectsResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removeGroupsFromUser">
+<xs:sequence>
+<xs:element name="groupsOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="userOid" type="xs:long" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removeGroupsFromUserResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
@@ -277,6 +309,18 @@
 <xs:element name="displayName" type="xs:string" minOccurs="0" />
 <xs:element name="description" type="xs:string" minOccurs="0" />
 <xs:element name="smallIcon" type="xs:base64Binary" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteGroups">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteGroupsResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -485,6 +529,19 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="addGroupsToUser">
+<xs:sequence>
+<xs:element name="groupsOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="userOid" type="xs:long" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addGroupsToUserResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="getMultipleChoice">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0" />
@@ -544,6 +601,16 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getRootPossibleChildren">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getRootPossibleChildrenResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="getMetadataForClass">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0" />
@@ -553,16 +620,6 @@
 <xs:complexType name="getMetadataForClassResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:classInfo" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getRootPossibleChildren">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getRootPossibleChildrenResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -627,6 +684,18 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="deleteUsers">
+<xs:sequence>
+<xs:element name="arg0" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteUsersResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="setClassPlainAttribute">
 <xs:sequence>
 <xs:element name="classId" type="xs:long" minOccurs="0" />
@@ -652,6 +721,16 @@
 <xs:complexType name="createObjectResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObjectLight" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createGroup">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="createGroupResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:userGroupInfo" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 

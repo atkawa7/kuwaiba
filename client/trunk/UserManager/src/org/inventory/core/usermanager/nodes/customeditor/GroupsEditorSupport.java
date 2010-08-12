@@ -17,26 +17,68 @@
 package org.inventory.core.usermanager.nodes.customeditor;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyEditorSupport;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalUserGroupObjectLight;
+import org.inventory.core.services.interfaces.LocalUserObject;
+import org.inventory.core.services.interfaces.NotificationUtil;
+import org.openide.explorer.propertysheet.ExPropertyEditor;
+import org.openide.explorer.propertysheet.PropertyEnv;
+import org.openide.util.Lookup;
 
 /**
  * This is the editor for changing the groups for a given users
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class GroupsEditorSupport extends PropertyEditorSupport{
+public class GroupsEditorSupport extends PropertyEditorSupport
+    implements ExPropertyEditor, VetoableChangeListener{
 
+    /**
+     * List of groups
+     */
     private LocalUserGroupObjectLight[] allGroups;
+    /**
+     * Groups the current user belongs to
+     */
     private LocalUserGroupObjectLight[] myGroups;
+    /**
+     * PropertyEnv instance associated to this editor
+     */
+    private PropertyEnv env;
+    /**
+     * Reference to the panel used to display the list
+     */
+    private SetGroupsPanel myPanel = null;
+    /**
+     * Reference to de CommunicationsStub singleton instance
+     */
+    private CommunicationsStub com;
+    /**
+     * Reference to the user that is being edited
+     */
+    private LocalUserObject user;
+    /**
+     * Reference to the NotificationUtil instance
+     */
+    private NotificationUtil nu;
 
-    public GroupsEditorSupport(LocalUserGroupObjectLight[] _allGroups, LocalUserGroupObjectLight[] _myGroups){
+    public GroupsEditorSupport(LocalUserGroupObjectLight[] _allGroups, LocalUserObject _user){
         this.allGroups = _allGroups;
-        this.myGroups = _myGroups;
+        this.myGroups = _user.getGroups();
+        this.com = CommunicationsStub.getInstance();
+        this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
+        this.user = _user;
     }
 
     @Override
     public Component getCustomEditor(){
-        return new SetGroupsPanel(allGroups,myGroups);
+        if(this.myPanel==null)
+            this.myPanel = new SetGroupsPanel(allGroups,myGroups, env);
+        return myPanel;
+
     }
 
     @Override
@@ -44,4 +86,41 @@ public class GroupsEditorSupport extends PropertyEditorSupport{
         return true;
     }
 
+    @Override
+    public String getAsText(){
+        if (myGroups == null)
+            return "";
+        if (myGroups.length == 0)
+            return "";
+        String res = "[";
+        for (LocalUserGroupObjectLight group : myGroups)
+            res += group.getName()+",";
+        return res.substring(0, res.length() - 1)+"]";
+    }
+
+    @Override
+    public void setValue(Object o){
+        //Do nothing, because we set the password and make the validations in the vetoable event
+    }
+
+
+    @Override
+    public void attachEnv(PropertyEnv env) {
+        this.env = env;
+        this.env.addVetoableChangeListener(this);
+    }
+
+    @Override
+    public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
+        if(evt.getNewValue().equals(PropertyEnv.STATE_VALID)){
+            if (!com.addGroupsToUser(myPanel.toBeAdded(), this.user.getOid()))
+                nu.showSimplePopup("User Update", NotificationUtil.ERROR, com.getError());
+            else{
+                if(!com.removeGroupsFromUser(myPanel.toBeDeleted(), this.user.getOid()))
+                    nu.showSimplePopup("User Update", NotificationUtil.ERROR, com.getError());
+                else
+                    myGroups = myPanel.getSelectedGroups();
+            }
+        }
+    }
 }

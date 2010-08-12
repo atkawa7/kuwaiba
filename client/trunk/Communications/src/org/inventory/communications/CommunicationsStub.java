@@ -221,8 +221,8 @@ public class CommunicationsStub {
 
     /**
      * Gets the possible instances that can be contained into a give class instance.
-     * Pay attention that this method calls the recurseive web method. This is,
-     * this method won't give you the abstract classes in the contaiiner hierarchy
+     * Pay attention that this method calls the recursive web method. This is,
+     * this method won't give you the abstract classes in the container hierarchy
      * but those instanceables. This method is used by the navigation tree nodes
      * to know what classes to show in the menu, but it's not used by the container manager,
      * which uses getPossibleChildrenNoRecursive
@@ -710,13 +710,58 @@ public class CommunicationsStub {
     }
 
     /**
+     * Creates a new group
+     * @return The newly created group
+     */
+    public LocalUserGroupObject addGroup(){
+        UserGroupInfo newGroup = port.createGroup();
+        if (newGroup == null){
+            this.error = port.getLastErr();
+            return null;
+        }
+        return new LocalUserGroupObjectImpl(newGroup);
+    }
+
+    /**
      * Removes a list of users
      * @param oids oids for the users to be deleted
      * @return success or failure
      */
-    public boolean removeUsers(Long[] oids){
-        Boolean res = port.removeUsers(Arrays.asList(oids));
+    public boolean deleteUsers(Long[] oids){
+        Boolean res = port.deleteUsers(Arrays.asList(oids));
         if(!res)
+            this.error = port.getLastErr();
+        return res;
+    }
+
+    /**
+     * Removes a list of groups
+     * @param oids oids for the users to be deleted
+     * @return success or failure
+     */
+    public boolean deleteGroups(Long[] oids){
+        Boolean res = port.deleteGroups(Arrays.asList(oids));
+        if(!res)
+            this.error = port.getLastErr();
+        return res;
+    }
+
+    /**
+     * Assigns groups to a user
+     * @param groupsOids An array with The groups oids
+     * @param userOid The user's oid
+     * @return Success or failure
+     */
+    public boolean addGroupsToUser(List<Long> groupsOids, Long userOid){
+        boolean res = port.addGroupsToUser(groupsOids, userOid);
+        if (!res)
+            this.error = port.getLastErr();
+        return res;
+    }
+
+    public boolean removeGroupsFromUser(List<Long> groupsOids, Long userOid){
+        boolean res = port.removeGroupsFromUser(groupsOids, userOid);
+        if (!res)
             this.error = port.getLastErr();
         return res;
     }

@@ -51,7 +51,10 @@ public class UserManagerService {
      * Reference to the user's list root node
      */
     private AbstractNode groupsRoot;
-
+    /**
+     * In order to refresh the list, will make this class a singleton
+     */
+     private UserManagerService instance;
 
     public UserManagerService(UserManagerTopComponent _umtc){
         this.umtc = _umtc;
@@ -76,6 +79,9 @@ public class UserManagerService {
                 getProperties());
         umtc.getExplorerManager().setRootContext(usersRoot);
         umtc.setTblUsers(new TableView(usersTableModel));
+        
+        //Focus the user tab
+        umtc.getPnlTabbedMain().setSelectedIndex(0);
     }
 
     /**
@@ -97,6 +103,9 @@ public class UserManagerService {
                 getProperties());
         umtc.getExplorerManager().setRootContext(groupsRoot);
         umtc.setTblGroups(new TableView(groupsTableModel));
+        
+        //Focus the user tab
+        umtc.getPnlTabbedMain().setSelectedIndex(1);
     }
 
     /**
@@ -126,4 +135,14 @@ public class UserManagerService {
     public void setRootToGroups(){
         this.umtc.getExplorerManager().setRootContext(groupsRoot);
     }
+
+    public AbstractNode getGroupsRoot() {
+        return groupsRoot;
+    }
+
+    public AbstractNode getUsersRoot() {
+        return usersRoot;
+    }
+
+
 }

@@ -32,12 +32,7 @@ import org.openide.util.Lookup;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class AddUser extends AbstractAction{
-
-    /**
-     * Used to add the new user node if the add is successful
-     */
-    private Node rootNode;
-    
+  
     /**
      * The object used for making the invocations to the web service
      */
@@ -55,8 +50,7 @@ public class AddUser extends AbstractAction{
      */
     private UserManagerService ums;
 
-    public AddUser(Node _rootNode, UserManagerService _ums){
-        this.rootNode = _rootNode;
+    public AddUser(UserManagerService _ums){
         this.com = CommunicationsStub.getInstance();
         this.ums = _ums;
     }
@@ -67,7 +61,7 @@ public class AddUser extends AbstractAction{
         if (luo == null)
             nu.showSimplePopup("User Creation", NotificationUtil.ERROR, com.getError());
         else{
-            ((UserChildren)rootNode.getChildren()).add(new Node[]{new UserNode(luo)});
+            ((UserChildren)ums.getUsersRoot().getChildren()).add(new Node[]{new UserNode(luo)});
             ums.refreshUserList();
             nu.showSimplePopup("User Creation", NotificationUtil.INFO, "User created successfully");
         }

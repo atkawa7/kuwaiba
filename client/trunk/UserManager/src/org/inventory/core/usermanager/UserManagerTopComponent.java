@@ -19,9 +19,11 @@ package org.inventory.core.usermanager;
 import java.awt.BorderLayout;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
+import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.usermanager.actions.AddGroup;
 import org.inventory.core.usermanager.actions.AddUser;
 import org.inventory.core.usermanager.actions.UpdateList;
 import org.openide.explorer.ExplorerManager;
@@ -33,7 +35,6 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.explorer.ExplorerManager.Provider;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.TableView;
-import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
 /**
@@ -74,8 +75,9 @@ public final class UserManagerTopComponent extends TopComponent
         pnlUsers.add(tblUsers,BorderLayout.CENTER);
        // pnlUsers.add(tblGroups);
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
-        btnAddUser.addActionListener(new AddUser(em.getRootContext(),ums));
+        btnAddUser.addActionListener(new AddUser(ums));
         btnRefresh.addActionListener(new UpdateList(pnlTabbedMain, ums));
+        btnAddGroup.addActionListener(new AddGroup(ums));
         pnlTabbedMain.addChangeListener(new ChangeListener() {
 
             @Override
@@ -85,8 +87,9 @@ public final class UserManagerTopComponent extends TopComponent
                         ums.setRootToUsers();
                         break;
                     case 1: //The groups tab
-                       if (tblGroups == null){
-                            ums.populateGroupsList();
+                       if (pnlGroups.getComponentCount() == 0){
+                           if (tblGroups == null)
+                                ums.populateGroupsList();
                             pnlGroups.add(tblGroups,BorderLayout.CENTER);
                             pnlGroups.revalidate();
                         }
@@ -305,11 +308,21 @@ public final class UserManagerTopComponent extends TopComponent
         return this.nu;
     }
 
-    void setTblUsers(TableView tableView) {
+    public void setTblUsers(TableView tableView) {
         this.tblUsers = tableView;
     }
 
-    void setTblGroups(TableView tableView){
+    public void setTblGroups(TableView tableView){
         this.tblGroups = tableView;
+    }
+
+    public JTabbedPane getPnlTabbedMain(){
+        return this.pnlTabbedMain;
+    }
+
+    public UserManagerService getUserManagerServiceInstance(){
+        if (ums == null)
+            ums = new UserManagerService(this);
+        return ums;
     }
 }

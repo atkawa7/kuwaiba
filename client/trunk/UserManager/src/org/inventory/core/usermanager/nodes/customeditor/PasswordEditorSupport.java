@@ -17,31 +17,54 @@
 package org.inventory.core.usermanager.nodes.customeditor;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyEditorSupport;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
 import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.usermanager.nodes.properties.UserProperty;
+import org.openide.explorer.propertysheet.ExPropertyEditor;
+import org.openide.explorer.propertysheet.PropertyEnv;
 import org.openide.util.Lookup;
 
 /**
  * This is the editor used for changing the password
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class PasswordEditorSupport extends PropertyEditorSupport{
+public class PasswordEditorSupport extends PropertyEditorSupport
+    implements ExPropertyEditor, VetoableChangeListener{
 
     /**
      * The panel shown in the editor
      */
-    private ChangePasswordPanel myPanel;
+    private ChangePasswordPanel myPanel = null;
     /**
      * A reference to the notification mechanism
      */
     private NotificationUtil nu;
 
+    /**
+     * PropertyEnv instance
+     */
+    private PropertyEnv env;
+
+    /**
+     * Reference to the UserProperty
+     */
+    private UserProperty property;
+
+    public PasswordEditorSupport(UserProperty _property){
+        nu = Lookup.getDefault().lookup(NotificationUtil.class);
+        this.property = _property;
+    }
 
     @Override
     public Component getCustomEditor(){
-        this.myPanel = new ChangePasswordPanel();
-        nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        return myPanel;
+        if (myPanel == null ){
+            this.myPanel = new ChangePasswordPanel(env);
+            env.addVetoableChangeListener(this);
+            return myPanel;
+        }else return myPanel;
     }
 
     @Override
@@ -52,5 +75,21 @@ public class PasswordEditorSupport extends PropertyEditorSupport{
     @Override
     public String getAsText(){
         return "****";
+    }
+
+    @Override
+    public void setValue(Object o){
+        //Do nothing, because we set the password and make the validations in the vetoable event
+    }
+    
+    @Override
+    public void attachEnv(PropertyEnv pe) {
+        env = pe;
+    }
+
+    @Override
+    public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
+        if(evt.getNewValue().equals(PropertyEnv.STATE_VALID))
+            property.setPassword(String.valueOf(myPanel.getTxtPassword().getPassword()));
     }
 }

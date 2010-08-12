@@ -17,18 +17,21 @@ package org.inventory.core.usermanager.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.usermanager.UserManagerService;
+import org.inventory.core.usermanager.nodes.GroupNode;
 import org.inventory.core.usermanager.nodes.UserNode;
+import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
-public class DeleteUser extends AbstractAction {
+public class Delete extends AbstractAction {
     /**
      * Node to be deleted
      */
-    private UserNode node;
+    private AbstractNode node;
 
     /**
      * The object used for making the invocations to the web service
@@ -47,20 +50,38 @@ public class DeleteUser extends AbstractAction {
      */
     private UserManagerService ums;
 
-    public DeleteUser(UserNode userNode){
+    public Delete(AbstractNode _node, UserManagerService _ums){
         com = CommunicationsStub.getInstance();
-        this.node = userNode;
+        this.node = _node;
+        this.ums = _ums;
         putValue(NAME, "Delete");
     }
     
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        if(com.removeUsers(new Long[]{this.node.getObject().getOid()})){
-            nu.showSimplePopup("User removal", NotificationUtil.INFO, "The user was deleted successfully");
-            node.getParentNode().getChildren().remove(new Node[]{node});
+
+        if (node instanceof UserNode){ //We're gonna delete an user
+
+            if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this user?", "Confirmation",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
+                return;
+
+            if(com.deleteUsers(new Long[]{((UserNode)this.node).getObject().getOid()})){
+                nu.showSimplePopup("User removal", NotificationUtil.INFO, "The user was deleted successfully");
+                node.getParentNode().getChildren().remove(new Node[]{node});
+            }
+            else
+                nu.showSimplePopup("User removal", NotificationUtil.ERROR, com.getError());
+        }else{ //We're gonna delete a group
+            if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this group? The associated users won't be deleted if you choose OK","Confirmation",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
+                    return;
+            if(com.deleteGroups(new Long[]{((GroupNode)this.node).getObject().getOid()})){       
+                nu.showSimplePopup("Group removal", NotificationUtil.INFO, "The group was deleted successfully");
+                node.getParentNode().getChildren().remove(new Node[]{node});
+                ums.refreshGroupsList();
+            }
+            else
+                nu.showSimplePopup("Group removal", NotificationUtil.ERROR, com.getError());
         }
-        else
-            nu.showSimplePopup("User removal", NotificationUtil.ERROR, com.getError());
     }
 }

@@ -16,17 +16,28 @@
 
 package org.inventory.core.usermanager.nodes.customeditor;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyVetoException;
 import javax.swing.JPasswordField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import org.openide.explorer.propertysheet.PropertyEnv;
 
 /**
  *
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ChangePasswordPanel extends javax.swing.JPanel {
+public class ChangePasswordPanel extends javax.swing.JPanel
+    implements DocumentListener{
 
+    private PropertyEnv env;
     /** Creates new form ChangePasswordPanel */
-    public ChangePasswordPanel() {
+    public ChangePasswordPanel(PropertyEnv _env) {
         initComponents();
+        this.env = _env;
+        this.env.setState(PropertyEnv.STATE_INVALID);
+        this.txtPassword.getDocument().addDocumentListener(this);
+        this.txtReTypePassword.getDocument().addDocumentListener(this);
     }
 
     /** This method is called from within the constructor to
@@ -42,14 +53,28 @@ public class ChangePasswordPanel extends javax.swing.JPanel {
         lblRetypePassword = new javax.swing.JLabel();
         txtPassword = new javax.swing.JPasswordField();
         txtReTypePassword = new javax.swing.JPasswordField();
+        lblError = new javax.swing.JLabel();
 
         lblPassword.setText(org.openide.util.NbBundle.getMessage(ChangePasswordPanel.class, "ChangePasswordPanel.lblPassword.text")); // NOI18N
 
         lblRetypePassword.setText(org.openide.util.NbBundle.getMessage(ChangePasswordPanel.class, "ChangePasswordPanel.lblRetypePassword.text")); // NOI18N
 
         txtPassword.setText(org.openide.util.NbBundle.getMessage(ChangePasswordPanel.class, "ChangePasswordPanel.txtPassword.text")); // NOI18N
+        txtPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPasswordActionPerformed(evt);
+            }
+        });
 
         txtReTypePassword.setText(org.openide.util.NbBundle.getMessage(ChangePasswordPanel.class, "ChangePasswordPanel.txtReTypePassword.text")); // NOI18N
+        txtReTypePassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtReTypePasswordActionPerformed(evt);
+            }
+        });
+
+        lblError.setForeground(new java.awt.Color(255, 0, 0));
+        lblError.setText(org.openide.util.NbBundle.getMessage(ChangePasswordPanel.class, "ChangePasswordPanel.lblError.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -58,18 +83,21 @@ public class ChangePasswordPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblPassword)
-                    .addComponent(lblRetypePassword))
-                .addGap(21, 21, 21)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtReTypePassword, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(47, Short.MAX_VALUE))
+                    .addComponent(lblError)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblPassword)
+                            .addComponent(lblRetypePassword))
+                        .addGap(21, 21, 21)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtReTypePassword, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(57, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(34, 34, 34)
+                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPassword)
                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -77,12 +105,23 @@ public class ChangePasswordPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRetypePassword)
                     .addComponent(txtReTypePassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(lblError)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void txtReTypePasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtReTypePasswordActionPerformed
+
+    }//GEN-LAST:event_txtReTypePasswordActionPerformed
+
+    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
+
+    }//GEN-LAST:event_txtPasswordActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lblError;
     private javax.swing.JLabel lblPassword;
     private javax.swing.JLabel lblRetypePassword;
     private javax.swing.JPasswordField txtPassword;
@@ -95,5 +134,43 @@ public class ChangePasswordPanel extends javax.swing.JPanel {
 
     public JPasswordField getTxtReTypePassword(){
         return this.txtReTypePassword;
+    }
+
+    public void checkPasswords(PropertyChangeEvent evt) throws PropertyVetoException{
+        if (String.valueOf(this.txtReTypePassword.getPassword()).trim().equals(
+                String.valueOf(this.txtPassword.getPassword()).trim())){
+            if(String.valueOf(this.txtReTypePassword.getPassword()).trim().equals(""))
+                throw new PropertyVetoException("Password can not be an empty string", evt);
+        }else
+            throw new PropertyVetoException("Passwords do not match", evt);
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        changedUpdate(e);
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        changedUpdate(e);
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent evt) {
+        if (String.valueOf(this.txtReTypePassword.getPassword()).trim().equals(
+                String.valueOf(this.txtPassword.getPassword()).trim())){
+            if(String.valueOf(this.txtReTypePassword.getPassword()).trim().equals("")){
+                lblError.setText("Password can not be an empty string");
+                this.env.setState(PropertyEnv.STATE_INVALID);
+                return;
+            }
+        }else{
+            lblError.setText("Passwords do not match");
+            this.env.setState(PropertyEnv.STATE_INVALID);
+            return;
+        }
+
+        lblError.setText("");
+        this.env.setState(PropertyEnv.STATE_NEEDS_VALIDATION);
     }
 }
