@@ -25,6 +25,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalUserGroupObjectLight;
 import org.inventory.core.services.interfaces.LocalUserObject;
 import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.usermanager.UserManagerService;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
 import org.openide.explorer.propertysheet.PropertyEnv;
 import org.openide.util.Lookup;
@@ -60,7 +61,6 @@ public class GroupsEditorSupport extends PropertyEditorSupport
      * Reference to the NotificationUtil instance
      */
     private NotificationUtil nu;
-
     public GroupsEditorSupport(LocalUserGroupObjectLight[] _allGroups, LocalUserObject _user){
         this.allGroups = _allGroups;
         this.com = CommunicationsStub.getInstance();
@@ -87,10 +87,7 @@ public class GroupsEditorSupport extends PropertyEditorSupport
             return "";
         if (user.getGroups().length == 0)
             return "";
-        String res = "[";
-        for (LocalUserGroupObjectLight group : user.getGroups())
-            res += group.getName()+",";
-        return res.substring(0, res.length() - 1)+"]";
+        return "[Many]";
     }
 
     @Override

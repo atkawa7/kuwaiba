@@ -110,7 +110,6 @@ public final class UserManagerTopComponent extends TopComponent
         barMain = new javax.swing.JToolBar();
         btnAddUser = new javax.swing.JButton();
         btnAddGroup = new javax.swing.JButton();
-        btnEdit = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
         pnlTabbedMain = new javax.swing.JTabbedPane();
         pnlTabUsers = new javax.swing.JPanel();
@@ -139,14 +138,6 @@ public final class UserManagerTopComponent extends TopComponent
         btnAddGroup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnAddGroup.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         barMain.add(btnAddGroup);
-
-        btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/usermanager/res/edit.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnEdit, org.openide.util.NbBundle.getMessage(UserManagerTopComponent.class, "UserManagerTopComponent.btnEdit.text")); // NOI18N
-        btnEdit.setToolTipText(org.openide.util.NbBundle.getMessage(UserManagerTopComponent.class, "UserManagerTopComponent.btnEdit.toolTipText")); // NOI18N
-        btnEdit.setFocusable(false);
-        btnEdit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnEdit.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        barMain.add(btnEdit);
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/usermanager/res/refresh.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(UserManagerTopComponent.class, "UserManagerTopComponent.btnRefresh.text")); // NOI18N
@@ -208,7 +199,6 @@ public final class UserManagerTopComponent extends TopComponent
     private javax.swing.JToolBar barMain;
     private javax.swing.JButton btnAddGroup;
     private javax.swing.JButton btnAddUser;
-    private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JPanel pnlGroups;
     private javax.swing.JScrollPane pnlScrollGroups;

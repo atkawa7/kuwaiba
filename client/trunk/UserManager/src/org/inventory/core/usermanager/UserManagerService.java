@@ -146,5 +146,7 @@ public class UserManagerService {
         return usersRoot;
     }
 
-
+    public UserManagerTopComponent getTC(){
+        return this.umtc;
+    }
 }

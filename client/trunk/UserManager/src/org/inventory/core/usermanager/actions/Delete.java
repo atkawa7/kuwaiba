@@ -21,7 +21,6 @@ import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.usermanager.UserManagerService;
-import org.inventory.core.usermanager.nodes.GroupChildren;
 import org.inventory.core.usermanager.nodes.GroupNode;
 import org.inventory.core.usermanager.nodes.UserNode;
 import org.openide.nodes.AbstractNode;
