@@ -75,4 +75,8 @@ public class LocalUserObjectImpl implements LocalUserObject {
     public String getUserName() {
         return userName;
     }
+
+    public void setGroups(LocalUserGroupObjectLight[] _groups) {
+        this.groups = _groups;
+    }
 }

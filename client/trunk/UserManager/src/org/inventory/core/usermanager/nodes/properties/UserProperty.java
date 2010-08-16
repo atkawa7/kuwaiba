@@ -50,10 +50,6 @@ public class UserProperty extends ReadWrite{
      * Custom editor for password property
      */
     private PasswordEditorSupport pes = null;
-    /**
-     * Custom editor for groups property
-     */
-    private GroupsEditorSupport ges = null;
 
     public UserProperty(String _name,String _displayName,String _toolTextTip,Object _value, LocalUserObject _user){
         super(_name,_value.getClass(),_displayName,_toolTextTip);
@@ -101,11 +97,9 @@ public class UserProperty extends ReadWrite{
                 pes = new PasswordEditorSupport(this);
             return pes;
         }
-        if (this.getName().equals(UserNode.PROP_GROUPS)){ //NOI18N
-            if(this.ges == null)
-                ges = new GroupsEditorSupport(com.getGroups(),this.object);
-            return ges;
-        }
+        if (this.getName().equals(UserNode.PROP_GROUPS)) //NOI18N
+                return new GroupsEditorSupport(com.getGroups(),this.object);
+
         return null;
     }
 

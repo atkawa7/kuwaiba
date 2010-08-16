@@ -41,10 +41,6 @@ public class GroupsEditorSupport extends PropertyEditorSupport
      */
     private LocalUserGroupObjectLight[] allGroups;
     /**
-     * Groups the current user belongs to
-     */
-    private LocalUserGroupObjectLight[] myGroups;
-    /**
      * PropertyEnv instance associated to this editor
      */
     private PropertyEnv env;
@@ -67,7 +63,6 @@ public class GroupsEditorSupport extends PropertyEditorSupport
 
     public GroupsEditorSupport(LocalUserGroupObjectLight[] _allGroups, LocalUserObject _user){
         this.allGroups = _allGroups;
-        this.myGroups = _user.getGroups();
         this.com = CommunicationsStub.getInstance();
         this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
         this.user = _user;
@@ -76,7 +71,7 @@ public class GroupsEditorSupport extends PropertyEditorSupport
     @Override
     public Component getCustomEditor(){
         if(this.myPanel==null)
-            this.myPanel = new SetGroupsPanel(allGroups,myGroups, env);
+            this.myPanel = new SetGroupsPanel(allGroups,user.getGroups(), env);
         return myPanel;
 
     }
@@ -88,12 +83,12 @@ public class GroupsEditorSupport extends PropertyEditorSupport
 
     @Override
     public String getAsText(){
-        if (myGroups == null)
+        if (user.getGroups() == null)
             return "";
-        if (myGroups.length == 0)
+        if (user.getGroups().length == 0)
             return "";
         String res = "[";
-        for (LocalUserGroupObjectLight group : myGroups)
+        for (LocalUserGroupObjectLight group : user.getGroups())
             res += group.getName()+",";
         return res.substring(0, res.length() - 1)+"]";
     }
@@ -119,7 +114,7 @@ public class GroupsEditorSupport extends PropertyEditorSupport
                 if(!com.removeGroupsFromUser(myPanel.toBeDeleted(), this.user.getOid()))
                     nu.showSimplePopup("User Update", NotificationUtil.ERROR, com.getError());
                 else
-                    myGroups = myPanel.getSelectedGroups();
+                    user.setGroups(myPanel.getSelectedGroups());
             }
         }
     }

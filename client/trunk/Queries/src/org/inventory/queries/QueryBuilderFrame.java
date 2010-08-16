@@ -90,6 +90,7 @@ public class QueryBuilderFrame extends JFrame {
         });
         barSearch.add(btnSearch);
 
+        btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/save.png"))); // NOI18N
         btnSave.setText(org.openide.util.NbBundle.getMessage(QueryBuilderFrame.class, "QueryBuilderFrame.btnSave.text")); // NOI18N
         btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderFrame.class, "QueryBuilderFrame.btnSave.toolTipText")); // NOI18N
         btnSave.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/save.png"))); // NOI18N

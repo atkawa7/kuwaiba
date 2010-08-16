@@ -62,8 +62,9 @@ public class AddGroup extends AbstractAction{
         if (lugo == null)
             nu.showSimplePopup("Group Creation", NotificationUtil.ERROR, com.getError());
         else{
-            ums.populateGroupsList();
-            ((GroupChildren)ums.getGroupsRoot().getChildren()).add(new Node[]{new GroupNode(lugo)});
+            if (ums.getGroupsRoot() != null) //The groups list is already populated
+                ((GroupChildren)ums.getGroupsRoot().getChildren()).add(new Node[]{new GroupNode(lugo)});
+
             ums.refreshGroupsList();
             nu.showSimplePopup("Group Creation", NotificationUtil.INFO, "Group created successfully");
         }

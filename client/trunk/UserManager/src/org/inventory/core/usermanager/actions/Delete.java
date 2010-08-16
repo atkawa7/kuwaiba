@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.usermanager.UserManagerService;
+import org.inventory.core.usermanager.nodes.GroupChildren;
 import org.inventory.core.usermanager.nodes.GroupNode;
 import org.inventory.core.usermanager.nodes.UserNode;
 import org.openide.nodes.AbstractNode;
@@ -69,6 +70,7 @@ public class Delete extends AbstractAction {
             if(com.deleteUsers(new Long[]{((UserNode)this.node).getObject().getOid()})){
                 nu.showSimplePopup("User removal", NotificationUtil.INFO, "The user was deleted successfully");
                 node.getParentNode().getChildren().remove(new Node[]{node});
+                ums.refreshUserList();
             }
             else
                 nu.showSimplePopup("User removal", NotificationUtil.ERROR, com.getError());

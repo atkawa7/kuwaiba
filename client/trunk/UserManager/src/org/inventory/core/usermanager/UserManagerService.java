@@ -79,9 +79,6 @@ public class UserManagerService {
                 getProperties());
         umtc.getExplorerManager().setRootContext(usersRoot);
         umtc.setTblUsers(new TableView(usersTableModel));
-        
-        //Focus the user tab
-        umtc.getPnlTabbedMain().setSelectedIndex(0);
     }
 
     /**
@@ -103,9 +100,6 @@ public class UserManagerService {
                 getProperties());
         umtc.getExplorerManager().setRootContext(groupsRoot);
         umtc.setTblGroups(new TableView(groupsTableModel));
-        
-        //Focus the user tab
-        umtc.getPnlTabbedMain().setSelectedIndex(1);
     }
 
     /**
@@ -115,11 +109,19 @@ public class UserManagerService {
     public void refreshUserList(){
         usersTableModel.setNodes(umtc.getExplorerManager().getRootContext().getChildren().getNodes());
         umtc.revalidate();
+
+        //Focus the users tab
+        umtc.getPnlTabbedMain().setSelectedIndex(0);
     }
 
     public void refreshGroupsList(){
+        if (groupsTableModel == null)
+            populateGroupsList();
         groupsTableModel.setNodes(umtc.getExplorerManager().getRootContext().getChildren().getNodes());
         umtc.revalidate();
+
+        //Focus the groups tab
+        umtc.getPnlTabbedMain().setSelectedIndex(1);
     }
 
     /**

@@ -7,21 +7,16 @@ import javax.swing.JComponent;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.openide.awt.Notification;
 import org.openide.awt.NotificationDisplayer;
+import org.openide.awt.StatusDisplayer;
 
 /**
- * Esta clase se encarga de proveer mecanismos para realizar notificaciones. Se
- * crea un módulo aparte para este tema (la notificaciones igual se podrían hacer desde
- * las instancias que lo necesiten directamente) debido a que se espera que en el futuro
- * los mecanismos de notificación permitan realizar acciones avanzadas relativas a trabajo
- * colaborativo, además de poder personalizar el look 'n feel
- * IMPORTANTE: Esta clase debe estar registrada en el META-INF del módulo, de tal manera
- * que quienes lo usen por medio de la llamada Lookup.getDefault().lookup(NotificationUtil.class)
- * puedan encontrar la implementación, esto es, crear un archico en el directorio
- * META-INF/services/nombre_y_paquete_de_la_interfaz con una línea dentro con el paquete_nombre de
- * la implementación
+ * This class provides mechanisms to perform different notifications. By now this is
+ * a wrapper module for existing notifications but we'll be looking forward to extend the scope
+ * adding connectors for remote notifications or integration with IM services, to name some
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class NotificationUtilImpl extends NotificationDisplayer implements NotificationUtil {
+public class NotificationUtilImpl extends NotificationDisplayer
+        implements NotificationUtil {
     static final String ERROR_ICON_PATH="/org/inventory/notifications/res/error.png";
     static final String WARNING_ICON_PATH="/org/inventory/notifications/res/warning.png";
     static final String INFO_ICON_PATH="/org/inventory/notifications/res/info.png";
@@ -49,6 +44,16 @@ public class NotificationUtilImpl extends NotificationDisplayer implements Notif
             default:
                 popupIcon = new ImageIcon(getClass().getResource(INFO_ICON_PATH));
         }
-        NotificationDisplayer.getDefault().notify(title,popupIcon, details, null);
+        if (NotificationDisplayer.getDefault() != null)
+            NotificationDisplayer.getDefault().notify(title,popupIcon, details, null);
+    }
+
+    public void showStatusMessage(String message, boolean important){
+        if (StatusDisplayer.getDefault() != null){
+            if (important)
+                StatusDisplayer.getDefault().setStatusText(message, StatusDisplayer.IMPORTANCE_ERROR_HIGHLIGHT);
+            else
+                StatusDisplayer.getDefault().setStatusText(message);
+        }
     }
 }
