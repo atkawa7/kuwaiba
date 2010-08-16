@@ -138,7 +138,10 @@ public class BackendBean implements BackendBeanRemote {
                 HierarchyUtils.persistClass(entity,em);
             }
         }
-        else this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+        else{
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+        }
 
     }
 
@@ -176,6 +179,7 @@ public class BackendBean implements BackendBeanRemote {
                     subQuery = em.createQuery(query);
                     result.addAll(subQuery.getResultList());
                 } catch (ClassNotFoundException ex) {
+                    this.error = ex.getMessage();
                     Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -184,6 +188,7 @@ public class BackendBean implements BackendBeanRemote {
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
     }
@@ -197,12 +202,14 @@ public class BackendBean implements BackendBeanRemote {
             Object result = query.getSingleResult();
             if (result==null){
                 this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT")+objectClass+java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid.toString();
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
                 return null;
             }else
                 return new RemoteObject(result);
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
     }
@@ -232,12 +239,14 @@ public class BackendBean implements BackendBeanRemote {
                 em.merge(myObject);
                 return true;
             } catch (Exception ex) {
+                this.error = ex.getMessage();
                 Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, ex.getMessage());
                 return false;
             }
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
     }
@@ -257,12 +266,14 @@ public class BackendBean implements BackendBeanRemote {
             Query query = em.createQuery(sentence);
             if (query.executeUpdate()==0){
                 this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT")+objectClass+java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid.toString();
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
                 return false;
             }else
                 return true;
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
     }
@@ -321,6 +332,7 @@ public class BackendBean implements BackendBeanRemote {
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
     }
@@ -353,6 +365,7 @@ public class BackendBean implements BackendBeanRemote {
           }
           else {
               this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+              Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
               return null;
           }
     }
@@ -385,13 +398,15 @@ public class BackendBean implements BackendBeanRemote {
                             invoke(newObject, parentOid);
                 em.persist(newObject);
             }catch(Exception e){
-                this.error = e.getMessage();
+                this.error = e.toString();
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
                 return null;
             }
             return new RemoteObjectLight(newObject);
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
     }
@@ -413,6 +428,7 @@ public class BackendBean implements BackendBeanRemote {
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
     }
@@ -427,13 +443,15 @@ public class BackendBean implements BackendBeanRemote {
             try{
                 res = (ClassMetadata)q.getSingleResult();
             }catch (Exception e){
-                this.error = e.getMessage();
+                this.error = e.toString();
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
                 return null;
             }
             return new ClassInfo(res);
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
     }
@@ -452,7 +470,7 @@ public class BackendBean implements BackendBeanRemote {
             Class multiObjectClass = Class.forName(className);
             }catch(Exception e){
             e.printStackTrace();
-            this.error= e.getMessage();
+            this.error= e.toString();
             return null;
             }*/
             String sentence = "SELECT x FROM "+className+" x ORDER BY x.name";
@@ -462,6 +480,7 @@ public class BackendBean implements BackendBeanRemote {
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
     }
@@ -496,6 +515,7 @@ public class BackendBean implements BackendBeanRemote {
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
         return true;
@@ -526,6 +546,7 @@ public class BackendBean implements BackendBeanRemote {
            return true;
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
         
@@ -567,12 +588,14 @@ public class BackendBean implements BackendBeanRemote {
                 }
                 em.remove(obj);
             }catch (Exception e){
-                this.error = e.getMessage();
+                this.error = e.toString();
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
                 return false;
             }
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
         return true;
@@ -595,6 +618,7 @@ public class BackendBean implements BackendBeanRemote {
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
     }
@@ -616,11 +640,13 @@ public class BackendBean implements BackendBeanRemote {
                 return true;
             }else{
                 this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOTMATCHINGARRAYSIZES")+"(objectOids, objectClasses)";
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
                 return false;
             }
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
     }
@@ -655,11 +681,13 @@ public class BackendBean implements BackendBeanRemote {
                 return res;
             }else{
                 this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOTMATCHINGARRAYSIZES")+" (objectOids, objectClasses)";
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
                 return null;
             }
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
     }
@@ -700,6 +728,7 @@ public class BackendBean implements BackendBeanRemote {
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
     }
@@ -710,7 +739,8 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             ClassMetadata myClass = em.find(ClassMetadata.class, classId);
             if (myClass == null){
-                error = "Class with Id "+classId+" not found";
+                this.error = "Class with Id "+classId+" not found";
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
                 return false;
             }
 
@@ -728,17 +758,20 @@ public class BackendBean implements BackendBeanRemote {
                                 if (propertyName.equals("isAdministrative"))
                                     att.setIsAdministrative(Boolean.valueOf(propertyValue));
                                 else{
-                                    error = "Property "+propertyName+" not supported";
+                                    this.error = "Property "+propertyName+" not supported";
+                                    Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
                                     return false;
                                 }
                     em.merge(att);
                     return true;
                 }
-            error = "Attribute "+attributeName+" in class with id "+classId+" not found";
+            this.error = "Attribute "+attributeName+" in class with id "+classId+" not found";
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
     }
@@ -748,7 +781,8 @@ public class BackendBean implements BackendBeanRemote {
         if(em !=null){
             ClassMetadata myClass = em.find(ClassMetadata.class, classId);
             if (em ==null){
-                error = "Class with id "+classId+" not found";
+                this.error = "Class with id "+classId+" not found";
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
                 return false;
             }
             if (attributeName.equals("displayName"))
@@ -758,6 +792,7 @@ public class BackendBean implements BackendBeanRemote {
                     myClass.setDescription(attributeValue);
                 else{
                     error = "Attribute "+attributeName+" in class with id "+classId+" not found";
+                    Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
                     return false;
                 }
 
@@ -765,6 +800,7 @@ public class BackendBean implements BackendBeanRemote {
             return true;
         }else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
     }
@@ -774,7 +810,8 @@ public class BackendBean implements BackendBeanRemote {
         if(em !=null){
             ClassMetadata myClass = em.find(ClassMetadata.class, classId);
             if (em ==null){
-                error = "Class with id "+classId+" not found";
+                this.error = "Class with id "+classId+" not found";
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
                 return false;
             }
             if (attributeName.equals("smallIcon"))
@@ -783,7 +820,8 @@ public class BackendBean implements BackendBeanRemote {
                 if (attributeName.equals("icon"))
                     myClass.setIcon(iconImage);
                 else{
-                    error = "Attribute "+attributeName+" in class with id "+classId+" not found";
+                    this.error = "Attribute "+attributeName+" in class with id "+classId+" not found";
+                    Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
                     return false;
                 }
 
@@ -791,6 +829,7 @@ public class BackendBean implements BackendBeanRemote {
             return true;
         }else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
     }
@@ -811,6 +850,7 @@ public class BackendBean implements BackendBeanRemote {
 
         }else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
     }
@@ -830,10 +870,12 @@ public class BackendBean implements BackendBeanRemote {
                 return true;
             else{
                 this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_BADLOGIN");
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
                 return false;
             }
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
     }
@@ -859,6 +901,7 @@ public class BackendBean implements BackendBeanRemote {
                      return new View(view);
                 }catch(NoResultException nre){
                     this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND");
+                    Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
                     return null;
                 }
             }
@@ -866,6 +909,7 @@ public class BackendBean implements BackendBeanRemote {
                 return new View(object.getViews().get(0));
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
     }
@@ -895,6 +939,7 @@ public class BackendBean implements BackendBeanRemote {
             return res;
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
     }
@@ -913,6 +958,7 @@ public class BackendBean implements BackendBeanRemote {
             return res;
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
     }
@@ -947,6 +993,7 @@ public class BackendBean implements BackendBeanRemote {
                     getBundle("internationalization/Bundle").
                     getString("LBL_NOSUCHOBJECT")+" UserGroup "+java.util.ResourceBundle.
                     getBundle("internationalization/Bundle").getString("LBL_WHICHID")+groupOid;
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
 
@@ -973,6 +1020,7 @@ public class BackendBean implements BackendBeanRemote {
                     getBundle("internationalization/Bundle").
                     getString("LBL_NOSUCHOBJECT")+" UserGroup "+java.util.ResourceBundle.
                     getBundle("internationalization/Bundle").getString("LBL_WHICHID")+groupOid;
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
 
@@ -1000,7 +1048,8 @@ public class BackendBean implements BackendBeanRemote {
             newUser.setUsername("user"+random.nextInt(10000));
             em.persist(newUser);
         }catch(Exception e){
-            this.error = e.getMessage();
+            this.error = e.toString();
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
         return new UserInfo(newUser);
@@ -1021,13 +1070,14 @@ public class BackendBean implements BackendBeanRemote {
                 if (groups != null){
                     for (UserGroup group : groups){
                         group.getUsers().remove(anUser);
-                        anUser.getGroups().remove(group);
+                        //anUser.getGroups().remove(group);
                     }
                 }
                 em.remove(anUser);
             }
         }catch(Exception e){
-            this.error = e.getMessage();
+            this.error = e.toString();
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
         return true;
@@ -1041,7 +1091,8 @@ public class BackendBean implements BackendBeanRemote {
             newGroup.setName("group"+random.nextInt(10000));
             em.persist(newGroup);
         }catch(Exception e){
-            this.error = e.getMessage();
+            this.error = e.toString();
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return null;
         }
         return new UserGroupInfo(newGroup);
@@ -1062,13 +1113,14 @@ public class BackendBean implements BackendBeanRemote {
                 if (users != null){
                     for (User user : users){
                         user.getGroups().remove(aGroup);
-                        aGroup.getUsers().remove(user);
+                        //aGroup.getUsers().remove(user);
                     }
                 }
                 em.remove(aGroup);
             }
         }catch(Exception e){
-            this.error = e.getMessage();
+            this.error = e.toString();
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
         return true;
@@ -1082,6 +1134,7 @@ public class BackendBean implements BackendBeanRemote {
                     getBundle("internationalization/Bundle").
                     getString("LBL_NOSUCHOBJECT")+" User "+java.util.ResourceBundle.
                     getBundle("internationalization/Bundle").getString("LBL_WHICHID")+userOid;
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
 
@@ -1115,6 +1168,7 @@ public class BackendBean implements BackendBeanRemote {
                     getBundle("internationalization/Bundle").
                     getString("LBL_NOSUCHOBJECT")+" User "+java.util.ResourceBundle.
                     getBundle("internationalization/Bundle").getString("LBL_WHICHID")+userOid;
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
 
