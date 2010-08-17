@@ -25,7 +25,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalUserGroupObjectLight;
 import org.inventory.core.services.interfaces.LocalUserObject;
 import org.inventory.core.services.interfaces.NotificationUtil;
-import org.inventory.core.usermanager.UserManagerService;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
 import org.openide.explorer.propertysheet.PropertyEnv;
 import org.openide.util.Lookup;

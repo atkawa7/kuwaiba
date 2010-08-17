@@ -16,10 +16,15 @@
 
 package org.inventory.core.authentication;
 
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
 import org.inventory.communications.CommunicationsStub;
 import org.openide.DialogDisplayer;
 import org.openide.LifecycleManager;
@@ -34,6 +39,67 @@ public class AuthenticationPanel extends javax.swing.JPanel {
     /** Creates new form AuthenticationPanel */
     public AuthenticationPanel() {
         initComponents();
+        initCustomComponents();
+    }
+    
+    private void initCustomComponents(){
+        btnLogin = new JButton("Login");
+        btnExit = new JButton("Exit");
+        btnLogin.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!CommunicationsStub.getInstance().createSession(txtUser.getText(), new String(txtPassword.getPassword()))){
+                   AuthenticationPanel authPanel =  new AuthenticationPanel();
+                   NotifyDescriptor nd = new NotifyDescriptor.Message(authPanel,NotifyDescriptor.PLAIN_MESSAGE);
+                   nd.setOptions(authPanel.getOptions());
+                   nd.setTitle("Login Window");
+                   authPanel.getLblError().setText(CommunicationsStub.getInstance().getError());
+                   DialogDisplayer.getDefault().notify(nd);
+                }
+            }
+        });
+        
+         btnExit.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LifecycleManager.getDefault().exit();
+            }
+        });
+
+        pnlSettingsContainer.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                toggleView();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+
+        //Finally we embed the connections settings into the collapsable panel
+        pnlSettingsContainer.add(new ConnectionSettingsPanel(),BorderLayout.CENTER);
+        pnlSettingsContainer.getComponent(0).setVisible(false);
+        txtUser.setRequestFocusEnabled(true);
     }
 
     /** This method is called from within the constructor to
@@ -45,42 +111,21 @@ public class AuthenticationPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pnlTabsMain = new javax.swing.JTabbedPane();
         pnlLogin = new javax.swing.JPanel();
         lblUser = new javax.swing.JLabel();
         lblPassword = new javax.swing.JLabel();
         txtUser = new javax.swing.JTextField();
-        btnLogin = new javax.swing.JButton();
-        btnExit = new javax.swing.JButton();
         txtPassword = new javax.swing.JPasswordField();
         lblError = new javax.swing.JLabel();
-        pnlConnectionSettings = new javax.swing.JPanel();
-        txtServerAddress = new javax.swing.JTextField();
-        lblServerPort = new javax.swing.JLabel();
-        lblServerAddress = new javax.swing.JLabel();
-        txtServerPort = new javax.swing.JTextField();
-        btnSaveConfiguration = new javax.swing.JButton();
-        btnTestConnection = new javax.swing.JButton();
+        pnlSettingsContainer = new javax.swing.JPanel();
+
+        setLayout(new java.awt.BorderLayout());
 
         lblUser.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.lblUser.text")); // NOI18N
 
         lblPassword.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.lblPassword.text")); // NOI18N
 
         txtUser.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.txtUser.text")); // NOI18N
-
-        btnLogin.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.btnLogin.text")); // NOI18N
-        btnLogin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLoginActionPerformed(evt);
-            }
-        });
-
-        btnExit.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.btnExit.text")); // NOI18N
-        btnExit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnExitActionPerformed(evt);
-            }
-        });
 
         txtPassword.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.txtPassword.text")); // NOI18N
 
@@ -91,29 +136,24 @@ public class AuthenticationPanel extends javax.swing.JPanel {
         pnlLogin.setLayout(pnlLoginLayout);
         pnlLoginLayout.setHorizontalGroup(
             pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlLoginLayout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(pnlLoginLayout.createSequentialGroup()
-                        .addComponent(lblError)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 235, Short.MAX_VALUE)
-                        .addComponent(btnLogin)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnExit))
+            .addGroup(pnlLoginLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(lblError, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlLoginLayout.createSequentialGroup()
-                        .addComponent(lblUser)
-                        .addGap(39, 39, 39)
-                        .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlLoginLayout.createSequentialGroup()
-                        .addComponent(lblPassword)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)))
-                .addGap(25, 25, 25))
+                        .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblPassword)
+                            .addComponent(lblUser))
+                        .addGap(16, 16, 16)
+                        .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtPassword)
+                            .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(38, 38, 38))
         );
         pnlLoginLayout.setVerticalGroup(
             pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlLoginLayout.createSequentialGroup()
-                .addGap(37, 37, 37)
+                .addContainerGap()
                 .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblUser)
                     .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -122,122 +162,59 @@ public class AuthenticationPanel extends javax.swing.JPanel {
                     .addComponent(lblPassword)
                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnLogin)
-                        .addComponent(btnExit))
-                    .addComponent(lblError))
-                .addContainerGap(40, Short.MAX_VALUE))
-        );
-
-        pnlTabsMain.addTab(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.pnlLogin.TabConstraints.tabTitle"), pnlLogin); // NOI18N
-
-        txtServerAddress.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.txtServerAddress.text")); // NOI18N
-
-        lblServerPort.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.lblServerPort.text")); // NOI18N
-
-        lblServerAddress.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.lblServerAddress.text")); // NOI18N
-
-        txtServerPort.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.txtServerPort.text")); // NOI18N
-
-        btnSaveConfiguration.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.btnSaveConfiguration.text")); // NOI18N
-
-        btnTestConnection.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.btnTestConnection.text")); // NOI18N
-
-        javax.swing.GroupLayout pnlConnectionSettingsLayout = new javax.swing.GroupLayout(pnlConnectionSettings);
-        pnlConnectionSettings.setLayout(pnlConnectionSettingsLayout);
-        pnlConnectionSettingsLayout.setHorizontalGroup(
-            pnlConnectionSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlConnectionSettingsLayout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addGroup(pnlConnectionSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(pnlConnectionSettingsLayout.createSequentialGroup()
-                        .addGroup(pnlConnectionSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblServerAddress)
-                            .addComponent(lblServerPort))
-                        .addGap(39, 39, 39)
-                        .addGroup(pnlConnectionSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtServerPort)
-                            .addComponent(txtServerAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(pnlConnectionSettingsLayout.createSequentialGroup()
-                        .addComponent(btnTestConnection)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnSaveConfiguration)))
-                .addContainerGap(86, Short.MAX_VALUE))
-        );
-        pnlConnectionSettingsLayout.setVerticalGroup(
-            pnlConnectionSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlConnectionSettingsLayout.createSequentialGroup()
-                .addContainerGap(48, Short.MAX_VALUE)
-                .addGroup(pnlConnectionSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblServerAddress)
-                    .addComponent(txtServerAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(pnlConnectionSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblServerPort)
-                    .addComponent(txtServerPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(35, 35, 35)
-                .addGroup(pnlConnectionSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSaveConfiguration)
-                    .addComponent(btnTestConnection))
+                .addComponent(lblError, javax.swing.GroupLayout.DEFAULT_SIZE, 11, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        pnlTabsMain.addTab(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.pnlConnectionSettings.TabConstraints.tabTitle"), pnlConnectionSettings); // NOI18N
+        add(pnlLogin, java.awt.BorderLayout.PAGE_START);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pnlTabsMain)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pnlTabsMain, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        pnlSettingsContainer.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.pnlSettingsContainer.border.title"))); // NOI18N
+        pnlSettingsContainer.setMaximumSize(null);
+        pnlSettingsContainer.setMinimumSize(null);
+        pnlSettingsContainer.setPreferredSize(null);
+        pnlSettingsContainer.setRequestFocusEnabled(false);
+        pnlSettingsContainer.setLayout(new java.awt.BorderLayout());
+        add(pnlSettingsContainer, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
-        LifecycleManager.getDefault().exit();
-}//GEN-LAST:event_btnExitActionPerformed
-
-    private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-        if (!CommunicationsStub.getInstance().createSession(txtUser.getText(), new String(txtPassword.getPassword()))){
-            NotifyDescriptor nd = new NotifyDescriptor.Message(
-              this,NotifyDescriptor.PLAIN_MESSAGE);
-            nd.setOptions(this.getOptions());
-            nd.setTitle("Login Window");
-            DialogDisplayer.getDefault().notifyLater(nd);
-        }
-    }//GEN-LAST:event_btnLoginActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnExit;
-    private javax.swing.JButton btnLogin;
-    private javax.swing.JButton btnSaveConfiguration;
-    private javax.swing.JButton btnTestConnection;
     private javax.swing.JLabel lblError;
     private javax.swing.JLabel lblPassword;
-    private javax.swing.JLabel lblServerAddress;
-    private javax.swing.JLabel lblServerPort;
     private javax.swing.JLabel lblUser;
-    private javax.swing.JPanel pnlConnectionSettings;
     private javax.swing.JPanel pnlLogin;
-    private javax.swing.JTabbedPane pnlTabsMain;
+    private javax.swing.JPanel pnlSettingsContainer;
     private javax.swing.JPasswordField txtPassword;
-    private javax.swing.JTextField txtServerAddress;
-    private javax.swing.JTextField txtServerPort;
     private javax.swing.JTextField txtUser;
     // End of variables declaration//GEN-END:variables
 
+    private javax.swing.JButton btnLogin;
+    private javax.swing.JButton btnExit;
+
+    /**
+     * Hides or shows the collapseable panel
+     * Thanks to at JavaRanch for his ideas on this
+     */
+    private void toggleView(){
+        JPanel contained = (JPanel)pnlSettingsContainer.getComponent(0);
+        if (contained.isShowing()){
+            contained.setVisible(false);
+            ((TitledBorder)pnlSettingsContainer.getBorder()).setTitle("[+] Connection Settings");
+        }
+        else{
+            contained.setVisible(true);
+            ((TitledBorder)pnlSettingsContainer.getBorder()).setTitle("[-] Connection Settings");
+        }
+
+        validate();
+        pnlSettingsContainer.repaint();
+    }
+
     public Object[] getOptions(){
         return new Object[]{btnLogin,btnExit};
+    }
+
+    public JLabel getLblError(){
+        return this.lblError;
     }
 }

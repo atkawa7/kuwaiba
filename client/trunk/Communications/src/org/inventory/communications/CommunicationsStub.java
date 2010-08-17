@@ -94,7 +94,10 @@ public class CommunicationsStub {
      */
     public boolean createSession(String user, String password){
         try{
-            return port.createSession(user, password);
+            if (!port.createSession(user, password)){
+                this.error = "Login or password incorrect";
+                return false;
+            }else return true;
         }catch(Exception e){
             this.error = this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
             return false;
