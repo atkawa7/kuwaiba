@@ -870,12 +870,12 @@ public class BackendBean implements BackendBeanRemote {
                 return true;
             else{
                 this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_BADLOGIN");
-                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
                 return false;
             }
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
-            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
             return false;
         }
     }
@@ -901,7 +901,7 @@ public class BackendBean implements BackendBeanRemote {
                      return new View(view);
                 }catch(NoResultException nre){
                     this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND");
-                    Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+                    Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
                     return null;
                 }
             }
@@ -909,7 +909,7 @@ public class BackendBean implements BackendBeanRemote {
                 return new View(object.getViews().get(0));
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
-            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
             return null;
         }
     }
@@ -939,7 +939,7 @@ public class BackendBean implements BackendBeanRemote {
             return res;
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
-            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
             return null;
         }
     }
@@ -958,7 +958,7 @@ public class BackendBean implements BackendBeanRemote {
             return res;
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
-            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
             return null;
         }
     }
@@ -993,7 +993,7 @@ public class BackendBean implements BackendBeanRemote {
                     getBundle("internationalization/Bundle").
                     getString("LBL_NOSUCHOBJECT")+" UserGroup "+java.util.ResourceBundle.
                     getBundle("internationalization/Bundle").getString("LBL_WHICHID")+groupOid;
-            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
             return false;
         }
 
@@ -1020,7 +1020,7 @@ public class BackendBean implements BackendBeanRemote {
                     getBundle("internationalization/Bundle").
                     getString("LBL_NOSUCHOBJECT")+" UserGroup "+java.util.ResourceBundle.
                     getBundle("internationalization/Bundle").getString("LBL_WHICHID")+groupOid;
-            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
             return false;
         }
 
@@ -1049,7 +1049,7 @@ public class BackendBean implements BackendBeanRemote {
             em.persist(newUser);
         }catch(Exception e){
             this.error = e.toString();
-            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
             return null;
         }
         return new UserInfo(newUser);
@@ -1077,7 +1077,7 @@ public class BackendBean implements BackendBeanRemote {
             }
         }catch(Exception e){
             this.error = e.toString();
-            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
             return false;
         }
         return true;
@@ -1092,7 +1092,7 @@ public class BackendBean implements BackendBeanRemote {
             em.persist(newGroup);
         }catch(Exception e){
             this.error = e.toString();
-            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
             return null;
         }
         return new UserGroupInfo(newGroup);
@@ -1120,7 +1120,7 @@ public class BackendBean implements BackendBeanRemote {
             }
         }catch(Exception e){
             this.error = e.toString();
-            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
             return false;
         }
         return true;
@@ -1134,7 +1134,7 @@ public class BackendBean implements BackendBeanRemote {
                     getBundle("internationalization/Bundle").
                     getString("LBL_NOSUCHOBJECT")+" User "+java.util.ResourceBundle.
                     getBundle("internationalization/Bundle").getString("LBL_WHICHID")+userOid;
-            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
             return false;
         }
 
@@ -1168,7 +1168,7 @@ public class BackendBean implements BackendBeanRemote {
                     getBundle("internationalization/Bundle").
                     getString("LBL_NOSUCHOBJECT")+" User "+java.util.ResourceBundle.
                     getBundle("internationalization/Bundle").getString("LBL_WHICHID")+userOid;
-            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
             return false;
         }
 
