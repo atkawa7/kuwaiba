@@ -15,11 +15,14 @@
  */
 package org.inventory.communications;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Logger;
 import org.inventory.communications.core.LocalClassMetadataImpl;
 import org.inventory.communications.core.LocalClassMetadataLightImpl;
 import org.inventory.communications.core.LocalObjectImpl;
@@ -49,32 +52,56 @@ import org.inventory.webservice.UserInfo;
 /**
  * Singleton class that provides communication and caching services to the rest of the modules
  * TODO: Make it a thread to support simultaneous operations
- * TODO: Use the caching mechanism within this class, in order to avoid the other classes
- * to call it by themselves
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class CommunicationsStub {
     private static CommunicationsStub instance=null;
     private KuwaibaWebserviceService service;
     private KuwaibaWebservice port;
+    private static URL serverURL = null;
     private String error=java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_ERROR");
     private Cache cache;
 
     
-    //Implements the singleton pattern
     private CommunicationsStub(){
-        this.service = new KuwaibaWebserviceService();
+        if (serverURL == null){
+            try{
+                //Default values
+                serverURL = new URL("http", "localhost", 8080,"/KuwaibaServer-war/KuwaibaWebserviceService?wsdl"); //NOI18n
+            }catch (MalformedURLException mue){
+                Logger.getAnonymousLogger("Malformed URL: "+mue.getMessage());
+            }
+        }
+        this.service = new KuwaibaWebserviceService(serverURL);
         this.port = service.getKuwaibaWebservicePort();
         cache = Cache.getInstace();
     }
 
+    //Implements the singleton pattern
     public static CommunicationsStub getInstance(){
             if(instance==null) instance = new CommunicationsStub();
             return instance;
     }
 
     /**
-     * This method closes a current session
+     * Resets the singleton instance to null so it has to be created again
+     * TODO: Is there a more graceful way to do it?
+     */
+    public static void resetInstance() {
+        serverURL = null;
+        instance = null;
+    }
+
+    /**
+     * Sets the webservice's URL
+     * @param _URL A valid URL
+     */
+    public static void setServerURL(URL _URL){
+        serverURL = _URL;
+    }
+    
+    /**
+     * This method closes the current session
      * @return Success or failure
      */
     public boolean closeSession(){

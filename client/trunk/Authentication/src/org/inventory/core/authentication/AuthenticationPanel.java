@@ -21,17 +21,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import org.inventory.communications.CommunicationsStub;
 import org.openide.DialogDisplayer;
 import org.openide.LifecycleManager;
 import org.openide.NotifyDescriptor;
+import org.openide.util.Exceptions;
 
 /**
- *
+ * This is the main auth panel which contains the login and password textfields
+ * and the connection settings section
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class AuthenticationPanel extends javax.swing.JPanel {
@@ -49,13 +54,29 @@ public class AuthenticationPanel extends javax.swing.JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!CommunicationsStub.getInstance().createSession(txtUser.getText(), new String(txtPassword.getPassword()))){
-                   AuthenticationPanel authPanel =  new AuthenticationPanel();
-                   NotifyDescriptor nd = new NotifyDescriptor.Message(authPanel,NotifyDescriptor.PLAIN_MESSAGE);
-                   nd.setOptions(authPanel.getOptions());
-                   nd.setTitle("Login Window");
-                   authPanel.getLblError().setText(CommunicationsStub.getInstance().getError());
-                   DialogDisplayer.getDefault().notify(nd);
+                ConnectionSettingsPanel containedPanel = (ConnectionSettingsPanel)pnlSettingsContainer.getComponent(0);
+                try {                   
+                    CommunicationsStub.setServerURL(
+                            new URL("http", containedPanel.getServerAddress() , containedPanel.getServerPort(),
+                            containedPanel.getWSDLPath()));
+                } catch (MalformedURLException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+
+                try{
+                    if (!CommunicationsStub.getInstance().createSession(txtUser.getText(), new String(txtPassword.getPassword())))
+                       showMeAgain(CommunicationsStub.getInstance().getError(),
+                               txtUser.getText(),
+                               containedPanel.getTxtServerAddress().getText(),
+                               containedPanel.getTxtServerPort().getText(),
+                               containedPanel.getTxtWSDLPath().getText());
+                }catch(Exception exp){
+                    CommunicationsStub.resetInstance();
+                    showMeAgain(exp.getMessage(),
+                            txtUser.getText(),
+                               containedPanel.getTxtServerAddress().getText(),
+                               containedPanel.getTxtServerPort().getText(),
+                               containedPanel.getTxtWSDLPath().getText());
                 }
             }
         });
@@ -131,6 +152,8 @@ public class AuthenticationPanel extends javax.swing.JPanel {
 
         lblError.setForeground(new java.awt.Color(255, 0, 0));
         lblError.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.lblError.text")); // NOI18N
+        lblError.setAutoscrolls(true);
+        lblError.setFocusable(false);
 
         javax.swing.GroupLayout pnlLoginLayout = new javax.swing.GroupLayout(pnlLogin);
         pnlLogin.setLayout(pnlLoginLayout);
@@ -166,15 +189,12 @@ public class AuthenticationPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        add(pnlLogin, java.awt.BorderLayout.PAGE_START);
+        add(pnlLogin, java.awt.BorderLayout.NORTH);
 
         pnlSettingsContainer.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.pnlSettingsContainer.border.title"))); // NOI18N
-        pnlSettingsContainer.setMaximumSize(null);
-        pnlSettingsContainer.setMinimumSize(null);
-        pnlSettingsContainer.setPreferredSize(null);
         pnlSettingsContainer.setRequestFocusEnabled(false);
         pnlSettingsContainer.setLayout(new java.awt.BorderLayout());
-        add(pnlSettingsContainer, java.awt.BorderLayout.SOUTH);
+        add(pnlSettingsContainer, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -193,7 +213,8 @@ public class AuthenticationPanel extends javax.swing.JPanel {
 
     /**
      * Hides or shows the collapseable panel
-     * Thanks to at JavaRanch for his ideas on this
+     * Thanks to Craig Wood and H Tasfr at CodeRanch for their ideas on this
+     * http://www.coderanch.com/t/341737/GUI/java/Expand-Collapse-Panels
      */
     private void toggleView(){
         JPanel contained = (JPanel)pnlSettingsContainer.getComponent(0);
@@ -216,5 +237,26 @@ public class AuthenticationPanel extends javax.swing.JPanel {
 
     public JLabel getLblError(){
         return this.lblError;
+    }
+
+    public JTextField getTxtUser(){
+        return this.txtUser;
+    }
+
+    public ConnectionSettingsPanel getContainedPanel(){
+        return (ConnectionSettingsPanel)this.pnlSettingsContainer.getComponent(0);
+    }
+
+    public void showMeAgain(String errorText, String user, String serverAddress, String serverPort, String WSDLPath){
+        AuthenticationPanel authPanel =  new AuthenticationPanel();
+        NotifyDescriptor nd = new NotifyDescriptor.Message(authPanel,NotifyDescriptor.PLAIN_MESSAGE);
+        nd.setOptions(authPanel.getOptions());
+        nd.setTitle("Login Window");
+        authPanel.getTxtUser().setText(user);
+        authPanel.getContainedPanel().getTxtServerAddress().setText(serverAddress);
+        authPanel.getContainedPanel().getTxtServerPort().setText(serverPort);
+        authPanel.getContainedPanel().getTxtWSDLPath().setText(WSDLPath);
+        authPanel.getLblError().setText(errorText);
+        DialogDisplayer.getDefault().notify(nd);
     }
 }
