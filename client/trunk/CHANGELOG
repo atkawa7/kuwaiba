@@ -11,3 +11,10 @@
 * Added many classes and attributes to the data model
 * More methods on the server side were migrated to used the Criteria API
 * New icons in the test db
+
+0.1.1
+* Added preliminar User/Groups management (You can create users and groups and relate them, but there's no privileges scheme yet)
+* The server and the client can reside in diferent computers. At login time you can choose a different WSDL location
+* Added tool bars and in general, the elements were rearranged
+* Inline edition for object nodes names
+* Multiple bugfixes
