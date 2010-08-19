@@ -28,16 +28,20 @@ import org.inventory.webservice.RemoteObject;
  */
 public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject {
     private HashMap<String, Object> attributes;
-    //Esto usa más memoria que el approach anterior donde sólo se guardaba un meta
-    //y se colocaba en la cache, pero este me parece que es más eficiente, ya que
-    //disminuye el tiempo de búsqueda de la metadata correspondiente al objeto
+    //Reference to the metadata associated to this object's class
     private LocalClassMetadata myMetadata;
+    /**
+     * Object's oid. Since this is a reference to the object in the database, it won't
+     * be treated as a common attribute anymore
+     */
+    private Long oid;
 
     public LocalObjectImpl(){}
 
-    public LocalObjectImpl(String className, String[] atts, Object[] vals){
+    public LocalObjectImpl(String className, Long _oid, String[] atts, Object[] vals){
         HashMap<String,Object> dict = new HashMap<String, Object>();
         this.className = className;
+        this.oid = _oid;
         for(int i =0; i < atts.length;i++)
             dict.put(atts[i], vals[i]);
         this.attributes = dict;
@@ -52,6 +56,7 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
     public LocalObjectImpl(RemoteObject ro, LocalClassMetadata lcmdt){
         this.className = ro.getClassName();
         this.myMetadata = lcmdt;
+        this.oid = ro.getOid();
 
         attributes = new HashMap<String, Object>();
         String[] atts = ro.getAttributes().toArray(new String[0]);
@@ -93,10 +98,10 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
 
     @Override
     public Long getOid(){
-        return (Long)attributes.get("id");
+        return this.oid;
     }
     public void setOid(Long id){
-        this.attributes.put("id", id);
+        this.oid = id;
     }
 
     @Override

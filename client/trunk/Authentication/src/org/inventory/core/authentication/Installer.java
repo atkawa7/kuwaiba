@@ -15,22 +15,37 @@
  */
 package org.inventory.core.authentication;
 
+import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
+import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
-import org.openide.NotifyDescriptor;
 import org.openide.modules.ModuleInstall;
 
 /**
- * This installer shows the login window and injects the user profile into the global lookup
+ * This installer shows the login window
+ * TODO: Inject the user profile into the global lookup
  */
 public class Installer extends ModuleInstall {
 
     @Override
     public void restored() {
-        AuthenticationPanel pnlAuthentication = new AuthenticationPanel();
-        NotifyDescriptor nd = new NotifyDescriptor.Message(
-              pnlAuthentication,NotifyDescriptor.PLAIN_MESSAGE);
-        nd.setOptions(pnlAuthentication.getOptions());
-        nd.setTitle("Login Window");
-        DialogDisplayer.getDefault().notifyLater(nd);
+
+        //This is a workaround. See http://old.nabble.com/DialogDisplayer-td15197060.html
+        //NotifyDisplayer doesn't allow to disable the close button, son you can easily bypass
+        //the login form. DialogDisplayer is much more versatile, but has a downside: stops thread execution
+        //until it gets the user input, that means it won't let all modules to get loaded, so you don't know
+        //if the Communications module is available to begin the auth process. My solution was to show it in another thread
+        //while everything else is loaded and then show the modals till the credentials are valid.
+        //Please note that showMeAgain at AuthenticationPanel doesn't use this trick
+        SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    AuthenticationPanel pnlAuthentication = new AuthenticationPanel();
+                    DialogDescriptor dd = new DialogDescriptor(pnlAuthentication, "Login Window", true, pnlAuthentication.getOptions(), null, DialogDescriptor.BOTTOM_ALIGN, null, null);
+                    JDialog dialog = (JDialog) DialogDisplayer.getDefault().createDialog(dd);
+                    dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+                    dialog.setVisible(true);
+                }
+            });        
     }
 }

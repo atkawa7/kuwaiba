@@ -25,6 +25,7 @@ import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.nodes.PropertySupport.ReadWrite;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 
 /**
@@ -89,7 +90,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
             else
                 value = t;
         }catch(Exception e){
-            e.printStackTrace();
+                Exceptions.printStackTrace(e);
         }
     }
 

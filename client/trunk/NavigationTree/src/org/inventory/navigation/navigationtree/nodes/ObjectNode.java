@@ -44,6 +44,7 @@ import org.openide.nodes.Node;
 import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
+import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.actions.SystemAction;
@@ -212,7 +213,7 @@ public class ObjectNode extends AbstractNode{
     protected void createPasteTypes(Transferable t, List s) {
         super.createPasteTypes(t, s);
         PasteType paste = getDropType( t, DnDConstants.ACTION_COPY, -1 );
-        if( null != paste )
+        if( paste != null )
             s.add( paste );
     }
 
@@ -266,7 +267,7 @@ public class ObjectNode extends AbstractNode{
                                     java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_MOVEOPERATION_TEXT")
                         );
                 }catch(Exception ex){
-                   ex.printStackTrace();
+                    Exceptions.printStackTrace(ex);
                 }
                 return object;
             }
@@ -305,5 +306,19 @@ public class ObjectNode extends AbstractNode{
     @Override
     public Image getOpenedIcon(int i){
         return getIcon(i);
+    }
+
+    @Override
+    public void setName(String newName){
+        try{
+            ((ObjectNodeProperty)getSheet().get("1").get("name")).setValue(newName); //NOI18n
+            this.object.setDisplayName(newName);
+
+            //If this method is not called, getDisplayName isn't called either
+            this.setDisplayName(newName);
+
+            //So the PropertySheet reflects the changes too
+            refresh();
+        }catch(Exception e){}
     }
 }
