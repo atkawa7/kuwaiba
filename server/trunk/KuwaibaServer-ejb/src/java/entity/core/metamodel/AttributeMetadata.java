@@ -1,4 +1,18 @@
-
+/*
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package entity.core.metamodel;
 
 import core.annotations.Metadata;
@@ -14,14 +28,13 @@ import javax.persistence.NamedQuery;
 import javax.persistence.metamodel.Attribute;
 
 /**
- * Representa los atributos de cada clase, sirve para propósitos de documentación
- * TODO: Ver cómo hacer para que no se repitan atributos o al menos para reusar ya existentes (habrán muchos "name" que signifiquen lo mismo)
+ * Represents an attribute metadata information for each. It's used for mapping and documentation purposes
+ * TODO: How should we handle the inherited attributes? so far it's storing them as well as the ones in the super classes
  *
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Metadata //Anotación personalizada para marcarla como que no se debe pasar a los
-          //clientes para que administren su meta, ya que ella es una clase de utilidad
+@Metadata //Custon annotation to mark this class as an utility class, no a business class
 @NamedQuery(name="flushAttributeMetadata", query="DELETE FROM AttributeMetadata x")
 public class AttributeMetadata implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -64,7 +77,7 @@ public class AttributeMetadata implements Serializable {
         if (att.getJavaType().getSuperclass().equals(GenericRelation.class) ||
                 att.getJavaType().getSuperclass().equals(GenericObjectList.class))
                 this.isMultiple = true;
-        this.description = "El atributo "+this.name;
+        this.description = "Attribute "+this.name;
     }
 
     public Boolean isAdministrative() {

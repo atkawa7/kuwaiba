@@ -87,7 +87,6 @@ public class KuwaibaWebservice {
 
     @WebMethod(operationName = "getObjectChildren")
     public RemoteObjectLight[] getObjectChildren(@WebParam(name = "oid") Long oid, @WebParam(name = "objectClassId") Long objectClassId){
-        System.out.println("[getObjectChildren]: Llamada");
         List res = sbr.getObjectChildren(oid,objectClassId);
         if(res == null)
             this.lastErr = "Error en el backendBean";

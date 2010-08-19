@@ -19,6 +19,7 @@ package core.toserialize;
 import core.todeserialize.ObjectUpdate;
 import java.lang.reflect.Field;
 import javax.persistence.EntityManager;
+import util.HierarchyUtils;
 import util.MetadataUtils;
 
 /**
@@ -41,8 +42,9 @@ public class RemoteObjectUpdate {
         updatedAttributes = new Field[object.getUpdatedAttributes().length];
         
         for (int i = 0; i < newValues.length;i++){
-            updatedAttributes[i] = this.objectClass.getDeclaredField(object.getUpdatedAttributes()[i]);
-            //This is a dumb reprocess, polish so we don't have to convert the types into strings again
+            updatedAttributes[i] = HierarchyUtils.getField(objectClass, object.getUpdatedAttributes()[i]);
+
+            //TODO: This is a dumb reprocess, polish so we don't have to convert the types into strings again
             newValues[i] = MetadataUtils.getRealValue(updatedAttributes[i].getType().getSimpleName(),
                     object.getNewValues()[i], em);
         }

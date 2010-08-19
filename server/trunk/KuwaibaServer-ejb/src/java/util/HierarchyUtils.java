@@ -20,6 +20,7 @@ import core.annotations.Dummy;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
 import entity.core.metamodel.PackageMetadata;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +115,7 @@ public class HierarchyUtils {
 
         ClassMetadata cm = new ClassMetadata(entity.getJavaType().getSimpleName(),
                                              pm,
-                                             java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASS")+" "+entity.getJavaType().getSimpleName(),
+                                             entity.getJavaType().getSimpleName(),
                                              false,Modifier.isAbstract(entity.getJavaType().getModifiers()),
                                              entity.getJavaType().getAnnotation(Dummy.class)!=null,
                                              entity.getJavaType().getAnnotation(Administrative.class)!=null,
@@ -123,5 +124,22 @@ public class HierarchyUtils {
 
         em.persist(cm);
         return cm.getId();
+    }
+
+    /**
+     * Gets a field for a given class no matter if it's a private one of if it belongs to a superclass
+     * @param aClass A class to look for the field
+     * @param  fieldName A string with the name of the field
+     */
+    public static Field getField (Class aClass, String fieldName) throws NoSuchFieldException{
+        for (Field f : aClass.getDeclaredFields()){
+            if(f.getName().equals(fieldName))
+                return f;
+        }
+
+        if (aClass.getSuperclass().equals(Object.class))
+            throw new NoSuchFieldException(fieldName);
+
+        return getField(aClass.getSuperclass(), fieldName);
     }
 }

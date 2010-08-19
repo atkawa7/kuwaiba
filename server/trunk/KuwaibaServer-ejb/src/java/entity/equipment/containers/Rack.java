@@ -16,7 +16,6 @@
 package entity.equipment.containers;
 
 import entity.multiple.companies.EquipmentProvider;
-import entity.multiple.companies.Vendor;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,7 +44,7 @@ public class Rack extends GenericContainer implements Serializable {
         return vendor;
     }
 
-    public void setVendor(Vendor vendor) {
+    public void setVendor(EquipmentProvider vendor) {
         this.vendor = vendor;
     }
 }

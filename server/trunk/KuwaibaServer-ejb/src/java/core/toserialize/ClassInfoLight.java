@@ -46,7 +46,7 @@ public class ClassInfoLight {
         this.className = cm.getName();
         this._package = cm.getPackageInfo().getName();
         this.displayName = cm.getDisplayName();
-        this.displayName = cm.getDescription();
+        this.description = cm.getDescription();
         this.smallIcon = cm.getSmallIcon();
     }
 

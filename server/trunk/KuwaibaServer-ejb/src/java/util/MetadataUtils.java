@@ -161,9 +161,14 @@ public class MetadataUtils {
             //In any other case we try to find an ObjectListItem
             try{
 
+                Long oid = Long.valueOf(valueAsString);
+
+                if (oid == 0) //Id 0 means null
+                    return null;
+
                 //Class itemClass = Class.forName(type);
                 Class itemClass = entity.multiple.GenericObjectList.class; //Just by now
-                Object item = em.find(itemClass, Long.valueOf(valueAsString));
+                Object item = em.find(itemClass, oid);
                 if (item == null) //TODO Make this return safer
                     return valueAsString;
                 return item;

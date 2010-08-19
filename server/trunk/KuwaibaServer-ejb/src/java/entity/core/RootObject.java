@@ -74,7 +74,7 @@ public abstract class RootObject implements Serializable, Cloneable {
         return isLocked;
     }
 
-    public void setIsLocked(boolean isLocked) {
+    public void setIsLocked(Boolean isLocked) {
         this.isLocked = isLocked;
     }
 
