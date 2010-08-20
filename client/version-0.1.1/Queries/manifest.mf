@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.inventory.queries
+OpenIDE-Module-Layer: org/inventory/queries/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/inventory/queries/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
