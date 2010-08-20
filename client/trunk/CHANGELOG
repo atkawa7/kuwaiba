@@ -17,4 +17,5 @@
 * The server and the client can reside in diferent computers. At login time you can choose a different WSDL location
 * Added tool bars and in general, the elements were rearranged
 * Inline edition for object nodes names
+* Built on top of NBP included in NetBeans IDE 6.9 (Build 201006101454)
 * Multiple bugfixes

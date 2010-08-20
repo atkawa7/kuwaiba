@@ -19,6 +19,7 @@ package org.inventory.core.usermanager;
 import java.awt.BorderLayout;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -90,8 +91,12 @@ public final class UserManagerTopComponent extends TopComponent
                        if (pnlGroups.getComponentCount() == 0){
                            if (tblGroups == null)
                                 ums.populateGroupsList();
-                            pnlGroups.add(tblGroups,BorderLayout.CENTER);
-                            pnlGroups.revalidate();
+                           
+                           //tblGroups may be null if there are no groups at all
+                           if (tblGroups != null){
+                                pnlGroups.add(tblGroups,BorderLayout.CENTER);
+                                pnlGroups.revalidate();
+                           }
                         }
                        ums.setRootToGroups();
                 }
@@ -308,6 +313,10 @@ public final class UserManagerTopComponent extends TopComponent
 
     public JTabbedPane getPnlTabbedMain(){
         return this.pnlTabbedMain;
+    }
+
+    public JPanel getPnlGroups(){
+        return this.pnlGroups;
     }
 
     public UserManagerService getUserManagerServiceInstance(){

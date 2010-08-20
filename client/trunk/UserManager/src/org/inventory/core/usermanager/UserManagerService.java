@@ -85,8 +85,11 @@ public class UserManagerService {
      * Populates the initial group list
      */
     public void populateGroupsList() {
-        groupsTableModel = new NodeTableModel();
         LocalUserGroupObject[] groups = com.getGroups();
+        //Do nothing if there are no groups
+        if (groups.length == 0)
+            return;
+        groupsTableModel = new NodeTableModel();
         if (groups == null){
             umtc.getNotifier().showSimplePopup(
                     java.util.ResourceBundle.getBundle("org/inventory/core/usermanager/Bundle").
@@ -95,7 +98,7 @@ public class UserManagerService {
         }
         groupsRoot = new AbstractNode(new GroupChildren(groups));
         groupsTableModel.setNodes(groupsRoot.getChildren().getNodes());
-        if (usersRoot.getChildren().getNodesCount() != 0)
+        if (groupsRoot.getChildren().getNodesCount() != 0)
             groupsTableModel.setProperties(groupsRoot.getChildren().getNodes()[0].getPropertySets()[0].
                 getProperties());
         umtc.getExplorerManager().setRootContext(groupsRoot);
@@ -117,6 +120,11 @@ public class UserManagerService {
     public void refreshGroupsList(){
         if (groupsTableModel == null)
             populateGroupsList();
+
+        if (umtc.getPnlGroups().getComponentCount() == 0){
+            umtc.getPnlGroups().add(umtc.getTblGroups());
+            umtc.getPnlGroups().revalidate();
+        }
         groupsTableModel.setNodes(umtc.getExplorerManager().getRootContext().getChildren().getNodes());
         umtc.revalidate();
 
@@ -135,7 +143,8 @@ public class UserManagerService {
      * Set the root context to the group's root node
      */
     public void setRootToGroups(){
-        this.umtc.getExplorerManager().setRootContext(groupsRoot);
+        if (groupsRoot != null) //null if there are no groups at all
+            this.umtc.getExplorerManager().setRootContext(groupsRoot);
     }
 
     public AbstractNode getGroupsRoot() {
