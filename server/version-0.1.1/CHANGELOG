@@ -1,0 +1,19 @@
+0.1 Beta
+* Fixed the support for abstract classes
+* Internacionalization of server log messages
+* Corrections to the initialization script
+* Container Manager now uses Children.Array
+
+0.1 Stable
+* Added a List type attributes manager
+* Added a class manager to customize the icons and display names for available classes
+* Added an attribute manager to customize descriptions, visibility and display names for available attributes
+* Added many classes and attributes to the data model
+* More methods on the server side were migrated to used the Criteria API
+* New icons in the test db
+
+0.1.1
+* Added preliminar User/Groups management (You can create users and groups and relate them, but there's no privileges scheme yet)
+* The server and the client can reside in diferent computers.
+* More methods use now the Criteria API, and the updateObject method doesn't use native queries to avoid SQL Injection
+* Multiple bugfixes
