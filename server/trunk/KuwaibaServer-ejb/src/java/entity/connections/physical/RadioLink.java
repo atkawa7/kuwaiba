@@ -14,15 +14,15 @@
  *  limitations under the License.
  */
 
-package core.interfaces;
+package entity.connections.physical;
 
-import java.util.List;
+import java.io.Serializable;
+import javax.persistence.Entity;
 
 /**
- * Classes implementing this interface can be endpoints of a physical connection
+ * Represents a wireless link
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public interface PhysicalConnectionEndpoint {
-    public List<PhysicallyConnectable> getConnectedElements();
-    public void addConnectedElement(PhysicallyConnectable element);
+@Entity
+public class RadioLink extends GenericPhysicalConnection implements Serializable {
 }

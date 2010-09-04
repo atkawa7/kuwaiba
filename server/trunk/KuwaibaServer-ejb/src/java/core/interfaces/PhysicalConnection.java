@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
- * 
+ *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,17 +14,17 @@
  *  limitations under the License.
  */
 
-package entity.multiple.types.parts;
+package core.interfaces;
 
+import entity.multiple.types.links.PhysicalLinkType;
 import java.io.Serializable;
-import javax.persistence.Entity;
-
 
 /**
- * Represents a connector for a power connection (NEMA 5-15P, NEMA 5-15R, etc)
+ * This interface a link (radio, electrical, optical) connectable
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-@Entity
-public class PowerConnectorType extends GenericType implements Serializable {
-
+public interface PhysicalConnection extends Serializable{
+    public PhysicalEndpoint getEndpointA();
+    public PhysicalEndpoint getEndpointB();
+    public PhysicalLinkType getType();
 }

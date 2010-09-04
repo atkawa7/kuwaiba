@@ -16,39 +16,14 @@
 
 package entity.connections.physical;
 
-import core.interfaces.PhysicalConnection;
-import core.interfaces.PhysicalEndpoint;
-import entity.connections.GenericConnection;
-import entity.multiple.types.links.PhysicalLinkType;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
 
 /**
- * This class represents a generic physical connection
+  Represents any connection that uses a wire/cable as a transmission medium
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericPhysicalConnection extends GenericConnection implements Serializable, PhysicalConnection {
-
-    protected PhysicalEndpoint endpointA;
-    protected PhysicalEndpoint endpointB;
-    @OneToOne
-    protected PhysicalLinkType type;
-
-    @Override
-    public PhysicalEndpoint getEndpointA() {
-        return endpointA;
-    }
-
-    @Override
-    public PhysicalEndpoint getEndpointB() {
-        return endpointB;
-    }
-
-    @Override
-    public PhysicalLinkType getType() {
-        return type;
-    }
-
+public class ElectricalLink extends GenericPhysicalConnection implements Serializable {
+    
 }

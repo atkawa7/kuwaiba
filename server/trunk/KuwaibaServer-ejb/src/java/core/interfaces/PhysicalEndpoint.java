@@ -16,13 +16,14 @@
 
 package core.interfaces;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
- * Classes implementing this interface can be used to connect two elements using a physical medium
+ * Classes implementing this interface can be endpoints to a physical connection
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public interface PhysicallyConnectable {
-    public PhysicalConnectionEndpoint getSideA();
-    public PhysicalConnectionEndpoint getSideB();
-    public void setSideA(PhysicalConnectionEndpoint sideA);
-    public void setSideB(PhysicalConnectionEndpoint sideB);
+public interface PhysicalEndpoint extends Serializable{
+    public List<PhysicalConnection> getPhysicalConnections();
+    public void addPhysicalConnections(PhysicalConnection[] connections);
 }

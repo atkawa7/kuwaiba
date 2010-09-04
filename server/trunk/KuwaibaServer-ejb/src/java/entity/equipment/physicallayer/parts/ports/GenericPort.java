@@ -16,29 +16,33 @@
  */
 package entity.equipment.physicallayer.parts.ports;
 
+import core.interfaces.PhysicalConnection;
+import core.interfaces.PhysicalEndpoint;
 import entity.equipment.physicallayer.parts.GenericPart;
-import entity.multiple.types.parts.PortType;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 
 /**
  * Represents a generic Port
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericPort extends GenericPart implements Serializable {
+public abstract class GenericPort extends GenericPart implements Serializable,PhysicalEndpoint {
 
-    //private boolean vendor; //Reuse the field as private to hide it. Uses a boolean to save diskspace
-    //private boolean conditions; //same here
-    @ManyToOne
-    protected PortType connector; //RJ-45, RJ-11, FC/PC, etc
+    protected List<PhysicalConnection> physicalConnections;
 
-    public PortType getConnector() {
-        return connector;
+    @Override
+    public void addPhysicalConnections(PhysicalConnection[] _connections) {
+        if (physicalConnections == null)
+            physicalConnections = new ArrayList<PhysicalConnection>();
+        physicalConnections.addAll(Arrays.asList(_connections));
     }
 
-    public void setConnector(PortType connector) {
-        this.connector = connector;
+    @Override
+    public List<PhysicalConnection> getPhysicalConnections() {
+        return physicalConnections;
     }
 }

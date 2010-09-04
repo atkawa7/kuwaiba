@@ -13,18 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package entity.multiple.types.parts;
 
-package entity.multiple.types.containers;
-
-import entity.multiple.types.parts.GenericType;
 import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- * Instances of this class represent a type of conduit, this is
- * cable ditches, cable racks, pipes or even cable trays
+ * Represents a connector type, like RJ45, RJ11, FC/PC, etc
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class ConduitType extends GenericType implements Serializable {
+public abstract class CommunicationsPortType extends GenericType implements Serializable {
+
 }

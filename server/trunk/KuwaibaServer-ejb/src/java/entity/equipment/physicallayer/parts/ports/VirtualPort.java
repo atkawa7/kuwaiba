@@ -12,17 +12,19 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *  under the License.
  */
-package entity.multiple.types.parts;
+
+package entity.equipment.physicallayer.parts.ports;
 
 import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- * Represents a connector type, like RJ45, RJ11, FC/PC, etc
+ * this is not a real port, but a trick to make stuff like antennas connectable
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class PortType extends GenericType implements Serializable {
+public class VirtualPort extends GenericPort implements Serializable {
 
 }
