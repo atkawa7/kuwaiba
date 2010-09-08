@@ -15,12 +15,16 @@
  */
 package org.inventory.views.viewrenderer;
 
+import java.awt.BorderLayout;
 import java.util.logging.Logger;
 import javax.swing.ActionMap;
+import javax.swing.ButtonGroup;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
+import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.views.viewrenderer.scene.ViewScene;
 import org.openide.explorer.ExplorerManager;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
@@ -29,8 +33,10 @@ import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.explorer.ExplorerManager.Provider;
 import org.openide.explorer.ExplorerUtils;
+import org.openide.util.Lookup;
 
 /**
+ * This component renders the views associated to an object
  * Top component which displays something.
  */
 @ConvertAsProperties(dtd = "-//org.inventory.views.viewrenderer//ViewRenderer//EN",
@@ -42,8 +48,16 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
     static final String ICON_PATH = "org/inventory/views/viewrenderer/res/icon.png";
     private static final String PREFERRED_ID = "ViewRendererTopComponent";
 
+    private ButtonGroup buttonGroupUpperToolbar;
+    private ButtonGroup buttonGroupRightToolbar;
+    private NotificationUtil nu;
+
     private ExplorerManager em = new ExplorerManager();
     private ViewRendererService vrs;
+    /**
+     * Represents the local scene
+     */
+    private ViewScene scene;
 
     public ViewRendererTopComponent() {
         initComponents();
@@ -70,7 +84,22 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         associateLookup(ExplorerUtils.createLookup(em, map));
         
         vrs = new ViewRendererService(this);
-       // cmbViewType
+
+        scene = new ViewScene();
+
+        pnlScrollMain.setViewportView(scene.createView());
+        add(scene.createSatelliteView(),BorderLayout.SOUTH);
+
+        buttonGroupUpperToolbar = new ButtonGroup();
+        buttonGroupUpperToolbar.add(btnSelect);
+        buttonGroupUpperToolbar.add(btnConnect);
+        buttonGroupUpperToolbar.add(btnZoomIn);
+        buttonGroupUpperToolbar.add(btnZoomOut);
+
+        buttonGroupRightToolbar = new ButtonGroup();
+        buttonGroupRightToolbar.add(btnElectricalLink);
+        buttonGroupRightToolbar.add(btnOpticalLink);
+        buttonGroupRightToolbar.add(btnWirelessLink);
     }
 
     /** This method is called from within the constructor to
@@ -83,18 +112,24 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
 
         barMain = new javax.swing.JToolBar();
         btnAddBackgroundImage = new javax.swing.JButton();
-        btnZomOut = new javax.swing.JButton();
-        btnZoomIn = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        btnSelect = new javax.swing.JToggleButton();
+        btnConnect = new javax.swing.JToggleButton();
+        btnZoomIn = new javax.swing.JToggleButton();
+        btnZoomOut = new javax.swing.JToggleButton();
         btnRefresh = new javax.swing.JButton();
         cmbViewType = new javax.swing.JComboBox();
         pnlScrollMain = new javax.swing.JScrollPane();
-        pnlMain = new javax.swing.JPanel();
+        barRight = new  javax.swing.JToolBar(javax.swing.JToolBar.VERTICAL);
+        btnElectricalLink = new javax.swing.JToggleButton();
+        btnOpticalLink = new javax.swing.JToggleButton();
+        btnWirelessLink = new javax.swing.JToggleButton();
 
         setLayout(new java.awt.BorderLayout());
 
         barMain.setRollover(true);
 
-        btnAddBackgroundImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/background.png"))); // NOI18N
+        btnAddBackgroundImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/add-background.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnAddBackgroundImage, org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnAddBackgroundImage.text")); // NOI18N
         btnAddBackgroundImage.setToolTipText(org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnAddBackgroundImage.toolTipText")); // NOI18N
         btnAddBackgroundImage.setFocusable(false);
@@ -102,13 +137,29 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         btnAddBackgroundImage.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         barMain.add(btnAddBackgroundImage);
 
-        btnZomOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/zoom-out.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnZomOut, org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnZomOut.text")); // NOI18N
-        btnZomOut.setToolTipText(org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnZomOut.toolTipText")); // NOI18N
-        btnZomOut.setFocusable(false);
-        btnZomOut.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnZomOut.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        barMain.add(btnZomOut);
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/save.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.jButton1.text")); // NOI18N
+        jButton1.setToolTipText(org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.jButton1.toolTipText")); // NOI18N
+        jButton1.setFocusable(false);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barMain.add(jButton1);
+
+        btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/select.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnSelect, org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnSelect.text")); // NOI18N
+        btnSelect.setToolTipText(org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnSelect.toolTipText")); // NOI18N
+        btnSelect.setFocusable(false);
+        btnSelect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSelect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barMain.add(btnSelect);
+
+        btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/connect.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnConnect, org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnConnect.text")); // NOI18N
+        btnConnect.setToolTipText(org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnConnect.toolTipText")); // NOI18N
+        btnConnect.setFocusable(false);
+        btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnConnect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barMain.add(btnConnect);
 
         btnZoomIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/zoom-in.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnZoomIn, org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnZoomIn.text")); // NOI18N
@@ -117,6 +168,14 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         btnZoomIn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnZoomIn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         barMain.add(btnZoomIn);
+
+        btnZoomOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/zoom-out.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnZoomOut, org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnZoomOut.text")); // NOI18N
+        btnZoomOut.setToolTipText(org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnZoomOut.toolTipText")); // NOI18N
+        btnZoomOut.setFocusable(false);
+        btnZoomOut.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnZoomOut.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barMain.add(btnZoomOut);
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/refresh.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnRefresh.text")); // NOI18N
@@ -129,31 +188,51 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         barMain.add(cmbViewType);
 
         add(barMain, java.awt.BorderLayout.PAGE_START);
-
-        javax.swing.GroupLayout pnlMainLayout = new javax.swing.GroupLayout(pnlMain);
-        pnlMain.setLayout(pnlMainLayout);
-        pnlMainLayout.setHorizontalGroup(
-            pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 532, Short.MAX_VALUE)
-        );
-        pnlMainLayout.setVerticalGroup(
-            pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 318, Short.MAX_VALUE)
-        );
-
-        pnlScrollMain.setViewportView(pnlMain);
-
         add(pnlScrollMain, java.awt.BorderLayout.CENTER);
+
+        barRight.setRollover(true);
+
+        btnElectricalLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/electrical_link.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnElectricalLink, org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnElectricalLink.text")); // NOI18N
+        btnElectricalLink.setToolTipText(org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnElectricalLink.toolTipText")); // NOI18N
+        btnElectricalLink.setFocusable(false);
+        btnElectricalLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnElectricalLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barRight.add(btnElectricalLink);
+
+        btnOpticalLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/optical_link.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnOpticalLink, org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnOpticalLink.text")); // NOI18N
+        btnOpticalLink.setToolTipText(org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnOpticalLink.toolTipText")); // NOI18N
+        btnOpticalLink.setFocusable(false);
+        btnOpticalLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnOpticalLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barRight.add(btnOpticalLink);
+
+        btnWirelessLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/wireless_link.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnWirelessLink, org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnWirelessLink.text")); // NOI18N
+        btnWirelessLink.setToolTipText(org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnWirelessLink.toolTipText")); // NOI18N
+        btnWirelessLink.setFocusable(false);
+        btnWirelessLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnWirelessLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barRight.add(btnWirelessLink);
+
+        add(barRight, java.awt.BorderLayout.LINE_END);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
+    private javax.swing.JToolBar barRight;
     private javax.swing.JButton btnAddBackgroundImage;
+    private javax.swing.JToggleButton btnConnect;
+    private javax.swing.JToggleButton btnElectricalLink;
+    private javax.swing.JToggleButton btnOpticalLink;
     private javax.swing.JButton btnRefresh;
-    private javax.swing.JButton btnZomOut;
-    private javax.swing.JButton btnZoomIn;
+    private javax.swing.JToggleButton btnSelect;
+    private javax.swing.JToggleButton btnWirelessLink;
+    private javax.swing.JToggleButton btnZoomIn;
+    private javax.swing.JToggleButton btnZoomOut;
     private javax.swing.JComboBox cmbViewType;
-    private javax.swing.JPanel pnlMain;
+    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane pnlScrollMain;
     // End of variables declaration//GEN-END:variables
     /**
@@ -189,17 +268,17 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
 
     @Override
     public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_ALWAYS;
+        return TopComponent.PERSISTENCE_NEVER;
     }
 
     @Override
     public void componentOpened() {
-        // TODO add custom code on component opening
+        vrs.initializeLookListener();
     }
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        vrs.terminateLookupListener();
     }
 
     void writeProperties(java.util.Properties p) {
@@ -229,5 +308,15 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
 
     public ExplorerManager getExplorerManager() {
         return em;
+    }
+
+    public NotificationUtil getNotifier(){
+        if (nu == null)
+            nu = Lookup.getDefault().lookup(NotificationUtil.class);
+        return nu;
+    }
+
+    public ViewScene getScene(){
+        return scene;
     }
 }

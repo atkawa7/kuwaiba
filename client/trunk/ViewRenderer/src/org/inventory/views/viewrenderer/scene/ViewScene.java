@@ -1,0 +1,89 @@
+/*
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
+ *   Licensed under the EPL License, Version 1.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *        http://www.eclipse.org/legal/epl-v10.html
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+
+package org.inventory.views.viewrenderer.scene;
+
+import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.netbeans.api.visual.action.ActionFactory;
+import org.netbeans.api.visual.graph.GraphScene;
+import org.netbeans.api.visual.widget.LayerWidget;
+import org.netbeans.api.visual.widget.Widget;
+
+
+/**
+ * This is the main scene for an object's view
+ * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ */
+public class ViewScene extends GraphScene<LocalObjectLight,String>{
+
+    /**
+     * Used to hold the background (just an image right now)
+     */
+    private LayerWidget backgroundLayer;
+    /**
+     * Used to hold the nodes
+     */
+    private LayerWidget nodesLayer; //Nodes
+    /**
+     * Used to hold the connections
+     */
+    private LayerWidget edgesLayer; //Edges
+
+    public ViewScene (){
+        backgroundLayer = new LayerWidget(this);
+        nodesLayer = new LayerWidget(this);
+        edgesLayer = new LayerWidget(this);
+        addChild(backgroundLayer);
+        addChild(nodesLayer);
+        addChild(edgesLayer);
+        getActions().addAction(ActionFactory.createZoomAction());
+        //setActiveTool(ToolsChildren.ACTION_SELECT);
+    }
+
+    @Override
+    protected Widget attachNodeWidget(LocalObjectLight node) {
+        System.out.println("attacnodewid");
+        return null;
+    }
+
+    @Override
+    protected Widget attachEdgeWidget(String edge) {
+        System.out.println("attacedgewid");
+        return null;
+    }
+
+    @Override
+    protected void attachEdgeSourceAnchor(String edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
+        System.out.println("attacsourceanch");
+    }
+
+    @Override
+    protected void attachEdgeTargetAnchor(String edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
+        System.out.println("attactargetanch");
+    }
+
+    public LayerWidget getBackgroundLayer(){
+        return backgroundLayer;
+    }
+
+    public LayerWidget getNodesLayer(){
+        return nodesLayer;
+    }
+
+    public LayerWidget getEdgesLayer(){
+        return edgesLayer;
+    }
+}

@@ -16,13 +16,48 @@
 
 package org.inventory.views.viewrenderer;
 
+import org.inventory.core.services.interfaces.LocalObject;
+import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.openide.util.Lookup;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
+
 /**
  * Contains the business logic for the associated TopComponent
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ViewRendererService {
+public class ViewRendererService implements LookupListener{
+    
     private ViewRendererTopComponent vrtc;
+    private Lookup.Result selectedNodes;
+
     public ViewRendererService(ViewRendererTopComponent _vrtc){
         this.vrtc = _vrtc;
+    }
+
+    /**
+     * Add this instance as listener for the selected nodes in the NavigationTree.
+     * Should be called when the TopComponent is opened
+     */
+    public void initializeLookListener(){
+        selectedNodes = Lookup.getDefault().lookupResult(LocalObjectLight.class);
+        selectedNodes.addLookupListener(this);
+    }
+
+    /**
+     * Removes this instance as listener for the selected nodes in the NavigationTree.
+     * Should be called when the TopComponent is closed
+     */
+    public void terminateLookupListener(){
+        selectedNodes.removeLookupListener(this);
+    }
+
+    public void resultChanged(LookupEvent ev) {
+        Lookup.Result lookupResult = (Lookup.Result)ev.getSource();
+        if(lookupResult.allInstances().size() == 1){
+           LocalObjectLight myObject = (LocalObjectLight)lookupResult.allInstances().iterator().next();
+
+        } else
+            vrtc.getNotifier().showStatusMessage("More than one object selected. No view available", true);
     }
 }
