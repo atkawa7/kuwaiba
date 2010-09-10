@@ -19,6 +19,7 @@ package core.interfaces;
 import entity.multiple.types.containers.PhysicalContainerType;
 
 
+
 /**
  * This interface makes a class a container (pipe, cable ditch) connectable to a node
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>

@@ -13,17 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-package core.interfaces;
+package entity.connections.physical.containers;
 
 import java.io.Serializable;
-import java.util.List;
+import javax.persistence.Entity;
 
 /**
- * Classes implementing this interface can be used to connect two elements using a physical medium
+ * This class represents an element to contain wireless connections, such as waveguides.
+ * Radio channels can be contained as well
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public interface PhysicalNode extends Serializable{
-    public List<PhysicalContainer> getConnectedPhysicalContainers();
-    public void addPhysicalContainers(PhysicalContainer[] containers);
+@Entity
+public class WirelessContainer extends GenericPhysicalContainer implements Serializable {
 }

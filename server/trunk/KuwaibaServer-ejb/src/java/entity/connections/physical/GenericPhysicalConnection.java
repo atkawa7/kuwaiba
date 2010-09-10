@@ -22,7 +22,7 @@ import entity.connections.GenericConnection;
 import entity.multiple.types.links.PhysicalLinkType;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 /**
  * This class represents a generic physical connection
@@ -33,7 +33,7 @@ public abstract class GenericPhysicalConnection extends GenericConnection implem
 
     protected PhysicalEndpoint endpointA;
     protected PhysicalEndpoint endpointB;
-    @OneToOne
+    @ManyToOne
     protected PhysicalLinkType type;
 
     @Override
@@ -44,6 +44,19 @@ public abstract class GenericPhysicalConnection extends GenericConnection implem
     @Override
     public PhysicalEndpoint getEndpointB() {
         return endpointB;
+    }
+
+    /**
+     * TODO: Is this the best way to disconnect?
+     */
+    @Override
+    public void disconnectPointA() {
+        endpointA = null;
+    }
+
+    @Override
+    public void disconnectPointB() {
+        endpointB = null;
     }
 
     @Override

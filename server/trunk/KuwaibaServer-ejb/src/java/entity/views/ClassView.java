@@ -14,16 +14,27 @@
  *  limitations under the License.
  */
 
-package core.interfaces;
+package entity.views;
 
-import java.io.Serializable;
-import java.util.List;
+import entity.core.metamodel.ClassMetadata;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
- * Classes implementing this interface can be used to connect two elements using a physical medium
+ * This class represents the root for all those view that applies only to certain classes
+ * for example, the views in racks or rooms
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public interface PhysicalNode extends Serializable{
-    public List<PhysicalContainer> getConnectedPhysicalContainers();
-    public void addPhysicalContainers(PhysicalContainer[] containers);
+@Entity
+public abstract class ClassView extends AbstractView{
+    @ManyToOne
+    protected ClassMetadata myclass;
+
+    public ClassMetadata getMyclass() {
+        return myclass;
+    }
+
+    public void setMyclass(ClassMetadata myclass) {
+        this.myclass = myclass;
+    }
 }

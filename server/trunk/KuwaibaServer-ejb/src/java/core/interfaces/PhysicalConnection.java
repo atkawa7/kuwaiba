@@ -17,14 +17,15 @@
 package core.interfaces;
 
 import entity.multiple.types.links.PhysicalLinkType;
-import java.io.Serializable;
 
 /**
  * This interface a link (radio, electrical, optical) connectable
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public interface PhysicalConnection extends Serializable{
+public interface PhysicalConnection{
     public PhysicalEndpoint getEndpointA();
     public PhysicalEndpoint getEndpointB();
     public PhysicalLinkType getType();
+    public void disconnectPointA();
+    public void disconnectPointB();
 }

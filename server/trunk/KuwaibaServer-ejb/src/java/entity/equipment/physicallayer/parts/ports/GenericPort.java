@@ -45,4 +45,21 @@ public abstract class GenericPort extends GenericPart implements Serializable,Ph
     public List<PhysicalConnection> getPhysicalConnections() {
         return physicalConnections;
     }
+
+    @Override
+    public void removePhysicalConnections(PhysicalConnection[] connections) {
+        for (PhysicalConnection pConnection: connections){
+            if (pConnection.getEndpointA() != null){
+                if (pConnection.getEndpointA().equals(this)){
+                    pConnection.disconnectPointA();
+                    continue;
+                }
+                if (pConnection.getEndpointB().equals(this)){
+                    pConnection.disconnectPointB();
+                    continue;
+                }
+            }
+        }
+    }
+
 }

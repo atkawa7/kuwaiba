@@ -16,10 +16,7 @@
 
 package core.toserialize;
 
-import entity.core.ConfigurationItem;
-import entity.multiple.views.ObjectView;
-import java.util.ArrayList;
-import java.util.List;
+import entity.views.AbstractView;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -30,12 +27,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class View {
-    private List<RemoteObjectLight> elements;
     private byte[] background;
-    private byte[] svgFile;
+    private byte[] structure;
+    private String description;
 
     /**
-     * Required by the serializer
+     * Required by the serializer. This empty view is returned when there's no a defaultview associated to the object
      */
     public View(){}
 
@@ -43,19 +40,9 @@ public class View {
      * Builds a serialized version of the view using directly the entity
      * @param objectView The entity to be serialized
      */
-    public View(ObjectView objectView){
-        elements = new ArrayList<RemoteObjectLight>();
-        for (ConfigurationItem ci : objectView.getElements())
-            elements.add(new RemoteObjectLight(ci));
-        this.background = objectView.getBackgroundImage();
-    }
-
-    public List<RemoteObjectLight> getElements() {
-        return elements;
-    }
-
-    public void setElements(List<RemoteObjectLight> elements) {
-        this.elements = elements;
+    public View(AbstractView objectView){
+        
+        this.background = objectView.getBackground();
     }
 
     public byte[] getBackground() {
@@ -66,11 +53,19 @@ public class View {
         this.background = background;
     }
 
-    public byte[] getSvgFile() {
-        return svgFile;
+    public String getDescription() {
+        return description;
     }
 
-    public void setSvgFile(byte[] svgFile) {
-        this.svgFile = svgFile;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public byte[] getStructure() {
+        return structure;
+    }
+
+    public void setStructure(byte[] structure) {
+        this.structure = structure;
     }
 }

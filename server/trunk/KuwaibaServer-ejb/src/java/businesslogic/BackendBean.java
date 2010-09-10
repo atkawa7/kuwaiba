@@ -37,7 +37,8 @@ import entity.core.metamodel.ClassMetadata;
 import entity.location.Country;
 import entity.location.StateObject;
 import entity.multiple.GenericObjectList;
-import entity.multiple.views.ObjectView;
+import entity.views.AbstractView;
+import entity.views.DefaultView;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -891,26 +892,25 @@ public class BackendBean implements BackendBeanRemote {
      * @return A view object representing the default view (the direct children)
      */
     @Override
-    public View getDefaultView(Long oid, Class className) {
+    public View getDefaultView(Long oid, Class myClass) {
         if(em != null){
-            ConfigurationItem object = (ConfigurationItem)em.find(className, oid);
-            List<ObjectView> views = object.getViews();
-            if (views == null){
-                try{
-                    Long classOid = (Long)em.createQuery("SELECT oid FROM ClassMetadata x WHERE x.name='"+
-                            className.getSimpleName()+"'").getSingleResult();
-                     List elements = getObjectChildren(oid, classOid);
-                     ObjectView view = new ObjectView(elements);
-                     em.persist(view);
-                     return new View(view);
-                }catch(NoResultException nre){
-                    this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND");
-                    Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
-                    return null;
+            Object obj = em.find(myClass, oid);
+            if (obj == null){
+
+                return null;
+            }
+            if (obj instanceof ConfigurationItem){ //Check if the object support view
+                List<AbstractView> views = ((ConfigurationItem)obj).getViews();
+                if (views == null)
+                    return new View();
+                for (AbstractView view : views){
+                    if (view instanceof DefaultView)
+                        return new View(view);
                 }
             }
-            else
-                return new View(object.getViews().get(0));
+            else{}
+
+            return new View();
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);

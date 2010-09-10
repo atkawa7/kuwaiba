@@ -13,17 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package entity.connections.logical.containers;
 
-import entity.connections.GenericConnection;
-import java.io.Serializable;
+package entity.views;
+
 import javax.persistence.Entity;
 
 /**
- * This class represents an element to contain cables. There can be many types of conduits:
- * cable ditches, cable racks, pipes or even cable trays
+ * Represents the default view for any object. It's basically the children (includin physical connections)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Conduit extends GenericConnection implements Serializable {
+public class DefaultView extends AbstractView{
+
 }
