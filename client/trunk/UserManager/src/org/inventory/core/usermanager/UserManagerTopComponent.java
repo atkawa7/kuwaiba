@@ -18,7 +18,6 @@ package org.inventory.core.usermanager;
 
 import java.awt.BorderLayout;
 import java.util.logging.Logger;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
