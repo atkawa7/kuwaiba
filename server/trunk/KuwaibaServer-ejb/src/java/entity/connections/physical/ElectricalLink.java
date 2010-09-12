@@ -16,14 +16,11 @@
 
 package entity.connections.physical;
 
-import java.io.Serializable;
-import javax.persistence.Entity;
 
 /**
   Represents any connection that uses a wire/cable as a transmission medium
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-@Entity
-public class ElectricalLink extends GenericPhysicalConnection implements Serializable {
+public class ElectricalLink extends GenericPhysicalConnection{
     
 }

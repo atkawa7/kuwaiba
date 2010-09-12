@@ -1,7 +1,7 @@
 package entity.location;
 
-import core.interfaces.PhysicalContainer;
 import core.interfaces.PhysicalNode;
+import entity.connections.physical.containers.GenericPhysicalContainer;
 import entity.core.RootObject;
 import entity.multiple.states.StructuralState;
 import java.io.Serializable;
@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 /**
@@ -21,7 +22,8 @@ public abstract class GenericLocation extends RootObject implements Serializable
     /**
      * This one has all pipes and ducts connected to the node
      */
-    protected List<PhysicalContainer> containers;
+    @ManyToMany
+    protected List<GenericPhysicalContainer> containers;
     protected String position; //Geo position (coordinates)
     @ManyToOne
     protected StructuralState state;
@@ -44,14 +46,14 @@ public abstract class GenericLocation extends RootObject implements Serializable
     }
 
     @Override
-    public void addPhysicalContainers(PhysicalContainer[] _containers) {
+    public void addPhysicalContainers(GenericPhysicalContainer[] _containers) {
         if (containers == null)
-            containers = new ArrayList<PhysicalContainer>();
+            containers = new ArrayList<GenericPhysicalContainer>();
         containers.addAll(Arrays.asList(_containers));
     }
 
     @Override
-    public List<PhysicalContainer> getConnectedPhysicalContainers() {
+    public List<GenericPhysicalContainer> getConnectedPhysicalContainers() {
         return containers;
     }
 }

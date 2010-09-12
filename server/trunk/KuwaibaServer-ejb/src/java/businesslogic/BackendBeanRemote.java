@@ -15,13 +15,15 @@
  */
 package businesslogic;
 
+import core.interfaces.PhysicalEndpoint;
+import core.interfaces.PhysicalNode;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfo;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectLight;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
-import core.toserialize.View;
+import core.toserialize.ViewInfo;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -61,9 +63,11 @@ public interface BackendBeanRemote {
     public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage);
     public ClassInfoLight[] getInstanceableListTypes();
     public boolean createSession(String username, String password);
-    public View getDefaultView(Long oid, Class className);
-    public View getRoomView(Long oid);
-    public View getRackView(Long oid);
+    public ViewInfo getDefaultView(Long oid, Class className);
+    public ViewInfo getRoomView(Long oid);
+    public ViewInfo getRackView(Long oid);
+    public Boolean createPhysicalContainer(Class containerClass, PhysicalNode nodeA, PhysicalNode nodeB);
+    public Boolean createPhysicalConnection(Class connectionClass, PhysicalEndpoint endpointA, PhysicalEndpoint endpointB);
     public UserInfo[] getUsers();
     public UserGroupInfo[] getGroups();
     public Boolean setUserProperties(Long oid, String[] propertiesNames, String[] propertiesValues);
@@ -76,4 +80,5 @@ public interface BackendBeanRemote {
     public Boolean removeGroupsFromUser(Long[] groupsOids, Long userOid);
     public UserGroupInfo createGroup();
     public Boolean deleteGroups(Long[] oids);
+    public Boolean setObjectView(Long oid, Class myClass, ViewInfo view);
 }

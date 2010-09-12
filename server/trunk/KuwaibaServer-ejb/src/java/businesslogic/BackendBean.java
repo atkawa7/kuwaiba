@@ -21,12 +21,16 @@ import core.toserialize.RemoteObject;
 import core.toserialize.RemoteObjectLight;
 import core.annotations.Metadata;
 import core.exceptions.ObjectNotFoundException;
+import core.interfaces.PhysicalConnection;
+import core.interfaces.PhysicalContainer;
+import core.interfaces.PhysicalEndpoint;
+import core.interfaces.PhysicalNode;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectUpdate;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
-import core.toserialize.View;
+import core.toserialize.ViewInfo;
 import entity.config.User;
 import entity.config.UserGroup;
 import entity.core.ConfigurationItem;
@@ -50,7 +54,6 @@ import java.util.logging.Logger;
 import javax.ejb.Stateful;
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -886,31 +889,36 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     /**
+     * Views
+     */
+
+    /**
      * The default view is composed of only the direct children of a
-     * @param oid View owner oid
+     * @param oid ViewInfo owner oid
      * @param className object's class
      * @return A view object representing the default view (the direct children)
      */
     @Override
-    public View getDefaultView(Long oid, Class myClass) {
+    public ViewInfo getDefaultView(Long oid, Class myClass) {
         if(em != null){
             Object obj = em.find(myClass, oid);
             if (obj == null){
-
+                this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+                Logger.getLogger(BackendBean.class.getName()).log(Level.WARNING, this.error);
                 return null;
             }
             if (obj instanceof ConfigurationItem){ //Check if the object support view
                 List<AbstractView> views = ((ConfigurationItem)obj).getViews();
                 if (views == null)
-                    return new View();
+                    return new ViewInfo();
                 for (AbstractView view : views){
                     if (view instanceof DefaultView)
-                        return new View(view);
+                        return new ViewInfo(view);
                 }
             }
             else{}
 
-            return new View();
+            return new ViewInfo();
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
@@ -919,14 +927,120 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     @Override
-    public View getRoomView(Long oid) {
+    public ViewInfo getRoomView(Long oid) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public View getRackView(Long oid) {
+    public ViewInfo getRackView(Long oid) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public Boolean setObjectView(Long oid, Class myClass, ViewInfo view){
+        if (em != null){
+            Object obj = em.find(myClass, oid);
+            if (obj == null){
+                this.error = java.util.ResourceBundle.
+                    getBundle("internationalization/Bundle").
+                    getString("LBL_NOSUCHOBJECT")+" "+myClass.getSimpleName()+" "+java.util.ResourceBundle.
+                    getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid;
+                Logger.getLogger(BackendBean.class.getName()).log(Level.WARNING, this.error);
+                return false;
+            }
+            List<AbstractView> views = ((ConfigurationItem)obj).getViews();
+            if (views != null){
+                for (AbstractView myView : views){
+                    //TODO: Only change the fields that have been updated
+                    if(myView.getClass().getName().equals(view.getViewClass())) //If there's one already, replace it
+                        em.remove(myView);
+                }            
+            }else ((ConfigurationItem)obj).setViews(new ArrayList<AbstractView>());
+            try{
+                AbstractView newView = new AbstractView(view) {};
+                em.persist(newView);
+                ((ConfigurationItem)obj).getViews().add(newView);
+                em.merge(obj);
+                return true;
+            }catch(UnsupportedOperationException uso){
+                this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CANT_CREATE_VIEW")+view.getViewClass();
+                Logger.getLogger(BackendBean.class.getName()).log(Level.WARNING, this.error);
+                return false;
+            }
+        }else{
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
+            return false;
+        }
+    }
+
+    /**
+     * Physical Connections
+     */
+
+    /**
+     * Creates a new connection (WirelessLink, ElectricalLink, OpticalLink)
+     * @param connectionClass
+     * @param nodeA
+     * @param nodeB
+     * @return
+     */
+    @Override
+    public Boolean createPhysicalConnection(Class connectionClass, PhysicalEndpoint endpointA, PhysicalEndpoint endpointB){
+        if (em != null){
+            try {
+                PhysicalConnection conn = (PhysicalConnection) connectionClass.newInstance();
+                conn.connectEndpointA(endpointA);
+                conn.connectEndpointA(endpointB);
+                em.persist(conn);
+                return true;
+            } catch (InstantiationException ex) {
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, ex.getClass());
+                return false;
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, ex.getClass());
+                return false;
+            }
+        }else{
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
+            return false;
+        }
+    }
+
+    /**
+     * Creates a new container (Conduit, cable ditch)
+     * @param containerClass
+     * @param nodeA
+     * @param nodeB
+     * @return
+     */
+    @Override
+    public Boolean createPhysicalContainer(Class containerClass, PhysicalNode nodeA, PhysicalNode nodeB){
+        if (em != null){
+            try {
+                PhysicalContainer conn = (PhysicalContainer) containerClass.newInstance();
+                conn.connectNodeA(nodeA);
+                conn.connectNodeB(nodeB);
+                em.persist(conn);
+                return true;
+            } catch (InstantiationException ex) {
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, ex.getClass());
+                return false;
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, ex.getClass());
+                return false;
+            }
+        }else{
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
+            return false;
+        }
+    }
+
+    /**
+     * User/group management
+     */
 
     @Override
     public UserInfo[] getUsers() {

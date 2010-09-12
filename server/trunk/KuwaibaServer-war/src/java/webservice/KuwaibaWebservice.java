@@ -31,7 +31,7 @@ import businesslogic.BackendBeanRemote;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
-import core.toserialize.View;
+import core.toserialize.ViewInfo;
 
 import entity.core.ConfigurationItem;
 import java.util.List;
@@ -405,25 +405,26 @@ public class KuwaibaWebservice {
      */
     
     /**
-     * This method generates/retrieves the 
+     * This method generates/retrieves the default view for a given object
+     *
      * @param oid Object id for the object
      * @param className
-     * @return a view object associated to the given object
+     * @return a view object associated to the given object. If there's no default view, an empty one (all field set to null) is returned
      */
     @WebMethod(operationName = "getDefaultView")
-    public View getDefaultView(@WebParam(name="oid")Long oid,
-            @WebParam(name="className")String className){
-        View res=null;
+    public ViewInfo getDefaultView(@WebParam(name="oid")Long oid,
+            @WebParam(name="objectClass")String objectClass){
+        ViewInfo res=null;
         try{
-            Class myClass = Class.forName(className);
+            Class myClass = Class.forName(objectClass);
             if (!HierarchyUtils.isSubclass(myClass, ConfigurationItem.class))
-                this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOVIEWS") + className;
+                this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOVIEWS") + objectClass;
             else
                 res = sbr.getDefaultView(oid, myClass);
         if(res == null)
             this.lastErr = sbr.getError();
         }catch (ClassNotFoundException cnfe){
-            this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+className;
+            this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+ objectClass;
             return null;
         }
         return res;
@@ -435,8 +436,8 @@ public class KuwaibaWebservice {
      * @return a view object associated to the given Room
      */
     @WebMethod(operationName = "getRoomView")
-    public View getRoomView(@WebParam(name="oid")Long oid){
-        View res = sbr.getRoomView(oid);
+    public ViewInfo getRoomView(@WebParam(name="oid")Long oid){
+        ViewInfo res = sbr.getRoomView(oid);
         if(res == null)
             this.lastErr = sbr.getError();
 
@@ -450,13 +451,48 @@ public class KuwaibaWebservice {
      * @return a view object associated to the given Room
      */
     @WebMethod(operationName = "getRackView")
-    public View getRackView(@WebParam(name="oid")Long oid){
-        View res = sbr.getRackView(oid);
+    public ViewInfo getRackView(@WebParam(name="oid")Long oid){
+        ViewInfo res = sbr.getRackView(oid);
         if(res == null)
             this.lastErr = sbr.getError();
 
         return res;
     }
+
+    /**
+     * Sets a view for a given object
+     * @param oid object's oid
+     * @param oid object's class (full name including the packages)
+     * @param view object's serialized view
+     * @return Success or failure
+     */
+    @WebMethod(operationName = "setObjectView")
+    public Boolean setObjectView(@WebParam(name="oid")Long oid,
+            @WebParam(name="objectClass")String objectClass ,@WebParam(name="view") ViewInfo view){
+        Boolean res;
+        try{
+            Class myClass = Class.forName(objectClass);
+            if (!HierarchyUtils.isSubclass(myClass, ConfigurationItem.class)){
+                this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOVIEWS") + objectClass;
+                return false;
+            }
+            else res = sbr.setObjectView(oid, myClass,view);
+
+            if(!res)
+                this.lastErr = sbr.getError();
+
+        }catch (ClassNotFoundException cnfe){
+            this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+objectClass;
+            return null;
+        }
+        return res;
+    }
+
+    /**
+     * Physical Connections
+     */
+
+
 
     /**
      * User Management

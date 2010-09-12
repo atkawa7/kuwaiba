@@ -28,8 +28,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 public class ClassInfoLight {
     protected Long id;
     protected Boolean isAbstract;
-    protected Boolean isPhysicallyConnectable;
-    protected Boolean isLogicallyConnectable;
+    protected Boolean isPhysicalNode;
+    protected Boolean isPhysicalConnection;
+    protected Boolean isPhysicalEndpoint;
     protected String className;
     protected String _package;
     protected String displayName;
@@ -41,8 +42,9 @@ public class ClassInfoLight {
     public ClassInfoLight(ClassMetadata cm) {
         this.id = cm.getId();
         this.isAbstract = cm.getIsAbstract();
-        this.isLogicallyConnectable = cm.getIsLogicallyConnectable();
-        this.isPhysicallyConnectable = cm.getIsLogicallyConnectable();
+        this.isPhysicalNode = cm.getIsPhysicalNode();
+        this.isPhysicalConnection = cm.getIsPhysicalConnection();
+        this.isPhysicalEndpoint = cm.getIsPhysicalEndpoint();
         this.className = cm.getName();
         this._package = cm.getPackageInfo().getName();
         this.displayName = cm.getDisplayName();
@@ -106,19 +108,27 @@ public class ClassInfoLight {
         this.smallIcon = smallIcon;
     }
 
-    public Boolean getIsLogicalConnectable() {
-        return isLogicallyConnectable;
+    public Boolean getIsPhysicalConnection() {
+        return isPhysicalConnection;
     }
 
-    public void setIsLogicalConnectable(Boolean isLogicalConnectable) {
-        this.isLogicallyConnectable = isLogicalConnectable;
+    public void setIsPhysicalConnection(Boolean isPhysicalConnection) {
+        this.isPhysicalConnection = isPhysicalConnection;
     }
 
-    public Boolean getIsPhysicalConnectable() {
-        return isPhysicallyConnectable;
+    public Boolean getIsPhysicalEndpoint() {
+        return isPhysicalEndpoint;
     }
 
-    public void setIsPhysicalConnectable(Boolean isPhysicalConnectable) {
-        this.isPhysicallyConnectable = isPhysicalConnectable;
+    public void setIsPhysicalEndpoint(Boolean isPhysicalEndpoint) {
+        this.isPhysicalEndpoint = isPhysicalEndpoint;
+    }
+
+    public Boolean getIsPhysicalNode() {
+        return isPhysicalNode;
+    }
+
+    public void setIsPhysicalNode(Boolean isPhysicalNode) {
+        this.isPhysicalNode = isPhysicalNode;
     }
 }

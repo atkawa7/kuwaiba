@@ -17,6 +17,9 @@ package util;
 
 import core.annotations.Administrative;
 import core.annotations.Dummy;
+import core.interfaces.PhysicalConnection;
+import core.interfaces.PhysicalEndpoint;
+import core.interfaces.PhysicalNode;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
 import entity.core.metamodel.PackageMetadata;
@@ -32,7 +35,7 @@ import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
 
 /**
- * Provide mesicelaneous methods to manipulate the class hierarchy
+ * Provide misc methods to manipulate the class hierarchy
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class HierarchyUtils {
@@ -40,7 +43,7 @@ public class HierarchyUtils {
     /**
      * This method returns is a given class is sub class of another
      * @param child Class to be tested
-     * @param allegedParent Class suppossed to be the parent class
+     * @param allegedParent Class supposed to be the parent class
      * @return true if the given class is
      */
     public static boolean isSubclass (Class child, Class allegedParent){
@@ -48,6 +51,25 @@ public class HierarchyUtils {
         while (!myClass.equals(Object.class)){
             if (myClass.equals(allegedParent))
                 return true;
+            myClass = myClass.getSuperclass();
+        }
+        return false;
+    }
+    
+    /**
+     * Says if given class implements an interface
+     * @param toBeTested 
+     * @param implementedInterface the interface that toBeTested may be implementing
+     * @return toBeTested (or any of its superclasses) implements implementedInterface
+     */
+    public static boolean implementsInterface(Class toBeTested, Class implementedInterface){
+        Class myClass=toBeTested;
+        while (!myClass.equals(Object.class)){
+            Class[] interfaces = myClass.getInterfaces();
+            for (Class myInterface : interfaces){
+                if (myInterface.equals(implementedInterface))
+                    return true;
+            }
             myClass = myClass.getSuperclass();
         }
         return false;
@@ -119,6 +141,9 @@ public class HierarchyUtils {
                                              false,Modifier.isAbstract(entity.getJavaType().getModifiers()),
                                              entity.getJavaType().getAnnotation(Dummy.class)!=null,
                                              entity.getJavaType().getAnnotation(Administrative.class)!=null,
+                                             implementsInterface(entity.getJavaType(),PhysicalNode.class),
+                                             implementsInterface(entity.getJavaType(),PhysicalConnection.class),
+                                             implementsInterface(entity.getJavaType(),PhysicalEndpoint.class),
                                              null,atts,parentId
                                              );
 

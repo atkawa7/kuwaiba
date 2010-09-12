@@ -53,23 +53,55 @@ public class ClassMetadata implements Serializable {
     @JoinColumn(nullable=false,name="package_id")
     @ManyToOne//(cascade=CascadeType.PERSIST) We don't need cascade, since we're supposed to check
               //data integrity before performing a deletion
-    private PackageMetadata packageInfo; //This is the package where the class belongs to. It's useful to reassemble the full-qualified
-                                         //name in order to call Class.forName
+    /**
+     * This is the package where the class belongs to. It's useful to reassemble the full-qualified
+     * name in order to call Class.forName
+     */
+    private PackageMetadata packageInfo; 
     private String description;
+    /**
+     * Shows if this is a core class (the ones provided in the official release) or a custom one
+     */
     @Column(nullable=false)
-    private Boolean isCustom=false;       //Shows if this is a core class (the ones provided in the official release) or a custom one
+    private Boolean isCustom=false;
+    /**
+     * Indicates if a class can have instances by itself (base classes like GenericXXX or RootObject are used only for object orientation)
+     */
     @Column(nullable=false)
-    private Boolean isAbstract=false;     //Indicates if a class can have instances by itself (base classes like GenericXXX or RootObject are used only for object orientation)
-    private Boolean isPhysicallyConnectable=false; //Is this class implementing the PhysicallyConnectable interface
-    private Boolean isLogicallyConnectable=false; //Is this class implementing the LocallyConnectable interface
+    private Boolean isAbstract=false;
+    /**
+     * Indicates if the instance of this class is a physical active
+     */
     @Column(nullable=false)
-    private Boolean isAccountable=true;      //Indicates if the instance of this class is a physical active
+    private Boolean isAccountable=true;
+    /**
+     * Is this a dummy class as described in the Dummy annotation?
+     */
     @Column(nullable=false)
-    private Boolean isDummy=false;      //Is this a dummy class as described in the Dummy annotation?
+    private Boolean isDummy=false;
+    /**
+     * Is this an class used for representing objects not related to the inventory itself, but for holding auxiliar information (marked with the annotation Administrative)
+     */
     @Column(nullable=false)
-    private Boolean isAdministrative = false; //Is this an class used for representing objects not related to the inventory itself, but for holding auxiliar information (marked with the annotation Administrative)
+    private Boolean isAdministrative = false;
+    /**
+     * Indicates if the current class implements the interface PhysicalNode
+     */
+    @Column(nullable=false)
+    private Boolean isPhysicalNode = false;
+    /**
+     * Indicates if the current class implements the interface PhysicalConnection
+     */
+    @Column(nullable=false)
+    private Boolean isPhysicalConnection = false;
+    /**
+     * Indicates if the current class implements the interface PhysicalEndpoint
+     */
+    @Column(nullable=false)
+    private Boolean isPhysicalEndpoint = false;
     private byte[] smallIcon;
     private byte[] icon;
+    
     private Integer color;              //Color assigned to the instances when displayed
 
     /*
@@ -95,6 +127,7 @@ public class ClassMetadata implements Serializable {
 
     public ClassMetadata(String _name, PackageMetadata _myPackage, String _description,
             Boolean _isCustom, Boolean _isAbstract, Boolean _isDummy, Boolean _isAdministrative,
+            Boolean _isPhysicalNode, Boolean _isPhysicalConnection, Boolean _isPhysicalEndpoint,
             List<ClassMetadata> _children, List <AttributeMetadata> _attributes, Long _parent){
         this.name = _name;
         this.packageInfo = _myPackage;
@@ -103,6 +136,9 @@ public class ClassMetadata implements Serializable {
         this.isAbstract = _isAbstract;
         this.isDummy = _isDummy;
         this.isAdministrative =_isAdministrative;
+        this.isPhysicalNode = _isPhysicalNode;
+        this.isPhysicalConnection = _isPhysicalConnection;
+        this.isPhysicalEndpoint = _isPhysicalEndpoint;
         this.possibleChildren = _children;
         this.attributes = _attributes;
         this.parent = _parent;
@@ -254,19 +290,35 @@ public class ClassMetadata implements Serializable {
         this.isAdministrative = isAdministrative;
     }
 
-    public Boolean getIsLogicallyConnectable() {
-        return isLogicallyConnectable;
+    public Integer getColor() {
+        return color;
     }
 
-    public void setIsLogicallyConnectable(Boolean isLogicallyConnectable) {
-        this.isLogicallyConnectable = isLogicallyConnectable;
+    public void setColor(Integer color) {
+        this.color = color;
     }
 
-    public Boolean getIsPhysicallyConnectable() {
-        return isPhysicallyConnectable;
+    public Boolean getIsPhysicalConnection() {
+        return isPhysicalConnection;
     }
 
-    public void setIsPhysicallyConnectable(Boolean isPhysicallyConnectable) {
-        this.isPhysicallyConnectable = isPhysicallyConnectable;
+    public void setIsPhysicalConnection(Boolean isPhysicalConnection) {
+        this.isPhysicalConnection = isPhysicalConnection;
+    }
+
+    public Boolean getIsPhysicalEndpoint() {
+        return isPhysicalEndpoint;
+    }
+
+    public void setIsPhysicalEndpoint(Boolean isPhysicalEndpoint) {
+        this.isPhysicalEndpoint = isPhysicalEndpoint;
+    }
+
+    public Boolean getIsPhysicalNode() {
+        return isPhysicalNode;
+    }
+
+    public void setIsPhysicalNode(Boolean isPhysicalNode) {
+        this.isPhysicalNode = isPhysicalNode;
     }
 }

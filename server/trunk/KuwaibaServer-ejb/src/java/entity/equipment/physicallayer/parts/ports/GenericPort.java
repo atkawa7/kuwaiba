@@ -18,12 +18,14 @@ package entity.equipment.physicallayer.parts.ports;
 
 import core.interfaces.PhysicalConnection;
 import core.interfaces.PhysicalEndpoint;
+import entity.connections.physical.GenericPhysicalConnection;
 import entity.equipment.physicallayer.parts.GenericPart;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 
 /**
  * Represents a generic Port
@@ -32,30 +34,31 @@ import javax.persistence.Entity;
 @Entity
 public abstract class GenericPort extends GenericPart implements Serializable,PhysicalEndpoint {
 
-    protected List<PhysicalConnection> physicalConnections;
+    @OneToMany
+    protected List<GenericPhysicalConnection> physicalConnections;
 
     @Override
-    public void addPhysicalConnections(PhysicalConnection[] _connections) {
+    public void addPhysicalConnections(GenericPhysicalConnection[] _connections) {
         if (physicalConnections == null)
-            physicalConnections = new ArrayList<PhysicalConnection>();
+            physicalConnections = new ArrayList<GenericPhysicalConnection>();
         physicalConnections.addAll(Arrays.asList(_connections));
     }
 
     @Override
-    public List<PhysicalConnection> getPhysicalConnections() {
+    public List<GenericPhysicalConnection> getPhysicalConnections() {
         return physicalConnections;
     }
 
     @Override
-    public void removePhysicalConnections(PhysicalConnection[] connections) {
+    public void removePhysicalConnections(GenericPhysicalConnection[] connections) {
         for (PhysicalConnection pConnection: connections){
             if (pConnection.getEndpointA() != null){
                 if (pConnection.getEndpointA().equals(this)){
-                    pConnection.disconnectPointA();
+                    pConnection.disconnectEndpointA();
                     continue;
                 }
                 if (pConnection.getEndpointB().equals(this)){
-                    pConnection.disconnectPointB();
+                    pConnection.disconnectEndpointB();
                     continue;
                 }
             }

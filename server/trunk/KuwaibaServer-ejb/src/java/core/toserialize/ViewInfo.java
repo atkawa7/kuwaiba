@@ -26,23 +26,29 @@ import javax.xml.bind.annotation.XmlAccessorType;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class View {
+public class ViewInfo {
     private byte[] background;
     private byte[] structure;
     private String description;
+    /**
+     * What class this view is instance of
+     */
+    private String viewClass;
 
     /**
      * Required by the serializer. This empty view is returned when there's no a defaultview associated to the object
      */
-    public View(){}
+    public ViewInfo(){}
 
     /**
      * Builds a serialized version of the view using directly the entity
      * @param objectView The entity to be serialized
      */
-    public View(AbstractView objectView){
-        
+    public ViewInfo(AbstractView objectView){
+        this.description = objectView.getDescription();
+        this.viewClass = objectView.getClass().getName();
         this.background = objectView.getBackground();
+        this.structure = objectView.getViewStructure();
     }
 
     public byte[] getBackground() {
@@ -67,5 +73,13 @@ public class View {
 
     public void setStructure(byte[] structure) {
         this.structure = structure;
+    }
+
+    public String getViewClass() {
+        return viewClass;
+    }
+
+    public void setViewClass(String viewClass) {
+        this.viewClass = viewClass;
     }
 }

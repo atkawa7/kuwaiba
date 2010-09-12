@@ -15,11 +15,13 @@
  */
 package entity.views;
 
+import core.toserialize.ViewInfo;
 import entity.core.RootObject;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
+import util.HierarchyUtils;
 
 /**
  * Represents a generic object view
@@ -46,6 +48,23 @@ public abstract class AbstractView extends RootObject{
      * A short note on the view. This could evolve into sticky notes
      */
     protected String description;
+
+    public AbstractView() {
+    }
+
+    public AbstractView(ViewInfo serializedView) throws UnsupportedOperationException{
+        try{
+            Class viewClass = Class.forName(serializedView.getViewClass());
+            if(HierarchyUtils.isSubclass(viewClass, AbstractView.class)){
+                this.viewStructure = serializedView.getStructure();
+                this.background = serializedView.getBackground();
+                this.description = serializedView.getDescription();
+            }else throw new UnsupportedOperationException(serializedView.getViewClass());
+
+        }catch(ClassNotFoundException cnfe){
+            throw new UnsupportedOperationException(serializedView.getViewClass());
+        }
+    }
 
     public String getDescription() {
         return description;

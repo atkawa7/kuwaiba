@@ -28,4 +28,6 @@ public interface PhysicalContainer{
     public PhysicalNode getNodeA();
     public PhysicalNode getNodeB();
     public PhysicalContainerType getType();
+    public void connectNodeA(PhysicalNode nodeA);
+    public void connectNodeB(PhysicalNode nodeB);
 }

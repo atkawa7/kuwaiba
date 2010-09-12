@@ -16,18 +16,17 @@
 
 package core.interfaces;
 
+import entity.connections.physical.GenericPhysicalConnection;
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.Entity;
 
 
 /**
  * Classes implementing this interface can be endpoints to a physical connection
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-@Entity
 public interface PhysicalEndpoint extends Serializable{
-    public List<PhysicalConnection> getPhysicalConnections();
-    public void addPhysicalConnections(PhysicalConnection[] connections);
-    public void removePhysicalConnections(PhysicalConnection[] connections);
+    public List<GenericPhysicalConnection> getPhysicalConnections();
+    public void addPhysicalConnections(GenericPhysicalConnection[] connections);
+    public void removePhysicalConnections(GenericPhysicalConnection[] connections);
 }

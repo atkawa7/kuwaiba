@@ -26,6 +26,8 @@ public interface PhysicalConnection{
     public PhysicalEndpoint getEndpointA();
     public PhysicalEndpoint getEndpointB();
     public PhysicalLinkType getType();
-    public void disconnectPointA();
-    public void disconnectPointB();
+    public void connectEndpointA(PhysicalEndpoint endpointA);
+    public void connectEndpointB(PhysicalEndpoint endpointB);
+    public void disconnectEndpointA();
+    public void disconnectEndpointB();
 }
