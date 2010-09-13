@@ -65,7 +65,6 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         setName(NbBundle.getMessage(ViewRendererTopComponent.class, "CTL_ViewRendererTopComponent"));
         setToolTipText(NbBundle.getMessage(ViewRendererTopComponent.class, "HINT_ViewRendererTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
-
     }
 
     public final void initCustomComponents(){
@@ -100,6 +99,8 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         buttonGroupRightToolbar.add(btnElectricalLink);
         buttonGroupRightToolbar.add(btnOpticalLink);
         buttonGroupRightToolbar.add(btnWirelessLink);
+
+        btnSelect.setSelected(true);
     }
 
     /** This method is called from within the constructor to
@@ -135,6 +136,11 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         btnAddBackgroundImage.setFocusable(false);
         btnAddBackgroundImage.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnAddBackgroundImage.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnAddBackgroundImage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddBackgroundImageActionPerformed(evt);
+            }
+        });
         barMain.add(btnAddBackgroundImage);
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/save.png"))); // NOI18N
@@ -151,6 +157,11 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         btnSelect.setFocusable(false);
         btnSelect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSelect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSelect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSelectActionPerformed(evt);
+            }
+        });
         barMain.add(btnSelect);
 
         btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/connect.png"))); // NOI18N
@@ -159,6 +170,11 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         btnConnect.setFocusable(false);
         btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnConnect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnConnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConnectActionPerformed(evt);
+            }
+        });
         barMain.add(btnConnect);
 
         btnZoomIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/zoom-in.png"))); // NOI18N
@@ -167,6 +183,11 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         btnZoomIn.setFocusable(false);
         btnZoomIn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnZoomIn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnZoomIn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnZoomInActionPerformed(evt);
+            }
+        });
         barMain.add(btnZoomIn);
 
         btnZoomOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/zoom-out.png"))); // NOI18N
@@ -175,6 +196,11 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         btnZoomOut.setFocusable(false);
         btnZoomOut.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnZoomOut.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnZoomOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnZoomOutActionPerformed(evt);
+            }
+        });
         barMain.add(btnZoomOut);
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/refresh.png"))); // NOI18N
@@ -218,6 +244,28 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
 
         add(barRight, java.awt.BorderLayout.LINE_END);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
+        scene.setActiveTool(ViewScene.ACTION_SELECT);
+        buttonGroupRightToolbar.clearSelection();
+    }//GEN-LAST:event_btnSelectActionPerformed
+
+    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
+        scene.setActiveTool(ViewScene.ACTION_CONNECT);
+        btnElectricalLink.setSelected(true);
+    }//GEN-LAST:event_btnConnectActionPerformed
+
+    private void btnZoomInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomInActionPerformed
+        scene.zoomIn();
+    }//GEN-LAST:event_btnZoomInActionPerformed
+
+    private void btnZoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomOutActionPerformed
+        scene.zoomOut();
+    }//GEN-LAST:event_btnZoomOutActionPerformed
+
+    private void btnAddBackgroundImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddBackgroundImageActionPerformed
+        vrs.addBackground();
+    }//GEN-LAST:event_btnAddBackgroundImageActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;

@@ -16,11 +16,17 @@
 
 package org.inventory.views.viewrenderer;
 
-import org.inventory.core.services.interfaces.LocalObject;
+import java.awt.Image;
+import java.awt.Toolkit;
+import javax.swing.JFileChooser;
 import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.utils.Utils;
+import org.inventory.views.viewrenderer.scene.ObjectNodeWidget;
+import org.netbeans.api.visual.widget.ImageWidget;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
+import org.openide.util.Utilities;
 
 /**
  * Contains the business logic for the associated TopComponent
@@ -40,7 +46,7 @@ public class ViewRendererService implements LookupListener{
      * Should be called when the TopComponent is opened
      */
     public void initializeLookListener(){
-        selectedNodes = Lookup.getDefault().lookupResult(LocalObjectLight.class);
+        selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
         selectedNodes.addLookupListener(this);
     }
 
@@ -56,8 +62,31 @@ public class ViewRendererService implements LookupListener{
         Lookup.Result lookupResult = (Lookup.Result)ev.getSource();
         if(lookupResult.allInstances().size() == 1){
            LocalObjectLight myObject = (LocalObjectLight)lookupResult.allInstances().iterator().next();
-
+           ObjectNodeWidget widget = new ObjectNodeWidget(vrtc.getScene(), myObject);
+           vrtc.getScene().getNodesLayer().addChild(widget);
+           vrtc.getScene().validate();
+           vrtc.getScene().repaint();
         } else
-            vrtc.getNotifier().showStatusMessage("More than one object selected. No view available", true);
+            if(!lookupResult.allInstances().isEmpty())
+                vrtc.getNotifier().showStatusMessage("More than one object selected. No view available", false);
+    }
+
+    void addBackground() {
+        JFileChooser fChooser = new JFileChooser();
+        fChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fChooser.setFileFilter(Utils.getImageFileFilter());
+        if (fChooser.showOpenDialog(vrtc.getScene().getView()) == JFileChooser.APPROVE_OPTION){
+            Image myBackgroundImage = Toolkit.getDefaultToolkit().createImage(fChooser.getSelectedFile().getAbsolutePath());
+            if (myBackgroundImage == null)
+                 System.out.println("Image in "+fChooser.getSelectedFile().getAbsolutePath()+" couldn't be loaded");
+            else{
+                if (!vrtc.getScene().getBackgroundLayer().getChildren().isEmpty())
+                    vrtc.getScene().getBackgroundLayer().removeChildren(); //Clean the layer
+                ImageWidget background = new ImageWidget(vrtc.getScene(),myBackgroundImage);
+                background.bringToBack();
+                vrtc.getScene().getBackgroundLayer().addChild(background);
+                vrtc.getScene().validate();
+            }
+        }
     }
 }

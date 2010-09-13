@@ -30,6 +30,10 @@ import org.netbeans.api.visual.widget.Widget;
 public class ViewScene extends GraphScene<LocalObjectLight,String>{
 
     /**
+     * This layer is used to paint the auxiliary elements 
+     */
+    private LayerWidget interactionLayer;
+    /**
      * Used to hold the background (just an image right now)
      */
     private LayerWidget backgroundLayer;
@@ -41,8 +45,17 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
      * Used to hold the connections
      */
     private LayerWidget edgesLayer; //Edges
+    /**
+     * Constant to represent the selection tool
+     */
+    public final static String ACTION_SELECT = "selection";
+    /**
+     * Constant to represent the connection tool
+     */
+    public final static String ACTION_CONNECT = "connect";
 
     public ViewScene (){
+        interactionLayer = new LayerWidget(this);
         backgroundLayer = new LayerWidget(this);
         nodesLayer = new LayerWidget(this);
         edgesLayer = new LayerWidget(this);
@@ -50,7 +63,7 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
         addChild(nodesLayer);
         addChild(edgesLayer);
         getActions().addAction(ActionFactory.createZoomAction());
-        //setActiveTool(ToolsChildren.ACTION_SELECT);
+        setActiveTool(ACTION_SELECT);
     }
 
     @Override
@@ -75,6 +88,10 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
         System.out.println("attactargetanch");
     }
 
+    public LayerWidget getInteractionLayer() {
+        return interactionLayer;
+    }
+
     public LayerWidget getBackgroundLayer(){
         return backgroundLayer;
     }
@@ -85,5 +102,13 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
 
     public LayerWidget getEdgesLayer(){
         return edgesLayer;
+    }
+
+    public void zoomIn() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void zoomOut() {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }
