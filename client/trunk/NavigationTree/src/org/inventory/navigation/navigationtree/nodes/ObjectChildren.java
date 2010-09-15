@@ -64,7 +64,7 @@ public class ObjectChildren extends Array{
             CommunicationsStub com = CommunicationsStub.getInstance();
             LocalObjectLight node = ((ObjectNode)this.getNode()).getObject();
             List <LocalObjectLight> children = com.getObjectChildren(node.getOid(),
-                    com.getMetaForClass(node.getClassName(),false).getId());
+                    com.getMetaForClass(node.getClassName(),false).getOid());
             keys.addAll(children);
             initCollection();
             refresh();

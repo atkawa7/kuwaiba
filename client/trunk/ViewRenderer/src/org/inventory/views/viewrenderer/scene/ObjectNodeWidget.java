@@ -39,7 +39,7 @@ public class ObjectNodeWidget extends IconNodeWidget{
             myIcon = ImageUtilities.loadImage("org/inventory/views/viewrenderer/res/default_32.png");
         setImage(myIcon);
         createActions(ViewScene.ACTION_SELECT).addAction(ActionFactory.createAlignWithMoveAction(scene.getNodesLayer(), scene.getInteractionLayer(), null));
-        createActions(ViewScene.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(scene.getEdgesLayer(), new PhysicalConnectionProvider()));
+        createActions(ViewScene.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(scene.getEdgesLayer(), scene.getConnectionProvider()));
     }
 
     /**

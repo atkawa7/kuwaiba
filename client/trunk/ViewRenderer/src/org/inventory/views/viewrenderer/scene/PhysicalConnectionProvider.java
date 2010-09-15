@@ -16,6 +16,7 @@
 
 package org.inventory.views.viewrenderer.scene;
 
+import java.awt.Color;
 import java.awt.Point;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -31,6 +32,26 @@ import org.netbeans.api.visual.widget.general.IconNodeWidget;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class PhysicalConnectionProvider implements ConnectProvider{
+
+    public static Color COLOR_ELECTRICAL = new Color(255, 102, 0);
+    public static Color COLOR_OPTICAL = new Color(0, 128, 0);
+    public static Color COLOR_WIRELESS = new Color(102, 0, 128);
+
+    private Color currentLineColor;
+
+    /**
+     * Gets the current line color
+     * @return
+     */
+    public Color getCurrentLineColor(){
+        if (currentLineColor == null)
+            currentLineColor = new Color(0, 0, 0);
+        return currentLineColor;
+    }
+
+    public void setCurrentLineColor(Color newColor){
+        this.currentLineColor = newColor;
+    }
 
     @Override
     public boolean isSourceWidget(Widget sourceWidget) {
@@ -56,7 +77,10 @@ public class PhysicalConnectionProvider implements ConnectProvider{
     public void createConnection(Widget sourceWidget, Widget targetWidget) {
         ViewScene scene =(ViewScene)sourceWidget.getScene();
         ConnectionWidget line = new ConnectionWidget(scene);
+        
         line.setControlPointShape(PointShape.SQUARE_FILLED_SMALL);
+        line.setLineColor(getCurrentLineColor());
+        line.setEndPointShape(PointShape.SQUARE_FILLED_SMALL);
         line.setTargetAnchor(AnchorFactory.createRectangularAnchor(targetWidget));
         line.setSourceAnchor(AnchorFactory.createRectangularAnchor(sourceWidget));
         

@@ -75,7 +75,7 @@ public class LocalClassMetadataLightImpl
         return packageName;
     }
 
-    public Long getId() {
+    public Long getOid() {
         return id;
     }
 
@@ -97,7 +97,7 @@ public class LocalClassMetadataLightImpl
         if (obj == null)
            return false;
         if (obj.getClass().equals(this.getClass()))
-            return this.getId().equals(((LocalClassMetadataLightImpl)obj).getId());
+            return this.getOid().equals(((LocalClassMetadataLightImpl)obj).getOid());
         else
             return false;
    }

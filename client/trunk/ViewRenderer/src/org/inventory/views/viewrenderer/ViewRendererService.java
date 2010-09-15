@@ -18,8 +18,11 @@ package org.inventory.views.viewrenderer;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.util.List;
 import javax.swing.JFileChooser;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
 import org.inventory.views.viewrenderer.scene.ObjectNodeWidget;
 import org.netbeans.api.visual.widget.ImageWidget;
@@ -36,9 +39,11 @@ public class ViewRendererService implements LookupListener{
     
     private ViewRendererTopComponent vrtc;
     private Lookup.Result selectedNodes;
+    private CommunicationsStub com;
 
     public ViewRendererService(ViewRendererTopComponent _vrtc){
         this.vrtc = _vrtc;
+        this.com = CommunicationsStub.getInstance();
     }
 
     /**
@@ -58,27 +63,44 @@ public class ViewRendererService implements LookupListener{
         selectedNodes.removeLookupListener(this);
     }
 
+    /**
+     * Updates the view when a new object is selected
+     * @param ev
+     */
     public void resultChanged(LookupEvent ev) {
         Lookup.Result lookupResult = (Lookup.Result)ev.getSource();
-        if(lookupResult.allInstances().size() == 1){
+        if(
+           lookupResult.allInstances().size() == 1){
+           //We clean the scene...
+           vrtc.getScene().getNodesLayer().removeChildren();
+           vrtc.getScene().getEdgesLayer().removeChildren();
+           vrtc.getScene().getBackgroundLayer().removeChildren();
+           vrtc.getScene().getInteractionLayer().removeChildren();
+
            LocalObjectLight myObject = (LocalObjectLight)lookupResult.allInstances().iterator().next();
-           ObjectNodeWidget widget = new ObjectNodeWidget(vrtc.getScene(), myObject);
-           vrtc.getScene().getNodesLayer().addChild(widget);
-           vrtc.getScene().validate();
-           vrtc.getScene().repaint();
+           List<LocalObjectLight> myChildren = com.getObjectChildren(myObject.getOid(), com.getMetaForClass(myObject.getClassName(), false).getOid());
+           for (LocalObjectLight myChild : myChildren){
+               ObjectNodeWidget widget = new ObjectNodeWidget(vrtc.getScene(), myChild);
+               vrtc.getScene().getNodesLayer().addChild(widget);
+               vrtc.getScene().validate();
+               vrtc.getScene().repaint();
+           }
         } else
             if(!lookupResult.allInstances().isEmpty())
                 vrtc.getNotifier().showStatusMessage("More than one object selected. No view available", false);
     }
 
-    void addBackground() {
+    /**
+     * Adds a background (removing the old one if existing) to the view
+     */
+    public void addBackground() {
         JFileChooser fChooser = new JFileChooser();
         fChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fChooser.setFileFilter(Utils.getImageFileFilter());
         if (fChooser.showOpenDialog(vrtc.getScene().getView()) == JFileChooser.APPROVE_OPTION){
             Image myBackgroundImage = Toolkit.getDefaultToolkit().createImage(fChooser.getSelectedFile().getAbsolutePath());
             if (myBackgroundImage == null)
-                 System.out.println("Image in "+fChooser.getSelectedFile().getAbsolutePath()+" couldn't be loaded");
+                 vrtc.getNotifier().showSimplePopup("Image load", NotificationUtil.ERROR, "Error loading image. Please try another");
             else{
                 if (!vrtc.getScene().getBackgroundLayer().getChildren().isEmpty())
                     vrtc.getScene().getBackgroundLayer().removeChildren(); //Clean the layer
@@ -88,5 +110,12 @@ public class ViewRendererService implements LookupListener{
                 vrtc.getScene().validate();
             }
         }
+    }
+
+    /**
+     * Removes the current background
+     */
+    public void removeBackground() {
+        vrtc.getScene().getBackgroundLayer().removeChildren();
     }
 }

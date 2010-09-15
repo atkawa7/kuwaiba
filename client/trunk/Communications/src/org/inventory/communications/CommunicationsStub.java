@@ -148,7 +148,7 @@ public class CommunicationsStub {
             }
 
             List<RemoteObjectLight> result = port.getObjectChildren(cache.getRootId(),
-                                                                    cache.getMetaForClass("DummyRoot").getId());
+                                                                    cache.getMetaForClass("DummyRoot").getOid());
             if(result ==null){
                 error = port.getLastErr();
                 return null;

@@ -40,25 +40,30 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
     /**
      * Used to hold the nodes
      */
-    private LayerWidget nodesLayer; //Nodes
+    private LayerWidget nodesLayer;
     /**
      * Used to hold the connections
      */
-    private LayerWidget edgesLayer; //Edges
+    private LayerWidget edgesLayer;
+    /**
+     * The common connection provider
+     */
+    private PhysicalConnectionProvider myConnectionProvider;
     /**
      * Constant to represent the selection tool
      */
-    public final static String ACTION_SELECT = "selection";
+    public final static String ACTION_SELECT = "selection"; //NOI18
     /**
      * Constant to represent the connection tool
      */
-    public final static String ACTION_CONNECT = "connect";
+    public final static String ACTION_CONNECT = "connect"; //NOI18
 
     public ViewScene (){
         interactionLayer = new LayerWidget(this);
         backgroundLayer = new LayerWidget(this);
         nodesLayer = new LayerWidget(this);
         edgesLayer = new LayerWidget(this);
+        myConnectionProvider = new PhysicalConnectionProvider();
         addChild(backgroundLayer);
         addChild(nodesLayer);
         addChild(edgesLayer);
@@ -104,11 +109,25 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
         return edgesLayer;
     }
 
+    public PhysicalConnectionProvider getConnectionProvider(){
+        return this.myConnectionProvider;
+    }
+
     public void zoomIn() {
-        throw new UnsupportedOperationException("Not yet implemented");
+        synchronized (getSceneAnimator()) {
+            double zoom = getSceneAnimator().isAnimatingZoomFactor () ? getSceneAnimator().getTargetZoomFactor () : getZoomFactor ();
+            if(zoom < 4){
+                getSceneAnimator().animateZoomFactor (zoom+0.5);
+                validate();
+            }
+        }
     }
 
     public void zoomOut() {
-        throw new UnsupportedOperationException("Not yet implemented");
+        synchronized (getSceneAnimator()) {
+            double zoom = getSceneAnimator().isAnimatingZoomFactor () ? getSceneAnimator().getTargetZoomFactor () : getZoomFactor ();
+            if(zoom > 0)
+                getSceneAnimator().animateZoomFactor (zoom-0.5);
+        }
     }
 }

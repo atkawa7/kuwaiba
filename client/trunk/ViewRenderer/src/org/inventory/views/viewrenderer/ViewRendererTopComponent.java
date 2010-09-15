@@ -16,6 +16,7 @@
 package org.inventory.views.viewrenderer;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
@@ -24,6 +25,7 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
 import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.views.viewrenderer.scene.PhysicalConnectionProvider;
 import org.inventory.views.viewrenderer.scene.ViewScene;
 import org.openide.explorer.ExplorerManager;
 import org.openide.util.NbBundle;
@@ -92,8 +94,6 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         buttonGroupUpperToolbar = new ButtonGroup();
         buttonGroupUpperToolbar.add(btnSelect);
         buttonGroupUpperToolbar.add(btnConnect);
-        buttonGroupUpperToolbar.add(btnZoomIn);
-        buttonGroupUpperToolbar.add(btnZoomOut);
 
         buttonGroupRightToolbar = new ButtonGroup();
         buttonGroupRightToolbar.add(btnElectricalLink);
@@ -113,11 +113,12 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
 
         barMain = new javax.swing.JToolBar();
         btnAddBackgroundImage = new javax.swing.JButton();
+        btnRemoveBackground = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         btnSelect = new javax.swing.JToggleButton();
         btnConnect = new javax.swing.JToggleButton();
-        btnZoomIn = new javax.swing.JToggleButton();
-        btnZoomOut = new javax.swing.JToggleButton();
+        btnZoomIn = new javax.swing.JButton();
+        btnZoomOut = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
         cmbViewType = new javax.swing.JComboBox();
         pnlScrollMain = new javax.swing.JScrollPane();
@@ -142,6 +143,19 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
             }
         });
         barMain.add(btnAddBackgroundImage);
+
+        btnRemoveBackground.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/remove-background.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnRemoveBackground, org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnRemoveBackground.text")); // NOI18N
+        btnRemoveBackground.setToolTipText(org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnRemoveBackground.toolTipText")); // NOI18N
+        btnRemoveBackground.setFocusable(false);
+        btnRemoveBackground.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRemoveBackground.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRemoveBackground.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveBackgroundActionPerformed(evt);
+            }
+        });
+        barMain.add(btnRemoveBackground);
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/save.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.jButton1.text")); // NOI18N
@@ -179,7 +193,6 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
 
         btnZoomIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/zoom-in.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnZoomIn, org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnZoomIn.text")); // NOI18N
-        btnZoomIn.setToolTipText(org.openide.util.NbBundle.getMessage(ViewRendererTopComponent.class, "ViewRendererTopComponent.btnZoomIn.toolTipText")); // NOI18N
         btnZoomIn.setFocusable(false);
         btnZoomIn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnZoomIn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -211,6 +224,7 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         barMain.add(btnRefresh);
 
+        cmbViewType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Default View" }));
         barMain.add(cmbViewType);
 
         add(barMain, java.awt.BorderLayout.PAGE_START);
@@ -224,6 +238,11 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         btnElectricalLink.setFocusable(false);
         btnElectricalLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnElectricalLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnElectricalLink.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnElectricalLinkActionPerformed(evt);
+            }
+        });
         barRight.add(btnElectricalLink);
 
         btnOpticalLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/optical_link.png"))); // NOI18N
@@ -232,6 +251,11 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         btnOpticalLink.setFocusable(false);
         btnOpticalLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnOpticalLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnOpticalLink.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOpticalLinkActionPerformed(evt);
+            }
+        });
         barRight.add(btnOpticalLink);
 
         btnWirelessLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/viewrenderer/res/wireless_link.png"))); // NOI18N
@@ -240,6 +264,11 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         btnWirelessLink.setFocusable(false);
         btnWirelessLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnWirelessLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnWirelessLink.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnWirelessLinkActionPerformed(evt);
+            }
+        });
         barRight.add(btnWirelessLink);
 
         add(barRight, java.awt.BorderLayout.LINE_END);
@@ -255,6 +284,10 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         btnElectricalLink.setSelected(true);
     }//GEN-LAST:event_btnConnectActionPerformed
 
+    private void btnAddBackgroundImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddBackgroundImageActionPerformed
+        vrs.addBackground();
+    }//GEN-LAST:event_btnAddBackgroundImageActionPerformed
+
     private void btnZoomInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomInActionPerformed
         scene.zoomIn();
     }//GEN-LAST:event_btnZoomInActionPerformed
@@ -263,9 +296,21 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
         scene.zoomOut();
     }//GEN-LAST:event_btnZoomOutActionPerformed
 
-    private void btnAddBackgroundImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddBackgroundImageActionPerformed
-        vrs.addBackground();
-    }//GEN-LAST:event_btnAddBackgroundImageActionPerformed
+    private void btnRemoveBackgroundActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveBackgroundActionPerformed
+        vrs.removeBackground();
+    }//GEN-LAST:event_btnRemoveBackgroundActionPerformed
+
+    private void btnElectricalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnElectricalLinkActionPerformed
+        scene.getConnectionProvider().setCurrentLineColor(PhysicalConnectionProvider.COLOR_ELECTRICAL);
+    }//GEN-LAST:event_btnElectricalLinkActionPerformed
+
+    private void btnOpticalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpticalLinkActionPerformed
+        scene.getConnectionProvider().setCurrentLineColor(PhysicalConnectionProvider.COLOR_OPTICAL);
+    }//GEN-LAST:event_btnOpticalLinkActionPerformed
+
+    private void btnWirelessLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessLinkActionPerformed
+        scene.getConnectionProvider().setCurrentLineColor(PhysicalConnectionProvider.COLOR_WIRELESS);
+    }//GEN-LAST:event_btnWirelessLinkActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
@@ -275,10 +320,11 @@ public final class ViewRendererTopComponent extends TopComponent implements Prov
     private javax.swing.JToggleButton btnElectricalLink;
     private javax.swing.JToggleButton btnOpticalLink;
     private javax.swing.JButton btnRefresh;
+    private javax.swing.JButton btnRemoveBackground;
     private javax.swing.JToggleButton btnSelect;
     private javax.swing.JToggleButton btnWirelessLink;
-    private javax.swing.JToggleButton btnZoomIn;
-    private javax.swing.JToggleButton btnZoomOut;
+    private javax.swing.JButton btnZoomIn;
+    private javax.swing.JButton btnZoomOut;
     private javax.swing.JComboBox cmbViewType;
     private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane pnlScrollMain;
