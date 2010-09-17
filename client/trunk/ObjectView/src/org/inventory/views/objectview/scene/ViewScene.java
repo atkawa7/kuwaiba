@@ -14,7 +14,7 @@
  *
  */
 
-package org.inventory.views.viewrenderer.scene;
+package org.inventory.views.objectview.scene;
 
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.netbeans.api.visual.action.ActionFactory;
@@ -49,6 +49,10 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
      * The common connection provider
      */
     private PhysicalConnectionProvider myConnectionProvider;
+    /**
+     * Object owning the current view
+     */
+    private LocalObjectLight currentObject;
     /**
      * Constant to represent the selection tool
      */
@@ -107,6 +111,14 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
 
     public LayerWidget getEdgesLayer(){
         return edgesLayer;
+    }
+
+    public LocalObjectLight getCurrentObject() {
+        return currentObject;
+    }
+
+    public void setCurrentObject(LocalObjectLight currentObject) {
+        this.currentObject = currentObject;
     }
 
     public PhysicalConnectionProvider getConnectionProvider(){

@@ -14,7 +14,7 @@
  * 
  */
 
-package org.inventory.views.viewrenderer;
+package org.inventory.views.objectview;
 
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -24,7 +24,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
-import org.inventory.views.viewrenderer.scene.ObjectNodeWidget;
+import org.inventory.views.objectview.scene.ObjectNodeWidget;
 import org.netbeans.api.visual.widget.ImageWidget;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
@@ -35,13 +35,13 @@ import org.openide.util.Utilities;
  * Contains the business logic for the associated TopComponent
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ViewRendererService implements LookupListener{
+public class ObjectViewService implements LookupListener{
     
-    private ViewRendererTopComponent vrtc;
+    private ObjectViewTopComponent vrtc;
     private Lookup.Result selectedNodes;
     private CommunicationsStub com;
 
-    public ViewRendererService(ViewRendererTopComponent _vrtc){
+    public ObjectViewService(ObjectViewTopComponent _vrtc){
         this.vrtc = _vrtc;
         this.com = CommunicationsStub.getInstance();
     }
@@ -71,13 +71,20 @@ public class ViewRendererService implements LookupListener{
         Lookup.Result lookupResult = (Lookup.Result)ev.getSource();
         if(
            lookupResult.allInstances().size() == 1){
-           //We clean the scene...
+
+           //Don't update if the same object is selected
+           LocalObjectLight myObject = (LocalObjectLight)lookupResult.allInstances().iterator().next();
+           if (myObject.equals(vrtc.getScene().getCurrentObject()))
+                return;
+
+            //We clean the scene...
            vrtc.getScene().getNodesLayer().removeChildren();
            vrtc.getScene().getEdgesLayer().removeChildren();
            vrtc.getScene().getBackgroundLayer().removeChildren();
            vrtc.getScene().getInteractionLayer().removeChildren();
+           
+           vrtc.getScene().setCurrentObject(myObject);
 
-           LocalObjectLight myObject = (LocalObjectLight)lookupResult.allInstances().iterator().next();
            List<LocalObjectLight> myChildren = com.getObjectChildren(myObject.getOid(), com.getMetaForClass(myObject.getClassName(), false).getOid());
            for (LocalObjectLight myChild : myChildren){
                ObjectNodeWidget widget = new ObjectNodeWidget(vrtc.getScene(), myChild);

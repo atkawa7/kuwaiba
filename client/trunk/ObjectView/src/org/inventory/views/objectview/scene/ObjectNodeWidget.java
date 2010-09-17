@@ -14,7 +14,7 @@
  * 
  */
 
-package org.inventory.views.viewrenderer.scene;
+package org.inventory.views.objectview.scene;
 
 import java.awt.Image;
 import org.inventory.communications.CommunicationsStub;
@@ -36,7 +36,7 @@ public class ObjectNodeWidget extends IconNodeWidget{
         setLabel(_object.getDisplayname());
         Image myIcon = CommunicationsStub.getInstance().getMetaForClass(_object.getClassName(), false).getIcon();
         if(myIcon == null)
-            myIcon = ImageUtilities.loadImage("org/inventory/views/viewrenderer/res/default_32.png");
+            myIcon = ImageUtilities.loadImage("org/inventory/views/objectview/res/default_32.png");
         setImage(myIcon);
         createActions(ViewScene.ACTION_SELECT).addAction(ActionFactory.createAlignWithMoveAction(scene.getNodesLayer(), scene.getInteractionLayer(), null));
         createActions(ViewScene.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(scene.getEdgesLayer(), scene.getConnectionProvider()));
