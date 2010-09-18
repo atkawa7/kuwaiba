@@ -491,7 +491,22 @@ public class KuwaibaWebservice {
     /**
      * Physical Connections
      */
-
+    @WebMethod(operationName = "createPhysicalContainerConnection")
+    public RemoteObjectLight createPhysicalContainerConnection(@WebParam(name="sourceObjectOid")Long sourceObjectOid,
+            @WebParam(name="targetObjectOid")Long targetObjectOid,@WebParam(name="connectionClass")String connectionClass,
+            @WebParam(name="parentObjectOid")Long parentObjectOid){
+        try{
+            Class containerClass = Class.forName(connectionClass);
+            RemoteObjectLight res = sbr.createPhysicalContainerConnection(sourceObjectOid,targetObjectOid,containerClass,parentObjectOid);
+            if (res == null)
+                lastErr = sbr.getError();
+            return res;
+        }catch(ClassNotFoundException cnfe){
+            lastErr = cnfe.getClass().toString();
+            return null;
+        }
+        
+    }
 
 
     /**
