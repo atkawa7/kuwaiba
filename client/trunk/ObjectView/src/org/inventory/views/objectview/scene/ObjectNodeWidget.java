@@ -19,6 +19,7 @@ package org.inventory.views.objectview.scene;
 import java.awt.Image;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.communications.core.views.LocalNode;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.widget.general.IconNodeWidget;
 import org.openide.util.ImageUtilities;
@@ -30,11 +31,11 @@ import org.openide.util.ImageUtilities;
 public class ObjectNodeWidget extends IconNodeWidget{
     private LocalObjectLight object;
 
-    public ObjectNodeWidget(ViewScene scene, LocalObjectLight _object){
+    public ObjectNodeWidget(ViewScene scene, LocalNode node){
         super(scene);
-        this.object = _object;
-        setLabel(_object.getDisplayname());
-        Image myIcon = CommunicationsStub.getInstance().getMetaForClass(_object.getClassName(), false).getIcon();
+        this.object = node.getObject();
+        setLabel(node.getObject().getDisplayname());
+        Image myIcon = CommunicationsStub.getInstance().getMetaForClass(node.getObject().getClassName(), false).getIcon();
         if(myIcon == null)
             myIcon = ImageUtilities.loadImage("org/inventory/views/objectview/res/default_32.png");
         setImage(myIcon);

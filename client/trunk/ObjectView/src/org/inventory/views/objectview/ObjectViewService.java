@@ -21,10 +21,12 @@ import java.awt.Toolkit;
 import java.util.List;
 import javax.swing.JFileChooser;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.views.LocalObjectView;
+import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
-import org.inventory.views.objectview.scene.ObjectNodeWidget;
+import org.inventory.views.objectview.scene.ViewBuilder;
 import org.netbeans.api.visual.widget.ImageWidget;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
@@ -84,14 +86,16 @@ public class ObjectViewService implements LookupListener{
            vrtc.getScene().getInteractionLayer().removeChildren();
            
            vrtc.getScene().setCurrentObject(myObject);
+           LocalObjectView defaultView = com.getObjectDefaultView(myObject.getOid(),myObject.getPackageName()+"."+myObject.getClassName());
+           if(defaultView == null){
+               List<LocalObjectLight> myChildren = com.getObjectChildren(myObject.getOid(), com.getMetaForClass(myObject.getClassName(),false).getOid());
+               //TODO: Change for a ViewFactory
+               ViewBuilder.buildDefaultView(myChildren,vrtc.getScene());
+           }else
+               new ViewBuilder(defaultView, vrtc.getScene()).buildView();
 
-           List<LocalObjectLight> myChildren = com.getObjectChildren(myObject.getOid(), com.getMetaForClass(myObject.getClassName(), false).getOid());
-           for (LocalObjectLight myChild : myChildren){
-               ObjectNodeWidget widget = new ObjectNodeWidget(vrtc.getScene(), myChild);
-               vrtc.getScene().getNodesLayer().addChild(widget);
-               vrtc.getScene().validate();
-               vrtc.getScene().repaint();
-           }
+           vrtc.getScene().validate();
+           vrtc.getScene().repaint();
         } else
             if(!lookupResult.allInstances().isEmpty())
                 vrtc.getNotifier().showStatusMessage("More than one object selected. No view available", false);
@@ -124,5 +128,18 @@ public class ObjectViewService implements LookupListener{
      */
     public void removeBackground() {
         vrtc.getScene().getBackgroundLayer().removeChildren();
+    }
+
+    /**
+     * Saves the view to an XML representation at server side
+     */
+    void saveView() {
+        byte[] viewStructure = vrtc.getScene().getAsXML();
+        LocalObject lo = Lookup.getDefault().lookup(LocalObject.class);
+        lo.setOid(vrtc.getScene().getCurrentObject().getOid());
+        lo.setLocalObject("entity.views.DefaultView",
+                new String[]{"background","viewStructure"},
+                new Object[]{vrtc.getScene().getBackgroundImage(), viewStructure});
+        com.saveObject(lo);
     }
 }

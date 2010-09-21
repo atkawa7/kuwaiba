@@ -16,9 +16,15 @@
 
 package org.inventory.views.objectview.scene;
 
+import com.ociweb.xml.StartTagWAX;
+import com.ociweb.xml.WAX;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.utils.Utils;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.graph.GraphScene;
+import org.netbeans.api.visual.widget.ImageWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -141,5 +147,34 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
             if(zoom > 0)
                 getSceneAnimator().animateZoomFactor (zoom-0.5);
         }
+    }
+
+    /**
+     * Gets the background image
+     * @return
+     */
+    public byte[] getBackgroundImage(){
+        if (backgroundLayer.getChildren().isEmpty())
+            return null;
+        try {
+            return Utils.getByteArrayFromImage(((ImageWidget) backgroundLayer.getChildren().iterator().next()).getImage(), "png"); //NOI18n
+        } catch (IOException ex) {
+            return null;
+        }
+    }
+
+    public byte[] getAsXML() {
+        ByteArrayOutputStream bas = new ByteArrayOutputStream();
+        WAX xmlWriter = new WAX(bas);
+        StartTagWAX mainTag = xmlWriter.start("view");
+        //TODO: Send this to a config file
+        mainTag.start("type").text("entity.views.DefaultView").end();
+        StartTagWAX nodesTag = mainTag.start("nodes");
+        for (Widget nodeWidget : nodesLayer.getChildren())
+            nodesTag.start("node").attr("x", nodeWidget.getLocation().getX()).
+            attr("y", nodeWidget.getLocation().getY()).text(((ObjectNodeWidget)nodeWidget).getObject().getOid().toString()).end();
+        nodesTag.end();
+        mainTag.end().close();
+        return bas.toByteArray();
     }
 }
