@@ -36,6 +36,8 @@ public class LocalClassMetadataLightImpl
 
     protected Long id;
     protected Boolean isAbstract;
+    protected Boolean isPhysicalNode;
+    protected Boolean isPhysicalEndpoint;
     protected String className;
     protected String displayName;
     protected String description;
@@ -44,11 +46,13 @@ public class LocalClassMetadataLightImpl
 
     public LocalClassMetadataLightImpl(ClassInfo ci){
         this (ci.getId(),ci.getClassName(),ci.getPackage(),ci.getDisplayName(),
-                ci.getDescription(),ci.getSmallIcon());
+                ci.getDescription(),ci.getSmallIcon(), ci.isIsPhysicalNode(),ci.isIsPhysicalEndpoint());
     }
 
     public LocalClassMetadataLightImpl(ClassInfoLight cil){
         this.id = cil.getId();
+        this.isPhysicalNode = cil.isIsPhysicalNode();
+        this.isPhysicalEndpoint = cil.isIsPhysicalEndpoint();
         this.isAbstract = cil.isIsAbstract();
         this.className = cil.getClassName();
         this.packageName = cil.getPackage();
@@ -58,8 +62,11 @@ public class LocalClassMetadataLightImpl
     }
 
     public LocalClassMetadataLightImpl(Long _id, String _className, String _packageName,
-            String _displayName, String _description, byte[] _smallIcon){
+            String _displayName, String _description, byte[] _smallIcon,
+            Boolean _isPhysicalNode, Boolean _isPhysicalEndpoint){
         this.id=_id;
+        this.isPhysicalNode = _isPhysicalNode;
+        this.isPhysicalEndpoint = _isPhysicalEndpoint;
         this.className = _className;
         this.packageName = _packageName;
         this.displayName = _displayName;
@@ -87,6 +94,15 @@ public class LocalClassMetadataLightImpl
     public Boolean getIsAbstract() {
         return isAbstract;
     }
+
+    public Boolean isPhysicalNode() {
+        return isPhysicalNode;
+    }
+
+    public Boolean isPhysicalEndpoint() {
+        return isPhysicalEndpoint;
+    }
+
 
    /*
     * The equals method is overwritten in order to make the comparison based on the id, which is

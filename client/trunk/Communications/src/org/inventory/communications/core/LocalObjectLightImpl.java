@@ -17,7 +17,6 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
     private Long oid;
     protected String className;
     protected String packageName;
-    protected Boolean hasChildren;
     private String displayName;
 
     public LocalObjectLightImpl(){}
@@ -26,7 +25,6 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
         this.className = rol.getClassName();
         this.packageName = rol.getPackageName();
         this.oid = rol.getOid();
-        this.hasChildren = rol.isHasChildren();
         this.displayName = rol.getDisplayName();
     }
 
@@ -34,16 +32,8 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
         return this.displayName;
     }
 
-    public Boolean getHasChildren() {
-        return hasChildren;
-    }
-
     public String getClassName() {
         return className;
-    }
-
-    public Boolean hasChildren() {
-        return hasChildren;
     }
 
     public Long getOid() {

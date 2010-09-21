@@ -38,7 +38,7 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
 
     public LocalClassMetadataImpl(ClassInfo cm){
         super(cm.getId(),cm.getClassName(),cm.getPackage(),cm.getDisplayName(),
-                cm.getDescription(),cm.getSmallIcon());
+                cm.getDescription(),cm.getSmallIcon(),cm.isIsPhysicalNode(),cm.isIsPhysicalEndpoint());
         this.isAbstract = cm.isIsAbstract();
         this.icon = cm.getIcon()==null?null:Utils.getImageFromByteArray(cm.getIcon());
         this.attributeNames = cm.getAttributeNames().toArray(new String[0]);

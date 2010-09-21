@@ -38,7 +38,14 @@ import org.inventory.core.services.interfaces.LocalObjectListItem;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class Utils {
+    /**
+     * Convert a byte array into an image
+     * @param bytes The byte array
+     * @return
+     */
     public static Image getImageFromByteArray(byte[] bytes){
+        if (bytes == null)
+            return null;
         try {
             InputStream in = new ByteArrayInputStream(bytes);
             BufferedImage bf = ImageIO.read(in);
@@ -48,18 +55,32 @@ public class Utils {
         }
     }
 
-    public static byte[] getByteArrayFromImage(File f,String format){
-        try {
-            BufferedImage img = ImageIO.read(f);
-            ByteArrayOutputStream bas = new ByteArrayOutputStream();
-            ImageIO.write(img, format, bas);
-            return bas.toByteArray();
-        } catch (IOException ex) {
-            return null;
-        }
+    /**
+     * Converts an image from a
+     * @param f File object
+     * @param format format to be read
+     * @return The byte array
+     */
+    public static byte[] getByteArrayFromImageFile(File f,String format)throws IOException{
+        BufferedImage img = ImageIO.read(f);
+        ByteArrayOutputStream bas = new ByteArrayOutputStream();
+        ImageIO.write(img, format, bas);
+        return bas.toByteArray();
     }
 
-        /*
+    /**
+     * Converts a java.awt.Image into a byte array
+     * @return The byte array
+     */
+    public static byte[] getByteArrayFromImage(Image im, String format) throws IOException{
+        BufferedImage bu = new BufferedImage(im.getWidth(null), im.getHeight(null), BufferedImage.TYPE_INT_RGB);
+        bu.getGraphics().drawImage(im, 0, 0, null);
+        ByteArrayOutputStream bas = new ByteArrayOutputStream();
+        ImageIO.write(bu, format, bas);
+        return bas.toByteArray();
+    }
+
+    /**
      * Finds the real type for a given type provided as a string
      * Possible types:
      * -A string --> String

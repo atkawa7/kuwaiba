@@ -952,6 +952,18 @@
 <message name="getRackViewResponse">
 <part name="parameters" element="tns:getRackViewResponse" />
 </message>
+<message name="setObjectView">
+<part name="parameters" element="tns:setObjectView" />
+</message>
+<message name="setObjectViewResponse">
+<part name="parameters" element="tns:setObjectViewResponse" />
+</message>
+<message name="createPhysicalContainerConnection">
+<part name="parameters" element="tns:createPhysicalContainerConnection" />
+</message>
+<message name="createPhysicalContainerConnectionResponse">
+<part name="parameters" element="tns:createPhysicalContainerConnectionResponse" />
+</message>
 <message name="getUsers">
 <part name="parameters" element="tns:getUsers" />
 </message>
@@ -1140,6 +1152,14 @@
 <operation name="getRackView">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getRackViewRequest" message="tns:getRackView" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getRackViewResponse" message="tns:getRackViewResponse" />
+</operation>
+<operation name="setObjectView">
+<input wsam:Action="http://webservice/KuwaibaWebservice/setObjectViewRequest" message="tns:setObjectView" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/setObjectViewResponse" message="tns:setObjectViewResponse" />
+</operation>
+<operation name="createPhysicalContainerConnection">
+<input wsam:Action="http://webservice/KuwaibaWebservice/createPhysicalContainerConnectionRequest" message="tns:createPhysicalContainerConnection" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/createPhysicalContainerConnectionResponse" message="tns:createPhysicalContainerConnectionResponse" />
 </operation>
 <operation name="getUsers">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getUsersRequest" message="tns:getUsers" />
@@ -1498,6 +1518,24 @@
 </output>
 </operation>
 <operation name="getRackView">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="setObjectView">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="createPhysicalContainerConnection">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />

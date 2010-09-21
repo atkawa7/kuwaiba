@@ -28,6 +28,10 @@
 
 <xs:element name="createObjectResponse" type="tns:createObjectResponse" />
 
+<xs:element name="createPhysicalContainerConnection" type="tns:createPhysicalContainerConnection" />
+
+<xs:element name="createPhysicalContainerConnectionResponse" type="tns:createPhysicalContainerConnectionResponse" />
+
 <xs:element name="createSession" type="tns:createSession" />
 
 <xs:element name="createSessionResponse" type="tns:createSessionResponse" />
@@ -160,6 +164,10 @@
 
 <xs:element name="setObjectLockResponse" type="tns:setObjectLockResponse" />
 
+<xs:element name="setObjectView" type="tns:setObjectView" />
+
+<xs:element name="setObjectViewResponse" type="tns:setObjectViewResponse" />
+
 <xs:element name="setUserProperties" type="tns:setUserProperties" />
 
 <xs:element name="setUserPropertiesResponse" type="tns:setUserPropertiesResponse" />
@@ -176,25 +184,16 @@
 
 <xs:complexType name="getRackViewResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:view" minOccurs="0" />
+<xs:element name="return" type="tns:viewInfo" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="view">
+<xs:complexType name="viewInfo">
 <xs:sequence>
-<xs:element name="elements" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="background" type="xs:base64Binary" minOccurs="0" />
-<xs:element name="svgFile" type="xs:base64Binary" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="remoteObjectLight">
-<xs:sequence>
-<xs:element name="displayName" type="xs:string" minOccurs="0" />
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="className" type="xs:string" minOccurs="0" />
-<xs:element name="packageName" type="xs:string" minOccurs="0" />
-<xs:element name="hasChildren" type="xs:boolean" minOccurs="0" />
+<xs:element name="structure" type="xs:base64Binary" minOccurs="0" />
+<xs:element name="description" type="xs:string" minOccurs="0" />
+<xs:element name="viewClass" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -259,6 +258,20 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="setObjectView">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="objectClass" type="xs:string" minOccurs="0" />
+<xs:element name="view" type="tns:viewInfo" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setObjectViewResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="moveObjects">
 <xs:sequence>
 <xs:element name="targetOid" type="xs:long" minOccurs="0" />
@@ -302,8 +315,9 @@
 <xs:sequence>
 <xs:element name="id" type="xs:long" minOccurs="0" />
 <xs:element name="isAbstract" type="xs:boolean" minOccurs="0" />
-<xs:element name="isPhysicallyConnectable" type="xs:boolean" minOccurs="0" />
-<xs:element name="isLogicallyConnectable" type="xs:boolean" minOccurs="0" />
+<xs:element name="isPhysicalNode" type="xs:boolean" minOccurs="0" />
+<xs:element name="isPhysicalConnection" type="xs:boolean" minOccurs="0" />
+<xs:element name="isPhysicalEndpoint" type="xs:boolean" minOccurs="0" />
 <xs:element name="className" type="xs:string" minOccurs="0" />
 <xs:element name="_package" type="xs:string" minOccurs="0" />
 <xs:element name="displayName" type="xs:string" minOccurs="0" />
@@ -338,6 +352,15 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="remoteObjectLight">
+<xs:sequence>
+<xs:element name="displayName" type="xs:string" minOccurs="0" />
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="className" type="xs:string" minOccurs="0" />
+<xs:element name="packageName" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="addPossibleChildren">
 <xs:sequence>
 <xs:element name="parentClassId" type="xs:long" minOccurs="0" />
@@ -348,6 +371,21 @@
 <xs:complexType name="addPossibleChildrenResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createPhysicalContainerConnection">
+<xs:sequence>
+<xs:element name="sourceObjectOid" type="xs:long" minOccurs="0" />
+<xs:element name="targetObjectOid" type="xs:long" minOccurs="0" />
+<xs:element name="connectionClass" type="xs:string" minOccurs="0" />
+<xs:element name="parentObjectOid" type="xs:long" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createPhysicalContainerConnectionResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -454,13 +492,13 @@
 <xs:complexType name="getDefaultView">
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="className" type="xs:string" minOccurs="0" />
+<xs:element name="objectClass" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getDefaultViewResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:view" minOccurs="0" />
+<xs:element name="return" type="tns:viewInfo" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -797,7 +835,7 @@
 
 <xs:complexType name="getRoomViewResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:view" minOccurs="0" />
+<xs:element name="return" type="tns:viewInfo" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 </xs:schema>

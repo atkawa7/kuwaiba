@@ -14,7 +14,6 @@ public interface LocalObjectLight extends Transferable {
             new DataFlavor(LocalObjectLight.class,"Object/LocalObjectLight");
     public String getClassName();
     public Long getOid();
-    public Boolean hasChildren();
     public String getDisplayname();
     public String getPackageName();
 

@@ -30,6 +30,7 @@ import org.inventory.communications.core.LocalObjectLightImpl;
 import org.inventory.communications.core.LocalObjectListItemImpl;
 import org.inventory.communications.core.LocalUserGroupObjectImpl;
 import org.inventory.communications.core.LocalUserObjectImpl;
+import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObject;
@@ -48,6 +49,7 @@ import org.inventory.webservice.ObjectUpdate;
 import org.inventory.webservice.RemoteObjectLight;
 import org.inventory.webservice.UserGroupInfo;
 import org.inventory.webservice.UserInfo;
+import org.inventory.webservice.ViewInfo;
 
 /**
  * Singleton class that provides communication and caching services to the rest of the modules
@@ -794,5 +796,39 @@ public class CommunicationsStub {
         if (!res)
             this.error = port.getLastErr();
         return res;
+    }
+
+    /**
+     * Creates a
+     * @param sourceNode source object oid
+     * @param targetNode target object oid
+     * @param connectionClass container class
+     * @param parentOid container parent oid
+     * @return
+     */
+    public LocalObjectLight createPhysicalConnection(Long sourceNode, Long targetNode, String connectionClass, Long parentOid) {
+        return null;
+    }
+
+    public LocalObjectLight createPhysicalContainerConnection(Long sourceNode, Long targetNode, String connectionClass, Long parentNode) {
+        RemoteObjectLight rol = port.createPhysicalContainerConnection(sourceNode, targetNode, connectionClass, parentNode);
+        if (rol == null){
+            this.error = port.getLastErr();
+            return null;
+        }
+        return new LocalObjectLightImpl(rol);
+    }
+
+    /**
+     * Gets the default view for an object
+     * @param oid object oid
+     * @param string object class name, including the package
+     * @return a view or null, if not such default view is being set
+     */
+    public LocalObjectView getObjectDefaultView(Long oid, String objectClass) {
+        ViewInfo myView = port.getDefaultView(oid, objectClass);
+        if (myView == null)
+            return null;
+        return new LocalObjectView(myView);
     }
 }

@@ -50,7 +50,12 @@
             <public-packages>
                 <package>org.inventory.communications</package>
                 <package>org.inventory.communications.core</package>
+                <package>org.inventory.communications.core.views</package>
             </public-packages>
+            <class-path-extension>
+                <runtime-relative-path>ext/woodstox-core-lgpl-4.0.8.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/woodstox-core-lgpl-4.0.8.jar</binary-origin>
+            </class-path-extension>
         </data>
     </configuration>
 </project>
