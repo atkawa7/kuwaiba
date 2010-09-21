@@ -66,7 +66,7 @@ public interface BackendBeanRemote {
     public ViewInfo getDefaultView(Long oid, Class className);
     public ViewInfo getRoomView(Long oid);
     public ViewInfo getRackView(Long oid);
-    public Boolean createPhysicalContainer(Class containerClass, PhysicalNode nodeA, PhysicalNode nodeB);
+    public RemoteObjectLight createPhysicalContainerConnection(Long nodeA, Long nodeB, Class containerClass,Long parentNode);
     public Boolean createPhysicalConnection(Class connectionClass, PhysicalEndpoint endpointA, PhysicalEndpoint endpointB);
     public UserInfo[] getUsers();
     public UserGroupInfo[] getGroups();
@@ -81,4 +81,5 @@ public interface BackendBeanRemote {
     public UserGroupInfo createGroup();
     public Boolean deleteGroups(Long[] oids);
     public Boolean setObjectView(Long oid, Class myClass, ViewInfo view);
+    public RemoteObjectLight[] getChildrenOfClass(Long parentOid, Class myClass);
 }

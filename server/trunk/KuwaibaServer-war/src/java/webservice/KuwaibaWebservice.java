@@ -93,6 +93,27 @@ public class KuwaibaWebservice {
         return RemoteObjectLight.toArray(res);
     }
 
+    /**
+     *
+     * @param parentOid
+     * @param childrenClass
+     * @return
+     */
+    @WebMethod(operationName="getChildrenOfClass")
+    public RemoteObjectLight[] getChildrenOfClass(@WebParam(name="parentOid")Long parentOid,
+            @WebParam(name="childrenClass")String childrenClass){
+        try{
+            Class myClass = Class.forName(childrenClass);
+            RemoteObjectLight[] res = sbr.getChildrenOfClass(parentOid,myClass);
+            if(res == null)
+                this.lastErr = sbr.getError();
+            return res;
+        }catch (ClassNotFoundException cnfe){
+            this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+ childrenClass;
+            return null;
+        }
+    }
+
     @WebMethod(operationName = "getObjectInfo")
     public RemoteObject getObjectInfo(@WebParam(name = "objectclass") String className, @WebParam(name = "oid") Long oid){
         return sbr.getObjectInfo(className, oid);
@@ -490,6 +511,15 @@ public class KuwaibaWebservice {
 
     /**
      * Physical Connections
+     */
+
+    /**
+     * Creates a physical container connection (ditch, conduit, pipe, etc)
+     * @param sourceObjectOid
+     * @param targetObjectOid
+     * @param connectionClass
+     * @param parentObjectOid
+     * @return
      */
     @WebMethod(operationName = "createPhysicalContainerConnection")
     public RemoteObjectLight createPhysicalContainerConnection(@WebParam(name="sourceObjectOid")Long sourceObjectOid,

@@ -26,7 +26,6 @@ import javax.persistence.Id;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.Table;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Temporal;
@@ -39,7 +38,6 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS) //Default is SINGLE_TABLE, so all data will be stored in a single table
-@Table(name="RootObject") //How to map the table name
 public abstract class RootObject implements Serializable, Cloneable {
 
     public static final Long PARENT_ROOT = new Long(0); // This is the id for the single instance of the root object

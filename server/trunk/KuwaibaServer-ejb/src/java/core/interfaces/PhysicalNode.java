@@ -16,7 +16,7 @@
 
 package core.interfaces;
 
-import entity.connections.physical.containers.GenericPhysicalContainer;
+import entity.adapters.PhysicalContainerNodeAdapter;
 import java.io.Serializable;
 import java.util.List;
 
@@ -25,6 +25,7 @@ import java.util.List;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public interface PhysicalNode extends Serializable{
-    public List<GenericPhysicalContainer> getConnectedPhysicalContainers();
-    public void addPhysicalContainers(GenericPhysicalContainer[] containers);
+    public List<PhysicalContainerNodeAdapter> getConnectedPhysicalContainers();
+    public void addPhysicalContainers(PhysicalContainerNodeAdapter[] containers);
+    public Long getId();
 }

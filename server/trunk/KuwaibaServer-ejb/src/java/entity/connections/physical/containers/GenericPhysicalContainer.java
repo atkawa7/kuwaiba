@@ -19,9 +19,10 @@ package entity.connections.physical.containers;
 import core.interfaces.PhysicalContainer;
 import core.interfaces.PhysicalNode;
 import entity.connections.GenericConnection;
-import entity.core.ConfigurationItem;
 import entity.multiple.types.containers.PhysicalContainerType;
+import entity.adapters.PhysicalContainerNodeAdapter;
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 
@@ -32,36 +33,48 @@ import javax.persistence.OneToOne;
 @Entity
 public abstract class GenericPhysicalContainer extends GenericConnection implements Serializable,PhysicalContainer {
 
-    @OneToOne
-    protected ConfigurationItem nodeA;
-    @OneToOne
-    protected ConfigurationItem nodeB;
+    //If the adapters don't exist, create them
+    @OneToOne(cascade=CascadeType.PERSIST)
+    protected PhysicalContainerNodeAdapter nodeA;
+    @OneToOne(cascade=CascadeType.PERSIST)
+    protected PhysicalContainerNodeAdapter nodeB;
     @OneToOne
     protected PhysicalContainerType type;
 
-    @Override
-    public PhysicalNode getNodeA() {
-        return (PhysicalNode) nodeA;
+
+    public GenericPhysicalContainer(){
+        nodeA = new PhysicalContainerNodeAdapter();
+        nodeA.setbSide(this.getId());
+        nodeA.setbSideClass(this.getClass().getSimpleName());
+        nodeB = new PhysicalContainerNodeAdapter();
+        nodeB.setbSide(this.getId());
+        nodeB.setbSideClass(this.getClass().getSimpleName());
     }
 
     @Override
-    public PhysicalNode getNodeB() {
-        return (PhysicalNode) nodeB;
+    public PhysicalContainerNodeAdapter getNodeA() {
+        return nodeA;
     }
 
     @Override
-    public void connectNodeA(PhysicalNode nodeA) {
-        this.nodeA = (ConfigurationItem) nodeA;
+    public PhysicalContainerNodeAdapter getNodeB() {
+        return nodeA;
     }
 
     @Override
-    public void connectNodeB(PhysicalNode nodeB) {
-        this.nodeB = (ConfigurationItem) nodeB;
+    public void connectNodeA(PhysicalNode _nodeA) {
+        this.nodeA.setaSide(_nodeA.getId());
+        this.nodeA.setaSideClass(_nodeA.getClass().getSimpleName());
+    }
+
+    @Override
+    public void connectNodeB(PhysicalNode _nodeB) {
+        this.nodeB.setaSide(_nodeB.getId());
+        this.nodeB.setaSideClass(_nodeB.getClass().getSimpleName());
     }
 
     @Override
     public PhysicalContainerType getType() {
         return type;
     }
-
 }

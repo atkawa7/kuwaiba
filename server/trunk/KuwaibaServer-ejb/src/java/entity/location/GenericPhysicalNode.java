@@ -16,8 +16,9 @@
 
 package entity.location;
 
+import core.interfaces.PhysicalContainer;
 import core.interfaces.PhysicalNode;
-import entity.connections.physical.containers.GenericPhysicalContainer;
+import entity.adapters.PhysicalContainerNodeAdapter;
 import entity.core.RootObject;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,17 +37,18 @@ public class GenericPhysicalNode extends RootObject implements PhysicalNode{
      * This one has all pipes and ducts connected to the node
      */
     @ManyToMany
-    protected List<GenericPhysicalContainer> containers;
+    protected List<PhysicalContainerNodeAdapter> containers;
 
+    //The adpaters are supossed to be alreaded bounded (aSide and bSide set)
     @Override
-    public void addPhysicalContainers(GenericPhysicalContainer[] _containers) {
+    public void addPhysicalContainers(PhysicalContainerNodeAdapter[] _containers) {
         if (containers == null)
-            containers = new ArrayList<GenericPhysicalContainer>();
+            containers = new ArrayList<PhysicalContainerNodeAdapter>();
         containers.addAll(Arrays.asList(_containers));
     }
 
     @Override
-    public List<GenericPhysicalContainer> getConnectedPhysicalContainers() {
+    public List<PhysicalContainerNodeAdapter> getConnectedPhysicalContainers() {
         return containers;
     }
 }

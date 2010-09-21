@@ -16,6 +16,7 @@
 
 package core.interfaces;
 
+import entity.adapters.PhysicalContainerNodeAdapter;
 import entity.multiple.types.containers.PhysicalContainerType;
 
 
@@ -25,9 +26,10 @@ import entity.multiple.types.containers.PhysicalContainerType;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public interface PhysicalContainer{
-    public PhysicalNode getNodeA();
-    public PhysicalNode getNodeB();
+    public PhysicalContainerNodeAdapter getNodeA();
+    public PhysicalContainerNodeAdapter getNodeB();
     public PhysicalContainerType getType();
     public void connectNodeA(PhysicalNode nodeA);
     public void connectNodeB(PhysicalNode nodeB);
+    public void setParent(Long parent);
 }

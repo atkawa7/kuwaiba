@@ -31,6 +31,7 @@ import core.toserialize.RemoteObjectUpdate;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.ViewInfo;
+import entity.adapters.PhysicalContainerNodeAdapter;
 import entity.config.User;
 import entity.config.UserGroup;
 import entity.core.ConfigurationItem;
@@ -39,6 +40,7 @@ import entity.core.RootObject;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
 import entity.location.Country;
+import entity.location.GenericPhysicalNode;
 import entity.location.StateObject;
 import entity.multiple.GenericObjectList;
 import entity.views.AbstractView;
@@ -197,11 +199,30 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    /**
+     * Retrieves the children of an object whose class would be the one provided
+     * @param parentOid
+     * @param myClass
+     * @return
+     */
+    @Override
+    public RemoteObjectLight[] getChildrenOfClass(Long parentOid, Class myClass) {
+        if (em !=null){
+            Query query = em.createNamedQuery("SELECT * FROM "+myClass.getSimpleName()+" WHERE parent="+parentOid);
+            List<Object> res = query.getResultList();
+            return RemoteObjectLight.toArray(res);
+        }else{
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
+            return null;
+        }
+    }
+
     @Override
     public RemoteObject getObjectInfo(String objectClass,Long oid){
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETOBJECTINFO"));
         if (em != null){
-            String sentence = "SELECT x from "+objectClass+" x WHERE x.id="+String.valueOf(oid);
+            String sentence = "SELECT x from "+objectClass+" x WHERE x.id="+oid;
             Query query = em.createQuery(sentence);
             Object result = query.getSingleResult();
             if (result==null){
@@ -1016,25 +1037,39 @@ public class BackendBean implements BackendBeanRemote {
      * @return
      */
     @Override
-    public Boolean createPhysicalContainer(Class containerClass, PhysicalNode nodeA, PhysicalNode nodeB){
+    public RemoteObjectLight createPhysicalContainerConnection(Long sourceNode, Long targetNode, Class containerClass, Long parentNode){
         if (em != null){
+
+            PhysicalNode nodeA = (PhysicalNode)em.find(GenericPhysicalNode.class, sourceNode);
+            if (nodeA ==null){
+                return null;
+            }
+
+            PhysicalNode nodeB = (PhysicalNode)em.find(GenericPhysicalNode.class, targetNode);
+            if (nodeB ==null){
+                return null;
+            }
+
             try {
                 PhysicalContainer conn = (PhysicalContainer) containerClass.newInstance();
                 conn.connectNodeA(nodeA);
                 conn.connectNodeB(nodeB);
+                conn.setParent(parentNode);
+                nodeA.addPhysicalContainers(new PhysicalContainerNodeAdapter[]{conn.getNodeA()});
+                nodeB.addPhysicalContainers(new PhysicalContainerNodeAdapter[]{conn.getNodeB()});
                 em.persist(conn);
-                return true;
+                return new RemoteObjectLight(conn);
             } catch (InstantiationException ex) {
                 Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, ex.getClass());
-                return false;
+                return null;
             } catch (IllegalAccessException ex) {
                 Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, ex.getClass());
-                return false;
+                return null;
             }
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
-            return false;
+            return null;
         }
     }
 
