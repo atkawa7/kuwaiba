@@ -135,11 +135,9 @@ public class ObjectViewService implements LookupListener{
      */
     void saveView() {
         byte[] viewStructure = vrtc.getScene().getAsXML();
-        LocalObject lo = Lookup.getDefault().lookup(LocalObject.class);
-        lo.setOid(vrtc.getScene().getCurrentObject().getOid());
-        lo.setLocalObject("entity.views.DefaultView",
-                new String[]{"background","viewStructure"},
-                new Object[]{vrtc.getScene().getBackgroundImage(), viewStructure});
-        com.saveObject(lo);
+        if (!com.saveView(vrtc.getScene().getCurrentObject().getOid(),
+                 vrtc.getScene().getCurrentObject().getPackageName()+"."+vrtc.getScene().getCurrentObject().getClassName(), //NOI18n
+                "entity.views.DefaultView", vrtc.getScene().getBackgroundImage(), viewStructure))
+            vrtc.getNotifier().showSimplePopup("Object View", NotificationUtil.ERROR, com.getError());
     }
 }

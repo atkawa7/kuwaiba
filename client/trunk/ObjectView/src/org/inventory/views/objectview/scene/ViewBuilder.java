@@ -16,7 +16,6 @@
 
 package org.inventory.views.objectview.scene;
 
-import java.awt.Point;
 import java.util.List;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalNode;
@@ -70,10 +69,12 @@ public class ViewBuilder {
     public static void buildDefaultView(List<LocalObjectLight> myChildren, ViewScene scene) {
         int lastX = 0;
         for (LocalObjectLight child : myChildren){
-            LocalNode ln = new LocalNode(child, lastX + 10, 0);
+            //Puts an element after another
+            LocalNode ln = new LocalNode(child, lastX, 0);
             ObjectNodeWidget widget = new ObjectNodeWidget(scene, ln);
             widget.setPreferredLocation(ln.getPosition());
             scene.getNodesLayer().addChild(widget);
+            lastX +=100;
         }
     }
 

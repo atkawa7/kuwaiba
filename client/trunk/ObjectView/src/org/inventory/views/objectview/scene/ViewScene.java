@@ -168,11 +168,13 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
         WAX xmlWriter = new WAX(bas);
         StartTagWAX mainTag = xmlWriter.start("view");
         //TODO: Send this to a config file
-        mainTag.start("type").text("entity.views.DefaultView").end();
+        mainTag.start("class").text("DefaultView").end();
         StartTagWAX nodesTag = mainTag.start("nodes");
         for (Widget nodeWidget : nodesLayer.getChildren())
             nodesTag.start("node").attr("x", nodeWidget.getLocation().getX()).
-            attr("y", nodeWidget.getLocation().getY()).text(((ObjectNodeWidget)nodeWidget).getObject().getOid().toString()).end();
+            attr("y", nodeWidget.getLocation().getY()).
+            attr("class", ((ObjectNodeWidget)nodeWidget).getObject().getClassName()).
+            text(((ObjectNodeWidget)nodeWidget).getObject().getOid().toString()).end();
         nodesTag.end();
         mainTag.end().close();
         return bas.toByteArray();
