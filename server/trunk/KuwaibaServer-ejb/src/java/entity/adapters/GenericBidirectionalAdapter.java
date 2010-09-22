@@ -17,6 +17,7 @@ package entity.adapters;
 
 //import javax.persistence.MappedSuperclass;
 
+import core.annotations.Dummy;
 import javax.persistence.Entity;
 
 
@@ -29,6 +30,7 @@ import javax.persistence.Entity;
  */
 //@MappedSuperclass
 @Entity
+@Dummy
 public abstract class GenericBidirectionalAdapter extends GenericUnidirectionalAdapter{
     protected Long bSide;
     protected String bSideClass;

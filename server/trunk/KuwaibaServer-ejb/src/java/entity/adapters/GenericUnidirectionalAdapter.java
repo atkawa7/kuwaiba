@@ -17,6 +17,7 @@ package entity.adapters;
 
 //import javax.persistence.MappedSuperclass;
 
+import core.annotations.Dummy;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,11 +36,12 @@ import javax.persistence.InheritanceType;
  */
 //@MappedSuperclass
 @Entity
+@Dummy
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 public abstract class GenericUnidirectionalAdapter implements Serializable{
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private Long id;
+    protected Long id;
     protected Long aSide;
     protected String aSideClass;
 

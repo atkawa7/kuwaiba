@@ -17,7 +17,6 @@
 package entity.location;
 
 import entity.multiple.types.parts.TowerType;
-import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
@@ -27,7 +26,7 @@ import javax.persistence.ManyToOne;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Tower extends GenericLocation implements Serializable {
+public class Tower extends GenericLocation{
     protected Float height;
     protected Integer segments;
     protected Integer edges;

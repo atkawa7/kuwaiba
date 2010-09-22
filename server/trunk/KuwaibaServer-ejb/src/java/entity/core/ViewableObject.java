@@ -12,34 +12,30 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
-package entity.location;
 
-import entity.core.ViewableObject;
-import javax.persistence.Column;
+package entity.core;
+
+import entity.adapters.ObjectViewAdapter;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 
 /**
- *
+ * Subclasses of this class have views
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Country extends ViewableObject {
-    @Column(length=3)
-    protected String acronym;
+public abstract class ViewableObject extends RootObject {
+    @ManyToMany(cascade=CascadeType.PERSIST)//(mappedBy = "elements")
+    protected List<ObjectViewAdapter> views;
 
-    public String getAcronym() {
-        return acronym;
+        public List<ObjectViewAdapter> getViews() {
+        return views;
     }
 
-    public void setAcronym(String acronym) {
-        this.acronym = acronym;
+    public void setViews(List<ObjectViewAdapter> views) {
+        this.views = views;
     }
-    
-    @Override
-    public String toString() {
-        return "entity.location.Country[id=" + id + "]";
-    }
-
 }

@@ -16,8 +16,7 @@
  */
 package entity.location;
 
-import entity.core.RootObject;
-import java.io.Serializable;
+import entity.core.ViewableObject;
 import javax.persistence.Entity;
 
 /**
@@ -25,7 +24,7 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Continent extends RootObject implements Serializable {
+public class Continent extends ViewableObject {
     @Override
     public String toString() {
         return "entity.location.Continent[id=" + id + "]";

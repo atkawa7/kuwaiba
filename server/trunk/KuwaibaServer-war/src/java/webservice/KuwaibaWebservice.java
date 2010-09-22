@@ -32,8 +32,10 @@ import core.toserialize.ClassInfoLight;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.ViewInfo;
+import entity.core.AdministrativeItem;
 
 import entity.core.ConfigurationItem;
+import entity.core.ViewableObject;
 import java.util.List;
 import util.HierarchyUtils;
 
@@ -114,11 +116,33 @@ public class KuwaibaWebservice {
         }
     }
 
+    /**
+     * Gets the complete information about a given object (all its attributes)
+     * @param className object class. No need to use the package
+     * @param oid object oid
+     * @return a representation of the entity as a RemoteObject
+     */
     @WebMethod(operationName = "getObjectInfo")
     public RemoteObject getObjectInfo(@WebParam(name = "objectclass") String className, @WebParam(name = "oid") Long oid){
         return sbr.getObjectInfo(className, oid);
     }
 
+    /**
+     * Gets the basic information about a given object (oid, classname, )
+     * @param className object class. No need to use the package
+     * @param oid object oid
+     * @return a representation of the entity as a RemoteObjectLight
+     */
+    @WebMethod(operationName = "getObjectInfoLight")
+    public RemoteObjectLight getObjectInfoLight(@WebParam(name = "objectclass") String className, @WebParam(name = "oid") Long oid){
+        return sbr.getObjectInfoLight(className, oid);
+    }
+
+    /**
+     * Updates attributes of a given object
+     * @param update ObjectUpdate object representing only the changes to be committed
+     * @return Success or failure
+     */
     @WebMethod(operationName = "updateObject")
     public boolean updateObject(@WebParam(name = "objectupdate")ObjectUpdate update){
         boolean res;
@@ -438,7 +462,7 @@ public class KuwaibaWebservice {
         ViewInfo res=null;
         try{
             Class myClass = Class.forName(objectClass);
-            if (!HierarchyUtils.isSubclass(myClass, ConfigurationItem.class))
+            if (!HierarchyUtils.isSubclass(myClass, ViewableObject.class))
                 this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOVIEWS") + objectClass;
             else
                 res = sbr.getDefaultView(oid, myClass);
@@ -483,28 +507,27 @@ public class KuwaibaWebservice {
     /**
      * Sets a view for a given object
      * @param oid object's oid
-     * @param oid object's class (full name including the packages)
+     * @param oid object's class (full name including the package)
      * @param view object's serialized view
      * @return Success or failure
      */
-    @WebMethod(operationName = "setObjectView")
-    public Boolean setObjectView(@WebParam(name="oid")Long oid,
+    @WebMethod(operationName = "saveObjectView")
+    public Boolean saveObjectView(@WebParam(name="oid")Long oid,
             @WebParam(name="objectClass")String objectClass ,@WebParam(name="view") ViewInfo view){
-        Boolean res;
+        Boolean res = false;
         try{
             Class myClass = Class.forName(objectClass);
-            if (!HierarchyUtils.isSubclass(myClass, ConfigurationItem.class)){
+            if (!HierarchyUtils.isSubclass(myClass, ViewableObject.class)){
                 this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOVIEWS") + objectClass;
                 return false;
             }
-            else res = sbr.setObjectView(oid, myClass,view);
+            else res = sbr.saveObjectView(oid, myClass,view);
 
             if(!res)
                 this.lastErr = sbr.getError();
 
         }catch (ClassNotFoundException cnfe){
             this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+objectClass;
-            return null;
         }
         return res;
     }

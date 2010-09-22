@@ -17,7 +17,6 @@
 package entity.location;
 
 import entity.multiple.people.Employee;
-import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -29,7 +28,7 @@ import javax.persistence.ManyToMany;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Warehouse extends GenericLocation implements Serializable{
+public class Warehouse extends GenericLocation{
     @ManyToMany
     @JoinColumn(name="responsibles_id")
     protected List<Employee> resposibles;

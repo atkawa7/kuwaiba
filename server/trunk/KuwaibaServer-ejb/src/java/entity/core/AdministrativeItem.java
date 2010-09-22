@@ -17,16 +17,15 @@
 package entity.core;
 
 import core.annotations.Administrative;
-import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- * Thios class is the root of all non-operative elements
+ * This class is the root of all non-operative elements
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
 @Administrative
-public abstract class AdministrativeItem extends RootObject implements Serializable {
+public abstract class AdministrativeItem extends ViewableObject {
     
     @Override
     public String toString() {

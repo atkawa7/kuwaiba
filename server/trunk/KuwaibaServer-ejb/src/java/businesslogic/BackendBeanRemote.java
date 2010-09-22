@@ -16,10 +16,10 @@
 package businesslogic;
 
 import core.interfaces.PhysicalEndpoint;
-import core.interfaces.PhysicalNode;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfo;
 import core.toserialize.ClassInfoLight;
+import core.toserialize.RemoteObject;
 import core.toserialize.RemoteObjectLight;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
@@ -38,7 +38,8 @@ public interface BackendBeanRemote {
     public void createInitialDataset(); //just for testing purposes
 
     public Long getDummyRootId();
-    public core.toserialize.RemoteObject getObjectInfo(String objectClass, Long oid);
+    public RemoteObject getObjectInfo(String objectClass, Long oid);
+    public RemoteObjectLight getObjectInfoLight(String className, Long oid);
     public boolean updateObject(ObjectUpdate obj);
     public java.lang.String getError();
     public boolean setObjectLock(Long oid, String objectClass, Boolean value);
@@ -80,6 +81,6 @@ public interface BackendBeanRemote {
     public Boolean removeGroupsFromUser(Long[] groupsOids, Long userOid);
     public UserGroupInfo createGroup();
     public Boolean deleteGroups(Long[] oids);
-    public Boolean setObjectView(Long oid, Class myClass, ViewInfo view);
+    public Boolean saveObjectView(Long oid, Class myClass, ViewInfo view);
     public RemoteObjectLight[] getChildrenOfClass(Long parentOid, Class myClass);
 }

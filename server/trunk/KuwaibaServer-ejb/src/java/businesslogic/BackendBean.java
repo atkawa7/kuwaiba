@@ -31,12 +31,14 @@ import core.toserialize.RemoteObjectUpdate;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.ViewInfo;
+import entity.adapters.ObjectViewAdapter;
 import entity.adapters.PhysicalContainerNodeAdapter;
 import entity.config.User;
 import entity.config.UserGroup;
 import entity.core.ConfigurationItem;
 import entity.core.DummyRoot;
 import entity.core.RootObject;
+import entity.core.ViewableObject;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
 import entity.location.Country;
@@ -56,6 +58,7 @@ import java.util.logging.Logger;
 import javax.ejb.Stateful;
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -208,7 +211,7 @@ public class BackendBean implements BackendBeanRemote {
     @Override
     public RemoteObjectLight[] getChildrenOfClass(Long parentOid, Class myClass) {
         if (em !=null){
-            Query query = em.createNamedQuery("SELECT * FROM "+myClass.getSimpleName()+" WHERE parent="+parentOid);
+            Query query = em.createNamedQuery("SELECT x FROM "+myClass.getSimpleName()+" x WHERE x.parent="+parentOid);
             List<Object> res = query.getResultList();
             return RemoteObjectLight.toArray(res);
         }else{
@@ -218,6 +221,12 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    /**
+     * Implementation of the idem method exposed by the webservice
+     * @param objectClass
+     * @param oid
+     * @return
+     */
     @Override
     public RemoteObject getObjectInfo(String objectClass,Long oid){
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETOBJECTINFO"));
@@ -238,6 +247,35 @@ public class BackendBean implements BackendBeanRemote {
             return null;
         }
     }
+
+    /**
+     * Implementation of the idem method exposed by the webservice
+     * TODO: This implementation is inefficient and should be corrected
+     * @param objectClass
+     * @param oid
+     * @return
+     */
+    @Override
+    public RemoteObjectLight getObjectInfoLight(String className, Long oid){
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETOBJECTINFO"));
+        if (em != null){
+            String sentence = "SELECT x from "+className+" x WHERE x.id="+oid;
+            Query query = em.createQuery(sentence);
+            Object result = query.getSingleResult();
+            if (result==null){
+                this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT")+className+java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid.toString();
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
+                return null;
+            }else
+                return new RemoteObjectLight(result);
+        }
+        else {
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
+            return null;
+        }
+    }
+
 
     /**
      *
@@ -928,23 +966,25 @@ public class BackendBean implements BackendBeanRemote {
                 Logger.getLogger(BackendBean.class.getName()).log(Level.WARNING, this.error);
                 return null;
             }
-            if (obj instanceof ConfigurationItem){ //Check if the object support view
-                List<AbstractView> views = ((ConfigurationItem)obj).getViews();
-                if (views == null)
-                    return new ViewInfo();
-                for (AbstractView view : views){
-                    if (view instanceof DefaultView)
-                        return new ViewInfo(view);
+            List<ObjectViewAdapter> viewAdapters = ((ViewableObject)obj).getViews();
+            if (viewAdapters.isEmpty())
+                return null;
+
+            for (ObjectViewAdapter myViewAdapter : viewAdapters){
+                try{
+                    AbstractView myView = (AbstractView)em.createQuery("SELECT x FROM "+myViewAdapter.getaSideClass()+" x WHERE x.id="+myViewAdapter.getaSide()).getSingleResult();
+                    if (myView instanceof DefaultView)
+                        return new ViewInfo(myView);
+                }catch (NoResultException nre){
                 }
             }
-            else{}
 
-            return new ViewInfo();
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
             return null;
         }
+        return null;
     }
 
     @Override
@@ -958,7 +998,7 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     @Override
-    public Boolean setObjectView(Long oid, Class myClass, ViewInfo view){
+    public Boolean saveObjectView(Long oid, Class myClass, ViewInfo view){
         if (em != null){
             Object obj = em.find(myClass, oid);
             if (obj == null){
@@ -969,18 +1009,28 @@ public class BackendBean implements BackendBeanRemote {
                 Logger.getLogger(BackendBean.class.getName()).log(Level.WARNING, this.error);
                 return false;
             }
-            List<AbstractView> views = ((ConfigurationItem)obj).getViews();
-            if (views != null){
-                for (AbstractView myView : views){
+            List<ObjectViewAdapter> viewAdapters = ((ViewableObject)obj).getViews();
+            if (!viewAdapters.isEmpty()){
+                for (ObjectViewAdapter myViewAdapter : viewAdapters){
                     //TODO: Only change the fields that have been updated
-                    if(myView.getClass().getName().equals(view.getViewClass())) //If there's one already, replace it
+                    try{
+                        AbstractView myView = (AbstractView)em.createQuery("SELECT x FROM "+myViewAdapter.getaSideClass()+" x WHERE x.id="+myViewAdapter.getaSide()).getSingleResult();
+                        if(myView.getClass().getName().equals(view.getViewClass())) //If there's one already, replace it
                         em.remove(myView);
+                        em.remove(myViewAdapter);
+                    }catch (NoResultException nre){
+                    }
                 }            
-            }else ((ConfigurationItem)obj).setViews(new ArrayList<AbstractView>());
+            }else 
+                ((ViewableObject)obj).setViews(new ArrayList<ObjectViewAdapter>());
+
             try{
-                AbstractView newView = new AbstractView(view) {};
+                DefaultView newView = new DefaultView(view);
                 em.persist(newView);
-                ((ConfigurationItem)obj).getViews().add(newView);
+                ObjectViewAdapter newViewAdapter = new ObjectViewAdapter();
+                newViewAdapter.setaSide(newView.getId());
+                newViewAdapter.setaSideClass(newView.getClass().getSimpleName());
+                ((ViewableObject)obj).getViews().add(newViewAdapter);
                 em.merge(obj);
                 return true;
             }catch(UnsupportedOperationException uso){

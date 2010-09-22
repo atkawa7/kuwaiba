@@ -12,34 +12,23 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
-package entity.location;
 
-import entity.core.ViewableObject;
-import javax.persistence.Column;
+package entity.adapters;
+
+import core.annotations.Dummy;
 import javax.persistence.Entity;
 
 /**
- *
+ * Using this adapter, the subclasses of ViewableObject can support different kinds of views
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Country extends ViewableObject {
-    @Column(length=3)
-    protected String acronym;
+@Dummy
+public class ObjectViewAdapter extends GenericUnidirectionalAdapter{
 
-    public String getAcronym() {
-        return acronym;
-    }
-
-    public void setAcronym(String acronym) {
-        this.acronym = acronym;
-    }
-    
-    @Override
-    public String toString() {
-        return "entity.location.Country[id=" + id + "]";
+    public ObjectViewAdapter() {
+        this.id = new Long(500);
     }
 
 }

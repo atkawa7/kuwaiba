@@ -19,11 +19,8 @@ package entity.core;
 import entity.multiple.companies.Vendor;
 import entity.multiple.misc.EnvironmentalCondition;
 import entity.multiple.states.OperationalState;
-import entity.views.AbstractView;
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 
@@ -35,11 +32,8 @@ import javax.persistence.ManyToOne;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class ConfigurationItem extends RootObject implements Serializable  {
+public abstract class ConfigurationItem extends ViewableObject  {
 
-    @ManyToMany//(mappedBy = "elements")
-    protected List<AbstractView> views;
-   
     protected String serialNumber;
     @ManyToOne
     protected Vendor vendor;
@@ -78,14 +72,6 @@ public abstract class ConfigurationItem extends RootObject implements Serializab
 
     public void setState(OperationalState state) {
         this.state = state;
-    }
-
-    public List<AbstractView> getViews() {
-        return views;
-    }
-
-    public void setViews(List<AbstractView> views) {
-        this.views = views;
     }
 
     @Override

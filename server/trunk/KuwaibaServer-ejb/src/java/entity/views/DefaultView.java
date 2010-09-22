@@ -16,6 +16,7 @@
 
 package entity.views;
 
+import core.toserialize.ViewInfo;
 import javax.persistence.Entity;
 
 /**
@@ -24,5 +25,12 @@ import javax.persistence.Entity;
  */
 @Entity
 public class DefaultView extends AbstractView{
+
+    public DefaultView() {
+    }
+
+    public DefaultView(ViewInfo view) {
+        super(view);
+    }
 
 }

@@ -16,10 +16,9 @@
 
 package entity.location;
 
-import core.interfaces.PhysicalContainer;
 import core.interfaces.PhysicalNode;
 import entity.adapters.PhysicalContainerNodeAdapter;
-import entity.core.RootObject;
+import entity.core.AdministrativeItem;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +30,7 @@ import javax.persistence.ManyToMany;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class GenericPhysicalNode extends RootObject implements PhysicalNode{
+public class GenericPhysicalNode extends AdministrativeItem implements PhysicalNode{
 
      /**
      * This one has all pipes and ducts connected to the node

@@ -16,8 +16,7 @@
  */
 package entity.location;
 
-import entity.core.RootObject;
-import java.io.Serializable;
+import entity.core.ViewableObject;
 import javax.persistence.Entity;
 
 /**
@@ -26,7 +25,7 @@ import javax.persistence.Entity;
  */
 @Entity
 //El nombre de clase State podía tener problemas, al parecer
-public class StateObject extends RootObject implements Serializable {
+public class StateObject extends ViewableObject {
 
     @Override
     public String toString() {
