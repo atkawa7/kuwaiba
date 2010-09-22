@@ -69,16 +69,29 @@ public class Utils {
     }
 
     /**
-     * Converts a java.awt.Image into a byte array
-     * @return The byte array
-     */
+    *  Converts a java.awt.Image into a byte array
+    *  @param im Image to be converted
+    *  @param format format used to save ("png","jpg", etc)
+    *  @return An byte array o null if the image passed is null
+    *  @throws IOException If it's not possible to create an image using the given format
+    **/
     public static byte[] getByteArrayFromImage(Image im, String format) throws IOException{
+
+        if (im == null)
+            return null;
+
+        //PNG by default
+        String myFormat = format ==null?"png":format;
+
         BufferedImage bu = new BufferedImage(im.getWidth(null), im.getHeight(null), BufferedImage.TYPE_INT_RGB);
         bu.getGraphics().drawImage(im, 0, 0, null);
         ByteArrayOutputStream bas = new ByteArrayOutputStream();
-        ImageIO.write(bu, format, bas);
+        ImageIO.write(bu, myFormat, bas);
+
+        //Do we need bu.getGraphics().dispose()?
         return bas.toByteArray();
     }
+
 
     /**
      * Finds the real type for a given type provided as a string

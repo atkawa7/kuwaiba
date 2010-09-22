@@ -3,6 +3,7 @@ package org.inventory.communications.core;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.webservice.RemoteObjectLight;
 
@@ -54,6 +55,8 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
 
    @Override
    public boolean equals(Object obj){
+       if(obj == null)
+           return false;
         if (obj.getClass().equals(this.getClass()))
             return (this.getOid() == ((LocalObjectLightImpl)obj).getOid());
         else

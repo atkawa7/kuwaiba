@@ -127,7 +127,7 @@ public class ObjectNode extends AbstractNode{
 
         LocalClassMetadata meta = com.getMetaForClass(object.getClassName(),false);
 
-        LocalObject lo = com.getObjectInfo(object.getClassName(), object.getOid(), meta);
+        LocalObject lo = com.getObjectInfo(object.getClassName(), object.getOid());
 
         int i = 0;
         for(LocalAttributeMetadata lam:meta.getAttributes()){

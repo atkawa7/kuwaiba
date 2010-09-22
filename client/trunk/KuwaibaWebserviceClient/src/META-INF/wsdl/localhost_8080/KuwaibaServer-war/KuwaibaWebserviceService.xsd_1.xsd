@@ -48,6 +48,10 @@
 
 <xs:element name="deleteUsersResponse" type="tns:deleteUsersResponse" />
 
+<xs:element name="getChildrenOfClass" type="tns:getChildrenOfClass" />
+
+<xs:element name="getChildrenOfClassResponse" type="tns:getChildrenOfClassResponse" />
+
 <xs:element name="getDefaultView" type="tns:getDefaultView" />
 
 <xs:element name="getDefaultViewResponse" type="tns:getDefaultViewResponse" />
@@ -89,6 +93,10 @@
 <xs:element name="getObjectChildrenResponse" type="tns:getObjectChildrenResponse" />
 
 <xs:element name="getObjectInfo" type="tns:getObjectInfo" />
+
+<xs:element name="getObjectInfoLight" type="tns:getObjectInfoLight" />
+
+<xs:element name="getObjectInfoLightResponse" type="tns:getObjectInfoLightResponse" />
 
 <xs:element name="getObjectInfoResponse" type="tns:getObjectInfoResponse" />
 
@@ -140,6 +148,10 @@
 
 <xs:element name="removeUsersFromGroupResponse" type="tns:removeUsersFromGroupResponse" />
 
+<xs:element name="saveObjectView" type="tns:saveObjectView" />
+
+<xs:element name="saveObjectViewResponse" type="tns:saveObjectViewResponse" />
+
 <xs:element name="searchForObjects" type="tns:searchForObjects" />
 
 <xs:element name="searchForObjectsResponse" type="tns:searchForObjectsResponse" />
@@ -164,10 +176,6 @@
 
 <xs:element name="setObjectLockResponse" type="tns:setObjectLockResponse" />
 
-<xs:element name="setObjectView" type="tns:setObjectView" />
-
-<xs:element name="setObjectViewResponse" type="tns:setObjectViewResponse" />
-
 <xs:element name="setUserProperties" type="tns:setUserProperties" />
 
 <xs:element name="setUserPropertiesResponse" type="tns:setUserPropertiesResponse" />
@@ -175,6 +183,28 @@
 <xs:element name="updateObject" type="tns:updateObject" />
 
 <xs:element name="updateObjectResponse" type="tns:updateObjectResponse" />
+
+<xs:complexType name="getChildrenOfClass">
+<xs:sequence>
+<xs:element name="parentOid" type="xs:long" minOccurs="0" />
+<xs:element name="childrenClass" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getChildrenOfClassResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteObjectLight">
+<xs:sequence>
+<xs:element name="displayName" type="xs:string" minOccurs="0" />
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="className" type="xs:string" minOccurs="0" />
+<xs:element name="packageName" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
 
 <xs:complexType name="getRackView">
 <xs:sequence>
@@ -202,16 +232,6 @@
 </xs:complexType>
 
 <xs:complexType name="closeSessionResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getServerStatus">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getServerStatusResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" />
 </xs:sequence>
@@ -258,17 +278,13 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="setObjectView">
-<xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="objectClass" type="xs:string" minOccurs="0" />
-<xs:element name="view" type="tns:viewInfo" minOccurs="0" />
-</xs:sequence>
+<xs:complexType name="getServerStatus">
+<xs:sequence />
 </xs:complexType>
 
-<xs:complexType name="setObjectViewResponse">
+<xs:complexType name="getServerStatusResponse">
 <xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
+<xs:element name="return" type="xs:boolean" />
 </xs:sequence>
 </xs:complexType>
 
@@ -349,15 +365,6 @@
 <xs:complexType name="copyObjectsResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="remoteObjectLight">
-<xs:sequence>
-<xs:element name="displayName" type="xs:string" minOccurs="0" />
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="className" type="xs:string" minOccurs="0" />
-<xs:element name="packageName" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -562,6 +569,20 @@
 </xs:complexType>
 
 <xs:complexType name="setGroupPropertiesResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="saveObjectView">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="objectClass" type="xs:string" minOccurs="0" />
+<xs:element name="view" type="tns:viewInfo" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="saveObjectViewResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
@@ -793,6 +814,19 @@
 <xs:complexType name="setUserPropertiesResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getObjectInfoLight">
+<xs:sequence>
+<xs:element name="objectclass" type="xs:string" minOccurs="0" />
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getObjectInfoLightResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 

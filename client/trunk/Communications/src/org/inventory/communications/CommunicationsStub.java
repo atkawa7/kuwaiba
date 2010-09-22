@@ -15,6 +15,7 @@
  */
 package org.inventory.communications;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
 import org.inventory.core.services.interfaces.LocalUserGroupObject;
 import org.inventory.core.services.interfaces.LocalUserObject;
+import org.inventory.core.services.utils.Utils;
 import org.inventory.objectcache.Cache;
 import org.inventory.webservice.ClassInfo;
 import org.inventory.webservice.ClassInfoLight;
@@ -50,6 +52,7 @@ import org.inventory.webservice.RemoteObjectLight;
 import org.inventory.webservice.UserGroupInfo;
 import org.inventory.webservice.UserInfo;
 import org.inventory.webservice.ViewInfo;
+import org.openide.util.Exceptions;
 
 /**
  * Singleton class that provides communication and caching services to the rest of the modules
@@ -229,12 +232,26 @@ public class CommunicationsStub {
      * Retrieves the whole object info
      * @param objectClass object class
      * @param oid object id
-     * @param lcmd metadata associated. Useful to map the response. Mmm, this should be corrected
      * @return The local representation of the object
      */
-    public LocalObject getObjectInfo(String objectClass, Long oid, LocalClassMetadata lcmd){
-
+    public LocalObject getObjectInfo(String objectClass, Long oid){
+        LocalClassMetadata lcmd = getMetaForClass(objectClass, false);
         LocalObjectImpl res = new LocalObjectImpl(port.getObjectInfo(objectClass, oid),lcmd);
+        if (res == null){
+            this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_OBJECT");
+        }
+        return res;
+    }
+
+    /**
+     * Retrieves the basic object info
+     * @param objectClass object class
+     * @param oid object id
+     * @return The local representation of the object
+     */
+    public LocalObjectLight getObjectInfoLight(String objectClass, Long oid){
+        LocalClassMetadata lcmd = getMetaForClass(objectClass, false);
+        LocalObjectLightImpl res = new LocalObjectLightImpl(port.getObjectInfoLight(objectClass, oid));
         if (res == null){
             this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_OBJECT");
         }
@@ -820,6 +837,10 @@ public class CommunicationsStub {
     }
 
     /**
+     * Views
+     */
+
+    /**
      * Gets the default view for an object
      * @param oid object oid
      * @param string object class name, including the package
@@ -830,5 +851,17 @@ public class CommunicationsStub {
         if (myView == null)
             return null;
         return new LocalObjectView(myView);
+    }
+
+    public boolean saveView(Long oid, String objectClass, String viewClass, byte[] background, byte[] viewStructure){
+        ViewInfo remoteView = new ViewInfo();
+        remoteView.setBackground(background);
+        remoteView.setStructure(viewStructure);
+        remoteView.setViewClass(viewClass);
+
+        boolean res = port.saveObjectView(oid, objectClass, remoteView);
+        if (!res)
+            this.error = port.getLastErr();
+        return res;
     }
 }

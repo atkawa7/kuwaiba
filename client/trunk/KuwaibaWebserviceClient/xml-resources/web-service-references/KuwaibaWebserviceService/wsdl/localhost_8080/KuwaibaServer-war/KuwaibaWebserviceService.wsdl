@@ -772,23 +772,11 @@
 <message name="getMetadataResponse">
 <part name="parameters" element="tns:getMetadataResponse" />
 </message>
-<message name="getGroups">
-<part name="parameters" element="tns:getGroups" />
-</message>
-<message name="getGroupsResponse">
-<part name="parameters" element="tns:getGroupsResponse" />
-</message>
 <message name="createObject">
 <part name="parameters" element="tns:createObject" />
 </message>
 <message name="createObjectResponse">
 <part name="parameters" element="tns:createObjectResponse" />
-</message>
-<message name="copyObjects">
-<part name="parameters" element="tns:copyObjects" />
-</message>
-<message name="copyObjectsResponse">
-<part name="parameters" element="tns:copyObjectsResponse" />
 </message>
 <message name="getServerStatus">
 <part name="parameters" element="tns:getServerStatus" />
@@ -814,11 +802,23 @@
 <message name="getObjectChildrenResponse">
 <part name="parameters" element="tns:getObjectChildrenResponse" />
 </message>
+<message name="getChildrenOfClass">
+<part name="parameters" element="tns:getChildrenOfClass" />
+</message>
+<message name="getChildrenOfClassResponse">
+<part name="parameters" element="tns:getChildrenOfClassResponse" />
+</message>
 <message name="getObjectInfo">
 <part name="parameters" element="tns:getObjectInfo" />
 </message>
 <message name="getObjectInfoResponse">
 <part name="parameters" element="tns:getObjectInfoResponse" />
+</message>
+<message name="getObjectInfoLight">
+<part name="parameters" element="tns:getObjectInfoLight" />
+</message>
+<message name="getObjectInfoLightResponse">
+<part name="parameters" element="tns:getObjectInfoLightResponse" />
 </message>
 <message name="updateObject">
 <part name="parameters" element="tns:updateObject" />
@@ -898,6 +898,12 @@
 <message name="getDummyRootIdResponse">
 <part name="parameters" element="tns:getDummyRootIdResponse" />
 </message>
+<message name="copyObjects">
+<part name="parameters" element="tns:copyObjects" />
+</message>
+<message name="copyObjectsResponse">
+<part name="parameters" element="tns:copyObjectsResponse" />
+</message>
 <message name="moveObjects">
 <part name="parameters" element="tns:moveObjects" />
 </message>
@@ -952,12 +958,6 @@
 <message name="getRackViewResponse">
 <part name="parameters" element="tns:getRackViewResponse" />
 </message>
-<message name="setObjectView">
-<part name="parameters" element="tns:setObjectView" />
-</message>
-<message name="setObjectViewResponse">
-<part name="parameters" element="tns:setObjectViewResponse" />
-</message>
 <message name="createPhysicalContainerConnection">
 <part name="parameters" element="tns:createPhysicalContainerConnection" />
 </message>
@@ -969,6 +969,12 @@
 </message>
 <message name="getUsersResponse">
 <part name="parameters" element="tns:getUsersResponse" />
+</message>
+<message name="getGroups">
+<part name="parameters" element="tns:getGroups" />
+</message>
+<message name="getGroupsResponse">
+<part name="parameters" element="tns:getGroupsResponse" />
 </message>
 <message name="createUser">
 <part name="parameters" element="tns:createUser" />
@@ -1024,6 +1030,12 @@
 <message name="removeGroupsFromUserResponse">
 <part name="parameters" element="tns:removeGroupsFromUserResponse" />
 </message>
+<message name="saveObjectView">
+<part name="parameters" element="tns:saveObjectView" />
+</message>
+<message name="saveObjectViewResponse">
+<part name="parameters" element="tns:saveObjectViewResponse" />
+</message>
 <portType name="KuwaibaWebservice">
 <operation name="createGroup">
 <input wsam:Action="http://webservice/KuwaibaWebservice/createGroupRequest" message="tns:createGroup" />
@@ -1033,17 +1045,9 @@
 <input wsam:Action="http://webservice/KuwaibaWebservice/getMetadataRequest" message="tns:getMetadata" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getMetadataResponse" message="tns:getMetadataResponse" />
 </operation>
-<operation name="getGroups">
-<input wsam:Action="http://webservice/KuwaibaWebservice/getGroupsRequest" message="tns:getGroups" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/getGroupsResponse" message="tns:getGroupsResponse" />
-</operation>
 <operation name="createObject">
 <input wsam:Action="http://webservice/KuwaibaWebservice/createObjectRequest" message="tns:createObject" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/createObjectResponse" message="tns:createObjectResponse" />
-</operation>
-<operation name="copyObjects">
-<input wsam:Action="http://webservice/KuwaibaWebservice/copyObjectsRequest" message="tns:copyObjects" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/copyObjectsResponse" message="tns:copyObjectsResponse" />
 </operation>
 <operation name="getServerStatus">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getServerStatusRequest" message="tns:getServerStatus" />
@@ -1061,9 +1065,17 @@
 <input wsam:Action="http://webservice/KuwaibaWebservice/getObjectChildrenRequest" message="tns:getObjectChildren" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getObjectChildrenResponse" message="tns:getObjectChildrenResponse" />
 </operation>
+<operation name="getChildrenOfClass">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getChildrenOfClassRequest" message="tns:getChildrenOfClass" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getChildrenOfClassResponse" message="tns:getChildrenOfClassResponse" />
+</operation>
 <operation name="getObjectInfo">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getObjectInfoRequest" message="tns:getObjectInfo" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getObjectInfoResponse" message="tns:getObjectInfoResponse" />
+</operation>
+<operation name="getObjectInfoLight">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getObjectInfoLightRequest" message="tns:getObjectInfoLight" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getObjectInfoLightResponse" message="tns:getObjectInfoLightResponse" />
 </operation>
 <operation name="updateObject">
 <input wsam:Action="http://webservice/KuwaibaWebservice/updateObjectRequest" message="tns:updateObject" />
@@ -1117,6 +1129,10 @@
 <input wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootIdRequest" message="tns:getDummyRootId" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootIdResponse" message="tns:getDummyRootIdResponse" />
 </operation>
+<operation name="copyObjects">
+<input wsam:Action="http://webservice/KuwaibaWebservice/copyObjectsRequest" message="tns:copyObjects" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/copyObjectsResponse" message="tns:copyObjectsResponse" />
+</operation>
 <operation name="moveObjects">
 <input wsam:Action="http://webservice/KuwaibaWebservice/moveObjectsRequest" message="tns:moveObjects" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/moveObjectsResponse" message="tns:moveObjectsResponse" />
@@ -1153,10 +1169,6 @@
 <input wsam:Action="http://webservice/KuwaibaWebservice/getRackViewRequest" message="tns:getRackView" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getRackViewResponse" message="tns:getRackViewResponse" />
 </operation>
-<operation name="setObjectView">
-<input wsam:Action="http://webservice/KuwaibaWebservice/setObjectViewRequest" message="tns:setObjectView" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/setObjectViewResponse" message="tns:setObjectViewResponse" />
-</operation>
 <operation name="createPhysicalContainerConnection">
 <input wsam:Action="http://webservice/KuwaibaWebservice/createPhysicalContainerConnectionRequest" message="tns:createPhysicalContainerConnection" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/createPhysicalContainerConnectionResponse" message="tns:createPhysicalContainerConnectionResponse" />
@@ -1164,6 +1176,10 @@
 <operation name="getUsers">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getUsersRequest" message="tns:getUsers" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getUsersResponse" message="tns:getUsersResponse" />
+</operation>
+<operation name="getGroups">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getGroupsRequest" message="tns:getGroups" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getGroupsResponse" message="tns:getGroupsResponse" />
 </operation>
 <operation name="createUser">
 <input wsam:Action="http://webservice/KuwaibaWebservice/createUserRequest" message="tns:createUser" />
@@ -1201,6 +1217,10 @@
 <input wsam:Action="http://webservice/KuwaibaWebservice/removeGroupsFromUserRequest" message="tns:removeGroupsFromUser" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/removeGroupsFromUserResponse" message="tns:removeGroupsFromUserResponse" />
 </operation>
+<operation name="saveObjectView">
+<input wsam:Action="http://webservice/KuwaibaWebservice/saveObjectViewRequest" message="tns:saveObjectView" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/saveObjectViewResponse" message="tns:saveObjectViewResponse" />
+</operation>
 </portType>
 <binding name="KuwaibaWebservicePortBinding" type="tns:KuwaibaWebservice">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
@@ -1224,15 +1244,6 @@
 <soap:body use="literal" />
 </output>
 </operation>
-<operation name="getGroups">
-<soap:operation soapAction="" />
-<input>
-<soap:body use="literal" />
-</input>
-<output>
-<soap:body use="literal" />
-</output>
-</operation>
 <operation name="createObject">
 <soap:operation soapAction="" />
 <input>
@@ -1241,17 +1252,6 @@
 </input>
 <output>
 <wsp:PolicyReference URI="#MainWSPortBinding_createObject_Output_Policy" />
-<soap:body use="literal" />
-</output>
-</operation>
-<operation name="copyObjects">
-<soap:operation soapAction="" />
-<input>
-<wsp:PolicyReference URI="#MainWSPortBinding_copyObjects_Input_Policy" />
-<soap:body use="literal" />
-</input>
-<output>
-<wsp:PolicyReference URI="#MainWSPortBinding_copyObjects_Output_Policy" />
 <soap:body use="literal" />
 </output>
 </operation>
@@ -1291,7 +1291,25 @@
 <soap:body use="literal" />
 </output>
 </operation>
+<operation name="getChildrenOfClass">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
 <operation name="getObjectInfo">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getObjectInfoLight">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
@@ -1435,6 +1453,17 @@
 <soap:body use="literal" />
 </output>
 </operation>
+<operation name="copyObjects">
+<soap:operation soapAction="" />
+<input>
+<wsp:PolicyReference URI="#MainWSPortBinding_copyObjects_Input_Policy" />
+<soap:body use="literal" />
+</input>
+<output>
+<wsp:PolicyReference URI="#MainWSPortBinding_copyObjects_Output_Policy" />
+<soap:body use="literal" />
+</output>
+</operation>
 <operation name="moveObjects">
 <soap:operation soapAction="" />
 <input>
@@ -1526,15 +1555,6 @@
 <soap:body use="literal" />
 </output>
 </operation>
-<operation name="setObjectView">
-<soap:operation soapAction="" />
-<input>
-<soap:body use="literal" />
-</input>
-<output>
-<soap:body use="literal" />
-</output>
-</operation>
 <operation name="createPhysicalContainerConnection">
 <soap:operation soapAction="" />
 <input>
@@ -1545,6 +1565,15 @@
 </output>
 </operation>
 <operation name="getUsers">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getGroups">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
@@ -1626,6 +1655,15 @@
 </output>
 </operation>
 <operation name="removeGroupsFromUser">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="saveObjectView">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
