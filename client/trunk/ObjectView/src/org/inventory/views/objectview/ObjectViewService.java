@@ -18,6 +18,9 @@ package org.inventory.views.objectview;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.List;
 import javax.swing.JFileChooser;
 import org.inventory.communications.CommunicationsStub;
@@ -28,6 +31,7 @@ import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
 import org.inventory.views.objectview.scene.ViewBuilder;
 import org.netbeans.api.visual.widget.ImageWidget;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
@@ -86,13 +90,15 @@ public class ObjectViewService implements LookupListener{
            vrtc.getScene().getInteractionLayer().removeChildren();
            
            vrtc.getScene().setCurrentObject(myObject);
+           
            LocalObjectView defaultView = com.getObjectDefaultView(myObject.getOid(),myObject.getPackageName()+"."+myObject.getClassName());
            if(defaultView == null){
                List<LocalObjectLight> myChildren = com.getObjectChildren(myObject.getOid(), com.getMetaForClass(myObject.getClassName(),false).getOid());
+               LocalObject[] myConnections = com.getConnectionsForParent(myObject.getOid(), "GenericPhysicalContainer");
                //TODO: Change for a ViewFactory
-               ViewBuilder.buildDefaultView(myChildren,vrtc.getScene());
-           }else
-               new ViewBuilder(defaultView, vrtc.getScene()).buildView();
+               new ViewBuilder(null, vrtc.getScene()).buildDefaultView(myChildren, myConnections);
+           }
+           new ViewBuilder(defaultView, vrtc.getScene()).buildView();
 
            vrtc.getScene().validate();
            vrtc.getScene().repaint();
@@ -113,11 +119,7 @@ public class ObjectViewService implements LookupListener{
             if (myBackgroundImage == null)
                  vrtc.getNotifier().showSimplePopup("Image load", NotificationUtil.ERROR, "Error loading image. Please try another");
             else{
-                if (!vrtc.getScene().getBackgroundLayer().getChildren().isEmpty())
-                    vrtc.getScene().getBackgroundLayer().removeChildren(); //Clean the layer
-                ImageWidget background = new ImageWidget(vrtc.getScene(),myBackgroundImage);
-                background.bringToBack();
-                vrtc.getScene().getBackgroundLayer().addChild(background);
+                vrtc.getScene().setBackgroundImage(myBackgroundImage);
                 vrtc.getScene().validate();
             }
         }

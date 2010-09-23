@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Point;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.interfaces.connections.LocalPhysicalContainer;
@@ -58,7 +59,7 @@ public class PhysicalConnectionProvider implements ConnectProvider{
 
     public PhysicalConnectionProvider(){
         this.com = CommunicationsStub.getInstance();
-        this.nu = (NotificationUtil)Lookup.getDefault().lookup(NotificationUtil.class);
+        this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
     }
 
     /**
@@ -119,7 +120,7 @@ public class PhysicalConnectionProvider implements ConnectProvider{
 
     @Override
     public void createConnection(Widget sourceWidget, Widget targetWidget) {
-        LocalObjectLight myConnection = null;
+        LocalObject myConnection = null;
 
         switch (currentConnectionSelection){
             case ObjectViewTopComponent.CONNECTION_WIRECONTAINER:

@@ -16,25 +16,25 @@
 
 package org.inventory.views.objectview.scene;
 
-import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.interfaces.LocalObject;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 
 /**
- *
+ * Extends the functionality of a simple connection widget
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class ObjectConnectionWidget extends ConnectionWidget{
     /**
      * The wrapped business object
      */
-    private LocalObjectLight object;
+    private LocalObject object;
 
-    public ObjectConnectionWidget(ViewScene scene, LocalObjectLight connection){
+    public ObjectConnectionWidget(ViewScene scene, LocalObject connection){
         super(scene);
         this.object = connection;
     }
 
-    public LocalObjectLight getObject() {
+    public LocalObject getObject() {
         return object;
     }
 }

@@ -16,10 +16,16 @@
 
 package org.inventory.views.objectview.scene;
 
+import java.util.ArrayList;
 import java.util.List;
+import org.inventory.communications.core.views.LocalEdge;
+import org.inventory.communications.core.views.LocalLabel;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalNode;
+import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.netbeans.api.visual.anchor.AnchorFactory;
+import org.netbeans.api.visual.widget.Widget;
 
 /**
  * This class builds every view so it can be rendered by the scene
@@ -42,12 +48,12 @@ public class ViewBuilder {
      * @throws NullPointerException if the LocalObjectView or the ViewScene provided are null
      */
     public ViewBuilder(LocalObjectView localView, ViewScene _scene) throws NullPointerException{
-        if (localView != null && _scene != null){
+        if (_scene != null){
             this.myView = localView;
             this.scene = _scene;
         }
         else
-            throw new NullPointerException("A null LocalView/ViewScene is not supported for this constructor");
+            throw new NullPointerException("A null ViewScene is not supported for this constructor");
     }
 
     /**
@@ -55,27 +61,72 @@ public class ViewBuilder {
      * that's coder's responsibility
      */
     public void buildView(){
+
         for (LocalNode node : myView.getNodes()){
             ObjectNodeWidget widget = new ObjectNodeWidget(scene, node);
             widget.setPreferredLocation(node.getPosition());
             scene.getNodesLayer().addChild(widget);
         }
+
+        for (LocalEdge edge : myView.getEdges()){
+            ObjectConnectionWidget widget = new ObjectConnectionWidget(scene, edge.getObject());
+
+            //TODO: This is a reprocess... It's already been done when creating the local view
+            for (Widget w : scene.getNodesLayer().getChildren()){
+                if (((ObjectNodeWidget)w).getObject().equals(edge.getaSide().getObject())){
+                    widget.setSourceAnchor(AnchorFactory.createRectangularAnchor(w));
+                    break;
+                }
+                else{
+                    if(((ObjectNodeWidget)w).getObject().equals(edge.getbSide().getObject())){
+                        widget.setTargetAnchor(AnchorFactory.createRectangularAnchor(w));
+                        break;
+                    }
+                }
+            }
+
+            scene.getNodesLayer().addChild(widget);
+        }
+
+        scene.setBackgroundImage(myView.getBackground());
     }
 
     /**
      * Builds a simple default view using the object's children and putting them one after another
      * @param myChildren
      */
-    public static void buildDefaultView(List<LocalObjectLight> myChildren, ViewScene scene) {
+    public void buildDefaultView(List<LocalObjectLight> myNodes, LocalObject[] myPhysicalConnections) {
         int lastX = 0;
-        for (LocalObjectLight child : myChildren){
+        List<LocalNode> myLocalNodes = new ArrayList<LocalNode>();
+        List<LocalEdge> myLocalEdges = new ArrayList<LocalEdge>();
+
+        for (LocalObjectLight node : myNodes){ //Add the nodes
             //Puts an element after another
-            LocalNode ln = new LocalNode(child, lastX, 0);
-            ObjectNodeWidget widget = new ObjectNodeWidget(scene, ln);
-            widget.setPreferredLocation(ln.getPosition());
-            scene.getNodesLayer().addChild(widget);
+            LocalNode ln = new LocalNode(node, lastX, 0);
+            myLocalNodes.add(ln);
             lastX +=100;
         }
+
+        //TODO: This algorithm to find the endpoints for a connection could be improved in a lot of way
+        for (LocalObject container : myPhysicalConnections){
+            LocalEdge le = new LocalEdge(container,null);
+
+            for (LocalNode myNode : myLocalNodes){
+                
+                if (((Long)container.getAttribute("aSide")).equals(myNode.getObject().getOid())){ //NOI18N
+                    le.setaSide(myNode);
+                    break;
+                }else{
+                    if (((Long)container.getAttribute("bSide")).equals(myNode.getObject().getOid())){ //NOI18N
+                       le.setbSide(myNode);
+                        break;
+                    }
+                }
+            }
+            myLocalEdges.add(le);
+        }
+        myView = new LocalObjectView(myLocalNodes.toArray(new LocalNode[0]), myLocalNodes.toArray(new LocalEdge[0]),new LocalLabel[0]);
+        buildView();
     }
 
 }

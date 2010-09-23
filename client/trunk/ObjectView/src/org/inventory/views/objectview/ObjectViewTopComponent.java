@@ -316,7 +316,7 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         scene.setActiveTool(ViewScene.ACTION_CONNECT);
-        btnElectricalLink.setSelected(true);
+        btnWireContainer.setSelected(true);
     }//GEN-LAST:event_btnConnectActionPerformed
 
     private void btnAddBackgroundImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddBackgroundImageActionPerformed

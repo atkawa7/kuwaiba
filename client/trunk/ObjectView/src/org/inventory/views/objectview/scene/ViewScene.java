@@ -18,6 +18,8 @@ package org.inventory.views.objectview.scene;
 
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
+import java.awt.Image;
+import java.awt.Point;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.inventory.core.services.interfaces.LocalObjectLight;
@@ -163,6 +165,21 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
         }
     }
 
+    /**
+     *
+     * @return
+     */
+    public void setBackgroundImage(Image im){
+        if (im == null) //Do nothing
+            return;
+        if (!backgroundLayer.getChildren().isEmpty())
+            backgroundLayer.removeChildren(); //Clean the layer
+
+        ImageWidget background = new ImageWidget(this,im);
+        background.bringToBack();
+        backgroundLayer.addChild(background);
+    }
+
     public byte[] getAsXML() {
         ByteArrayOutputStream bas = new ByteArrayOutputStream();
         WAX xmlWriter = new WAX(bas);
@@ -176,6 +193,17 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
             attr("class", ((ObjectNodeWidget)nodeWidget).getObject().getClassName()).
             text(((ObjectNodeWidget)nodeWidget).getObject().getOid().toString()).end();
         nodesTag.end();
+
+        StartTagWAX edgesTag = mainTag.start("edges");
+        for (Widget edgeWidget : edgesLayer.getChildren()){
+            StartTagWAX edgeTag = edgesTag.start("edge");
+            edgeTag.attr("id", ((ObjectConnectionWidget)edgeWidget).getObject().getOid());
+            edgeTag.attr("class", ((ObjectConnectionWidget)edgeWidget).getObject().getClassName());
+            for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints())
+                edgeTag.start("controlpoint").attr("x", point.getX()).attr("y", point.getY()).end();
+            edgeTag.end();
+        }
+        edgesTag.end();
         mainTag.end().close();
         return bas.toByteArray();
     }
