@@ -1017,10 +1017,10 @@ public class BackendBean implements BackendBeanRemote {
                         AbstractView myView = (AbstractView)em.createQuery("SELECT x FROM "+myViewAdapter.getaSideClass()+" x WHERE x.id="+myViewAdapter.getaSide()).getSingleResult();
                         if(myView.getClass().getName().equals(view.getViewClass())) //If there's one already, replace it
                         em.remove(myView);
-                        em.remove(myViewAdapter);
                     }catch (NoResultException nre){
                     }
-                }            
+                }
+                em.merge(obj);
             }else 
                 ((ViewableObject)obj).setViews(new ArrayList<ObjectViewAdapter>());
 
@@ -1030,6 +1030,7 @@ public class BackendBean implements BackendBeanRemote {
                 ObjectViewAdapter newViewAdapter = new ObjectViewAdapter();
                 newViewAdapter.setaSide(newView.getId());
                 newViewAdapter.setaSideClass(newView.getClass().getSimpleName());
+                em.persist(newViewAdapter);
                 ((ViewableObject)obj).getViews().add(newViewAdapter);
                 em.merge(obj);
                 return true;
@@ -1079,6 +1080,24 @@ public class BackendBean implements BackendBeanRemote {
         }
     }
 
+    /**
+     * Gets the connections (container or single connections) for a given parent
+     * @param oid parent oid
+     * @param className class name
+     * @return List of connections or null on error
+     */
+    public RemoteObject[] getConnectionsForParent(Long oid, String className){
+
+        //TODO: Check that this class represents some kind of connection/container
+        if (em!=null){
+            List<Object> res = em.createQuery("SELECT x FROM "+className+" x WHERE x.id="+oid).getResultList();
+            return RemoteObject.toArray(res);
+        }else{
+            this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
+            Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
+            return null;
+        }
+    }
     /**
      * Creates a new container (Conduit, cable ditch)
      * @param containerClass

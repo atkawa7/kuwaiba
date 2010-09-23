@@ -17,6 +17,7 @@
 package entity.adapters;
 
 import core.annotations.Dummy;
+import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
@@ -25,10 +26,5 @@ import javax.persistence.Entity;
  */
 @Entity
 @Dummy
-public class ObjectViewAdapter extends GenericUnidirectionalAdapter{
-
-    public ObjectViewAdapter() {
-        this.id = new Long(500);
-    }
-
+public class ObjectViewAdapter extends GenericUnidirectionalAdapter implements Serializable{
 }

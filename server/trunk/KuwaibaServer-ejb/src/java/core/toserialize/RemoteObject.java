@@ -87,4 +87,20 @@ public class RemoteObject extends RemoteObjectLight {
             i++;
         }
     }
+
+    /**
+     * This method is useful to transform the returned value from queries (Entities)
+     * into serialize RemoteObject
+     * @param objs objects to be transformed
+     * @return an array with RO
+     */
+    public static RemoteObject[] toArray(List objs){
+        RemoteObject[] res = new RemoteObject[objs.size()];
+        int i=0;
+        for (Object obj : objs){
+            res[i] = new RemoteObject(obj);
+            i++;
+        }
+        return res;
+    }
 }

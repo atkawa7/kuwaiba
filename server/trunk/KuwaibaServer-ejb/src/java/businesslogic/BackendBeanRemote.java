@@ -69,6 +69,7 @@ public interface BackendBeanRemote {
     public ViewInfo getRackView(Long oid);
     public RemoteObjectLight createPhysicalContainerConnection(Long nodeA, Long nodeB, Class containerClass,Long parentNode);
     public Boolean createPhysicalConnection(Class connectionClass, PhysicalEndpoint endpointA, PhysicalEndpoint endpointB);
+    public RemoteObject[] getConnectionsForParent(Long oid, String className);
     public UserInfo[] getUsers();
     public UserGroupInfo[] getGroups();
     public Boolean setUserProperties(Long oid, String[] propertiesNames, String[] propertiesValues);

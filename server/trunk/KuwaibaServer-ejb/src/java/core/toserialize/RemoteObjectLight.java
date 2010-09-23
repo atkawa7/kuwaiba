@@ -59,7 +59,7 @@ public class RemoteObjectLight {
 
     /**
      * This method is useful to transform the returned value from queries (Entities)
-     * into serialize RemoteObjectight
+     * into serialize RemoteObjectLight
      * @param objs objects to be transformed
      * @return an array with ROL
      */

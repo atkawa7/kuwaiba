@@ -560,8 +560,14 @@ public class KuwaibaWebservice {
         }
         
     }
-
-
+    @WebMethod(operationName="getConnectionsForParent")
+    public RemoteObject[] getConnectionsForParent(@WebParam(name="oid")Long oid,
+            @WebParam(name="className")String className){
+        RemoteObject[] res = sbr.getConnectionsForParent(oid, className);
+        if (res == null)
+            this.lastErr = sbr.getError();
+        return res;
+    }
     /**
      * User Management
      */
