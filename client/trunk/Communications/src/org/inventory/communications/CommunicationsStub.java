@@ -15,6 +15,7 @@
  */
 package org.inventory.communications;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,6 +49,7 @@ import org.inventory.webservice.KuwaibaWebserviceService;
 import org.inventory.webservice.ObjectList;
 import org.inventory.webservice.ObjectList.List.Entry;
 import org.inventory.webservice.ObjectUpdate;
+import org.inventory.webservice.RemoteObject;
 import org.inventory.webservice.RemoteObjectLight;
 import org.inventory.webservice.UserGroupInfo;
 import org.inventory.webservice.UserInfo;
@@ -181,13 +183,33 @@ public class CommunicationsStub {
     public List<LocalObjectLight> getObjectChildren(Long oid, Long objectClassId){
         List <RemoteObjectLight> children = port.getObjectChildren(oid, objectClassId);
         List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
-        
+
+        if (children == null){
+            this.error = port.getLastErr();
+            return null;
+        }
+
         for (RemoteObjectLight rol : children)
             res.add(new LocalObjectLightImpl(rol));
         
         return res;
     }
-    
+
+    public List<LocalObjectLight> getChildrenOfClass(Long oid, String className){
+        List <RemoteObjectLight> children = port.getChildrenOfClass(oid, className);
+        List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
+
+        if (children == null){
+            this.error = port.getLastErr();
+            return null;
+        }
+
+        for (RemoteObjectLight rol : children)
+            res.add(new LocalObjectLightImpl(rol));
+
+        return res;
+    }
+
     /**
      * Updates the attributes of a given object
      *
@@ -827,13 +849,35 @@ public class CommunicationsStub {
         return null;
     }
 
-    public LocalObjectLight createPhysicalContainerConnection(Long sourceNode, Long targetNode, String connectionClass, Long parentNode) {
+    public LocalObject createPhysicalContainerConnection(Long sourceNode, Long targetNode, String connectionClass, Long parentNode) {
         RemoteObjectLight rol = port.createPhysicalContainerConnection(sourceNode, targetNode, connectionClass, parentNode);
         if (rol == null){
             this.error = port.getLastErr();
             return null;
         }
-        return new LocalObjectLightImpl(rol);
+        return new LocalObjectImpl(rol.getClassName(), rol.getOid(), new String[0], new Object[0]);
+    }
+
+    /**
+     * Gets the connections (container or single connections) for a given parent
+     * @param oid parent oid
+     * @param className class name
+     * @return List of connections or null on error
+     */
+    public LocalObject[] getConnectionsForParent(Long oid, String className){
+        List<RemoteObject> res = port.getConnectionsForParent(oid, className);
+        if (res == null){
+            this.error = port.getLastErr();
+            return null;
+        }
+
+        LocalObject[] myConnections = new LocalObject[res.size()];
+        int i = 0;
+        for (RemoteObject ro : res){
+            myConnections[i] = new LocalObjectImpl(ro, getMetaForClass(className, false));
+            i++;
+        }
+        return myConnections;
     }
 
     /**
@@ -850,7 +894,7 @@ public class CommunicationsStub {
         ViewInfo myView = port.getDefaultView(oid, objectClass);
         if (myView == null)
             return null;
-        return new LocalObjectView(myView);
+        return new LocalObjectView(myView.getStructure(),myView.getBackground(),myView.getViewClass());
     }
 
     public boolean saveView(Long oid, String objectClass, String viewClass, byte[] background, byte[] viewStructure){

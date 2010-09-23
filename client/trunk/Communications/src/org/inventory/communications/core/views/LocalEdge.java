@@ -17,7 +17,8 @@
 package org.inventory.communications.core.views;
 
 import java.awt.Point;
-import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.interfaces.LocalObject;
+
 
 /**
  * Represents a connection in a view independent from the presentation. This class represents
@@ -28,22 +29,52 @@ public class LocalEdge {
     /**
      * Wrapped business object
      */
-    private LocalObjectLight object;
+    private LocalObject object;
+    /**
+     * Reference to the "a" side of the connection
+     */
+    private LocalNode aSide;
+    /**
+     * Reference to the "b" side of the connection
+     */
+    private LocalNode bSide;
     /**
      * Control points used to route the connection
      */
     private Point[] controlPoints;
 
-    public LocalEdge(LocalObjectLight _object, Point[] _controlsPoints){
+    public LocalEdge(LocalObject _object, Point[] _controlsPoints){
         this.object = _object;
         this.controlPoints = _controlsPoints;
+    }
+
+    public LocalEdge(LocalObject _object, LocalNode _aSide, LocalNode _bSide, Point[] _controlsPoints){
+        this (_object,_controlsPoints);
+        this.aSide = _aSide;
+        this.bSide =_bSide;
     }
 
     public Point[] getControlPoints() {
         return controlPoints;
     }
 
-    public LocalObjectLight getObject() {
+    public LocalObject getObject() {
         return object;
+    }
+
+    public LocalNode getaSide() {
+        return aSide;
+    }
+
+    public LocalNode getbSide() {
+        return bSide;
+    }
+
+    public void setaSide(LocalNode aSide) {
+        this.aSide = aSide;
+    }
+
+    public void setbSide(LocalNode bSide) {
+        this.bSide = bSide;
     }
 }

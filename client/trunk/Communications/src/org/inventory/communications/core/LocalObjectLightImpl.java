@@ -3,7 +3,6 @@ package org.inventory.communications.core;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.webservice.RemoteObjectLight;
 

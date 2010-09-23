@@ -26,9 +26,9 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.utils.Utils;
-import org.inventory.webservice.ViewInfo;
 
 
 /**
@@ -58,22 +58,28 @@ public class LocalObjectView {
      */
     private String viewClass;
 
-    public LocalObjectView(ViewInfo remoteView) {
-        this.background = Utils.getImageFromByteArray(remoteView.getBackground());
-        this.viewClass = remoteView.getViewClass();
-        if (remoteView.getStructure() == null){
+    public LocalObjectView(byte[] viewStructure, byte[] _background, String viewClass) {
+        this.background = Utils.getImageFromByteArray(_background);
+        this.viewClass = viewClass;
+        if (viewStructure == null){
             nodes = new LocalNode[0];
             edges = new LocalEdge[0];
             labels = new LocalLabel[0];
         }else{
             try {
-                parseXML(remoteView.getStructure());
+                parseXML(viewStructure);
             } catch (XMLStreamException ex) {
                 nodes = new LocalNode[0];
                 edges = new LocalEdge[0];
                 labels = new LocalLabel[0];
             }
         }
+    }
+
+    public LocalObjectView(LocalNode[] myNodes, LocalEdge[] myEdges,LocalLabel[] myLabels) {
+        nodes = myNodes;
+        edges = myEdges;
+        labels = myLabels;
     }
 
     public LocalEdge[] getEdges() {
@@ -116,16 +122,49 @@ public class LocalObjectView {
         XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
 
         List<LocalNode> myNodes = new ArrayList<LocalNode>();
+        List<LocalEdge> myEdges = new ArrayList<LocalEdge>();
 
         while (reader.hasNext()){
             int event = reader.next();
             if (event == XMLStreamConstants.START_ELEMENT){
-                if (reader.getName().equals(qNode))
-                    myNodes.add(new LocalNode((LocalObjectLight) CommunicationsStub.getInstance().getObjectInfoLight(reader.getAttributeValue(null, "class"), Long.valueOf(reader.getElementText())),
-                            Integer.valueOf(reader.getAttributeValue(null,"x")),
-                            Integer.valueOf(reader.getAttributeValue(null, "y"))));
+                if (reader.getName().equals(qNode)){
+                    String objectClass = reader.getAttributeValue(null, "class");
+                    
+                    int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
+                    int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
+                    Long objectId = Long.valueOf(reader.getElementText());
+                    
+                    LocalObjectLight lol = CommunicationsStub.getInstance().
+                            getObjectInfoLight(objectClass, objectId);
+
+                    myNodes.add(new LocalNode(lol, xCoordinate, yCoordinate));
+                }else{
+                    if (reader.getName().equals(qEdge)){
+                        Long objectId = Long.valueOf(reader.getAttributeValue(null,"id"));
+                        String className = reader.getAttributeValue(null,"class");
+                        LocalObject container = CommunicationsStub.getInstance().getObjectInfo(className, objectId);
+                        LocalEdge myLocalEdge = new LocalEdge(container,null);
+
+                        for (LocalNode myNode : myNodes){
+
+                            if (((Long)container.getAttribute("aSide")).equals(myNode.getObject().getOid())){ //NOI18N
+                                myLocalEdge.setaSide(myNode);
+                                break;
+                            }else{
+                                if (((Long)container.getAttribute("bSide")).equals(myNode.getObject().getOid())){ //NOI18N
+                                   myLocalEdge.setbSide(myNode);
+                                   break;
+                                }
+                            }
+                        }
+
+                        myEdges.add(myLocalEdge);
+                    }
+                }
             }
         }
         reader.close();
+        nodes = myNodes.toArray(new LocalNode[0]);
+        edges = myEdges.toArray(new LocalEdge[0]);
     }
 }

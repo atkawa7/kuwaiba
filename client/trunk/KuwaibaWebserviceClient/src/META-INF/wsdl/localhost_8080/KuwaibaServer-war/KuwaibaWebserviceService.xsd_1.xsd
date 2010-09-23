@@ -52,6 +52,10 @@
 
 <xs:element name="getChildrenOfClassResponse" type="tns:getChildrenOfClassResponse" />
 
+<xs:element name="getConnectionsForParent" type="tns:getConnectionsForParent" />
+
+<xs:element name="getConnectionsForParentResponse" type="tns:getConnectionsForParentResponse" />
+
 <xs:element name="getDefaultView" type="tns:getDefaultView" />
 
 <xs:element name="getDefaultViewResponse" type="tns:getDefaultViewResponse" />
@@ -574,6 +578,19 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="addGroupsToUser">
+<xs:sequence>
+<xs:element name="groupsOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="userOid" type="xs:long" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addGroupsToUserResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="saveObjectView">
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0" />
@@ -583,19 +600,6 @@
 </xs:complexType>
 
 <xs:complexType name="saveObjectViewResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="addGroupsToUser">
-<xs:sequence>
-<xs:element name="groupsOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="userOid" type="xs:long" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="addGroupsToUserResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
@@ -800,6 +804,19 @@
 <xs:complexType name="getLightMetadataResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getConnectionsForParent">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="className" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getConnectionsForParentResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObject" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 

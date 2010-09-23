@@ -958,6 +958,12 @@
 <message name="getRackViewResponse">
 <part name="parameters" element="tns:getRackViewResponse" />
 </message>
+<message name="saveObjectView">
+<part name="parameters" element="tns:saveObjectView" />
+</message>
+<message name="saveObjectViewResponse">
+<part name="parameters" element="tns:saveObjectViewResponse" />
+</message>
 <message name="createPhysicalContainerConnection">
 <part name="parameters" element="tns:createPhysicalContainerConnection" />
 </message>
@@ -1030,11 +1036,11 @@
 <message name="removeGroupsFromUserResponse">
 <part name="parameters" element="tns:removeGroupsFromUserResponse" />
 </message>
-<message name="saveObjectView">
-<part name="parameters" element="tns:saveObjectView" />
+<message name="getConnectionsForParent">
+<part name="parameters" element="tns:getConnectionsForParent" />
 </message>
-<message name="saveObjectViewResponse">
-<part name="parameters" element="tns:saveObjectViewResponse" />
+<message name="getConnectionsForParentResponse">
+<part name="parameters" element="tns:getConnectionsForParentResponse" />
 </message>
 <portType name="KuwaibaWebservice">
 <operation name="createGroup">
@@ -1169,6 +1175,10 @@
 <input wsam:Action="http://webservice/KuwaibaWebservice/getRackViewRequest" message="tns:getRackView" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getRackViewResponse" message="tns:getRackViewResponse" />
 </operation>
+<operation name="saveObjectView">
+<input wsam:Action="http://webservice/KuwaibaWebservice/saveObjectViewRequest" message="tns:saveObjectView" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/saveObjectViewResponse" message="tns:saveObjectViewResponse" />
+</operation>
 <operation name="createPhysicalContainerConnection">
 <input wsam:Action="http://webservice/KuwaibaWebservice/createPhysicalContainerConnectionRequest" message="tns:createPhysicalContainerConnection" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/createPhysicalContainerConnectionResponse" message="tns:createPhysicalContainerConnectionResponse" />
@@ -1217,9 +1227,9 @@
 <input wsam:Action="http://webservice/KuwaibaWebservice/removeGroupsFromUserRequest" message="tns:removeGroupsFromUser" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/removeGroupsFromUserResponse" message="tns:removeGroupsFromUserResponse" />
 </operation>
-<operation name="saveObjectView">
-<input wsam:Action="http://webservice/KuwaibaWebservice/saveObjectViewRequest" message="tns:saveObjectView" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/saveObjectViewResponse" message="tns:saveObjectViewResponse" />
+<operation name="getConnectionsForParent">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getConnectionsForParentRequest" message="tns:getConnectionsForParent" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getConnectionsForParentResponse" message="tns:getConnectionsForParentResponse" />
 </operation>
 </portType>
 <binding name="KuwaibaWebservicePortBinding" type="tns:KuwaibaWebservice">
@@ -1555,6 +1565,15 @@
 <soap:body use="literal" />
 </output>
 </operation>
+<operation name="saveObjectView">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
 <operation name="createPhysicalContainerConnection">
 <soap:operation soapAction="" />
 <input>
@@ -1663,7 +1682,7 @@
 <soap:body use="literal" />
 </output>
 </operation>
-<operation name="saveObjectView">
+<operation name="getConnectionsForParent">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
