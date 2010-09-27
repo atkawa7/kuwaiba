@@ -35,7 +35,6 @@ import entity.adapters.ObjectViewAdapter;
 import entity.adapters.PhysicalContainerNodeAdapter;
 import entity.config.User;
 import entity.config.UserGroup;
-import entity.core.ConfigurationItem;
 import entity.core.DummyRoot;
 import entity.core.RootObject;
 import entity.core.ViewableObject;
@@ -1086,11 +1085,12 @@ public class BackendBean implements BackendBeanRemote {
      * @param className class name
      * @return List of connections or null on error
      */
+    @Override
     public RemoteObject[] getConnectionsForParent(Long oid, String className){
 
         //TODO: Check that this class represents some kind of connection/container
         if (em!=null){
-            List<Object> res = em.createQuery("SELECT x FROM "+className+" x WHERE x.id="+oid).getResultList();
+            List<Object> res = em.createQuery("SELECT x FROM "+className+" x WHERE x.parent="+oid).getResultList();
             return RemoteObject.toArray(res);
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");

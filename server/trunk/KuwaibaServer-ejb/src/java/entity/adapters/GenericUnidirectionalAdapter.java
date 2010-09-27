@@ -68,4 +68,13 @@ public abstract class GenericUnidirectionalAdapter implements Serializable{
     public void setId(Long id) {
         this.id = id;
     }
+
+    /**
+     * The serialized representation of this is the a side oid
+     * @return
+     */
+    @Override
+    public String toString (){
+        return aSide.toString();
+    }
 }

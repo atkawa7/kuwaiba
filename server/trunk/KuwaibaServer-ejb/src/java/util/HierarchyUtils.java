@@ -132,8 +132,13 @@ public class HierarchyUtils {
             else
                 parentId = persistClass((EntityType)entity.getSupertype(), em);
         }
-        for(Attribute att : metaAtts)
+        for(Attribute att : metaAtts){
+            //Ignore the administrative fields
+            if (att.getJavaType().getAnnotation(Dummy.class) != null)
+                continue;
+            
             atts.add(new AttributeMetadata(att));
+        }
 
         ClassMetadata cm = new ClassMetadata(entity.getJavaType().getSimpleName(),
                                              pm,

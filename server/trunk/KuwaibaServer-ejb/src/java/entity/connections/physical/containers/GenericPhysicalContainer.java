@@ -58,7 +58,7 @@ public abstract class GenericPhysicalContainer extends GenericConnection impleme
 
     @Override
     public PhysicalContainerNodeAdapter getNodeB() {
-        return nodeA;
+        return nodeB;
     }
 
     @Override

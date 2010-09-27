@@ -16,6 +16,7 @@
 
 package entity.location;
 
+import core.annotations.Administrative;
 import core.interfaces.PhysicalNode;
 import entity.adapters.PhysicalContainerNodeAdapter;
 import entity.core.AdministrativeItem;
@@ -36,6 +37,7 @@ public class GenericPhysicalNode extends AdministrativeItem implements PhysicalN
      * This one has all pipes and ducts connected to the node
      */
     @ManyToMany
+    @Administrative
     protected List<PhysicalContainerNodeAdapter> containers;
 
     //The adpaters are supossed to be alreaded bounded (aSide and bSide set)

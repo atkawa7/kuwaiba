@@ -15,6 +15,7 @@
  */
 package core.toserialize;
 
+import core.annotations.Administrative;
 import entity.multiple.GenericObjectList;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -50,8 +51,12 @@ public class RemoteObject extends RemoteObjectLight {
 
         int i = 0;
         for (Field f : allAttributes ){
+
+            //Administrative fields shouldn't be serialized
+            if(f.getAnnotation(Administrative.class) != null)
+                continue;
             attributes[i]=f.getName();
-            
+
             try{
                 //getDeclaredMethods takes private and protected methods, but NOT the inherited ones
                 //getMethods do the opposite. Now:
@@ -68,6 +73,9 @@ public class RemoteObject extends RemoteObjectLight {
                             values[i] = String.valueOf(((Date)value).getTime());
                         else
                             values[i]=value.toString();
+
+                    if (attributes[i].equals("id"))
+                        this.oid = (Long)value;
                 }
             } catch (NoSuchMethodException nsme){
                 System.out.println("NoSuchM:"+nsme.getMessage());

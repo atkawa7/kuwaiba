@@ -16,6 +16,7 @@
 
 package entity.core;
 
+import core.annotations.Administrative;
 import entity.adapters.ObjectViewAdapter;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -29,6 +30,7 @@ import javax.persistence.ManyToMany;
 @Entity
 public abstract class ViewableObject extends RootObject {
     @ManyToMany(cascade=CascadeType.PERSIST)//(mappedBy = "elements")
+    @Administrative
     protected List<ObjectViewAdapter> views;
 
         public List<ObjectViewAdapter> getViews() {
