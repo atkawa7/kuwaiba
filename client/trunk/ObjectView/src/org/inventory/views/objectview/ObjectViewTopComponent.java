@@ -18,9 +18,10 @@ package org.inventory.views.objectview;
 import java.awt.BorderLayout;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
+import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.interfaces.connections.LocalPhysicalConnection;
-import org.inventory.core.services.interfaces.connections.LocalPhysicalContainer;
+import org.inventory.views.objectview.scene.ObjectConnectionWidget;
 import org.inventory.views.objectview.scene.ViewScene;
 import org.openide.explorer.ExplorerManager;
 import org.openide.util.NbBundle;
@@ -80,9 +81,8 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
         pnlScrollMain.setViewportView(scene.createView());
         add(scene.createSatelliteView(),BorderLayout.SOUTH);
 
-        //btnElectricalLink.
-        btnWireContainer.setName(LocalPhysicalContainer.CLASSNAME_WIRECONTAINER);
-        btnWirelessContainer.setName(LocalPhysicalContainer.CLASSNAME_WIRELESSCONTAINER);
+        btnWireContainer.setName(LocalEdge.CLASSNAME_WIRECONTAINER);
+        btnWirelessContainer.setName(LocalEdge.CLASSNAME_WIRELESSCONTAINER);
 
         buttonGroupUpperToolbar = new ButtonGroup();
         buttonGroupUpperToolbar.add(btnSelect);
@@ -317,6 +317,7 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         scene.setActiveTool(ViewScene.ACTION_CONNECT);
         btnWireContainer.setSelected(true);
+        btnWireContainer.firePropertyChange("state", true, true);
     }//GEN-LAST:event_btnConnectActionPerformed
 
     private void btnAddBackgroundImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddBackgroundImageActionPerformed
@@ -351,12 +352,12 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
     }//GEN-LAST:event_btnWirelessLinkActionPerformed
 
     private void btnWireContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWireContainerActionPerformed
-        scene.getConnectionProvider().setCurrentLineColor(LocalPhysicalContainer.COLOR_WIRE);
+        scene.getConnectionProvider().setCurrentLineColor(ObjectConnectionWidget.COLOR_WIRE);
         scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_WIRECONTAINER);
     }//GEN-LAST:event_btnWireContainerActionPerformed
 
     private void btnWirelessContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessContainerActionPerformed
-        scene.getConnectionProvider().setCurrentLineColor(LocalPhysicalContainer.COLOR_WIRELESS);
+        scene.getConnectionProvider().setCurrentLineColor(ObjectConnectionWidget.COLOR_WIRELESS);
         scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_WIRELESSCONTAINER);
     }//GEN-LAST:event_btnWirelessContainerActionPerformed
 

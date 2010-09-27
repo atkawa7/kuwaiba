@@ -16,6 +16,7 @@
 
 package org.inventory.views.objectview.scene;
 
+import java.awt.Color;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 
@@ -24,6 +25,13 @@ import org.netbeans.api.visual.widget.ConnectionWidget;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class ObjectConnectionWidget extends ConnectionWidget{
+
+    /**
+     * Some constants
+     */
+    public static Color COLOR_WIRE = new Color(255, 0, 0);
+    public static Color COLOR_WIRELESS = new Color(0, 0, 255);
+
     /**
      * The wrapped business object
      */

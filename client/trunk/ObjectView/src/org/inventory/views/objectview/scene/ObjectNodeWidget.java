@@ -41,6 +41,8 @@ public class ObjectNodeWidget extends IconNodeWidget{
         setImage(myIcon);
         createActions(ViewScene.ACTION_SELECT).addAction(ActionFactory.createAlignWithMoveAction(scene.getNodesLayer(), scene.getInteractionLayer(), null));
         createActions(ViewScene.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(scene.getEdgesLayer(), scene.getConnectionProvider()));
+        getActions().addAction(scene.createWidgetHoverAction());
+        getActions().addAction(ActionFactory.createInplaceEditorAction(new LabelInplaceTextEditor()));
     }
 
     /**

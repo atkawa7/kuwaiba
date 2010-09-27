@@ -80,6 +80,7 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
         addChild(nodesLayer);
         addChild(edgesLayer);
         getActions().addAction(ActionFactory.createZoomAction());
+        getActions().addAction(ActionFactory.createPanAction());
         setActiveTool(ACTION_SELECT);
     }
 

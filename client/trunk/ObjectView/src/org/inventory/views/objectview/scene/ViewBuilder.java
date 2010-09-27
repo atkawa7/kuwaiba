@@ -73,19 +73,23 @@ public class ViewBuilder {
 
             //TODO: This is a reprocess... It's already been done when creating the local view
             for (Widget w : scene.getNodesLayer().getChildren()){
-                if (((ObjectNodeWidget)w).getObject().equals(edge.getaSide().getObject())){
+                if (((ObjectNodeWidget)w).getObject().equals(edge.getaSide().getObject()))
                     widget.setSourceAnchor(AnchorFactory.createRectangularAnchor(w));
-                    break;
-                }
                 else{
-                    if(((ObjectNodeWidget)w).getObject().equals(edge.getbSide().getObject())){
+                    if(((ObjectNodeWidget)w).getObject().equals(edge.getbSide().getObject()))
                         widget.setTargetAnchor(AnchorFactory.createRectangularAnchor(w));
-                        break;
-                    }
                 }
+                if (widget.getSourceAnchor() != null && widget.getTargetAnchor() != null)
+                    break;
             }
 
-            scene.getNodesLayer().addChild(widget);
+            if (LocalEdge.CLASSNAME_WIRECONTAINER.contains(edge.getClassName()))
+                widget.setLineColor(ObjectConnectionWidget.COLOR_WIRE);
+            else
+                if (LocalEdge.CLASSNAME_WIRELESSCONTAINER.contains(edge.getClassName()))
+                    widget.setLineColor(ObjectConnectionWidget.COLOR_WIRELESS);
+
+            scene.getEdgesLayer().addChild(widget);
         }
 
         scene.setBackgroundImage(myView.getBackground());
@@ -113,20 +117,28 @@ public class ViewBuilder {
 
             for (LocalNode myNode : myLocalNodes){
                 
-                if (((Long)container.getAttribute("aSide")).equals(myNode.getObject().getOid())){ //NOI18N
+                if (((Long)container.getAttribute("nodeA")).equals(myNode.getObject().getOid())) //NOI18N
                     le.setaSide(myNode);
-                    break;
-                }else{
-                    if (((Long)container.getAttribute("bSide")).equals(myNode.getObject().getOid())){ //NOI18N
+                else{
+                    if (((Long)container.getAttribute("nodeB")).equals(myNode.getObject().getOid())) //NOI18N
                        le.setbSide(myNode);
-                        break;
-                    }
                 }
+                if (le.getaSide() != null && le.getbSide() != null)
+                    break;
             }
+            le.setClassName(container.getClassName());
             myLocalEdges.add(le);
         }
-        myView = new LocalObjectView(myLocalNodes.toArray(new LocalNode[0]), myLocalNodes.toArray(new LocalEdge[0]),new LocalLabel[0]);
+        myView = new LocalObjectView(myLocalNodes.toArray(new LocalNode[0]), myLocalEdges.toArray(new LocalEdge[0]),new LocalLabel[0]);
         buildView();
     }
 
+    /**
+     * This method
+     * @param myNodes
+     * @param myPhysicalConnections
+     */
+    public void refreshView(List<LocalObjectLight> myNodes, LocalObject[] myPhysicalConnections){
+        
+    }
 }

@@ -20,10 +20,10 @@ import java.awt.Color;
 import java.awt.Point;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
-import org.inventory.core.services.interfaces.connections.LocalPhysicalContainer;
 import org.inventory.views.objectview.ObjectViewTopComponent;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -128,7 +128,7 @@ public class PhysicalConnectionProvider implements ConnectProvider{
                 myConnection = com.createPhysicalContainerConnection(
                     ((ObjectNodeWidget)sourceWidget).getObject().getOid(),
                     ((ObjectNodeWidget)targetWidget).getObject().getOid(),
-                    currentConnectionSelection == ObjectViewTopComponent.CONNECTION_WIRECONTAINER ? LocalPhysicalContainer.CLASSNAME_WIRECONTAINER:LocalPhysicalContainer.CLASSNAME_WIRELESSCONTAINER,
+                    currentConnectionSelection == ObjectViewTopComponent.CONNECTION_WIRECONTAINER ? LocalEdge.CLASSNAME_WIRECONTAINER:LocalEdge.CLASSNAME_WIRELESSCONTAINER,
                     ((ViewScene)((ObjectNodeWidget)sourceWidget).getScene()).getCurrentObject().getOid());
                 break;
             case ObjectViewTopComponent.CONNECTION_ELECTRICALLINK:
