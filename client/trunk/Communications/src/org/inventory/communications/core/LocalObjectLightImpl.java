@@ -2,7 +2,11 @@ package org.inventory.communications.core;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.webservice.RemoteObjectLight;
 
@@ -18,14 +22,25 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
     protected String className;
     protected String packageName;
     private String displayName;
+    /**
+     * The list of property change listeners
+     */
+    protected List<PropertyChangeListener> propertyChangeListeners;
+    /**
+     * Properties
+     */
+    public static String PROP_DISPLAYNAME="displayname";
 
-    public LocalObjectLightImpl(){}
+    public LocalObjectLightImpl(){
+        this.propertyChangeListeners = new ArrayList<PropertyChangeListener>();
+    }
 
     public LocalObjectLightImpl(RemoteObjectLight rol){
         this.className = rol.getClassName();
         this.packageName = rol.getPackageName();
         this.oid = rol.getOid();
         this.displayName = rol.getDisplayName();
+        this.propertyChangeListeners = new ArrayList<PropertyChangeListener>();
     }
 
     public final String getDisplayname(){
@@ -50,6 +65,22 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
 
     public void setDisplayName(String text){
         this.displayName = text;
+        firePropertyChangeEvent(PROP_DISPLAYNAME, oid, text);
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener newListener){
+        if (propertyChangeListeners.contains(newListener))
+            return;
+        propertyChangeListeners.add(newListener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener){
+        propertyChangeListeners.remove(listener);
+    }
+
+    public void firePropertyChangeEvent(String property, Object oldValue, Object newValue){
+        for (PropertyChangeListener listener : propertyChangeListeners)
+            listener.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
     }
 
    @Override

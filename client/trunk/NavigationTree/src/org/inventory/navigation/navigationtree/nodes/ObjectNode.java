@@ -18,6 +18,8 @@ package org.inventory.navigation.navigationtree.nodes;
 import java.awt.Image;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.List;
 import javax.swing.Action;
@@ -55,7 +57,7 @@ import org.openide.util.lookup.Lookups;
  * Represents a node within the navigation tree
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ObjectNode extends AbstractNode{
+public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
     public static final String GENERIC_ICON_PATH="org/inventory/navigation/navigationtree/res/default.png";
     protected LocalObjectLight object;
@@ -75,6 +77,7 @@ public class ObjectNode extends AbstractNode{
     public ObjectNode(LocalObjectLight _lol, boolean isLeaf){
         super(Children.LEAF, Lookups.singleton(_lol));
         this.object = _lol;
+        this.object.addPropertyChangeListener(this);
 
         com = CommunicationsStub.getInstance();
 
@@ -89,6 +92,7 @@ public class ObjectNode extends AbstractNode{
     public ObjectNode(LocalObjectLight _lol){
         super(new ObjectChildren(), Lookups.singleton(_lol));
         this.object = _lol;
+        this.object.addPropertyChangeListener(this);
         
         com = CommunicationsStub.getInstance();
 
@@ -320,5 +324,14 @@ public class ObjectNode extends AbstractNode{
             //So the PropertySheet reflects the changes too
             refresh();
         }catch(Exception e){}
+    }
+
+    /**
+     * The node listen for changes in the wrapped business object
+     * @param evt
+     */
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getSource().equals(object))
+            object = (LocalObjectLight)evt.getSource();
     }
 }

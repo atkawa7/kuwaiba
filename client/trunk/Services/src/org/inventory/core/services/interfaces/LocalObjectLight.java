@@ -2,6 +2,8 @@ package org.inventory.core.services.interfaces;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.beans.PropertyChangeListener;
+
 
 /**
  * This interface expose the business object shown in the explorer views (typically beanTreeView)
@@ -16,6 +18,8 @@ public interface LocalObjectLight extends Transferable {
     public Long getOid();
     public String getDisplayname();
     public String getPackageName();
-
+    public void firePropertyChangeEvent(String property, Object oldValue, Object newValue);
+    public void addPropertyChangeListener(PropertyChangeListener listener);
+    public void removePropertyChangeListener(PropertyChangeListener listener);
     public void setDisplayName(String text);
 }

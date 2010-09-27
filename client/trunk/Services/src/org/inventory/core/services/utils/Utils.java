@@ -159,23 +159,23 @@ public class Utils {
         }
     }
 
-        /**
-     * Given a plain string, it calculate the MD5 hash. This method is used when authenticating users
-     * Thanks to cholland for the code snippet at http://snippets.dzone.com/posts/show/3686
-     * @param pass
-     * @return the MD5 hash for the given string
-     */
-    public static String getMD5Hash(String pass) {
-        try{
-		MessageDigest m = MessageDigest.getInstance("MD5");
-		byte[] data = pass.getBytes();
-		m.update(data,0,data.length);
-		BigInteger i = new BigInteger(1,m.digest());
-		return String.format("%1$032X", i);
-        }catch(NoSuchAlgorithmException nsa){
-            return null;
+            /**
+         * Given a plain string, it calculate the MD5 hash. This method is used when authenticating users
+         * Thanks to cholland for the code snippet at http://snippets.dzone.com/posts/show/3686
+         * @param pass
+         * @return the MD5 hash for the given string
+         */
+        public static String getMD5Hash(String pass) {
+            try{
+                    MessageDigest m = MessageDigest.getInstance("MD5");
+                    byte[] data = pass.getBytes();
+                    m.update(data,0,data.length);
+                    BigInteger i = new BigInteger(1,m.digest());
+                    return String.format("%1$032X", i);
+            }catch(NoSuchAlgorithmException nsa){
+                return null;
+            }
         }
-    }
 
     public static FileFilter getImageFileFilter(){
         return new FileFilter() {

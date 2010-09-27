@@ -56,6 +56,7 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
     public LocalObjectImpl(RemoteObject ro, LocalClassMetadata lcmdt){
         this.className = ro.getClassName();
         this.myMetadata = lcmdt;
+        this.packageName = ro.getPackageName();
         this.oid = ro.getOid();
 
         attributes = new HashMap<String, Object>();

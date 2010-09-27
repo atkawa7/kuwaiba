@@ -27,6 +27,12 @@ import org.inventory.core.services.interfaces.LocalObject;
  */
 public class LocalEdge {
     /**
+     * Some constants
+     */
+    //TODO: Gotta send this to a config file
+    public static String CLASSNAME_WIRECONTAINER="entity.connections.physical.containers.WireContainer";
+    public static String CLASSNAME_WIRELESSCONTAINER="entity.connections.physical.containers.WirelessContainer";
+    /**
      * Wrapped business object
      */
     private LocalObject object;
@@ -39,6 +45,10 @@ public class LocalEdge {
      */
     private LocalNode bSide;
     /**
+     * connection className
+     */
+    private String className;
+    /**
      * Control points used to route the connection
      */
     private Point[] controlPoints;
@@ -48,10 +58,11 @@ public class LocalEdge {
         this.controlPoints = _controlsPoints;
     }
 
-    public LocalEdge(LocalObject _object, LocalNode _aSide, LocalNode _bSide, Point[] _controlsPoints){
+    public LocalEdge(LocalObject _object, LocalNode _aSide, LocalNode _bSide, String _className,Point[] _controlsPoints){
         this (_object,_controlsPoints);
         this.aSide = _aSide;
         this.bSide =_bSide;
+        this.className = _className;
     }
 
     public Point[] getControlPoints() {
@@ -76,5 +87,13 @@ public class LocalEdge {
 
     public void setbSide(LocalNode bSide) {
         this.bSide = bSide;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 }

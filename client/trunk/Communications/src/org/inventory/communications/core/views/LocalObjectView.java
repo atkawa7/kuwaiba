@@ -147,17 +147,17 @@ public class LocalObjectView {
 
                         for (LocalNode myNode : myNodes){
 
-                            if (((Long)container.getAttribute("aSide")).equals(myNode.getObject().getOid())){ //NOI18N
+                            if ((Long.valueOf((String)container.getAttribute("nodeA"))).equals(myNode.getObject().getOid())) //NOI18N
                                 myLocalEdge.setaSide(myNode);
-                                break;
-                            }else{
-                                if (((Long)container.getAttribute("bSide")).equals(myNode.getObject().getOid())){ //NOI18N
+                            else{
+                                if ((Long.valueOf((String)container.getAttribute("nodeB"))).equals(myNode.getObject().getOid())) //NOI18N
                                    myLocalEdge.setbSide(myNode);
-                                   break;
-                                }
                             }
-                        }
 
+                            if (myLocalEdge.getaSide() != null && myLocalEdge.getbSide() != null)
+                                break;
+                        }
+                        myLocalEdge.setClassName(className);
                         myEdges.add(myLocalEdge);
                     }
                 }

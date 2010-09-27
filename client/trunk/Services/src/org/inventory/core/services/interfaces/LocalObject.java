@@ -22,7 +22,7 @@ import java.util.HashMap;
  * Instances of this class are proxy objects representing entities
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public interface LocalObject {
+public interface LocalObject extends LocalObjectLight{
     public HashMap<String,Object> getAttributes();
     public String getClassName();
     public Long getOid();
