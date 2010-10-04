@@ -17,15 +17,17 @@
 package entity.equipment.containers;
 
 import entity.core.RootObject;
-import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  * This class represents a generic equipment that can be used to contain parts
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericContainer extends RootObject implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericContainer extends RootObject{
 
     @Override
     public String toString() {

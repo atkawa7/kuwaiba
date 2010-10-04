@@ -17,20 +17,25 @@
 package entity.core;
 
 import core.annotations.Administrative;
+import core.annotations.NoSerialize;
 import entity.adapters.ObjectViewAdapter;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
 
 /**
  * Subclasses of this class have views
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
+@Administrative
+@Inheritance(strategy=InheritanceType.JOINED)
 public abstract class ViewableObject extends RootObject {
-    @ManyToMany(cascade=CascadeType.PERSIST)//(mappedBy = "elements")
-    @Administrative
+    @OneToMany(cascade=CascadeType.PERSIST)//(mappedBy = "elements")
+    @NoSerialize
     protected List<ObjectViewAdapter> views;
 
         public List<ObjectViewAdapter> getViews() {

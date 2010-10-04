@@ -19,6 +19,8 @@ package entity.equipment.physicallayer.power;
 import entity.equipment.physicallayer.GenericPhysicalElement;
 import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 
 /**
@@ -26,6 +28,7 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericPowerElement extends GenericPhysicalElement implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericPowerElement extends GenericPhysicalElement{
 
 }

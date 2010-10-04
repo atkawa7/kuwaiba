@@ -1,8 +1,9 @@
 package entity.equipment.physicallayer.parts.ports;
 
 import entity.multiple.types.parts.CommunicationsPortType;
-import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 
 /**
@@ -10,7 +11,8 @@ import javax.persistence.ManyToOne;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericCommunicationsPort extends GenericPort implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericCommunicationsPort extends GenericPort{
     //private boolean vendor; //Reuse the field as private to hide it. Uses a boolean to save diskspace
     //private boolean conditions; //same here
 

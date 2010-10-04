@@ -16,14 +16,16 @@
 package entity.equipment.physicallayer.parts;
 
 import entity.core.ConfigurationItem;
-import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  * Represents a part of a equipment
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericPart extends ConfigurationItem implements Serializable{
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericPart extends ConfigurationItem{
 
 }

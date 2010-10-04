@@ -16,22 +16,26 @@
 
 package entity.core;
 
+import core.annotations.Administrative;
 import entity.multiple.companies.Vendor;
 import entity.multiple.misc.EnvironmentalCondition;
 import entity.multiple.states.OperationalState;
-import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 
 
 
 /**
  * Represents a configuration item according to ITIL. Descendants are every element
- * suceptible to be configured (equipment, ports, etc)
+ * that can be somehow to be configured (equipment, ports, etc)
  *
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
+@Administrative
+@Inheritance(strategy=InheritanceType.JOINED)
 public abstract class ConfigurationItem extends ViewableObject  {
 
     protected String serialNumber;

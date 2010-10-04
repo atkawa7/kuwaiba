@@ -16,13 +16,15 @@
 
 package entity.equipment.containers;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  * Represents a generic distribution frame
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericDistributionFrame extends GenericContainer implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericDistributionFrame extends GenericContainer{
 }

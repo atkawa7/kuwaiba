@@ -18,12 +18,15 @@ package entity.connections;
 
 import entity.core.ConfigurationItem;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  * This class represents a connection, physical or logical
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
+@Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericConnection extends ConfigurationItem {
 
 }

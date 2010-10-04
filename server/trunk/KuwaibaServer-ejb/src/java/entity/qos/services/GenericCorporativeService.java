@@ -16,14 +16,16 @@
 
 package entity.qos.services;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  * Represents a service provided to a corporative customer
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericCorporativeService extends GenericService implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericCorporativeService extends GenericService{
     
 }

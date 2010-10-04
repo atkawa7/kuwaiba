@@ -26,7 +26,7 @@ import javax.persistence.ManyToOne;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class ClassView extends AbstractView{
+public abstract class ClassView extends GenericView{
     @ManyToOne
     protected ClassMetadata myclass;
 

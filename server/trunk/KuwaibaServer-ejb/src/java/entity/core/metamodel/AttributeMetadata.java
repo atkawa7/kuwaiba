@@ -19,6 +19,7 @@ import core.annotations.Metadata;
 import entity.multiple.GenericObjectList;
 import entity.relations.GenericRelation;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,6 +27,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.metamodel.Attribute;
+import util.HierarchyUtils;
 
 /**
  * Represents an attribute metadata information for each. It's used for mapping and documentation purposes
@@ -37,8 +39,6 @@ import javax.persistence.metamodel.Attribute;
 @Metadata //Custon annotation to mark this class as an utility class, no a business class
 @NamedQuery(name="flushAttributeMetadata", query="DELETE FROM AttributeMetadata x")
 public class AttributeMetadata implements Serializable {
-    private static final long serialVersionUID = 1L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -72,10 +72,18 @@ public class AttributeMetadata implements Serializable {
     public AttributeMetadata(Attribute att){
         this.name = att.getName();
         this.type= att.getJavaType().getSimpleName();
-        //TODO:Buscar una forma de buscar si una clase es subclase de otra
-        //a través de varios niveles, esta comparación sólo busca en la superclase inmediata
-        if (att.getJavaType().getSuperclass().equals(GenericRelation.class) ||
-                att.getJavaType().getSuperclass().equals(GenericObjectList.class))
+
+        if (HierarchyUtils.isSubclass(att.getJavaType(), GenericRelation.class) ||
+                HierarchyUtils.isSubclass(att.getJavaType(), GenericRelation.class))
+                this.isMultiple = true;
+        this.description = "Attribute "+this.name;
+    }
+
+    public AttributeMetadata(Field att){
+        this.name = att.getName();
+        this.type= att.getType().getSimpleName();
+        if (HierarchyUtils.isSubclass(att.getType(), GenericRelation.class) ||
+                HierarchyUtils.isSubclass(att.getType(), GenericObjectList.class))
                 this.isMultiple = true;
         this.description = "Attribute "+this.name;
     }

@@ -16,7 +16,6 @@
  */
 package entity.equipment.physicallayer.parts.boards;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
@@ -24,6 +23,6 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class DWDMBoard extends GenericBoard implements Serializable {
+public class DWDMBoard extends GenericBoard{
     
 }

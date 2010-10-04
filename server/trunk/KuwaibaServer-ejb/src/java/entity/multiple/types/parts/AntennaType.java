@@ -16,7 +16,6 @@
 
 package entity.multiple.types.parts;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
@@ -24,6 +23,6 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class AntennaType extends GenericType implements Serializable {
+public class AntennaType extends GenericType{
 
 }

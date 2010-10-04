@@ -16,16 +16,11 @@
 
 package core.interfaces;
 
-import entity.adapters.PhysicalContainerNodeAdapter;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Classes implementing this interface can be used to connect two elements using a physical medium
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public interface PhysicalNode extends Serializable{
-    public List<PhysicalContainerNodeAdapter> getConnectedPhysicalContainers();
-    public void addPhysicalContainers(PhysicalContainerNodeAdapter[] containers);
-    public Long getId();
 }

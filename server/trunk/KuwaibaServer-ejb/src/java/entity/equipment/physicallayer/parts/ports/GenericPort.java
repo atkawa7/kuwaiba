@@ -16,53 +16,18 @@
  */
 package entity.equipment.physicallayer.parts.ports;
 
-import core.interfaces.PhysicalConnection;
 import core.interfaces.PhysicalEndpoint;
-import entity.connections.physical.GenericPhysicalConnection;
 import entity.equipment.physicallayer.parts.GenericPart;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  * Represents a generic Port
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericPort extends GenericPart implements Serializable,PhysicalEndpoint {
-
-    @OneToMany
-    protected List<GenericPhysicalConnection> physicalConnections;
-
-    @Override
-    public void addPhysicalConnections(GenericPhysicalConnection[] _connections) {
-        if (physicalConnections == null)
-            physicalConnections = new ArrayList<GenericPhysicalConnection>();
-        physicalConnections.addAll(Arrays.asList(_connections));
-    }
-
-    @Override
-    public List<GenericPhysicalConnection> getPhysicalConnections() {
-        return physicalConnections;
-    }
-
-    @Override
-    public void removePhysicalConnections(GenericPhysicalConnection[] connections) {
-        for (PhysicalConnection pConnection: connections){
-            if (pConnection.getEndpointA() != null){
-                if (pConnection.getEndpointA().equals(this)){
-                    pConnection.disconnectEndpointA();
-                    continue;
-                }
-                if (pConnection.getEndpointB().equals(this)){
-                    pConnection.disconnectEndpointB();
-                    continue;
-                }
-            }
-        }
-    }
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericPort extends GenericPart implements PhysicalEndpoint {
 
 }

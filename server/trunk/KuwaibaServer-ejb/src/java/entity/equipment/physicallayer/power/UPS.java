@@ -16,11 +16,8 @@
 
 package entity.equipment.physicallayer.power;
 
-import entity.equipment.physicallayer.parts.ports.PowerPort;
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
 
 
 /**
@@ -35,10 +32,6 @@ public class UPS extends GenericPowerElement implements Serializable {
     protected Float nominalOutputVoltage; //Volts
     protected Float outputFrecuency; //Hertz
     protected Float cordLenght; //Meters
-    @ManyToMany
-    protected List<PowerPort> inputConnectors;
-    @ManyToMany
-    protected List<PowerPort> outputConnectors;
 
     public Float getCordLenght() {
         return cordLenght;
@@ -46,14 +39,6 @@ public class UPS extends GenericPowerElement implements Serializable {
 
     public void setCordLenght(Float cordLenght) {
         this.cordLenght = cordLenght;
-    }
-
-    public List<PowerPort> getInputConnectors() {
-        return inputConnectors;
-    }
-
-    public void setInputConnectors(List<PowerPort> inputConnectors) {
-        this.inputConnectors = inputConnectors;
     }
 
     public Float getInputFrecuency() {
@@ -86,14 +71,6 @@ public class UPS extends GenericPowerElement implements Serializable {
 
     public void setOutputCapacity(Float outputCapacity) {
         this.outputCapacity = outputCapacity;
-    }
-
-    public List<PowerPort> getOutputConnectors() {
-        return outputConnectors;
-    }
-
-    public void setOutputConnectors(List<PowerPort> outputConnectors) {
-        this.outputConnectors = outputConnectors;
     }
 
     public Float getOutputFrecuency() {

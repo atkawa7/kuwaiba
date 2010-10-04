@@ -20,6 +20,8 @@ import entity.core.RootObject;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
 import util.HierarchyUtils;
 
@@ -28,7 +30,8 @@ import util.HierarchyUtils;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class AbstractView extends RootObject{
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericView extends RootObject{
     /**
      * An XML document containing the view
      */
@@ -49,13 +52,13 @@ public abstract class AbstractView extends RootObject{
      */
     protected String description;
 
-    public AbstractView() {
+    public GenericView() {
     }
 
-    public AbstractView(ViewInfo serializedView) throws UnsupportedOperationException{
+    public GenericView(ViewInfo serializedView) throws UnsupportedOperationException{
         try{
             Class viewClass = Class.forName(serializedView.getViewClass());
-            if(HierarchyUtils.isSubclass(viewClass, AbstractView.class)){
+            if(HierarchyUtils.isSubclass(viewClass, GenericView.class)){
                 this.viewStructure = serializedView.getStructure();
                 this.background = serializedView.getBackground();
                 this.description = serializedView.getDescription();

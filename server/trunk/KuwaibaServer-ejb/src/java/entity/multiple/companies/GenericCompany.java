@@ -17,15 +17,17 @@
 package entity.multiple.companies;
 
 import entity.multiple.GenericObjectList;
-import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  * Represents a simple company
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericCompany extends GenericObjectList implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericCompany extends GenericObjectList{
     protected String corporativeId;
     protected String phoneNumber; //The normal one
     protected String supportPhoneNumber; //This is used for providing support

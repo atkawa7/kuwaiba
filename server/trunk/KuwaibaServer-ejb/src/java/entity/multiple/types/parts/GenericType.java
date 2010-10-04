@@ -17,8 +17,9 @@
 package entity.multiple.types.parts;
 
 import entity.multiple.GenericObjectList;
-import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 
 /**
@@ -26,5 +27,6 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericType extends GenericObjectList implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericType extends GenericObjectList{
 }

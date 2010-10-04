@@ -14,17 +14,24 @@
  *  limitations under the License.
  */
 
-package entity.connections.logical;
+package core.annotations;
 
-import entity.connections.GenericConnection;
-import java.io.Serializable;
-import javax.persistence.Entity;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * This class represents a generic logical connection
+ * Decorates a field to keep it from being serialized. Field marked like these are supposed to
+ * be retrieved directly (say containers associated to a node or endpoints)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-@Entity
-public abstract class GenericLogicalConnection extends GenericConnection implements Serializable {
+@Documented
+@Target(ElementType.FIELD)
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+public @interface NoSerialize {
 
 }

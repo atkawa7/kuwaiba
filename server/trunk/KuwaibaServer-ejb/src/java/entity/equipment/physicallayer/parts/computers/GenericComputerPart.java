@@ -17,14 +17,16 @@
 package entity.equipment.physicallayer.parts.computers;
 
 import entity.equipment.physicallayer.parts.GenericPart;
-import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  * The root class for all computer parts
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericComputerPart extends GenericPart implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericComputerPart extends GenericPart{
 
 }

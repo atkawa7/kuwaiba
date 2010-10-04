@@ -17,3 +17,6 @@
 * The server and the client can reside in diferent computers.
 * More methods use now the Criteria API, and the updateObject method doesn't use native queries to avoid SQL Injection
 * Multiple bugfixes
+
+0.2 alpha
+* Added support for physical connections. A lot to polish, though

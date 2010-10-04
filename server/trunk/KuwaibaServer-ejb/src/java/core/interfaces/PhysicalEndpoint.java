@@ -16,9 +16,8 @@
 
 package core.interfaces;
 
-import entity.connections.physical.GenericPhysicalConnection;
 import java.io.Serializable;
-import java.util.List;
+
 
 
 /**
@@ -26,7 +25,4 @@ import java.util.List;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public interface PhysicalEndpoint extends Serializable{
-    public List<GenericPhysicalConnection> getPhysicalConnections();
-    public void addPhysicalConnections(GenericPhysicalConnection[] connections);
-    public void removePhysicalConnections(GenericPhysicalConnection[] connections);
 }

@@ -16,7 +16,6 @@
 
 package entity.connections.physical;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
@@ -24,5 +23,5 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class RadioLink extends GenericPhysicalConnection implements Serializable {
+public class RadioLink extends GenericPhysicalConnection{
 }

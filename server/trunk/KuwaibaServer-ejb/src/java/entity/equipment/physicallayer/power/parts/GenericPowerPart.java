@@ -19,12 +19,15 @@ package entity.equipment.physicallayer.power.parts;
 import entity.equipment.physicallayer.power.GenericPowerElement;
 import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  * The root for all power parts
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericPowerPart extends GenericPowerElement implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericPowerPart extends GenericPowerElement{
 
 }

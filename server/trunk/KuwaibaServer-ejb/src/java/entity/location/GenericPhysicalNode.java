@@ -16,40 +16,36 @@
 
 package entity.location;
 
-import core.annotations.Administrative;
+import core.annotations.NoSerialize;
 import core.interfaces.PhysicalNode;
-import entity.adapters.PhysicalContainerNodeAdapter;
+import entity.connections.physical.containers.GenericPhysicalContainer;
 import entity.core.AdministrativeItem;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
 
 /**
  * This is the superclass for all possible physically connectable objects (using containers)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
+@Inheritance(strategy=InheritanceType.JOINED)
 public class GenericPhysicalNode extends AdministrativeItem implements PhysicalNode{
 
      /**
      * This one has all pipes and ducts connected to the node
      */
-    @ManyToMany
-    @Administrative
-    protected List<PhysicalContainerNodeAdapter> containers;
+    @OneToMany
+    @NoSerialize
+    protected List<GenericPhysicalContainer> containers;
 
-    //The adpaters are supossed to be alreaded bounded (aSide and bSide set)
-    @Override
-    public void addPhysicalContainers(PhysicalContainerNodeAdapter[] _containers) {
-        if (containers == null)
-            containers = new ArrayList<PhysicalContainerNodeAdapter>();
-        containers.addAll(Arrays.asList(_containers));
+    public List<GenericPhysicalContainer> getContainers() {
+        return containers;
     }
 
-    @Override
-    public List<PhysicalContainerNodeAdapter> getConnectedPhysicalContainers() {
-        return containers;
+    public void setContainers(List<GenericPhysicalContainer> containers) {
+        this.containers = containers;
     }
 }

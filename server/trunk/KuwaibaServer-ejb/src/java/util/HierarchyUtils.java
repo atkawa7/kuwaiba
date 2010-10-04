@@ -17,6 +17,7 @@ package util;
 
 import core.annotations.Administrative;
 import core.annotations.Dummy;
+import core.annotations.NoSerialize;
 import core.interfaces.PhysicalConnection;
 import core.interfaces.PhysicalEndpoint;
 import core.interfaces.PhysicalNode;
@@ -27,11 +28,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
 
 /**
@@ -47,11 +46,18 @@ public class HierarchyUtils {
      * @return true if the given class is
      */
     public static boolean isSubclass (Class child, Class allegedParent){
+        if (child == null)
+            return false;
+
         Class myClass=child;
         while (!myClass.equals(Object.class)){
             if (myClass.equals(allegedParent))
                 return true;
+            
             myClass = myClass.getSuperclass();
+            //This usually happens when after a recursive operation when the child is an interface
+            if (myClass == null)
+                return false;
         }
         return false;
     }
@@ -109,7 +115,7 @@ public class HierarchyUtils {
         }
 
         List<AttributeMetadata> atts = new ArrayList<AttributeMetadata>();
-        Set<Attribute> metaAtts = entity.getAttributes();
+        List<Field> metaAtts = MetadataUtils.getAllFields(entity.getJavaType());
         PackageMetadata pm;
         sentence = "SELECT x FROM PackageMetadata x WHERE x.name = '"+entity.getJavaType().getPackage().getName()+"'";
         query = em.createQuery(sentence);
@@ -132,11 +138,12 @@ public class HierarchyUtils {
             else
                 parentId = persistClass((EntityType)entity.getSupertype(), em);
         }
-        for(Attribute att : metaAtts){
-            //Ignore the administrative fields
-            if (att.getJavaType().getAnnotation(Dummy.class) != null)
+        for(Field att : metaAtts){
+            //Ignore the fields marked as non serializables
+            if (att.getAnnotation(NoSerialize.class) != null)
                 continue;
-            
+            if (Modifier.isPrivate(att.getModifiers()) || Modifier.isStatic(att.getModifiers()))
+                continue;
             atts.add(new AttributeMetadata(att));
         }
 

@@ -17,9 +17,10 @@
 package entity.multiple.people;
 
 import entity.multiple.GenericObjectList;
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 
 /**
@@ -27,7 +28,8 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericPerson extends GenericObjectList implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericPerson extends GenericObjectList{
     protected String firstName;
     protected String lastName;
     protected String phoneNumber;

@@ -16,7 +16,7 @@
 
 package core.toserialize;
 
-import entity.views.AbstractView;
+import entity.views.GenericView;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -44,7 +44,7 @@ public class ViewInfo {
      * Builds a serialized version of the view using directly the entity
      * @param objectView The entity to be serialized
      */
-    public ViewInfo(AbstractView objectView){
+    public ViewInfo(GenericView objectView){
         this.description = objectView.getDescription();
         this.viewClass = objectView.getClass().getName();
         this.background = objectView.getBackground();

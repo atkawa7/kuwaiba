@@ -15,6 +15,7 @@
  */
 package entity.core;
 
+import core.annotations.Administrative;
 import core.annotations.NoCopy;
 import java.io.Serializable;
 
@@ -37,7 +38,8 @@ import javax.persistence.TemporalType;
  * @author Charles Bedon <charles.bedon@zoho.com>
  */
 @Entity
-@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS) //Default is SINGLE_TABLE, so all data will be stored in a single table
+@Administrative
+@Inheritance(strategy=InheritanceType.JOINED) //Default is SINGLE_TABLE, so all data will be stored in a single table
 public abstract class RootObject implements Serializable, Cloneable {
 
     public static final Long PARENT_ROOT = new Long(0); // This is the id for the single instance of the root object
@@ -46,6 +48,7 @@ public abstract class RootObject implements Serializable, Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE) //How to generate the primary key (SEQUENCE makes it customizable)
     @NoCopy
+    @Column(updatable=false)
     protected Long id; //Primary key
     @Column(nullable=false)
     protected String name = ""; //Name

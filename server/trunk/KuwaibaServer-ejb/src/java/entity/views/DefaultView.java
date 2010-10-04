@@ -24,7 +24,7 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class DefaultView extends AbstractView{
+public class DefaultView extends GenericView{
 
     public DefaultView() {
     }

@@ -18,6 +18,8 @@ package entity.core;
 
 import core.annotations.Administrative;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  * This class is the root of all non-operative elements
@@ -25,6 +27,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @Administrative
+@Inheritance(strategy=InheritanceType.JOINED)
 public abstract class AdministrativeItem extends ViewableObject {
     
     @Override

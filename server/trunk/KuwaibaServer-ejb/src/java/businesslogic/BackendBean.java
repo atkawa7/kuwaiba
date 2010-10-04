@@ -22,9 +22,7 @@ import core.toserialize.RemoteObjectLight;
 import core.annotations.Metadata;
 import core.exceptions.ObjectNotFoundException;
 import core.interfaces.PhysicalConnection;
-import core.interfaces.PhysicalContainer;
 import core.interfaces.PhysicalEndpoint;
-import core.interfaces.PhysicalNode;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectUpdate;
@@ -32,9 +30,9 @@ import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.ViewInfo;
 import entity.adapters.ObjectViewAdapter;
-import entity.adapters.PhysicalContainerNodeAdapter;
 import entity.config.User;
 import entity.config.UserGroup;
+import entity.connections.physical.containers.GenericPhysicalContainer;
 import entity.core.DummyRoot;
 import entity.core.RootObject;
 import entity.core.ViewableObject;
@@ -44,7 +42,7 @@ import entity.location.Country;
 import entity.location.GenericPhysicalNode;
 import entity.location.StateObject;
 import entity.multiple.GenericObjectList;
-import entity.views.AbstractView;
+import entity.views.GenericView;
 import entity.views.DefaultView;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -75,7 +73,7 @@ import util.MetadataUtils;
 public class BackendBean implements BackendBeanRemote {
     //We use cointainer managed persistance, which means that we don't handle the
     //access to the database directly, but we use a persistemce unit set by the
-    //application server. If we'd like to do it manually, er show use a EntityManagerFactory
+    //application server. If we'd like to do it manually, we should use an EntityManagerFactory
     @PersistenceContext
     private EntityManager em;
     private String error;
@@ -971,7 +969,7 @@ public class BackendBean implements BackendBeanRemote {
 
             for (ObjectViewAdapter myViewAdapter : viewAdapters){
                 try{
-                    AbstractView myView = (AbstractView)em.createQuery("SELECT x FROM "+myViewAdapter.getaSideClass()+" x WHERE x.id="+myViewAdapter.getaSide()).getSingleResult();
+                    GenericView myView = (GenericView)em.createQuery("SELECT x FROM "+myViewAdapter.getaSideClass()+" x WHERE x.id="+myViewAdapter.getaSide()).getSingleResult();
                     if (myView instanceof DefaultView)
                         return new ViewInfo(myView);
                 }catch (NoResultException nre){
@@ -1013,7 +1011,7 @@ public class BackendBean implements BackendBeanRemote {
                 for (ObjectViewAdapter myViewAdapter : viewAdapters){
                     //TODO: Only change the fields that have been updated
                     try{
-                        AbstractView myView = (AbstractView)em.createQuery("SELECT x FROM "+myViewAdapter.getaSideClass()+" x WHERE x.id="+myViewAdapter.getaSide()).getSingleResult();
+                        GenericView myView = (GenericView)em.createQuery("SELECT x FROM "+myViewAdapter.getaSideClass()+" x WHERE x.id="+myViewAdapter.getaSide()).getSingleResult();
                         if(myView.getClass().getName().equals(view.getViewClass())) //If there's one already, replace it
                         em.remove(myView);
                     }catch (NoResultException nre){
@@ -1061,8 +1059,8 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             try {
                 PhysicalConnection conn = (PhysicalConnection) connectionClass.newInstance();
-                conn.connectEndpointA(endpointA);
-                conn.connectEndpointA(endpointB);
+//                conn.connectEndpointA(endpointA);
+  //              conn.connectEndpointA(endpointB);
                 em.persist(conn);
                 return true;
             } catch (InstantiationException ex) {
@@ -1109,23 +1107,23 @@ public class BackendBean implements BackendBeanRemote {
     public RemoteObjectLight createPhysicalContainerConnection(Long sourceNode, Long targetNode, Class containerClass, Long parentNode){
         if (em != null){
 
-            PhysicalNode nodeA = (PhysicalNode)em.find(GenericPhysicalNode.class, sourceNode);
+            GenericPhysicalNode nodeA = (GenericPhysicalNode)em.find(GenericPhysicalNode.class, sourceNode);
             if (nodeA ==null){
                 return null;
             }
 
-            PhysicalNode nodeB = (PhysicalNode)em.find(GenericPhysicalNode.class, targetNode);
+            GenericPhysicalNode nodeB = (GenericPhysicalNode)em.find(GenericPhysicalNode.class, targetNode);
             if (nodeB ==null){
                 return null;
             }
 
             try {
-                PhysicalContainer conn = (PhysicalContainer) containerClass.newInstance();
-                conn.connectNodeA(nodeA);
-                conn.connectNodeB(nodeB);
+                GenericPhysicalContainer conn = (GenericPhysicalContainer) containerClass.newInstance();
+                conn.setNodeA(nodeA);
+                conn.setNodeB(nodeB);
                 conn.setParent(parentNode);
-                nodeA.addPhysicalContainers(new PhysicalContainerNodeAdapter[]{conn.getNodeA()});
-                nodeB.addPhysicalContainers(new PhysicalContainerNodeAdapter[]{conn.getNodeB()});
+                nodeA.getContainers().add(conn);
+                nodeB.getContainers().add(conn);
                 em.persist(conn);
                 return new RemoteObjectLight(conn);
             } catch (InstantiationException ex) {

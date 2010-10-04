@@ -17,14 +17,16 @@
 package entity.equipment.physicallayer;
 
 import entity.core.ConfigurationItem;
-import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  * This class is the root for all physical layer elements
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericPhysicalElement extends ConfigurationItem implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericPhysicalElement extends ConfigurationItem{
 
 }

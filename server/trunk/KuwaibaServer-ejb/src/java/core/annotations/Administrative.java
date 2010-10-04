@@ -15,9 +15,9 @@ import java.lang.annotation.Target;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Documented
-@Target({ElementType.TYPE,ElementType.FIELD})
+@Target(ElementType.TYPE)
 @Inherited
-@Retention(RetentionPolicy.RUNTIME) //Don't discard this annotation afeter compilation
+@Retention(RetentionPolicy.RUNTIME) //Don't discard this annotation after a compilation
                                     //In fact, we need it at runtime
 public @interface Administrative {
 

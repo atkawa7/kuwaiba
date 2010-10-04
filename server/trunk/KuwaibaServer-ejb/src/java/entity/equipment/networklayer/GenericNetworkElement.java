@@ -16,15 +16,17 @@
 package entity.equipment.networklayer;
 
 import entity.core.ConfigurationItem;
-import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  * This class is the root for all layer 3 elements
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericNetworkElement extends ConfigurationItem implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericNetworkElement extends ConfigurationItem{
     protected String ipAddress;
 
     public String getIpAddress() {

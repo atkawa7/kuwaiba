@@ -16,18 +16,10 @@
 
 package core.interfaces;
 
-import entity.multiple.types.links.PhysicalLinkType;
 
 /**
  * This interface a link (radio, electrical, optical) connectable
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public interface PhysicalConnection{
-    public PhysicalEndpoint getEndpointA();
-    public PhysicalEndpoint getEndpointB();
-    public PhysicalLinkType getType();
-    public void connectEndpointA(PhysicalEndpoint endpointA);
-    public void connectEndpointB(PhysicalEndpoint endpointB);
-    public void disconnectEndpointA();
-    public void disconnectEndpointB();
 }

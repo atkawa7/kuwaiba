@@ -17,13 +17,16 @@ package entity.location;
 
 import entity.multiple.states.StructuralState;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 
 /**
- *
+ * This is a generic location
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
+@Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericLocation extends GenericPhysicalNode {
 
     protected String position; //Geo position (coordinates)

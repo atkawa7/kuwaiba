@@ -17,8 +17,9 @@
 package entity.multiple.states;
 
 import entity.multiple.GenericObjectList;
-import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 
 /**
@@ -27,7 +28,8 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericState extends GenericObjectList implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericState extends GenericObjectList{
     protected Long nextState; //Id of the next state. I prefer to handle the relations
                               //within the same table using plain Longs values rather than a relationship
                               //to a GenericState

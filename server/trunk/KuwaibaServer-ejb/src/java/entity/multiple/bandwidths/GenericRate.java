@@ -17,15 +17,17 @@
 package entity.multiple.bandwidths;
 
 import entity.multiple.GenericObjectList;
-import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
- * Represents a generic
+ * Represents a generic rate
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericRate extends GenericObjectList implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericRate extends GenericObjectList{
     protected String mesurementUnit;
 
     public String getMesurementUnit() {

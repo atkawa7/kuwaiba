@@ -17,14 +17,16 @@
 package entity.equipment.physicallayer.parts.boards;
 
 import entity.equipment.physicallayer.parts.GenericPart;
-import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  * Represents a generic card
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericBoard extends GenericPart implements Serializable {
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class GenericBoard extends GenericPart{
 
 }

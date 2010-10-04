@@ -16,20 +16,10 @@
 
 package core.interfaces;
 
-import entity.adapters.PhysicalContainerNodeAdapter;
-import entity.multiple.types.containers.PhysicalContainerType;
-
-
 
 /**
  * This interface makes a class a container (pipe, cable ditch) connectable to a node
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public interface PhysicalContainer{
-    public PhysicalContainerNodeAdapter getNodeA();
-    public PhysicalContainerNodeAdapter getNodeB();
-    public PhysicalContainerType getType();
-    public void connectNodeA(PhysicalNode nodeA);
-    public void connectNodeB(PhysicalNode nodeB);
-    public void setParent(Long parent);
 }
