@@ -11,17 +11,16 @@ import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.webservice.RemoteObjectLight;
 
 /**
- * Este clase representa los elementos que aparecen en los árboles de navegación
- * es sólo información de despliegue (sin detalle)
+ * This class is a simple representation of a business object with a very basic information
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class LocalObjectLightImpl implements LocalObjectLight{ //This class implements Transferable because of
                                                                //LocalObjectLight interface extends from it
 
-    private Long oid;
+    protected Long oid;
     protected String className;
     protected String packageName;
-    private String displayName;
+    protected String displayName;
     /**
      * The list of property change listeners
      */

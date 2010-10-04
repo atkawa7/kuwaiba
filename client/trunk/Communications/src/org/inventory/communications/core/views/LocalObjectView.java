@@ -147,10 +147,10 @@ public class LocalObjectView {
 
                         for (LocalNode myNode : myNodes){
 
-                            if ((Long.valueOf((String)container.getAttribute("nodeA"))).equals(myNode.getObject().getOid())) //NOI18N
+                            if (((Long)container.getAttribute("nodeA")).equals(myNode.getObject().getOid())) //NOI18N
                                 myLocalEdge.setaSide(myNode);
                             else{
-                                if ((Long.valueOf((String)container.getAttribute("nodeB"))).equals(myNode.getObject().getOid())) //NOI18N
+                                if (((Long)container.getAttribute("nodeB")).equals(myNode.getObject().getOid())) //NOI18N
                                    myLocalEdge.setbSide(myNode);
                             }
 

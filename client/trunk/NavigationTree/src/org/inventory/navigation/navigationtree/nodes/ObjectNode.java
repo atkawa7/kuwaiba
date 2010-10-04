@@ -140,7 +140,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                 ObjectNodeProperty property = null;
 
                 if (lam.getType().equals(LocalObjectListItem.class)){
-
+                    //If so, this can be a reference to an object list item or a 1:1 to any other RootObject subclass
                     LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(),false);
                     LocalObjectListItem val = null;
 

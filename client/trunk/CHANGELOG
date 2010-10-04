@@ -19,3 +19,7 @@
 * Inline edition for object nodes names
 * Built on top of NBP included in NetBeans IDE 6.9 (Build 201006101454)
 * Multiple bugfixes
+
+0.2 alpha
+* Basic support for physical views including physical containers only (see documentation for details). Zoom, pan, background actions
+* New splashscreen

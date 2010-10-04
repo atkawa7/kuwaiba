@@ -15,9 +15,6 @@
  */
 package org.inventory.communications.core;
 
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.Date;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
 import org.inventory.core.services.utils.Utils;

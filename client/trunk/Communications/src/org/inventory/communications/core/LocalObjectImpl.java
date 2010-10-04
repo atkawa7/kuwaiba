@@ -30,11 +30,7 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
     private HashMap<String, Object> attributes;
     //Reference to the metadata associated to this object's class
     private LocalClassMetadata myMetadata;
-    /**
-     * Object's oid. Since this is a reference to the object in the database, it won't
-     * be treated as a common attribute anymore
-     */
-    private Long oid;
+
 
     public LocalObjectImpl(){}
 
