@@ -22,8 +22,8 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
 import org.inventory.core.services.interfaces.LocalObjectLight;
-import org.inventory.navigation.navigationtree.nodes.ObjectChildren;
-import org.inventory.navigation.navigationtree.nodes.RootObjectNode;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
+import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.util.ImageUtilities;
@@ -44,7 +44,6 @@ public final class NavigationTreeTopComponent extends TopComponent
 
     /** path to the icon used by the component and its open action */
     static final String ICON_PATH = "org/inventory/navigation/navigationtree/res/icon.png";
-    static final String ROOT_ICON_PATH = "org/inventory/navigation/navigationtree/res/root.png";
 
     private final ExplorerManager em = new ExplorerManager();
     private NavigationTreeService nts;
@@ -102,9 +101,7 @@ public final class NavigationTreeTopComponent extends TopComponent
         LocalObjectLight[] rootChildren = nts.getRootChildren();
         if (rootChildren != null){
             RootObjectNode root = new RootObjectNode(new ObjectChildren(rootChildren));
-            root.setIconBaseWithExtension(ROOT_ICON_PATH);
             em.setRootContext(root);
-            em.getRootContext().setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_ROOT"));
             add(treeView,BorderLayout.CENTER);
         }
         
@@ -191,6 +188,7 @@ public final class NavigationTreeTopComponent extends TopComponent
         String version = p.getProperty("version");
     }
 
+    @Override
     public ExplorerManager getExplorerManager() {
         return em;
     }

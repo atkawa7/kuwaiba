@@ -24,7 +24,7 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
 import org.inventory.core.services.interfaces.LocalObjectLight;
-import org.inventory.navigation.navigationtree.nodes.ObjectChildren;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerManager.Provider;
 import org.openide.explorer.ExplorerUtils;
