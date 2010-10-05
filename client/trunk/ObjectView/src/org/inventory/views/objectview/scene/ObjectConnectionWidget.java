@@ -40,6 +40,7 @@ public class ObjectConnectionWidget extends ConnectionWidget{
     public ObjectConnectionWidget(ViewScene scene, LocalObject connection){
         super(scene);
         this.object = connection;
+        getActions().addAction(scene.createSelectAction());
     }
 
     public LocalObject getObject() {

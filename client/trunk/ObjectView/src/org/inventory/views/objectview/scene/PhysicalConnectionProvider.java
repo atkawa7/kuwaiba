@@ -18,11 +18,11 @@ package org.inventory.views.objectview.scene;
 
 import java.awt.Color;
 import java.awt.Point;
-import javax.swing.JOptionPane;
+import java.awt.event.ActionEvent;
+import org.inventory.connections.physicalconnections.wizards.PhysicalConnectionWizardWizardAction;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.core.services.interfaces.LocalObject;
-import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.views.objectview.ObjectViewTopComponent;
 import org.netbeans.api.visual.action.ConnectProvider;
@@ -83,7 +83,7 @@ public class PhysicalConnectionProvider implements ConnectProvider{
 
     @Override
     public boolean isSourceWidget(Widget sourceWidget) {
-        LocalObjectLight myObject = ((ObjectNodeWidget)sourceWidget).getObject();
+/*        LocalObjectLight myObject = ((ObjectNodeWidget)sourceWidget).getObject();
         switch (currentConnectionSelection){
             case ObjectViewTopComponent.CONNECTION_WIRECONTAINER:
             case ObjectViewTopComponent.CONNECTION_WIRELESSCONTAINER:
@@ -96,7 +96,8 @@ public class PhysicalConnectionProvider implements ConnectProvider{
                 if (com.getMetaForClass(myObject.getClassName(), false).isPhysicalEndpoint())
                     return true;
         }
-        return false;
+        return false;*/
+        return true;
     }
 
     @Override
@@ -134,7 +135,10 @@ public class PhysicalConnectionProvider implements ConnectProvider{
             case ObjectViewTopComponent.CONNECTION_ELECTRICALLINK:
             case ObjectViewTopComponent.CONNECTION_OPTICALLINK:
             case ObjectViewTopComponent.CONNECTION_WIRELESSLINK:
-                JOptionPane.showMessageDialog(null, "Not supported yet");
+                new PhysicalConnectionWizardWizardAction(((ObjectNodeWidget)sourceWidget).getObject(),
+                                                            ((ObjectNodeWidget)targetWidget).getObject(),
+                                                            currentConnectionSelection).
+                        actionPerformed(new ActionEvent(this, 1, "create"));
                 return;
         }
 
