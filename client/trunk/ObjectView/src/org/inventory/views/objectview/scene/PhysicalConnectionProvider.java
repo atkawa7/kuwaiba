@@ -21,8 +21,10 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import org.inventory.connections.physicalconnections.wizards.PhysicalConnectionWizardWizardAction;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.connections.LocalPhysicalConnection;
 import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.core.services.interfaces.LocalObject;
+import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.views.objectview.ObjectViewTopComponent;
 import org.netbeans.api.visual.action.ConnectProvider;
@@ -49,6 +51,10 @@ public class PhysicalConnectionProvider implements ConnectProvider{
      */
     private int currentConnectionSelection;
     /**
+     * What are we trying to create
+     */
+    private String connectionClass;
+    /**
      * Reference to the common CommunicationsStub
      */
     private CommunicationsStub com;
@@ -56,6 +62,10 @@ public class PhysicalConnectionProvider implements ConnectProvider{
      * Reference to the common notifier
      */
     private NotificationUtil nu;
+    /**
+     * Action to be called when a physical connection is requested
+     */
+    private PhysicalConnectionWizardWizardAction physicalConnectAction;
 
     public PhysicalConnectionProvider(){
         this.com = CommunicationsStub.getInstance();
@@ -80,10 +90,13 @@ public class PhysicalConnectionProvider implements ConnectProvider{
         this.currentConnectionSelection = currentConnectionSelection;
     }
 
+    public void setConnectionClass(String connectionClass) {
+        this.connectionClass = connectionClass;
+    }
 
     @Override
     public boolean isSourceWidget(Widget sourceWidget) {
-/*        LocalObjectLight myObject = ((ObjectNodeWidget)sourceWidget).getObject();
+        LocalObjectLight myObject = ((ObjectNodeWidget)sourceWidget).getObject();
         switch (currentConnectionSelection){
             case ObjectViewTopComponent.CONNECTION_WIRECONTAINER:
             case ObjectViewTopComponent.CONNECTION_WIRELESSCONTAINER:
@@ -93,11 +106,9 @@ public class PhysicalConnectionProvider implements ConnectProvider{
             case ObjectViewTopComponent.CONNECTION_ELECTRICALLINK:
             case ObjectViewTopComponent.CONNECTION_OPTICALLINK:
             case ObjectViewTopComponent.CONNECTION_WIRELESSLINK:
-                if (com.getMetaForClass(myObject.getClassName(), false).isPhysicalEndpoint())
-                    return true;
+                return true;
         }
-        return false;*/
-        return true;
+        return false;
     }
 
     @Override
@@ -122,6 +133,7 @@ public class PhysicalConnectionProvider implements ConnectProvider{
     @Override
     public void createConnection(Widget sourceWidget, Widget targetWidget) {
         LocalObject myConnection = null;
+        
 
         switch (currentConnectionSelection){
             case ObjectViewTopComponent.CONNECTION_WIRECONTAINER:
@@ -135,10 +147,16 @@ public class PhysicalConnectionProvider implements ConnectProvider{
             case ObjectViewTopComponent.CONNECTION_ELECTRICALLINK:
             case ObjectViewTopComponent.CONNECTION_OPTICALLINK:
             case ObjectViewTopComponent.CONNECTION_WIRELESSLINK:
-                new PhysicalConnectionWizardWizardAction(((ObjectNodeWidget)sourceWidget).getObject(),
+                if (physicalConnectAction == null)
+                    physicalConnectAction = new PhysicalConnectionWizardWizardAction(((ObjectNodeWidget)sourceWidget).getObject(),
                                                             ((ObjectNodeWidget)targetWidget).getObject(),
-                                                            currentConnectionSelection).
-                        actionPerformed(new ActionEvent(this, 1, "create"));
+                                                            connectionClass);
+                else{
+                    physicalConnectAction.setASide(((ObjectNodeWidget)sourceWidget).getObject());
+                    physicalConnectAction.setBSide(((ObjectNodeWidget)targetWidget).getObject());
+                    physicalConnectAction.setConnectionClass(connectionClass);
+                }
+                physicalConnectAction.actionPerformed(new ActionEvent(this, 1, "create"));
                 return;
         }
 

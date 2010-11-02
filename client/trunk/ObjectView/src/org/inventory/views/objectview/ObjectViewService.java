@@ -70,8 +70,7 @@ public class ObjectViewService implements LookupListener{
      */
     public void resultChanged(LookupEvent ev) {
         Lookup.Result lookupResult = (Lookup.Result)ev.getSource();
-        if(
-           lookupResult.allInstances().size() == 1){
+        if(lookupResult.allInstances().size() == 1){
 
            //Don't update if the same object is selected
            LocalObjectLight myObject = (LocalObjectLight)lookupResult.allInstances().iterator().next();

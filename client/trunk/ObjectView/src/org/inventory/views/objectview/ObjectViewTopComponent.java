@@ -18,9 +18,9 @@ package org.inventory.views.objectview;
 import java.awt.BorderLayout;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
+import org.inventory.communications.core.connections.LocalPhysicalConnection;
 import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.core.services.interfaces.NotificationUtil;
-import org.inventory.core.services.interfaces.connections.LocalPhysicalConnection;
 import org.inventory.views.objectview.scene.ObjectConnectionWidget;
 import org.inventory.views.objectview.scene.ViewScene;
 import org.openide.explorer.ExplorerManager;
@@ -338,16 +338,19 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
     private void btnElectricalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnElectricalLinkActionPerformed
         scene.getConnectionProvider().setCurrentLineColor(LocalPhysicalConnection.COLOR_ELECTRICAL);
         scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_ELECTRICALLINK);
+        scene.getConnectionProvider().setConnectionClass(LocalPhysicalConnection.CLASS_ELECTRICALLINK);
     }//GEN-LAST:event_btnElectricalLinkActionPerformed
 
     private void btnOpticalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpticalLinkActionPerformed
         scene.getConnectionProvider().setCurrentLineColor(LocalPhysicalConnection.COLOR_OPTICAL);
         scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_OPTICALLINK);
+        scene.getConnectionProvider().setConnectionClass(LocalPhysicalConnection.CLASS_OPTICALLINK);
     }//GEN-LAST:event_btnOpticalLinkActionPerformed
 
     private void btnWirelessLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessLinkActionPerformed
         scene.getConnectionProvider().setCurrentLineColor(LocalPhysicalConnection.COLOR_WIRELESS);
         scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_WIRELESSLINK);
+        scene.getConnectionProvider().setConnectionClass(LocalPhysicalConnection.CLASS_WIRELESSLINK);
     }//GEN-LAST:event_btnWirelessLinkActionPerformed
 
     private void btnWireContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWireContainerActionPerformed
