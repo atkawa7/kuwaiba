@@ -57,6 +57,14 @@ public final class PhysicalConnectionWizardVisualPanel1 extends JPanel{
         return "Choose endpoints";
     }
 
+    public ExplorablePanel getPnlLeft() {
+        return pnlLeft;
+    }
+
+    public ExplorablePanel getPnlRight() {
+        return pnlRight;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

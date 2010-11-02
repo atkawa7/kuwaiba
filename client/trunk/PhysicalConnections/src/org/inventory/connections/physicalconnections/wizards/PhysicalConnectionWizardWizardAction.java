@@ -17,39 +17,41 @@ package org.inventory.connections.physicalconnections.wizards;
 
 import java.awt.Component;
 import java.awt.Dialog;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 import javax.swing.JComponent;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
-import org.openide.util.HelpCtx;
-import org.openide.util.actions.CallableSystemAction;
 
 // An example action demonstrating how the wizard could be called from within
 // your code. You can copy-paste the code below wherever you need.
-public final class PhysicalConnectionWizardWizardAction extends CallableSystemAction {
+public final class PhysicalConnectionWizardWizardAction implements ActionListener {
 
     private WizardDescriptor.Panel[] panels;
     private LocalObjectLight aSide;
     private LocalObjectLight bSide;
+    private String connectionClass;
 
-    public PhysicalConnectionWizardWizardAction(LocalObjectLight aObject, LocalObjectLight bObject, int currentConnectionSelection) {
+    public PhysicalConnectionWizardWizardAction(LocalObjectLight aObject, LocalObjectLight bObject, String connectionClass) {
         this.aSide = aObject;
         this.bSide = bObject;
+        this.connectionClass = connectionClass;
     }
 
     @Override
-    public void performAction() {
+    public void actionPerformed(ActionEvent e) {
         WizardDescriptor wizardDescriptor = new WizardDescriptor(getPanels());
-        // {0} will be replaced by WizardDesriptor.Panel.getComponent().getName()
         wizardDescriptor.setTitleFormat(new MessageFormat("{0}"));
         wizardDescriptor.setTitle("Physical Connections Wizard");
+        wizardDescriptor.putProperty("connectionClass", connectionClass);
         Dialog dialog = DialogDisplayer.getDefault().createDialog(wizardDescriptor);
         dialog.setVisible(true);
         dialog.toFront();
         boolean cancelled = wizardDescriptor.getValue() != WizardDescriptor.FINISH_OPTION;
         if (!cancelled) {
-            // do something
+
         }
     }
 
@@ -73,16 +75,15 @@ public final class PhysicalConnectionWizardWizardAction extends CallableSystemAc
                 if (c instanceof JComponent) { // assume Swing components
                     JComponent jc = (JComponent) c;
                     // Sets step number of a component
-                    // TODO if using org.openide.dialogs >= 7.8, can use WizardDescriptor.PROP_*:
-                    jc.putClientProperty("WizardPanel_contentSelectedIndex", new Integer(i));
+                    jc.putClientProperty(WizardDescriptor.PROP_CONTENT_SELECTED_INDEX, new Integer(i));
                     // Sets steps names for a panel
-                    jc.putClientProperty("WizardPanel_contentData", steps);
+                    jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DATA, steps);
                     // Turn on subtitle creation on each step
-                    jc.putClientProperty("WizardPanel_autoWizardStyle", Boolean.TRUE);
+                    jc.putClientProperty(WizardDescriptor.PROP_AUTO_WIZARD_STYLE, Boolean.TRUE);
                     // Show steps on the left side with the image on the background
-                    jc.putClientProperty("WizardPanel_contentDisplayed", Boolean.TRUE);
+                    jc.putClientProperty(WizardDescriptor.PROP_CONTENT_DISPLAYED, Boolean.TRUE);
                     // Turn on numbering of all steps
-                    jc.putClientProperty("WizardPanel_contentNumbered", Boolean.TRUE);
+                    jc.putClientProperty(WizardDescriptor.PROP_CONTENT_NUMBERED, Boolean.TRUE);
                 }
             }
         }
@@ -90,20 +91,18 @@ public final class PhysicalConnectionWizardWizardAction extends CallableSystemAc
     }
 
     public String getName() {
-        return "Start Sample Wizard";
+        return "Physical Connection Wizard";
     }
 
-    @Override
-    public String iconResource() {
-        return null;
+    public void setASide(LocalObjectLight object) {
+        this.aSide = object;
     }
 
-    public HelpCtx getHelpCtx() {
-        return HelpCtx.DEFAULT_HELP;
+    public void setBSide(LocalObjectLight object) {
+        this.bSide = object;
     }
 
-    @Override
-    protected boolean asynchronous() {
-        return false;
+    public void setConnectionClass(String currentConnectionSelection) {
+        connectionClass = currentConnectionSelection;
     }
 }

@@ -16,15 +16,18 @@
 
 package org.inventory.connections.physicalconnections.wizards.custompanels;
 
+import javax.swing.ActionMap;
 import javax.swing.JPanel;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerManager.Provider;
+import org.openide.explorer.ExplorerUtils;
+import org.openide.util.Lookup;
 
 /**
  * This panel can embed an explorer view
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ExplorablePanel extends JPanel implements Provider{
+public class ExplorablePanel extends JPanel implements Provider, Lookup.Provider{
 
     private ExplorerManager em;
 
@@ -35,6 +38,11 @@ public class ExplorablePanel extends JPanel implements Provider{
     @Override
     public ExplorerManager getExplorerManager() {
         return em;
+    }
+
+    @Override
+    public Lookup getLookup() {
+        return ExplorerUtils.createLookup(em, new ActionMap());
     }
 
 }
