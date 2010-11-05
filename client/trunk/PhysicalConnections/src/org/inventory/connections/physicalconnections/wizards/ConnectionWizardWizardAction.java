@@ -21,23 +21,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 import javax.swing.JComponent;
-import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.interfaces.LocalObject;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
 
 // An example action demonstrating how the wizard could be called from within
 // your code. You can copy-paste the code below wherever you need.
-public final class PhysicalConnectionWizardWizardAction implements ActionListener {
+public final class ConnectionWizardWizardAction implements ActionListener {
 
     private WizardDescriptor.Panel[] panels;
-    private LocalObjectLight aSide;
-    private LocalObjectLight bSide;
-    private String connectionClass;
+    private ConnectionWizard myWizard;
 
-    public PhysicalConnectionWizardWizardAction(LocalObjectLight aObject, LocalObjectLight bObject, String connectionClass) {
-        this.aSide = aObject;
-        this.bSide = bObject;
-        this.connectionClass = connectionClass;
+    public ConnectionWizardWizardAction(ConnectionWizard myWizard) {
+        this.myWizard = myWizard;
     }
 
     @Override
@@ -45,12 +41,15 @@ public final class PhysicalConnectionWizardWizardAction implements ActionListene
         WizardDescriptor wizardDescriptor = new WizardDescriptor(getPanels());
         wizardDescriptor.setTitleFormat(new MessageFormat("{0}"));
         wizardDescriptor.setTitle("Physical Connections Wizard");
-        wizardDescriptor.putProperty("connectionClass", connectionClass);
+        wizardDescriptor.putProperty("connectionClass", myWizard.getConnectionClass()); //NOI18N
         Dialog dialog = DialogDisplayer.getDefault().createDialog(wizardDescriptor);
         dialog.setVisible(true);
         dialog.toFront();
         boolean cancelled = wizardDescriptor.getValue() != WizardDescriptor.FINISH_OPTION;
         if (!cancelled) {
+//            LocalObject lo = com.createPhysicalConnection(aSelection.getOid(),
+//            bSelection.getOid(), connectionClass, null);
+//            if (lo == null)
 
         }
     }
@@ -62,8 +61,8 @@ public final class PhysicalConnectionWizardWizardAction implements ActionListene
     private WizardDescriptor.Panel[] getPanels() {
         if (panels == null) {
             panels = new WizardDescriptor.Panel[]{
-                        new PhysicalConnectionWizardWizardPanel1(aSide, bSide),
-                        new PhysicalConnectionWizardWizardPanel2()
+                        new ConnectionWizardWizardPanel1(myWizard.getASide(), myWizard.getBSide()),
+                        new ConnectionWizardWizardPanel2()
                     };
             String[] steps = new String[panels.length];
             for (int i = 0; i < panels.length; i++) {
@@ -94,15 +93,7 @@ public final class PhysicalConnectionWizardWizardAction implements ActionListene
         return "Physical Connection Wizard";
     }
 
-    public void setASide(LocalObjectLight object) {
-        this.aSide = object;
-    }
-
-    public void setBSide(LocalObjectLight object) {
-        this.bSide = object;
-    }
-
-    public void setConnectionClass(String currentConnectionSelection) {
-        connectionClass = currentConnectionSelection;
+    LocalObject getNewConnection() {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

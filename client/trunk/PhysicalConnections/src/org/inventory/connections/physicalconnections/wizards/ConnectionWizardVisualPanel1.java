@@ -15,13 +15,14 @@
  */
 package org.inventory.connections.physicalconnections.wizards;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.inventory.connections.physicalconnections.wizards.custompanels.ExplorablePanel;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.explorer.view.BeanTreeView;
 
-public final class PhysicalConnectionWizardVisualPanel1 extends JPanel{
+public final class ConnectionWizardVisualPanel1 extends JPanel{
 
     private BeanTreeView treeLeft;
     private BeanTreeView treeRight;
@@ -30,7 +31,7 @@ public final class PhysicalConnectionWizardVisualPanel1 extends JPanel{
     private ExplorablePanel pnlLeft;
     private ExplorablePanel pnlRight;
 
-    PhysicalConnectionWizardVisualPanel1(LocalObjectLight aSide, LocalObjectLight bSide) {
+    ConnectionWizardVisualPanel1(LocalObjectLight aSide, LocalObjectLight bSide) {
         this.aSide = aSide;
         this.bSide = bSide;
         initComponents();
@@ -78,7 +79,7 @@ public final class PhysicalConnectionWizardVisualPanel1 extends JPanel{
         pnlScrollLeft = new javax.swing.JScrollPane();
 
         lblInstructions.setFont(new java.awt.Font("Dialog", 0, 12));
-        org.openide.awt.Mnemonics.setLocalizedText(lblInstructions, org.openide.util.NbBundle.getMessage(PhysicalConnectionWizardVisualPanel1.class, "PhysicalConnectionWizardVisualPanel1.lblInstructions.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(lblInstructions, org.openide.util.NbBundle.getMessage(ConnectionWizardVisualPanel1.class, "ConnectionWizardVisualPanel1.lblInstructions.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -87,14 +88,12 @@ public final class PhysicalConnectionWizardVisualPanel1 extends JPanel{
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblInstructions)
-                        .addContainerGap())
+                    .addComponent(lblInstructions)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(pnlScrollLeft, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
-                        .addComponent(pnlScrollRight, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(80, Short.MAX_VALUE))))
+                        .addGap(42, 42, 42)
+                        .addComponent(pnlScrollRight, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(80, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -102,10 +101,10 @@ public final class PhysicalConnectionWizardVisualPanel1 extends JPanel{
                 .addContainerGap()
                 .addComponent(lblInstructions)
                 .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlScrollLeft, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
-                    .addComponent(pnlScrollRight, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(pnlScrollRight)
+                    .addComponent(pnlScrollLeft, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables

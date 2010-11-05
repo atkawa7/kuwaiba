@@ -21,32 +21,19 @@ package org.inventory.core.services.interfaces;
  */
 public interface LocalAttributeMetadata {
     public Long getId();
-
     public void setId(Long id);
-
     public String getDescription();
-
     public void setDescription(String description);
-
     public String getDisplayName();
-
     public void setDisplayName(String displayName);
-
     public Boolean getIsAdministrative();
-
     public void setIsAdministrative(Boolean isAdministrative);
-
     public Boolean getIsVisible();
-
+    public Boolean getIsMultiple();
     public void setIsVisible(Boolean isVisible);
-
     public String getName();
-
     public void setName(String name);
-
     public Class getType();
-
     public void setType(Class type);
-
     public String getListAttributeClassName();
 }

@@ -17,16 +17,21 @@ package org.inventory.connections.physicalconnections.wizards;
 
 import java.awt.Component;
 import javax.swing.event.ChangeListener;
+import org.inventory.communications.CommunicationsStub;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 
-public class PhysicalConnectionWizardWizardPanel2 implements WizardDescriptor.Panel {
+public class ConnectionWizardWizardPanel2 implements WizardDescriptor.Panel {
 
     /**
      * The visual component that displays this panel. If you need to access the
      * component from this class, just use getComponent().
      */
     private Component component;
+    private String connectionClass;
+    private Long aSide;
+    private Long bSide;
+    private CommunicationsStub com = CommunicationsStub.getInstance();
 
     // Get the visual component for the panel. In this template, the component
     // is kept separate. This can be more efficient: if the wizard is created
@@ -35,7 +40,8 @@ public class PhysicalConnectionWizardWizardPanel2 implements WizardDescriptor.Pa
     @Override
     public Component getComponent() {
         if (component == null) {
-            component = new PhysicalConnectionWizardVisualPanel2();
+            component = new ConnectionWizardVisualPanel2();
+            //com.getList(connectionClass, false);
         }
         return component;
     }
@@ -96,6 +102,9 @@ public class PhysicalConnectionWizardWizardPanel2 implements WizardDescriptor.Pa
     // by the user.
     @Override
     public void readSettings(Object settings) {
+        this.connectionClass = (String)((WizardDescriptor)settings).getProperty("connectionClass");
+        this.aSide = (Long)((WizardDescriptor)settings).getProperty("aSide");
+        this.bSide = (Long)((WizardDescriptor)settings).getProperty("bSide");
     }
 
     @Override

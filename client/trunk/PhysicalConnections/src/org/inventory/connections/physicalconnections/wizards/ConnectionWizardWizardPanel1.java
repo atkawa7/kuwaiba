@@ -22,7 +22,6 @@ import java.util.Set;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
@@ -32,7 +31,7 @@ import org.openide.util.Lookup.Result;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
 
-public class PhysicalConnectionWizardWizardPanel1 implements WizardDescriptor.ValidatingPanel{
+public class ConnectionWizardWizardPanel1 implements WizardDescriptor.ValidatingPanel{
 
     /**
      * The visual component that displays this panel. If you need to access the
@@ -42,49 +41,69 @@ public class PhysicalConnectionWizardWizardPanel1 implements WizardDescriptor.Va
     private boolean isValid = false;
     private LocalObjectLight aSelection;
     private LocalObjectLight bSelection;
-    private String connectionClass;
     private Lookup.Result aResult;
     private Lookup.Result bResult;
     private CommunicationsStub com = CommunicationsStub.getInstance();
+    private String errorStr="";
 
-    PhysicalConnectionWizardWizardPanel1(LocalObjectLight aSide, LocalObjectLight bSide) {
-        component = new PhysicalConnectionWizardVisualPanel1(aSide, bSide);
-        aResult = ((PhysicalConnectionWizardVisualPanel1)component).getPnlLeft().getLookup().lookupResult(LocalObjectLight.class);
+    ConnectionWizardWizardPanel1(LocalObjectLight aSide, LocalObjectLight bSide) {
+        component = new ConnectionWizardVisualPanel1(aSide, bSide);
+        aResult = ((ConnectionWizardVisualPanel1)component).getPnlLeft().getLookup().lookupResult(LocalObjectLight.class);
         aResult.addLookupListener(new LookupListener() {
                         @Override
                         public void resultChanged(LookupEvent ev) {
                             Lookup.Result res = (Lookup.Result)ev.getSource();
                             if (res.allInstances().size() == 1){
                                 aSelection = (LocalObjectLight)res.allInstances().iterator().next();
-                                if (aSelection == null || bSelection == null)
+                                if (aSelection == null || bSelection == null){
+                                    errorStr = "You have to select both sides of this connection";
                                     isValid = false;
+                                }
                                 else{
-                                    if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalEndpoint() &&
-                                        com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalEndpoint())
-                                        isValid = true;
-                                    else
+                                    if (aSelection.getValidator("isConnected")){ //NOI18n
+                                        errorStr = "The port A is already connected";
                                         isValid = false;
+                                    }
+                                    else{
+                                        if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalEndpoint() &&
+                                            com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalEndpoint())
+                                            isValid = true;
+                                        else{
+                                            errorStr = "The object selected in the left tree cannot be connected";
+                                            isValid = false;
+                                        }
+                                    }
                                 }
                                 fireChangeEvent();
                             }
                         }
         });
 
-        bResult= ((PhysicalConnectionWizardVisualPanel1)component).getPnlRight().getLookup().lookupResult(LocalObjectLight.class);
+        bResult= ((ConnectionWizardVisualPanel1)component).getPnlRight().getLookup().lookupResult(LocalObjectLight.class);
         bResult.addLookupListener(new LookupListener() {
                         @Override
                         public void resultChanged(LookupEvent ev) {
                             Lookup.Result res = (Lookup.Result)ev.getSource();
                             if (res.allInstances().size() == 1){
                                 bSelection = (LocalObjectLight)res.allInstances().iterator().next();
-                                if (aSelection == null || bSelection == null)
+                                if (aSelection == null || bSelection == null){
+                                    errorStr = "You have to select both sides of this connection";
                                     isValid = false;
+                                }
                                 else{
-                                    if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalEndpoint() &&
-                                        com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalEndpoint())
-                                        isValid = true;
-                                    else
+                                    if (bSelection.getValidator("isConnected")){ //NOI18n
+                                        errorStr = "The port B is already connected";
                                         isValid = false;
+                                    }
+                                    else{
+                                        if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalEndpoint() &&
+                                            com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalEndpoint())
+                                            isValid = true;
+                                        else{
+                                            errorStr = "The object selected in the right tree cannot be connected";
+                                            isValid = false;
+                                        }
+                                    }
                                 }
                                 fireChangeEvent();
                             }
@@ -111,7 +130,8 @@ public class PhysicalConnectionWizardWizardPanel1 implements WizardDescriptor.Va
 
     @Override
     public boolean isValid() {
-        return isValid;
+        //return isValid;
+        return true;
     }
     
     private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
@@ -135,9 +155,8 @@ public class PhysicalConnectionWizardWizardPanel1 implements WizardDescriptor.Va
             it = new HashSet<ChangeListener>(listeners).iterator();
         }
         ChangeEvent ev = new ChangeEvent(this);
-        while (it.hasNext()) {
+        while (it.hasNext()) 
             it.next().stateChanged(ev);
-        }
     }
      
 
@@ -147,17 +166,12 @@ public class PhysicalConnectionWizardWizardPanel1 implements WizardDescriptor.Va
     // by the user.
     @Override
     public void readSettings(Object settings) {
-        this.connectionClass = (String)((WizardDescriptor)settings).getProperty("connectionClass");
     }
 
     @Override
     public void storeSettings(Object settings) {
-        LocalObject lo = com.createPhysicalConnection(aSelection.getOid(),
-                bSelection.getOid(), connectionClass, null);
-        if (lo == null)
-            ((WizardDescriptor)settings).putProperty("error", com.getError());
-        else
-            ((WizardDescriptor)settings).putProperty("object", lo);
+        ((WizardDescriptor)settings).putProperty("aSide", aSelection.getOid());
+        ((WizardDescriptor)settings).putProperty("bSide", bSelection.getOid());
     }
 
     public Result getaResult() {
@@ -170,8 +184,7 @@ public class PhysicalConnectionWizardWizardPanel1 implements WizardDescriptor.Va
 
     @Override
     public void validate() throws WizardValidationException {
-        if (!isValid)
-            throw new WizardValidationException(null, "The selected objects are not valid endpoints", null);
-    }
-    
+        //if (!isValid)
+          //  throw new WizardValidationException(null, this.errorStr, null);
+    }    
 }

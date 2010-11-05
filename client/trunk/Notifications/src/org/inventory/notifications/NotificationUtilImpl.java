@@ -44,8 +44,10 @@ public class NotificationUtilImpl extends NotificationDisplayer
             default:
                 popupIcon = new ImageIcon(getClass().getResource(INFO_ICON_PATH));
         }
-        if (NotificationDisplayer.getDefault() != null)
-            NotificationDisplayer.getDefault().notify(title,popupIcon, details, null);
+        if (NotificationDisplayer.getDefault() != null){
+            Notification n = NotificationDisplayer.getDefault().notify(title,popupIcon, details, null);
+            n.clear();
+        }
     }
 
     public void showStatusMessage(String message, boolean important){

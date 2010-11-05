@@ -18,6 +18,7 @@ public interface LocalObjectLight extends Transferable {
     public Long getOid();
     public String getDisplayname();
     public String getPackageName();
+    public Boolean getValidator(String label);
     public void firePropertyChangeEvent(String property, Object oldValue, Object newValue);
     public void addPropertyChangeListener(PropertyChangeListener listener);
     public void removePropertyChangeListener(PropertyChangeListener listener);

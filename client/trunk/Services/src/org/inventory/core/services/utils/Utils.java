@@ -31,7 +31,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileFilter;
-import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.core.services.interfaces.LocalObjectLight;
 
 /**
  * Class with utility methods
@@ -123,7 +123,7 @@ public class Utils {
         if (typeAsString.equals("Boolean"))
             return Boolean.class;
         else
-            return LocalObjectListItem.class;
+            return LocalObjectLight.class;
     }
 
     public static Object getRealValue (String type, String valueAsString){
