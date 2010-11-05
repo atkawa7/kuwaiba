@@ -32,11 +32,8 @@ import core.toserialize.ClassInfoLight;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.ViewInfo;
-import entity.core.AdministrativeItem;
-
-import entity.core.ConfigurationItem;
+import entity.connections.physical.GenericPhysicalConnection;
 import entity.core.ViewableObject;
-import java.util.List;
 import util.HierarchyUtils;
 
 /**
@@ -52,7 +49,7 @@ public class KuwaibaWebservice {
      * Contains the last error or notification
      * TODO: This should be a per-session variable
      */
-    private String lastErr ="No error specified";
+    private String lastErr ="No error string has been set";
 
 
     /**
@@ -89,10 +86,11 @@ public class KuwaibaWebservice {
 
     @WebMethod(operationName = "getObjectChildren")
     public RemoteObjectLight[] getObjectChildren(@WebParam(name = "oid") Long oid, @WebParam(name = "objectClassId") Long objectClassId){
-        List res = sbr.getObjectChildren(oid,objectClassId);
+        RemoteObjectLight[] res = sbr.getObjectChildren(oid,objectClassId);
         if(res == null)
-            this.lastErr = "Error en el backendBean";
-        return RemoteObjectLight.toArray(res);
+            this.lastErr = sbr.getError();
+
+        return res;
     }
 
     /**
@@ -185,7 +183,8 @@ public class KuwaibaWebservice {
             parentClass = Class.forName(_parentClass);
             return sbr.getPossibleChildren(parentClass);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, ex);
+            this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+ _parentClass;
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, this.lastErr);
             return null;
         }
     }
@@ -201,7 +200,8 @@ public class KuwaibaWebservice {
             parentClass = Class.forName(_parentClass);
             return sbr.getPossibleChildrenNoRecursive(parentClass);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, ex);
+            this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+ _parentClass;
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, this.lastErr);
             return null;
         }
     }
@@ -249,12 +249,19 @@ public class KuwaibaWebservice {
     }
 
     /**
-     * Recupera una lista
+     * Retrieves a list of objects corresponding to a GenericListType group of instances
      */
     @WebMethod(operationName = "getMultipleChoice")
     public ObjectList getMultipleChoice(@WebParam(name = "className")
         String className) {
-        return sbr.getMultipleChoice(className);
+        try{
+            Class myClass = Class.forName(className);
+            return sbr.getMultipleChoice(myClass);
+        }catch(ClassNotFoundException cnfe){
+            this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+ className;
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, this.lastErr);
+            return null;
+        }
     }
 
     /**
@@ -537,6 +544,21 @@ public class KuwaibaWebservice {
      */
 
     /**
+     * Get all physical connections for a given parent
+     * @param oid
+     * @param className
+     * @return
+     */
+    @WebMethod(operationName="getConnectionsForParent")
+    public RemoteObject[] getConnectionsForParent(@WebParam(name="oid")Long oid,
+            @WebParam(name="className")String className){
+        RemoteObject[] res = sbr.getConnectionsForParent(oid, className);
+        if (res == null)
+            this.lastErr = sbr.getError();
+        return res;
+    }
+
+    /**
      * Creates a physical container connection (ditch, conduit, pipe, etc)
      * @param sourceObjectOid
      * @param targetObjectOid
@@ -558,16 +580,39 @@ public class KuwaibaWebservice {
             lastErr = cnfe.getClass().toString();
             return null;
         }
-        
+
     }
-    @WebMethod(operationName="getConnectionsForParent")
-    public RemoteObject[] getConnectionsForParent(@WebParam(name="oid")Long oid,
-            @WebParam(name="className")String className){
-        RemoteObject[] res = sbr.getConnectionsForParent(oid, className);
-        if (res == null)
-            this.lastErr = sbr.getError();
-        return res;
+
+    /**
+     * Creates a physical connection connection (cable, fiber optics, etc)
+     * @param sourceObjectOid
+     * @param targetObjectOid
+     * @param connectionClass
+     * @param parentObjectOid
+     * @return
+     */
+    @WebMethod(operationName = "createPhysicalConnection")
+    public RemoteObject createPhysicalConnection(@WebParam(name="endpointAOid")Long endpointAOid,
+            @WebParam(name="endpointBOid")Long endpointBOid,@WebParam(name="connectionClass")String connectionClass,
+            @WebParam(name="parentObjectOid")Long parentObjectOid){
+        try{
+            Class containerClass = Class.forName(connectionClass);
+            if(!HierarchyUtils.isSubclass(containerClass, GenericPhysicalConnection.class)){
+                lastErr = java.util.ResourceBundle.
+                    getBundle("internationalization/Bundle").getString("LBL_WRONGCLASS")+ connectionClass;
+                return null;
+            }
+            RemoteObject res = sbr.createPhysicalConnection(endpointAOid,endpointBOid,containerClass,parentObjectOid);
+            if (res == null)
+                lastErr = sbr.getError();
+            return res;
+        }catch(ClassNotFoundException cnfe){
+            lastErr = cnfe.getClass().toString();
+            return null;
+        }
+
     }
+
     /**
      * User Management
      */
