@@ -16,7 +16,9 @@
 
 package entity.connections.physical;
 
+import entity.multiple.types.links.WirelessLinkType;
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 
 /**
  * Represents a wireless link
@@ -24,4 +26,14 @@ import javax.persistence.Entity;
  */
 @Entity
 public class RadioLink extends GenericPhysicalConnection{
+    @OneToOne
+    protected WirelessLinkType type;
+
+    public WirelessLinkType getType() {
+        return type;
+    }
+
+    public void setType(WirelessLinkType type) {
+        this.type = type;
+    }
 }

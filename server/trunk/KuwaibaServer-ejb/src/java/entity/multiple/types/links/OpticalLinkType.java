@@ -16,15 +16,13 @@
 
 package entity.multiple.types.links;
 
-import entity.multiple.types.parts.GenericType;
-import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- * Represents a physical link type, such as ethernet, monomode fiber, microwave, coaxial, etc
+ * Represents an optical link type, such as fiber monomode or multimode
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class PhysicalLinkType extends GenericType implements Serializable {
+public class OpticalLinkType extends GenericPhysicalLinkType{
 
 }

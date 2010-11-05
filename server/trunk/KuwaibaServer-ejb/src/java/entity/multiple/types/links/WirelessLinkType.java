@@ -14,26 +14,15 @@
  *  limitations under the License.
  */
 
-package entity.connections.physical;
+package entity.multiple.types.links;
 
-import entity.multiple.types.links.OpticalLinkType;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
 
 /**
- * Represents a link using a fiber optics as a transmission medium
+ * Represents a wireless link type, microwave, satellite, etc
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class OpticalLink extends GenericPhysicalConnection{
-    @OneToOne
-    protected OpticalLinkType type;
+public class WirelessLinkType extends GenericPhysicalLinkType{
 
-    public OpticalLinkType getType() {
-        return type;
-    }
-
-    public void setType(OpticalLinkType type) {
-        this.type = type;
-    }
 }

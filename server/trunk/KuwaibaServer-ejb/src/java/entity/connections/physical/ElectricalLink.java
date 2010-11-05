@@ -16,11 +16,25 @@
 
 package entity.connections.physical;
 
+import entity.multiple.types.links.ElectricalLinkType;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+
 
 /**
   Represents any connection that uses a wire/cable as a transmission medium
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
+@Entity
 public class ElectricalLink extends GenericPhysicalConnection{
-    
+    @OneToOne
+    protected ElectricalLinkType type;
+
+    public ElectricalLinkType getType() {
+        return type;
+    }
+
+    public void setType(ElectricalLinkType type) {
+        this.type = type;
+    }
 }

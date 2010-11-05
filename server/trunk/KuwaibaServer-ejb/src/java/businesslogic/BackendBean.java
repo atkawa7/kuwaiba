@@ -21,23 +21,24 @@ import core.toserialize.RemoteObject;
 import core.toserialize.RemoteObjectLight;
 import core.annotations.Metadata;
 import core.exceptions.ObjectNotFoundException;
-import core.interfaces.PhysicalConnection;
-import core.interfaces.PhysicalEndpoint;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectUpdate;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
+import core.toserialize.Validator;
 import core.toserialize.ViewInfo;
 import entity.adapters.ObjectViewAdapter;
 import entity.config.User;
 import entity.config.UserGroup;
+import entity.connections.physical.GenericPhysicalConnection;
 import entity.connections.physical.containers.GenericPhysicalContainer;
 import entity.core.DummyRoot;
 import entity.core.RootObject;
 import entity.core.ViewableObject;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
+import entity.equipment.physicallayer.parts.ports.GenericPort;
 import entity.location.Country;
 import entity.location.GenericPhysicalNode;
 import entity.location.StateObject;
@@ -45,8 +46,7 @@ import entity.multiple.GenericObjectList;
 import entity.views.GenericView;
 import entity.views.DefaultView;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -134,7 +134,7 @@ public class BackendBean implements BackendBeanRemote {
             query.executeUpdate();
 
             Set<EntityType<?>> ent = em.getMetamodel().getEntities();
-            Dictionary<String, EntityType> alreadyPersisted = new Hashtable<String, EntityType>();
+            HashMap<String, EntityType> alreadyPersisted = new HashMap<String, EntityType>();
 
             for (EntityType entity : ent){
                 if(entity.getJavaType().getAnnotation(Metadata.class)!=null)
@@ -167,13 +167,13 @@ public class BackendBean implements BackendBeanRemote {
      * @return a list of objects or null if an error ocurred
      */
     @Override
-    public List getObjectChildren(Long oid, Long objectClassId) {
+    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId) {
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETOBJECTCHILDREN"));
         if (em != null){
            
             ClassMetadata objectClass = em.find(ClassMetadata.class, objectClassId);
 
-            List result = new ArrayList();
+            List<Object> result = new ArrayList<Object>();
             CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
             Query subQuery=null;
 
@@ -190,7 +190,15 @@ public class BackendBean implements BackendBeanRemote {
                 }
             }
 
-            return result;
+            RemoteObjectLight[] validatedResult = new RemoteObjectLight[result.size()];
+            int i = 0;
+            for (Object child : result) {
+                validatedResult[i] = new RemoteObjectLight(child);
+                if (child instanceof GenericPort)
+                    validatedResult[i].addValidator(new Validator("isConnected",((GenericPort)child).getConnectedConnection() != null)); //NOI18n
+                i++;
+            }
+            return validatedResult;
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
@@ -526,7 +534,7 @@ public class BackendBean implements BackendBeanRemote {
      * @return
      */
     @Override
-    public ObjectList getMultipleChoice(String className){
+    public ObjectList getMultipleChoice(Class className){
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETMULTIPLECHOICE"));
         if (em != null){
             /*Maybe later, I can fix the method to avoid the cast
@@ -537,10 +545,12 @@ public class BackendBean implements BackendBeanRemote {
             this.error= e.toString();
             return null;
             }*/
-            String sentence = "SELECT x FROM "+className+" x ORDER BY x.name";
-            Query q = em.createQuery(sentence,GenericObjectList.class);
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery query = cb.createQuery();
+            Root entity = query.from(className);
+            Query q =em.createQuery(query.select(entity).orderBy(cb.desc(entity.get("name"))));
             List<GenericObjectList> list = q.getResultList();
-            return new ObjectList(className,list);
+            return new ObjectList(className.getSimpleName(),list);
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
@@ -1052,28 +1062,58 @@ public class BackendBean implements BackendBeanRemote {
      * @param connectionClass
      * @param nodeA
      * @param nodeB
-     * @return
+     * @return and RemoteObject with the newly created connection
      */
     @Override
-    public Boolean createPhysicalConnection(Class connectionClass, PhysicalEndpoint endpointA, PhysicalEndpoint endpointB){
+    public RemoteObject createPhysicalConnection(Long endpointA, Long endpointB, Class connectionClass, Long parent){
         if (em != null){
             try {
-                PhysicalConnection conn = (PhysicalConnection) connectionClass.newInstance();
-//                conn.connectEndpointA(endpointA);
-  //              conn.connectEndpointA(endpointB);
+
+                GenericPort portA = em.find(GenericPort.class, endpointA);
+                if (portA == null){
+                    return null;
+                }
+
+                if (portA.getConnectedConnection() != null){
+                    this.error = "Port A is already connnected";
+                    return null;
+                }
+
+                GenericPort portB = em.find(GenericPort.class, endpointB);
+                if (portB == null){
+                    return null;
+                }
+                
+                if (portB.getConnectedConnection() != null){
+                    this.error = "Port B is already connnected";
+                    return null;
+                }
+
+                GenericPhysicalConnection conn = (GenericPhysicalConnection) connectionClass.newInstance();
+                conn.setEndpointA(portA);
+                conn.setEndpointB(portB);
+                conn.setParent(parent);
+
+                portA.setConnectedConnection(conn);
+                portB.setConnectedConnection(conn);
+
+                em.persist(portA);
+                em.persist(portB);
                 em.persist(conn);
-                return true;
+                return new RemoteObject(conn);
             } catch (InstantiationException ex) {
-                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, ex.getClass());
-                return false;
+                this.error = ex.getClass().toString();
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+                return null;
             } catch (IllegalAccessException ex) {
-                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, ex.getClass());
-                return false;
+                this.error = ex.getClass().toString();
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+                return null;
             }
         }else{
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");
             Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
-            return false;
+            return null;
         }
     }
 
@@ -1104,7 +1144,7 @@ public class BackendBean implements BackendBeanRemote {
      * @return
      */
     @Override
-    public RemoteObjectLight createPhysicalContainerConnection(Long sourceNode, Long targetNode, Class containerClass, Long parentNode){
+    public RemoteObject createPhysicalContainerConnection(Long sourceNode, Long targetNode, Class containerClass, Long parentNode){
         if (em != null){
 
             GenericPhysicalNode nodeA = (GenericPhysicalNode)em.find(GenericPhysicalNode.class, sourceNode);
@@ -1125,7 +1165,7 @@ public class BackendBean implements BackendBeanRemote {
                 nodeA.getContainers().add(conn);
                 nodeB.getContainers().add(conn);
                 em.persist(conn);
-                return new RemoteObjectLight(conn);
+                return new RemoteObject(conn);
             } catch (InstantiationException ex) {
                 Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, ex.getClass());
                 return null;

@@ -17,10 +17,12 @@
 package entity.equipment.physicallayer.parts.ports;
 
 import core.interfaces.PhysicalEndpoint;
+import entity.connections.physical.GenericPhysicalConnection;
 import entity.equipment.physicallayer.parts.GenericPart;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.OneToOne;
 
 /**
  * Represents a generic Port
@@ -29,5 +31,19 @@ import javax.persistence.InheritanceType;
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericPort extends GenericPart implements PhysicalEndpoint {
+    /**
+     *The connected cable/fiber/radio channel. Can't use mappedBy here since the
+     * connection has two endpoints (A or B) and it's not possible to know which
+     * of them will be connected at design time
+     */
+    @OneToOne
+    protected GenericPhysicalConnection connectedConnection;
 
+    public GenericPhysicalConnection getConnectedConnection() {
+        return connectedConnection;
+    }
+
+    public void setConnectedConnection(GenericPhysicalConnection connectedConnection) {
+        this.connectedConnection = connectedConnection;
+    }
 }

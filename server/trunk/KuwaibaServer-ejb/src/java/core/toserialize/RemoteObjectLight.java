@@ -15,6 +15,7 @@
  */package core.toserialize;
 
 import entity.core.RootObject;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -32,7 +33,10 @@ public class RemoteObjectLight {
     protected Long oid;
     protected String className;
     protected String packageName;
-    
+    /**
+     * Misc flags used to give more information about the object
+     */
+    protected List<Validator> validators;
 
     public RemoteObjectLight(){} 
 
@@ -48,7 +52,9 @@ public class RemoteObjectLight {
         return className;
     }
 
-    //Shouldn't be inherit because displayName is private
+    /**
+     * Shouldn't be inherit because displayName is private
+     */
     public final String getDisplayName() {
         return displayName;
     }
@@ -56,6 +62,32 @@ public class RemoteObjectLight {
     public Long getOid() {
         return oid;
     }
+
+    /**
+     * Validators are flags indicating things about objects. Of course, every instance may have
+     * something to expose or not. For instance, a port has an indicator to mark it as "connected physically",
+     * but a Building (so far) has nothing to "indicate". This is done in order to avoid a second call to query
+     * for a particular information that could affect the performance. I.e:
+     * Call 1: getPort (retrieving a LocalObjectLight)
+     * Call 2: isThisPortConnected (retrieving a boolean according to a condition)
+     *
+     * With this method there's only one call
+     * getPort (a LocalObjectLight with a flag to indicate that the port is connected)
+     *
+     * Why not use getPort retrieving a LocalObject? Well, because the condition might be complicated, and
+     * it's easier to compute its value at server side. Besides, it can involve complex queries that would require
+     * more calls to the webservice
+     */
+    public List<Validator> getValidators() {
+        return this.validators;
+    }
+
+    public void addValidator(Validator newValidator){
+        if (this.validators == null)
+            this.validators = new ArrayList<Validator>();
+        this.validators.add(newValidator);
+    }
+
 
     /**
      * This method is useful to transform the returned value from queries (Entities)

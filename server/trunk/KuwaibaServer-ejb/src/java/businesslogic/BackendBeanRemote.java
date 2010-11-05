@@ -19,12 +19,12 @@ import core.interfaces.PhysicalEndpoint;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfo;
 import core.toserialize.ClassInfoLight;
+import core.toserialize.ObjectList;
 import core.toserialize.RemoteObject;
 import core.toserialize.RemoteObjectLight;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.ViewInfo;
-import java.util.List;
 import javax.ejb.Remote;
 
 /**
@@ -41,14 +41,14 @@ public interface BackendBeanRemote {
     public RemoteObject getObjectInfo(String objectClass, Long oid);
     public RemoteObjectLight getObjectInfoLight(String className, Long oid);
     public boolean updateObject(ObjectUpdate obj);
-    public java.lang.String getError();
+    public String getError();
     public boolean setObjectLock(Long oid, String objectClass, Boolean value);
-    public List getObjectChildren(Long oid, Long objectClassId);
+    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId);
     public RemoteObjectLight createObject(String objectClass, Long parentOid, String template);
     public ClassInfo[] getMetadata();
     public ClassInfo getMetadataForClass(String className);
     public void buildMetaModel();
-    public core.toserialize.ObjectList getMultipleChoice(String className);
+    public ObjectList getMultipleChoice(Class className);
     public Boolean addPossibleChildren(Long parentClassId, Long[] possibleChildren);
     public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved);
     public boolean removeObject(Class className, Long oid);
@@ -67,8 +67,8 @@ public interface BackendBeanRemote {
     public ViewInfo getDefaultView(Long oid, Class className);
     public ViewInfo getRoomView(Long oid);
     public ViewInfo getRackView(Long oid);
-    public RemoteObjectLight createPhysicalContainerConnection(Long nodeA, Long nodeB, Class containerClass,Long parentNode);
-    public Boolean createPhysicalConnection(Class connectionClass, PhysicalEndpoint endpointA, PhysicalEndpoint endpointB);
+    public RemoteObject createPhysicalContainerConnection(Long nodeA, Long nodeB, Class containerClass,Long parent);
+    public RemoteObject createPhysicalConnection(Long endpointA, Long endpointB, Class connectionClass, Long parent);
     public RemoteObject[] getConnectionsForParent(Long oid, String className);
     public UserInfo[] getUsers();
     public UserGroupInfo[] getGroups();
