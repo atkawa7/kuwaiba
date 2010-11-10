@@ -17,6 +17,7 @@ package org.inventory.connections.physicalconnections.wizards;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public final class ConnectionWizardVisualPanel2 extends JPanel {
 
@@ -34,6 +35,9 @@ public final class ConnectionWizardVisualPanel2 extends JPanel {
         return cmbType;
     }
 
+    public JTextField getTxtName() {
+        return txtName;
+    }
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

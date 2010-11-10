@@ -110,5 +110,7 @@ public class ConnectionWizardWizardPanel2 implements WizardDescriptor.Panel {
 
     @Override
     public void storeSettings(Object settings) {
+        ((WizardDescriptor)settings).putProperty("type", ((ConnectionWizardVisualPanel2)component).getCmbType().getSelectedItem());//NOI18N
+        ((WizardDescriptor)settings).putProperty("name", ((ConnectionWizardVisualPanel2)component).getTxtName().getText());//NOI18N
     }
 }

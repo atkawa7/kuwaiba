@@ -21,11 +21,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.core.services.interfaces.LocalObject;
+import org.inventory.core.services.interfaces.LocalObjectListItem;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
+import org.openide.util.Lookup;
 
 // An example action demonstrating how the wizard could be called from within
 // your code. You can copy-paste the code below wherever you need.
@@ -54,6 +57,8 @@ public final class ConnectionWizardWizardAction implements ActionListener {
         if (!cancelled) {
             Long aSide = (Long)wizardDescriptor.getProperty("aSide");
             Long bSide = (Long)wizardDescriptor.getProperty("bSide");
+            String name = (String)wizardDescriptor.getProperty("name");
+            LocalObjectListItem type = (LocalObjectListItem)wizardDescriptor.getProperty("type");
             if (myWizard.getWizardType() == ConnectionWizard.WIZARDTYPE_CONTAINERS)
                 newConnection = CommunicationsStub.getInstance().createPhysicalContainerConnection(
                     aSide,
@@ -66,6 +71,8 @@ public final class ConnectionWizardWizardAction implements ActionListener {
                     bSide,
                     myWizard.getConnectionClass(),
                     null);
+            if (setConnectionDetails(newConnection.getOid(), name, type))
+                JOptionPane.showMessageDialog(null, "The object was successfully created","New Connection",JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -110,5 +117,25 @@ public final class ConnectionWizardWizardAction implements ActionListener {
 
     public LocalObject getNewConnection() {
         return this.newConnection;
+    }
+
+    public boolean setConnectionDetails(Long oid, String name, LocalObjectListItem type){
+        try{
+            LocalObject update = Lookup.getDefault().lookup(LocalObject.class);
+            update.setLocalObject(myWizard.getConnectionClass(),
+                    new String[]{"name","type"}, new Object[]{name,type.getId()});
+            
+            update.setOid(oid);
+            if(!CommunicationsStub.getInstance().saveObject(update)){
+                JOptionPane.showMessageDialog(null, "The object could not be updated \n"+CommunicationsStub.getInstance().getError(),
+                        "New Connection",JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, "The object could not be updated","New Connection",JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
     }
 }

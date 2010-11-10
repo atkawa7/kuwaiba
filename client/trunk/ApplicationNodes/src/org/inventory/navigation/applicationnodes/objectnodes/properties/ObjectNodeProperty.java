@@ -23,6 +23,7 @@ import java.sql.Date;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.PropertySupport.ReadWrite;
 import org.openide.util.Exceptions;
@@ -90,7 +91,8 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
             else
                 value = t;
         }catch(Exception e){
-                Exceptions.printStackTrace(e);
+            NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
+            nu.showSimplePopup("Object update", NotificationUtil.ERROR, "An error occurred while updating this object: "+e.getMessage());
         }
     }
 

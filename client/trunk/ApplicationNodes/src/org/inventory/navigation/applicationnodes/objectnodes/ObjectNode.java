@@ -139,7 +139,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
                 ObjectNodeProperty property = null;
 
-                if (lam.getType().equals(LocalObjectListItem.class)){
+                if (lam.getIsMultiple()){
                     //If so, this can be a reference to an object list item or a 1:1 to any other RootObject subclass
                     LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(),false);
                     LocalObjectListItem val = null;
@@ -330,6 +330,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
      * The node listen for changes in the wrapped business object
      * @param evt
      */
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getSource().equals(object))
             object = (LocalObjectLight)evt.getSource();

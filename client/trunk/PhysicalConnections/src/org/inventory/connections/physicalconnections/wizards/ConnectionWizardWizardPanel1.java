@@ -161,7 +161,8 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
 
     @Override
     public boolean isValid() {
-        return isValid;
+        //return isValid;
+        return true;
     }
     
     private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
@@ -201,9 +202,10 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
 
     @Override
     public void storeSettings(Object settings) {
-        ((WizardDescriptor)settings).putProperty("aSide", aSelection.getOid());//NOI18N
-        ((WizardDescriptor)settings).putProperty("bSide", bSelection.getOid());//NOI18N
-
+        if(isValid){
+            ((WizardDescriptor)settings).putProperty("aSide", aSelection.getOid());//NOI18N
+            ((WizardDescriptor)settings).putProperty("bSide", bSelection.getOid());//NOI18N
+        }
     }
 
     public Result getaResult() {

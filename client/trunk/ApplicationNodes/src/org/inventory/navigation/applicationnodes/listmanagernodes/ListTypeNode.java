@@ -27,7 +27,8 @@ import org.openide.nodes.AbstractNode;
  */
 public class ListTypeNode extends AbstractNode{
     private LocalClassMetadataLight object;
-    public static final String ICON_PATH="org/inventory/navigation/applicationnodes/listmanagernodes/res/list-type.png";
+
+    public static final String ICON_PATH="org/inventory/navigation/applicationnodes/res/list-type.png";
 
     public ListTypeNode(LocalClassMetadataLight lcm) {
         super(new ListElementChildren());
