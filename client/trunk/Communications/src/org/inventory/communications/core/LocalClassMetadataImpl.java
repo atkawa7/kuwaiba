@@ -157,6 +157,7 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
                                     attributeDisplayNames[i],
                                     attributesIsVisible[i],
                                     attributesIsAdministrative[i],
+                                    attributesIsMultiple[i],
                                     attributesDescription[i]);
         return res;
     }

@@ -6,9 +6,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.webservice.RemoteObjectLight;
+import org.inventory.webservice.Validator;
 
 /**
  * This class is a simple representation of a business object with a very basic information
@@ -26,6 +28,10 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
      */
     protected List<PropertyChangeListener> propertyChangeListeners;
     /**
+     * Collection of flags
+     */
+    protected HashMap validators;
+    /**
      * Properties
      */
     public static String PROP_DISPLAYNAME="displayname";
@@ -40,6 +46,11 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
         this.oid = rol.getOid();
         this.displayName = rol.getDisplayName();
         this.propertyChangeListeners = new ArrayList<PropertyChangeListener>();
+        if (rol.getValidators() != null){
+            validators = new HashMap();
+            for (Validator validator : rol.getValidators())
+                validators.put(validator.getLabel(), validator.isValue());
+        }
     }
 
     public final String getDisplayname(){
@@ -65,6 +76,14 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
     public void setDisplayName(String text){
         this.displayName = text;
         firePropertyChangeEvent(PROP_DISPLAYNAME, oid, text);
+    }
+
+    public Boolean getValidator(String label){
+        Boolean res = (Boolean)this.validators.get(label);
+        if(res == null)
+            return false;
+        else
+            return res;
     }
 
     public void addPropertyChangeListener(PropertyChangeListener newListener){

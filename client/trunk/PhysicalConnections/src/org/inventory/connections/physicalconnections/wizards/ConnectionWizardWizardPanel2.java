@@ -18,6 +18,7 @@ package org.inventory.connections.physicalconnections.wizards;
 import java.awt.Component;
 import javax.swing.event.ChangeListener;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.interfaces.LocalObjectListItem;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 
@@ -28,9 +29,7 @@ public class ConnectionWizardWizardPanel2 implements WizardDescriptor.Panel {
      * component from this class, just use getComponent().
      */
     private Component component;
-    private String connectionClass;
-    private Long aSide;
-    private Long bSide;
+    private String connectionTypeClass;
     private CommunicationsStub com = CommunicationsStub.getInstance();
 
     // Get the visual component for the panel. In this template, the component
@@ -41,7 +40,6 @@ public class ConnectionWizardWizardPanel2 implements WizardDescriptor.Panel {
     public Component getComponent() {
         if (component == null) {
             component = new ConnectionWizardVisualPanel2();
-            //com.getList(connectionClass, false);
         }
         return component;
     }
@@ -102,9 +100,12 @@ public class ConnectionWizardWizardPanel2 implements WizardDescriptor.Panel {
     // by the user.
     @Override
     public void readSettings(Object settings) {
-        this.connectionClass = (String)((WizardDescriptor)settings).getProperty("connectionClass");
-        this.aSide = (Long)((WizardDescriptor)settings).getProperty("aSide");
-        this.bSide = (Long)((WizardDescriptor)settings).getProperty("bSide");
+        this.connectionTypeClass = (String)((WizardDescriptor)settings).getProperty("connectionTypeClass");
+        LocalObjectListItem[] types = com.getList(connectionTypeClass, false);
+            if (types != null){
+                for(LocalObjectListItem type : types)
+                    ((ConnectionWizardVisualPanel2)component).getCmbType().addItem(type);
+            }
     }
 
     @Override

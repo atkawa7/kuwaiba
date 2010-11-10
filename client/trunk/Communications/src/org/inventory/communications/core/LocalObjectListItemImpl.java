@@ -68,7 +68,10 @@ public class LocalObjectListItemImpl extends LocalObjectLightImpl implements Loc
 
     @Override
     public String toString(){
-        return this.displayName;
+        if (this.displayName != null)
+            if (!this.displayName.trim().equals(""))
+                return this.displayName;
+        return this.name;
     }
 
     public static LocalObjectListItem getNullValue() {

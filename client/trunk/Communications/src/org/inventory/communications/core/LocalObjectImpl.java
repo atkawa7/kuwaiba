@@ -72,10 +72,6 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
     }
 
 
-    //ESTE MÉTODO ES UN WORKAROUND: Por otra razón que desconozco, no me dejó crear un constructor en LocalObjectImpl que recibiera los valores
-    //individuales, decía que cannot find class test.RemoteObject, pero ni idea, porque en ningún lado se
-    //estaba llamando el constructor que pedía un RemoteObject como parámetro.
-    //Creo que al final va a tocar crear una nueva aplicación RCP y adicionar los módulos manualmente uno por uno
     public void setLocalObject(String className, String[] attributes, Object[] values){
         HashMap<String,Object> dict = new HashMap<String, Object>();
         this.className = className;
@@ -84,8 +80,8 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
         this.attributes = dict;
     }
 
-    /*
-     * Función helper que proporciona el tipo de un atributo en particular
+    /**
+     * Helper method to get the type of a given attribute
      *
      */
     public Class getTypeOf(String name){

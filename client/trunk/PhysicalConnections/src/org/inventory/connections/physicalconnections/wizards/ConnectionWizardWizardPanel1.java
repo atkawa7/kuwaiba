@@ -43,6 +43,7 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
     private LocalObjectLight bSelection;
     private Lookup.Result aResult;
     private Lookup.Result bResult;
+    private int wizardType;
     private CommunicationsStub com = CommunicationsStub.getInstance();
     private String errorStr="";
 
@@ -65,12 +66,27 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
                                         isValid = false;
                                     }
                                     else{
-                                        if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalEndpoint() &&
-                                            com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalEndpoint())
-                                            isValid = true;
-                                        else{
-                                            errorStr = "The object selected in the left tree cannot be connected";
-                                            isValid = false;
+                                        switch(wizardType){
+                                            case ConnectionWizard.WIZARDTYPE_CONTAINERS:
+                                                if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalNode() &&
+                                                    com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalNode())
+                                                    isValid = true;
+                                                else{
+                                                    errorStr = "The object selected in the left tree cannot be connected using a container";
+                                                    isValid = false;
+                                                }
+                                                break;
+                                            case ConnectionWizard.WIZARDTYPE_CONNECTIONS:
+                                                if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalEndpoint() &&
+                                                    com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalEndpoint())
+                                                    isValid = true;
+                                                else{
+                                                    errorStr = "The object selected in the left tree cannot be connected using a link";
+                                                    isValid = false;
+                                                }
+                                                 break;
+                                            default:
+                                                isValid = false;
                                         }
                                     }
                                 }
@@ -96,12 +112,27 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
                                         isValid = false;
                                     }
                                     else{
-                                        if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalEndpoint() &&
-                                            com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalEndpoint())
-                                            isValid = true;
-                                        else{
-                                            errorStr = "The object selected in the right tree cannot be connected";
-                                            isValid = false;
+                                        switch(wizardType){
+                                            case ConnectionWizard.WIZARDTYPE_CONTAINERS:
+                                                if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalNode() &&
+                                                    com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalNode())
+                                                    isValid = true;
+                                                else{
+                                                    errorStr = "The object selected in the right tree cannot be connected using a container";
+                                                    isValid = false;
+                                                }
+                                                break;
+                                            case ConnectionWizard.WIZARDTYPE_CONNECTIONS:
+                                                if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalEndpoint() &&
+                                                    com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalEndpoint())
+                                                    isValid = true;
+                                                else{
+                                                    errorStr = "The object selected in the right tree cannot be connected using a link";
+                                                    isValid = false;
+                                                }
+                                                 break;
+                                            default:
+                                                isValid = false;
                                         }
                                     }
                                 }
@@ -130,8 +161,7 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
 
     @Override
     public boolean isValid() {
-        //return isValid;
-        return true;
+        return isValid;
     }
     
     private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
@@ -166,12 +196,14 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
     // by the user.
     @Override
     public void readSettings(Object settings) {
+        wizardType = (Integer)((WizardDescriptor)settings).getProperty("wizardType");//NOI18N
     }
 
     @Override
     public void storeSettings(Object settings) {
-        ((WizardDescriptor)settings).putProperty("aSide", aSelection.getOid());
-        ((WizardDescriptor)settings).putProperty("bSide", bSelection.getOid());
+        ((WizardDescriptor)settings).putProperty("aSide", aSelection.getOid());//NOI18N
+        ((WizardDescriptor)settings).putProperty("bSide", bSelection.getOid());//NOI18N
+
     }
 
     public Result getaResult() {
@@ -184,7 +216,7 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
 
     @Override
     public void validate() throws WizardValidationException {
-        //if (!isValid)
-          //  throw new WizardValidationException(null, this.errorStr, null);
+        if (!isValid)
+            throw new WizardValidationException(null, this.errorStr, null);
     }    
 }

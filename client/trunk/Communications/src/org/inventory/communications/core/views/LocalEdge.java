@@ -30,8 +30,29 @@ public class LocalEdge {
      * Some constants
      */
     //TODO: Gotta send this to a config file
-    public static String CLASSNAME_WIRECONTAINER="entity.connections.physical.containers.WireContainer";
-    public static String CLASSNAME_WIRELESSCONTAINER="entity.connections.physical.containers.WirelessContainer";
+    public static String CLASS_WIRECONTAINER="entity.connections.physical.containers.WireContainer";
+    public static String CLASS_WIRELESSCONTAINER="entity.connections.physical.containers.WirelessContainer";
+
+    /**
+     * Physical connection classes
+     */
+    public static String CLASS_ELECTRICALLINK = "entity.connections.physical.ElectricalLink";
+    public static String CLASS_OPTICALLINK = "entity.connections.physical.OpticalLink";
+    public static String CLASS_WIRELESSLINK = "entity.connections.physical.RadioLink";
+
+    /**
+     * Physical connection type classes
+     */
+    public static String CLASS_ELECTRICALLINKTYPE = "entity.multiple.types.links.ElectricalLinkType";
+    public static String CLASS_OPTICALLINKTYPE = "entity.multiple.types.links.OpticalLinkType";
+    public static String CLASS_WIRELESSLINKTYPE = "entity.multiple.types.links.WirelessLinkType";
+
+    /**
+     * Physical container type classes
+     */
+    public static String CLASS_WIRECONTAINERTYPE = "entity.multiple.types.links.WireContainerType";
+    public static String CLASS_WIRELESSCONTAINERTYPE = "entity.multiple.types.links.WirelessContainerType";
+
     /**
      * Wrapped business object
      */
@@ -95,5 +116,22 @@ public class LocalEdge {
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    /**
+     * Returns the connection type class for a given connection class
+     */
+    public static String getConnectionType(String connectionClass){
+        if (connectionClass.equals(CLASS_ELECTRICALLINK))
+            return CLASS_ELECTRICALLINKTYPE;
+        if (connectionClass.equals(CLASS_OPTICALLINK))
+            return CLASS_OPTICALLINKTYPE;
+        if (connectionClass.equals(CLASS_WIRELESSLINK))
+            return CLASS_WIRELESSLINKTYPE;
+        if (connectionClass.equals(CLASS_WIRECONTAINER))
+            return CLASS_WIRECONTAINERTYPE;
+        if (connectionClass.equals(CLASS_WIRELESSCONTAINER))
+            return CLASS_WIRELESSCONTAINERTYPE;
+        return null;
     }
 }

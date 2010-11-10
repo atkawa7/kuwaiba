@@ -31,18 +31,20 @@ public class LocalAttributeMetadataImpl
     private String displayName;
     private Boolean isVisible;
     private Boolean isAdministrative;
+    private Boolean isMultiple;
     private String description;
 
     private String listAttributeClassName = null;
 
     public LocalAttributeMetadataImpl(){}
     public LocalAttributeMetadataImpl(String _name, String _type, String _displayName,
-            Boolean _isVisible, Boolean _isAdministrative, String _description){
+            Boolean _isVisible, Boolean _isAdministrative, Boolean _isMultiple, String _description){
         this.name = _name;
         this.type = Utils.getRealType(_type);
         this.displayName = _displayName;
         this.isVisible = _isVisible;
         this.isAdministrative = _isAdministrative;
+        this.isMultiple = _isMultiple;
         this.description = _description;
 
         if (this.type.equals(LocalObjectListItem.class))
@@ -110,5 +112,9 @@ public class LocalAttributeMetadataImpl
 
     public void setId(Long _id){
         this.id =_id;
+    }
+
+    public Boolean getIsMultiple() {
+        return this.isMultiple;
     }
 }

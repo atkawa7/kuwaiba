@@ -19,9 +19,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Dictionary;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import org.inventory.communications.core.LocalClassMetadataImpl;
 import org.inventory.communications.core.LocalClassMetadataLightImpl;
@@ -38,7 +38,6 @@ import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
 import org.inventory.core.services.interfaces.LocalUserGroupObject;
 import org.inventory.core.services.interfaces.LocalUserObject;
-import org.inventory.core.services.utils.Utils;
 import org.inventory.objectcache.Cache;
 import org.inventory.webservice.ClassInfo;
 import org.inventory.webservice.ClassInfoLight;
@@ -52,7 +51,6 @@ import org.inventory.webservice.RemoteObjectLight;
 import org.inventory.webservice.UserGroupInfo;
 import org.inventory.webservice.UserInfo;
 import org.inventory.webservice.ViewInfo;
-import org.openide.util.Exceptions;
 
 /**
  * Singleton class that provides communication and caching services to the rest of the modules
@@ -644,23 +642,21 @@ public class CommunicationsStub {
         }
 
         if (refreshList){
-            Dictionary<String, List<LocalObjectListItem>> myLocalList
+            HashMap<String, List<LocalObjectListItem>> myLocalList
                     = cache.getAllList();
-            Enumeration em = myLocalList.keys();
-            while(em.hasMoreElements()){
-                String item = (String) em.nextElement();
-                myLocalList.remove(item);
-                getList(item,true);
+            Set<String> keys = myLocalList.keySet();
+        for (String key : keys){
+                myLocalList.remove(key);
+                getList(key,true);
             }
         }
         if (refreshPossibleChildren){
-            Dictionary<String, List<LocalClassMetadataLight>> myLocalPossibleChildren
+            HashMap<String, List<LocalClassMetadataLight>> myLocalPossibleChildren
                     = cache.getAllPossibleChildren();
-            Enumeration em = myLocalPossibleChildren.keys();
-            while(em.hasMoreElements()){
-                String item = (String) em.nextElement();
-                myLocalPossibleChildren.remove(item);
-                getPossibleChildren(item,true);
+            Set<String> keys = myLocalPossibleChildren.keySet();
+            for (String key : keys){
+                myLocalPossibleChildren.remove(key);
+                getPossibleChildren(key,true);
             }
         }
     }
@@ -836,15 +832,26 @@ public class CommunicationsStub {
     }
 
     /**
-     * Creates a
+     * Creates a physical connection (cable, fiber optics)
      * @param sourceNode source object oid
      * @param targetNode target object oid
      * @param connectionClass container class
      * @param parentOid container parent oid
-     * @return
+     * @return The object containing
      */
-    public LocalObjectLight createPhysicalConnection(Long sourceNode, Long targetNode, String connectionClass, Long parentOid) {
-        return null;
+    public LocalObject createPhysicalConnection(Long endpointA, Long endpointB, String connectionClass, Long parentOid) {
+        RemoteObject myObject = port.createPhysicalConnection(endpointA,endpointB,connectionClass,parentOid);
+        if (myObject == null){
+            error = port.getLastErr();
+            return null;
+        }
+        LocalClassMetadata lcmd = getMetaForClass(myObject.getClassName(), false);
+        if (lcmd == null){
+            this.error = "RemoteObject couldn't be mapped: "+myObject.getClassName();
+            return null;
+        }
+
+        return new LocalObjectImpl(myObject, lcmd);
     }
 
     public LocalObject createPhysicalContainerConnection(Long sourceNode, Long targetNode, String connectionClass, Long parentNode) {

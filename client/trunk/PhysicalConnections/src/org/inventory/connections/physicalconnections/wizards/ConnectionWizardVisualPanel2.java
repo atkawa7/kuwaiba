@@ -15,6 +15,7 @@
  */
 package org.inventory.connections.physicalconnections.wizards;
 
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 public final class ConnectionWizardVisualPanel2 extends JPanel {
@@ -29,6 +30,10 @@ public final class ConnectionWizardVisualPanel2 extends JPanel {
         return "Edit connection settings";
     }
 
+    public JComboBox getCmbType() {
+        return cmbType;
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -39,14 +44,14 @@ public final class ConnectionWizardVisualPanel2 extends JPanel {
 
         lblName = new javax.swing.JLabel();
         txtName = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
+        lblType = new javax.swing.JLabel();
+        cmbType = new javax.swing.JComboBox();
 
         org.openide.awt.Mnemonics.setLocalizedText(lblName, org.openide.util.NbBundle.getMessage(ConnectionWizardVisualPanel2.class, "ConnectionWizardVisualPanel2.lblName.text")); // NOI18N
 
         txtName.setText(org.openide.util.NbBundle.getMessage(ConnectionWizardVisualPanel2.class, "ConnectionWizardVisualPanel2.txtName.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(ConnectionWizardVisualPanel2.class, "ConnectionWizardVisualPanel2.jLabel1.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(lblType, org.openide.util.NbBundle.getMessage(ConnectionWizardVisualPanel2.class, "ConnectionWizardVisualPanel2.lblType.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -56,10 +61,10 @@ public final class ConnectionWizardVisualPanel2 extends JPanel {
                 .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblName)
-                    .addComponent(jLabel1))
+                    .addComponent(lblType))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(103, Short.MAX_VALUE))
         );
@@ -72,15 +77,15 @@ public final class ConnectionWizardVisualPanel2 extends JPanel {
                     .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblType)
+                    .addComponent(cmbType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(183, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JComboBox cmbType;
     private javax.swing.JLabel lblName;
+    private javax.swing.JLabel lblType;
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
 }

@@ -16,12 +16,12 @@
 
 package org.inventory.communications.core.connections;
 
-import org.inventory.communications.core.LocalObjectLightImpl;
+import org.inventory.communications.core.LocalObjectImpl;
 
 /**
  * This is the deserialized version of PhysicalConnection
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class LocalPhysicalConnectionImpl extends LocalObjectLightImpl{
-
+public class LocalPhysicalConnection extends LocalObjectImpl{
+     
 }

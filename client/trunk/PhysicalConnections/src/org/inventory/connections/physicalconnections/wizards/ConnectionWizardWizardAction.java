@@ -21,6 +21,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 import javax.swing.JComponent;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
@@ -31,6 +33,7 @@ public final class ConnectionWizardWizardAction implements ActionListener {
 
     private WizardDescriptor.Panel[] panels;
     private ConnectionWizard myWizard;
+    private LocalObject newConnection;
 
     public ConnectionWizardWizardAction(ConnectionWizard myWizard) {
         this.myWizard = myWizard;
@@ -41,16 +44,28 @@ public final class ConnectionWizardWizardAction implements ActionListener {
         WizardDescriptor wizardDescriptor = new WizardDescriptor(getPanels());
         wizardDescriptor.setTitleFormat(new MessageFormat("{0}"));
         wizardDescriptor.setTitle("Physical Connections Wizard");
-        wizardDescriptor.putProperty("connectionClass", myWizard.getConnectionClass()); //NOI18N
+        wizardDescriptor.putProperty("connectionTypeClass",LocalEdge.getConnectionType(myWizard.getConnectionClass())); //NOI18N
+        wizardDescriptor.putProperty("wizardType",myWizard.getWizardType()); //NOI18N
         Dialog dialog = DialogDisplayer.getDefault().createDialog(wizardDescriptor);
+
         dialog.setVisible(true);
         dialog.toFront();
         boolean cancelled = wizardDescriptor.getValue() != WizardDescriptor.FINISH_OPTION;
         if (!cancelled) {
-//            LocalObject lo = com.createPhysicalConnection(aSelection.getOid(),
-//            bSelection.getOid(), connectionClass, null);
-//            if (lo == null)
-
+            Long aSide = (Long)wizardDescriptor.getProperty("aSide");
+            Long bSide = (Long)wizardDescriptor.getProperty("bSide");
+            if (myWizard.getWizardType() == ConnectionWizard.WIZARDTYPE_CONTAINERS)
+                newConnection = CommunicationsStub.getInstance().createPhysicalContainerConnection(
+                    aSide,
+                    bSide,
+                    myWizard.getConnectionClass(),
+                    null);
+            else
+                newConnection = CommunicationsStub.getInstance().createPhysicalConnection(
+                    aSide,
+                    bSide,
+                    myWizard.getConnectionClass(),
+                    null);
         }
     }
 
@@ -93,7 +108,7 @@ public final class ConnectionWizardWizardAction implements ActionListener {
         return "Physical Connection Wizard";
     }
 
-    LocalObject getNewConnection() {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public LocalObject getNewConnection() {
+        return this.newConnection;
     }
 }
