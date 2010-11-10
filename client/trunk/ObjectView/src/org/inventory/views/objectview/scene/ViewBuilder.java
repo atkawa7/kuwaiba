@@ -83,10 +83,10 @@ public class ViewBuilder {
                     break;
             }
 
-            if (LocalEdge.CLASSNAME_WIRECONTAINER.contains(edge.getClassName()))
+            if (LocalEdge.CLASS_WIRECONTAINER.contains(edge.getClassName()))
                 widget.setLineColor(ObjectConnectionWidget.COLOR_WIRE);
             else
-                if (LocalEdge.CLASSNAME_WIRELESSCONTAINER.contains(edge.getClassName()))
+                if (LocalEdge.CLASS_WIRELESSCONTAINER.contains(edge.getClassName()))
                     widget.setLineColor(ObjectConnectionWidget.COLOR_WIRELESS);
 
             scene.getEdgesLayer().addChild(widget);

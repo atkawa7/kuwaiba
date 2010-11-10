@@ -18,12 +18,9 @@ package org.inventory.views.objectview.scene;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import org.inventory.connections.physicalconnections.wizards.PhysicalConnectionWizardWizardAction;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.connections.LocalPhysicalConnection;
 import org.inventory.communications.core.views.LocalEdge;
-import org.inventory.core.services.interfaces.LocalObject;
+import org.inventory.connections.physicalconnections.wizards.ConnectionWizard;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.views.objectview.ObjectViewTopComponent;
@@ -51,10 +48,6 @@ public class PhysicalConnectionProvider implements ConnectProvider{
      */
     private int currentConnectionSelection;
     /**
-     * What are we trying to create
-     */
-    private String connectionClass;
-    /**
      * Reference to the common CommunicationsStub
      */
     private CommunicationsStub com;
@@ -62,10 +55,6 @@ public class PhysicalConnectionProvider implements ConnectProvider{
      * Reference to the common notifier
      */
     private NotificationUtil nu;
-    /**
-     * Action to be called when a physical connection is requested
-     */
-    private PhysicalConnectionWizardWizardAction physicalConnectAction;
 
     public PhysicalConnectionProvider(){
         this.com = CommunicationsStub.getInstance();
@@ -88,10 +77,6 @@ public class PhysicalConnectionProvider implements ConnectProvider{
 
     public void setCurrentConnectionSelection(int currentConnectionSelection) {
         this.currentConnectionSelection = currentConnectionSelection;
-    }
-
-    public void setConnectionClass(String connectionClass) {
-        this.connectionClass = connectionClass;
     }
 
     @Override
@@ -132,38 +117,42 @@ public class PhysicalConnectionProvider implements ConnectProvider{
 
     @Override
     public void createConnection(Widget sourceWidget, Widget targetWidget) {
-        LocalObject myConnection = null;
-        
-
+        String connectionClass;
+        int wizardType;
         switch (currentConnectionSelection){
             case ObjectViewTopComponent.CONNECTION_WIRECONTAINER:
+                connectionClass = LocalEdge.CLASS_WIRECONTAINER;
+                wizardType = ConnectionWizard.WIZARDTYPE_CONTAINERS;
+                break;
             case ObjectViewTopComponent.CONNECTION_WIRELESSCONTAINER:
-                myConnection = com.createPhysicalContainerConnection(
-                    ((ObjectNodeWidget)sourceWidget).getObject().getOid(),
-                    ((ObjectNodeWidget)targetWidget).getObject().getOid(),
-                    currentConnectionSelection == ObjectViewTopComponent.CONNECTION_WIRECONTAINER ? LocalEdge.CLASSNAME_WIRECONTAINER:LocalEdge.CLASSNAME_WIRELESSCONTAINER,
-                    ((ViewScene)((ObjectNodeWidget)sourceWidget).getScene()).getCurrentObject().getOid());
+                connectionClass = LocalEdge.CLASS_WIRELESSCONTAINER;
+                wizardType = ConnectionWizard.WIZARDTYPE_CONTAINERS;
                 break;
             case ObjectViewTopComponent.CONNECTION_ELECTRICALLINK:
+                connectionClass = LocalEdge.CLASS_ELECTRICALLINK;
+                wizardType = ConnectionWizard.WIZARDTYPE_CONNECTIONS;
+                break;
             case ObjectViewTopComponent.CONNECTION_OPTICALLINK:
+                connectionClass = LocalEdge.CLASS_OPTICALLINK;
+                wizardType = ConnectionWizard.WIZARDTYPE_CONNECTIONS;
+                break;
             case ObjectViewTopComponent.CONNECTION_WIRELESSLINK:
-                if (physicalConnectAction == null)
-                    physicalConnectAction = new PhysicalConnectionWizardWizardAction(((ObjectNodeWidget)sourceWidget).getObject(),
-                                                            ((ObjectNodeWidget)targetWidget).getObject(),
-                                                            connectionClass);
-                else{
-                    physicalConnectAction.setASide(((ObjectNodeWidget)sourceWidget).getObject());
-                    physicalConnectAction.setBSide(((ObjectNodeWidget)targetWidget).getObject());
-                    physicalConnectAction.setConnectionClass(connectionClass);
-                }
-                physicalConnectAction.actionPerformed(new ActionEvent(this, 1, "create"));
+                connectionClass = LocalEdge.CLASS_WIRELESSLINK;
+                wizardType = ConnectionWizard.WIZARDTYPE_CONNECTIONS;
+                break;
+            default:
+                nu.showSimplePopup("Create Connection", NotificationUtil.ERROR, "No connection was selected");
                 return;
         }
 
+        ConnectionWizard myWizard =new ConnectionWizard(wizardType,((ObjectNodeWidget)sourceWidget).getObject(),
+                ((ObjectNodeWidget)targetWidget).getObject(), connectionClass);
+        
+        myWizard.show();
+        if (myWizard.getNewConnection() != null){
 
-        if (myConnection != null){
             ViewScene scene =(ViewScene)sourceWidget.getScene();
-            ObjectConnectionWidget line = new ObjectConnectionWidget(scene,myConnection);
+            ObjectConnectionWidget line = new ObjectConnectionWidget(scene,myWizard.getNewConnection());
 
             line.setControlPointShape(PointShape.SQUARE_FILLED_SMALL);
             line.setLineColor(getCurrentLineColor());
@@ -172,7 +161,6 @@ public class PhysicalConnectionProvider implements ConnectProvider{
             line.setSourceAnchor(AnchorFactory.createRectangularAnchor(sourceWidget,true));
 
             scene.getEdgesLayer().addChild(line);
-        }else
-            nu.showSimplePopup("New Connection", NotificationUtil.ERROR, com.getError());
+        }
     }
 }
