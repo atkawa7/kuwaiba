@@ -15,8 +15,10 @@
  */
 package entity.connections.physical.containers;
 
+import entity.multiple.types.links.WirelessContainerType;
 import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 
 /**
  * This class represents an element to contain wireless connections, such as waveguides.
@@ -25,4 +27,14 @@ import javax.persistence.Entity;
  */
 @Entity
 public class WirelessContainer extends GenericPhysicalContainer implements Serializable {
+    @OneToOne
+    protected WirelessContainerType type;
+
+    public WirelessContainerType getType() {
+        return type;
+    }
+
+    public void setType(WirelessContainerType type) {
+        this.type = type;
+    }
 }

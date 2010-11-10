@@ -37,8 +37,7 @@ public abstract class GenericPhysicalContainer extends GenericConnection impleme
     protected GenericPhysicalNode nodeA;
     @OneToOne
     protected GenericPhysicalNode nodeB;
-    @OneToOne
-    protected PhysicalContainerType type;
+
 
     public GenericPhysicalNode getNodeA() {
         return nodeA;
@@ -54,13 +53,5 @@ public abstract class GenericPhysicalContainer extends GenericConnection impleme
 
     public void setNodeB(GenericPhysicalNode nodeB) {
         this.nodeB = nodeB;
-    }
-
-    public PhysicalContainerType getType() {
-        return type;
-    }
-
-    public void setType(PhysicalContainerType type) {
-        this.type = type;
     }
 }

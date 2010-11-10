@@ -13,28 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package entity.connections.physical.containers;
 
-import entity.multiple.types.links.WireContainerType;
-import java.io.Serializable;
+package entity.multiple.types.links;
+
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
 
 /**
- * This class represents an element to contain cables. There can be many types of conduits:
- * cable ditches, cable racks, pipes or even cable trays
+ * Represents a wireless link type, microwave, satellite, etc
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class WireContainer extends GenericPhysicalContainer implements Serializable {
-    @OneToOne
-    protected WireContainerType type;
+public class WirelessContainerType extends GenericPhysicalLinkType{
 
-    public WireContainerType getType() {
-        return type;
-    }
-
-    public void setType(WireContainerType type) {
-        this.type = type;
-    }
 }
