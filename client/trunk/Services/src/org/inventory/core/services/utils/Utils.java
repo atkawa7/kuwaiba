@@ -29,6 +29,8 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileFilter;
 import org.inventory.core.services.interfaces.LocalObjectLight;
@@ -210,5 +212,26 @@ public class Utils {
                 return "Image Files";
             }
         };
+    }
+    
+    /**
+     * This method receives two conjuncts and extract the elements that are not common among them
+     * @param groupA
+     * @param groupB
+     * @return An array of two positions with the remaining elements in the conjunct A and the second with the B's elements
+     */
+    public static Object[] inverseIntersection(List groupA, List groupB){
+        for (Object elementA : groupA){
+            for (Object elementB : groupB){
+                if (elementA.equals(elementB)){
+                    List<Object> myGroupA = new ArrayList<Object>(groupA);
+                    List<Object> myGroupB = new ArrayList<Object>(groupB);
+                    myGroupA.remove(elementA);
+                    myGroupB.remove(elementB);
+                    return inverseIntersection(myGroupA, myGroupB);
+                }
+            }
+        }
+        return new Object[]{groupA,groupB};
     }
 }
