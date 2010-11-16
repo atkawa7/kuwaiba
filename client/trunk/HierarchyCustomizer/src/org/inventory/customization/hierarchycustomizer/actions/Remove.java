@@ -29,9 +29,9 @@ public class Remove extends AbstractAction{
         List<Long> oids = new ArrayList<Long>();
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         CommunicationsStub com = CommunicationsStub.getInstance();
-        oids.add(node.getObject().getId());
+        oids.add(node.getObject().getOid());
         if (com.removePossibleChildren(
-                ((ClassMetadataNode)node.getParentNode()).getObject().getId(),oids)){
+                ((ClassMetadataNode)node.getParentNode()).getObject().getOid(),oids)){
 
             ((ClassMetadataChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
             com.refreshCache(false, false, false, true);

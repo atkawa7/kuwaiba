@@ -95,7 +95,7 @@ public class HierarchyCustomizerService implements LookupListener{
     //LookupListener methods
     public void resultChanged(LookupEvent le) {
         //Sometimes the event is fired but the object is no longer available (i.e., if you remove a node from the tree)
-        if (result.allInstances().size()==0)
+        if (result.allInstances().isEmpty())
             return;
         Object obj = result.allInstances().iterator().next();
         if (obj != null){
