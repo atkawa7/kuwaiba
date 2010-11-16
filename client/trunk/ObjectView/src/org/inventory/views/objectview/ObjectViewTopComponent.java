@@ -231,6 +231,11 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
         btnRefresh.setFocusable(false);
         btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
         barMain.add(btnRefresh);
 
         cmbViewType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Default View" }));
@@ -369,6 +374,10 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         vrs.saveView();
     }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        vrs.refreshView();
+    }//GEN-LAST:event_btnRefreshActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barConnections;

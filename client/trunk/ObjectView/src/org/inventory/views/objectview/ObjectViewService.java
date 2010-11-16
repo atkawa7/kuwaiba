@@ -18,6 +18,7 @@ package org.inventory.views.objectview;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
 import org.inventory.communications.CommunicationsStub;
@@ -26,7 +27,9 @@ import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
+import org.inventory.views.objectview.scene.ObjectNodeWidget;
 import org.inventory.views.objectview.scene.ViewBuilder;
+import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
@@ -135,5 +138,17 @@ public class ObjectViewService implements LookupListener{
                  vrtc.getScene().getCurrentObject().getPackageName()+"."+vrtc.getScene().getCurrentObject().getClassName(), //NOI18n
                 "entity.views.DefaultView", vrtc.getScene().getBackgroundImage(), viewStructure))
             vrtc.getNotifier().showSimplePopup("Object View", NotificationUtil.ERROR, com.getError());
+    }
+
+    void refreshView() {
+        List<LocalObjectLight> children = com.getObjectChildren(vrtc.getScene().getCurrentObject().getOid(),
+                com.getMetaForClass(vrtc.getScene().getCurrentObject().getClassName(), false).getOid());
+        List<LocalObjectLight> currentObjects = new ArrayList<LocalObjectLight>();
+        for (Widget widget : vrtc.getScene().getNodesLayer().getChildren()){
+            currentObjects.add(((ObjectNodeWidget)widget).getObject());
+        }
+        Object[] result = Utils.inverseIntersection(children, currentObjects);
+        for (Object res : (ArrayList)result[0])
+            System.out.println("El res: "+((LocalObjectLight)res).getOid());
     }
 }
