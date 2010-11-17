@@ -16,6 +16,7 @@
 package core.toserialize;
 
 import core.annotations.Administrative;
+import core.annotations.NoSerialize;
 import entity.core.RootObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -50,8 +51,9 @@ public class RemoteObject extends RemoteObjectLight {
         int i = 0;
         for (Field f : allAttributes ){
 
-            //Administrative fields shouldn't be serialized
-            if(f.getAnnotation(Administrative.class) != null)
+            //Administrative fields and those decorated as NoSerialize shouldn't be serialized
+            if(f.getAnnotation(Administrative.class) != null ||
+                    f.getAnnotation(NoSerialize.class) != null)
                 continue;
             attributes[i]=f.getName();
 

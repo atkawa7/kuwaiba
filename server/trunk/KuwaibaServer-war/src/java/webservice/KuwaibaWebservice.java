@@ -121,8 +121,14 @@ public class KuwaibaWebservice {
      * @return a representation of the entity as a RemoteObject
      */
     @WebMethod(operationName = "getObjectInfo")
-    public RemoteObject getObjectInfo(@WebParam(name = "objectclass") String className, @WebParam(name = "oid") Long oid){
-        return sbr.getObjectInfo(className, oid);
+    public RemoteObject getObjectInfo(@WebParam(name = "objectClass") String objectClass, @WebParam(name = "oid") Long oid){
+        Class myClass = sbr.getClassFor(objectClass);
+        if (myClass == null){
+            this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+ objectClass;
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, this.lastErr);
+            return null;
+        }
+        return sbr.getObjectInfo(myClass, oid);
     }
 
     /**
@@ -132,8 +138,14 @@ public class KuwaibaWebservice {
      * @return a representation of the entity as a RemoteObjectLight
      */
     @WebMethod(operationName = "getObjectInfoLight")
-    public RemoteObjectLight getObjectInfoLight(@WebParam(name = "objectclass") String className, @WebParam(name = "oid") Long oid){
-        return sbr.getObjectInfoLight(className, oid);
+    public RemoteObjectLight getObjectInfoLight(@WebParam(name = "objectclass") String objectClass, @WebParam(name = "oid") Long oid){
+        Class myClass = sbr.getClassFor(objectClass);
+        if (myClass == null){
+            this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+ objectClass;
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, this.lastErr);
+            return null;
+        }
+        return sbr.getObjectInfoLight(myClass, oid);
     }
 
     /**
@@ -254,14 +266,18 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "getMultipleChoice")
     public ObjectList getMultipleChoice(@WebParam(name = "className")
         String className) {
-        try{
-            Class myClass = Class.forName(className);
-            return sbr.getMultipleChoice(myClass);
-        }catch(ClassNotFoundException cnfe){
+        Class myClass = sbr.getClassFor(className);
+        if (myClass == null){
             this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+ className;
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, this.lastErr);
             return null;
         }
+        ObjectList res = sbr.getMultipleChoice(myClass);
+        if (res == null){
+            this.lastErr = sbr.getError();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, this.lastErr);
+        }
+        return res;
     }
 
     /**
@@ -568,19 +584,20 @@ public class KuwaibaWebservice {
      */
     @WebMethod(operationName = "createPhysicalContainerConnection")
     public RemoteObjectLight createPhysicalContainerConnection(@WebParam(name="sourceObjectOid")Long sourceObjectOid,
-            @WebParam(name="targetObjectOid")Long targetObjectOid,@WebParam(name="connectionClass")String connectionClass,
+            @WebParam(name="targetObjectOid")Long targetObjectOid,@WebParam(name="containerClass")String containerClass,
             @WebParam(name="parentObjectOid")Long parentObjectOid){
-        try{
-            Class containerClass = Class.forName(connectionClass);
-            RemoteObjectLight res = sbr.createPhysicalContainerConnection(sourceObjectOid,targetObjectOid,containerClass,parentObjectOid);
-            if (res == null)
-                lastErr = sbr.getError();
-            return res;
-        }catch(ClassNotFoundException cnfe){
-            lastErr = cnfe.getClass().toString();
-            return null;
-        }
-
+        
+            Class myClass = sbr.getClassFor(containerClass);
+            if (myClass != null){
+                RemoteObjectLight res = sbr.createPhysicalContainerConnection(sourceObjectOid,targetObjectOid,myClass,parentObjectOid);
+                if (res == null)
+                    lastErr = sbr.getError();
+                return res;
+            }else{
+                this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+ containerClass;
+                Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, this.lastErr);
+                return null;
+            }
     }
 
     /**
@@ -595,22 +612,22 @@ public class KuwaibaWebservice {
     public RemoteObject createPhysicalConnection(@WebParam(name="endpointAOid")Long endpointAOid,
             @WebParam(name="endpointBOid")Long endpointBOid,@WebParam(name="connectionClass")String connectionClass,
             @WebParam(name="parentObjectOid")Long parentObjectOid){
-        try{
-            Class containerClass = Class.forName(connectionClass);
-            if(!HierarchyUtils.isSubclass(containerClass, GenericPhysicalConnection.class)){
+        Class myClass = sbr.getClassFor(connectionClass);
+        if (myClass != null){
+            if(!HierarchyUtils.isSubclass(myClass, GenericPhysicalConnection.class)){
                 lastErr = java.util.ResourceBundle.
                     getBundle("internationalization/Bundle").getString("LBL_WRONGCLASS")+ connectionClass;
                 return null;
             }
-            RemoteObject res = sbr.createPhysicalConnection(endpointAOid,endpointBOid,containerClass,parentObjectOid);
+            RemoteObject res = sbr.createPhysicalConnection(endpointAOid,endpointBOid,myClass,parentObjectOid);
             if (res == null)
                 lastErr = sbr.getError();
             return res;
-        }catch(ClassNotFoundException cnfe){
-            lastErr = cnfe.getClass().toString();
+        }else{
+            this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+ connectionClass;
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, this.lastErr);
             return null;
         }
-
     }
 
     /**

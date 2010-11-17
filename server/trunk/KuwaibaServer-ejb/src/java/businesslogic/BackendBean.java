@@ -77,41 +77,17 @@ public class BackendBean implements BackendBeanRemote {
     @PersistenceContext
     private EntityManager em;
     private String error;
+    private HashMap<String,Class> classIndex;
 
-    @Override
-    public void createInitialDataset() {
-        String[] countryNames = new String[]{"Colombia","Brazil","England","Germany","United States"};
-
-        List<StateObject> rl = new ArrayList<StateObject> ();
-        List<Country> sl = new ArrayList<Country> ();
-
-        //Let's create the root
-        DummyRoot root = new DummyRoot();
-        root.setId(RootObject.PARENT_ROOT);
-        em.persist(root);
-
-        for (int i=1;i<3;i++){
-            StateObject r = new StateObject();
-            r.setName("State #"+String.valueOf(i));
-            rl.add(r);
+    public Class getClassFor(String className){
+        if (classIndex == null){
+            classIndex = new HashMap<String, Class>();
+            Set<EntityType<?>> allEntities = em.getMetamodel().getEntities();
+            for (EntityType ent : allEntities)
+                classIndex.put(ent.getJavaType().getSimpleName(), ent.getJavaType());
         }
-        for(String name : countryNames){
-            Country country = new Country();
-            country.setName(name);
-            country.setParent(RootObject.PARENT_ROOT); //Means the parent is the root
-            sl.add(country);
-        }
-
-        for (Country s : sl){
-            em.persist(s);
-        }
-
-        for (StateObject r : rl){
-            r.setParent(sl.iterator().next().getId());
-            em.persist(r);
-        }
+        return classIndex.get(className);
     }
-
     /**
      * This method resets class metadata information
      *
@@ -233,12 +209,10 @@ public class BackendBean implements BackendBeanRemote {
      * @return
      */
     @Override
-    public RemoteObject getObjectInfo(String objectClass,Long oid){
+    public RemoteObject getObjectInfo(Class objectClass,Long oid){
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETOBJECTINFO"));
         if (em != null){
-            String sentence = "SELECT x from "+objectClass+" x WHERE x.id="+oid;
-            Query query = em.createQuery(sentence);
-            Object result = query.getSingleResult();
+            Object result = em.find(objectClass, oid);           
             if (result==null){
                 this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT")+objectClass+java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid.toString();
                 Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
@@ -261,18 +235,17 @@ public class BackendBean implements BackendBeanRemote {
      * @return
      */
     @Override
-    public RemoteObjectLight getObjectInfoLight(String className, Long oid){
+    public RemoteObjectLight getObjectInfoLight(Class objectClass, Long oid){
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETOBJECTINFO"));
         if (em != null){
-            String sentence = "SELECT x from "+className+" x WHERE x.id="+oid;
-            Query query = em.createQuery(sentence);
-            Object result = query.getSingleResult();
+            Object result = em.find(objectClass, oid);
             if (result==null){
-                this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT")+className+java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid.toString();
+                this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT")+objectClass+java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid.toString();
                 Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
                 return null;
             }else
                 return new RemoteObjectLight(result);
+            
         }
         else {
             this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER");

@@ -32,6 +32,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.persistence.EntityManager;
 
@@ -41,6 +42,12 @@ import javax.persistence.EntityManager;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class MetadataUtils {
+    
+    /**
+     * This is a singleton dictionary used to retrieve classes used later
+     * in queries
+     */
+    private static HashMap<String,Class> classIndex;
     /**
      * Retrieves recursively through the class hierarchy the <b>protected</b> attributes of a given class
      * @param aClass The class to be tested
@@ -199,5 +206,4 @@ public class MetadataUtils {
             return null;
         }
     }
-
 }
