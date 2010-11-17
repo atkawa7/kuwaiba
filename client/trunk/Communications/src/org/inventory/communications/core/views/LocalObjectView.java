@@ -19,6 +19,7 @@ package org.inventory.communications.core.views;
 import java.awt.Image;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -39,15 +40,15 @@ public class LocalObjectView {
     /**
      * Every possible node in the view
      */
-    private LocalNode[] nodes;
+    private List<LocalNode> nodes;
     /**
      * Every possible edge in the view
      */
-    private LocalEdge[] edges;
+    private List<LocalEdge> edges;
     /**
      * Every possible label in the view
      */
-    private LocalLabel[] labels;
+    private List<LocalLabel> labels;
     
     /**
      * The view background
@@ -61,36 +62,33 @@ public class LocalObjectView {
     public LocalObjectView(byte[] viewStructure, byte[] _background, String viewClass) {
         this.background = Utils.getImageFromByteArray(_background);
         this.viewClass = viewClass;
-        if (viewStructure == null){
-            nodes = new LocalNode[0];
-            edges = new LocalEdge[0];
-            labels = new LocalLabel[0];
-        }else{
+        nodes = new ArrayList<LocalNode>();
+        edges = new ArrayList<LocalEdge>();
+        labels = new ArrayList<LocalLabel>();
+        if (viewStructure != null){
             try {
                 parseXML(viewStructure);
             } catch (XMLStreamException ex) {
-                nodes = new LocalNode[0];
-                edges = new LocalEdge[0];
-                labels = new LocalLabel[0];
+                System.out.println("An exception was thrown parsing the XML View: "+ex.getMessage());
             }
         }
     }
 
     public LocalObjectView(LocalNode[] myNodes, LocalEdge[] myEdges,LocalLabel[] myLabels) {
-        nodes = myNodes;
-        edges = myEdges;
-        labels = myLabels;
+        nodes = Arrays.asList(myNodes);
+        edges = Arrays.asList(myEdges);
+        labels = Arrays.asList(myLabels);
     }
 
-    public LocalEdge[] getEdges() {
+    public List<LocalEdge> getEdges() {
         return edges;
     }
 
-    public LocalLabel[] getLabels() {
+    public List<LocalLabel> getLabels() {
         return labels;
     }
 
-    public LocalNode[] getNodes() {
+    public List<LocalNode> getNodes() {
         return nodes;
     }
 
@@ -121,8 +119,9 @@ public class LocalObjectView {
         ByteArrayInputStream bais = new ByteArrayInputStream(structure);
         XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
 
-        List<LocalNode> myNodes = new ArrayList<LocalNode>();
-        List<LocalEdge> myEdges = new ArrayList<LocalEdge>();
+        nodes.removeAll(nodes);
+        edges.removeAll(edges);
+       labels.removeAll(labels);
 
         while (reader.hasNext()){
             int event = reader.next();
@@ -137,7 +136,7 @@ public class LocalObjectView {
                     LocalObjectLight lol = CommunicationsStub.getInstance().
                             getObjectInfoLight(objectClass, objectId);
 
-                    myNodes.add(new LocalNode(lol, xCoordinate, yCoordinate));
+                    nodes.add(new LocalNode(lol, xCoordinate, yCoordinate));
                 }else{
                     if (reader.getName().equals(qEdge)){
                         Long objectId = Long.valueOf(reader.getAttributeValue(null,"id"));
@@ -145,7 +144,7 @@ public class LocalObjectView {
                         LocalObject container = CommunicationsStub.getInstance().getObjectInfo(className, objectId);
                         LocalEdge myLocalEdge = new LocalEdge(container,null);
 
-                        for (LocalNode myNode : myNodes){
+                        for (LocalNode myNode : nodes){
 
                             if (((Long)container.getAttribute("nodeA")).equals(myNode.getObject().getOid())) //NOI18N
                                 myLocalEdge.setaSide(myNode);
@@ -158,13 +157,15 @@ public class LocalObjectView {
                                 break;
                         }
                         myLocalEdge.setClassName(className);
-                        myEdges.add(myLocalEdge);
+                        edges.add(myLocalEdge);
+                    }else{
+                        if (reader.getName().equals(qLabel)){
+                            //Unavailable by now
+                        }
                     }
                 }
             }
         }
         reader.close();
-        nodes = myNodes.toArray(new LocalNode[0]);
-        edges = myEdges.toArray(new LocalEdge[0]);
     }
 }

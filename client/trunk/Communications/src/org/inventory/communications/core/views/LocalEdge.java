@@ -30,28 +30,28 @@ public class LocalEdge {
      * Some constants
      */
     //TODO: Gotta send this to a config file
-    public static String CLASS_WIRECONTAINER="entity.connections.physical.containers.WireContainer";
-    public static String CLASS_WIRELESSCONTAINER="entity.connections.physical.containers.WirelessContainer";
+    public static String CLASS_WIRECONTAINER="WireContainer";
+    public static String CLASS_WIRELESSCONTAINER="WirelessContainer";
 
     /**
      * Physical connection classes
      */
-    public static String CLASS_ELECTRICALLINK = "entity.connections.physical.ElectricalLink";
-    public static String CLASS_OPTICALLINK = "entity.connections.physical.OpticalLink";
-    public static String CLASS_WIRELESSLINK = "entity.connections.physical.RadioLink";
+    public static String CLASS_ELECTRICALLINK = "ElectricalLink";
+    public static String CLASS_OPTICALLINK = "OpticalLink";
+    public static String CLASS_WIRELESSLINK = "RadioLink";
 
     /**
      * Physical connection type classes
      */
-    public static String CLASS_ELECTRICALLINKTYPE = "entity.multiple.types.links.ElectricalLinkType";
-    public static String CLASS_OPTICALLINKTYPE = "entity.multiple.types.links.OpticalLinkType";
-    public static String CLASS_WIRELESSLINKTYPE = "entity.multiple.types.links.WirelessLinkType";
+    public static String CLASS_ELECTRICALLINKTYPE = "ElectricalLinkType";
+    public static String CLASS_OPTICALLINKTYPE = "OpticalLinkType";
+    public static String CLASS_WIRELESSLINKTYPE = "WirelessLinkType";
 
     /**
      * Physical container type classes
      */
-    public static String CLASS_WIRECONTAINERTYPE = "entity.multiple.types.links.WireContainerType";
-    public static String CLASS_WIRELESSCONTAINERTYPE = "entity.multiple.types.links.WirelessContainerType";
+    public static String CLASS_WIRECONTAINERTYPE = "WireContainerType";
+    public static String CLASS_WIRELESSCONTAINERTYPE = "WirelessContainerType";
 
     /**
      * Wrapped business object
@@ -74,6 +74,10 @@ public class LocalEdge {
      */
     private Point[] controlPoints;
 
+    public LocalEdge(LocalObject obj) {
+        this.object = obj;
+    }
+
     public LocalEdge(LocalObject _object, Point[] _controlsPoints){
         this.object = _object;
         this.controlPoints = _controlsPoints;
@@ -86,6 +90,21 @@ public class LocalEdge {
         this.className = _className;
     }
 
+    @Override
+    public boolean equals (Object obj){
+        if (obj == null)
+            return false;
+        if (!(obj instanceof LocalEdge))
+            return false;
+        return ((LocalEdge)obj).getObject().getOid().equals(this.object.getOid());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 53 * hash + (this.object != null ? this.object.hashCode() : 0);
+        return hash;
+    }
     public Point[] getControlPoints() {
         return controlPoints;
     }

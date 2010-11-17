@@ -37,7 +37,6 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
     public static String PROP_DISPLAYNAME="displayname";
 
     public LocalObjectLightImpl(){
-        this.propertyChangeListeners = new ArrayList<PropertyChangeListener>();
     }
 
     public LocalObjectLightImpl(RemoteObjectLight rol){

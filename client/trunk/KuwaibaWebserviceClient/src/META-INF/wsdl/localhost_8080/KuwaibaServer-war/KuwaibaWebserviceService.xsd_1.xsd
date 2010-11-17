@@ -28,6 +28,10 @@
 
 <xs:element name="createObjectResponse" type="tns:createObjectResponse" />
 
+<xs:element name="createPhysicalConnection" type="tns:createPhysicalConnection" />
+
+<xs:element name="createPhysicalConnectionResponse" type="tns:createPhysicalConnectionResponse" />
+
 <xs:element name="createPhysicalContainerConnection" type="tns:createPhysicalContainerConnection" />
 
 <xs:element name="createPhysicalContainerConnectionResponse" type="tns:createPhysicalContainerConnectionResponse" />
@@ -207,6 +211,14 @@
 <xs:element name="oid" type="xs:long" minOccurs="0" />
 <xs:element name="className" type="xs:string" minOccurs="0" />
 <xs:element name="packageName" type="xs:string" minOccurs="0" />
+<xs:element name="validators" type="tns:validator" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="validator">
+<xs:sequence>
+<xs:element name="label" type="xs:string" minOccurs="0" />
+<xs:element name="value" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -236,6 +248,16 @@
 </xs:complexType>
 
 <xs:complexType name="closeSessionResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getServerStatus">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getServerStatusResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" />
 </xs:sequence>
@@ -279,16 +301,6 @@
 <xs:element name="creationDate" type="xs:long" minOccurs="0" />
 <xs:element name="isEnabled" type="xs:boolean" minOccurs="0" />
 <xs:element name="groups" type="tns:userGroupInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getServerStatus">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getServerStatusResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" />
 </xs:sequence>
 </xs:complexType>
 
@@ -389,7 +401,7 @@
 <xs:sequence>
 <xs:element name="sourceObjectOid" type="xs:long" minOccurs="0" />
 <xs:element name="targetObjectOid" type="xs:long" minOccurs="0" />
-<xs:element name="connectionClass" type="xs:string" minOccurs="0" />
+<xs:element name="containerClass" type="xs:string" minOccurs="0" />
 <xs:element name="parentObjectOid" type="xs:long" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
@@ -715,7 +727,7 @@
 
 <xs:complexType name="getObjectInfo">
 <xs:sequence>
-<xs:element name="objectclass" type="xs:string" minOccurs="0" />
+<xs:element name="objectClass" type="xs:string" minOccurs="0" />
 <xs:element name="oid" type="xs:long" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
@@ -735,6 +747,21 @@
 </xs:sequence>
 </xs:extension>
 </xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="createPhysicalConnection">
+<xs:sequence>
+<xs:element name="endpointAOid" type="xs:long" minOccurs="0" />
+<xs:element name="endpointBOid" type="xs:long" minOccurs="0" />
+<xs:element name="connectionClass" type="xs:string" minOccurs="0" />
+<xs:element name="parentObjectOid" type="xs:long" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createPhysicalConnectionResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObject" minOccurs="0" />
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getDummyRootId">
@@ -807,19 +834,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getConnectionsForParent">
-<xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="className" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getConnectionsForParentResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteObject" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="setUserProperties">
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0" />
@@ -834,6 +848,19 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getConnectionsForParent">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="className" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getConnectionsForParentResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObject" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="getObjectInfoLight">
 <xs:sequence>
 <xs:element name="objectclass" type="xs:string" minOccurs="0" />
@@ -844,16 +871,6 @@
 <xs:complexType name="getObjectInfoLightResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObjectLight" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getLastErr">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getLastErrResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -875,6 +892,16 @@
 <xs:complexType name="updateObjectResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getLastErr">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getLastErrResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 

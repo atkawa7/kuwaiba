@@ -254,11 +254,12 @@ public class CommunicationsStub {
      */
     public LocalObject getObjectInfo(String objectClass, Long oid){
         LocalClassMetadata lcmd = getMetaForClass(objectClass, false);
-        LocalObjectImpl res = new LocalObjectImpl(port.getObjectInfo(objectClass, oid),lcmd);
-        if (res == null){
+        RemoteObject myObject = port.getObjectInfo(objectClass, oid);
+        if (myObject == null){
             this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_OBJECT");
+            return null;
         }
-        return res;
+        return new LocalObjectImpl(myObject,lcmd);
     }
 
     /**

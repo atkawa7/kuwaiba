@@ -46,4 +46,20 @@ public class LocalNode {
     public Point getPosition() {
         return position;
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if (obj == null)
+            return false;
+        if (!(obj instanceof LocalNode))
+            return false;
+        return ((LocalNode)obj).getObject().getOid().equals(this.object.getOid());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.object != null ? this.object.hashCode() : 0);
+        return hash;
+    }
 }

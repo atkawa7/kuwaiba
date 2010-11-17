@@ -26,7 +26,6 @@ import org.inventory.core.services.interfaces.LocalObjectListItem;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.PropertySupport.ReadWrite;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 
 /**

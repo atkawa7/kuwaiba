@@ -16,7 +16,7 @@
 package org.inventory.communications.core;
 
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
-import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.utils.Utils;
 
 /**
@@ -47,7 +47,7 @@ public class LocalAttributeMetadataImpl
         this.isMultiple = _isMultiple;
         this.description = _description;
 
-        if (this.type.equals(LocalObjectListItem.class))
+        if (this.type.equals(LocalObjectLight.class))
             listAttributeClassName = _type;
     }
 
@@ -100,7 +100,7 @@ public class LocalAttributeMetadataImpl
     }
 
     /*
-     * If this is a list type attribute, returns the class name associated to yhe item
+     * If this is a list type attribute, returns the class name associated to the item
      */
     public String getListAttributeClassName(){
         return listAttributeClassName;
