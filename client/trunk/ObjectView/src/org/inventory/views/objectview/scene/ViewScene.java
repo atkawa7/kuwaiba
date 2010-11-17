@@ -20,8 +20,12 @@ import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.utils.Utils;
 import org.netbeans.api.visual.action.ActionFactory;
@@ -54,6 +58,10 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
      */
     private LayerWidget edgesLayer;
     /**
+     * Used to hold misc messages
+     */
+    private LayerWidget labelsLayer;
+    /**
      * The common connection provider
      */
     private PhysicalConnectionProvider myConnectionProvider;
@@ -62,6 +70,11 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
      */
     private LocalObjectLight currentObject;
     /**
+     * Action listeners
+     */
+    private List<ActionListener> listeners;
+    
+    /**
      * Constant to represent the selection tool
      */
     public final static String ACTION_SELECT = "selection"; //NOI18
@@ -69,16 +82,22 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
      * Constant to represent the connection tool
      */
     public final static String ACTION_CONNECT = "connect"; //NOI18
+    /**
+     * Event ID to indicate a change in the scene
+     */
+    public final static int SCENE_CHANGE = 1;
 
     public ViewScene (){
         interactionLayer = new LayerWidget(this);
         backgroundLayer = new LayerWidget(this);
         nodesLayer = new LayerWidget(this);
         edgesLayer = new LayerWidget(this);
+        labelsLayer = new LayerWidget(this);
         myConnectionProvider = new PhysicalConnectionProvider();
         addChild(backgroundLayer);
         addChild(nodesLayer);
         addChild(edgesLayer);
+        addChild(labelsLayer);
         getActions().addAction(ActionFactory.createZoomAction());
         getActions().addAction(ActionFactory.createPanAction());
         setActiveTool(ACTION_SELECT);
@@ -120,6 +139,10 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
 
     public LayerWidget getEdgesLayer(){
         return edgesLayer;
+    }
+
+    public LayerWidget getLabelsLayer() {
+        return labelsLayer;
     }
 
     public LocalObjectLight getCurrentObject() {
@@ -164,6 +187,27 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
         } catch (IOException ex) {
             return null;
         }
+    }
+
+    /**
+     * To listen for scene changes implementing the observer design pattern
+     * @param listener
+     */
+    public void addActionListener(ActionListener listener){
+        if (listeners == null)
+            listeners = new ArrayList<ActionListener>();
+        listeners.add(listener);
+    }
+
+    public void removeActionListener(ActionListener listener){
+        if (listeners == null)
+            return;
+        listeners.remove(listener);
+    }
+
+    public void fireChangeEvent(ActionEvent ev){
+        for (ActionListener listener : listeners)
+            listener.actionPerformed(ev);
     }
 
     /**

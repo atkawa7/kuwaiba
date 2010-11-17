@@ -18,6 +18,7 @@ package org.inventory.views.objectview;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
@@ -29,6 +30,7 @@ import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
 import org.inventory.views.objectview.scene.ObjectNodeWidget;
 import org.inventory.views.objectview.scene.ViewBuilder;
+import org.inventory.views.objectview.scene.ViewScene;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
@@ -44,6 +46,7 @@ public class ObjectViewService implements LookupListener{
     private ObjectViewTopComponent vrtc;
     private Lookup.Result selectedNodes;
     private CommunicationsStub com;
+    private ViewBuilder viewBuilder;
 
     public ObjectViewService(ObjectViewTopComponent _vrtc){
         this.vrtc = _vrtc;
@@ -79,13 +82,24 @@ public class ObjectViewService implements LookupListener{
            LocalObjectLight myObject = (LocalObjectLight)lookupResult.allInstances().iterator().next();
            if (myObject.equals(vrtc.getScene().getCurrentObject()))
                 return;
+           
+           //Check if the view is still unsaved
+           vrtc.checkForUnsavedView(false);
 
             //We clean the scene...
            vrtc.getScene().getNodesLayer().removeChildren();
            vrtc.getScene().getEdgesLayer().removeChildren();
            vrtc.getScene().getBackgroundLayer().removeChildren();
            vrtc.getScene().getInteractionLayer().removeChildren();
-           
+           vrtc.getScene().getLabelsLayer().removeChildren();
+
+           //If the selected node is the root
+           if (myObject.getOid() == null){
+               vrtc.setDisplayName(null);
+               vrtc.setHtmlDisplayName(null);
+               return;
+           }
+
            vrtc.getScene().setCurrentObject(myObject);
            
            LocalObjectView defaultView = com.getObjectDefaultView(myObject.getOid(),myObject.getPackageName()+"."+myObject.getClassName());
@@ -93,15 +107,22 @@ public class ObjectViewService implements LookupListener{
                List<LocalObjectLight> myChildren = com.getObjectChildren(myObject.getOid(), com.getMetaForClass(myObject.getClassName(),false).getOid());
                LocalObject[] myConnections = com.getConnectionsForParent(myObject.getOid(), "GenericPhysicalContainer");
                //TODO: Change for a ViewFactory
-               new ViewBuilder(null, vrtc.getScene()).buildDefaultView(myChildren, myConnections);
+               viewBuilder = new ViewBuilder(null, vrtc.getScene());
+               viewBuilder.buildDefaultView(myChildren, myConnections);
            }
-           else new ViewBuilder(defaultView, vrtc.getScene()).buildView();
+           else{
+               viewBuilder = new ViewBuilder(defaultView, vrtc.getScene());
+               viewBuilder.buildView();
+           }
 
            vrtc.getScene().validate();
            vrtc.getScene().repaint();
-        } else
+           vrtc.setDisplayName(myObject.getDisplayname() + " ["+myObject.getClassName()+"]");
+        }else{
             if(!lookupResult.allInstances().isEmpty())
                 vrtc.getNotifier().showStatusMessage("More than one object selected. No view available", false);
+            //vrtc.setDisplayName(null);
+        }
     }
 
     /**
@@ -132,7 +153,7 @@ public class ObjectViewService implements LookupListener{
     /**
      * Saves the view to an XML representation at server side
      */
-    void saveView() {
+    public void saveView() {
         byte[] viewStructure = vrtc.getScene().getAsXML();
         if (!com.saveView(vrtc.getScene().getCurrentObject().getOid(),
                  vrtc.getScene().getCurrentObject().getPackageName()+"."+vrtc.getScene().getCurrentObject().getClassName(), //NOI18n
@@ -140,15 +161,20 @@ public class ObjectViewService implements LookupListener{
             vrtc.getNotifier().showSimplePopup("Object View", NotificationUtil.ERROR, com.getError());
     }
 
-    void refreshView() {
+    public void refreshView() {
         List<LocalObjectLight> children = com.getObjectChildren(vrtc.getScene().getCurrentObject().getOid(),
                 com.getMetaForClass(vrtc.getScene().getCurrentObject().getClassName(), false).getOid());
         List<LocalObjectLight> currentObjects = new ArrayList<LocalObjectLight>();
-        for (Widget widget : vrtc.getScene().getNodesLayer().getChildren()){
+
+        for (Widget widget : vrtc.getScene().getNodesLayer().getChildren())
             currentObjects.add(((ObjectNodeWidget)widget).getObject());
-        }
+
         Object[] result = Utils.inverseIntersection(children, currentObjects);
-        for (Object res : (ArrayList)result[0])
-            System.out.println("El res: "+((LocalObjectLight)res).getOid());
+        viewBuilder.refreshView((List<LocalObjectLight>)result[0], null,
+                (List<LocalObjectLight>)result[1], null);
+        vrtc.getScene().validate();
+        vrtc.getScene().repaint();
+        if (!((List)result[0]).isEmpty() || !((List)result[1]).isEmpty())
+            vrtc.getScene().fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "Refresh result"));
     }
 }

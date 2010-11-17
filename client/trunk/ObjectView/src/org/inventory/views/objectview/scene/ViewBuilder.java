@@ -111,7 +111,7 @@ public class ViewBuilder {
             lastX +=100;
         }
 
-        //TODO: This algorithm to find the endpoints for a connection could be improved in a lot of way
+        //TODO: This algorithm to find the endpoints for a connection could be improved in many ways
         for (LocalObject container : myPhysicalConnections){
             LocalEdge le = new LocalEdge(container,null);
 
@@ -134,11 +134,37 @@ public class ViewBuilder {
     }
 
     /**
-     * This method
+     * This method takes the current view and adds/removes the nodes/connections according to a recalculation
+     * of the view
      * @param myNodes
      * @param myPhysicalConnections
      */
-    public void refreshView(List<LocalObjectLight> myNodes, LocalObject[] myPhysicalConnections){
-        
+    public void refreshView(List<LocalObjectLight> newNodes, List<LocalObject> newPhysicalConnections,
+            List<LocalObjectLight> nodesToDelete, List<LocalObject> physicalConnectionsToDelete){
+        scene.getNodesLayer().removeChildren();
+        scene.getEdgesLayer().removeChildren();
+        scene.getLabelsLayer().removeChildren();
+        scene.getInteractionLayer().removeChildren();
+        if (nodesToDelete != null)
+            for (LocalObjectLight toDelete : nodesToDelete)
+                myView.getNodes().remove(new LocalNode(toDelete, 0, 0));
+
+        if (physicalConnectionsToDelete != null)
+            for (LocalObject toDelete : physicalConnectionsToDelete)
+                myView.getEdges().remove(new LocalEdge(toDelete));
+
+        int i = 0;
+        if (newNodes != null)
+            for (LocalObjectLight toAdd : newNodes){
+                myView.getNodes().add(new LocalNode(toAdd, i, 0));
+                i+=100;
+            }
+
+        if (newPhysicalConnections != null)
+        for (LocalObjectLight toAdd : newPhysicalConnections){
+            //Not available yet
+        }
+
+        buildView();
     }
 }

@@ -17,8 +17,11 @@ package org.inventory.views.objectview;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
+import javax.swing.JOptionPane;
 import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.views.objectview.scene.ObjectConnectionWidget;
@@ -39,7 +42,7 @@ import org.openide.util.Lookup;
  */
 @ConvertAsProperties(dtd = "-//org.inventory.views.objectview//ObjectView//EN",
 autostore = false)
-public final class ObjectViewTopComponent extends TopComponent implements Provider {
+public final class ObjectViewTopComponent extends TopComponent implements Provider, ActionListener {
 
     private static ObjectViewTopComponent instance;
     /** path to the icon used by the component and its open action */
@@ -63,6 +66,10 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
 
     private ExplorerManager em = new ExplorerManager();
     private ObjectViewService vrs;
+    /**
+     * To warn the user if the view has not been saved yet
+     */
+    private boolean isSaved = true;
     /**
      * Represents the local scene
      */
@@ -373,6 +380,7 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         vrs.saveView();
+        isSaved = true;
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
@@ -439,11 +447,13 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
     @Override
     public void componentOpened() {
         vrs.initializeLookListener();
+        scene.addActionListener(this);
     }
 
     @Override
     public void componentClosed() {
         vrs.terminateLookupListener();
+        scene.removeActionListener(this);
     }
 
     void writeProperties(java.util.Properties p) {
@@ -470,6 +480,11 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
     protected String preferredID() {
         return PREFERRED_ID;
     }
+    
+    @Override
+    public boolean canClose(){
+        return checkForUnsavedView(true);
+    }
 
     public ExplorerManager getExplorerManager() {
         return em;
@@ -483,5 +498,44 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
 
     public ViewScene getScene(){
         return scene;
+    }
+
+    @Override
+    public String getDisplayName(){
+        if (super.getDisplayName() == null)
+            return null;
+        return super.getDisplayName().trim().equals("")?"<No Name>":super.getDisplayName();
+    }
+
+    public boolean getIsSaved() {
+        return isSaved;
+    }
+
+    public void setIsSaved(boolean value){
+        this.isSaved = value;
+        if (value)
+            this.setHtmlDisplayName(this.getDisplayName());
+        else
+            this.setHtmlDisplayName("<html><b>"+ getDisplayName()+" [Modified]</b></html>");
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if (e.getID() == ViewScene.SCENE_CHANGE)
+            this.setIsSaved(false);
+    }
+
+    public boolean checkForUnsavedView(boolean showCancel) {
+        if (!isSaved){
+            switch (JOptionPane.showConfirmDialog(null, "This view has not been saved, do you want to save it?",
+                    "Confirmation",showCancel?JOptionPane.YES_NO_CANCEL_OPTION:JOptionPane.YES_NO_OPTION)){
+                case JOptionPane.YES_OPTION:
+                    btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
+                    break;
+                case JOptionPane.CANCEL_OPTION:
+                    return false;
+            }
+        }
+        isSaved = true;
+        return true;
     }
 }

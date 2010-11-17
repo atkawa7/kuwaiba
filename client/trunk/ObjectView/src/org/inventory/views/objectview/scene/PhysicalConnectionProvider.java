@@ -18,6 +18,7 @@ package org.inventory.views.objectview.scene;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.connections.physicalconnections.wizards.ConnectionWizard;
@@ -161,6 +162,7 @@ public class PhysicalConnectionProvider implements ConnectProvider{
             line.setSourceAnchor(AnchorFactory.createRectangularAnchor(sourceWidget,true));
 
             scene.getEdgesLayer().addChild(line);
+            scene.fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "New Connection"));
         }
     }
 }
