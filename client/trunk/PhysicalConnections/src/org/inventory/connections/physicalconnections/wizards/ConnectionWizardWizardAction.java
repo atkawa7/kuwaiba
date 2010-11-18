@@ -64,13 +64,13 @@ public final class ConnectionWizardWizardAction implements ActionListener {
                     aSide,
                     bSide,
                     myWizard.getConnectionClass(),
-                    null);
+                    myWizard.getConnectionParent());
             else
                 newConnection = CommunicationsStub.getInstance().createPhysicalConnection(
                     aSide,
                     bSide,
                     myWizard.getConnectionClass(),
-                    null);
+                    myWizard.getConnectionParent());
             if (setConnectionDetails(newConnection.getOid(), name, type))
                 JOptionPane.showMessageDialog(null, "The object was successfully created","New Connection",JOptionPane.INFORMATION_MESSAGE);
         }

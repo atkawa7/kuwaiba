@@ -29,15 +29,17 @@ public class ConnectionWizard {
     private String connectionClass;
     private LocalObjectLight aSide;
     private LocalObjectLight bSide;
+    private Long connectionParent;
     private int wizardType;
     public static final int WIZARDTYPE_CONTAINERS = 1;
     public static final int WIZARDTYPE_CONNECTIONS = 2;
     
     public ConnectionWizard(int wizardType, LocalObjectLight aSide,
-            LocalObjectLight bSide, String connectionClass) {
+            LocalObjectLight bSide, String connectionClass, Long connectionParent) {
         this.connectionClass = connectionClass;
         this.aSide = aSide;
         this.bSide = bSide;
+        this.connectionParent = connectionParent;
         this.wizardType = wizardType;
         this.action = new ConnectionWizardWizardAction(this);
     }
@@ -64,5 +66,9 @@ public class ConnectionWizard {
 
     public LocalObject getNewConnection(){
         return action.getNewConnection();
+    }
+
+    public Long getConnectionParent() {
+        return connectionParent;
     }
 }
