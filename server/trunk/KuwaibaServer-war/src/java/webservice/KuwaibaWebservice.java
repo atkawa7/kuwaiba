@@ -282,9 +282,9 @@ public class KuwaibaWebservice {
 
     /**
      * Updates the container hierarchy for a given class
-     * @param parentClass Clase a la cual se le desea adicionar un posible hijo en la jerarquía
-     * @param possibleChildren Arreglo con los nombre de
-     * @return true si la operación fur completada con éxito, false si ocurrió algún error. Si sólo la adición de algunas 
+     * @param parentClass Class where the possible children class will be attached
+     * @param possibleChildren Array with all new possible children classes
+     * @return true if succeed, false otherwise
      */
     @WebMethod(operationName = "addPossibleChildren")
     public Boolean addPossibleChildren(@WebParam(name = "parentClassId")
@@ -308,21 +308,22 @@ public class KuwaibaWebservice {
 
     /**
      * Deletes an object
-     * @param className Nombre de la clase a la que pertenece el elemento
-     * @return true si fue posible ejecutar la acción, false en otro caso
+     * @param className Object class' name
+     * @return true if succeed, false otherwise
      */
     @WebMethod(operationName = "removeObject")
     public Boolean removeObject(@WebParam(name = "className")
     String className, @WebParam(name = "oid")
     Long oid) {
-        try{
-            Class myClass = Class.forName(className);
+        Class myClass = sbr.getClassFor(className);
+        if (myClass != null){
             Boolean res = sbr.removeObject(myClass, oid);
             if(!res)
                 this.lastErr = sbr.getError();
             return res;
-        }catch (ClassNotFoundException cnfe){
-            this.lastErr = cnfe.getMessage();
+        }else{
+            this.lastErr = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+ className;
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, this.lastErr);
             return false;
         }
     }

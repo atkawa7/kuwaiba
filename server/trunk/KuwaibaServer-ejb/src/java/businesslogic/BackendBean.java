@@ -600,7 +600,7 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     /**
-     *
+     * Removes a given object
      * @param className
      * @param oid
      * @return
@@ -610,8 +610,9 @@ public class BackendBean implements BackendBeanRemote {
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_REMOVEOBJECT"));
 
         if (em != null){
-            //TODO ¿Será que se deja una relación del objeto a su metadata para
-            //hacer más rápida la búsqueda en estos casos?
+
+            em.getTransaction().begin();
+
             RootObject obj = (RootObject)em.find(className, oid);
             if(obj.getIsLocked()){
                 this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_OBJECTLOCKED");
@@ -628,15 +629,20 @@ public class BackendBean implements BackendBeanRemote {
                     System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_EXECUTINGSQL")+sentence);
                     query = em.createQuery(sentence);
                     for (Object removable : query.getResultList()){
-                        //TODO Código de verificación de integridad
-                        if (!((RootObject)removable).getIsLocked())
-                            em.remove(removable);
+                        RootObject myRemovable = (RootObject)removable;
+                        //If any of the children is locked, throw an exception
+                        if (!myRemovable.getIsLocked())
+                            em.remove(myRemovable);
+                        else 
+                            throw new Exception("An object within the hierarchy is locked: "+
+                                    myRemovable.getId()+" ("+myRemovable.getClass()+")");
                     }
                 }
                 em.remove(obj);
             }catch (Exception e){
                 this.error = e.toString();
                 Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+                em.getTransaction().rollback();
                 return false;
             }
         }
