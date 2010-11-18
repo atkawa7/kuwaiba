@@ -83,9 +83,13 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
      */
     public final static String ACTION_CONNECT = "connect"; //NOI18
     /**
-     * Event ID to indicate a change in the scene
+     * Event ID to indicate a change in the scene (saving is not mandatory)
      */
     public final static int SCENE_CHANGE = 1;
+    /**
+     * Event ID to indicate a change in the scene (saving is mandatory)
+     */
+    public final static int SCENE_CHANGETOSAVE = 2;
 
     public ViewScene (){
         interactionLayer = new LayerWidget(this);

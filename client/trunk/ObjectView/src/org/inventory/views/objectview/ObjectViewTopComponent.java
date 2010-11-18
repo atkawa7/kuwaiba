@@ -520,8 +520,14 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getID() == ViewScene.SCENE_CHANGE)
-            this.setIsSaved(false);
+        switch (e.getID()){
+            case ViewScene.SCENE_CHANGE:
+                this.setIsSaved(false);
+                break;
+            case ViewScene.SCENE_CHANGETOSAVE:
+                btnSaveActionPerformed(e);
+                nu.showSimplePopup("New Connection", NotificationUtil.INFO, "The view has been saved");
+        }
     }
 
     public boolean checkForUnsavedView(boolean showCancel) {

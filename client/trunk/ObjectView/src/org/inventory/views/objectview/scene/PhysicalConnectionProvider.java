@@ -147,7 +147,8 @@ public class PhysicalConnectionProvider implements ConnectProvider{
         }
 
         ConnectionWizard myWizard =new ConnectionWizard(wizardType,((ObjectNodeWidget)sourceWidget).getObject(),
-                ((ObjectNodeWidget)targetWidget).getObject(), connectionClass);
+                ((ObjectNodeWidget)targetWidget).getObject(), connectionClass,
+                ((ViewScene)sourceWidget.getScene()).getCurrentObject().getOid());
         
         myWizard.show();
         if (myWizard.getNewConnection() != null){
