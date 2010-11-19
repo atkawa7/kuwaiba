@@ -105,7 +105,7 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
        if(obj == null)
            return false;
         if (obj.getClass().equals(this.getClass()))
-            return (this.getOid() == ((LocalObjectLightImpl)obj).getOid());
+            return (this.getOid().longValue() == ((LocalObjectLightImpl)obj).getOid().longValue());
         else
             return false;
    }

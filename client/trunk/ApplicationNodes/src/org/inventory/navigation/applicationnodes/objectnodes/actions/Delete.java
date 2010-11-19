@@ -46,7 +46,7 @@ public final class Delete extends AbstractAction {
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CONFIRMATIOn"),JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
 
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-            if (CommunicationsStub.getInstance().removeObject(node.getObject().getPackageName()+"."+node.getObject().getClassName(),
+            if (CommunicationsStub.getInstance().removeObject(node.getObject().getClassName(),
                     node.getObject().getOid())){
                 ((ObjectChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
                 nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));

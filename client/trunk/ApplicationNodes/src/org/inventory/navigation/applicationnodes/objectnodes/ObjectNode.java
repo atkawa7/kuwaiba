@@ -335,4 +335,18 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         if (evt.getSource().equals(object))
             object = (LocalObjectLight)evt.getSource();
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if (obj instanceof ObjectNode){
+            return ((ObjectNode)obj).getObject().getOid().longValue() == this.getObject().getOid().longValue();
+        }else return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.object != null ? this.object.hashCode() : 0);
+        return hash;
+    }
 }

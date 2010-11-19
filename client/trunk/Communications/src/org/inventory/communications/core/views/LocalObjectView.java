@@ -58,6 +58,10 @@ public class LocalObjectView {
      * Type of view (DefaultView, RackView, etc)
      */
     private String viewClass;
+    /**
+     * Mark the current view as outdated
+     */
+    private boolean isDirty = false;
 
     public LocalObjectView(byte[] viewStructure, byte[] _background, String viewClass) {
         this.background = Utils.getImageFromByteArray(_background);
@@ -100,7 +104,7 @@ public class LocalObjectView {
         return this.viewClass;
     }
     /**
-     * Parse the XML document using StAX. Thanks to Michael Galpin (http://www.ibm.com/developerworks/java/library/os-ag-renegade15/index.html)
+     * Parse the XML document using StAX. Thanks to <a href="http://www.ibm.com/developerworks/java/library/os-ag-renegade15/index.html">Michael Galpin</a>
      * for his ideas on this
      * @param structure
      * @throws XMLStreamException
@@ -135,8 +139,10 @@ public class LocalObjectView {
                     
                     LocalObjectLight lol = CommunicationsStub.getInstance().
                             getObjectInfoLight(objectClass, objectId);
-
-                    nodes.add(new LocalNode(lol, xCoordinate, yCoordinate));
+                    if (lol != null)
+                        nodes.add(new LocalNode(lol, xCoordinate, yCoordinate));
+                    else
+                        isDirty = true;
                 }else{
                     if (reader.getName().equals(qEdge)){
                         Long objectId = Long.valueOf(reader.getAttributeValue(null,"id"));
@@ -156,8 +162,12 @@ public class LocalObjectView {
                             if (myLocalEdge.getaSide() != null && myLocalEdge.getbSide() != null)
                                 break;
                         }
-                        myLocalEdge.setClassName(className);
-                        edges.add(myLocalEdge);
+                        if (myLocalEdge.getaSide() == null || myLocalEdge.getbSide() == null)
+                            isDirty = true;
+                        else{
+                            myLocalEdge.setClassName(className);
+                            edges.add(myLocalEdge);
+                        }
                     }else{
                         if (reader.getName().equals(qLabel)){
                             //Unavailable by now
@@ -167,5 +177,9 @@ public class LocalObjectView {
             }
         }
         reader.close();
+    }
+
+    public boolean getIsDirty(){
+        return this.isDirty;
     }
 }

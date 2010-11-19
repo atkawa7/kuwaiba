@@ -269,12 +269,12 @@ public class CommunicationsStub {
      * @return The local representation of the object
      */
     public LocalObjectLight getObjectInfoLight(String objectClass, Long oid){
-        LocalClassMetadata lcmd = getMetaForClass(objectClass, false);
-        LocalObjectLightImpl res = new LocalObjectLightImpl(port.getObjectInfoLight(objectClass, oid));
-        if (res == null){
+        RemoteObjectLight myLocalObject = port.getObjectInfoLight(objectClass, oid);
+        if (myLocalObject == null){
             this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_OBJECT");
+            return null;
         }
-        return res;
+        return new LocalObjectLightImpl(myLocalObject);
     }
 
     /**

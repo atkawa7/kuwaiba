@@ -79,14 +79,14 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
             LocalObject update = Lookup.getDefault().lookup(LocalObject.class);
 
             if (t instanceof LocalObjectListItem)
-                update.setLocalObject(node.getObject().getPackageName()+"."+node.getObject().getClassName(),
+                update.setLocalObject(node.getObject().getClassName(),
                     new String[]{this.getName()}, new Object[]{((LocalObjectListItem)t).getId()});
             else
-                update.setLocalObject(node.getObject().getPackageName()+"."+node.getObject().getClassName(),
+                update.setLocalObject(node.getObject().getClassName(),
                     new String[]{this.getName()}, new Object[]{t});
             update.setOid(node.getObject().getOid());
             if(!CommunicationsStub.getInstance().saveObject(update))
-                System.out.println("[saveObject]: Error "+ CommunicationsStub.getInstance().getError());
+                throw new Exception("[saveObject]: Error "+ CommunicationsStub.getInstance().getError());
             else
                 value = t;
         }catch(Exception e){
@@ -105,6 +105,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
     }
 
      //PropertyListener methods
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         try {
             if (this.getValue() == null) 

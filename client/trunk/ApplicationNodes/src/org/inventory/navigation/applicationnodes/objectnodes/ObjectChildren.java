@@ -21,8 +21,10 @@ import java.util.Collection;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.interfaces.NotificationUtil;
 import org.openide.nodes.Children.Array;
 import org.openide.nodes.Node;
+import org.openide.util.Lookup;
 
 /**
  * Represents the children for the navigation tree
@@ -41,7 +43,6 @@ public class ObjectChildren extends Array{
      *  since they're going to be created on demand (see method addNotify)
      */
     public ObjectChildren(){
-        
         keys = new ArrayList<LocalObjectLight>();
     }
 
@@ -58,16 +59,24 @@ public class ObjectChildren extends Array{
      */
     @Override
     public void addNotify(){
-        super.addNotify();
         //The tree root is not an AbstractNode, but a RootObjectNode
         if (this.getNode() instanceof ObjectNode){
             CommunicationsStub com = CommunicationsStub.getInstance();
             LocalObjectLight node = ((ObjectNode)this.getNode()).getObject();
             List <LocalObjectLight> children = com.getObjectChildren(node.getOid(),
                     com.getMetaForClass(node.getClassName(),false).getOid());
-            keys.addAll(children);
-            initCollection();
-            refresh();
+            if (children == null){
+                NotificationUtil  nu = Lookup.getDefault().lookup(NotificationUtil.class);
+                nu.showSimplePopup("Error", NotificationUtil.ERROR, "An error has occurred retrieving this object's children: "+com.getError());
+            }else{
+                for (LocalObjectLight child : children){
+                    ObjectNode newNode = new ObjectNode(child);
+                    // Remove it if it already exists (if this is not done,
+                    // it will duplicate the nodes created when the parent was collapsed)
+                    remove(new Node[]{newNode});
+                    add(new Node[]{newNode});
+                }
+            }
         }
     }
 }
