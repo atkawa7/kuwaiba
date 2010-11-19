@@ -44,7 +44,7 @@ public class LabelInplaceTextEditor implements TextFieldInplaceEditor{
         LocalObjectLight myObject = ((ObjectNodeWidget)widget).getObject();
         LocalObject lo = Lookup.getDefault().lookup(LocalObject.class);
         lo.setOid(myObject.getOid());
-        lo.setLocalObject(myObject.getPackageName()+"."+myObject.getClassName(), new String[] {"name"}, new Object[]{text});
+        lo.setLocalObject(myObject.getClassName(), new String[] {"name"}, new Object[]{text});
 
         if (CommunicationsStub.getInstance().saveObject(lo)){
             ((ObjectNodeWidget)widget).setLabel(text);

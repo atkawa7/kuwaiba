@@ -113,6 +113,10 @@ public class ObjectViewService implements LookupListener{
            else{
                viewBuilder = new ViewBuilder(defaultView, vrtc.getScene());
                viewBuilder.buildView();
+               if (viewBuilder.getMyView().getIsDirty()){
+                   vrtc.getNotifier().showSimplePopup("View changes", NotificationUtil.WARNING, "Some elements in the view has been deleted since the last time it was opened. They were removed");
+                   vrtc.getScene().fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGETOSAVE, "Removing old objects"));
+               }
            }
 
            vrtc.getScene().validate();
@@ -121,7 +125,6 @@ public class ObjectViewService implements LookupListener{
         }else{
             if(!lookupResult.allInstances().isEmpty())
                 vrtc.getNotifier().showStatusMessage("More than one object selected. No view available", false);
-            //vrtc.setDisplayName(null);
         }
     }
 
@@ -159,6 +162,8 @@ public class ObjectViewService implements LookupListener{
                  vrtc.getScene().getCurrentObject().getPackageName()+"."+vrtc.getScene().getCurrentObject().getClassName(), //NOI18n
                 "entity.views.DefaultView", vrtc.getScene().getBackgroundImage(), viewStructure))
             vrtc.getNotifier().showSimplePopup("Object View", NotificationUtil.ERROR, com.getError());
+        else
+            vrtc.setHtmlDisplayName(vrtc.getDisplayName());
     }
 
     public void refreshView() {

@@ -61,7 +61,6 @@ public class ViewBuilder {
      * that's coder's responsibility
      */
     public void buildView(){
-
         for (LocalNode node : myView.getNodes()){
             ObjectNodeWidget widget = new ObjectNodeWidget(scene, node);
             widget.setPreferredLocation(node.getPosition());
@@ -145,20 +144,23 @@ public class ViewBuilder {
         scene.getEdgesLayer().removeChildren();
         scene.getLabelsLayer().removeChildren();
         scene.getInteractionLayer().removeChildren();
-        if (nodesToDelete != null)
+        if (nodesToDelete != null){
             for (LocalObjectLight toDelete : nodesToDelete)
                 myView.getNodes().remove(new LocalNode(toDelete, 0, 0));
+        }
 
-        if (physicalConnectionsToDelete != null)
+        if (physicalConnectionsToDelete != null){
             for (LocalObject toDelete : physicalConnectionsToDelete)
                 myView.getEdges().remove(new LocalEdge(toDelete));
+        }
 
         int i = 0;
-        if (newNodes != null)
+        if (newNodes != null){
             for (LocalObjectLight toAdd : newNodes){
                 myView.getNodes().add(new LocalNode(toAdd, i, 0));
                 i+=100;
             }
+        }
 
         if (newPhysicalConnections != null)
         for (LocalObjectLight toAdd : newPhysicalConnections){
@@ -166,5 +168,9 @@ public class ViewBuilder {
         }
 
         buildView();
+    }
+
+    public LocalObjectView getMyView(){
+        return this.myView;
     }
 }
