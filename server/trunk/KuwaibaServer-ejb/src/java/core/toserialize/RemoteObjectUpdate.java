@@ -32,10 +32,10 @@ public class RemoteObjectUpdate {
     private Field[] updatedAttributes;
     private Object[] newValues;
 
-    public RemoteObjectUpdate(ObjectUpdate object, EntityManager em)
+    public RemoteObjectUpdate(Class objectClass, ObjectUpdate object, EntityManager em)
             throws ClassNotFoundException,NoSuchFieldException{
 
-        this.objectClass = Class.forName(object.getClassname());
+        this.objectClass = objectClass;
         this.oid=object.getOid();
                
         newValues = new Object[object.getUpdatedAttributes().length];

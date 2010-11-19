@@ -161,8 +161,9 @@ public class BackendBean implements BackendBeanRemote {
                     subQuery = em.createQuery(query);
                     result.addAll(subQuery.getResultList());
                 } catch (ClassNotFoundException ex) {
-                    this.error = ex.getMessage();
-                    Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, ex);
+                    this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+ possibleChildren.getName();
+                    Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
+                    return null;
                 }
             }
 
@@ -268,7 +269,10 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             RemoteObjectUpdate obj;
             try {
-                obj = new RemoteObjectUpdate(_obj,em);
+                Class myClass = getClassFor(_obj.getClassname());
+                if (myClass == null)
+                    throw new ClassNotFoundException(_obj.getClassname());
+                obj = new RemoteObjectUpdate(myClass,_obj,em);
 
                 Object myObject = em.find(obj.getObjectClass(), obj.getOid());
                 if(myObject == null)
@@ -279,7 +283,7 @@ public class BackendBean implements BackendBeanRemote {
                 em.merge(myObject);
                 return true;
             } catch (Exception ex) {
-                this.error = ex.getClass().toString()+": "+ex.getMessage();
+                this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CLASSNOTFOUND")+ ex.getMessage();
                 Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
                 return false;
             }
@@ -611,9 +615,15 @@ public class BackendBean implements BackendBeanRemote {
 
         if (em != null){
 
-            em.getTransaction().begin();
+            //em.getTransaction().begin();
 
             RootObject obj = (RootObject)em.find(className, oid);
+            if (obj == null){
+                this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT")+className+java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid.toString();
+                Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, this.error);
+                return false;
+            }
+
             if(obj.getIsLocked()){
                 this.error = java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_OBJECTLOCKED");
                 return false;
@@ -642,7 +652,7 @@ public class BackendBean implements BackendBeanRemote {
             }catch (Exception e){
                 this.error = e.toString();
                 Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
-                em.getTransaction().rollback();
+                //em.getTransaction().rollback();
                 return false;
             }
         }
@@ -651,6 +661,7 @@ public class BackendBean implements BackendBeanRemote {
             Logger.getLogger(BackendBean.class.getName()).log(Level.SEVERE, null, this.error);
             return false;
         }
+        //em.getTransaction().commit();
         return true;
     }
 
