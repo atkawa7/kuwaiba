@@ -1,5 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.2-hudson-752-. --><xs:schema xmlns:tns="http://webservice/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://webservice/">
 
+<xs:element name="Exception" type="tns:Exception" />
+
 <xs:element name="addGroupsToUser" type="tns:addGroupsToUser" />
 
 <xs:element name="addGroupsToUserResponse" type="tns:addGroupsToUserResponse" />
@@ -56,10 +58,6 @@
 
 <xs:element name="getChildrenOfClassResponse" type="tns:getChildrenOfClassResponse" />
 
-<xs:element name="getConnectionsForParent" type="tns:getConnectionsForParent" />
-
-<xs:element name="getConnectionsForParentResponse" type="tns:getConnectionsForParentResponse" />
-
 <xs:element name="getDefaultView" type="tns:getDefaultView" />
 
 <xs:element name="getDefaultViewResponse" type="tns:getDefaultViewResponse" />
@@ -75,10 +73,6 @@
 <xs:element name="getInstanceableListTypes" type="tns:getInstanceableListTypes" />
 
 <xs:element name="getInstanceableListTypesResponse" type="tns:getInstanceableListTypesResponse" />
-
-<xs:element name="getLastErr" type="tns:getLastErr" />
-
-<xs:element name="getLastErrResponse" type="tns:getLastErrResponse" />
 
 <xs:element name="getLightMetadata" type="tns:getLightMetadata" />
 
@@ -201,8 +195,19 @@
 
 <xs:complexType name="getChildrenOfClassResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="return" type="tns:remoteObject" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteObject">
+<xs:complexContent>
+<xs:extension base="tns:remoteObjectLight">
+<xs:sequence>
+<xs:element name="attributes" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="values" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
 </xs:complexType>
 
 <xs:complexType name="remoteObjectLight">
@@ -219,6 +224,12 @@
 <xs:sequence>
 <xs:element name="label" type="xs:string" minOccurs="0" />
 <xs:element name="value" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Exception">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -738,17 +749,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="remoteObject">
-<xs:complexContent>
-<xs:extension base="tns:remoteObjectLight">
-<xs:sequence>
-<xs:element name="attributes" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="values" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-
 <xs:complexType name="createPhysicalConnection">
 <xs:sequence>
 <xs:element name="endpointAOid" type="xs:long" minOccurs="0" />
@@ -848,19 +848,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getConnectionsForParent">
-<xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="className" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getConnectionsForParentResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteObject" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="getObjectInfoLight">
 <xs:sequence>
 <xs:element name="objectclass" type="xs:string" minOccurs="0" />
@@ -892,16 +879,6 @@
 <xs:complexType name="updateObjectResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getLastErr">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getLastErrResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 

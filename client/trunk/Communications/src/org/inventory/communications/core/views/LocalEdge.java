@@ -29,6 +29,11 @@ public class LocalEdge {
     /**
      * Some constants
      */
+    /**
+     * Generic classes
+     */
+    public static String CLASS_GENERICCONNECTION="GenericConnection";
+
     //TODO: Gotta send this to a config file
     public static String CLASS_WIRECONTAINER="WireContainer";
     public static String CLASS_WIRELESSCONTAINER="WirelessContainer";

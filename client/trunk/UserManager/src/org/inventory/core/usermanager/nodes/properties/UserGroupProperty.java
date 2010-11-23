@@ -16,7 +16,6 @@
 
 package org.inventory.core.usermanager.nodes.properties;
 
-import java.beans.PropertyEditorSupport;
 import java.lang.reflect.InvocationTargetException;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectImpl;
@@ -61,11 +60,11 @@ public class UserGroupProperty extends ReadWrite{
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         LocalObject update = new LocalObjectImpl();
 
-        update.setLocalObject("entity.config.UserGroup",
+        update.setLocalObject("UserGroup",
                 new String[]{this.getName()}, new Object[]{t});
         update.setOid(this.object.getOid());
         if(com.saveObject(update)){
-            if(!this.getName().equals("password"))
+            if(!this.getName().equals("password")) //NOI18N
                 this.value = t;
         }
         else{

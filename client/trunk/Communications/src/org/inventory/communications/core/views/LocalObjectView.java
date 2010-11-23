@@ -182,4 +182,8 @@ public class LocalObjectView {
     public boolean getIsDirty(){
         return this.isDirty;
     }
+
+    public void setIsDirty(boolean value) {
+        this.isDirty = value;
+    }
 }

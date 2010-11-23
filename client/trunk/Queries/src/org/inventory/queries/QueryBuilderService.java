@@ -203,9 +203,7 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
             }
         }
 
-        
-        LocalObjectLight[] found = com.searchForObjects(
-                selectedClass.getPackageName()+"."+selectedClass.getClassName(),atts,types, values);
+        LocalObjectLight[] found = com.searchForObjects(selectedClass.getClassName(),atts,types, values);
 
         if (found == null){
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/queries/Bundle").getString("LBL_QUERY RESULT"), 

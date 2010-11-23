@@ -77,13 +77,13 @@ public final class Create extends AbstractAction implements Popup{
             items = CommunicationsStub.getInstance().getRootPossibleChildren();
         else
             items = CommunicationsStub.getInstance().
-                    getPossibleChildren(((ObjectNode)node).getObject().getPackageName()+"."+((ObjectNode)node).getObject().getClassName(),false);
+                    getPossibleChildren(((ObjectNode)node).getObject().getClassName(),false);
 
-        if (items.size() == 0) mnuPossibleChildren.setEnabled(false);
+        if (items.isEmpty()) mnuPossibleChildren.setEnabled(false);
             else
                 for(LocalClassMetadataLight item: items){
                     JMenuItem smiChildren = new JMenuItem(item.getClassName());
-                    smiChildren.setName(item.getPackageName()+"."+item.getClassName());
+                    smiChildren.setName(item.getClassName());
                     smiChildren.addActionListener(this);
                     mnuPossibleChildren.add(smiChildren);
                 }

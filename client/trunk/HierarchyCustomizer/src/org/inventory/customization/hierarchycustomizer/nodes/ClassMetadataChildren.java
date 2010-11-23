@@ -57,8 +57,7 @@ public class ClassMetadataChildren extends Array{
     public void addNotify(){
         if (this.getNode() instanceof ClassMetadataNode){ //Ignores the root node
             LocalClassMetadataLight lcm = ((ClassMetadataNode)this.getNode()).getObject();
-            List children = CommunicationsStub.getInstance().getPossibleChildrenNoRecursive(
-                    lcm.getPackageName()+"."+lcm.getClassName());
+            List children = CommunicationsStub.getInstance().getPossibleChildrenNoRecursive(lcm.getClassName());
             
             keys = new ArrayList<LocalClassMetadataLight>();
             keys.addAll(children);

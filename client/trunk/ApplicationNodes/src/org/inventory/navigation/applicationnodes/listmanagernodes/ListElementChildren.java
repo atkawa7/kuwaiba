@@ -45,7 +45,7 @@ public class ListElementChildren extends ObjectChildren{
     @Override
     public void addNotify(){
         LocalClassMetadataLight lcml = ((ListTypeNode)this.getNode()).getObject();
-        LocalObjectLight[] myObjects = CommunicationsStub.getInstance().searchForObjects(lcml.getPackageName()+"."+lcml.getClassName(),
+        LocalObjectLight[] myObjects = CommunicationsStub.getInstance().searchForObjects(lcml.getClassName(),
                 new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>());
         if (myObjects == null)
             Lookup.getDefault().lookup(NotificationUtil.class).

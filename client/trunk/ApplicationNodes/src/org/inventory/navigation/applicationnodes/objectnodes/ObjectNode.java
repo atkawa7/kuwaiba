@@ -237,7 +237,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                 try{
                     NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
                     LocalObjectLight obj = dropNode.getObject();
-                    for(LocalClassMetadataLight lcml : com.getPossibleChildren(object.getPackageName()+"."+object.getClassName(),false)){
+                    for(LocalClassMetadataLight lcml : com.getPossibleChildren(object.getClassName(),false)){
                         if(lcml.getClassName().equals(obj.getClassName()))
                             canMove = true;
                     }
