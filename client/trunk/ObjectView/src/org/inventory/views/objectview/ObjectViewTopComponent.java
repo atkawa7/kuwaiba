@@ -526,7 +526,7 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
                 break;
             case ViewScene.SCENE_CHANGETOSAVE:
                 btnSaveActionPerformed(e);
-                nu.showSimplePopup("New Connection", NotificationUtil.INFO, "The view has been saved");
+                nu.showSimplePopup("Object View", NotificationUtil.INFO, "The view has been saved automatically");
         }
     }
 

@@ -16,6 +16,7 @@
 
 package org.inventory.views.objectview.scene;
 
+import java.awt.BasicStroke;
 import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.core.views.LocalEdge;
@@ -88,6 +89,7 @@ public class ViewBuilder {
                 if (LocalEdge.CLASS_WIRELESSCONTAINER.contains(edge.getClassName()))
                     widget.setLineColor(ObjectConnectionWidget.COLOR_WIRELESS);
 
+            widget.setStroke(new BasicStroke(2));
             scene.getEdgesLayer().addChild(widget);
         }
 
@@ -98,7 +100,8 @@ public class ViewBuilder {
      * Builds a simple default view using the object's children and putting them one after another
      * @param myChildren
      */
-    public void buildDefaultView(List<LocalObjectLight> myNodes, LocalObject[] myPhysicalConnections) {
+    public void buildDefaultView(List<LocalObjectLight> myNodes,
+            List<LocalObject> myPhysicalConnections) {
         int lastX = 0;
         List<LocalNode> myLocalNodes = new ArrayList<LocalNode>();
         List<LocalEdge> myLocalEdges = new ArrayList<LocalEdge>();

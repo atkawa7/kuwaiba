@@ -16,6 +16,7 @@
 
 package org.inventory.views.objectview.scene;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -156,6 +157,7 @@ public class PhysicalConnectionProvider implements ConnectProvider{
             ViewScene scene =(ViewScene)sourceWidget.getScene();
             ObjectConnectionWidget line = new ObjectConnectionWidget(scene,myWizard.getNewConnection());
 
+            line.setStroke(new BasicStroke(2));
             line.setControlPointShape(PointShape.SQUARE_FILLED_SMALL);
             line.setLineColor(getCurrentLineColor());
             line.setEndPointShape(PointShape.SQUARE_FILLED_SMALL);

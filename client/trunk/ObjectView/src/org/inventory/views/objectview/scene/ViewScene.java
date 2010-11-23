@@ -237,8 +237,8 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
         mainTag.start("class").text("DefaultView").end();
         StartTagWAX nodesTag = mainTag.start("nodes");
         for (Widget nodeWidget : nodesLayer.getChildren())
-            nodesTag.start("node").attr("x", nodeWidget.getLocation().getX()).
-            attr("y", nodeWidget.getLocation().getY()).
+            nodesTag.start("node").attr("x", nodeWidget.getPreferredLocation().getX()).
+            attr("y", nodeWidget.getPreferredLocation().getY()).
             attr("class", ((ObjectNodeWidget)nodeWidget).getObject().getClassName()).
             text(((ObjectNodeWidget)nodeWidget).getObject().getOid().toString()).end();
         nodesTag.end();
