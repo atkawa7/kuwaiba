@@ -18,7 +18,6 @@ package entity.connections.physical.containers;
 
 import core.interfaces.PhysicalContainer;
 import entity.connections.GenericConnection;
-import entity.multiple.types.containers.PhysicalContainerType;
 import entity.location.GenericPhysicalNode;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
