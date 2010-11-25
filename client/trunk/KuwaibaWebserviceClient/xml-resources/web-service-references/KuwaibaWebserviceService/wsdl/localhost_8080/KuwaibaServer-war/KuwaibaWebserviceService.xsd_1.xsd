@@ -190,6 +190,8 @@
 <xs:sequence>
 <xs:element name="parentOid" type="xs:long" minOccurs="0" />
 <xs:element name="childrenClass" type="xs:string" minOccurs="0" />
+<xs:element name="username" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -236,6 +238,7 @@
 <xs:complexType name="getRackView">
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -255,7 +258,10 @@
 </xs:complexType>
 
 <xs:complexType name="closeSession">
-<xs:sequence />
+<xs:sequence>
+<xs:element name="username" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="closeSessionResponse">
@@ -264,18 +270,10 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getServerStatus">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getServerStatusResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="getGroups">
-<xs:sequence />
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getGroupsResponse">
@@ -315,11 +313,22 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getServerStatus">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getServerStatusResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="moveObjects">
 <xs:sequence>
 <xs:element name="targetOid" type="xs:long" minOccurs="0" />
 <xs:element name="objectsClasses" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="objectsOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -333,6 +342,7 @@
 <xs:sequence>
 <xs:element name="groupsOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="userOid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -345,6 +355,7 @@
 <xs:complexType name="getPossibleChildren">
 <xs:sequence>
 <xs:element name="parentClass" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -371,7 +382,7 @@
 
 <xs:complexType name="deleteGroups">
 <xs:sequence>
-<xs:element name="arg0" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="toBeDeleted" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -386,6 +397,7 @@
 <xs:element name="targetOid" type="xs:long" minOccurs="0" />
 <xs:element name="objectClases" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="templateObjects" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -399,6 +411,7 @@
 <xs:sequence>
 <xs:element name="parentClassId" type="xs:long" minOccurs="0" />
 <xs:element name="possibleChildren" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -414,6 +427,7 @@
 <xs:element name="targetObjectOid" type="xs:long" minOccurs="0" />
 <xs:element name="containerClass" type="xs:string" minOccurs="0" />
 <xs:element name="parentObjectOid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -424,7 +438,9 @@
 </xs:complexType>
 
 <xs:complexType name="createUser">
-<xs:sequence />
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="createUserResponse">
@@ -436,6 +452,7 @@
 <xs:complexType name="getPossibleChildrenNoRecursive">
 <xs:sequence>
 <xs:element name="parentClass" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -451,6 +468,7 @@
 <xs:element name="attributeName" type="xs:string" minOccurs="0" />
 <xs:element name="propertyName" type="xs:string" minOccurs="0" />
 <xs:element name="propertyValue" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -461,7 +479,9 @@
 </xs:complexType>
 
 <xs:complexType name="getUsers">
-<xs:sequence />
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getUsersResponse">
@@ -474,6 +494,8 @@
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0" />
 <xs:element name="objectClassId" type="xs:long" minOccurs="0" />
+<xs:element name="username" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -484,7 +506,9 @@
 </xs:complexType>
 
 <xs:complexType name="getMetadata">
-<xs:sequence />
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getMetadataResponse">
@@ -514,6 +538,7 @@
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0" />
 <xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -527,6 +552,7 @@
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0" />
 <xs:element name="objectClass" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -542,6 +568,7 @@
 <xs:element name="paramNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="paramTypes" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="paramValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -552,7 +579,9 @@
 </xs:complexType>
 
 <xs:complexType name="getInstanceableListTypes">
-<xs:sequence />
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getInstanceableListTypesResponse">
@@ -570,7 +599,14 @@
 
 <xs:complexType name="createSessionResponse">
 <xs:sequence>
-<xs:element name="return" type="xs:boolean" />
+<xs:element name="return" type="tns:remoteSession" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteSession">
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+<xs:element name="username" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -578,6 +614,7 @@
 <xs:sequence>
 <xs:element name="parentClassId" type="xs:long" minOccurs="0" />
 <xs:element name="childrenToBeRemoved" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -592,6 +629,7 @@
 <xs:element name="oid" type="xs:long" minOccurs="0" />
 <xs:element name="propertiesNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="propertiesValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -605,6 +643,7 @@
 <xs:sequence>
 <xs:element name="groupsOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="userOid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -619,6 +658,7 @@
 <xs:element name="oid" type="xs:long" minOccurs="0" />
 <xs:element name="objectClass" type="xs:string" minOccurs="0" />
 <xs:element name="view" type="tns:viewInfo" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -631,6 +671,7 @@
 <xs:complexType name="getMultipleChoice">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -664,6 +705,7 @@
 <xs:sequence>
 <xs:element name="usersOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="groupOid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -678,6 +720,7 @@
 <xs:element name="oid" type="xs:long" minOccurs="0" />
 <xs:element name="objectclass" type="xs:string" minOccurs="0" />
 <xs:element name="value" type="xs:boolean" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -688,7 +731,9 @@
 </xs:complexType>
 
 <xs:complexType name="getRootPossibleChildren">
-<xs:sequence />
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getRootPossibleChildrenResponse">
@@ -700,6 +745,7 @@
 <xs:complexType name="getMetadataForClass">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -714,6 +760,7 @@
 <xs:element name="classId" type="xs:long" minOccurs="0" />
 <xs:element name="iconAttribute" type="xs:string" minOccurs="0" />
 <xs:element name="iconImage" type="xs:base64Binary" nillable="true" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -727,6 +774,7 @@
 <xs:sequence>
 <xs:element name="usersOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="groupOid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -740,6 +788,8 @@
 <xs:sequence>
 <xs:element name="objectClass" type="xs:string" minOccurs="0" />
 <xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="username" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -755,6 +805,7 @@
 <xs:element name="endpointBOid" type="xs:long" minOccurs="0" />
 <xs:element name="connectionClass" type="xs:string" minOccurs="0" />
 <xs:element name="parentObjectOid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -765,7 +816,9 @@
 </xs:complexType>
 
 <xs:complexType name="getDummyRootId">
-<xs:sequence />
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getDummyRootIdResponse">
@@ -776,7 +829,7 @@
 
 <xs:complexType name="deleteUsers">
 <xs:sequence>
-<xs:element name="arg0" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="tobeDeleted" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -791,6 +844,7 @@
 <xs:element name="classId" type="xs:long" minOccurs="0" />
 <xs:element name="attributeName" type="xs:string" minOccurs="0" />
 <xs:element name="attributeValue" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -805,6 +859,7 @@
 <xs:element name="objectClass" type="xs:string" minOccurs="0" />
 <xs:element name="template" type="xs:string" minOccurs="0" />
 <xs:element name="parentOid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -815,7 +870,9 @@
 </xs:complexType>
 
 <xs:complexType name="createGroup">
-<xs:sequence />
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="createGroupResponse">
@@ -825,7 +882,9 @@
 </xs:complexType>
 
 <xs:complexType name="getLightMetadata">
-<xs:sequence />
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getLightMetadataResponse">
@@ -839,6 +898,7 @@
 <xs:element name="oid" type="xs:long" minOccurs="0" />
 <xs:element name="propertiesNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="propertiesValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -852,6 +912,8 @@
 <xs:sequence>
 <xs:element name="objectclass" type="xs:string" minOccurs="0" />
 <xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="username" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -864,6 +926,8 @@
 <xs:complexType name="updateObject">
 <xs:sequence>
 <xs:element name="objectupdate" type="tns:objectUpdate" minOccurs="0" />
+<xs:element name="username" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -885,6 +949,7 @@
 <xs:complexType name="getRoomView">
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
