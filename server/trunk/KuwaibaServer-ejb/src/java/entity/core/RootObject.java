@@ -52,14 +52,20 @@ public abstract class RootObject implements Serializable, Cloneable {
     protected Long id; //Primary key
     @Column(nullable=false)
     protected String name = ""; //Name
+    /**
+     * Is this object locked read-only?
+     */
     @Column(nullable=false)
     @NoCopy
-    protected Boolean isLocked= false; //Is this object locked read-only?
+    protected Boolean isLocked= false;
     @NoCopy
     protected Long parent = null;
+    /**
+     * When was the object created?
+     */
     @NoCopy
     @Temporal(value=TemporalType.TIMESTAMP)
-    protected Date creationDate = Calendar.getInstance().getTime();   //When was the object created?
+    protected Date creationDate = Calendar.getInstance().getTime();
 
     public RootObject(){}
 

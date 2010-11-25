@@ -28,11 +28,15 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import businesslogic.BackendBeanRemote;
 import core.toserialize.ClassInfoLight;
+import core.toserialize.RemoteSession;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.ViewInfo;
 import entity.connections.physical.GenericPhysicalConnection;
 import entity.core.ViewableObject;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.ws.WebServiceContext;
 import util.HierarchyUtils;
 
 /**
@@ -41,8 +45,14 @@ import util.HierarchyUtils;
  */
 @WebService
 public class KuwaibaWebservice {
+    /**
+     * The backend bean with all business logic
+     */
     @EJB
     private BackendBeanRemote sbr;
+
+    @Resource
+    private WebServiceContext context;
     
     /**
      * This method is useful to test if the server is actually running. By now, it always says "true"
@@ -57,34 +67,52 @@ public class KuwaibaWebservice {
      * Authenticates the user
      * @param username user login
      * @param password user password
-     * @return true success or failure
-     **/
+     * @return the SessionID
+     * @throws Exception
+     */
     @WebMethod(operationName = "createSession")
-    public boolean createSession(@WebParam(name = "username") String username,
+    public RemoteSession createSession(@WebParam(name = "username") String username,
             @WebParam(name = "password") String password) throws Exception{
         try{
-            if(sbr.createSession(username,password))
-                return true;
-            return false;
+            String remoteAddress = ((HttpServletRequest)context.getMessageContext().
+                    get("javax.xml.ws.servlet.request")).getRemoteAddr().toString();
+            
+            return new RemoteSession(sbr.createSession(username,password, remoteAddress));
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
             throw e;
         }
     }
 
+
     /**
      * Close a session
-     * @return true if it could close the session, false otherwise. In this case, an error message is written in the error stack
-     **/
+     * @param username
+     * @param sessionId
+     * @return @return true if it could close the session, false otherwise. In this case, an error message is written in the error stack
+     */
     @WebMethod(operationName = "closeSession")
-    public boolean closeSession(){
+    public boolean closeSession(@WebParam(name = "username") String username,
+            @WebParam(name = "sessionId")String sessionId){
         return true;
     }
 
+    /**
+     * Get the children of a given object
+     * @param oid
+     * @param objectClassId
+     * @param username
+     * @param sessionId
+     * @return
+     * @throws Exception
+     */
     @WebMethod(operationName = "getObjectChildren")
     public RemoteObjectLight[] getObjectChildren(@WebParam(name = "oid") Long oid, 
-            @WebParam(name = "objectClassId") Long objectClassId) throws Exception{
+            @WebParam(name = "objectClassId") Long objectClassId,
+            @WebParam(name = "username")String username,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getObjectChildren", oid, null, null);
             RemoteObjectLight[] res = sbr.getObjectChildren(oid,objectClassId);
             return res;
         }catch(Exception e){
@@ -102,7 +130,9 @@ public class KuwaibaWebservice {
      */
     @WebMethod(operationName="getChildrenOfClass")
     public RemoteObject[] getChildrenOfClass(@WebParam(name="parentOid")Long parentOid,
-            @WebParam(name="childrenClass")String childrenClass) throws Exception{
+            @WebParam(name="childrenClass")String childrenClass,
+            @WebParam(name = "username")String username,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Class myClass = sbr.getClassFor(childrenClass);
             if (myClass == null)
@@ -115,15 +145,20 @@ public class KuwaibaWebservice {
         }
     }
 
-    /**
-     * Gets the complete information about a given object (all its attributes)
-     * @param className object class. No need to use the package
-     * @param oid object oid
-     * @return a representation of the entity as a RemoteObject
-     */
+     /**
+      * Gets the complete information about a given object (all its attributes)
+      * @param objectClass
+      * @param oid
+      * @param username
+      * @param sessionId
+      * @return a representation of the entity as a RemoteObject
+      * @throws Exception
+      */
     @WebMethod(operationName = "getObjectInfo")
     public RemoteObject getObjectInfo(@WebParam(name = "objectClass") String objectClass, 
-            @WebParam(name = "oid") Long oid) throws Exception{
+            @WebParam(name = "oid") Long oid,
+            @WebParam(name = "username")String username,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Class myClass = sbr.getClassFor(objectClass);
             return sbr.getObjectInfo(myClass, oid);
@@ -134,14 +169,19 @@ public class KuwaibaWebservice {
     }
 
     /**
-     * Gets the basic information about a given object (oid, classname, )
-     * @param className object class. No need to use the package
-     * @param oid object oid
+     * Gets the basic information about a given object (oid, classname, etc)
+     * @param objectClass className object class. No need to use the package
+     * @param oid oid object oid
+     * @param username
+     * @param sessionId
      * @return a representation of the entity as a RemoteObjectLight
+     * @throws Exception
      */
     @WebMethod(operationName = "getObjectInfoLight")
     public RemoteObjectLight getObjectInfoLight(@WebParam(name = "objectclass") String objectClass, 
-            @WebParam(name = "oid") Long oid) throws Exception{
+            @WebParam(name = "oid") Long oid,
+            @WebParam(name = "username")String username,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Class myClass = sbr.getClassFor(objectClass);
             return sbr.getObjectInfoLight(myClass, oid);
@@ -156,8 +196,18 @@ public class KuwaibaWebservice {
      * @param update ObjectUpdate object representing only the changes to be committed
      * @return Success or failure
      */
+    /**
+     *
+     * @param update
+     * @param username
+     * @param sessionId
+     * @return
+     * @throws Exception
+     */
     @WebMethod(operationName = "updateObject")
-    public boolean updateObject(@WebParam(name = "objectupdate")ObjectUpdate update) throws Exception{
+    public boolean updateObject(@WebParam(name = "objectupdate")ObjectUpdate update,
+            @WebParam(name = "username")String username,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             boolean res;
             res = sbr.updateObject(update);
@@ -169,13 +219,19 @@ public class KuwaibaWebservice {
     }
 
     /**
-     * Sets an object's lock
-     * @return Error or success
+     * Sets a lock over an object
+     * @param oid
+     * @param objectclass
+     * @param value
+     * @param sessionId
+     * @return Success or failure
+     * @throws Exception
      */
     @WebMethod(operationName = "setObjectLock")
     public Boolean setObjectLock(@WebParam(name = "oid")Long oid, 
             @WebParam(name = "objectclass")String objectclass,
-            @WebParam(name = "value")Boolean value) throws Exception{
+            @WebParam(name = "value")Boolean value,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Boolean res = sbr.setObjectLock(oid, objectclass, value);
             return res;
@@ -187,10 +243,15 @@ public class KuwaibaWebservice {
 
     /**
      * Return all possible classes that can be contained by the given class instances
+     * @param _parentClass
+     * @param sessionId
+     * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "getPossibleChildren")
     public ClassInfoLight[] getPossibleChildren(
-            @WebParam(name = "parentClass")String _parentClass) throws Exception{
+            @WebParam(name = "parentClass")String _parentClass,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Class parentClass;
             parentClass = sbr.getClassFor(_parentClass);
@@ -203,10 +264,15 @@ public class KuwaibaWebservice {
 
     /**
      * Return all possible classes that can be contained by the given class instances
+     * @param _parentClass
+     * @param sessionId
+     * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "getPossibleChildrenNoRecursive")
     public ClassInfoLight[] getPossibleChildrenNoRecursive(
-            @WebParam(name = "parentClass")String _parentClass) throws Exception{
+            @WebParam(name = "parentClass")String _parentClass,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Class parentClass = sbr.getClassFor(_parentClass);
             return sbr.getPossibleChildrenNoRecursive(parentClass);
@@ -218,9 +284,12 @@ public class KuwaibaWebservice {
 
     /**
      * Gets the possible children of a the root node
+     * @param sessionId
+     * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "getRootPossibleChildren")
-    public ClassInfoLight[] getRootPossibleChildren() throws Exception{
+    public ClassInfoLight[] getRootPossibleChildren(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return sbr.getRootPossibleChildren();
         }catch(Exception e){
@@ -231,12 +300,19 @@ public class KuwaibaWebservice {
 
     /**
      * Creates a an object
+     * @param objectClass
+     * @param template This is not working by now
+     * @param parentOid
+     * @param sessionId
+     * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "createObject")
     public RemoteObjectLight createObject
             (@WebParam(name = "objectClass")String objectClass,
              @WebParam(name = "template")String template,
-             @WebParam(name = "parentOid")Long parentOid) throws Exception{
+             @WebParam(name = "parentOid")Long parentOid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Class myClass = sbr.getClassFor(objectClass);
             return sbr.createObject(myClass,parentOid,template);
@@ -248,10 +324,12 @@ public class KuwaibaWebservice {
 
     /**
      * Retrieves all the class metadata
-     * @return An array of classes
+     * @param sessionId
+     * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "getMetadata")
-    public ClassInfo[] getMetadata() throws Exception{
+    public ClassInfo[] getMetadata(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             ClassInfo[] res = sbr.getMetadata();
             return res;
@@ -264,11 +342,13 @@ public class KuwaibaWebservice {
     /**
      * Gets the metadata of a single class
      * @param className
-     * @return the class
+     * @param sessionId
+     * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "getMetadataForClass")
-    public ClassInfo getMetadataForClass(@WebParam(name = "className")
-    String className) throws Exception{
+    public ClassInfo getMetadataForClass(@WebParam(name = "className")String className,
+                        @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Class myClass = sbr.getClassFor(className);
             return sbr.getMetadataForClass(myClass);
@@ -280,10 +360,14 @@ public class KuwaibaWebservice {
 
     /**
      * Retrieves a list of objects corresponding to a GenericListType group of instances
+     * @param className
+     * @param sessionId
+     * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "getMultipleChoice")
-    public ObjectList getMultipleChoice(@WebParam(name = "className")
-        String className) throws Exception{
+    public ObjectList getMultipleChoice(@WebParam(name = "className")String className,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Class myClass = sbr.getClassFor(className);
             ObjectList res = sbr.getMultipleChoice(myClass);
@@ -296,14 +380,16 @@ public class KuwaibaWebservice {
 
     /**
      * Updates the container hierarchy for a given class
-     * @param parentClass Class where the possible children class will be attached
+     * @param parentClassId Class id where the possible children class will be attached
      * @param possibleChildren Array with all new possible children classes
+     * @param sessionId
      * @return true if succeed, false otherwise
+     * @throws Exception
      */
     @WebMethod(operationName = "addPossibleChildren")
-    public Boolean addPossibleChildren(@WebParam(name = "parentClassId")
-    Long parentClassId, @WebParam(name = "possibleChildren")
-    Long[] possibleChildren) throws Exception{
+    public Boolean addPossibleChildren(@WebParam(name = "parentClassId")Long parentClassId, 
+            @WebParam(name = "possibleChildren")Long[] possibleChildren,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Boolean res = sbr.addPossibleChildren(parentClassId, possibleChildren);
             return res;
@@ -313,10 +399,18 @@ public class KuwaibaWebservice {
         }
     }
 
+    /**
+     * Remove a possible children in the container hierarchy
+     * @param parentClassId
+     * @param childrenToBeRemoved
+     * @param sessionId
+     * @return
+     * @throws Exception
+     */
     @WebMethod(operationName = "removePossibleChildren")
-    public Boolean removePossibleChildren(@WebParam(name = "parentClassId")
-    Long parentClassId, @WebParam(name = "childrenToBeRemoved")
-    Long[] childrenToBeRemoved) throws Exception{
+    public Boolean removePossibleChildren(@WebParam(name = "parentClassId")Long parentClassId,
+            @WebParam(name = "childrenToBeRemoved")Long[] childrenToBeRemoved,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Boolean res = sbr.removePossibleChildren(parentClassId, childrenToBeRemoved);
             return res;
@@ -329,12 +423,15 @@ public class KuwaibaWebservice {
     /**
      * Deletes an object
      * @param className Object class' name
-     * @return true if succeed, false otherwise
+     * @param oid
+     * @param sessionId
+     * @return success or failure
+     * @throws Exception
      */
     @WebMethod(operationName = "removeObject")
-    public Boolean removeObject(@WebParam(name = "className")
-    String className, @WebParam(name = "oid")
-    Long oid) throws Exception{
+    public Boolean removeObject(@WebParam(name = "className")String className,
+            @WebParam(name = "oid")Long oid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Class myClass = sbr.getClassFor(className);
             Boolean res = sbr.removeObject(myClass, oid);
@@ -346,10 +443,13 @@ public class KuwaibaWebservice {
     }
 
     /**
-     * Provides metadata for all classes, but the ligh version
+     * Provides metadata for all classes, but the light version
+     * @param sessionId
+     * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "getLightMetadata")
-    public ClassInfoLight[] getLightMetadata() throws Exception{
+    public ClassInfoLight[] getLightMetadata(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return sbr.getLightMetadata();
         }catch(Exception e){
@@ -358,8 +458,13 @@ public class KuwaibaWebservice {
         }
     }
 
+    /**
+     * Gets the id that should be used for the root object
+     * @param sessionId
+     * @return
+     */
     @WebMethod(operationName = "getDummyRootId")
-    public Long getDummyRootId() {
+    public Long getDummyRootId(@WebParam(name = "sessionId")String sessionId) {
         return sbr.getDummyRootId();
     }
 
@@ -367,15 +472,18 @@ public class KuwaibaWebservice {
      * Copy objects from its current parent to a target.
      * Note: This method does *not* check if the parent change is possible according to the container hierarchy
      * the developer must check it on his side!
-     * @param targetOid The new parent's oid
+     * @param targetOid The new parent oid
      * @param objectClasses Class names of the objects to be moved
-     * @param templateOids Oids of the objects to be used as templates
+     * @param templateObjects Oids of the objects to be used as templates
+     * @param sessionId
      * @return An array with the new objects
+     * @throws Exception
      */
     @WebMethod(operationName = "copyObjects")
-    public RemoteObjectLight[] copyObjects(@WebParam(name = "targetOid")
-    Long targetOid, @WebParam(name = "objectClases")
-    String[] objectClasses, @WebParam(name = "templateObjects")Long[] templateObjects ) throws Exception{
+    public RemoteObjectLight[] copyObjects(@WebParam(name = "targetOid")Long targetOid,
+            @WebParam(name = "objectClases")String[] objectClasses,
+            @WebParam(name = "templateObjects")Long[] templateObjects,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             RemoteObjectLight[] res = sbr.copyObjects(targetOid, templateObjects, objectClasses);
             return res;
@@ -392,12 +500,15 @@ public class KuwaibaWebservice {
      * @param targetOid The new parent's oid
      * @param objectClasses Class names of the objects to be moved
      * @param objectOids Oids of the objects to be moved
+     * @param sessionId
      * @return Success or failure
+     * @throws Exception
      */
     @WebMethod(operationName = "moveObjects")
-    public Boolean moveObjects(@WebParam(name = "targetOid")
-    Long targetOid, @WebParam(name = "objectsClasses")
-            String[] objectClasses,@WebParam(name = "objectsOids")Long[] objectOids) throws Exception{
+    public Boolean moveObjects(@WebParam(name = "targetOid")Long targetOid,
+            @WebParam(name = "objectsClasses")String[] objectClasses,
+            @WebParam(name = "objectsOids")Long[] objectOids,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return sbr.moveObjects(targetOid, objectOids,objectClasses);
         }catch(Exception e){
@@ -408,12 +519,20 @@ public class KuwaibaWebservice {
 
     /**
      * Searches for objects given some criteria
-     * @param  
+     * @param className
+     * @param paramNames
+     * @param paramTypes
+     * @param paramValues
+     * @param sessionId
+     * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "searchForObjects")
-    public RemoteObjectLight[] searchForObjects(@WebParam(name="className")String className, @WebParam(name="paramNames")
-            String[] paramNames, @WebParam(name="paramTypes")String[] paramTypes,
-            @WebParam(name="paramValues")String[] paramValues) throws Exception{
+    public RemoteObjectLight[] searchForObjects(@WebParam(name="className")String className,
+            @WebParam(name="paramNames")String[] paramNames,
+            @WebParam(name="paramTypes")String[] paramTypes,
+            @WebParam(name="paramValues")String[] paramValues,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             if (paramNames.length != paramValues.length || paramTypes.length != paramValues.length)
                 throw new Exception(java.util.ResourceBundle.
@@ -435,18 +554,20 @@ public class KuwaibaWebservice {
      * -isVisible
      * -isAdministrative
      * -description
-     * @param classid The id of the class associated to the attribute
+     * @param classId The id of the class associated to the attribute
      * @param attributeName The name of the attribute
      * @param propertyName The name of the property
      * @param propertyValue The value of the property
+     * @param sessionId
      * @return Success or failure
+     * @throws Exception
      */
     @WebMethod(operationName = "setAttributePropertyValue")
-    public Boolean setAttributePropertyValue(@WebParam(name = "classId")
-    Long classId, @WebParam(name = "attributeName")
-    String attributeName, @WebParam(name = "propertyName")
-    String propertyName, @WebParam(name = "propertyValue")
-    String propertyValue) throws Exception{
+    public Boolean setAttributePropertyValue(@WebParam(name = "classId")Long classId,
+            @WebParam(name = "attributeName")String attributeName,
+            @WebParam(name = "propertyName")String propertyName,
+            @WebParam(name = "propertyValue")String propertyValue,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return sbr.setAttributePropertyValue(classId, attributeName, propertyName, propertyValue);
         }catch(Exception e){
@@ -460,13 +581,15 @@ public class KuwaibaWebservice {
      * @param classId Class to be modified
      * @param attributeName attribute to be modified
      * @param attributeValue value for such attribute
-     * @return success or failure
+     * @param sessionId
+     * @return Success or failure
+     * @throws Exception
      */
     @WebMethod(operationName = "setClassPlainAttribute")
-    public Boolean setClassPlainAttribute(@WebParam(name = "classId")
-    Long classId, @WebParam(name = "attributeName")
-    String attributeName, @WebParam(name = "attributeValue")
-    String attributeValue) throws Exception{
+    public Boolean setClassPlainAttribute(@WebParam(name = "classId")Long classId,
+            @WebParam(name = "attributeName")String attributeName,
+            @WebParam(name = "attributeValue")String attributeValue,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return sbr.setClassPlainAttribute(classId,attributeName,attributeValue);
         }catch(Exception e){
@@ -475,18 +598,20 @@ public class KuwaibaWebservice {
         }
     }
 
-    /**
-     * Sets the image (icons) attributes in a class meta data (smallIcon and Icon)
-     * @param classId Class to be modified
-     * @param attributeName attribute to be modified
-     * @param attributeValue value for such attribute
-     * @return success or failure
-     */
+     /**
+      * Sets the image (icons) attributes in a class meta data (smallIcon and Icon)
+      * @param classId Class to be modified
+      * @param iconAttribute icon attribute to be modified
+      * @param iconImage image as a byte array
+      * @param sessionId
+      * @return success or failure
+      * @throws Exception
+      */
     @WebMethod(operationName = "setClassIcon")
-    public Boolean setClassIcon(@WebParam(name = "classId")
-    Long classId, @WebParam(name = "iconAttribute")
-    String iconAttribute, @WebParam(name = "iconImage")
-    byte[] iconImage) throws Exception{
+    public Boolean setClassIcon(@WebParam(name = "classId")Long classId,
+            @WebParam(name = "iconAttribute")String iconAttribute,
+            @WebParam(name = "iconImage")byte[] iconImage,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return sbr.setClassIcon(classId, iconAttribute, iconImage);
         }catch(Exception e){
@@ -497,9 +622,12 @@ public class KuwaibaWebservice {
 
     /**
      * Returns the list type attributes
+     * @param sessionId
+     * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "getInstanceableListTypes")
-    public ClassInfoLight[] getInstanceableListTypes() throws Exception{
+    public ClassInfoLight[] getInstanceableListTypes(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             ClassInfoLight[] res = sbr.getInstanceableListTypes();
             return res;
@@ -512,17 +640,19 @@ public class KuwaibaWebservice {
     /**
      * Views
      */
-    
+
     /**
      * This method generates/retrieves the default view for a given object
-     *
      * @param oid Object id for the object
-     * @param className
+     * @param objectClass
+     * @param sessionId
      * @return a view object associated to the given object. If there's no default view, an empty one (all field set to null) is returned
+     * @throws Exception
      */
     @WebMethod(operationName = "getDefaultView")
     public ViewInfo getDefaultView(@WebParam(name="oid")Long oid,
-            @WebParam(name="objectClass")String objectClass) throws Exception{
+            @WebParam(name="objectClass")String objectClass,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
        try{
             ViewInfo res;
             Class myClass = sbr.getClassFor(objectClass);
@@ -538,12 +668,15 @@ public class KuwaibaWebservice {
     }
 
     /**
-     *
-     * @param oid The oid for the related Room instance
-     * @return a view object associated to the given Room
+     * Gets and special built-in room view
+     * @param oid oid The oid for the related Room instance
+     * @param sessionId
+     * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "getRoomView")
-    public ViewInfo getRoomView(@WebParam(name="oid")Long oid) throws Exception{
+    public ViewInfo getRoomView(@WebParam(name="oid")Long oid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             ViewInfo res = sbr.getRoomView(oid);
             return res;
@@ -557,10 +690,13 @@ public class KuwaibaWebservice {
      * Get the view of a simple rack. This is nothing but the rack and its children
      * placed within depending on the "rackUnits" attributes
      * @param oid The oid for the related Room instance
-     * @return a view object associated to the given Room
+     * @param sessionId
+     * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "getRackView")
-    public ViewInfo getRackView(@WebParam(name="oid")Long oid) throws Exception{
+    public ViewInfo getRackView(@WebParam(name="oid")Long oid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             ViewInfo res = sbr.getRackView(oid);
             return res;
@@ -571,15 +707,19 @@ public class KuwaibaWebservice {
     }
 
     /**
+     * Save and object view
      * Sets a view for a given object
      * @param oid object's oid
      * @param oid object's class (full name including the package)
      * @param view object's serialized view
      * @return Success or failure
+     * @throws Exception
      */
     @WebMethod(operationName = "saveObjectView")
     public Boolean saveObjectView(@WebParam(name="oid")Long oid,
-            @WebParam(name="objectClass")String objectClass ,@WebParam(name="view") ViewInfo view) throws Exception{
+            @WebParam(name="objectClass")String objectClass,
+            @WebParam(name="view") ViewInfo view,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Class myClass = sbr.getClassFor(objectClass);
             if (!HierarchyUtils.isSubclass(myClass, ViewableObject.class))
@@ -597,14 +737,17 @@ public class KuwaibaWebservice {
      * Creates a physical container connection (ditch, conduit, pipe, etc)
      * @param sourceObjectOid
      * @param targetObjectOid
-     * @param connectionClass
+     * @param containerClass
      * @param parentObjectOid
+     * @param sessionId
      * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "createPhysicalContainerConnection")
     public RemoteObjectLight createPhysicalContainerConnection(@WebParam(name="sourceObjectOid")Long sourceObjectOid,
             @WebParam(name="targetObjectOid")Long targetObjectOid,@WebParam(name="containerClass")String containerClass,
-            @WebParam(name="parentObjectOid")Long parentObjectOid) throws Exception{
+            @WebParam(name="parentObjectOid")Long parentObjectOid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Class myClass = sbr.getClassFor(containerClass);
             RemoteObjectLight res = sbr.createPhysicalContainerConnection(sourceObjectOid,targetObjectOid,myClass,parentObjectOid);
@@ -617,16 +760,19 @@ public class KuwaibaWebservice {
 
     /**
      * Creates a physical connection connection (cable, fiber optics, etc)
-     * @param sourceObjectOid
-     * @param targetObjectOid
+     * @param endpointAOid
+     * @param endpointBOid
      * @param connectionClass
      * @param parentObjectOid
+     * @param sessionId
      * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "createPhysicalConnection")
     public RemoteObject createPhysicalConnection(@WebParam(name="endpointAOid")Long endpointAOid,
             @WebParam(name="endpointBOid")Long endpointBOid,@WebParam(name="connectionClass")String connectionClass,
-            @WebParam(name="parentObjectOid")Long parentObjectOid) throws Exception{
+            @WebParam(name="parentObjectOid")Long parentObjectOid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Class myClass = sbr.getClassFor(connectionClass);
             if(!HierarchyUtils.isSubclass(myClass, GenericPhysicalConnection.class))
@@ -645,10 +791,12 @@ public class KuwaibaWebservice {
 
     /**
      * Retrieves all users
+     * @param sessionId
      * @return An user list
+     * @throws Exception
      */
     @WebMethod(operationName = "getUsers")
-    public UserInfo[] getUsers() throws Exception{
+    public UserInfo[] getUsers(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return sbr.getUsers();
         }catch(Exception e){
@@ -659,10 +807,12 @@ public class KuwaibaWebservice {
 
     /**
      * Retrieves all groups
+     * @param sessionId
      * @return A group list
+     * @throws Exception
      */
     @WebMethod(operationName = "getGroups")
-    public UserGroupInfo[] getGroups() throws Exception{
+    public UserGroupInfo[] getGroups(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return sbr.getGroups();
         }catch(Exception e){
@@ -674,10 +824,12 @@ public class KuwaibaWebservice {
 
     /**
      * Creates a new user
+     * @param sessionId
      * @return The newly created user
+     * @throws Exception
      */
     @WebMethod(operationName = "createUser")
-    public UserInfo createUser() throws Exception{
+    public UserInfo createUser(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return sbr.createUser();
         }catch(Exception e){
@@ -688,12 +840,14 @@ public class KuwaibaWebservice {
 
     /**
      * Deletes an user
+     * @param toBeDeleted
      * @return Success or failure
+     * @throws Exception
      */
     @WebMethod(operationName = "deleteUsers")
-    public Boolean deleteUsers(Long[] oids) throws Exception{
+    public Boolean deleteUsers(@WebParam(name="tobeDeleted")Long[] toBeDeleted) throws Exception{
         try{
-            return sbr.deleteUsers(oids);
+            return sbr.deleteUsers(toBeDeleted);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
             throw e;
@@ -702,10 +856,12 @@ public class KuwaibaWebservice {
 
     /**
      * Creates a new group
-     * @return The newly created group
+     * @param sessionId
+     * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "createGroup")
-    public UserGroupInfo createGroup() throws Exception{
+    public UserGroupInfo createGroup(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return sbr.createGroup();
         }catch(Exception e){
@@ -716,12 +872,14 @@ public class KuwaibaWebservice {
 
     /**
      * Deletes a list of groups
-     * @return Success or failure
+     * @param toBeDeleted
+     * @return
+     * @throws Exception
      */
     @WebMethod(operationName = "deleteGroups")
-    public Boolean deleteGroups(Long[] oids) throws Exception{
+    public Boolean deleteGroups(@WebParam(name="toBeDeleted")Long[] toBeDeleted) throws Exception{
         try{
-            return sbr.deleteGroups(oids);
+            return sbr.deleteGroups(toBeDeleted);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
             throw e;
@@ -733,12 +891,15 @@ public class KuwaibaWebservice {
      * @param oid User oid
      * @param propertiesNames Array with the names of the properties to be set
      * @param propertiesValues Array with the values of the properties to be set
+     * @param sessionId
      * @return Success or failure
+     * @throws Exception
      */
     @WebMethod(operationName = "setUserProperties")
     public Boolean setUserProperties(@WebParam(name="oid")Long oid,
             @WebParam(name="propertiesNames")String[] propertiesNames,
-            @WebParam(name="propertiesValues")String[] propertiesValues) throws Exception{
+            @WebParam(name="propertiesValues")String[] propertiesValues,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             if (propertiesNames.length != propertiesValues.length)
                 throw new Exception(java.util.ResourceBundle.
@@ -756,12 +917,15 @@ public class KuwaibaWebservice {
      * @param oid Group oid
      * @param propertiesNames Array with the names of the properties to be set
      * @param propertiesValues Array with the values of the properties to be set
+     * @param sessionId
      * @return Success or failure
+     * @throws Exception
      */
     @WebMethod(operationName = "setGroupProperties")
     public Boolean setGroupProperties(@WebParam(name="oid")Long oid,
             @WebParam(name="propertiesNames")String[] propertiesNames,
-            @WebParam(name="propertiesValues")String[] propertiesValues) throws Exception{
+            @WebParam(name="propertiesValues")String[] propertiesValues,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             if (propertiesNames.length != propertiesValues.length)
                 throw new Exception(java.util.ResourceBundle.
@@ -778,12 +942,15 @@ public class KuwaibaWebservice {
     /**
      * Adds users to a group
      * @param usersOids An array with The users oids
-     * @param groupOid The group's oid
+     * @param groupOid The group oid
+     * @param sessionId
      * @return Success or failure
+     * @throws Exception
      */
     @WebMethod(operationName = "addUsersToGroup")
     public Boolean addUsersToGroup(@WebParam(name="usersOids")Long[] usersOids,
-            @WebParam(name="groupOid")Long groupOid) throws Exception{
+            @WebParam(name="groupOid")Long groupOid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return sbr.addUsersToGroup(usersOids, groupOid);
         }catch(Exception e){
@@ -801,7 +968,8 @@ public class KuwaibaWebservice {
      */
     @WebMethod(operationName = "removeUsersFromGroup")
     public Boolean removeUserfromGroup(@WebParam(name="usersOids")Long[] usersOids,
-            @WebParam(name="groupOid")Long groupOid) throws Exception{
+            @WebParam(name="groupOid")Long groupOid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return sbr.removeUsersFromGroup(usersOids, groupOid);
         }catch(Exception e){
@@ -813,12 +981,15 @@ public class KuwaibaWebservice {
     /**
      * Assigns groups to a user
      * @param groupsOids An array with The groups oids
-     * @param userOid The user's oid
+     * @param userOid The user oid
+     * @param sessionId
      * @return Success or failure
+     * @throws Exception
      */
     @WebMethod(operationName = "addGroupsToUser")
     public Boolean addGroupsToUser(@WebParam(name="groupsOids")Long[] groupsOids,
-            @WebParam(name="userOid")Long userOid) throws Exception{
+            @WebParam(name="userOid")Long userOid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return sbr.addGroupsToUser(groupsOids, userOid);
         }catch(Exception e){
@@ -830,12 +1001,15 @@ public class KuwaibaWebservice {
     /**
      * Removes groups from a user
      * @param groupsOids An array with The groups oids
-     * @param groupOid The user's oid
+     * @param userOid The user oid
+     * @param sessionId
      * @return Success or failure
+     * @throws Exception
      */
     @WebMethod(operationName = "removeGroupsFromUser")
     public Boolean removeGroupsFromUser(@WebParam(name="groupsOids")Long[] groupsOids,
-            @WebParam(name="userOid")Long userOid) throws Exception{
+            @WebParam(name="userOid")Long userOid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return sbr.removeGroupsFromUser(groupsOids, userOid);
         }catch(Exception e){

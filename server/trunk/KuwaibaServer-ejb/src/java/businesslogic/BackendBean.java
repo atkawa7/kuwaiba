@@ -21,6 +21,7 @@ import core.toserialize.RemoteObject;
 import core.toserialize.RemoteObjectLight;
 import core.annotations.Metadata;
 import core.exceptions.EntityManagerNotAvailableException;
+import core.exceptions.NotAuthorizedException;
 import core.exceptions.ObjectNotFoundException;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfoLight;
@@ -41,6 +42,7 @@ import entity.core.metamodel.ClassMetadata;
 import entity.equipment.physicallayer.parts.ports.GenericPort;
 import entity.location.GenericPhysicalNode;
 import entity.multiple.GenericObjectList;
+import entity.session.UserSession;
 import entity.views.GenericView;
 import entity.views.DefaultView;
 import java.util.ArrayList;
@@ -828,7 +830,7 @@ public class BackendBean implements BackendBeanRemote {
      * @return
      */
     @Override
-    public boolean createSession(String username, String password) throws Exception{
+    public UserSession createSession(String username, String password, String remoteAddress) throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_CREATESESSION"));
         if (em != null){
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -838,8 +840,13 @@ public class BackendBean implements BackendBeanRemote {
             predicate = cb.and(cb.equal(entity.get("password"), MetadataUtils.
                     getMD5Hash(password)),predicate);
             cQuery.where(predicate);
-            if (!em.createQuery(cQuery).getResultList().isEmpty())
-                return true;
+            List result = em.createQuery(cQuery).getResultList();
+            if (!result.isEmpty()){
+                UserSession mySession = new UserSession((User)result.get(0));
+                mySession.setIpAddress(remoteAddress);
+                em.persist(mySession);
+                return mySession;
+            }
             else
                 throw new Exception(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_BADLOGIN"));
                 
@@ -1254,6 +1261,37 @@ public class BackendBean implements BackendBeanRemote {
 
             em.merge(user);
 
+            return true;
+        }else throw new EntityManagerNotAvailableException();
+    }
+
+    /**
+     * Session management
+     */
+
+     /**
+      * @param method the method to be validated
+      * @param username the user that tries to invoke the method
+      * @param ipAddress the ip address to avoid [somehow] a session hijack
+      * @param token the session ID
+      * @return success or failure
+      * @throws NotAuthorizedException if the user tries to call a method which he/she's not supposed to, and a generic Exception if something happens with the database
+      */
+    @Override
+    public boolean validateCall(String method, Long userId, String ipAddress,
+            String token) throws Exception{
+        if (em != null){
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery myQuery = cb.createQuery();
+            Root entity = myQuery.from(UserSession.class);
+            myQuery.where(cb.and(cb.equal(entity.get("token"), token), //NOI18N
+                    cb.equal(entity.get("ipAddress"), ipAddress),     //NOI18N
+                    cb.equal(entity.get("user_id"), userId)));        //NOI18N
+
+            List result = em.createQuery(myQuery).getResultList();
+            if (result.isEmpty())
+                throw new NotAuthorizedException("No session active for this user");
+            //TODO: Check for the allowed methods
             return true;
         }else throw new EntityManagerNotAvailableException();
     }

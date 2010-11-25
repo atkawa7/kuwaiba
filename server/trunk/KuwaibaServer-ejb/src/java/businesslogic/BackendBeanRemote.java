@@ -24,6 +24,7 @@ import core.toserialize.RemoteObjectLight;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.ViewInfo;
+import entity.session.UserSession;
 import javax.ejb.Remote;
 
 /**
@@ -58,7 +59,7 @@ public interface BackendBeanRemote {
     public Boolean setClassPlainAttribute(Long classId, String attributeName, String attributeValue) throws Exception;
     public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws Exception;
     public ClassInfoLight[] getInstanceableListTypes() throws Exception;
-    public boolean createSession(String username, String password) throws Exception;
+    public UserSession createSession(String username, String password, String remoteAddress) throws Exception;
     public ViewInfo getDefaultView(Long oid, Class className) throws Exception;
     public ViewInfo getRoomView(Long oid) throws Exception;
     public ViewInfo getRackView(Long oid) throws Exception;
@@ -78,4 +79,5 @@ public interface BackendBeanRemote {
     public Boolean saveObjectView(Long oid, Class myClass, ViewInfo view) throws Exception;
     public RemoteObject[] getChildrenOfClass(Long parentOid, Class myClass) throws Exception;
     public Class getClassFor(String objectClass) throws Exception;
+    public boolean validateCall(String method, Long userId, String ipAddress, String token) throws Exception;
 }
