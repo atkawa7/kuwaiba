@@ -165,7 +165,6 @@ public class LocalObjectView {
                         if (myLocalEdge.getaSide() == null || myLocalEdge.getbSide() == null)
                             isDirty = true;
                         else{
-                            myLocalEdge.setClassName(className);
                             edges.add(myLocalEdge);
                         }
                     }else{

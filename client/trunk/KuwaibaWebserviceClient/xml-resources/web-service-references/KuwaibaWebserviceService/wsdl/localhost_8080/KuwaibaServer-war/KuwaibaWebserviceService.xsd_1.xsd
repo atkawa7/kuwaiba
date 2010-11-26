@@ -190,7 +190,6 @@
 <xs:sequence>
 <xs:element name="parentOid" type="xs:long" minOccurs="0" />
 <xs:element name="childrenClass" type="xs:string" minOccurs="0" />
-<xs:element name="username" type="xs:string" minOccurs="0" />
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
@@ -259,7 +258,6 @@
 
 <xs:complexType name="closeSession">
 <xs:sequence>
-<xs:element name="username" type="xs:string" minOccurs="0" />
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
@@ -494,7 +492,6 @@
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0" />
 <xs:element name="objectClassId" type="xs:long" minOccurs="0" />
-<xs:element name="username" type="xs:string" minOccurs="0" />
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
@@ -788,7 +785,6 @@
 <xs:sequence>
 <xs:element name="objectClass" type="xs:string" minOccurs="0" />
 <xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="username" type="xs:string" minOccurs="0" />
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
@@ -912,7 +908,6 @@
 <xs:sequence>
 <xs:element name="objectclass" type="xs:string" minOccurs="0" />
 <xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="username" type="xs:string" minOccurs="0" />
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
@@ -926,7 +921,6 @@
 <xs:complexType name="updateObject">
 <xs:sequence>
 <xs:element name="objectupdate" type="tns:objectUpdate" minOccurs="0" />
-<xs:element name="username" type="xs:string" minOccurs="0" />
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>

@@ -28,6 +28,7 @@ import org.inventory.communications.core.LocalClassMetadataLightImpl;
 import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.communications.core.LocalObjectLightImpl;
 import org.inventory.communications.core.LocalObjectListItemImpl;
+import org.inventory.communications.core.LocalSession;
 import org.inventory.communications.core.LocalUserGroupObjectImpl;
 import org.inventory.communications.core.LocalUserObjectImpl;
 import org.inventory.communications.core.views.LocalObjectView;
@@ -64,6 +65,7 @@ public class CommunicationsStub {
     private static URL serverURL = null;
     private String error=java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_ERROR");
     private Cache cache;
+    private LocalSession session;
 
     
     private CommunicationsStub(){
@@ -96,7 +98,7 @@ public class CommunicationsStub {
     }
 
     /**
-     * Sets the webservice's URL
+     * Sets the webservice URL
      * @param _URL A valid URL
      */
     public static void setServerURL(URL _URL){
@@ -109,7 +111,7 @@ public class CommunicationsStub {
      */
     public boolean closeSession(){
         try{
-            return port.closeSession();
+            return port.closeSession(this.session.getSessionId());
         }catch(Exception e){
             this.error = this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
             return false;
@@ -124,12 +126,10 @@ public class CommunicationsStub {
      */
     public boolean createSession(String user, String password){
         try{
-            if (!port.createSession(user, password)){
-                this.error = "Login or password incorrect";
-                return false;
-            }else return true;
-        }catch(Exception e){
-            this.error = this.error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_CONNECTION");
+            this.session = new LocalSession(port.createSession(user, password));
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getClass()+": "+ ex.getMessage();
             return false;
         }
     }
@@ -142,16 +142,17 @@ public class CommunicationsStub {
         try{
             
             if (cache.getRootId()==null)
-                cache.setRootId(port.getDummyRootId());
+                cache.setRootId(port.getDummyRootId(this.session.getSessionId()));
             if (cache.getMetaForClass("DummyRoot")==null){
                 cache.addMeta(
                         new LocalClassMetadataImpl[]{new LocalClassMetadataImpl(
-                                                            port.getMetadataForClass("DummyRoot"))});
+                                                            port.getMetadataForClass("DummyRoot",this.session.getSessionId()))});
 
             }
 
             List<RemoteObjectLight> result = port.getObjectChildren(cache.getRootId(),
-                                                                    cache.getMetaForClass("DummyRoot").getOid());        
+                                                                    cache.getMetaForClass("DummyRoot").getOid(),
+                                                                    this.session.getSessionId());
             LocalObjectLightImpl[] children = new LocalObjectLightImpl[result.size()];
             int i = 0;
             for (RemoteObjectLight obj : result){
@@ -173,7 +174,7 @@ public class CommunicationsStub {
      */
     public List<LocalObjectLight> getObjectChildren(Long oid, Long objectClassId){
         try{
-            List <RemoteObjectLight> children = port.getObjectChildren(oid, objectClassId);
+            List <RemoteObjectLight> children = port.getObjectChildren(oid, objectClassId,this.session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
 
             for (RemoteObjectLight rol : children)
@@ -188,7 +189,7 @@ public class CommunicationsStub {
 
     public List<LocalObject> getChildrenOfClass(Long oid, String className){
         try{
-            List <RemoteObject> children = port.getChildrenOfClass(oid, className);
+            List <RemoteObject> children = port.getChildrenOfClass(oid, className,this.session.getSessionId());
             List <LocalObject> res = new ArrayList<LocalObject>();
 
             for (RemoteObject rol : children)
@@ -209,23 +210,24 @@ public class CommunicationsStub {
      * @return success or failure
      */
     public boolean saveObject(LocalObject obj){
-        ObjectUpdate update = new ObjectUpdate();
-        List<String> atts = new ArrayList<String>();
-        List<String> vals = new ArrayList<String>();
-
-        update.setClassname(obj.getClassName());
-        update.setOid(obj.getOid());
-
-        for (String key : obj.getAttributes().keySet()){
-            atts.add(key);
-            vals.add(obj.getAttribute(key).toString());
-        }
-
-        update.setUpdatedAttributes(atts);
-        update.setNewValues(vals);
-
         try{
-            return port.updateObject(update);
+            ObjectUpdate update = new ObjectUpdate();
+            List<String> atts = new ArrayList<String>();
+            List<String> vals = new ArrayList<String>();
+
+            update.setClassname(obj.getClassName());
+            update.setOid(obj.getOid());
+
+            for (String key : obj.getAttributes().keySet()){
+                atts.add(key);
+                vals.add(obj.getAttribute(key).toString());
+            }
+
+            update.setUpdatedAttributes(atts);
+            update.setNewValues(vals);
+
+
+            return port.updateObject(update,this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
             return false;
@@ -254,7 +256,7 @@ public class CommunicationsStub {
     public LocalObject getObjectInfo(String objectClass, Long oid){
         try{
             LocalClassMetadata lcmd = getMetaForClass(objectClass, false);
-            RemoteObject myObject = port.getObjectInfo(objectClass, oid);
+            RemoteObject myObject = port.getObjectInfo(objectClass, oid,this.session.getSessionId());
             return new LocalObjectImpl(myObject,lcmd);
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
@@ -270,7 +272,7 @@ public class CommunicationsStub {
      */
     public LocalObjectLight getObjectInfoLight(String objectClass, Long oid){
         try{
-            RemoteObjectLight myLocalObject = port.getObjectInfoLight(objectClass, oid);
+            RemoteObjectLight myLocalObject = port.getObjectInfoLight(objectClass, oid,this.session.getSessionId());
             return new LocalObjectLightImpl(myLocalObject);
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
@@ -279,12 +281,12 @@ public class CommunicationsStub {
     }
 
     /**
-     * Returns the last error related to communications
+     * Returns the last error
      * @return The error string
      */
-    public String getError() {
+    public synchronized  String getError() {
         if (error == null)
-            error = "No network connection";
+            error = "Unknown error";
         return error;
     }
 
@@ -307,7 +309,7 @@ public class CommunicationsStub {
 
             if (resAsLocal == null){
                 resAsLocal = new ArrayList<LocalClassMetadataLight>();
-                List<ClassInfoLight> resAsRemote = port.getPossibleChildren(className);
+                List<ClassInfoLight> resAsRemote = port.getPossibleChildren(className,this.session.getSessionId());
 
                 for (ClassInfoLight cil : resAsRemote){
                     resAsLocal.add(new LocalClassMetadataLightImpl(cil));
@@ -329,7 +331,7 @@ public class CommunicationsStub {
      */
     public List<LocalClassMetadataLight> getPossibleChildrenNoRecursive(String className) {
         try{
-            List<ClassInfoLight> resAsRemote = port.getPossibleChildrenNoRecursive(className);
+            List<ClassInfoLight> resAsRemote = port.getPossibleChildrenNoRecursive(className,this.session.getSessionId());
             List<LocalClassMetadataLight> resAsLocal = new ArrayList<LocalClassMetadataLight>();
 
             for (ClassInfoLight cil : resAsRemote)
@@ -344,7 +346,7 @@ public class CommunicationsStub {
 
     public LocalObjectLight createObject(String objectClass, Long parentOid, String template){
         try{
-            RemoteObjectLight myObject = port.createObject(objectClass, template,parentOid);
+            RemoteObjectLight myObject = port.createObject(objectClass, template,parentOid,this.session.getSessionId());
             return new LocalObjectLightImpl(myObject);
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
@@ -363,7 +365,7 @@ public class CommunicationsStub {
     public LocalClassMetadata[] getAllMeta() {
         try{
             List<ClassInfo> metas;
-            metas= port.getMetadata();
+            metas= port.getMetadata(this.session.getSessionId());
             LocalClassMetadata[] lm = new LocalClassMetadata[metas.size()];
             int i=0;
             for (ClassInfo cm : metas){
@@ -392,7 +394,7 @@ public class CommunicationsStub {
                     return res;
             }
 
-            ClassInfo cm = port.getMetadataForClass(className);
+            ClassInfo cm = port.getMetadataForClass(className,this.session.getSessionId());
 
             res = new LocalClassMetadataImpl(cm);
             cache.addMeta(new LocalClassMetadata[]{res});
@@ -417,7 +419,7 @@ public class CommunicationsStub {
                     return res;
             }
 
-            ClassInfo cm = port.getMetadataForClass(className);
+            ClassInfo cm = port.getMetadataForClass(className,this.session.getSessionId());
 
             res = new LocalClassMetadataLightImpl(cm);
             cache.addLightMeta(new LocalClassMetadataLight[]{res});
@@ -443,7 +445,7 @@ public class CommunicationsStub {
                     return res;
             }
 
-            ObjectList remoteList = port.getMultipleChoice(className);
+            ObjectList remoteList = port.getMultipleChoice(className,this.session.getSessionId());
 
             List<LocalObjectListItem> loli = new ArrayList<LocalObjectListItem>();
             //The +1 represents the empty room left for the "null" value
@@ -467,7 +469,7 @@ public class CommunicationsStub {
 
     public boolean addPossibleChildren(Long parentClassId, List<Long> possibleChildren){
         try{
-            return port.addPossibleChildren(parentClassId, possibleChildren);
+            return port.addPossibleChildren(parentClassId, possibleChildren,this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
             return false;
@@ -482,7 +484,7 @@ public class CommunicationsStub {
      */
     public boolean removePossibleChildren(Long parentClassId, List<Long> childrenToBeDeleted){
         try{
-            return port.removePossibleChildren(parentClassId, childrenToBeDeleted);
+            return port.removePossibleChildren(parentClassId, childrenToBeDeleted,this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
             return false;
@@ -497,7 +499,7 @@ public class CommunicationsStub {
      */
     public boolean removeObject(String className, Long oid){
         try{
-            return port.removeObject(className,oid);
+            return port.removeObject(className,oid,this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
             return false;
@@ -512,7 +514,7 @@ public class CommunicationsStub {
     public LocalClassMetadataLight[] getAllLightMeta() {
         try{
             List<ClassInfoLight> metas;
-            metas= port.getLightMetadata();
+            metas= port.getLightMetadata(this.session.getSessionId());
 
             LocalClassMetadataLight[] lm = new LocalClassMetadataLight[metas.size()];
             int i=0;
@@ -531,7 +533,7 @@ public class CommunicationsStub {
 
     public Long getRootId(){
         if (cache.getRootId() == null)
-            cache.setRootId(port.getDummyRootId());
+            cache.setRootId(port.getDummyRootId(this.session.getSessionId()));
         return cache.getRootId();
     }
 
@@ -546,7 +548,7 @@ public class CommunicationsStub {
      */
     public List<LocalClassMetadataLight> getRootPossibleChildren() {
         try{
-            List<ClassInfoLight> list = port.getRootPossibleChildren();
+            List<ClassInfoLight> list = port.getRootPossibleChildren(this.session.getSessionId());
             List <LocalClassMetadataLight> res = new ArrayList<LocalClassMetadataLight>();
             for (ClassInfoLight cil : list)
                 res.add(new LocalClassMetadataLightImpl(cil));
@@ -569,7 +571,7 @@ public class CommunicationsStub {
                 objectClasses.add(lol.getClassName());
             }
 
-            return port.moveObjects(targetOid, objectClasses, objectOids);
+            return port.moveObjects(targetOid, objectClasses, objectOids,this.session.getSessionId());
 
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
@@ -587,7 +589,7 @@ public class CommunicationsStub {
                 objectClasses.add(lol.getClassName());
             }
 
-            List<RemoteObjectLight> objs = port.copyObjects(targetOid, objectClasses, objectOids);
+            List<RemoteObjectLight> objs = port.copyObjects(targetOid, objectClasses, objectOids,this.session.getSessionId());
 
             LocalObjectLight[] res = new LocalObjectLight[objs.size()];
             int i = 0;
@@ -606,7 +608,7 @@ public class CommunicationsStub {
     public LocalObjectLight[] searchForObjects(String className, List<String> atts,
             List<String> types, List<String> values) {
         try{
-            List<RemoteObjectLight> found = port.searchForObjects(className,atts, types, values);
+            List<RemoteObjectLight> found = port.searchForObjects(className,atts, types, values,this.session.getSessionId());
 
             LocalObjectLight[] res = new LocalObjectLight[found.size()];
 
@@ -630,7 +632,7 @@ public class CommunicationsStub {
     public void resetCache(){
 
         //Set the new values
-        cache.setRootId(port.getDummyRootId());
+        cache.setRootId(port.getDummyRootId(this.session.getSessionId()));
 
         //Wipe out the dictionaries
         cache.resetMetadataIndex();
@@ -648,13 +650,13 @@ public class CommunicationsStub {
             if (refreshMeta)
                 for (LocalClassMetadata lcm : cache.getMetadataIndex()){
                     LocalClassMetadata myLocal =
-                            new LocalClassMetadataImpl(port.getMetadataForClass(lcm.getClassName()));
+                            new LocalClassMetadataImpl(port.getMetadataForClass(lcm.getClassName(),this.session.getSessionId()));
                     if(myLocal!=null)
                     cache.addMeta(new LocalClassMetadata[]{myLocal});
                 }
 
             if (refreshLightMeta){
-                List<ClassInfoLight> myLocalLight  = port.getLightMetadata();
+                List<ClassInfoLight> myLocalLight  = port.getLightMetadata(this.session.getSessionId());
                 if (myLocalLight != null)
                     getAllLightMeta();
             }
@@ -685,7 +687,7 @@ public class CommunicationsStub {
     public boolean setAttributePropertyValue(Long classId, String attributeName,
             String propertyName, String propertyType) {
         try{
-            return port.setAttributePropertyValue(classId, attributeName, propertyName, propertyType);
+            return port.setAttributePropertyValue(classId, attributeName, propertyName, propertyType,this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
             return false;
@@ -694,7 +696,7 @@ public class CommunicationsStub {
 
     public boolean setClassPlainAttribute(Long classId, String attributeName, String attributeValue){
         try{
-            return port.setClassPlainAttribute(classId, attributeName, attributeValue);
+            return port.setClassPlainAttribute(classId, attributeName, attributeValue,this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
             return false;
@@ -703,7 +705,7 @@ public class CommunicationsStub {
 
     public boolean setClassIcon(Long classId, String attributeName, byte[] attributeValue){
         try{
-            return port.setClassIcon(classId, attributeName, attributeValue);
+            return port.setClassIcon(classId, attributeName, attributeValue,this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
             return false;
@@ -717,7 +719,7 @@ public class CommunicationsStub {
     public LocalClassMetadataLight[] getInstanceableListTypes() {
         try{
             List<ClassInfoLight> listTypes;
-            listTypes = port.getInstanceableListTypes();
+            listTypes = port.getInstanceableListTypes(this.session.getSessionId());
 
 
             LocalClassMetadataLight[] res = new LocalClassMetadataLight[listTypes.size()];
@@ -743,7 +745,7 @@ public class CommunicationsStub {
      */
     public LocalUserObject[] getUsers() {
         try{
-            List<UserInfo> users = port.getUsers();
+            List<UserInfo> users = port.getUsers(this.session.getSessionId());
             LocalUserObject[] localUsers = new LocalUserObject[users.size()];
 
             int i = 0;
@@ -763,7 +765,7 @@ public class CommunicationsStub {
      */
     public LocalUserGroupObject[] getGroups() {
         try{
-            List<UserGroupInfo> groups = port.getGroups();
+            List<UserGroupInfo> groups = port.getGroups(this.session.getSessionId());
             LocalUserGroupObject[] localGroups = new LocalUserGroupObject[groups.size()];
 
             int i = 0;
@@ -784,7 +786,7 @@ public class CommunicationsStub {
      */
     public LocalUserObject addUser(){
         try{
-            UserInfo newUser = port.createUser();
+            UserInfo newUser = port.createUser(this.session.getSessionId());
             return new LocalUserObjectImpl(newUser);
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
@@ -798,7 +800,7 @@ public class CommunicationsStub {
      */
     public LocalUserGroupObject addGroup(){
         try{
-            UserGroupInfo newGroup = port.createGroup();
+            UserGroupInfo newGroup = port.createGroup(this.session.getSessionId());
             return new LocalUserGroupObjectImpl(newGroup);
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
@@ -842,7 +844,7 @@ public class CommunicationsStub {
      */
     public boolean addGroupsToUser(List<Long> groupsOids, Long userOid){
         try{
-            return port.addGroupsToUser(groupsOids, userOid);
+            return port.addGroupsToUser(groupsOids, userOid,this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
             return false;
@@ -851,7 +853,7 @@ public class CommunicationsStub {
 
     public boolean removeGroupsFromUser(List<Long> groupsOids, Long userOid){
         try{
-            return port.removeGroupsFromUser(groupsOids, userOid);
+            return port.removeGroupsFromUser(groupsOids, userOid,this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
             return false;
@@ -868,7 +870,7 @@ public class CommunicationsStub {
      */
     public LocalObject createPhysicalConnection(Long endpointA, Long endpointB, String connectionClass, Long parentOid) {
         try{
-            RemoteObject myObject = port.createPhysicalConnection(endpointA,endpointB,connectionClass,parentOid);
+            RemoteObject myObject = port.createPhysicalConnection(endpointA,endpointB,connectionClass,parentOid,this.session.getSessionId());
             LocalClassMetadata lcmd = getMetaForClass(myObject.getClassName(), false);
             return new LocalObjectImpl(myObject, lcmd);
         }catch(Exception ex){
@@ -879,7 +881,7 @@ public class CommunicationsStub {
 
     public LocalObject createPhysicalContainerConnection(Long sourceNode, Long targetNode, String connectionClass, Long parentNode) {
         try{
-            RemoteObjectLight rol = port.createPhysicalContainerConnection(sourceNode, targetNode, connectionClass, parentNode);
+            RemoteObjectLight rol = port.createPhysicalContainerConnection(sourceNode, targetNode, connectionClass, parentNode,this.session.getSessionId());
             return new LocalObjectImpl(rol.getClassName(), rol.getOid(), new String[0], new Object[0]);
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
@@ -899,7 +901,7 @@ public class CommunicationsStub {
      */
     public LocalObjectView getObjectDefaultView(Long oid, String objectClass) {
         try{
-            ViewInfo myView = port.getDefaultView(oid, objectClass);
+            ViewInfo myView = port.getDefaultView(oid, objectClass,this.session.getSessionId());
             return new LocalObjectView(myView.getStructure(),myView.getBackground(),myView.getViewClass());
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
@@ -913,7 +915,7 @@ public class CommunicationsStub {
             remoteView.setBackground(background);
             remoteView.setStructure(viewStructure);
             remoteView.setViewClass(viewClass);
-            return port.saveObjectView(oid, objectClass, remoteView);
+            return port.saveObjectView(oid, objectClass, remoteView,this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();
             return false;

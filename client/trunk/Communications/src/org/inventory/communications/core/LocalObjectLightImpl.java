@@ -104,6 +104,8 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
    public boolean equals(Object obj){
        if(obj == null)
            return false;
+       if (this.getOid() == null || ((LocalObjectLightImpl)obj).getOid() == null)
+               return false;
         if (obj.getClass().equals(this.getClass()))
             return (this.getOid().longValue() == ((LocalObjectLightImpl)obj).getOid().longValue());
         else

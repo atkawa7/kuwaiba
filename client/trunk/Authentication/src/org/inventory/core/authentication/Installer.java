@@ -37,7 +37,7 @@ public class Installer extends ModuleInstall {
         //if the Communications module is available to begin the auth process. My solution was to show it in another thread
         //while everything else is loaded and then show the modals till the credentials are valid.
         //Please note that showMeAgain at AuthenticationPanel doesn't use this trick
- /*       SwingUtilities.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
                     AuthenticationPanel pnlAuthentication = new AuthenticationPanel();
@@ -46,6 +46,6 @@ public class Installer extends ModuleInstall {
                     dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
                     dialog.setVisible(true);
                 }
-            });        */
+            });        
     }
 }
