@@ -29,6 +29,7 @@ import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
+import org.inventory.views.objectview.scene.ObjectConnectionWidget;
 import org.inventory.views.objectview.scene.ObjectNodeWidget;
 import org.inventory.views.objectview.scene.ViewBuilder;
 import org.inventory.views.objectview.scene.ViewScene;
@@ -156,13 +157,13 @@ public class ObjectViewService implements LookupListener{
     }
 
     /**
-     * Saves the view to an XML representation at server side
+     * Saves the view to a XML representation at server side
      */
     public void saveView() {
         byte[] viewStructure = vrtc.getScene().getAsXML();
         if (!com.saveView(vrtc.getScene().getCurrentObject().getOid(),
                  vrtc.getScene().getCurrentObject().getClassName(), 
-                "entity.views.DefaultView", vrtc.getScene().getBackgroundImage(), viewStructure)) //NOI18N
+                "DefaultView", vrtc.getScene().getBackgroundImage(), viewStructure)) //NOI18N
             vrtc.getNotifier().showSimplePopup("Object View", NotificationUtil.ERROR, com.getError());
         else
             vrtc.setHtmlDisplayName(vrtc.getDisplayName());
@@ -175,13 +176,13 @@ public class ObjectViewService implements LookupListener{
                 LocalEdge.CLASS_GENERICCONNECTION);
         
         List<LocalObjectLight> currentNodes = new ArrayList<LocalObjectLight>();
-        List<LocalObjectLight> currentEdges = new ArrayList<LocalObjectLight>();
+        List<LocalObject> currentEdges = new ArrayList<LocalObject>();
 
         for (Widget widget : vrtc.getScene().getNodesLayer().getChildren())
             currentNodes.add(((ObjectNodeWidget)widget).getObject());
 
         for (Widget widget : vrtc.getScene().getEdgesLayer().getChildren())
-            currentEdges.add(((ObjectNodeWidget)widget).getObject());
+            currentEdges.add(((ObjectConnectionWidget)widget).getObject());
 
         Object[] nodesIntersection = Utils.inverseIntersection(childrenNodes, currentNodes);
         Object[] edgesIntersection = Utils.inverseIntersection(childrenEdges, currentEdges);
@@ -190,7 +191,8 @@ public class ObjectViewService implements LookupListener{
                 (List<LocalObjectLight>)nodesIntersection[1], (List<LocalObject>)edgesIntersection[1]);
         vrtc.getScene().validate();
         vrtc.getScene().repaint();
-        if (!((List)nodesIntersection[0]).isEmpty() || !((List)nodesIntersection[1]).isEmpty())
+        if (!((List)nodesIntersection[0]).isEmpty() || !((List)nodesIntersection[1]).isEmpty()
+                || !((List)edgesIntersection[0]).isEmpty() || !((List)edgesIntersection[1]).isEmpty())
             vrtc.getScene().fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "Refresh result"));
     }
 }

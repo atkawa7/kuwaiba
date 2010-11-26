@@ -83,10 +83,10 @@ public class ViewBuilder {
                     break;
             }
 
-            if (LocalEdge.CLASS_WIRECONTAINER.contains(edge.getClassName()))
+            if (LocalEdge.CLASS_WIRECONTAINER.contains(edge.getObject().getClassName()))
                 widget.setLineColor(ObjectConnectionWidget.COLOR_WIRE);
             else
-                if (LocalEdge.CLASS_WIRELESSCONTAINER.contains(edge.getClassName()))
+                if (LocalEdge.CLASS_WIRELESSCONTAINER.contains(edge.getObject().getClassName()))
                     widget.setLineColor(ObjectConnectionWidget.COLOR_WIRELESS);
 
             widget.setStroke(new BasicStroke(2));
@@ -128,7 +128,6 @@ public class ViewBuilder {
                 if (le.getaSide() != null && le.getbSide() != null)
                     break;
             }
-            le.setClassName(container.getClassName());
             myLocalEdges.add(le);
         }
         myView = new LocalObjectView(myLocalNodes.toArray(new LocalNode[0]), myLocalEdges.toArray(new LocalEdge[0]),new LocalLabel[0]);
@@ -166,8 +165,14 @@ public class ViewBuilder {
         }
 
         if (newPhysicalConnections != null)
-        for (LocalObjectLight toAdd : newPhysicalConnections){
-            //Not available yet
+        for (LocalObject toAdd : newPhysicalConnections){
+            LocalNode nodeA = getNodeMatching(myView.getNodes(), (Long)toAdd.getAttribute("nodeA"));
+            if (nodeA == null)
+                continue;
+            LocalNode nodeB = getNodeMatching(myView.getNodes(), (Long)toAdd.getAttribute("nodeB"));
+            if (nodeB == null)
+                continue;
+            myView.getEdges().add(new LocalEdge(toAdd, nodeA, nodeB, null));
         }
 
         buildView();
@@ -175,5 +180,19 @@ public class ViewBuilder {
 
     public LocalObjectView getMyView(){
         return this.myView;
+    }
+
+    /**
+     * Helper to get a localnode which inner object has a given id
+     * @param list
+     * @param id
+     * @return the node matching the oid or null if the object is not present
+     */
+    private LocalNode getNodeMatching(List<LocalNode> list, Long id){
+        for (LocalNode node : list){
+            if (node.getObject().getOid().equals(id))
+                return node;
+        }
+        return null;
     }
 }
