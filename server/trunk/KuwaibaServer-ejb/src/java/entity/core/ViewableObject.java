@@ -19,6 +19,8 @@ package entity.core;
 import core.annotations.Administrative;
 import core.annotations.NoSerialize;
 import entity.adapters.ObjectViewAdapter;
+import entity.views.GenericView;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -36,13 +38,15 @@ import javax.persistence.OneToMany;
 public abstract class ViewableObject extends RootObject {
     @OneToMany(cascade=CascadeType.PERSIST)//(mappedBy = "elements")
     @NoSerialize
-    protected List<ObjectViewAdapter> views;
+    protected List<GenericView> views;
 
-        public List<ObjectViewAdapter> getViews() {
+        public List<GenericView> getViews() {
         return views;
     }
 
-    public void setViews(List<ObjectViewAdapter> views) {
-        this.views = views;
+    public void addView(GenericView view) {
+        if (this.views == null)
+            views = new ArrayList<GenericView>();
+        this.views.add(view);
     }
 }

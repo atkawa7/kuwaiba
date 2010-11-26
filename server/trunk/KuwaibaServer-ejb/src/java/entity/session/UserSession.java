@@ -45,7 +45,7 @@ public class UserSession implements Serializable {
     protected User user;
     @Temporal(TemporalType.TIMESTAMP)
     protected Date loginTime = Calendar.getInstance().getTime();
-    @Column(nullable=false,length=32)
+    @Column(nullable=false,length=35)
     protected String token;
     @Column(length=15,nullable=false)
     protected String ipAddress;

@@ -30,7 +30,6 @@ import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.Validator;
 import core.toserialize.ViewInfo;
-import entity.adapters.ObjectViewAdapter;
 import entity.config.User;
 import entity.config.UserGroup;
 import entity.connections.physical.GenericPhysicalConnection;
@@ -53,7 +52,6 @@ import java.util.Set;
 import javax.ejb.Stateful;
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -874,20 +872,14 @@ public class BackendBean implements BackendBeanRemote {
             if (obj == null)
                 throw new Exception(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER"));
 
-            List<ObjectViewAdapter> viewAdapters = ((ViewableObject)obj).getViews();
-            if (viewAdapters.isEmpty())
+            List<GenericView> views = ((ViewableObject)obj).getViews();
+            if (views.isEmpty())
                 return null;
 
-            for (ObjectViewAdapter myViewAdapter : viewAdapters){
-                try{
-                    GenericView myView = (GenericView)em.createQuery("SELECT x FROM "+myViewAdapter.getaSideClass()+" x WHERE x.id="+myViewAdapter.getaSide()).getSingleResult();
-                    if (myView instanceof DefaultView)
-                        return new ViewInfo(myView);
-                }catch (NoResultException nre){
-                    return null;
-                }
+            for (GenericView myView : views){
+                if (myView instanceof DefaultView)
+                    return new ViewInfo(myView);
             }
-
         }else
             throw new EntityManagerNotAvailableException();
         return null;
@@ -906,6 +898,10 @@ public class BackendBean implements BackendBeanRemote {
     @Override
     public Boolean saveObjectView(Long oid, Class myClass, ViewInfo view) throws Exception{
         if (em != null){
+            Class viewClass = getClassFor(view.getViewClass());
+            if (viewClass == null)
+                throw new Exception("View class not valid: "+ view.getViewClass());
+
             Object obj = em.find(myClass, oid);
             if (obj == null)
                 throw new Exception (java.util.ResourceBundle.
@@ -913,28 +909,27 @@ public class BackendBean implements BackendBeanRemote {
                     getString("LBL_NOSUCHOBJECT")+" "+myClass.getSimpleName()+" "+java.util.ResourceBundle.
                     getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid);
                 
-            List<ObjectViewAdapter> viewAdapters = ((ViewableObject)obj).getViews();
-            if (!viewAdapters.isEmpty()){
-                for (ObjectViewAdapter myViewAdapter : viewAdapters){
-                    //TODO: Only change the fields that have been updated
-                    try{
-                        GenericView myView = (GenericView)em.createQuery("SELECT x FROM "+myViewAdapter.getaSideClass()+" x WHERE x.id="+myViewAdapter.getaSide()).getSingleResult();
-                        if(myView.getClass().getName().equals(view.getViewClass())) //If there's one already, replace it
-                        em.remove(myView);
-                    }catch (NoResultException nre){
-                    }
-                }
-                em.merge(obj);
-            }else 
-                ((ViewableObject)obj).setViews(new ArrayList<ObjectViewAdapter>());
-
-            DefaultView newView = new DefaultView(view);
-            em.persist(newView);
-            ObjectViewAdapter newViewAdapter = new ObjectViewAdapter();
-            newViewAdapter.setaSide(newView.getId());
-            newViewAdapter.setaSideClass(newView.getClass().getSimpleName());
-            em.persist(newViewAdapter);
-            ((ViewableObject)obj).getViews().add(newViewAdapter);
+            List<GenericView> views = ((ViewableObject)obj).getViews();
+            GenericView myView = null;
+            for (GenericView eachView : views){
+                if (eachView.getClass().equals(viewClass))
+                    myView = eachView;
+            }
+            GenericView newView;
+            if (myView == null){
+                newView = (GenericView)viewClass.newInstance();
+                newView.setViewStructure(view.getStructure());
+                newView.setBackground(view.getBackground());
+                newView.setDescription(view.getDescription());
+                em.persist(newView);
+                ((ViewableObject)obj).addView(newView);
+            }
+            else{
+                myView.setViewStructure(view.getStructure());
+                myView.setBackground(view.getBackground());
+                myView.setDescription(view.getDescription());
+                em.merge(myView);
+            }
             em.merge(obj);
             return true;
 
@@ -1278,15 +1273,15 @@ public class BackendBean implements BackendBeanRemote {
       * @throws NotAuthorizedException if the user tries to call a method which he/she's not supposed to, and a generic Exception if something happens with the database
       */
     @Override
-    public boolean validateCall(String method, Long userId, String ipAddress,
+    public boolean validateCall(String method, String ipAddress,
             String token) throws Exception{
         if (em != null){
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery myQuery = cb.createQuery();
             Root entity = myQuery.from(UserSession.class);
             myQuery.where(cb.and(cb.equal(entity.get("token"), token), //NOI18N
-                    cb.equal(entity.get("ipAddress"), ipAddress),     //NOI18N
-                    cb.equal(entity.get("user_id"), userId)));        //NOI18N
+                    cb.equal(entity.get("ipAddress"), ipAddress)     //NOI18N
+                    ));        //NOI18N
 
             List result = em.createQuery(myQuery).getResultList();
             if (result.isEmpty())

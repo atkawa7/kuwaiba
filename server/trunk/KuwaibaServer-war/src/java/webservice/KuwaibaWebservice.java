@@ -74,8 +74,7 @@ public class KuwaibaWebservice {
     public RemoteSession createSession(@WebParam(name = "username") String username,
             @WebParam(name = "password") String password) throws Exception{
         try{
-            String remoteAddress = ((HttpServletRequest)context.getMessageContext().
-                    get("javax.xml.ws.servlet.request")).getRemoteAddr().toString();
+            String remoteAddress = getIPAddress();
             
             return new RemoteSession(sbr.createSession(username,password, remoteAddress));
         }catch(Exception e){
@@ -92,8 +91,7 @@ public class KuwaibaWebservice {
      * @return @return true if it could close the session, false otherwise. In this case, an error message is written in the error stack
      */
     @WebMethod(operationName = "closeSession")
-    public boolean closeSession(@WebParam(name = "username") String username,
-            @WebParam(name = "sessionId")String sessionId){
+    public boolean closeSession(@WebParam(name = "sessionId")String sessionId){
         return true;
     }
 
@@ -109,10 +107,9 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "getObjectChildren")
     public RemoteObjectLight[] getObjectChildren(@WebParam(name = "oid") Long oid, 
             @WebParam(name = "objectClassId") Long objectClassId,
-            @WebParam(name = "username")String username,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            sbr.validateCall("getObjectChildren", oid, null, null);
+            sbr.validateCall("getObjectChildren", getIPAddress(), sessionId);
             RemoteObjectLight[] res = sbr.getObjectChildren(oid,objectClassId);
             return res;
         }catch(Exception e){
@@ -131,7 +128,6 @@ public class KuwaibaWebservice {
     @WebMethod(operationName="getChildrenOfClass")
     public RemoteObject[] getChildrenOfClass(@WebParam(name="parentOid")Long parentOid,
             @WebParam(name="childrenClass")String childrenClass,
-            @WebParam(name = "username")String username,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Class myClass = sbr.getClassFor(childrenClass);
@@ -157,7 +153,6 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "getObjectInfo")
     public RemoteObject getObjectInfo(@WebParam(name = "objectClass") String objectClass, 
             @WebParam(name = "oid") Long oid,
-            @WebParam(name = "username")String username,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Class myClass = sbr.getClassFor(objectClass);
@@ -180,7 +175,6 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "getObjectInfoLight")
     public RemoteObjectLight getObjectInfoLight(@WebParam(name = "objectclass") String objectClass, 
             @WebParam(name = "oid") Long oid,
-            @WebParam(name = "username")String username,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             Class myClass = sbr.getClassFor(objectClass);
@@ -206,7 +200,6 @@ public class KuwaibaWebservice {
      */
     @WebMethod(operationName = "updateObject")
     public boolean updateObject(@WebParam(name = "objectupdate")ObjectUpdate update,
-            @WebParam(name = "username")String username,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             boolean res;
@@ -1016,5 +1009,17 @@ public class KuwaibaWebservice {
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
             throw e;
         }
+    }
+
+    /**
+     * Helpers
+     */
+    /**
+     * Gets the IP address from the client making the request
+     * @return the IP address as string
+     */
+    private String getIPAddress(){
+        return ((HttpServletRequest)context.getMessageContext().
+                    get("javax.xml.ws.servlet.request")).getRemoteAddr().toString();
     }
 }
