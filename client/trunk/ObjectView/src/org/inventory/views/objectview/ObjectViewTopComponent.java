@@ -16,7 +16,6 @@
 package org.inventory.views.objectview;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Logger;
@@ -53,12 +52,7 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
     public static final int CONNECTION_ELECTRICALLINK = 3;
     public static final int CONNECTION_OPTICALLINK = 4;
     public static final int CONNECTION_WIRELESSLINK = 5;
-    /**
-     * Connection colors
-     */
-    public static Color COLOR_ELECTRICAL = new Color(255, 102, 0);
-    public static Color COLOR_OPTICAL = new Color(0, 128, 0);
-    public static Color COLOR_WIRELESS = new Color(102, 0, 128);
+    
 
     private ButtonGroup buttonGroupUpperToolbar;
     private ButtonGroup buttonGroupRightToolbar;
@@ -354,17 +348,17 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
     }//GEN-LAST:event_btnRemoveBackgroundActionPerformed
 
     private void btnElectricalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnElectricalLinkActionPerformed
-        scene.getConnectionProvider().setCurrentLineColor(COLOR_ELECTRICAL);
+        scene.getConnectionProvider().setCurrentLineColor(ObjectConnectionWidget.COLOR_ELECTRICALLINK);
         scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_ELECTRICALLINK);
     }//GEN-LAST:event_btnElectricalLinkActionPerformed
 
     private void btnOpticalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpticalLinkActionPerformed
-        scene.getConnectionProvider().setCurrentLineColor(COLOR_OPTICAL);
+        scene.getConnectionProvider().setCurrentLineColor(ObjectConnectionWidget.COLOR_OPTICALLINK);
         scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_OPTICALLINK);
     }//GEN-LAST:event_btnOpticalLinkActionPerformed
 
     private void btnWirelessLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessLinkActionPerformed
-        scene.getConnectionProvider().setCurrentLineColor(COLOR_WIRELESS);
+        scene.getConnectionProvider().setCurrentLineColor(ObjectConnectionWidget.COLOR_WIRELESSLINK);
         scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_WIRELESSLINK);
     }//GEN-LAST:event_btnWirelessLinkActionPerformed
 

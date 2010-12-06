@@ -16,6 +16,7 @@
 
 package org.inventory.views.objectview.scene;
 
+import java.awt.Font;
 import java.awt.Image;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalObjectLight;
@@ -35,6 +36,7 @@ public class ObjectNodeWidget extends IconNodeWidget{
         super(scene);
         this.object = node.getObject();
         setLabel(node.getObject().getDisplayname());
+        getLabelWidget().setFont(new Font(Font.SANS_SERIF,Font.BOLD,12));
         Image myIcon = CommunicationsStub.getInstance().getMetaForClass(node.getObject().getClassName(), false).getIcon();
         if(myIcon == null)
             myIcon = ImageUtilities.loadImage("org/inventory/views/objectview/res/default_32.png");

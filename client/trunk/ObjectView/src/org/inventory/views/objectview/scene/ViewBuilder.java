@@ -82,12 +82,8 @@ public class ViewBuilder {
                 if (widget.getSourceAnchor() != null && widget.getTargetAnchor() != null)
                     break;
             }
-
-            if (LocalEdge.CLASS_WIRECONTAINER.contains(edge.getObject().getClassName()))
-                widget.setLineColor(ObjectConnectionWidget.COLOR_WIRE);
-            else
-                if (LocalEdge.CLASS_WIRELESSCONTAINER.contains(edge.getObject().getClassName()))
-                    widget.setLineColor(ObjectConnectionWidget.COLOR_WIRELESS);
+            
+            widget.setLineColor(ObjectConnectionWidget.getConnectionColor(edge.getObject().getClassName()));
 
             widget.setStroke(new BasicStroke(2));
             scene.getEdgesLayer().addChild(widget);

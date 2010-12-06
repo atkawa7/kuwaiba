@@ -145,6 +145,7 @@ public class ObjectViewService implements LookupListener{
             else{
                 vrtc.getScene().setBackgroundImage(myBackgroundImage);
                 vrtc.getScene().validate();
+                vrtc.getScene().fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "Add Background"));
             }
         }
     }
@@ -154,6 +155,7 @@ public class ObjectViewService implements LookupListener{
      */
     public void removeBackground() {
         vrtc.getScene().getBackgroundLayer().removeChildren();
+        vrtc.getScene().fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "Remove Background"));
     }
 
     /**

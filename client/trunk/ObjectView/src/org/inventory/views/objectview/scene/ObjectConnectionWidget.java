@@ -17,6 +17,7 @@
 package org.inventory.views.objectview.scene;
 
 import java.awt.Color;
+import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 
@@ -29,8 +30,14 @@ public class ObjectConnectionWidget extends ConnectionWidget{
     /**
      * Some constants
      */
-    public static Color COLOR_WIRE = new Color(255, 0, 0);
-    public static Color COLOR_WIRELESS = new Color(0, 0, 255);
+    public static final Color COLOR_WIRE = new Color(255, 0, 0);
+    public static final Color COLOR_WIRELESS = new Color(0, 0, 255);
+    /**
+     * Connection colors
+     */
+    public static final Color COLOR_ELECTRICALLINK = new Color(255, 102, 0);
+    public static final Color COLOR_OPTICALLINK = new Color(0, 128, 0);
+    public static final Color COLOR_WIRELESSLINK = new Color(102, 0, 128);
 
     /**
      * The wrapped business object
@@ -45,5 +52,19 @@ public class ObjectConnectionWidget extends ConnectionWidget{
 
     public LocalObject getObject() {
         return object;
+    }
+
+    public static Color getConnectionColor(String connectionClass){
+        if (connectionClass.equals(LocalEdge.CLASS_ELECTRICALLINK))
+            return COLOR_ELECTRICALLINK;
+        if (connectionClass.equals(LocalEdge.CLASS_OPTICALLINK))
+            return COLOR_OPTICALLINK;
+        if (connectionClass.equals(LocalEdge.CLASS_WIRELESSLINK))
+            return COLOR_WIRELESSLINK;
+        if (connectionClass.equals(LocalEdge.CLASS_WIRECONTAINER))
+            return COLOR_WIRE;
+        if (connectionClass.equals(LocalEdge.CLASS_WIRECONTAINER))
+            return COLOR_WIRELESS;
+        return Color.BLACK;
     }
 }

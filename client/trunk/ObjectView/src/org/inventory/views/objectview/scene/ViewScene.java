@@ -248,6 +248,8 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
             StartTagWAX edgeTag = edgesTag.start("edge");
             edgeTag.attr("id", ((ObjectConnectionWidget)edgeWidget).getObject().getOid());
             edgeTag.attr("class", ((ObjectConnectionWidget)edgeWidget).getObject().getClassName());
+            edgeTag.attr("aside", ((ObjectNodeWidget)((ObjectConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
+            edgeTag.attr("bside", ((ObjectNodeWidget)((ObjectConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
             for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints())
                 edgeTag.start("controlpoint").attr("x", point.getX()).attr("y", point.getY()).end();
             edgeTag.end();
