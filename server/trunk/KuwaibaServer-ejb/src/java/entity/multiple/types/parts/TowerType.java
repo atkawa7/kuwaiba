@@ -16,6 +16,7 @@
 
 package entity.multiple.types.parts;
 
+import entity.multiple.GenericObjectList;
 import javax.persistence.Entity;
 
 
@@ -24,5 +25,5 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class TowerType extends GenericType{
+public class TowerType extends GenericObjectList{
 }

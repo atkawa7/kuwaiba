@@ -32,7 +32,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-public class GenericPhysicalNode extends AdministrativeItem implements PhysicalNode{
+public abstract class GenericPhysicalNode extends AdministrativeItem implements PhysicalNode{
 
      /**
      * This one has all pipes and ducts connected to the node

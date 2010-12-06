@@ -16,6 +16,7 @@
 package entity.config;
 
 import core.annotations.Administrative;
+import core.annotations.Hidden;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,6 +40,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Administrative
+@Hidden
 @Table(name="Users") //Table name "User" is a reserved keyword
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;

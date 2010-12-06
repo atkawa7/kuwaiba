@@ -18,7 +18,6 @@ package entity.core;
 
 import core.annotations.Administrative;
 import core.annotations.NoSerialize;
-import entity.adapters.ObjectViewAdapter;
 import entity.views.GenericView;
 import java.util.ArrayList;
 import java.util.List;

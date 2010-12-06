@@ -16,6 +16,7 @@
 package entity.multiple;
 
 import core.annotations.Administrative;
+import core.annotations.Hidden;
 import entity.core.AdministrativeItem;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -26,6 +27,7 @@ import javax.persistence.InheritanceType;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Administrative
+@Hidden
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericObjectList extends AdministrativeItem{

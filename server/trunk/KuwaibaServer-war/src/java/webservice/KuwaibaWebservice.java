@@ -34,6 +34,7 @@ import core.toserialize.UserInfo;
 import core.toserialize.ViewInfo;
 import entity.connections.physical.GenericPhysicalConnection;
 import entity.core.ViewableObject;
+import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
@@ -50,7 +51,9 @@ public class KuwaibaWebservice {
      */
     @EJB
     private BackendBeanRemote sbr;
-
+    /**
+     * The context to get information about each request
+     */
     @Resource
     private WebServiceContext context;
     
@@ -86,9 +89,8 @@ public class KuwaibaWebservice {
 
     /**
      * Close a session
-     * @param username
      * @param sessionId
-     * @return @return true if it could close the session, false otherwise. In this case, an error message is written in the error stack
+     * @return true if it could close the session, false otherwise. In this case, an error message is written in the error stack
      */
     @WebMethod(operationName = "closeSession")
     public boolean closeSession(@WebParam(name = "sessionId")String sessionId){
@@ -99,9 +101,8 @@ public class KuwaibaWebservice {
      * Get the children of a given object
      * @param oid
      * @param objectClassId
-     * @param username
      * @param sessionId
-     * @return
+     * @return An array of all the direct children of the provided object according with the current container hierarchy
      * @throws Exception
      */
     @WebMethod(operationName = "getObjectChildren")
@@ -145,7 +146,6 @@ public class KuwaibaWebservice {
       * Gets the complete information about a given object (all its attributes)
       * @param objectClass
       * @param oid
-      * @param username
       * @param sessionId
       * @return a representation of the entity as a RemoteObject
       * @throws Exception
@@ -167,7 +167,6 @@ public class KuwaibaWebservice {
      * Gets the basic information about a given object (oid, classname, etc)
      * @param objectClass className object class. No need to use the package
      * @param oid oid object oid
-     * @param username
      * @param sessionId
      * @return a representation of the entity as a RemoteObjectLight
      * @throws Exception
@@ -188,14 +187,8 @@ public class KuwaibaWebservice {
     /**
      * Updates attributes of a given object
      * @param update ObjectUpdate object representing only the changes to be committed
-     * @return Success or failure
-     */
-    /**
-     *
-     * @param update
-     * @param username
      * @param sessionId
-     * @return
+     * @return Success or failure
      * @throws Exception
      */
     @WebMethod(operationName = "updateObject")
@@ -238,7 +231,7 @@ public class KuwaibaWebservice {
      * Return all possible classes that can be contained by the given class instances
      * @param _parentClass
      * @param sessionId
-     * @return
+     * @return An array with all possible classes whose instances can be contained in the provided class instance
      * @throws Exception
      */
     @WebMethod(operationName = "getPossibleChildren")
@@ -259,7 +252,7 @@ public class KuwaibaWebservice {
      * Return all possible classes that can be contained by the given class instances
      * @param _parentClass
      * @param sessionId
-     * @return
+     * @return An array with the possible children classes
      * @throws Exception
      */
     @WebMethod(operationName = "getPossibleChildrenNoRecursive")
@@ -278,7 +271,7 @@ public class KuwaibaWebservice {
     /**
      * Gets the possible children of a the root node
      * @param sessionId
-     * @return
+     * @return An array with all possible children according to the current container hierarchy for the root object
      * @throws Exception
      */
     @WebMethod(operationName = "getRootPossibleChildren")
@@ -297,7 +290,7 @@ public class KuwaibaWebservice {
      * @param template This is not working by now
      * @param parentOid
      * @param sessionId
-     * @return
+     * @return An object representing the newly created object
      * @throws Exception
      */
     @WebMethod(operationName = "createObject")
@@ -318,14 +311,13 @@ public class KuwaibaWebservice {
     /**
      * Retrieves all the class metadata
      * @param sessionId
-     * @return
+     * @return An array with the complete metadata for each class
      * @throws Exception
      */
     @WebMethod(operationName = "getMetadata")
-    public ClassInfo[] getMetadata(@WebParam(name = "sessionId")String sessionId) throws Exception{
+    public List<ClassInfo> getMetadata(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            ClassInfo[] res = sbr.getMetadata();
-            return res;
+            return sbr.getMetadata();
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
             throw e;
@@ -336,7 +328,7 @@ public class KuwaibaWebservice {
      * Gets the metadata of a single class
      * @param className
      * @param sessionId
-     * @return
+     * @return The metadata for the given class
      * @throws Exception
      */
     @WebMethod(operationName = "getMetadataForClass")
@@ -355,7 +347,7 @@ public class KuwaibaWebservice {
      * Retrieves a list of objects corresponding to a GenericListType group of instances
      * @param className
      * @param sessionId
-     * @return
+     * @return An object representing the basic information about the list type and the choices
      * @throws Exception
      */
     @WebMethod(operationName = "getMultipleChoice")
@@ -397,7 +389,7 @@ public class KuwaibaWebservice {
      * @param parentClassId
      * @param childrenToBeRemoved
      * @param sessionId
-     * @return
+     * @return Success or failure
      * @throws Exception
      */
     @WebMethod(operationName = "removePossibleChildren")
@@ -438,11 +430,11 @@ public class KuwaibaWebservice {
     /**
      * Provides metadata for all classes, but the light version
      * @param sessionId
-     * @return
+     * @return An array with the basic class metadata
      * @throws Exception
      */
     @WebMethod(operationName = "getLightMetadata")
-    public ClassInfoLight[] getLightMetadata(@WebParam(name = "sessionId")String sessionId) throws Exception{
+    public List<ClassInfoLight> getLightMetadata(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             return sbr.getLightMetadata();
         }catch(Exception e){
@@ -454,7 +446,7 @@ public class KuwaibaWebservice {
     /**
      * Gets the id that should be used for the root object
      * @param sessionId
-     * @return
+     * @return the Id that should be used to reference the root object
      */
     @WebMethod(operationName = "getDummyRootId")
     public Long getDummyRootId(@WebParam(name = "sessionId")String sessionId) {
@@ -517,7 +509,7 @@ public class KuwaibaWebservice {
      * @param paramTypes
      * @param paramValues
      * @param sessionId
-     * @return
+     * @return An array with the search results
      * @throws Exception
      */
     @WebMethod(operationName = "searchForObjects")
@@ -616,7 +608,7 @@ public class KuwaibaWebservice {
     /**
      * Returns the list type attributes
      * @param sessionId
-     * @return
+     * @return An array containing all list types
      * @throws Exception
      */
     @WebMethod(operationName = "getInstanceableListTypes")
@@ -664,7 +656,7 @@ public class KuwaibaWebservice {
      * Gets and special built-in room view
      * @param oid oid The oid for the related Room instance
      * @param sessionId
-     * @return
+     * @return A viewInfo object enclosing the room view
      * @throws Exception
      */
     @WebMethod(operationName = "getRoomView")
@@ -684,7 +676,7 @@ public class KuwaibaWebservice {
      * placed within depending on the "rackUnits" attributes
      * @param oid The oid for the related Room instance
      * @param sessionId
-     * @return
+     * @return A viewInfo object enclosing the rack view
      * @throws Exception
      */
     @WebMethod(operationName = "getRackView")
@@ -703,7 +695,7 @@ public class KuwaibaWebservice {
      * Save and object view
      * Sets a view for a given object
      * @param oid object's oid
-     * @param oid object's class (full name including the package)
+     * @param objectClass object's class
      * @param view object's serialized view
      * @return Success or failure
      * @throws Exception
@@ -733,7 +725,7 @@ public class KuwaibaWebservice {
      * @param containerClass
      * @param parentObjectOid
      * @param sessionId
-     * @return
+     * @return An object representing the newly created object
      * @throws Exception
      */
     @WebMethod(operationName = "createPhysicalContainerConnection")
@@ -758,7 +750,7 @@ public class KuwaibaWebservice {
      * @param connectionClass
      * @param parentObjectOid
      * @param sessionId
-     * @return
+     * @return An object representing the newly created object
      * @throws Exception
      */
     @WebMethod(operationName = "createPhysicalConnection")
@@ -850,7 +842,7 @@ public class KuwaibaWebservice {
     /**
      * Creates a new group
      * @param sessionId
-     * @return
+     * @return An object representing the newly created object
      * @throws Exception
      */
     @WebMethod(operationName = "createGroup")
@@ -866,7 +858,7 @@ public class KuwaibaWebservice {
     /**
      * Deletes a list of groups
      * @param toBeDeleted
-     * @return
+     * @return Success or failure
      * @throws Exception
      */
     @WebMethod(operationName = "deleteGroups")

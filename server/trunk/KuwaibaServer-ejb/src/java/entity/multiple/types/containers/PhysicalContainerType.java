@@ -16,8 +16,7 @@
 
 package entity.multiple.types.containers;
 
-import entity.multiple.types.parts.GenericType;
-import java.io.Serializable;
+import entity.multiple.GenericObjectList;
 import javax.persistence.Entity;
 
 /**
@@ -25,6 +24,6 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class PhysicalContainerType extends GenericType implements Serializable {
+public class PhysicalContainerType extends GenericObjectList{
     
 }

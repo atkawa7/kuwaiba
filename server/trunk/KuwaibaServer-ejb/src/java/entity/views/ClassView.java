@@ -21,7 +21,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 /**
- * This class represents the root for all those view that applies only to certain classes
+ * This class represents the root for all those views that applies only to certain classes
  * for example, the views in racks or rooms
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */

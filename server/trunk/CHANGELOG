@@ -20,3 +20,12 @@
 
 0.2 alpha
 * Added support for physical connections. A lot to polish, though
+
+0.2 beta
+* Support for physical connections complete
+* Webservice session support
+* A lot of minor fixes
+* Javadoc updated
+* Additions to the data model
+* Adapters are not longer used (see http://kuwaiba.sourceforge.net/blogs/?p=65)
+* Performance improvements

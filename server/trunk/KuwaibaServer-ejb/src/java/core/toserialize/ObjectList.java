@@ -22,6 +22,7 @@ public class ObjectList {
     public ObjectList(String _className, List<GenericObjectList> _list){
         this.className = _className;
         this.list = new HashMap<Long, String>();
+        String displayName;
         for (GenericObjectList item : _list)
             this.list.put(item.getId(), (item.getDisplayName() == null)?
                                             item.getName():item.getDisplayName());

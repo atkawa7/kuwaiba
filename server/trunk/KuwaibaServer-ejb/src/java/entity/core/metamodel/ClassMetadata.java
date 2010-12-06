@@ -99,6 +99,11 @@ public class ClassMetadata implements Serializable {
      */
     @Column(nullable=false)
     private Boolean isPhysicalEndpoint = false;
+    /**
+     * Classes decorated with "hidden" annotation shouldn't be returned by getMetadata or getLightMetadata
+     */
+    @Column(nullable=false)
+    private Boolean isHidden = false;
     private byte[] smallIcon;
     private byte[] icon;
     
@@ -126,7 +131,7 @@ public class ClassMetadata implements Serializable {
     }
 
     public ClassMetadata(String _name, PackageMetadata _myPackage, String _description,
-            Boolean _isCustom, Boolean _isAbstract, Boolean _isDummy, Boolean _isAdministrative,
+            Boolean _isCustom, Boolean _isAbstract, Boolean _isDummy, Boolean _isAdministrative,Boolean _isHidden,
             Boolean _isPhysicalNode, Boolean _isPhysicalConnection, Boolean _isPhysicalEndpoint,
             List<ClassMetadata> _children, List <AttributeMetadata> _attributes, Long _parent){
         this.name = _name;
@@ -136,6 +141,7 @@ public class ClassMetadata implements Serializable {
         this.isAbstract = _isAbstract;
         this.isDummy = _isDummy;
         this.isAdministrative =_isAdministrative;
+        this.isHidden = _isHidden;
         this.isPhysicalNode = _isPhysicalNode;
         this.isPhysicalConnection = _isPhysicalConnection;
         this.isPhysicalEndpoint = _isPhysicalEndpoint;
@@ -320,5 +326,13 @@ public class ClassMetadata implements Serializable {
 
     public void setIsPhysicalNode(Boolean isPhysicalNode) {
         this.isPhysicalNode = isPhysicalNode;
+    }
+
+    public Boolean getIsHidden() {
+        return isHidden;
+    }
+
+    public void setIsHidden(Boolean isHidden) {
+        this.isHidden = isHidden;
     }
 }

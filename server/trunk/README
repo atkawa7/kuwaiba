@@ -1,4 +1,4 @@
-Please refer to http://kuwaiba.sourceforge.net
+Please refer to http://kuwaiba.sourceforge.net for detailed installation instructions
 
 kuwaibadb_empty.backup is a db with the classmetadata, but no objects created or containment hierarchy defined
 kuwaibadb_container_hierarchy.backup is a db with a basic containment hierarchy defined

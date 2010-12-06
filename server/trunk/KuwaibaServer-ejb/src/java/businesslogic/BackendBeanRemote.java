@@ -25,6 +25,7 @@ import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.ViewInfo;
 import entity.session.UserSession;
+import java.util.List;
 import javax.ejb.Remote;
 
 /**
@@ -41,7 +42,8 @@ public interface BackendBeanRemote {
     public boolean setObjectLock(Long oid, String objectClass, Boolean value) throws Exception;
     public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId)  throws Exception;
     public RemoteObjectLight createObject(Class objectClass, Long parentOid, String template) throws Exception;
-    public ClassInfo[] getMetadata() throws Exception;
+    public List<ClassInfo> getMetadata() throws Exception;
+    public List<ClassInfoLight> getLightMetadata() throws Exception;
     public ClassInfo getMetadataForClass(Class className) throws Exception;
     public void buildMetaModel() throws Exception;
     public ObjectList getMultipleChoice(Class className) throws Exception;
@@ -51,7 +53,6 @@ public interface BackendBeanRemote {
     public ClassInfoLight[] getPossibleChildren(Class parentClass) throws Exception;
     public ClassInfoLight[] getPossibleChildrenNoRecursive(Class parentClass) throws Exception;
     public ClassInfoLight[] getRootPossibleChildren() throws Exception;
-    public ClassInfoLight[] getLightMetadata() throws Exception;
     public boolean moveObjects(Long targetOid, Long[] objectOids, String[] objectClasses) throws Exception;
     public RemoteObjectLight[] copyObjects(Long targetOid, Long[] templateOids, String[] objectClasses) throws Exception;
     public RemoteObjectLight[] searchForObjects(Class searchedClass, String[] paramNames, String [] paramTypes, String[] paramValues) throws Exception;

@@ -16,6 +16,7 @@
 package entity.config;
 
 import core.annotations.Administrative;
+import core.annotations.Hidden;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,6 +37,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Administrative
+@Hidden
 @Table(name="Groups")
 public class UserGroup implements Serializable { //Group is a keyword in JPQL
     

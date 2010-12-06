@@ -401,17 +401,18 @@ public class BackendBean implements BackendBeanRemote {
      * @return An array of classes
      */
     @Override
-    public ClassInfo[] getMetadata() throws Exception{
+    public List<ClassInfo> getMetadata() throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETMETADATA"));
         if (em != null){
             String sentence = "SELECT x FROM ClassMetadata x WHERE x.isAdministrative=false ORDER BY x.name ";
             Query q = em.createQuery(sentence);
             List<ClassMetadata> cr = q.getResultList();
-            ClassInfo[] cm = new ClassInfo[cr.size()];
+            List<ClassInfo> cm = new ArrayList<ClassInfo>();
             int i=0;
             for (ClassMetadata myClass : cr){
-                cm[i] = new ClassInfo(myClass);
-                i++;
+                if (myClass.getIsHidden() || myClass.getIsDummy())
+                    continue;
+                cm.add(new ClassInfo(myClass));
             }
             return cm;
         }
@@ -581,17 +582,18 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     @Override
-    public ClassInfoLight[] getLightMetadata() throws Exception{
+    public List<ClassInfoLight> getLightMetadata() throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETLIGHTMETADATA"));
         if (em != null){
             String sentence = "SELECT x FROM ClassMetadata x ORDER BY x.name";
             Query q = em.createQuery(sentence);
             List<ClassMetadata> cr = q.getResultList();
-            ClassInfoLight[] cml = new ClassInfoLight[cr.size()];
-            int i=0;
+            List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
+
             for (ClassMetadata myClass : cr){
-                cml[i] = new ClassInfoLight(myClass);
-                i++;
+                if (myClass.getIsHidden() || myClass.getIsDummy())
+                    continue;
+                cml.add(new ClassInfoLight(myClass));
             }
             return cml;
         }
@@ -806,7 +808,7 @@ public class BackendBean implements BackendBeanRemote {
     @Override
     public ClassInfoLight[] getInstanceableListTypes() throws Exception{
         if (em != null){
-            Long id = (Long) em.createQuery("SELECT x.id FROM ClassMetadata x WHERE x.name ='GenericObjectList' ORDER BY x.name").getSingleResult();
+            Long id = (Long) em.createQuery("SELECT x.id FROM ClassMetadata x WHERE x.name ='GenericObjectList'").getSingleResult();
             List<ClassMetadata> listTypes =HierarchyUtils.getInstanceableSubclasses(id, em);
             ClassInfoLight[] res = new ClassInfoLight[listTypes.size()];
 

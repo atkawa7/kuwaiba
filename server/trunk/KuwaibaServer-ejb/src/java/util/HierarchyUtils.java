@@ -17,6 +17,7 @@ package util;
 
 import core.annotations.Administrative;
 import core.annotations.Dummy;
+import core.annotations.Hidden;
 import core.annotations.NoSerialize;
 import core.interfaces.PhysicalConnection;
 import core.interfaces.PhysicalEndpoint;
@@ -153,6 +154,7 @@ public class HierarchyUtils {
                                              false,Modifier.isAbstract(entity.getJavaType().getModifiers()),
                                              entity.getJavaType().getAnnotation(Dummy.class)!=null,
                                              entity.getJavaType().getAnnotation(Administrative.class)!=null,
+                                             entity.getJavaType().getAnnotation(Hidden.class)!=null,
                                              implementsInterface(entity.getJavaType(),PhysicalNode.class),
                                              implementsInterface(entity.getJavaType(),PhysicalConnection.class),
                                              implementsInterface(entity.getJavaType(),PhysicalEndpoint.class),

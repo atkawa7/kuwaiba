@@ -24,15 +24,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Esta anotación sirve para marcar clases como de metadata y que no es necesario meterlas en lo
- * que se manda a los clientes para que administren su información
+ * Classes decorated with this annotation are used to keep metadata information and should not be
+ * returned to to the client.
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Documented
 @Target(ElementType.TYPE)
 @Inherited
-@Retention(RetentionPolicy.RUNTIME) //No descarte la anotación después de la compilación
-                                    //ya que precisamente requerimos esa anotación en runtime
+@Retention(RetentionPolicy.RUNTIME) //Don't discard this annotation after compiling the class
+                                    //we need it at runtime
 public @interface Metadata {
 
 }

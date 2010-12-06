@@ -14,17 +14,23 @@
  *  limitations under the License.
  */
 
-package entity.adapters;
+package core.annotations;
 
-import core.annotations.Dummy;
-import java.io.Serializable;
-import javax.persistence.Entity;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Using this adapter, the subclasses of ViewableObject can support different kinds of views
+ * Classes decorated with this annotation are not returned by getMetadata or getLightMetadata
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-@Entity
-@Dummy
-public class ObjectViewAdapter extends GenericUnidirectionalAdapter implements Serializable{
+@Documented
+@Target(ElementType.TYPE)
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Hidden {
+
 }

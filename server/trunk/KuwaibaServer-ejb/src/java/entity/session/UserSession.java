@@ -17,6 +17,7 @@
 package entity.session;
 
 import core.annotations.Administrative;
+import core.annotations.Hidden;
 import entity.config.User;
 import java.io.Serializable;
 import java.util.Calendar;
@@ -38,6 +39,7 @@ import util.MetadataUtils;
  */
 @Entity
 @Administrative
+@Hidden
 public class UserSession implements Serializable {
     private static final long serialVersionUID = 1L;
     @OneToOne
