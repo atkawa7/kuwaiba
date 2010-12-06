@@ -103,12 +103,6 @@ public class Cache{
         return res;
     }
 
-    public void resetMetadataIndex(){
-        Set<String> keys = metadataIndex.keySet();
-        for (String key : keys)
-            metadataIndex.remove(key);
-    }
-
     public LocalClassMetadata getMetaForClass(String className) {
         if (className == null)
             return null;
@@ -143,12 +137,6 @@ public class Cache{
             this.lightMetadataIndex.put(lcml.getClassName(), lcml);
     }
 
-    public void resetLightMetadataIndex() {
-        Set<String> keys = metadataIndex.keySet();
-        for (String key : keys)
-            lightMetadataIndex.remove(key);
-    }
-
     public void addPossibleChildrenCached(String className, List<LocalClassMetadataLight> children){
         List<LocalClassMetadataLight> toBeAdded = new ArrayList<LocalClassMetadataLight>();
         for (LocalClassMetadataLight lcml : children){
@@ -167,12 +155,6 @@ public class Cache{
         if (className == null)
             return null;
         return possibleChildrenIndex.get(className);
-    }
-
-    public void resetPossibleChildrenCached() {
-        Set<String> keys = metadataIndex.keySet();
-        for (String key : keys)
-            possibleChildrenIndex.remove(key);
     }
 
     public HashMap<String, List<LocalClassMetadataLight>> getAllPossibleChildren() {
@@ -199,12 +181,6 @@ public class Cache{
         listIndex.put(className, items);
     }
 
-    public void resetLists() {
-        Set<String> keys = metadataIndex.keySet();
-        for (String key : keys)
-            listIndex.remove(key);
-    }
-
     public HashMap<String, List<LocalObjectListItem>> getAllList() {
         return listIndex;
     }
@@ -223,5 +199,33 @@ public class Cache{
      */
     public LocalUserGroupObject[] getCurrentGroupsInfo(){
         return this.currentUserGroupInfo;
+    }
+
+    /**
+     * Resets de cached list types
+     */
+    public void resetLists() {
+        listIndex.clear();
+    }
+
+    /**
+     * Resets the cached possible children
+     */
+    public void resetPossibleChildrenCached() {
+        possibleChildrenIndex.clear();
+    }
+
+    /**
+     * Resets the cached light class metadata
+     */
+    public void resetLightMetadataIndex() {
+        lightMetadataIndex.clear();
+    }
+
+    /**
+     * Resets the cached class metadata
+     */
+    public void resetMetadataIndex(){
+        metadataIndex.clear();
     }
 }
