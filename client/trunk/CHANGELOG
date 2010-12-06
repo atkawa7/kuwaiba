@@ -23,3 +23,11 @@
 0.2 alpha
 * Basic support for physical views including physical containers only (see documentation for details). Zoom, pan, background actions
 * New splashscreen
+
+0.2 Beta
+* Complete support for physical connections
+* Support for user sessions
+* New error handling mechanism
+* New element icons
+* Performance improvements
+* General code cleanup

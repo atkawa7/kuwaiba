@@ -110,7 +110,7 @@ public class UserProperty extends ReadWrite{
     public void setPassword(String passwd) {
         LocalObject update = Lookup.getDefault().lookup(LocalObject.class);
         //The password is hashed before setting it
-        update.setLocalObject("entity.config.User", //NOI18N
+        update.setLocalObject("User", //NOI18N
                 new String[]{UserNode.PROP_PASSWORD}, new Object[]{Utils.getMD5Hash(passwd)}); //NOI18N
         update.setOid(this.object.getOid());
         if(!com.saveObject(update)){

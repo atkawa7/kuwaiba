@@ -78,7 +78,7 @@ public final class ConnectionWizardVisualPanel1 extends JPanel{
         pnlScrollRight = new javax.swing.JScrollPane();
         pnlScrollLeft = new javax.swing.JScrollPane();
 
-        lblInstructions.setFont(new java.awt.Font("Dialog", 0, 12));
+        lblInstructions.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(lblInstructions, org.openide.util.NbBundle.getMessage(ConnectionWizardVisualPanel1.class, "ConnectionWizardVisualPanel1.lblInstructions.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

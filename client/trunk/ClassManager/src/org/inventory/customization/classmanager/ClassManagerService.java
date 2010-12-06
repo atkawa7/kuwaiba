@@ -83,13 +83,13 @@ public class ClassManagerService extends FileFilter implements ActionListener{
         boolean res =true;
         CommunicationsStub com = CommunicationsStub.getInstance();
         if (!displayName.equals(""))
-            res = res&&com.setClassPlainAttribute(modifiedClass.getId(), "displayName", displayName);
+            res = res&&com.setClassPlainAttribute(modifiedClass.getOid(), "displayName", displayName);
         if (!description.equals(""))
-            res = res&&com.setClassPlainAttribute(modifiedClass.getId(), "description", description);
+            res = res&&com.setClassPlainAttribute(modifiedClass.getOid(), "description", description);
         if (smallIcon != null)
-            res = res&&com.setClassIcon(modifiedClass.getId(), "smallIcon", smallIcon);
+            res = res&&com.setClassIcon(modifiedClass.getOid(), "smallIcon", smallIcon);
         if (icon != null)
-            res = res&&com.setClassIcon(modifiedClass.getId(), "icon", icon);
+            res = res&&com.setClassIcon(modifiedClass.getOid(), "icon", icon);
         return res;
     }
 
@@ -102,7 +102,7 @@ public class ClassManagerService extends FileFilter implements ActionListener{
         }
 
         for (LocalClassMetadataLight myLight : allMeta)
-            if (!(myLight.getIsAbstract() || myLight.getClassName().equals(CommunicationsStub.getInstance().getRootClass())))
+            if (!myLight.getIsAbstract())
                 res.add(myLight);
         return res;
     }

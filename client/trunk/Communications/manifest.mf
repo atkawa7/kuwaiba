@@ -1,5 +1,6 @@
 Manifest-Version: 1.0
 OpenIDE-Module: org.inventory.communications
+OpenIDE-Module-Layer: org/inventory/communications/layer.xml
 OpenIDE-Module-Localizing-Bundle: org/inventory/communications/Bundle.properties
 OpenIDE-Module-Specification-Version: 1.0
 OpenIDE-Module-Provides: org.inventory.core.services.interfaces.LocalObjectLight,org.inventory.core.services.interfaces.LocalObject,org.inventory.core.services.interfaces.LocalClassMetadata,org.inventory.core.services.interfaces.LocalAttributeMetadata

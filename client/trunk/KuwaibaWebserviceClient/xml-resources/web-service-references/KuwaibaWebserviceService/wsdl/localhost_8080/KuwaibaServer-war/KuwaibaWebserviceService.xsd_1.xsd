@@ -510,7 +510,7 @@
 
 <xs:complexType name="getMetadataResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:classInfo" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="return" type="tns:classInfo" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -885,7 +885,7 @@
 
 <xs:complexType name="getLightMetadataResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 

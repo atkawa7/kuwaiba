@@ -43,7 +43,7 @@ public class ClassMetadataNode extends AbstractNode {
    
    public ClassMetadataNode(LocalClassMetadataLight _lcm, boolean isMain){
       super (new ClassMetadataChildren(),Lookups.singleton(_lcm));
-      if (_lcm.getClassName().equals(CommunicationsStub.getInstance().getRootClass()))
+      if (_lcm.getClassName().equals(CommunicationsStub.getInstance().getDummyRootClass().getClassName()))
           setIconBaseWithExtension(ROOT_PARENT_ICON_PATH);
       else
         setIconBaseWithExtension(PARENT_ICON_PATH);
@@ -65,7 +65,7 @@ public class ClassMetadataNode extends AbstractNode {
    @Override
    public String getDisplayName(){
        if (object!=null){
-            if (object.getClassName().equals(CommunicationsStub.getInstance().getRootClass()))
+            if (object.getClassName().equals(CommunicationsStub.getInstance().getDummyRootClass().getClassName()))
                 return java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_ROOTNODE_TEXT");
             else
                 return object.getClassName();       

@@ -107,7 +107,7 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
                     component = chkValue;
                 }
                 else{
-                    if(lam.getType().equals(LocalObjectListItem.class)){
+                    if(lam.getIsMultiple()){
                         LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(),false);
 
                         JComboBox cmbValue = new JComboBox(list);
@@ -118,7 +118,7 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
                         component = cmbValue;
                     }
                     else{
-                         //Si se usa el segundo constructor del textfield, especificado el número de caracteres, la vaina se totea, y empieza  acolocar el texfield centrado y el panel queda inmenso
+                         //The second constructor that uses the max lenghtSi se usa el segundo constructor del textfield, especificado el número de caracteres, la vaina se totea, y empieza  acolocar el texfield centrado y el panel queda inmenso
                         JTextField txtValue = new JTextField();
                         txtValue.setMaximumSize(new Dimension (400,10));
                         component = txtValue;

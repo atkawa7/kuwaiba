@@ -18,6 +18,7 @@ package org.inventory.communications.core.views;
 
 import java.awt.Image;
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -70,6 +71,11 @@ public class LocalObjectView {
         edges = new ArrayList<LocalEdge>();
         labels = new ArrayList<LocalLabel>();
         if (viewStructure != null){
+            try{
+                FileOutputStream fos = new FileOutputStream("/home/zim/out.xml");
+                fos.write(viewStructure);
+                fos.close();
+            }catch(Exception e){}
             try {
                 parseXML(viewStructure);
             } catch (XMLStreamException ex) {
@@ -146,16 +152,19 @@ public class LocalObjectView {
                 }else{
                     if (reader.getName().equals(qEdge)){
                         Long objectId = Long.valueOf(reader.getAttributeValue(null,"id"));
+                        Long aSide = Long.valueOf(reader.getAttributeValue(null,"aside"));
+                        Long bSide = Long.valueOf(reader.getAttributeValue(null,"bside"));
+
                         String className = reader.getAttributeValue(null,"class");
                         LocalObject container = CommunicationsStub.getInstance().getObjectInfo(className, objectId);
                         LocalEdge myLocalEdge = new LocalEdge(container,null);
 
                         for (LocalNode myNode : nodes){
 
-                            if (((Long)container.getAttribute("nodeA")).equals(myNode.getObject().getOid())) //NOI18N
+                            if (aSide.equals(myNode.getObject().getOid())) //NOI18N
                                 myLocalEdge.setaSide(myNode);
                             else{
-                                if (((Long)container.getAttribute("nodeB")).equals(myNode.getObject().getOid())) //NOI18N
+                                if (bSide.equals(myNode.getObject().getOid())) //NOI18N
                                    myLocalEdge.setbSide(myNode);
                             }
 

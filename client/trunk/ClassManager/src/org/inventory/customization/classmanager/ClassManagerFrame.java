@@ -19,6 +19,7 @@ package org.inventory.customization.classmanager;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -26,6 +27,7 @@ import javax.swing.JTextField;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 
 /**
@@ -234,7 +236,11 @@ public class ClassManagerFrame extends javax.swing.JFrame {
                     if((new ImageIcon(mySmallIcon)).getIconWidth() > 16) //We don't accept images of more tha 16x16 pixels
                         getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The widtth if the given image exceeds 16 pixels");
                     else{
-                        smallIcon = Utils.getByteArrayFromImage(fChooser.getSelectedFile(),cms.getExtension(fChooser.getSelectedFile()));
+                        try {
+                            smallIcon = Utils.getByteArrayFromImageFile(fChooser.getSelectedFile(), cms.getExtension(fChooser.getSelectedFile()));
+                        } catch (IOException ex) {
+                            smallIcon = null;
+                        }
                         if (smallIcon == null)
                             getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The file couldn't be converted");
                     }
@@ -255,7 +261,11 @@ public class ClassManagerFrame extends javax.swing.JFrame {
                     if(mySmallIcon.getWidth(null) > 48) //We don't accept images of more tha 48x48 pixels
                         getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The widtth if the given image is bigger tha 16 pixels");
                     else{
-                        icon = Utils.getByteArrayFromImage(fChooser.getSelectedFile(),cms.getExtension(fChooser.getSelectedFile()));
+                        try {
+                            icon = Utils.getByteArrayFromImageFile(fChooser.getSelectedFile(), cms.getExtension(fChooser.getSelectedFile()));
+                        } catch (IOException ex) {
+                            icon = null;
+                        }
                         if (icon == null)
                             getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The file couldn't be converted");
                         else

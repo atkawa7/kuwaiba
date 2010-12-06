@@ -531,15 +531,15 @@ public class CommunicationsStub {
         }
     }
 
+
     public Long getRootId(){
         if (cache.getRootId() == null)
             cache.setRootId(port.getDummyRootId(this.session.getSessionId()));
         return cache.getRootId();
     }
 
-    public String getRootClass(){
-        LocalClassMetadata lcm = getMetaForClass("DummyRoot",false);
-        return lcm.getClassName();
+    public LocalClassMetadata getDummyRootClass(){
+        return getMetaForClass("DummyRoot",false);
     }
 
     /*

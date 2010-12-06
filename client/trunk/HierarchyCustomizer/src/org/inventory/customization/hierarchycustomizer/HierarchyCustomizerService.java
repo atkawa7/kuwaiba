@@ -17,7 +17,6 @@ package org.inventory.customization.hierarchycustomizer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
@@ -71,11 +70,11 @@ public class HierarchyCustomizerService implements LookupListener{
             //Build the lstClasses model, made out of allMeta minus DummyRoot
             //and the bTreeView model, made out of allMeta minus the abstract classes
             //(RootObject, ConfigurationItem, GenericXXX, etc)
-            String rootClass = com.getRootClass();
+            LocalClassMetadata rootClass = com.getDummyRootClass();
+            treeModel.add(rootClass);
 
             for (LocalClassMetadataLight item : allMeta){
-                if (!item.getClassName().equals(rootClass))
-                    listModel.add(item);
+                listModel.add(item);
 
                 if (!item.getIsAbstract())
                     treeModel.add(item);
@@ -105,7 +104,7 @@ public class HierarchyCustomizerService implements LookupListener{
             if(currentSelection.isLeaf()) //Show nothing for ClassMetadataNodes representing to possible children
                 hctc.getLstClasses().setListData(new Object[0]);
             else{
-                Vector content = new Vector(listModel);
+                List content = new ArrayList(listModel);
 
                 //Too bad the call to addNotify from expandNode goes in other thread, and
                 //getChildren is empty the first time a node is expanded. This is a workaround
@@ -118,7 +117,7 @@ public class HierarchyCustomizerService implements LookupListener{
 
                 //Leaves only the possible children available in the list
                 content.remove(currentSelection.getObject());
-                hctc.getLstClasses().setListData(content);
+                hctc.getLstClasses().setListData(content.toArray());
             }
         }
     }

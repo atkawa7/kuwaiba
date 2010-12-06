@@ -35,7 +35,7 @@ public class AttributeCustomizerNodeProperty extends PropertySupport.ReadWrite{
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         CommunicationsStub com = CommunicationsStub.getInstance();
         LocalClassMetadataLight myClass = ((ClassMetadataNode)node.getParentNode()).getObject();
-        if(com.setAttributePropertyValue(myClass.getId(),
+        if(com.setAttributePropertyValue(myClass.getOid(),
                 node.getObject().getName(),getName(),t.toString())){
             this.value = t;
             //Refresh the cache
