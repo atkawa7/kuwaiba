@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.inventory.navigation.navigationtree
+OpenIDE-Module-Layer: org/inventory/navigation/navigationtree/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/inventory/navigation/navigationtree/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+

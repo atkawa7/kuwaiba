@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.inventory.customization.classmanager
+OpenIDE-Module-Layer: org/inventory/customization/classmanager/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/inventory/customization/classmanager/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
