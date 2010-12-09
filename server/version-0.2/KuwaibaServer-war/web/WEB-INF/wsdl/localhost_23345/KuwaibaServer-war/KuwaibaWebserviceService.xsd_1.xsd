@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.2-hudson-752-. --><xs:schema xmlns:tns="http://webservice/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://webservice/">
+
+<xs:element name="createSession" type="tns:createSession" />
+
+<xs:element name="createSessionResponse" type="tns:createSessionResponse" />
+
+<xs:element name="destroySession" type="tns:destroySession" />
+
+<xs:element name="destroySessionResponse" type="tns:destroySessionResponse" />
+
+<xs:element name="getEquipment" type="tns:getEquipment" />
+
+<xs:element name="getEquipmentResponse" type="tns:getEquipmentResponse" />
+
+<xs:element name="getLastErr" type="tns:getLastErr" />
+
+<xs:element name="getLastErrResponse" type="tns:getLastErrResponse" />
+
+<xs:element name="getTreeNode" type="tns:getTreeNode" />
+
+<xs:element name="getTreeNodeResponse" type="tns:getTreeNodeResponse" />
+
+<xs:element name="updateObject" type="tns:updateObject" />
+
+<xs:element name="updateObjectResponse" type="tns:updateObjectResponse" />
+
+<xs:complexType name="destroySession">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="destroySessionResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createSession">
+<xs:sequence>
+<xs:element name="username" type="xs:string" minOccurs="0" />
+<xs:element name="password" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createSessionResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getLastErr">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getLastErrResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="updateObject">
+<xs:sequence>
+<xs:element name="objectupdate" type="tns:objectUpdate" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="objectUpdate">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="updateObjectResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getTreeNode">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="class" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getTreeNodeResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteTreeNode" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteTreeNode">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getEquipment">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getEquipmentResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
