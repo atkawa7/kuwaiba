@@ -28,8 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.utils.Utils;
+import org.inventory.views.objectview.scene.menus.EdgeMenu;
 import org.netbeans.api.visual.action.ActionFactory;
+import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.graph.GraphScene;
+import org.netbeans.api.visual.router.Router;
+import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.ImageWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
@@ -65,6 +69,18 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
      * The common connection provider
      */
     private PhysicalConnectionProvider myConnectionProvider;
+    /**
+     * Default free router (shared by all connection widgets)
+     */
+    private Router freeRouter = RouterFactory.createFreeRouter();
+    /**
+     * Default free router (shared by all connection widgets)
+     */
+    private WidgetAction moveControlPointAction = ActionFactory.createFreeMoveControlPointAction();
+    /**
+     * Popup menu used for edges
+     */
+    private EdgeMenu edgeMenu = new EdgeMenu();
     /**
      * Object owning the current view
      */
@@ -104,6 +120,7 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
         addChild(labelsLayer);
         getActions().addAction(ActionFactory.createZoomAction());
         getActions().addAction(ActionFactory.createPanAction());
+        getActions().addAction(ActionFactory.createRectangularSelectAction(this, backgroundLayer));
         setActiveTool(ACTION_SELECT);
     }
 
@@ -157,6 +174,18 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
         this.currentObject = currentObject;
     }
 
+    public WidgetAction getMoveControlPointAction() {
+        return moveControlPointAction;
+    }
+
+    public Router getFreeRouter() {
+        return freeRouter;
+    }
+
+    public EdgeMenu getEdgeMenu() {
+        return edgeMenu;
+    }
+    
     public PhysicalConnectionProvider getConnectionProvider(){
         return this.myConnectionProvider;
     }

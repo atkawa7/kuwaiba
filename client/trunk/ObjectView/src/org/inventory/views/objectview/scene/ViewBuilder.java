@@ -19,6 +19,7 @@ package org.inventory.views.objectview.scene;
 import java.awt.BasicStroke;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.communications.core.views.LocalLabel;
 import org.inventory.communications.core.views.LocalObjectView;
@@ -62,31 +63,39 @@ public class ViewBuilder {
      * that's coder's responsibility
      */
     public void buildView(){
+        
+        //We clean the object-widget mapping has in order to fill it again
+        List myClone = new ArrayList(scene.getObjects());
+        for(Object obj : myClone)
+            scene.removeObject(obj);
+
         for (LocalNode node : myView.getNodes()){
             ObjectNodeWidget widget = new ObjectNodeWidget(scene, node);
             widget.setPreferredLocation(node.getPosition());
             scene.getNodesLayer().addChild(widget);
+            if (!scene.getObjects().contains(node.getObject()))
+                scene.addObject(widget.getObject(), widget);
         }
 
         for (LocalEdge edge : myView.getEdges()){
-            ObjectConnectionWidget widget = new ObjectConnectionWidget(scene, edge.getObject());
+            ObjectConnectionWidget widget = new ObjectConnectionWidget(scene,
+                    edge.getObject(),scene.getFreeRouter(), ObjectConnectionWidget.getConnectionColor(edge.getObject().getClassName()));
 
             //TODO: This is a reprocess... It's already been done when creating the local view
             for (Widget w : scene.getNodesLayer().getChildren()){
                 if (((ObjectNodeWidget)w).getObject().equals(edge.getaSide().getObject()))
-                    widget.setSourceAnchor(AnchorFactory.createRectangularAnchor(w));
+                    widget.setSourceAnchor(AnchorFactory.createFreeRectangularAnchor(w, true));
                 else{
                     if(((ObjectNodeWidget)w).getObject().equals(edge.getbSide().getObject()))
-                        widget.setTargetAnchor(AnchorFactory.createRectangularAnchor(w));
+                        widget.setTargetAnchor(AnchorFactory.createFreeRectangularAnchor(w, true));
                 }
                 if (widget.getSourceAnchor() != null && widget.getTargetAnchor() != null)
                     break;
             }
-            
-            widget.setLineColor(ObjectConnectionWidget.getConnectionColor(edge.getObject().getClassName()));
-
-            widget.setStroke(new BasicStroke(2));
+            widget.setControlPoints(edge.getControlPoints(), true);
             scene.getEdgesLayer().addChild(widget);
+            if (!scene.getObjects().contains(edge.getObject()))
+                scene.addObject(widget.getObject(), widget);
         }
 
         scene.setBackgroundImage(myView.getBackground());
@@ -138,10 +147,12 @@ public class ViewBuilder {
      */
     public void refreshView(List<LocalObjectLight> newNodes, List<LocalObject> newPhysicalConnections,
             List<LocalObjectLight> nodesToDelete, List<LocalObject> physicalConnectionsToDelete){
+
         scene.getNodesLayer().removeChildren();
         scene.getEdgesLayer().removeChildren();
         scene.getLabelsLayer().removeChildren();
         scene.getInteractionLayer().removeChildren();
+        
         if (nodesToDelete != null){
             for (LocalObjectLight toDelete : nodesToDelete)
                 myView.getNodes().remove(new LocalNode(toDelete, 0, 0));

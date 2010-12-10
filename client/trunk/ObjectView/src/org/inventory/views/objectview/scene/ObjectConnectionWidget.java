@@ -16,9 +16,13 @@
 
 package org.inventory.views.objectview.scene;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.core.services.interfaces.LocalObject;
+import org.netbeans.api.visual.action.ActionFactory;
+import org.netbeans.api.visual.anchor.PointShape;
+import org.netbeans.api.visual.router.Router;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 
 /**
@@ -44,10 +48,27 @@ public class ObjectConnectionWidget extends ConnectionWidget{
      */
     private LocalObject object;
 
-    public ObjectConnectionWidget(ViewScene scene, LocalObject connection){
+    /**
+     * We don't take the router from the scene directly because it's possible that in some
+     * cases the caller need to specify other type of routing
+     * @param scene
+     * @param connection
+     * @param router
+     */
+    public ObjectConnectionWidget(ViewScene scene, LocalObject connection,
+            Router router, Color lineColor){
         super(scene);
         this.object = connection;
+        setToolTipText((String)connection.getAttribute("name")+" ["+connection.getClassName()+"]"); //NOI18N
+        setRouter(router);
+        setStroke(new BasicStroke(3));
+        setLineColor(lineColor);
+        setControlPointShape(PointShape.SQUARE_FILLED_BIG);
+        setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         getActions().addAction(scene.createSelectAction());
+        getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
+        getActions().addAction(scene.getMoveControlPointAction());
+        getActions().addAction(ActionFactory.createPopupMenuAction(scene.getEdgeMenu()));
     }
 
     public LocalObject getObject() {
