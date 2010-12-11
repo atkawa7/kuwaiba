@@ -17,6 +17,9 @@
 package org.inventory.communications.core.views;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.inventory.core.services.interfaces.LocalObject;
 
 
@@ -73,7 +76,7 @@ public class LocalEdge {
     /**
      * Control points used to route the connection
      */
-    private Point[] controlPoints;
+    private List<Point> controlPoints;
 
     public LocalEdge(LocalObject obj) {
         this.object = obj;
@@ -81,7 +84,9 @@ public class LocalEdge {
 
     public LocalEdge(LocalObject _object, Point[] _controlsPoints){
         this.object = _object;
-        this.controlPoints = _controlsPoints;
+        this.controlPoints = new ArrayList<Point>();
+        if (_controlsPoints != null)
+            this.controlPoints.addAll(Arrays.asList(_controlsPoints));
     }
 
     public LocalEdge(LocalObject _object, LocalNode _aSide, LocalNode _bSide, Point[] _controlsPoints){
@@ -105,7 +110,7 @@ public class LocalEdge {
         hash = 53 * hash + (this.object != null ? this.object.hashCode() : 0);
         return hash;
     }
-    public Point[] getControlPoints() {
+    public List<Point> getControlPoints() {
         return controlPoints;
     }
 

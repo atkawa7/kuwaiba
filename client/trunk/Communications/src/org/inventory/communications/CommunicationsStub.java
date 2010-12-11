@@ -902,6 +902,8 @@ public class CommunicationsStub {
     public LocalObjectView getObjectDefaultView(Long oid, String objectClass) {
         try{
             ViewInfo myView = port.getDefaultView(oid, objectClass,this.session.getSessionId());
+            if (myView == null) //There's no default view yet
+                return null;
             return new LocalObjectView(myView.getStructure(),myView.getBackground(),myView.getViewClass());
         }catch(Exception ex){
             this.error = ex.getClass()+": "+ ex.getMessage();

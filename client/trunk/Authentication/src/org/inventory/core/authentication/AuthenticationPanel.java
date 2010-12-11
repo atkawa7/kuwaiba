@@ -17,24 +17,15 @@
 package org.inventory.core.authentication;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.net.MalformedURLException;
-import java.net.URL;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
-import org.inventory.communications.CommunicationsStub;
-import org.openide.DialogDescriptor;
-import org.openide.DialogDisplayer;
-import org.openide.LifecycleManager;
-import org.openide.util.Exceptions;
 
 /**
  * This is the main auth panel which contains the login and password textfields
@@ -50,48 +41,6 @@ public class AuthenticationPanel extends javax.swing.JPanel {
     }
     
     private void initCustomComponents(){
-        btnLogin = new JButton("Login");
-        btnExit = new JButton("Exit");
-        btnLogin.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                
-                ConnectionSettingsPanel containedPanel = (ConnectionSettingsPanel)pnlSettingsContainer.getComponent(0);
-                try {                   
-                    CommunicationsStub.setServerURL(
-                            new URL("http", containedPanel.getServerAddress() , containedPanel.getServerPort(),
-                            containedPanel.getWSDLPath()));
-                } catch (MalformedURLException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
-
-                try{
-                    if (!CommunicationsStub.getInstance().createSession(txtUser.getText(), new String(txtPassword.getPassword())))
-                       showMeAgain(CommunicationsStub.getInstance().getError(),
-                               txtUser.getText(),
-                               containedPanel.getTxtServerAddress().getText(),
-                               containedPanel.getTxtServerPort().getText(),
-                               containedPanel.getTxtWSDLPath().getText());
-                }catch(Exception exp){
-                    CommunicationsStub.resetInstance();
-                    showMeAgain(exp.getMessage(),
-                            txtUser.getText(),
-                               containedPanel.getTxtServerAddress().getText(),
-                               containedPanel.getTxtServerPort().getText(),
-                               containedPanel.getTxtWSDLPath().getText());
-                }
-            }
-        });
-        
-         btnExit.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LifecycleManager.getDefault().exit();
-            }
-        });
-
         pnlSettingsContainer.addMouseListener(new MouseListener() {
 
             @Override
@@ -263,34 +212,11 @@ public class AuthenticationPanel extends javax.swing.JPanel {
         return this.txtUser;
     }
 
-    public ConnectionSettingsPanel getContainedPanel(){
-        return (ConnectionSettingsPanel)this.pnlSettingsContainer.getComponent(0);
+    public JPasswordField getTxtPassword(){
+        return this.txtPassword;
     }
 
-    public void showMeAgain(String errorText, String user, String serverAddress, String serverPort, String WSDLPath){
-        AuthenticationPanel pnlAuthentication =  new AuthenticationPanel();
-
-        pnlAuthentication.getTxtUser().setText(user);
-        pnlAuthentication.getContainedPanel().getTxtServerAddress().setText(serverAddress);
-        pnlAuthentication.getContainedPanel().getTxtServerPort().setText(serverPort);
-        pnlAuthentication.getContainedPanel().getTxtWSDLPath().setText(WSDLPath);
-
-        //If the message is too long we assigned to the tooltiptext
-        if (errorText.length() > 50){
-            pnlAuthentication.getLblDetails().setToolTipText(errorText);
-            pnlAuthentication.getLblDetails().setVisible(true);
-            pnlAuthentication.getLblError().setText(errorText.substring(0, 50)+"..."); //NOI18n
-        }else{
-            pnlAuthentication.getLblError().setText(errorText);
-            pnlAuthentication.getLblDetails().setVisible(false);
-        }
-        pnlAuthentication.getLblError().setVisible(true);
-
-        DialogDescriptor dd = new DialogDescriptor(pnlAuthentication,"Login Window",true,
-                pnlAuthentication.getOptions(),null,DialogDescriptor.BOTTOM_ALIGN,null,null);
-
-        JDialog dialog = (JDialog)DialogDisplayer.getDefault().createDialog(dd);
-        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        dialog.setVisible(true);
+    public ConnectionSettingsPanel getContainedPanel(){
+        return (ConnectionSettingsPanel)this.pnlSettingsContainer.getComponent(0);
     }
 }

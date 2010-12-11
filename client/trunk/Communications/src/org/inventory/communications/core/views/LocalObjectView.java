@@ -17,6 +17,7 @@
 package org.inventory.communications.core.views;
 
 import java.awt.Image;
+import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -71,11 +72,13 @@ public class LocalObjectView {
         edges = new ArrayList<LocalEdge>();
         labels = new ArrayList<LocalLabel>();
         if (viewStructure != null){
+            /* Comment this out for debugging purposes
             try{
                 FileOutputStream fos = new FileOutputStream("/home/zim/out.xml");
                 fos.write(viewStructure);
                 fos.close();
             }catch(Exception e){}
+             */
             try {
                 parseXML(viewStructure);
             } catch (XMLStreamException ex) {
@@ -118,20 +121,18 @@ public class LocalObjectView {
     private void parseXML(byte[] structure) throws XMLStreamException {
         //Here is where we use Woodstox as StAX provider
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-        //QName qView = new QName("view");
-        //QName qNodes = new QName("nodes");
-        QName qNode = new QName("node");
 
-        //QName qEdges = new QName("edges");
-        QName qEdge = new QName("edge");
-        //QName qLabels = new QName("labels");
-        QName qLabel = new QName("label");
+        QName qNode = new QName("node"); //NOI18N
+        QName qEdge = new QName("edge"); //NOI18N
+        QName qLabel = new QName("label"); //NOI18N
+        QName qControlPoint = new QName("controlpoint"); //NOI18N
+
         ByteArrayInputStream bais = new ByteArrayInputStream(structure);
         XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
 
         nodes.removeAll(nodes);
         edges.removeAll(edges);
-       labels.removeAll(labels);
+        labels.removeAll(labels);
 
         while (reader.hasNext()){
             int event = reader.next();
@@ -179,6 +180,13 @@ public class LocalObjectView {
                     }else{
                         if (reader.getName().equals(qLabel)){
                             //Unavailable by now
+                        }
+                        else{
+                            if (reader.getName().equals(qControlPoint)){
+                                edges.get(edges.size() -1).getControlPoints().
+                                        add(new Point(Double.valueOf(reader.getAttributeValue(null,"x")).intValue(), //NOI18N
+                                        Double.valueOf(reader.getAttributeValue(null,"y")).intValue()));             //NOI18N
+                            }
                         }
                     }
                 }
