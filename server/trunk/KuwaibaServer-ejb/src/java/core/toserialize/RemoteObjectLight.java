@@ -43,7 +43,7 @@ public class RemoteObjectLight {
     public RemoteObjectLight(Object obj){
         this.className = obj.getClass().getSimpleName();
         this.packageName = obj.getClass().getPackage().getName();
-        //TODO: It should be possible to the user to change the sisplay name using a customization tool
+        //TODO: It should be possible to the user to change the display name using a customization tool
         this.displayName = ((RootObject)obj).getName();
         this.oid = ((RootObject)obj).getId();
     }
