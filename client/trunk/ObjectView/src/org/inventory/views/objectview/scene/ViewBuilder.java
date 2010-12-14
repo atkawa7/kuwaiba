@@ -16,10 +16,8 @@
 
 package org.inventory.views.objectview.scene;
 
-import java.awt.BasicStroke;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.communications.core.views.LocalLabel;
 import org.inventory.communications.core.views.LocalObjectView;
@@ -64,10 +62,8 @@ public class ViewBuilder {
      */
     public void buildView(){
         
-        //We clean the object-widget mapping has in order to fill it again
-        List myClone = new ArrayList(scene.getObjects());
-        for(Object obj : myClone)
-            scene.removeObject(obj);
+        //We clean the object-widget mapping has in order to fill it again. So we do with listeners
+        scene.clear();
 
         for (LocalNode node : myView.getNodes()){
             ObjectNodeWidget widget = new ObjectNodeWidget(scene, node);
@@ -172,15 +168,15 @@ public class ViewBuilder {
         }
 
         if (newPhysicalConnections != null)
-        for (LocalObject toAdd : newPhysicalConnections){
-            LocalNode nodeA = getNodeMatching(myView.getNodes(), (Long)toAdd.getAttribute("nodeA"));
-            if (nodeA == null)
-                continue;
-            LocalNode nodeB = getNodeMatching(myView.getNodes(), (Long)toAdd.getAttribute("nodeB"));
-            if (nodeB == null)
-                continue;
-            myView.getEdges().add(new LocalEdge(toAdd, nodeA, nodeB, null));
-        }
+            for (LocalObject toAdd : newPhysicalConnections){
+                LocalNode nodeA = getNodeMatching(myView.getNodes(), (Long)toAdd.getAttribute("nodeA"));
+                if (nodeA == null)
+                    continue;
+                LocalNode nodeB = getNodeMatching(myView.getNodes(), (Long)toAdd.getAttribute("nodeB"));
+                if (nodeB == null)
+                    continue;
+                myView.getEdges().add(new LocalEdge(toAdd, nodeA, nodeB, null));
+            }
 
         buildView();
     }

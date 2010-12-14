@@ -22,9 +22,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.core.services.interfaces.LocalObject;
-import org.inventory.views.objectview.scene.actions.CustomAddRemoveControlPointAction;
-import org.inventory.views.objectview.scene.actions.CustomMoveControlPointAction;
-import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.Router;
 import org.netbeans.api.visual.widget.FreeConnectionWidget;
@@ -72,9 +69,8 @@ public class ObjectConnectionWidget extends FreeConnectionWidget implements Acti
         getActions().addAction(scene.createSelectAction());
         //I don't like this workaround but it seems to be the only way to realize that 
         //the action has been performed
-        CustomAddRemoveControlPointAction addRemoveControlPointActions = new CustomAddRemoveControlPointAction(3.0, 5.0, null);
-        addRemoveControlPointActions.addActionListener(this);
-        getActions().addAction(addRemoveControlPointActions);
+        scene.getAddRemoveControlPointAction().addActionListener(this);
+        getActions().addAction(scene.getAddRemoveControlPointAction());
 
         scene.getMoveControlPointAction().addActionListener(this);
         getActions().addAction(scene.getMoveControlPointAction());

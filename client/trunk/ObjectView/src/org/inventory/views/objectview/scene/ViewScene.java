@@ -30,6 +30,8 @@ import java.util.Set;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.utils.Utils;
+import org.inventory.views.objectview.scene.actions.CustomAddRemoveControlPointAction;
+import org.inventory.views.objectview.scene.actions.CustomMoveAction;
 import org.inventory.views.objectview.scene.actions.CustomMoveControlPointAction;
 import org.inventory.views.objectview.scene.menus.EdgeMenu;
 import org.netbeans.api.visual.action.ActionFactory;
@@ -80,10 +82,20 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
      */
     private Router freeRouter = RouterFactory.createFreeRouter();
     /**
-     * Default free router (shared by all connection widgets)
+     * Default control point move action (shared by all connection widgets)
      */
     private CustomMoveControlPointAction moveControlPointAction =
             new CustomMoveControlPointAction(new FreeMoveControlPointProvider(),null);
+    /**
+     * Default add/remove control point action (shared by all connection widgets)
+     */
+    private CustomAddRemoveControlPointAction addRemoveControlPointAction =
+            new CustomAddRemoveControlPointAction(3.0, 5.0, null);
+    /**
+     * Default move action (shared by all node widgets)
+     */
+    private CustomMoveAction moveAction =
+            new CustomMoveAction(ActionFactory.createFreeMoveStrategy(),ActionFactory.createDefaultMoveProvider());
     /**
      * Popup menu used for edges
      */
@@ -129,37 +141,6 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
         getActions().addAction(ActionFactory.createPanAction());
         getActions().addAction(ActionFactory.createRectangularSelectAction(this, backgroundLayer));
         setActiveTool(ACTION_SELECT);
-        addObjectSceneListener(new ObjectSceneListener() {
-
-            public void objectAdded(ObjectSceneEvent ose, Object o) {
-                //throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            public void objectRemoved(ObjectSceneEvent ose, Object o) {
-                //throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            public void objectStateChanged(ObjectSceneEvent ose, Object o, ObjectState os, ObjectState os1) {
-        
-            }
-
-            public void selectionChanged(ObjectSceneEvent ose, Set<Object> set, Set<Object> set1) {
-        
-            }
-
-            public void highlightingChanged(ObjectSceneEvent ose, Set<Object> set, Set<Object> set1) {
-        
-            }
-
-            public void hoverChanged(ObjectSceneEvent ose, Object o, Object o1) {
-        
-            }
-
-            public void focusChanged(ObjectSceneEvent ose, Object o, Object o1) {
-        
-            }
-        }, ObjectSceneEventType.OBJECT_ADDED, ObjectSceneEventType.OBJECT_REMOVED,
-                ObjectSceneEventType.OBJECT_SELECTION_CHANGED);
     }
 
     /**
@@ -223,6 +204,14 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
         return moveControlPointAction;
     }
 
+    public CustomAddRemoveControlPointAction getAddRemoveControlPointAction() {
+        return addRemoveControlPointAction;
+    }
+
+    public CustomMoveAction getMoveAction() {
+        return moveAction;
+    }
+
     public Router getFreeRouter() {
         return freeRouter;
     }
@@ -281,6 +270,16 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
         if (listeners == null)
             return;
         listeners.remove(listener);
+    }
+
+    public void clear(){
+        List myClone = new ArrayList(getObjects());
+        for(Object obj : myClone)
+            removeObject(obj);
+
+        moveAction.clearActionListeners();
+        addRemoveControlPointAction.clearActionListeners();
+        moveControlPointAction.clearActionListeners();
     }
 
     public void fireChangeEvent(ActionEvent ev){

@@ -448,6 +448,7 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
     public void componentClosed() {
         vrs.terminateLookupListener();
         scene.removeActionListener(this);
+        scene.clear();
     }
 
     void writeProperties(java.util.Properties p) {
@@ -497,7 +498,7 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
     @Override
     public String getDisplayName(){
         if (super.getDisplayName() == null)
-            return null;
+            return "<No Name>";
         return super.getDisplayName().trim().equals("")?"<No Name>":super.getDisplayName();
     }
 

@@ -88,6 +88,8 @@ public class ObjectViewService implements LookupListener{
            //Check if the view is still unsaved
            vrtc.checkForUnsavedView(false);
 
+           vrtc.setHtmlDisplayName(null); //Clear the displayname in case it was set to another value
+
             //We clean the scene...
            vrtc.getScene().getNodesLayer().removeChildren();
            vrtc.getScene().getEdgesLayer().removeChildren();

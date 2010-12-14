@@ -64,7 +64,7 @@ import org.netbeans.api.visual.widget.Widget;
  * copy of org.netbeans.modules.visual.action.AddRemoveControlPointAction since this is not
  * reachable from the current code.
  * This class was licensed under CDDL and keeps the licensing
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Alex, modified by Charles Edward Bedon Cortazar <charles.bedon@zoho.com> for project Kuwaiba 2010
  */
 public class CustomAddRemoveControlPointAction extends WidgetAction.Adapter {
 
@@ -90,6 +90,11 @@ public class CustomAddRemoveControlPointAction extends WidgetAction.Adapter {
         if (listeners == null)
             return;
         listeners.remove(listener);
+    }
+
+    public void clearActionListeners(){
+        if (listeners != null)
+            listeners.clear();
     }
 
     public void fireChangeEvent(ActionEvent ev){

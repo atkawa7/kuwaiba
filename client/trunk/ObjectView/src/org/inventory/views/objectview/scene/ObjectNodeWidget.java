@@ -18,6 +18,8 @@ package org.inventory.views.objectview.scene;
 
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.communications.core.views.LocalNode;
@@ -29,7 +31,7 @@ import org.openide.util.ImageUtilities;
  * This widget represents a node (as in the navigation tree)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ObjectNodeWidget extends IconNodeWidget{
+public class ObjectNodeWidget extends IconNodeWidget implements ActionListener{
     private LocalObjectLight object;
 
     public ObjectNodeWidget(ViewScene scene, LocalNode node){
@@ -42,6 +44,8 @@ public class ObjectNodeWidget extends IconNodeWidget{
             myIcon = ImageUtilities.loadImage("org/inventory/views/objectview/res/default_32.png");
         setImage(myIcon);
         //createActions(ViewScene.ACTION_SELECT).addAction(ActionFactory.createAlignWithMoveAction(scene.getNodesLayer(), scene.getInteractionLayer(), null));
+        scene.getMoveAction().addActionListener(this);
+        getActions().addAction(scene.getMoveAction());
         createActions(ViewScene.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(scene.getEdgesLayer(), scene.getConnectionProvider()));
         getActions().addAction(scene.createWidgetHoverAction());
         getActions().addAction(ActionFactory.createInplaceEditorAction(new LabelInplaceTextEditor()));
@@ -53,5 +57,9 @@ public class ObjectNodeWidget extends IconNodeWidget{
      */
     public LocalObjectLight getObject(){
         return this.object;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        ((ViewScene)getScene()).fireChangeEvent(e);
     }
 }
