@@ -26,12 +26,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.utils.Utils;
+import org.inventory.views.objectview.scene.actions.CustomMoveControlPointAction;
 import org.inventory.views.objectview.scene.menus.EdgeMenu;
 import org.netbeans.api.visual.action.ActionFactory;
-import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.graph.GraphScene;
+import org.netbeans.api.visual.model.ObjectSceneEvent;
+import org.netbeans.api.visual.model.ObjectSceneEventType;
+import org.netbeans.api.visual.model.ObjectSceneListener;
+import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.router.Router;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.ImageWidget;
@@ -43,7 +49,7 @@ import org.netbeans.api.visual.widget.Widget;
  * This is the main scene for an object's view
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ViewScene extends GraphScene<LocalObjectLight,String>{
+public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
 
     /**
      * This layer is used to paint the auxiliary elements 
@@ -76,7 +82,8 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
     /**
      * Default free router (shared by all connection widgets)
      */
-    private WidgetAction moveControlPointAction = ActionFactory.createFreeMoveControlPointAction();
+    private CustomMoveControlPointAction moveControlPointAction =
+            new CustomMoveControlPointAction(new FreeMoveControlPointProvider(),null);
     /**
      * Popup menu used for edges
      */
@@ -122,28 +129,66 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
         getActions().addAction(ActionFactory.createPanAction());
         getActions().addAction(ActionFactory.createRectangularSelectAction(this, backgroundLayer));
         setActiveTool(ACTION_SELECT);
+        addObjectSceneListener(new ObjectSceneListener() {
+
+            public void objectAdded(ObjectSceneEvent ose, Object o) {
+                //throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public void objectRemoved(ObjectSceneEvent ose, Object o) {
+                //throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public void objectStateChanged(ObjectSceneEvent ose, Object o, ObjectState os, ObjectState os1) {
+        
+            }
+
+            public void selectionChanged(ObjectSceneEvent ose, Set<Object> set, Set<Object> set1) {
+        
+            }
+
+            public void highlightingChanged(ObjectSceneEvent ose, Set<Object> set, Set<Object> set1) {
+        
+            }
+
+            public void hoverChanged(ObjectSceneEvent ose, Object o, Object o1) {
+        
+            }
+
+            public void focusChanged(ObjectSceneEvent ose, Object o, Object o1) {
+        
+            }
+        }, ObjectSceneEventType.OBJECT_ADDED, ObjectSceneEventType.OBJECT_REMOVED,
+                ObjectSceneEventType.OBJECT_SELECTION_CHANGED);
     }
 
+    /**
+     * This methods are called if addNode/addEdge instead of "addChild"
+     * @param node
+     * @return
+     */
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
-        System.out.println("attacnodewid");
         return null;
     }
 
     @Override
-    protected Widget attachEdgeWidget(String edge) {
-        System.out.println("attacedgewid");
+    protected Widget attachEdgeWidget(LocalObject edge) {
         return null;
     }
 
+    /**
+     * These are called when creating anchors based on the past methods
+     * @param edge
+     * @param oldSourceNode
+     * @param sourceNode
+     */
     @Override
-    protected void attachEdgeSourceAnchor(String edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
-        System.out.println("attacsourceanch");
+    protected void attachEdgeSourceAnchor(LocalObject edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
     }
 
     @Override
-    protected void attachEdgeTargetAnchor(String edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
-        System.out.println("attactargetanch");
+    protected void attachEdgeTargetAnchor(LocalObject edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
     }
 
     public LayerWidget getInteractionLayer() {
@@ -174,7 +219,7 @@ public class ViewScene extends GraphScene<LocalObjectLight,String>{
         this.currentObject = currentObject;
     }
 
-    public WidgetAction getMoveControlPointAction() {
+    public CustomMoveControlPointAction getMoveControlPointAction() {
         return moveControlPointAction;
     }
 

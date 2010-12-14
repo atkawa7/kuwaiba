@@ -18,18 +18,22 @@ package org.inventory.views.objectview.scene;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.core.services.interfaces.LocalObject;
+import org.inventory.views.objectview.scene.actions.CustomAddRemoveControlPointAction;
+import org.inventory.views.objectview.scene.actions.CustomMoveControlPointAction;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.Router;
-import org.netbeans.api.visual.widget.ConnectionWidget;
+import org.netbeans.api.visual.widget.FreeConnectionWidget;
 
 /**
  * Extends the functionality of a simple connection widget
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ObjectConnectionWidget extends ConnectionWidget{
+public class ObjectConnectionWidget extends FreeConnectionWidget implements ActionListener{
 
     /**
      * Some constants
@@ -66,9 +70,16 @@ public class ObjectConnectionWidget extends ConnectionWidget{
         setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         getActions().addAction(scene.createSelectAction());
-        getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
+        //I don't like this workaround but it seems to be the only way to realize that 
+        //the action has been performed
+        CustomAddRemoveControlPointAction addRemoveControlPointActions = new CustomAddRemoveControlPointAction(3.0, 5.0, null);
+        addRemoveControlPointActions.addActionListener(this);
+        getActions().addAction(addRemoveControlPointActions);
+
+        scene.getMoveControlPointAction().addActionListener(this);
         getActions().addAction(scene.getMoveControlPointAction());
-        getActions().addAction(ActionFactory.createPopupMenuAction(scene.getEdgeMenu()));
+
+        //getActions().addAction(ActionFactory.createPopupMenuAction(scene.getEdgeMenu()));
     }
 
     public LocalObject getObject() {
@@ -87,5 +98,9 @@ public class ObjectConnectionWidget extends ConnectionWidget{
         if (connectionClass.equals(LocalEdge.CLASS_WIRECONTAINER))
             return COLOR_WIRELESS;
         return Color.BLACK;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        ((ViewScene)getScene()).fireChangeEvent(e);
     }
 }
