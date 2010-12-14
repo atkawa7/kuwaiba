@@ -30,6 +30,7 @@ import java.util.Set;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.utils.Utils;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.views.objectview.scene.actions.CustomAddRemoveControlPointAction;
 import org.inventory.views.objectview.scene.actions.CustomMoveAction;
 import org.inventory.views.objectview.scene.actions.CustomMoveControlPointAction;
@@ -125,6 +126,10 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
      * Event ID to indicate a change in the scene (saving is mandatory)
      */
     public final static int SCENE_CHANGETOSAVE = 2;
+    /**
+     * Event ID to indicate an object has been selected
+     */
+    public final static int SCENE_OBJECTSELECTED = 3;
 
     public ViewScene (){
         interactionLayer = new LayerWidget(this);
@@ -141,6 +146,38 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
         getActions().addAction(ActionFactory.createPanAction());
         getActions().addAction(ActionFactory.createRectangularSelectAction(this, backgroundLayer));
         setActiveTool(ACTION_SELECT);
+        addObjectSceneListener(new ObjectSceneListener() {
+
+            public void objectAdded(ObjectSceneEvent ose, Object o) {
+
+            }
+
+            public void objectRemoved(ObjectSceneEvent ose, Object o) {
+
+            }
+
+            public void objectStateChanged(ObjectSceneEvent ose, Object o, ObjectState os, ObjectState os1) {
+
+            }
+
+            public void selectionChanged(ObjectSceneEvent ose, Set<Object> oldSelection, Set<Object> newSelection) {
+                if (newSelection.size() == 1)
+                    fireChangeEvent(new ActionEvent(newSelection.iterator().next(),
+                            SCENE_OBJECTSELECTED, "object-selected-operation"));
+            }
+
+            public void highlightingChanged(ObjectSceneEvent ose, Set<Object> set, Set<Object> set1) {
+                System.out.println("");
+            }
+
+            public void hoverChanged(ObjectSceneEvent ose, Object o, Object o1) {
+                System.out.println("");
+            }
+
+            public void focusChanged(ObjectSceneEvent ose, Object o, Object o1) {
+
+            }
+        }, ObjectSceneEventType.OBJECT_SELECTION_CHANGED);
     }
 
     /**

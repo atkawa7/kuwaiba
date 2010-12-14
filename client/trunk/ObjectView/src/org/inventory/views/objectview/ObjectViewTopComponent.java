@@ -18,11 +18,14 @@ package org.inventory.views.objectview;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.views.LocalEdge;
+import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.views.objectview.scene.ObjectConnectionWidget;
 import org.inventory.views.objectview.scene.ViewScene;
 import org.openide.explorer.ExplorerManager;
@@ -33,6 +36,8 @@ import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.explorer.ExplorerManager.Provider;
 import org.openide.explorer.ExplorerUtils;
+import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 
 /**
@@ -522,6 +527,18 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
             case ViewScene.SCENE_CHANGETOSAVE:
                 btnSaveActionPerformed(e);
                 nu.showSimplePopup("Object View", NotificationUtil.INFO, "The view has been saved automatically");
+                break;
+            case ViewScene.SCENE_OBJECTSELECTED:
+                if (em.getRootContext() != null){
+                    try{
+                        em.getExploredContext().destroy();
+                    }catch(IOException ioe){
+                        Exceptions.printStackTrace(ioe);
+                    }
+                    ObjectNode widgetNode = new ObjectNode((LocalObjectLight)e.getSource(),true);
+                    em.setRootContext(widgetNode);
+                    setActivatedNodes(new Node[]{widgetNode});
+                }
         }
     }
 

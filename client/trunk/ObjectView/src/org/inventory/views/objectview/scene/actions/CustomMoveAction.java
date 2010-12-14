@@ -133,14 +133,13 @@ public final class CustomMoveAction extends WidgetAction.LockedAdapter {
             originalSceneLocation = null;
             initialMouseLocation = null;
             provider.movementFinished (widget);
-        }
-        if (state)
-            fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "node-move-operation"));
+        }           
         return state ? State.CONSUMED : State.REJECTED;
     }
 
     @Override
     public State mouseDragged (Widget widget, WidgetMouseEvent event) {
+        fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "node-move-operation"));
         return move (widget, event.getPoint ()) ? State.createLocked (widget, this) : State.REJECTED;
     }
 
@@ -153,5 +152,4 @@ public final class CustomMoveAction extends WidgetAction.LockedAdapter {
         provider.setNewLocation (widget, strategy.locationSuggested (widget, originalSceneLocation, location));
         return true;
     }
-
 }
