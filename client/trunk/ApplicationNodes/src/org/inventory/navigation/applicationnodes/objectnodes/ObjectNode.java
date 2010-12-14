@@ -115,10 +115,14 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     
     @Override
     public String getDisplayName(){
-        String displayName = (object.getDisplayname().equals("") ||
-                                    object.getDisplayname() == null)?java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME"):object.getDisplayname();
+        String displayName;
+        if (object instanceof LocalObject)
+            displayName = (((LocalObject)object).getAttribute("name").equals("")) ?
+                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME"):((LocalObject)object).getAttribute("name").toString();
+        else
+            displayName= (object.getDisplayname().equals(""))?
+                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME"):object.getDisplayname();
         String className = CommunicationsStub.getInstance().getMetaForClass(object.getClassName(),false).getDisplayName();
-        //return displayName + " ["+object.getClassName()+"]"; TODO: Just to test!!!!
         return displayName + " ["+(className==null?object.getClassName():className)+"]";
     }
 
@@ -130,10 +134,12 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         Set administrativePropertySet = Sheet.createPropertiesSet(); //Administrative attributes category
 
         LocalClassMetadata meta = com.getMetaForClass(object.getClassName(),false);
+        LocalObject lo;
+        if (object instanceof LocalObject)
+            lo = (LocalObject)object;
+        else
+            lo = com.getObjectInfo(object.getClassName(), object.getOid());
 
-        LocalObject lo = com.getObjectInfo(object.getClassName(), object.getOid());
-
-        int i = 0;
         for(LocalAttributeMetadata lam:meta.getAttributes()){
             if(lam.getIsVisible()){
 
@@ -162,20 +168,23 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                                            this);
                 }
                 else{
-                    property = new ObjectNodeProperty(
-                                                        lam.getName(),
-                                                        lam.getType(),
-                                                        lo.getAttribute(lam.getName()),
-                                                        lam.getDisplayName().equals("")?lam.getName():lam.getDisplayName(),
-                                                        lam.getDescription(),this);
+                    //Those attributes that are not multiple, but references another object
+                    //like nodeA or endpointB in physicalConnections should be ignored, at least by now
+                    if (!lam.getType().equals(LocalObjectLight.class))
+                        property = new ObjectNodeProperty(
+                                                            lam.getName(),
+                                                            lam.getType(),
+                                                            lo.getAttribute(lam.getName()),
+                                                            lam.getDisplayName().equals("")?lam.getName():lam.getDisplayName(),
+                                                            lam.getDescription(),this);
                 }
-
-                if(lam.getIsAdministrative())
-                    administrativePropertySet.put(property);
-                else
-                    generalPropertySet.put(property);
-            }
-            i++;
+                if (property != null){
+                    if(lam.getIsAdministrative())
+                        administrativePropertySet.put(property);
+                    else
+                        generalPropertySet.put(property);
+                }
+            }         
         }
 
         generalPropertySet.setName("1");

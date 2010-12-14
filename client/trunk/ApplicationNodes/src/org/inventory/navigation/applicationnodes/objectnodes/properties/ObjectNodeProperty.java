@@ -39,7 +39,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
     private ObjectNode node;
 
 
-    /*
+    /**
      * This constructor is called when the type is anything but a list
      */
     public ObjectNodeProperty(String _name, Class _valueType, Object _value,
@@ -51,9 +51,9 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
         this.getPropertyEditor().addPropertyChangeListener(this);
     }
 
-    /*
-     This constructor is called when the property is a list
-     *@param _name
+    /**
+     * This constructor is called when the property is a list
+     * @param _name
      */
     public ObjectNodeProperty(String _name, Class _valueType, Object _value,
             String _displayName,String _toolTextTip, LocalObjectListItem[] _list, ObjectNode _node) {
@@ -70,7 +70,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
 
     @Override
     public Object getValue() throws IllegalAccessException, InvocationTargetException {
-            return this.value;
+       return this.value;
     }
 
     @Override

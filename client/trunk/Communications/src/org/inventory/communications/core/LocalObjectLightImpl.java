@@ -86,12 +86,16 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
     }
 
     public void addPropertyChangeListener(PropertyChangeListener newListener){
+        if (propertyChangeListeners == null)
+            propertyChangeListeners = new ArrayList<PropertyChangeListener>();
         if (propertyChangeListeners.contains(newListener))
             return;
         propertyChangeListeners.add(newListener);
     }
 
     public void removePropertyChangeListener(PropertyChangeListener listener){
+        if (propertyChangeListeners == null)
+            return;
         propertyChangeListeners.remove(listener);
     }
 
