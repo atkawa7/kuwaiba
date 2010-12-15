@@ -43,6 +43,10 @@ import org.openide.actions.PasteAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
+import org.openide.nodes.NodeEvent;
+import org.openide.nodes.NodeListener;
+import org.openide.nodes.NodeMemberEvent;
+import org.openide.nodes.NodeReorderEvent;
 import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
@@ -73,11 +77,19 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
     protected Sheet sheet;
     protected Image icon;
+    /**
+     * Incredibly it is not possible to know if a node is collapsed and calling getChildren calls addNotify
+     * so the nodes that are supposed to be created in a lazy fashion are created. This flag is useful
+     * to be used when refreshing collapsed nodes
+     */
+    protected boolean collapsed;
 
     public ObjectNode(LocalObjectLight _lol, boolean isLeaf){
         super(Children.LEAF, Lookups.singleton(_lol));
         this.object = _lol;
         this.object.addPropertyChangeListener(this);
+
+        collapsed = true;
 
         com = CommunicationsStub.getInstance();
 
@@ -201,8 +213,20 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     }
 
     public void refresh(){
-        //We force to get the attributes again
-        setSheet(createSheet());
+        //Force to retrieve the object info again
+        if (object instanceof LocalObjectLight)
+            object = com.getObjectInfoLight(object.getClassName(), object.getOid());
+        else
+            object = com.getObjectInfo(object.getClassName(), object.getOid());
+        //Force to get the attributes again, but only if there's a property sheet already asigned
+        if (this.sheet != null)
+            setSheet(createSheet());
+
+        icon = (com.getMetaForClass(object.getClassName(),false)).getSmallIcon();
+        fireIconChange();
+        if (!((ObjectChildren)getChildren()).getKeys().isEmpty())
+            for (Node child : getChildren().getNodes())
+                ((ObjectNode)child).refresh();
     }
 
     //This method is called for the very first time when the first context menu is created, and

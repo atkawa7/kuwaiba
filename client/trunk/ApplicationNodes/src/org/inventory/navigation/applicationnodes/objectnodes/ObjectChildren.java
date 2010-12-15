@@ -38,7 +38,7 @@ public class ObjectChildren extends Array{
         keys.addAll(Arrays.asList(_lols));
     }
 
-    /*
+    /**
      * This constructor is used to create a node with no children
      *  since they're going to be created on demand (see method addNotify)
      */
@@ -54,7 +54,7 @@ public class ObjectChildren extends Array{
         return myNodes;
     }
 
-    /*
+    /**
      * Creates children nodes on demand
      */
     @Override
@@ -73,10 +73,21 @@ public class ObjectChildren extends Array{
                     ObjectNode newNode = new ObjectNode(child);
                     // Remove it if it already exists (if this is not done,
                     // it will duplicate the nodes created when the parent was collapsed)
+                    keys.remove(child);
+                    keys.add(child);
                     remove(new Node[]{newNode});
                     add(new Node[]{newNode});
                 }
             }
         }
+    }
+
+    @Override
+    protected void removeNotify() {
+        keys.clear();
+    }
+
+    public List<LocalObjectLight> getKeys() {
+        return keys;
     }
 }

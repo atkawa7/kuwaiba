@@ -18,15 +18,12 @@ package org.inventory.views.objectview.scene;
 
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.communications.core.views.LocalNode;
 import org.netbeans.api.visual.action.ActionFactory;
-import org.netbeans.api.visual.action.SelectProvider;
-import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.api.visual.widget.general.IconNodeWidget;
 import org.openide.util.ImageUtilities;
 
@@ -50,6 +47,7 @@ public class ObjectNodeWidget extends IconNodeWidget implements ActionListener{
         scene.getMoveAction().addActionListener(this);
         getActions().addAction(scene.getMoveAction());
         createActions(ViewScene.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(scene.getEdgesLayer(), scene.getConnectionProvider()));
+        getActions().addAction(ActionFactory.createInplaceEditorAction(new LabelInplaceTextEditor()));
     }
 
     /**
