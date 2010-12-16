@@ -43,11 +43,15 @@ public class ObjectNodeWidget extends IconNodeWidget implements ActionListener{
         if(myIcon == null)
             myIcon = ImageUtilities.loadImage("org/inventory/views/objectview/res/default_32.png");
         setImage(myIcon);
-        getActions().addAction(scene.createSelectAction());
+
+        //The difference between using getActions().addAction() and createActions("tool").addAction()
+        //is that the first enable the action no matter what's the active scene tool. The second
+        //enables the action to be used *only* when the specified "tool" is active in the scene
+        createActions(ViewScene.ACTION_SELECT).addAction(scene.createSelectAction());
+        createActions(ViewScene.ACTION_SELECT).addAction(scene.getMoveAction());
         scene.getMoveAction().addActionListener(this);
-        getActions().addAction(scene.getMoveAction());
         createActions(ViewScene.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(scene.getEdgesLayer(), scene.getConnectionProvider()));
-        getActions().addAction(ActionFactory.createInplaceEditorAction(new LabelInplaceTextEditor()));
+        getActions().addAction(ActionFactory.createInplaceEditorAction(scene.getInplaceEditor()));
     }
 
     /**
@@ -57,6 +61,8 @@ public class ObjectNodeWidget extends IconNodeWidget implements ActionListener{
     public LocalObjectLight getObject(){
         return this.object;
     }
+
+
 
     public void actionPerformed(ActionEvent e) {
         ((ViewScene)getScene()).fireChangeEvent(e);

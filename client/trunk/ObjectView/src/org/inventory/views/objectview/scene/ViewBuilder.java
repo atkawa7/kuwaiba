@@ -69,7 +69,7 @@ public class ViewBuilder {
             ObjectNodeWidget widget = new ObjectNodeWidget(scene, node);
             widget.setPreferredLocation(node.getPosition());
             scene.getNodesLayer().addChild(widget);
-            if (!scene.getObjects().contains(node.getObject()))
+            if (scene.findObject(widget)==null)
                 scene.addObject(widget.getObject(), widget);
         }
 
@@ -90,7 +90,7 @@ public class ViewBuilder {
             }
             widget.setControlPoints(edge.getControlPoints(), true);
             scene.getEdgesLayer().addChild(widget);
-            if (!scene.getObjects().contains(edge.getObject()))
+            if (scene.findObject(widget)==null)
                 scene.addObject(widget.getObject(), widget);
         }
 

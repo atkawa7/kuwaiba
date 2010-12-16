@@ -74,7 +74,7 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
 
     public void setDisplayName(String text){
         this.displayName = text;
-        firePropertyChangeEvent(PROP_DISPLAYNAME, oid, text);
+        
     }
 
     public Boolean getValidator(String label){

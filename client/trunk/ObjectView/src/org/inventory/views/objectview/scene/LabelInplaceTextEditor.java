@@ -16,12 +16,10 @@
 
 package org.inventory.views.objectview.scene;
 
-import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.netbeans.api.visual.action.TextFieldInplaceEditor;
 import org.netbeans.api.visual.widget.Widget;
-import org.openide.util.Lookup;
 
 /**
  * The editor for node widget
@@ -42,13 +40,8 @@ public class LabelInplaceTextEditor implements TextFieldInplaceEditor{
 
     public void setText(Widget widget, String text) {
         LocalObjectLight myObject = ((ObjectNodeWidget)widget).getObject();
-        LocalObject lo = Lookup.getDefault().lookup(LocalObject.class);
-        lo.setOid(myObject.getOid());
-        lo.setLocalObject(myObject.getClassName(), new String[] {"name"}, new Object[]{text});
-
-        if (CommunicationsStub.getInstance().saveObject(lo)){
+        myObject.firePropertyChangeEvent(ObjectNode.PROP_NAME, myObject.getDisplayname(), text);
+        if (myObject.getDisplayname().equals(text))
             ((ObjectNodeWidget)widget).setLabel(text);
-            myObject.setDisplayName(text);
-        }
     }
 }

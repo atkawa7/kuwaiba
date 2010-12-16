@@ -115,15 +115,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     
     @Override
     public String getDisplayName(){
-        String displayName;
-        if (object instanceof LocalObject)
-            displayName = (((LocalObject)object).getAttribute("name").equals("")) ?
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME"):((LocalObject)object).getAttribute("name").toString();
-        else
-            displayName= (object.getDisplayname().equals(""))?
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME"):object.getDisplayname();
         String className = CommunicationsStub.getInstance().getMetaForClass(object.getClassName(),false).getDisplayName();
-        return displayName + " ["+(className==null?object.getClassName():className)+"]";
+        return getEditableText() + " ["+(className==null?object.getClassName():className)+"]";
     }
 
     @Override
@@ -337,14 +330,30 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     public void setName(String newName){
         try{
             ((ObjectNodeProperty)getSheet().get("1").get("name")).setValue(newName); //NOI18n
-            this.object.setDisplayName(newName);
-
-            //If this method is not called, getDisplayName isn't called either
-            this.setDisplayName(newName);
+            if (((ObjectNodeProperty)getSheet().get("1").get("name")).getValue().equals(newName)){
+                object.setDisplayName(newName);
+                fireDisplayNameChange(object.getDisplayname(), newName);
+            }
 
             //So the PropertySheet reflects the changes too
             refresh();
         }catch(Exception e){}
+    }
+
+    @Override
+    public String getName(){     
+        return getEditableText();
+    }
+
+    public String getEditableText(){
+        String displayName;
+        if (object instanceof LocalObject)
+            displayName = (((LocalObject)object).getAttribute("name").equals("")) ?
+                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME"):((LocalObject)object).getAttribute("name").toString();
+        else
+            displayName= (object.getDisplayname().equals(""))?
+                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME"):object.getDisplayname();
+        return displayName;
     }
 
     /**
@@ -353,8 +362,11 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getSource().equals(object))
+        if (evt.getSource().equals(object)){
             object = (LocalObjectLight)evt.getSource();
+            if (evt.getPropertyName().equals(PROP_NAME))
+                setName(evt.getNewValue().toString());
+        }
     }
 
     @Override

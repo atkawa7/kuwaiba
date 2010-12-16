@@ -98,6 +98,10 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
     private CustomMoveAction moveAction =
             new CustomMoveAction(ActionFactory.createFreeMoveStrategy(),ActionFactory.createDefaultMoveProvider());
     /**
+     * Default inplace editor for node widgets
+     */
+    private LabelInplaceTextEditor inplaceEditor = new LabelInplaceTextEditor();
+    /**
      * Popup menu used for edges
      */
     private EdgeMenu edgeMenu = new EdgeMenu();
@@ -144,7 +148,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
         addChild(labelsLayer);
         getActions().addAction(ActionFactory.createZoomAction());
         getActions().addAction(ActionFactory.createPanAction());
-        getActions().addAction(ActionFactory.createRectangularSelectAction(this, backgroundLayer));
+        //getActions().addAction(ActionFactory.createRectangularSelectAction(this, backgroundLayer));
         setActiveTool(ACTION_SELECT);
         addObjectSceneListener(new ObjectSceneListener() {
 
@@ -161,9 +165,10 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
             }
 
             public void selectionChanged(ObjectSceneEvent ose, Set<Object> oldSelection, Set<Object> newSelection) {
-                if (newSelection.size() == 1)
+                if (newSelection.size() == 1){
                     fireChangeEvent(new ActionEvent(newSelection.iterator().next(),
                             SCENE_OBJECTSELECTED, "object-selected-operation"));
+                }
             }
 
             public void highlightingChanged(ObjectSceneEvent ose, Set<Object> set, Set<Object> set1) {
@@ -247,6 +252,10 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
 
     public CustomMoveAction getMoveAction() {
         return moveAction;
+    }
+
+    public LabelInplaceTextEditor getInplaceEditor() {
+        return inplaceEditor;
     }
 
     public Router getFreeRouter() {

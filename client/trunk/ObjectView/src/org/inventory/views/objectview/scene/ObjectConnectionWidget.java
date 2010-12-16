@@ -18,13 +18,18 @@ package org.inventory.views.objectview.scene;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.core.services.interfaces.LocalObject;
+import org.netbeans.api.visual.action.ActionFactory;
+import org.netbeans.api.visual.action.SelectProvider;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.Router;
 import org.netbeans.api.visual.widget.FreeConnectionWidget;
+import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Extends the functionality of a simple connection widget
