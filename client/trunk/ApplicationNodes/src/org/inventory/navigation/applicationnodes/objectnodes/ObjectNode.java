@@ -43,10 +43,6 @@ import org.openide.actions.PasteAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.nodes.NodeEvent;
-import org.openide.nodes.NodeListener;
-import org.openide.nodes.NodeMemberEvent;
-import org.openide.nodes.NodeReorderEvent;
 import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
@@ -77,19 +73,11 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
     protected Sheet sheet;
     protected Image icon;
-    /**
-     * Incredibly it is not possible to know if a node is collapsed and calling getChildren calls addNotify
-     * so the nodes that are supposed to be created in a lazy fashion are created. This flag is useful
-     * to be used when refreshing collapsed nodes
-     */
-    protected boolean collapsed;
 
     public ObjectNode(LocalObjectLight _lol, boolean isLeaf){
         super(Children.LEAF, Lookups.singleton(_lol));
         this.object = _lol;
         this.object.addPropertyChangeListener(this);
-
-        collapsed = true;
 
         com = CommunicationsStub.getInstance();
 

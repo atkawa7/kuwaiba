@@ -20,6 +20,7 @@ import java.awt.BorderLayout;
 import java.util.logging.Logger;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.services.interfaces.RefreshableTopComponent;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -31,12 +32,12 @@ import org.openide.nodes.AbstractNode;
 import org.openide.util.Lookup;
 
 /**
- * This component is used to cutomiza the way the attributes are shown in the interface
+ * This component is used to customize the way the attributes are shown in the interface
  */
 @ConvertAsProperties(dtd = "-//org.inventory.customization.attributecustomizer//AttributeCustomizer//EN",
 autostore = false)
 public final class AttributeCustomizerTopComponent extends TopComponent
-                           implements ExplorerManager.Provider{
+                           implements ExplorerManager.Provider, RefreshableTopComponent{
 
     private static AttributeCustomizerTopComponent instance;
     /** path to the icon used by the component and its open action */
@@ -114,17 +115,10 @@ public final class AttributeCustomizerTopComponent extends TopComponent
 
     private void initCustomComponents() {
         acs = new AttributeCustomizerService(this);
-        LocalClassMetadataLight[] allMeta = acs.getInstanceableMeta();
-
-        em.setRootContext(new AbstractNode(new ClassMetadataChildren(allMeta)));
-
         tblClassCustomizerMain = new TreeTableView();
         tblClassCustomizerMain.setRootVisible(false);
 
-        if (allMeta.length !=0)
-        tblClassCustomizerMain.setProperties(em.getRootContext().getChildren().
-                getNodes()[0].getChildren().getNodes()[0].getPropertySets()[0].
-                getProperties());
+        setRoot();
 
         pnlTableEnclosing.setLayout(new BorderLayout());
         pnlTableEnclosing.add(tblClassCustomizerMain,BorderLayout.CENTER);
@@ -214,5 +208,21 @@ public final class AttributeCustomizerTopComponent extends TopComponent
         if (nu == null)
             nu = Lookup.getDefault().lookup(NotificationUtil.class);
         return nu;
+    }
+
+    public void setRoot(){
+        LocalClassMetadataLight[] allMeta = acs.getInstanceableMeta();
+        em.setRootContext(new AbstractNode(new ClassMetadataChildren(allMeta)));
+        if (allMeta.length !=0)
+        tblClassCustomizerMain.setProperties(em.getRootContext().getChildren().
+                getNodes()[0].getChildren().getNodes()[0].getPropertySets()[0].
+                getProperties());
+    }
+
+    public void refresh() {
+        if (em.getRootContext().getChildren().getNodesCount() == 0){
+            setRoot();
+            revalidate();
+        }
     }
 }

@@ -17,6 +17,7 @@
 package org.inventory.customization.attributecustomizer.nodes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
@@ -32,8 +33,7 @@ public class ClassMetadataChildren extends Array{
 
     public ClassMetadataChildren(LocalClassMetadataLight[] lcm){
         this.keys =  new ArrayList<LocalClassMetadataLight>();
-        for (LocalClassMetadataLight lcml : lcm)
-            keys.add(lcml);
+        keys.addAll(Arrays.asList(lcm));
     }
 
     @Override

@@ -27,7 +27,6 @@ import javax.swing.JTextField;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 
 /**
@@ -54,11 +53,7 @@ public class ClassManagerFrame extends javax.swing.JFrame {
         fChooser.setFileFilter(cms);
         fChooser.setAcceptAllFileFilterUsed(false);
 
-        List<LocalClassMetadataLight> lcml = cms.getAllMeta();
-        for (LocalClassMetadataLight lcm : lcml)
-            cmbClass.addItem(lcm);
-        cmbClass.addActionListener(cms);
-        cmbClass.setSelectedIndex(-1);
+        setRoot();
         this.setLocationRelativeTo(getRootPane());
     }
 
@@ -73,6 +68,7 @@ public class ClassManagerFrame extends javax.swing.JFrame {
 
         barMain = new javax.swing.JToolBar();
         btnSave = new javax.swing.JButton();
+        btnRefresh = new javax.swing.JButton();
         pnlScrollMain = new javax.swing.JScrollPane();
         pnlMain = new javax.swing.JPanel();
         txtDisplayName = new javax.swing.JTextField();
@@ -104,6 +100,19 @@ public class ClassManagerFrame extends javax.swing.JFrame {
             }
         });
         barMain.add(btnSave);
+
+        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/classmanager/res/refresh.png"))); // NOI18N
+        btnRefresh.setText(org.openide.util.NbBundle.getMessage(ClassManagerFrame.class, "ClassManagerFrame.btnRefresh.text")); // NOI18N
+        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(ClassManagerFrame.class, "ClassManagerFrame.btnRefresh.toolTipText")); // NOI18N
+        btnRefresh.setFocusable(false);
+        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
+        barMain.add(btnRefresh);
 
         getContentPane().add(barMain, java.awt.BorderLayout.PAGE_START);
 
@@ -161,11 +170,11 @@ public class ClassManagerFrame extends javax.swing.JFrame {
                 .addGap(34, 34, 34)
                 .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlMainLayout.createSequentialGroup()
-                        .addComponent(txtIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
+                        .addComponent(txtIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 499, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnIconChooser))
                     .addGroup(pnlMainLayout.createSequentialGroup()
-                        .addComponent(txtSmallIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
+                        .addComponent(txtSmallIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 499, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSmallIconChooser))
                     .addComponent(txtDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
@@ -211,6 +220,8 @@ public class ClassManagerFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        if (cmbClass.getSelectedIndex() == -1)
+            return;
         if(cms.saveProperties((LocalClassMetadataLight)cmbClass.getSelectedItem(),
                 txtDisplayName.getText().trim(),txtDescription.getText().trim(),smallIcon,icon))
             getNotifier().showSimplePopup("Class Properties Modification", NotificationUtil.INFO, "Operation completed successfully");
@@ -219,7 +230,7 @@ public class ClassManagerFrame extends javax.swing.JFrame {
 }//GEN-LAST:event_btnSaveActionPerformed
 
     private void txtDisplayNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDisplayNameActionPerformed
-        // TODO add your handling code here:
+        refresh();
 }//GEN-LAST:event_txtDisplayNameActionPerformed
 
     private void btnSmallIconChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSmallIconChooserActionPerformed
@@ -276,9 +287,14 @@ public class ClassManagerFrame extends javax.swing.JFrame {
         }
 }//GEN-LAST:event_btnIconChooserActionPerformed
 
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        refresh();
+    }//GEN-LAST:event_btnRefreshActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
     private javax.swing.JButton btnIconChooser;
+    private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnSmallIconChooser;
     private javax.swing.JComboBox cmbClass;
@@ -294,6 +310,14 @@ public class ClassManagerFrame extends javax.swing.JFrame {
     private javax.swing.JTextField txtIcon;
     private javax.swing.JTextField txtSmallIcon;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void removeNotify() {
+        cmbClass.removeActionListener(cms);
+        super.removeNotify();
+    }
+    // End of variables declaration
+
 
    public NotificationUtil getNotifier(){
         if (nu == null)
@@ -315,5 +339,21 @@ public class ClassManagerFrame extends javax.swing.JFrame {
 
     public JTextField getTxtSmallIcon() {
         return txtSmallIcon;
+    }
+
+    public void setRoot(){
+        List<LocalClassMetadataLight> lcml = cms.getAllMeta();
+        for (LocalClassMetadataLight lcm : lcml)
+            cmbClass.addItem(lcm);
+        cmbClass.setSelectedIndex(-1);
+        cmbClass.addActionListener(cms);
+    }
+
+    public void refresh(){
+        if (cmbClass.getItemCount() != 0){
+            cmbClass.removeActionListener(cms);
+            cmbClass.removeAllItems();
+        }
+        setRoot();
     }
 }

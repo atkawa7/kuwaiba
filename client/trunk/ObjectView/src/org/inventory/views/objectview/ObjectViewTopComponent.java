@@ -25,6 +25,7 @@ import javax.swing.JOptionPane;
 import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.services.interfaces.RefreshableTopComponent;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.views.objectview.scene.ObjectConnectionWidget;
 import org.inventory.views.objectview.scene.ViewScene;
@@ -46,7 +47,8 @@ import org.openide.util.Lookup;
  */
 @ConvertAsProperties(dtd = "-//org.inventory.views.objectview//ObjectView//EN",
 autostore = false)
-public final class ObjectViewTopComponent extends TopComponent implements Provider, ActionListener {
+public final class ObjectViewTopComponent extends TopComponent 
+        implements Provider, ActionListener,RefreshableTopComponent {
 
     private static ObjectViewTopComponent instance;
     /** path to the icon used by the component and its open action */
@@ -555,5 +557,9 @@ public final class ObjectViewTopComponent extends TopComponent implements Provid
         }
         isSaved = true;
         return true;
+    }
+
+    public void refresh() {
+        btnRefreshActionPerformed(null);
     }
 }
