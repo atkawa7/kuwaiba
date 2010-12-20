@@ -13,17 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package core.exceptions;
 
+import java.util.ResourceBundle;
+
 /**
- * Thrown if you're trying to access to a not existing exception
+ * Thrown when a certain operation can't be performed because a system restriction or illegal state
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ObjectNotFoundException extends Exception{
+public class OperationNotPermittedException extends Exception{
 
-    public ObjectNotFoundException(String objectClass, Long oid) {
-        super(java.util.ResourceBundle.getBundle("internationalization/Bundle").
-                getString("LBL_NOSUCHOBJECT")+objectClass+java.util.
-                ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid);
+    public OperationNotPermittedException(String operationName, String reason) {
+        super(ResourceBundle.getBundle("internationalization/Bundle").
+                getString("LBL_OPERATIONNOTPERMITTED")+operationName+", "+reason);
     }
+
 }

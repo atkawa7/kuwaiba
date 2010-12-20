@@ -13,17 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package core.exceptions;
 
+import java.util.ResourceBundle;
+
 /**
- * Thrown if you're trying to access to a not existing exception
+ * Thrown when a certain property is not known or currently supported
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ObjectNotFoundException extends Exception{
+public class UnsupportedPropertyException extends Exception{
 
-    public ObjectNotFoundException(String objectClass, Long oid) {
-        super(java.util.ResourceBundle.getBundle("internationalization/Bundle").
-                getString("LBL_NOSUCHOBJECT")+objectClass+java.util.
-                ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid);
+    public UnsupportedPropertyException(String propertyName) {
+        super(ResourceBundle.getBundle("internationalization/Bundle").
+                getString("LBL_UNSUPPORTEDPROPERTY")+propertyName);
     }
+
 }

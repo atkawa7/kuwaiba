@@ -12,18 +12,21 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *  under the License.
  */
+
 package core.exceptions;
 
+import java.util.ResourceBundle;
+
 /**
- * Thrown if you're trying to access to a not existing exception
+ * Should be thrown when an operation is not permitted
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ObjectNotFoundException extends Exception{
+public class SessionNotValidException extends Exception{
 
-    public ObjectNotFoundException(String objectClass, Long oid) {
-        super(java.util.ResourceBundle.getBundle("internationalization/Bundle").
-                getString("LBL_NOSUCHOBJECT")+objectClass+java.util.
-                ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid);
+    public SessionNotValidException() {
+        super(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOACTIVESESSION"));
     }
+
 }

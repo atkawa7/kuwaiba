@@ -61,6 +61,7 @@ public interface BackendBeanRemote {
     public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws Exception;
     public ClassInfoLight[] getInstanceableListTypes() throws Exception;
     public UserSession createSession(String username, String password, String remoteAddress) throws Exception;
+    public Boolean closeSession(String sessionId, String remoteAddress) throws Exception;
     public ViewInfo getDefaultView(Long oid, Class className) throws Exception;
     public ViewInfo getRoomView(Long oid) throws Exception;
     public ViewInfo getRackView(Long oid) throws Exception;

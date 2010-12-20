@@ -21,8 +21,12 @@ import core.toserialize.RemoteObject;
 import core.toserialize.RemoteObjectLight;
 import core.annotations.Metadata;
 import core.exceptions.EntityManagerNotAvailableException;
+import core.exceptions.MiscException;
 import core.exceptions.NotAuthorizedException;
 import core.exceptions.ObjectNotFoundException;
+import core.exceptions.OperationNotPermittedException;
+import core.exceptions.SessionNotValidException;
+import core.exceptions.UnsupportedPropertyException;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectUpdate;
@@ -48,6 +52,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.ResourceBundle;
 import java.util.Set;
 import javax.ejb.Stateful;
 import javax.persistence.PersistenceContext;
@@ -203,7 +208,7 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             Object result = em.find(objectClass, oid);           
             if (result==null)
-                throw new Exception(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT")+objectClass+java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid.toString());
+                throw new ObjectNotFoundException(objectClass.getSimpleName(),oid);
              else
                 return new RemoteObject(result);
         }
@@ -224,7 +229,7 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             Object result = em.find(objectClass, oid);
             if (result==null)
-                throw new Exception(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT")+objectClass+java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid.toString());
+                throw new ObjectNotFoundException(objectClass.getSimpleName(),oid);
             else
                 return new RemoteObjectLight(result);
             
@@ -253,7 +258,7 @@ public class BackendBean implements BackendBeanRemote {
 
             Object myObject = em.find(obj.getObjectClass(), obj.getOid());
             if(myObject == null)
-                throw new ObjectNotFoundException();
+                throw new ObjectNotFoundException(obj.getObjectClass().getSimpleName(),obj.getOid());
             for (int i = 0; i< obj.getNewValues().length; i++)
                 myObject.getClass().getMethod("set"+MetadataUtils.capitalize(obj.getUpdatedAttributes()[i].getName()),
                         obj.getUpdatedAttributes()[i].getType()).invoke(myObject, obj.getNewValues()[i]);
@@ -278,7 +283,7 @@ public class BackendBean implements BackendBeanRemote {
             String sentence = "UPDATE x "+myClassName+" x SET isLocked="+value.toString()+" WHERE x.id="+String.valueOf(oid);
             Query query = em.createQuery(sentence);
             if (query.executeUpdate()==0)
-                throw new Exception(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT")+objectClass+java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid.toString());
+                throw new Exception();
             else
                 return true;
         }
@@ -568,7 +573,8 @@ public class BackendBean implements BackendBeanRemote {
                     if (!myRemovable.getIsLocked())
                         em.remove(myRemovable);
                     else
-                        throw new Exception("An object within the hierarchy is locked: "+
+                        throw new OperationNotPermittedException(ResourceBundle.getBundle("internationalization/Bundle").
+                                getString("LBL_OBJECTREMOVAL"),ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_OBJECTLOCKED")+
                                 myRemovable.getId()+" ("+myRemovable.getClass()+")");
                 }
             }
@@ -712,11 +718,11 @@ public class BackendBean implements BackendBeanRemote {
     @Override
     public Boolean setAttributePropertyValue(Long classId, String attributeName, 
             String propertyName, String propertyValue) throws Exception{
-        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_SETATTRIBUTEPROPERTYVALUE"));
+        System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_SETATTRIBUTEPROPERTYVALUE"));
         if (em != null){
             ClassMetadata myClass = em.find(ClassMetadata.class, classId);
             if (myClass == null)
-                throw new Exception("Class with id "+classId+" not found");
+                throw new ClassNotFoundException("Class with id "+classId+" not found");
                 
             for (AttributeMetadata att : myClass.getAttributes())
                 if(att.getName().equals(attributeName)){
@@ -732,12 +738,12 @@ public class BackendBean implements BackendBeanRemote {
                                 if (propertyName.equals("isAdministrative"))
                                     att.setIsAdministrative(Boolean.valueOf(propertyValue));
                                 else{
-                                    throw new Exception("Property "+propertyName+" not supported");
+                                    throw new UnsupportedPropertyException(propertyName);
                                 }
                     em.merge(att);
                     return true;
                 }
-            throw new Exception("Attribute "+attributeName+" in class with id "+classId+" not found");
+            throw new MiscException("Attribute "+attributeName+" in class with id "+classId+" not found");
         }
         else
             throw new EntityManagerNotAvailableException();
@@ -757,7 +763,7 @@ public class BackendBean implements BackendBeanRemote {
         if(em !=null){
             ClassMetadata myClass = em.find(ClassMetadata.class, classId);
             if (myClass ==null)
-                throw new Exception("Class with id "+classId+" not found");
+                throw new ClassNotFoundException("Class Id "+classId);
 
             if (attributeName.equals("displayName"))
                 myClass.setDisplayName(attributeValue);
@@ -765,7 +771,7 @@ public class BackendBean implements BackendBeanRemote {
                 if (attributeName.equals("description"))
                     myClass.setDescription(attributeValue);
                 else
-                    throw new Exception("Attribute "+attributeName+" in class with id "+classId+" not found");
+                    throw new MiscException("Attribute "+attributeName+" in class with id "+classId+" not found");
 
             em.merge(myClass);
             return true;
@@ -785,7 +791,7 @@ public class BackendBean implements BackendBeanRemote {
         if(em !=null){
             ClassMetadata myClass = em.find(ClassMetadata.class, classId);
             if (em ==null)
-                throw new Exception("Class with id "+classId+" not found");
+                throw new ClassNotFoundException("Class Id "+classId);
 
             if (attributeName.equals("smallIcon"))
                 myClass.setSmallIcon(iconImage);
@@ -793,7 +799,7 @@ public class BackendBean implements BackendBeanRemote {
                 if (attributeName.equals("icon"))
                     myClass.setIcon(iconImage);
                 else
-                    throw new Exception("Attribute "+attributeName+" in class with id "+classId+" not found");
+                    throw new MiscException("Attribute "+attributeName+" in class with id "+classId+" not found");
             }
             em.merge(myClass);
             return true;
@@ -848,8 +854,36 @@ public class BackendBean implements BackendBeanRemote {
                 return mySession;
             }
             else
-                throw new Exception(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_BADLOGIN"));
+                throw new NotAuthorizedException(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_BADLOGIN"));
                 
+        }else
+            throw new EntityManagerNotAvailableException();
+    }
+
+    /**
+     * Authenticate the user and creates a session if the login was successful
+     * @param username
+     * @param password
+     * @return
+     */
+    @Override
+    public Boolean closeSession(String sessionId, String remoteAddress) throws Exception{
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_CLOSESESSION"));
+        if (em != null){
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery cQuery = cb.createQuery();
+            Root entity = cQuery.from(UserSession.class);
+            Predicate predicate = cb.equal(entity.get("token"), sessionId);
+            predicate = cb.and(cb.equal(entity.get("ipAddress"), remoteAddress),predicate);
+            cQuery.where(predicate);
+            List result = em.createQuery(cQuery).getResultList();
+            if (!result.isEmpty()){
+                em.remove(result.get(0));
+                return true;
+            }
+            else
+                throw new Exception(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOACTIVSESSION"));
+
         }else
             throw new EntityManagerNotAvailableException();
     }
@@ -902,14 +936,11 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             Class viewClass = getClassFor(view.getViewClass());
             if (viewClass == null)
-                throw new Exception("View class not valid: "+ view.getViewClass());
+                throw new MiscException("View class not valid: "+ view.getViewClass());
 
             Object obj = em.find(myClass, oid);
             if (obj == null)
-                throw new Exception (java.util.ResourceBundle.
-                    getBundle("internationalization/Bundle").
-                    getString("LBL_NOSUCHOBJECT")+" "+myClass.getSimpleName()+" "+java.util.ResourceBundle.
-                    getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid);
+                throw new ObjectNotFoundException(myClass.getSimpleName(),oid);
                 
             List<GenericView> views = ((ViewableObject)obj).getViews();
             GenericView myView = null;
@@ -957,18 +988,18 @@ public class BackendBean implements BackendBeanRemote {
 
             GenericPort portA = em.find(GenericPort.class, endpointA);
             if (portA == null)
-                throw new Exception("Port A does not exist");
+                throw new ObjectNotFoundException("GenericPort",endpointA);//NOI18N
 
             if (portA.getConnectedConnection() != null)
-                throw new Exception("Port A is already connnected");
+                throw new MiscException("Port A is already connnected");
 
             GenericPort portB = em.find(GenericPort.class, endpointB);
             if (portB == null)
-                throw new Exception("Port B is already connnected");
+                throw new ObjectNotFoundException("GenericPort",endpointB);//NOI18N
 
 
             if (portB.getConnectedConnection() != null)
-                throw new Exception("Port B is already connnected");
+                throw new MiscException("Port B is already connnected");
 
             GenericPhysicalConnection conn = (GenericPhysicalConnection) connectionClass.newInstance();
             conn.setEndpointA(portA);
@@ -1001,11 +1032,11 @@ public class BackendBean implements BackendBeanRemote {
 
             GenericPhysicalNode nodeA = (GenericPhysicalNode)em.find(GenericPhysicalNode.class, sourceNode);
             if (nodeA ==null)
-                throw new Exception("Node A does not exist");
+                throw new ObjectNotFoundException("GenericPhysicalNode",sourceNode); //NOI18N
 
             GenericPhysicalNode nodeB = (GenericPhysicalNode)em.find(GenericPhysicalNode.class, targetNode);
             if (nodeB ==null)
-                throw new Exception("Node B does not exist");
+                throw new ObjectNotFoundException("GenericPhysicalNode",targetNode); //NOI18N
 
             GenericPhysicalContainer conn = (GenericPhysicalContainer) containerClass.newInstance();
             conn.setNodeA(nodeA);
@@ -1079,10 +1110,7 @@ public class BackendBean implements BackendBeanRemote {
     public Boolean removeUsersFromGroup(Long[] usersOids, Long groupOid) throws Exception{
         UserGroup group = em.find(UserGroup.class, groupOid);
         if (group == null)
-            throw new Exception(java.util.ResourceBundle.
-                    getBundle("internationalization/Bundle").
-                    getString("LBL_NOSUCHOBJECT")+" UserGroup "+java.util.ResourceBundle.
-                    getBundle("internationalization/Bundle").getString("LBL_WHICHID")+groupOid);
+            throw new ObjectNotFoundException("UserGroup ",groupOid); //I18N
 
         for (Long oid : usersOids){
             User user = em.find(User.class,oid);
@@ -1101,10 +1129,7 @@ public class BackendBean implements BackendBeanRemote {
     public Boolean addUsersToGroup(Long[] usersOids, Long groupOid) throws Exception{
         UserGroup group = em.find(UserGroup.class, groupOid);
         if (group == null)
-            throw new Exception(java.util.ResourceBundle.
-                    getBundle("internationalization/Bundle").
-                    getString("LBL_NOSUCHOBJECT")+" UserGroup "+java.util.ResourceBundle.
-                    getBundle("internationalization/Bundle").getString("LBL_WHICHID")+groupOid);
+            throw new ObjectNotFoundException("UserGroup",groupOid); //I18N
             
         for (Long oid : usersOids){
             User user = em.find(User.class,oid);
@@ -1148,7 +1173,6 @@ public class BackendBean implements BackendBeanRemote {
                 if (groups != null){
                     for (UserGroup group : groups){
                         group.getUsers().remove(anUser);
-                        //anUser.getGroups().remove(group);
                     }
                 }
                 em.remove(anUser);
@@ -1187,7 +1211,6 @@ public class BackendBean implements BackendBeanRemote {
                 if (users != null){
                     for (User user : users){
                         user.getGroups().remove(aGroup);
-                        //aGroup.getUsers().remove(user);
                     }
                 }
                 em.remove(aGroup);
@@ -1207,10 +1230,7 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             User user = em.find(User.class, userOid);
             if (user == null)
-                throw new Exception (java.util.ResourceBundle.
-                        getBundle("internationalization/Bundle").
-                        getString("LBL_NOSUCHOBJECT")+" User "+java.util.ResourceBundle.
-                        getBundle("internationalization/Bundle").getString("LBL_WHICHID")+userOid);
+                throw new ObjectNotFoundException("User",userOid);
 
             for (Long oid : groupsOids){
                 UserGroup group = em.find(UserGroup.class,oid);
@@ -1238,10 +1258,7 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             User user = em.find(User.class, userOid);
             if (user == null)
-                throw new Exception(java.util.ResourceBundle.
-                        getBundle("internationalization/Bundle").
-                        getString("LBL_NOSUCHOBJECT")+" User "+java.util.ResourceBundle.
-                        getBundle("internationalization/Bundle").getString("LBL_WHICHID")+userOid);
+                throw new ObjectNotFoundException("User", userOid);
 
             UserGroup group = null;
 
@@ -1287,7 +1304,7 @@ public class BackendBean implements BackendBeanRemote {
 
             List result = em.createQuery(myQuery).getResultList();
             if (result.isEmpty())
-                throw new NotAuthorizedException("No session active for this user");
+                throw new SessionNotValidException();
             //TODO: Check for the allowed methods
             return true;
         }else throw new EntityManagerNotAvailableException();

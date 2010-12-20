@@ -27,6 +27,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import businesslogic.BackendBeanRemote;
+import core.exceptions.NotAuthorizedException;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteSession;
 import core.toserialize.UserGroupInfo;
@@ -37,7 +38,9 @@ import entity.core.ViewableObject;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.soap.SOAPFault;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.soap.SOAPFaultException;
 import util.HierarchyUtils;
 
 /**
@@ -81,20 +84,26 @@ public class KuwaibaWebservice {
             
             return new RemoteSession(sbr.createSession(username,password, remoteAddress));
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.WARNING, "",new Object[]{e.getClass().getSimpleName(),e.getMessage()});
             throw e;
         }
     }
 
 
     /**
-     * Close a session
+     * Closes a session
      * @param sessionId
      * @return true if it could close the session, false otherwise. In this case, an error message is written in the error stack
      */
     @WebMethod(operationName = "closeSession")
-    public boolean closeSession(@WebParam(name = "sessionId")String sessionId){
-        return true;
+    public boolean closeSession(@WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            String remoteAddress = getIPAddress();
+            return sbr.closeSession(sessionId, remoteAddress);
+        }catch(Exception e){
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "", new Object[]{e.getClass(),e.getMessage()});
+            throw e;
+        }
     }
 
     /**
