@@ -107,4 +107,11 @@ public class Installer extends ModuleInstall {
         }
         pnlAuthentication.getLblError().setVisible(true);
     }
+
+    @Override
+    public boolean closing() {
+        CommunicationsStub.getInstance().closeSession();
+        return true;
+    }
+
 }
