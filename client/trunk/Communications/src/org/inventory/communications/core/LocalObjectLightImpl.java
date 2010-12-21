@@ -108,18 +108,24 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
    public boolean equals(Object obj){
        if(obj == null)
            return false;
+       if (!(obj instanceof LocalObjectLight))
+           return false;
        if (this.getOid() == null || ((LocalObjectLightImpl)obj).getOid() == null)
-               return false;
-        if (obj.getClass().equals(this.getClass()))
-            return (this.getOid().longValue() == ((LocalObjectLightImpl)obj).getOid().longValue());
-        else
-            return false;
+           return false;
+       return (this.getOid().longValue() == ((LocalObjectLightImpl)obj).getOid().longValue());
    }
 
+   /**
+    * Return the hashcode necessary for comparing objects. ATTENTION: In prior versions the attribute
+    * <b>displayName</b> was used, but since it was no longer used by the subclass @LocalObjectImpl
+    * (The attribute is private here and it's not inherited), the <code>equals</code> method failed, so
+    * I changed it to <code>oid</code>
+    * @return
+    */
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 31 * hash + (this.displayName != null ? this.displayName.hashCode() : 0);
+        hash = 31 * hash + (this.oid != null ? this.oid.hashCode() : 0);
         return hash;
     }
 
