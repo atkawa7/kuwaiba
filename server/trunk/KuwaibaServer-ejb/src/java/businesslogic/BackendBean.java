@@ -617,17 +617,21 @@ public class BackendBean implements BackendBeanRemote {
      * @return
      */
     @Override
-    public boolean moveObjects(Long targetOid, Long[] objectOids, String[] objectClasses) throws Exception{
+    public boolean moveObjects(Long targetOid, Long[] objectOids, Class[] objectClasses) throws Exception{
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_MOVEOBJECTS"));
         if (em != null){
             if (objectOids.length == objectClasses.length){
                 for (int i = 0; i<objectClasses.length;i++){
-                    String sentence = "UPDATE "+objectClasses[i]+" x SET x.parent="+targetOid+" WHERE x.id="+objectOids[i];
-                    Query q = em.createQuery(sentence);
-                    q.executeUpdate();
+                    RootObject currentObject = (RootObject)em.find(objectClasses[i], objectOids[i]);
+                    if (currentObject == null)
+                        throw new ObjectNotFoundException(objectClasses[i].getSimpleName(), objectOids[i]);
+
+                    currentObject.setParent(targetOid);
+                    em.merge(currentObject);
                 }
                 return true;
             }else
-                throw new Exception(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOTMATCHINGARRAYSIZES")+"(objectOids, objectClasses)");
+                throw new ArrayIndexOutOfBoundsException(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOTMATCHINGARRAYSIZES")+"(objectOids, objectClasses)");
         }
         else
             throw new EntityManagerNotAvailableException();
@@ -641,23 +645,21 @@ public class BackendBean implements BackendBeanRemote {
      */
     @Override
     public RemoteObjectLight[] copyObjects(Long targetOid, Long[] templateOids,
-            String[] objectClasses) throws Exception{
+            Class[] objectClasses) throws Exception{
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_COPYOBJECTS"));
         if (em != null){
             if (templateOids.length == objectClasses.length){
                 RemoteObjectLight[] res = new RemoteObjectLight[objectClasses.length];
                 for (int i = 0; i<objectClasses.length;i++){
                     //TODO: A more efficient way? maybe retrieving two or more objects at a time?
-                    String sentence = "SELECT x FROM "+objectClasses[i]+" x WHERE x.id="+templateOids[i];
-                    Query q = em.createQuery(sentence);
-                    Object obj = q.getSingleResult(), clone;
+                    RootObject template = (RootObject)em.find(objectClasses[i], templateOids[i]);
                     
-                    clone = MetadataUtils.clone(obj);
+                    if (template == null)
+                        throw new ObjectNotFoundException(objectClasses[i].getSimpleName(), templateOids[i]);
+                    
+                    Object clone = MetadataUtils.clone(new RemoteObject(template),objectClasses[i],em);
                     ((RootObject)clone).setParent(targetOid);
                     ((RootObject)clone).setIsLocked(false);
-                    //Nice trick to generate an Id
-                    ((RootObject)clone).setId((new RootObject() {}).getId());
-                    
-
                     em.persist(clone);
                     res[i] = new RemoteObjectLight(clone);
                 }

@@ -16,6 +16,7 @@
 
 package entity.location;
 
+import core.annotations.NoCopy;
 import core.annotations.NoSerialize;
 import core.interfaces.PhysicalNode;
 import entity.connections.physical.containers.GenericPhysicalContainer;
@@ -39,6 +40,7 @@ public abstract class GenericPhysicalNode extends AdministrativeItem implements 
      */
     @OneToMany
     @NoSerialize
+    @NoCopy
     protected List<GenericPhysicalContainer> containers;
 
     public List<GenericPhysicalContainer> getContainers() {

@@ -16,6 +16,7 @@
  */
 package entity.equipment.physicallayer.parts.ports;
 
+import core.annotations.NoCopy;
 import core.annotations.NoSerialize;
 import core.interfaces.PhysicalEndpoint;
 import entity.connections.physical.GenericPhysicalConnection;
@@ -39,6 +40,7 @@ public abstract class GenericPort extends GenericPart implements PhysicalEndpoin
      */
     @OneToOne
     @NoSerialize
+    @NoCopy
     protected GenericPhysicalConnection connectedConnection;
 
     public GenericPhysicalConnection getConnectedConnection() {

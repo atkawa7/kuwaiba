@@ -27,7 +27,6 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import businesslogic.BackendBeanRemote;
-import core.exceptions.NotAuthorizedException;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteSession;
 import core.toserialize.UserGroupInfo;
@@ -38,9 +37,7 @@ import entity.core.ViewableObject;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.soap.SOAPFault;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.soap.SOAPFaultException;
 import util.HierarchyUtils;
 
 /**
@@ -416,7 +413,7 @@ public class KuwaibaWebservice {
 
     /**
      * Deletes an object
-     * @param className Object class' name
+     * @param className Object's class name
      * @param oid
      * @param sessionId
      * @return success or failure
@@ -475,14 +472,22 @@ public class KuwaibaWebservice {
      */
     @WebMethod(operationName = "copyObjects")
     public RemoteObjectLight[] copyObjects(@WebParam(name = "targetOid")Long targetOid,
-            @WebParam(name = "objectClases")String[] objectClasses,
+            @WebParam(name = "objectClases")String[] _objectClasses,
             @WebParam(name = "templateObjects")Long[] templateObjects,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            Class[] objectClasses = new Class[_objectClasses.length];
+
+            for (int i = 0; i < _objectClasses.length;i++){
+                objectClasses[i] = sbr.getClassFor(_objectClasses[i]);
+                if (objectClasses[i] == null)
+                    throw new ClassNotFoundException(_objectClasses[i]);
+            }
+
             RemoteObjectLight[] res = sbr.copyObjects(targetOid, templateObjects, objectClasses);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "", new Object[]{e.getClass(),e.getMessage()});
             throw e;
         }
     }
@@ -500,10 +505,17 @@ public class KuwaibaWebservice {
      */
     @WebMethod(operationName = "moveObjects")
     public Boolean moveObjects(@WebParam(name = "targetOid")Long targetOid,
-            @WebParam(name = "objectsClasses")String[] objectClasses,
+            @WebParam(name = "objectsClasses")String[] _objectClasses,
             @WebParam(name = "objectsOids")Long[] objectOids,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            Class[] objectClasses = new Class[_objectClasses.length];
+
+            for (int i = 0; i < _objectClasses.length;i++){
+                objectClasses[i] = sbr.getClassFor(_objectClasses[i]);
+                if (objectClasses[i] == null)
+                    throw new ClassNotFoundException(_objectClasses[i]);
+            }
             return sbr.moveObjects(targetOid, objectOids,objectClasses);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());

@@ -17,6 +17,7 @@
 package entity.core;
 
 import core.annotations.Administrative;
+import core.annotations.NoCopy;
 import core.annotations.NoSerialize;
 import entity.views.GenericView;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import javax.persistence.OneToMany;
 public abstract class ViewableObject extends RootObject {
     @OneToMany(cascade=CascadeType.PERSIST)//(mappedBy = "elements")
     @NoSerialize
+    @NoCopy
     protected List<GenericView> views;
 
         public List<GenericView> getViews() {

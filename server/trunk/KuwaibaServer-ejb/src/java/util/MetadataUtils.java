@@ -16,7 +16,9 @@
 
 package util;
 
+import core.annotations.NoCopy;
 import core.toserialize.ObjectList;
+import core.toserialize.RemoteObject;
 import entity.core.RootObject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -109,6 +111,31 @@ public class MetadataUtils {
         }
 
     }
+
+    public static Object clone(RemoteObject clonnable, Class objectClass, EntityManager em){
+        try{
+            Object newObject = objectClass.newInstance();
+            List<Field> allFields = getAllFields(objectClass);
+            Field myField = null;
+            for (int i = 0; i< clonnable.getAttributes().length; i++){
+                for (Field field : allFields){
+                    if (field.getName().equals(clonnable.getAttributes()[i])){
+                        myField = field;
+                        break;
+                    }
+                }
+                if (myField !=null){
+                    if (myField.getAnnotation(NoCopy.class) == null)
+                        newObject.getClass().getMethod("set"+capitalize(clonnable.getAttributes()[i]),
+                            myField.getType()).invoke(newObject,
+                            getRealValue(myField.getType().getSimpleName(),clonnable.getValues()[i], em));
+                }
+            }
+            return newObject;
+        }catch (Exception e){
+            return null;
+        }
+     }
 
     /*
      * Finds the real type for a given type provided as a string
