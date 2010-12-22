@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.views.LocalEdge;
-import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.interfaces.RefreshableTopComponent;
@@ -89,7 +88,7 @@ public final class ObjectViewTopComponent extends TopComponent
         
         vrs = new ObjectViewService(this);
 
-        scene = new ViewScene();
+        scene = new ViewScene(getNotifier());
 
         pnlScrollMain.setViewportView(scene.createView());
         add(scene.createSatelliteView(),BorderLayout.SOUTH);

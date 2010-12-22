@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Set;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.views.objectview.scene.actions.CustomAddRemoveControlPointAction;
 import org.inventory.views.objectview.scene.actions.CustomMoveAction;
 import org.inventory.views.objectview.scene.actions.CustomMoveControlPointAction;
@@ -134,8 +134,12 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
      * Event ID to indicate an object has been selected
      */
     public final static int SCENE_OBJECTSELECTED = 3;
+    /**
+     * Default notifier
+     */
+    private NotificationUtil notifier;
 
-    public ViewScene (){
+    public ViewScene (NotificationUtil notifier){
         interactionLayer = new LayerWidget(this);
         backgroundLayer = new LayerWidget(this);
         nodesLayer = new LayerWidget(this);
@@ -183,6 +187,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
 
             }
         }, ObjectSceneEventType.OBJECT_SELECTION_CHANGED);
+        this.notifier = notifier;
     }
 
     /**
@@ -376,5 +381,9 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
         edgesTag.end();
         mainTag.end().close();
         return bas.toByteArray();
+    }
+
+    public NotificationUtil getNotifier() {
+        return notifier;
     }
 }

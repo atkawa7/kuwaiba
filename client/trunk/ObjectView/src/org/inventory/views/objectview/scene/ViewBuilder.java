@@ -24,6 +24,7 @@ import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalNode;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.interfaces.NotificationUtil;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -88,10 +89,16 @@ public class ViewBuilder {
                 if (widget.getSourceAnchor() != null && widget.getTargetAnchor() != null)
                     break;
             }
-            widget.setControlPoints(edge.getControlPoints(), true);
-            scene.getEdgesLayer().addChild(widget);
-            if (scene.findObject(widget)==null)
-                scene.addObject(widget.getObject(), widget);
+            if (widget.getSourceAnchor() == null || widget.getTargetAnchor() == null)
+                scene.getNotifier().showSimplePopup("View Generation",
+                        NotificationUtil.WARNING, "The connection "+
+                        edge.getObject().getAttribute("name")+" ["+edge.getObject().getClassName()+"], id="+edge.getObject().getOid()+" has a side missing, please check if it was moved and refresh the view"); //NOI18N
+            else{
+                widget.setControlPoints(edge.getControlPoints(), true);
+                scene.getEdgesLayer().addChild(widget);
+                if (scene.findObject(widget)==null)
+                    scene.addObject(widget.getObject(), widget);
+            }
         }
 
         scene.setBackgroundImage(myView.getBackground());

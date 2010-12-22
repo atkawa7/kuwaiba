@@ -21,6 +21,7 @@ import java.awt.dnd.DnDConstants;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.Formatter;
 import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
@@ -148,10 +149,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                             val = loli;
                             break;
                         }
-
-                    /****************************/
-
-                    property = new ObjectNodeProperty(
+                   property = new ObjectNodeProperty(
                                            lam.getName(),
                                            LocalObjectListItem.class,
                                            val,
@@ -194,6 +192,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     }
 
     public void refresh(){
+        //Don't refresh anything if the node is a leaf (used only in views)
+        if (!(getChildren() instanceof ObjectChildren))
+            return;
         //Force to retrieve the object info again
         if (object instanceof LocalObjectLight)
             object = com.getObjectInfoLight(object.getClassName(), object.getOid());
@@ -205,6 +206,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
         icon = (com.getMetaForClass(object.getClassName(),false)).getSmallIcon();
         fireIconChange();
+
         if (!((ObjectChildren)getChildren()).getKeys().isEmpty())
             for (Node child : getChildren().getNodes())
                 ((ObjectNode)child).refresh();
@@ -240,7 +242,12 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         final ObjectNode dropNode = (ObjectNode)NodeTransfer.node( _obj,
                 DnDConstants.ACTION_COPY_OR_MOVE+NodeTransfer.CLIPBOARD_CUT );
 
-        if (dropNode == null || this.equals(dropNode.getParentNode()))
+        //When there's no an actual drag/drop operation, but a simple node selection
+        if (dropNode == null)
+            return null;
+
+        //Can't move to the same parent, only copy
+        if (this.equals(dropNode.getParentNode()) && (action == DnDConstants.ACTION_MOVE))
             return null;
 
         return new PasteType() {
@@ -248,15 +255,18 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
             @Override
             public Transferable paste() throws IOException {
                 boolean canMove = false;
+                NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
                 try{
-                    NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
                     LocalObjectLight obj = dropNode.getObject();
-                    for(LocalClassMetadataLight lcml : com.getPossibleChildren(object.getClassName(),false)){
+
+                    //Check if the current object can contain the drop node
+                    List<LocalClassMetadataLight> possibleChildren = com.getPossibleChildren(object.getClassName(),false);
+                    for(LocalClassMetadataLight lcml : possibleChildren){
                         if(lcml.getClassName().equals(obj.getClassName()))
                             canMove = true;
                     }
                     if (canMove){
-                          if ((action & DnDConstants.ACTION_MOVE) != 0 ){
+                          if (action == DnDConstants.ACTION_COPY){
                               LocalObjectLight[] copiedNodes = com.copyObjects(getObject().getOid(),
                                                                 new LocalObjectLight[] {obj});
                                 if (copiedNodes!= null){
@@ -266,28 +276,29 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                                 }
                                 else
                                     nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").
-                                        getString("LBL_MOVEOPERATION_TITLE"), NotificationUtil.ERROR, com.getError());
+                                        getString("LBL_COPYOPERATION_TITLE"), NotificationUtil.ERROR, com.getError());
                           }
                           else{
-                                if (com.moveObjects(getObject().getOid(),new LocalObjectLight[] {obj})){
-                                    dropNode.getParentNode().getChildren().remove(new Node[]{dropNode});
-                                    getChildren().add(new Node[]{new ObjectNode(obj)});
-
-                                }
-                                else
-                                    nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").
-                                        getString("LBL_MOVEOPERATION_TITLE"), NotificationUtil.ERROR, com.getError());
+                              if (action == DnDConstants.ACTION_MOVE){
+                                    if (com.moveObjects(getObject().getOid(),new LocalObjectLight[] {obj})){
+                                        dropNode.getParentNode().getChildren().remove(new Node[]{dropNode});
+                                        getChildren().add(new Node[]{new ObjectNode(obj)});
+                                    }
+                                    else
+                                        nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").
+                                            getString("LBL_MOVEOPERATION_TITLE"), NotificationUtil.ERROR, com.getError());
+                              }
                           }                        
                     }else
                         nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").
                                     getString("LBL_MOVEOPERATION_TITLE"), NotificationUtil.ERROR,
-                                    //NbBundle.getMessage(ObjectNode.class, "LBL_MOVEOPERATION_TEXT",new Object[]{obj.getClassName(),object.getClassName()})
-                                    java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_MOVEOPERATION_TEXT")
-                        );
+                                    new Formatter().format(java.util.ResourceBundle.
+                                        getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_MOVEOPERATION_TEXT"),obj.getClassName(),object.getClassName()).toString());
                 }catch(Exception ex){
-                    Exceptions.printStackTrace(ex);
+                    nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").
+                                        getString("LBL_MOVEOPERATION_TITLE"), NotificationUtil.ERROR, ex.getClass().getSimpleName() +" "+ex.getMessage());
                 }
-                return object;
+                 return null;
             }
         };
     }
@@ -329,15 +340,20 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     @Override
     public void setName(String newName){
         try{
-            ((ObjectNodeProperty)getSheet().get("1").get("name")).setValue(newName); //NOI18n
-            if (((ObjectNodeProperty)getSheet().get("1").get("name")).getValue().equals(newName)){
+            LocalObject update = Lookup.getDefault().lookup(LocalObject.class);
+            update.setLocalObject(object.getClassName(),
+                    new String[]{"name"}, new Object[]{newName}); //NOI18N
+            update.setOid(object.getOid());
+            if (com.saveObject(update)){
                 object.setDisplayName(newName);
                 fireDisplayNameChange(object.getDisplayname(), newName);
             }
 
             //So the PropertySheet reflects the changes too
             refresh();
-        }catch(Exception e){}
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

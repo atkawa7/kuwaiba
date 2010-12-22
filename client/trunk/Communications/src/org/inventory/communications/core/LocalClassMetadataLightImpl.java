@@ -104,25 +104,25 @@ public class LocalClassMetadataLightImpl
     }
 
 
-   /*
+   /**
     * The equals method is overwritten in order to make the comparison based on the id, which is
     * the actual unique identifier (this is used when filtering the list of possible children in the Hierarchy Manager)
     */
    @Override
    public boolean equals(Object obj){
-        if (obj == null)
+       if(obj == null)
            return false;
-        if (obj.getClass().equals(this.getClass()))
-            return this.getOid().equals(((LocalClassMetadataLightImpl)obj).getOid());
-        else
-            return false;
+       if (!(obj instanceof LocalClassMetadataLight))
+           return false;
+       if (this.getOid() == null || ((LocalObjectLightImpl)obj).getOid() == null)
+           return false;
+       return (this.getOid().longValue() == ((LocalObjectLightImpl)obj).getOid().longValue());
    }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 41 * hash + (this.id != null ? this.id.hashCode() : 0);
-        hash = 41 * hash + (this.className != null ? this.className.hashCode() : 0);
+        int hash = 9;
+        hash = 81 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
     
