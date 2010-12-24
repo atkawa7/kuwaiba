@@ -29,3 +29,9 @@
 * Additions to the data model
 * Adapters are not longer used (see http://kuwaiba.sourceforge.net/blogs/?p=65)
 * Performance improvements
+
+0.2.1 Stable (23122010)
+* Support for user sessions
+* copyObjects method rewritten
+* Performance improvements
+* Several bugfixes
