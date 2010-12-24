@@ -114,9 +114,9 @@ public class LocalClassMetadataLightImpl
            return false;
        if (!(obj instanceof LocalClassMetadataLight))
            return false;
-       if (this.getOid() == null || ((LocalObjectLightImpl)obj).getOid() == null)
+       if (this.getOid() == null || ((LocalClassMetadataLight)obj).getOid() == null)
            return false;
-       return (this.getOid().longValue() == ((LocalObjectLightImpl)obj).getOid().longValue());
+       return (this.getOid().longValue() == ((LocalClassMetadataLight)obj).getOid().longValue());
    }
 
     @Override

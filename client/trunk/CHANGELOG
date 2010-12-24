@@ -31,3 +31,13 @@
 * New element icons
 * Performance improvements
 * General code cleanup
+
+0.2.1 Maintenance Release (23122010)
+* Support for basic views (children of an object, physical connections, backcground, etc)
+* Support for physical connections thru wizards
+* Fixed authentication issues
+* Fixed bugs related to copy and cut operations
+* Improved stability in object views
+* New element icons
+* General code clean up
+* Several bugfixes
