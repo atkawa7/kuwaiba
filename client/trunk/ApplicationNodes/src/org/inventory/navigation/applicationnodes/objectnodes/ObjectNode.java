@@ -47,7 +47,6 @@ import org.openide.nodes.Node;
 import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
-import org.openide.util.Exceptions;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.actions.SystemAction;
@@ -192,9 +191,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     }
 
     public void refresh(){
-        //Don't refresh anything if the node is a leaf (used only in views)
-        if (!(getChildren() instanceof ObjectChildren))
-            return;
+        
         //Force to retrieve the object info again
         if (object instanceof LocalObjectLight)
             object = com.getObjectInfoLight(object.getClassName(), object.getOid());
@@ -207,24 +204,28 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         icon = (com.getMetaForClass(object.getClassName(),false)).getSmallIcon();
         fireIconChange();
 
+        //Don't refresh anything if the node is a leaf (used only in views)
+        if (!(getChildren() instanceof ObjectChildren))
+            return;
+
         if (!((ObjectChildren)getChildren()).getKeys().isEmpty())
             for (Node child : getChildren().getNodes())
                 ((ObjectNode)child).refresh();
     }
 
     //This method is called for the very first time when the first context menu is created, and
-    //called everytime
+    //then called everytime
     @Override
     public Action[] getActions(boolean context){
         return new Action[]{createAction,
                             refreshAction,
                             editAction,
                             deleteAction,
-                            null,
+                            null, //Separator
                             SystemAction.get(CopyAction.class),
                             SystemAction.get(CutAction.class),
                             SystemAction.get(PasteAction.class),
-                            null,
+                            null, //Separator
                             explorerAction};
 
     }
@@ -232,18 +233,27 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     @Override
     protected void createPasteTypes(Transferable t, List s) {
         super.createPasteTypes(t, s);
-        PasteType paste = getDropType( t, DnDConstants.ACTION_COPY, -1 );
+        //From the transferable we figure out if it comes from a copy or a cut operation
+        PasteType paste = getDropType( t, NodeTransfer.node(t, NodeTransfer.CLIPBOARD_COPY) != null ?
+                                        DnDConstants.ACTION_COPY:DnDConstants.ACTION_MOVE, -1 );
+        //It's also possible to define many paste types (like "normal paste" and "special paste") 
+        //by adding more entries to the list. Those will appear as options in the context menu
         if( paste != null )
             s.add( paste );
+
     }
 
     @Override
     public PasteType getDropType(Transferable _obj, final int action, int index){
         final ObjectNode dropNode = (ObjectNode)NodeTransfer.node( _obj,
-                DnDConstants.ACTION_COPY_OR_MOVE+NodeTransfer.CLIPBOARD_CUT );
+                NodeTransfer.DND_COPY_OR_MOVE+NodeTransfer.CLIPBOARD_CUT);
 
         //When there's no an actual drag/drop operation, but a simple node selection
         if (dropNode == null)
+            return null;
+
+        //Ignore those noisy attempts to move it to itself
+        if (dropNode.getObject().equals(object))
             return null;
 
         //Can't move to the same parent, only copy

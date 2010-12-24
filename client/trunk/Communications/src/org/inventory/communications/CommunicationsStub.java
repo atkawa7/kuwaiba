@@ -305,8 +305,8 @@ public class CommunicationsStub {
     public List<LocalClassMetadataLight> getPossibleChildren(String className, boolean ignoreCache) {
         try{
             List<LocalClassMetadataLight> resAsLocal = null;
-            //if (!ignoreCache)
-            //        resAsLocal = cache.getPossibleChildrenCached(className);
+            if (!ignoreCache)
+                    resAsLocal = cache.getPossibleChildrenCached(className);
 
             if (resAsLocal == null){
                 resAsLocal = new ArrayList<LocalClassMetadataLight>();

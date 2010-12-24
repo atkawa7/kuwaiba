@@ -256,6 +256,7 @@ public final class ObjectViewTopComponent extends TopComponent
 
         btnWireContainer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/wire-container.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnWireContainer, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnWireContainer.text")); // NOI18N
+        btnWireContainer.setToolTipText(org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnWireContainer.toolTipText")); // NOI18N
         btnWireContainer.setFocusable(false);
         btnWireContainer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnWireContainer.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -268,6 +269,7 @@ public final class ObjectViewTopComponent extends TopComponent
 
         btnWirelessContainer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/wireless-container.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnWirelessContainer, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnWirelessContainer.text")); // NOI18N
+        btnWirelessContainer.setToolTipText(org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnWirelessContainer.toolTipText")); // NOI18N
         btnWirelessContainer.setFocusable(false);
         btnWirelessContainer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnWirelessContainer.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);

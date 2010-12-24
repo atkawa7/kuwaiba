@@ -17,7 +17,6 @@
 package org.inventory.navigation.applicationnodes.listmanagernodes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
@@ -34,6 +33,7 @@ import org.openide.util.Lookup;
  */
 public class ListElementChildren extends ObjectChildren{
 
+    //This is basically the same code as in ObjectChildren but changes ObjectNodes for ListElementNodes
     @Override
     protected Collection<Node> initCollection(){
         List<Node> myNodes = new ArrayList<Node>();
@@ -44,14 +44,25 @@ public class ListElementChildren extends ObjectChildren{
 
     @Override
     public void addNotify(){
-        LocalClassMetadataLight lcml = ((ListTypeNode)this.getNode()).getObject();
-        LocalObjectLight[] myObjects = CommunicationsStub.getInstance().searchForObjects(lcml.getClassName(),
+        if (this.getNode() instanceof ListTypeNode){
+            CommunicationsStub com = CommunicationsStub.getInstance();
+            LocalClassMetadataLight lcml = ((ListTypeNode)this.getNode()).getObject();
+            LocalObjectLight[] myObjects = CommunicationsStub.getInstance().searchForObjects(lcml.getClassName(),
                 new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>());
-        if (myObjects == null)
-            Lookup.getDefault().lookup(NotificationUtil.class).
-                    showSimplePopup("List Generation", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
-        keys.addAll(Arrays.asList(myObjects));
-
-        initCollection();
+            if (myObjects == null){
+                Lookup.getDefault().lookup(NotificationUtil.class).
+                        showSimplePopup("List Generation", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            }else{
+                for (LocalObjectLight child : myObjects){
+                    ListElementNode newNode = new ListElementNode(child);
+                    // Remove it if it already exists (if this is not done,
+                    // it will duplicate the nodes created when the parent was collapsed)
+                    keys.remove(child);
+                    keys.add(child);
+                    remove(new Node[]{newNode});
+                    add(new Node[]{newNode});
+               }
+            }
+        }
     }
 }

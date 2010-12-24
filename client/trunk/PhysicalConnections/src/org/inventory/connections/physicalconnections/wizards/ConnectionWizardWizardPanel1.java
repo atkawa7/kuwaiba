@@ -66,27 +66,42 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
                                         isValid = false;
                                     }
                                     else{
-                                        switch(wizardType){
-                                            case ConnectionWizard.WIZARDTYPE_CONTAINERS:
-                                                if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalNode() &&
-                                                    com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalNode())
-                                                    isValid = true;
-                                                else{
-                                                    errorStr = "The object selected in the left tree cannot be connected using a container";
+                                        if (bSelection.getValidator("isConnected")){ //NOI18n
+                                           errorStr = "The port B is already connected";
+                                            isValid = false;
+                                        }else{
+                                            switch(wizardType){
+                                                case ConnectionWizard.WIZARDTYPE_CONTAINERS:
+                                                    if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalNode()){
+                                                        if(com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalNode())
+                                                            isValid = true;
+                                                        else{
+                                                            errorStr = "The object selected in the right tree cannot be connected using a container";
+                                                            isValid = false;
+                                                        }
+                                                    }
+                                                    else{
+                                                        errorStr = "The object selected in the left tree cannot be connected using a container";
+                                                        isValid = false;
+                                                    }
+                                                    break;
+                                                case ConnectionWizard.WIZARDTYPE_CONNECTIONS:
+                                                    if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalEndpoint()){
+                                                        if(com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalEndpoint())
+                                                            isValid = true;
+                                                        else{
+                                                            errorStr = "The object selected in the right tree cannot be connected using a link";
+                                                            isValid = false;
+                                                        }
+                                                    }
+                                                    else{
+                                                        errorStr = "The object selected in the left tree cannot be connected using a link";
+                                                        isValid = false;
+                                                    }
+                                                     break;
+                                                default:
                                                     isValid = false;
-                                                }
-                                                break;
-                                            case ConnectionWizard.WIZARDTYPE_CONNECTIONS:
-                                                if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalEndpoint() &&
-                                                    com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalEndpoint())
-                                                    isValid = true;
-                                                else{
-                                                    errorStr = "The object selected in the left tree cannot be connected using a link";
-                                                    isValid = false;
-                                                }
-                                                 break;
-                                            default:
-                                                isValid = false;
+                                            }
                                         }
                                     }
                                 }
@@ -112,27 +127,42 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
                                         isValid = false;
                                     }
                                     else{
-                                        switch(wizardType){
-                                            case ConnectionWizard.WIZARDTYPE_CONTAINERS:
-                                                if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalNode() &&
-                                                    com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalNode())
-                                                    isValid = true;
-                                                else{
-                                                    errorStr = "The object selected in the right tree cannot be connected using a container";
+                                        if (aSelection.getValidator("isConnected")){ //NOI18n
+                                            errorStr = "The port A is already connected";
+                                            isValid = false;
+                                        }else{
+                                            switch(wizardType){
+                                                case ConnectionWizard.WIZARDTYPE_CONTAINERS:
+                                                    if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalNode()){
+                                                        if(com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalNode())
+                                                            isValid = true;
+                                                        else{
+                                                            errorStr = "The object selected in the right tree cannot be connected using a container";
+                                                            isValid = false;
+                                                        }
+                                                    }
+                                                    else{
+                                                        errorStr = "The object selected in the left tree cannot be connected using a container";
+                                                        isValid = false;
+                                                    }
+                                                    break;
+                                                case ConnectionWizard.WIZARDTYPE_CONNECTIONS:
+                                                    if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalEndpoint()){
+                                                        if(com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalEndpoint())
+                                                            isValid = true;
+                                                        else{
+                                                            errorStr = "The object selected in the right tree cannot be connected using a link";
+                                                            isValid = false;
+                                                        }
+                                                    }
+                                                    else{
+                                                        errorStr = "The object selected in the left tree cannot be connected using a link";
+                                                        isValid = false;
+                                                    }
+                                                     break;
+                                                default:
                                                     isValid = false;
-                                                }
-                                                break;
-                                            case ConnectionWizard.WIZARDTYPE_CONNECTIONS:
-                                                if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalEndpoint() &&
-                                                    com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalEndpoint())
-                                                    isValid = true;
-                                                else{
-                                                    errorStr = "The object selected in the right tree cannot be connected using a link";
-                                                    isValid = false;
-                                                }
-                                                 break;
-                                            default:
-                                                isValid = false;
+                                            }
                                         }
                                     }
                                 }

@@ -88,11 +88,11 @@ public final class NavigationTreeTopComponent extends TopComponent
         map.put(DefaultEditorKit.pasteAction, ExplorerUtils.actionPaste(em));
         
 
-        //Now the keystrokes (doesn't seem to be working)
+        //Now the keystrokes
         InputMap keys = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        keys.put(KeyStroke.getKeyStroke("control C"), DefaultEditorKit.copyAction);
-        keys.put(KeyStroke.getKeyStroke("control X"), DefaultEditorKit.cutAction);
-        keys.put(KeyStroke.getKeyStroke("control V"), DefaultEditorKit.pasteAction);
+//        keys.put(KeyStroke.getKeyStroke("control C"), DefaultEditorKit.copyAction);
+//        keys.put(KeyStroke.getKeyStroke("control X"), DefaultEditorKit.cutAction);
+//        keys.put(KeyStroke.getKeyStroke("control V"), DefaultEditorKit.pasteAction);
         
         nts = new NavigationTreeService(this);
         associateLookup(ExplorerUtils.createLookup(em, map));

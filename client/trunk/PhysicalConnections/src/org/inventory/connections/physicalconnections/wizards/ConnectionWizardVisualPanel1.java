@@ -15,7 +15,6 @@
  */
 package org.inventory.connections.physicalconnections.wizards;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.inventory.connections.physicalconnections.wizards.custompanels.ExplorablePanel;
 import org.inventory.core.services.interfaces.LocalObjectLight;
