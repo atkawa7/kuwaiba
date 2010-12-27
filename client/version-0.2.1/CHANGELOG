@@ -1,0 +1,43 @@
+0.1 Beta
+* Fixed the support for abstract classes
+* Internacionalization of server log messages
+* Corrections to the initialization script
+* Container Manager now uses Children.Array
+
+0.1 Stable
+* Added a List type attributes manager
+* Added a class manager to customize the icons and display names for available classes
+* Added an attribute manager to customize descriptions, visibility and display names for available attributes
+* Added many classes and attributes to the data model
+* More methods on the server side were migrated to used the Criteria API
+* New icons in the test db
+
+0.1.1
+* Added preliminar User/Groups management (You can create users and groups and relate them, but there's no privileges scheme yet)
+* The server and the client can reside in diferent computers. At login time you can choose a different WSDL location
+* Added tool bars and in general, the elements were rearranged
+* Inline edition for object nodes names
+* Built on top of NBP included in NetBeans IDE 6.9 (Build 201006101454)
+* Multiple bugfixes
+
+0.2 alpha
+* Basic support for physical views including physical containers only (see documentation for details). Zoom, pan, background actions
+* New splashscreen
+
+0.2 Beta
+* Complete support for physical connections
+* Support for user sessions
+* New error handling mechanism
+* New element icons
+* Performance improvements
+* General code cleanup
+
+0.2.1 Maintenance Release (23122010)
+* Support for basic views (children of an object, physical connections, backcground, etc)
+* Support for physical connections thru wizards
+* Fixed authentication issues
+* Fixed bugs related to copy and cut operations
+* Improved stability in object views
+* New element icons
+* General code clean up
+* Several bugfixes

@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.inventory.core.services
+OpenIDE-Module-Layer: org/inventory/core/services/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/inventory/core/services/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
