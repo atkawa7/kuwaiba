@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-OpenIDE-Module: org.inventory.core.usermanager
-OpenIDE-Module-Layer: org/inventory/core/usermanager/layer.xml
-OpenIDE-Module-Localizing-Bundle: org/inventory/core/usermanager/Bundle.properties
-OpenIDE-Module-Specification-Version: 1.0
-
