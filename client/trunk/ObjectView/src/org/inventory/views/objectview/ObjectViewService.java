@@ -83,7 +83,7 @@ public class ObjectViewService implements LookupListener{
            //Don't update if the same object is selected
            LocalObjectLight myObject = (LocalObjectLight)lookupResult.allInstances().iterator().next();
            if (myObject.equals(vrtc.getScene().getCurrentObject()))
-                return;
+               return;
            
            //Check if the view is still unsaved
            vrtc.checkForUnsavedView(false);
@@ -101,8 +101,11 @@ public class ObjectViewService implements LookupListener{
            if (myObject.getOid() == null){
                vrtc.setDisplayName(null);
                vrtc.setHtmlDisplayName(null);
+               vrtc.toggleButtons(false);
                return;
            }
+
+           vrtc.toggleButtons(true);
 
            vrtc.getScene().setCurrentObject(myObject);
            
@@ -128,8 +131,10 @@ public class ObjectViewService implements LookupListener{
            vrtc.getScene().repaint();
            vrtc.setDisplayName(myObject.getDisplayname() + " ["+myObject.getClassName()+"]");
         }else{
-            if(!lookupResult.allInstances().isEmpty())
-                vrtc.getNotifier().showStatusMessage("More than one object selected. No view available", false);
+            if(!lookupResult.allInstances().isEmpty()){
+               vrtc.getNotifier().showStatusMessage("More than one object selected. No view available", false);
+               vrtc.toggleButtons(false);
+            }
         }
     }
 

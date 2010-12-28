@@ -20,6 +20,7 @@ import org.openide.modules.ModuleInstall;
 /**
  * Manages a module's lifecycle. Remember that an installer is optional and
  * often not needed at all.
+ * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class Installer extends ModuleInstall {
     @Override
