@@ -14,12 +14,12 @@
  * 
  */
 
-package org.inventory.views.objectview;
+package org.inventory.views.objectview.dialogs;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Date;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.inventory.views.objectview.scene.ViewScene;
@@ -29,11 +29,11 @@ import org.netbeans.api.visual.export.SceneExporter;
  * This frame let the user to choose the export settings
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ExportSettingsFrame extends javax.swing.JFrame {
+public class ExportSettingsDialog extends JDialog {
 
     private ViewScene myScene;
-    /** Creates new form ExportSettingsFrame */
-    public ExportSettingsFrame(ViewScene scene) {
+    /** Creates new form ExportSettingsDialog */
+    public ExportSettingsDialog(ViewScene scene) {
         this.myScene = scene;
         initComponents();
         initCustomComponents();
@@ -42,6 +42,7 @@ public class ExportSettingsFrame extends javax.swing.JFrame {
     private void initCustomComponents(){
         this.setTitle("Export Settings");
         this.setLocationRelativeTo(getRootPane());
+        this.setModal(true);
     }
 
     /** This method is called from within the constructor to
@@ -66,42 +67,42 @@ public class ExportSettingsFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        lblLocaltion.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.lblLocaltion.text")); // NOI18N
+        lblLocaltion.setText(org.openide.util.NbBundle.getMessage(ExportSettingsDialog.class, "ExportSettingsDialog.lblLocaltion.text")); // NOI18N
 
-        txtLocation.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.txtLocation.text")); // NOI18N
+        txtLocation.setText(org.openide.util.NbBundle.getMessage(ExportSettingsDialog.class, "ExportSettingsDialog.txtLocation.text")); // NOI18N
 
-        btnAccept.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.btnAccept.text")); // NOI18N
+        btnAccept.setText(org.openide.util.NbBundle.getMessage(ExportSettingsDialog.class, "ExportSettingsDialog.btnAccept.text")); // NOI18N
         btnAccept.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAcceptActionPerformed(evt);
             }
         });
 
-        btnCancel.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.btnCancel.text")); // NOI18N
+        btnCancel.setText(org.openide.util.NbBundle.getMessage(ExportSettingsDialog.class, "ExportSettingsDialog.btnCancel.text")); // NOI18N
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelActionPerformed(evt);
             }
         });
 
-        btnLocation.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.btnLocation.text")); // NOI18N
+        btnLocation.setText(org.openide.util.NbBundle.getMessage(ExportSettingsDialog.class, "ExportSettingsDialog.btnLocation.text")); // NOI18N
         btnLocation.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLocationActionPerformed(evt);
             }
         });
 
-        lblFormat.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.lblFormat.text")); // NOI18N
+        lblFormat.setText(org.openide.util.NbBundle.getMessage(ExportSettingsDialog.class, "ExportSettingsDialog.lblFormat.text")); // NOI18N
 
         cmbFormat.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "JPG", "PNG" }));
 
-        lblZoomType.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.lblZoomType.text")); // NOI18N
+        lblZoomType.setText(org.openide.util.NbBundle.getMessage(ExportSettingsDialog.class, "ExportSettingsDialog.lblZoomType.text")); // NOI18N
 
         cmbZoomType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Normal", "Current zoom level" }));
 
-        lblError.setFont(new java.awt.Font("Bitstream Vera Sans", 0, 10)); // NOI18N
+        lblError.setFont(new java.awt.Font("Bitstream Vera Sans", 0, 10));
         lblError.setForeground(new java.awt.Color(255, 0, 0));
-        lblError.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.lblError.text")); // NOI18N
+        lblError.setText(org.openide.util.NbBundle.getMessage(ExportSettingsDialog.class, "ExportSettingsDialog.lblError.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

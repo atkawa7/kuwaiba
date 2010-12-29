@@ -15,6 +15,7 @@
  */
 package org.inventory.views.objectview;
 
+import org.inventory.views.objectview.dialogs.ExportSettingsDialog;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,6 +27,7 @@ import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.interfaces.RefreshableTopComponent;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.views.objectview.dialogs.FormatTextDialog;
 import org.inventory.views.objectview.scene.ObjectConnectionWidget;
 import org.inventory.views.objectview.scene.ViewScene;
 import org.openide.explorer.ExplorerManager;
@@ -120,6 +122,7 @@ public final class ObjectViewTopComponent extends TopComponent
         barMain = new javax.swing.JToolBar();
         btnAddBackgroundImage = new javax.swing.JButton();
         btnRemoveBackground = new javax.swing.JButton();
+        btnFormatText = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
         btnSelect = new javax.swing.JToggleButton();
         btnConnect = new javax.swing.JToggleButton();
@@ -169,6 +172,20 @@ public final class ObjectViewTopComponent extends TopComponent
             }
         });
         barMain.add(btnRemoveBackground);
+
+        btnFormatText.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/format.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnFormatText, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnFormatText.text")); // NOI18N
+        btnFormatText.setToolTipText(org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnFormatText.toolTipText")); // NOI18N
+        btnFormatText.setEnabled(false);
+        btnFormatText.setFocusable(false);
+        btnFormatText.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnFormatText.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnFormatText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFormatTextActionPerformed(evt);
+            }
+        });
+        barMain.add(btnFormatText);
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/save.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnSave.text")); // NOI18N
@@ -412,8 +429,12 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
-        new ExportSettingsFrame(scene).setVisible(true);
+        new ExportSettingsDialog(scene).setVisible(true);
     }//GEN-LAST:event_btnExportActionPerformed
+
+    private void btnFormatTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFormatTextActionPerformed
+        new FormatTextDialog(scene).setVisible(true);
+    }//GEN-LAST:event_btnFormatTextActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barConnections;
@@ -423,6 +444,7 @@ public final class ObjectViewTopComponent extends TopComponent
     private javax.swing.JToggleButton btnConnect;
     private javax.swing.JToggleButton btnElectricalLink;
     private javax.swing.JButton btnExport;
+    private javax.swing.JButton btnFormatText;
     private javax.swing.JToggleButton btnOpticalLink;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnRemoveBackground;

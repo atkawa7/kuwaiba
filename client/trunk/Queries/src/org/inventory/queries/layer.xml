@@ -10,6 +10,13 @@
                 <attr name="iconBase" stringvalue="org/inventory/queries/res/icon.png"/>
                 <attr name="noIconInMenu" boolvalue="false"/>
             </file>
+            <file name="org-inventory-queries-QueryBuilderAction.instance">
+                <attr name="component" methodvalue="org.inventory.queries.QueryBuilderTopComponent.findInstance"/>
+                <attr name="displayName" bundlevalue="org.inventory.queries.Bundle#CTL_QueryBuilderAction"/>
+                <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
+                <attr name="iconBase" stringvalue="org/inventory/queries/res/icon2.png"/>
+                <attr name="noIconInMenu" boolvalue="false"/>
+            </file>
         </folder>
     </folder>
     <folder name="Menu">
@@ -17,6 +24,9 @@
             <file name="org-inventory-queries-actions-ShowQueryBuilder.shadow">
                 <attr name="originalFile" stringvalue="Actions/Edit/org-inventory-queries-actions-ShowQueryBuilder.instance"/>
                 <attr name="position" intvalue="100"/>
+            </file>
+            <file name="QueryBuilderAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Edit/org-inventory-queries-QueryBuilderAction.instance"/>
             </file>
             <file name="org-openide-actions-FindAction.shadow_hidden"/>
             <file name="org-openide-actions-ReplaceAction.shadow_hidden"/>
@@ -51,8 +61,22 @@
                 <attr name="originalFile" stringvalue="Actions/Edit/org-inventory-queries-actions-ShowQueryBuilder.instance"/>
                 <attr name="displayName" bundlevalue="org.inventory.queries.Bundle#CTL_ShowQueryBuilder"/>
             </file>
+            <file name="QueryBuilderAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Edit/org-inventory-queries-QueryBuilderAction.instance"/>
+                <attr name="displayName" bundlevalue="org.inventory.queries.Bundle#CTL_ShowQueryBuilder2"/>
+            </file>
         </folder>
         <folder name="File_hidden"/>
         <folder name="UndoRedo_hidden"/>
+    </folder>
+    <folder name="Windows2">
+        <folder name="Components">
+            <file name="QueryBuilderTopComponent.settings" url="QueryBuilderTopComponentSettings.xml"/>
+        </folder>
+        <folder name="Modes">
+            <folder name="editor">
+                <file name="QueryBuilderTopComponent.wstcref" url="QueryBuilderTopComponentWstcref.xml"/>
+            </folder>
+        </folder>
     </folder>
 </filesystem>
