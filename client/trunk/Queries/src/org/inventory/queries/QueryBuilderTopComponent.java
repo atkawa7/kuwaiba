@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 zim.
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -15,8 +15,14 @@
  */
 package org.inventory.queries;
 
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.logging.Logger;
-import org.inventory.communications.CommunicationsStub;
+import javax.swing.JComboBox;
+import org.inventory.core.services.interfaces.LocalClassMetadata;
+import org.inventory.core.services.interfaces.LocalClassMetadataLight;
+import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.inventory.queries.graphical.elements.ClassNodeWidget;
 import org.openide.util.NbBundle;
@@ -24,19 +30,22 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.util.Lookup;
 
 /**
  * Top component which displays something.
  */
 @ConvertAsProperties(dtd = "-//org.inventory.queries//QueryBuilder//EN",
 autostore = false)
-public final class QueryBuilderTopComponent extends TopComponent {
+public final class QueryBuilderTopComponent extends TopComponent implements ActionListener{
 
     private static QueryBuilderTopComponent instance;
     /** path to the icon used by the component and its open action */
     static final String ICON_PATH = "org/inventory/queries/res/icon2.png";
     private static final String PREFERRED_ID = "QueryBuilderTopComponent";
     private QueryEditorScene queryScene;
+    private NotificationUtil nu;
+    private NextGenerationQueryBuilderService qbs;
 
     public QueryBuilderTopComponent() {
         initComponents();
@@ -44,13 +53,13 @@ public final class QueryBuilderTopComponent extends TopComponent {
         setName(NbBundle.getMessage(QueryBuilderTopComponent.class, "CTL_QueryBuilderTopComponent"));
         setToolTipText(NbBundle.getMessage(QueryBuilderTopComponent.class, "HINT_QueryBuilderTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
-
     }
 
     private void initCustomComponents(){
+        qbs = new NextGenerationQueryBuilderService(this);
+        cmbClassList.addItem(null);
         queryScene = new QueryEditorScene();
         pnlMainScrollPanel.setViewportView(queryScene.createView());
-        queryScene.addChild(new ClassNodeWidget(queryScene, CommunicationsStub.getInstance().getMetaForClass("Building", false)));
     }
 
     /** This method is called from within the constructor to
@@ -62,12 +71,45 @@ public final class QueryBuilderTopComponent extends TopComponent {
     private void initComponents() {
 
         pnlMainScrollPanel = new javax.swing.JScrollPane();
+        barMain = new javax.swing.JToolBar();
+        lblSearch = new javax.swing.JLabel();
+        cmbClassList = new javax.swing.JComboBox();
+        btnSearch = new javax.swing.JButton();
+        btnButton = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
         add(pnlMainScrollPanel, java.awt.BorderLayout.CENTER);
+
+        barMain.setRollover(true);
+
+        org.openide.awt.Mnemonics.setLocalizedText(lblSearch, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.lblSearch.text")); // NOI18N
+        barMain.add(lblSearch);
+
+        barMain.add(cmbClassList);
+
+        btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/search.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnSearch, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSearch.text")); // NOI18N
+        btnSearch.setFocusable(false);
+        btnSearch.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSearch.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barMain.add(btnSearch);
+
+        btnButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/save.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnButton, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnButton.text")); // NOI18N
+        btnButton.setFocusable(false);
+        btnButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barMain.add(btnButton);
+
+        add(barMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToolBar barMain;
+    private javax.swing.JButton btnButton;
+    private javax.swing.JButton btnSearch;
+    private javax.swing.JComboBox cmbClassList;
+    private javax.swing.JLabel lblSearch;
     private javax.swing.JScrollPane pnlMainScrollPanel;
     // End of variables declaration//GEN-END:variables
     /**
@@ -103,17 +145,19 @@ public final class QueryBuilderTopComponent extends TopComponent {
 
     @Override
     public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_ALWAYS;
+        return TopComponent.PERSISTENCE_NEVER;
     }
 
     @Override
     public void componentOpened() {
-        // TODO add custom code on component opening
+        cmbClassList.addActionListener(this);
+        for (Object obj : qbs.getClassList())
+            cmbClassList.addItem(obj);
     }
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        cmbClassList.removeActionListener(this);
     }
 
     void writeProperties(java.util.Properties p) {
@@ -139,5 +183,24 @@ public final class QueryBuilderTopComponent extends TopComponent {
     @Override
     protected String preferredID() {
         return PREFERRED_ID;
+    }
+
+    public NotificationUtil getNotifier(){
+        if (nu == null)
+            return Lookup.getDefault().lookup(NotificationUtil.class);
+        return null;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        LocalClassMetadataLight selectedItem = (LocalClassMetadataLight) ((JComboBox)e.getSource()).getSelectedItem();
+        queryScene.removeChildren();
+
+        if(selectedItem != null){
+            LocalClassMetadata myClass = qbs.getClassDetails(selectedItem.getClassName());
+            if (myClass != null)
+                queryScene.addNode(myClass).setPreferredLocation(new Point(100, 100));
+        }
+        queryScene.validate();
+        queryScene.repaint();
     }
 }

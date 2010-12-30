@@ -20,7 +20,6 @@ import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDNodeWidget;
-import org.netbeans.api.visual.vmd.VMDPinWidget;
 
 /**
  * This class represents the nodes that wrap a particular class
@@ -30,13 +29,14 @@ public class ClassNodeWidget extends VMDNodeWidget{
 
     private LocalClassMetadata myClass;
 
-    public ClassNodeWidget(QueryEditorScene scene,LocalClassMetadata lcm) {
+    public ClassNodeWidget(QueryEditorScene scene, LocalClassMetadata lcm) {
         super(scene);
         this.myClass = lcm;
+        setNodeName(lcm.getClassName());
         for (LocalAttributeMetadata lam : myClass.getAttributes()){
-            VMDPinWidget myPin = new VMDPinWidget(scene);
-            myPin.setPinName(lam.getDisplayName());
-            addChild(myPin);
+            if (!lam.getIsVisible())
+                continue;
+            scene.addPin(lcm, lam);
         }
     }
 

@@ -16,9 +16,9 @@
 
 package org.inventory.queries.graphical.elements.filters;
 
-import javax.swing.JComponent;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDNodeWidget;
+import org.netbeans.api.visual.vmd.VMDPinWidget;
 
 /**
  * This class represents a simple searching criteria, this is, related to a simple data type.
@@ -26,6 +26,8 @@ import org.netbeans.api.visual.vmd.VMDNodeWidget;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public abstract class SimpleCriteriaNodeWidget extends VMDNodeWidget{
+
+    protected VMDPinWidget dummyPin;
 
     public SimpleCriteriaNodeWidget(QueryEditorScene scene) {
         super(scene);
@@ -36,6 +38,14 @@ public abstract class SimpleCriteriaNodeWidget extends VMDNodeWidget{
      * @return The component used to filter
      */
     public abstract Object getValue();
+
+    /**
+     * Gets the only pin used in this node
+     * @return
+     */
+    public VMDPinWidget getPin(){
+        return dummyPin;
+    }
 
     protected enum Criteria{
         EQUAL("Equal to",0),

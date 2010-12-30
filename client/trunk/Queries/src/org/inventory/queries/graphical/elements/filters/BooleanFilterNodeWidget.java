@@ -29,7 +29,6 @@ import org.netbeans.api.visual.widget.ComponentWidget;
  */
 public class BooleanFilterNodeWidget extends SimpleCriteriaNodeWidget{
     
-    private VMDPinWidget dummyPin;
     public BooleanFilterNodeWidget(QueryEditorScene scene) {
         super(scene);
         //scene.addNode("NumericFilter"+scene.getChildren().size()); //NOI18N

@@ -117,4 +117,20 @@ public class LocalAttributeMetadataImpl
     public Boolean getIsMultiple() {
         return this.isMultiple;
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if (obj == null)
+            return false;
+        if (!(obj instanceof LocalAttributeMetadata))
+            return false;
+        return this.getId().longValue() == ((LocalAttributeMetadata)obj).getId().longValue();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 13 * hash + (this.id != null ? this.id.hashCode() : 0);
+        return hash;
+    }
 }
