@@ -32,9 +32,7 @@ public class ClassInfoLight {
     protected Boolean isPhysicalConnection;
     protected Boolean isPhysicalEndpoint;
     protected String className;
-    protected String _package;
     protected String displayName;
-    protected String description;
     protected byte[] smallIcon;
 
     public ClassInfoLight(){}
@@ -46,9 +44,7 @@ public class ClassInfoLight {
         this.isPhysicalConnection = cm.getIsPhysicalConnection();
         this.isPhysicalEndpoint = cm.getIsPhysicalEndpoint();
         this.className = cm.getName();
-        this._package = cm.getPackageInfo().getName();
         this.displayName = cm.getDisplayName();
-        this.description = cm.getDescription();
         this.smallIcon = cm.getSmallIcon();
     }
 
@@ -68,28 +64,12 @@ public class ClassInfoLight {
         this.id = id;
     }
 
-    public String getPackage() {
-        return _package;
-    }
-
-    public void setPackage(String packageName) {
-        this._package = packageName;
-    }
-
     public Boolean getIsAbstract() {
         return isAbstract;
     }
 
     public void setIsAbstract(Boolean isAbstract) {
         this.isAbstract = isAbstract;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getDisplayName() {
