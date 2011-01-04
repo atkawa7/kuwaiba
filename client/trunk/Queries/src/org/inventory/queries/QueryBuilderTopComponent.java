@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
@@ -45,7 +46,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     private static final String PREFERRED_ID = "QueryBuilderTopComponent";
     private QueryEditorScene queryScene;
     private NotificationUtil nu;
-    private NextGenerationQueryBuilderService qbs;
+    private GraphicalQueryBuilderService qbs;
 
     public QueryBuilderTopComponent() {
         initComponents();
@@ -56,7 +57,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     }
 
     private void initCustomComponents(){
-        qbs = new NextGenerationQueryBuilderService(this);
+        qbs = new GraphicalQueryBuilderService(this);
         cmbClassList.addItem(null);
         queryScene = new QueryEditorScene();
         pnlMainScrollPanel.setViewportView(queryScene.createView());
@@ -193,12 +194,15 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
 
     public void actionPerformed(ActionEvent e) {
         LocalClassMetadataLight selectedItem = (LocalClassMetadataLight) ((JComboBox)e.getSource()).getSelectedItem();
-        queryScene.removeChildren();
+        queryScene.clear();
 
         if(selectedItem != null){
             LocalClassMetadata myClass = qbs.getClassDetails(selectedItem.getClassName());
-            if (myClass != null)
-                queryScene.addNode(myClass).setPreferredLocation(new Point(100, 100));
+            if (myClass != null){
+                ClassNodeWidget myNewNode = ((ClassNodeWidget)queryScene.addNode(myClass));
+                myNewNode.build(null);
+                myNewNode.setPreferredLocation(new Point(200, 200));
+            }
         }
         queryScene.validate();
         queryScene.repaint();

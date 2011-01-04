@@ -25,11 +25,11 @@ import org.inventory.core.services.interfaces.NotificationUtil;
  * This class will replace the old QueryBuilderService in next releases
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class NextGenerationQueryBuilderService{
+public class GraphicalQueryBuilderService{
     private QueryBuilderTopComponent qbtc;
     private CommunicationsStub com = CommunicationsStub.getInstance();
 
-    public NextGenerationQueryBuilderService(QueryBuilderTopComponent qbtc) {
+    public GraphicalQueryBuilderService(QueryBuilderTopComponent qbtc) {
         this.qbtc = qbtc;
     }
 

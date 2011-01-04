@@ -16,6 +16,7 @@
 
 package org.inventory.queries.graphical.elements.filters;
 
+import java.util.Random;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JRadioButton;
@@ -30,11 +31,21 @@ import org.netbeans.api.visual.widget.ComponentWidget;
 public class BooleanFilterNodeWidget extends SimpleCriteriaNodeWidget{
     
     public BooleanFilterNodeWidget(QueryEditorScene scene) {
-        super(scene);
+        super(scene);        
+    }
+
+    @Override
+    public Object getValue() {
+        return null;
+    }
+
+    @Override
+    public void build(String id) {
+        QueryEditorScene scene = (QueryEditorScene)getScene();
         //scene.addNode("NumericFilter"+scene.getChildren().size()); //NOI18N
         setNodeProperties(null, "Numeric", "Filter", null);
-        dummyPin = new VMDPinWidget(scene);
-        dummyPin.setPinName("Dummy");
+        defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
+        VMDPinWidget dummyPin = (VMDPinWidget)scene.addPin(id, defaultPinId);
         dummyPin.addChild(new ComponentWidget(scene, new JComboBox(new Object[]{Criteria.EQUAL})));
         ButtonGroup myGroup = new ButtonGroup();
         JRadioButton myTrue = new JRadioButton("True");
@@ -43,10 +54,5 @@ public class BooleanFilterNodeWidget extends SimpleCriteriaNodeWidget{
         myGroup.add(myFalse);
         dummyPin.addChild(new ComponentWidget(scene, myTrue));
         dummyPin.addChild(new ComponentWidget(scene, myFalse));
-    }
-
-    @Override
-    public Object getValue() {
-        return null;
     }
 }

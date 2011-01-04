@@ -37,8 +37,9 @@ public class LocalAttributeMetadataImpl
     private String listAttributeClassName = null;
 
     public LocalAttributeMetadataImpl(){}
-    public LocalAttributeMetadataImpl(String _name, String _type, String _displayName,
+    public LocalAttributeMetadataImpl(Long oid, String _name, String _type, String _displayName,
             Boolean _isVisible, Boolean _isAdministrative, Boolean _isMultiple, String _description){
+        this.id = oid;
         this.name = _name;
         this.type = Utils.getRealType(_type);
         this.displayName = _displayName;

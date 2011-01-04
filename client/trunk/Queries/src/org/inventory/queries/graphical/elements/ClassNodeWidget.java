@@ -16,28 +16,25 @@
 
 package org.inventory.queries.graphical.elements;
 
+import java.util.Random;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
+import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
-import org.netbeans.api.visual.vmd.VMDNodeWidget;
+import org.netbeans.api.visual.vmd.VMDFactory;
 
 /**
  * This class represents the nodes that wrap a particular class
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ClassNodeWidget extends VMDNodeWidget{
+public class ClassNodeWidget extends QueryEditorNodeWidget{
 
     private LocalClassMetadata myClass;
 
     public ClassNodeWidget(QueryEditorScene scene, LocalClassMetadata lcm) {
-        super(scene);
+        super(scene,VMDFactory.getOriginalScheme());
         this.myClass = lcm;
         setNodeName(lcm.getClassName());
-        for (LocalAttributeMetadata lam : myClass.getAttributes()){
-            if (!lam.getIsVisible())
-                continue;
-            scene.addPin(lcm, lam);
-        }
     }
 
     public LocalClassMetadata getMyClass() {
@@ -46,5 +43,16 @@ public class ClassNodeWidget extends VMDNodeWidget{
 
     public void setMyClass(LocalClassMetadata myClass) {
         this.myClass = myClass;
+    }
+
+    @Override
+    public void build(String id) {
+        defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
+        ((QueryEditorScene)getScene()).addPin(myClass, defaultPinId);
+        for (LocalAttributeMetadata lam : myClass.getAttributes()){
+            if (!lam.getIsVisible())
+                continue;
+            ((QueryEditorScene)getScene()).addPin(myClass, lam);
+        }
     }
 }

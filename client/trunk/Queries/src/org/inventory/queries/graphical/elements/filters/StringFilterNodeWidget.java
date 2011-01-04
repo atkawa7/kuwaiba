@@ -16,6 +16,7 @@
 
 package org.inventory.queries.graphical.elements.filters;
 
+import java.util.Random;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import org.inventory.queries.graphical.QueryEditorScene;
@@ -27,22 +28,25 @@ import org.netbeans.api.visual.widget.ComponentWidget;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class StringFilterNodeWidget extends SimpleCriteriaNodeWidget{
-    private VMDPinWidget dummyPin;
     public StringFilterNodeWidget(QueryEditorScene scene) {
         super(scene);
         //scene.addNode("NumericFilter"+scene.getChildren().size()); //NOI18N
         setNodeProperties(null, "Numeric", "Filter", null);
-        dummyPin = new VMDPinWidget(scene);
-        dummyPin.setPinName("Dummy");
-        dummyPin.addChild(new ComponentWidget(scene, new JComboBox(new Object[]{
-                                                Criteria.EQUAL,
-                                                Criteria.LIKE
-                          })));
-        dummyPin.addChild(new ComponentWidget(scene, new JTextField(10)));
     }
 
     @Override
     public Object getValue() {
         return null;
+    }
+
+    @Override
+    public void build(String id) {
+        defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
+        VMDPinWidget dummyPin = (VMDPinWidget)((QueryEditorScene)getScene()).addPin(id, defaultPinId);
+        dummyPin.addChild(new ComponentWidget(getScene(), new JComboBox(new Object[]{
+                                                Criteria.EQUAL,
+                                                Criteria.LIKE
+                          })));
+        dummyPin.addChild(new ComponentWidget(getScene(), new JTextField(10)));
     }
 }

@@ -17,6 +17,7 @@
 package org.inventory.queries.graphical.elements.filters;
 
 import java.util.Calendar;
+import java.util.Random;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import org.inventory.queries.graphical.QueryEditorScene;
@@ -28,13 +29,22 @@ import org.netbeans.api.visual.widget.ComponentWidget;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class DateFilterNodeWidget extends SimpleCriteriaNodeWidget{
-    private VMDPinWidget dummyPin;
+    
     public DateFilterNodeWidget(QueryEditorScene scene) {
         super(scene);
-        //scene.addNode("NumericFilter"+scene.getChildren().size()); //NOI18N
+    }
+
+    @Override
+    public Object getValue() {
+        return null;
+    }
+
+    @Override
+    public void build(String id) {
         setNodeProperties(null, "Numeric", "Filter", null);
-        dummyPin = new VMDPinWidget(scene);
-        dummyPin.setPinName("Dummy");
+        defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
+        QueryEditorScene scene = ((QueryEditorScene)getScene());
+        VMDPinWidget dummyPin = (VMDPinWidget)scene.addPin(id, defaultPinId);
         dummyPin.addChild(new ComponentWidget(scene, new JComboBox(new Object[]{
                                                 Criteria.EQUAL,
                                                 Criteria.BETWEEN,
@@ -42,10 +52,5 @@ public class DateFilterNodeWidget extends SimpleCriteriaNodeWidget{
                                                 Criteria.LESS_THAN
                           })));
         dummyPin.addChild(new ComponentWidget(scene, new JTextField(Calendar.getInstance().getTime().toString(), 10)));
-    }
-
-    @Override
-    public Object getValue() {
-        return null;
     }
 }

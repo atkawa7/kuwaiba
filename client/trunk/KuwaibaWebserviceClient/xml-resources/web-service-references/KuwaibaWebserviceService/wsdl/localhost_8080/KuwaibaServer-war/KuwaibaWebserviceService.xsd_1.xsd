@@ -268,6 +268,16 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getServerStatus">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getServerStatusResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="getGroups">
 <xs:sequence>
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
@@ -308,16 +318,6 @@
 <xs:element name="creationDate" type="xs:long" minOccurs="0" />
 <xs:element name="isEnabled" type="xs:boolean" minOccurs="0" />
 <xs:element name="groups" type="tns:userGroupInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getServerStatus">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getServerStatusResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" />
 </xs:sequence>
 </xs:complexType>
 
@@ -371,9 +371,7 @@
 <xs:element name="isPhysicalConnection" type="xs:boolean" minOccurs="0" />
 <xs:element name="isPhysicalEndpoint" type="xs:boolean" minOccurs="0" />
 <xs:element name="className" type="xs:string" minOccurs="0" />
-<xs:element name="_package" type="xs:string" minOccurs="0" />
 <xs:element name="displayName" type="xs:string" minOccurs="0" />
-<xs:element name="description" type="xs:string" minOccurs="0" />
 <xs:element name="smallIcon" type="xs:base64Binary" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
@@ -518,6 +516,7 @@
 <xs:complexContent>
 <xs:extension base="tns:classInfoLight">
 <xs:sequence>
+<xs:element name="attributeIds" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="attributeTypes" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="attributeDisplayNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
@@ -526,6 +525,7 @@
 <xs:element name="attributesIsMultiple" type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="attributesDescription" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="icon" type="xs:base64Binary" minOccurs="0" />
+<xs:element name="description" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:extension>
 </xs:complexContent>

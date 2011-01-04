@@ -49,14 +49,15 @@ package org.inventory.queries.graphical;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Date;
+import java.util.Random;
 import javax.swing.JCheckBox;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.queries.graphical.elements.ClassNodeWidget;
 import org.inventory.queries.graphical.elements.filters.BooleanFilterNodeWidget;
 import org.inventory.queries.graphical.elements.filters.DateFilterNodeWidget;
 import org.inventory.queries.graphical.elements.filters.NumericFilterNodeWidget;
-import org.inventory.queries.graphical.elements.filters.SimpleCriteriaNodeWidget;
 import org.inventory.queries.graphical.elements.filters.StringFilterNodeWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.WidgetAction;
@@ -86,7 +87,7 @@ import org.netbeans.api.visual.widget.Widget;
  * @author David Kaspar
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class QueryEditorScene extends GraphPinScene<LocalClassMetadata, String, LocalAttributeMetadata>
+public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         implements ItemListener{
 
     private LayerWidget backgroundLayer = new LayerWidget (this);
@@ -128,7 +129,7 @@ public class QueryEditorScene extends GraphPinScene<LocalClassMetadata, String, 
         getActions ().addAction (ActionFactory.createPanAction ());
         getActions ().addAction (ActionFactory.createRectangularSelectAction (this, backgroundLayer));
 
-        sceneLayout = LayoutFactory.createSceneGraphLayout(this, new GridGraphLayout<LocalClassMetadata, String> ().setChecker (true));
+        sceneLayout = LayoutFactory.createSceneGraphLayout(this, new GridGraphLayout<Object, String> ().setChecker (true));
     }
 
     /**
@@ -136,10 +137,31 @@ public class QueryEditorScene extends GraphPinScene<LocalClassMetadata, String, 
      * @param node the node
      * @return the widget attached to the node
      */
-    protected Widget attachNodeWidget (LocalClassMetadata node) {
-        VMDNodeWidget widget = new VMDNodeWidget (this, scheme);
-        mainLayer.addChild (widget);
+    protected Widget attachNodeWidget (Object node) {
+        QueryEditorNodeWidget widget=null;
+        if (node instanceof LocalClassMetadata)
+            widget = new ClassNodeWidget(this, (LocalClassMetadata)node);
+        else{
+            if (((Class)node).equals(LocalObjectLight.class)){ //NOI18N
 
+            }else{
+                if (((Class)node).equals(String.class)) //NOI18N
+                    widget = new StringFilterNodeWidget(this);
+                else
+                    if (((Class)node).equals(Integer.class) || //NOI18N
+                            ((Class)node).equals(Float.class) || //NOI18N
+                            ((Class)node).equals(Long.class)) //NOI18N
+                        widget = new NumericFilterNodeWidget(this);
+                    else
+                        if (((Class)node).equals(Boolean.class)) //NOI18N
+                            widget = new BooleanFilterNodeWidget(this);
+                        else
+                            if (((Class)node).equals(Date.class)) //NOI18N
+                                widget = new DateFilterNodeWidget(this);
+            }
+        }
+        
+        mainLayer.addChild (widget);
         widget.getHeader ().getActions ().addAction (createObjectHoverAction ());
         widget.getActions ().addAction (createSelectAction ());
         widget.getActions ().addAction (moveAction);
@@ -154,16 +176,22 @@ public class QueryEditorScene extends GraphPinScene<LocalClassMetadata, String, 
      * @param pin the pin
      * @return the widget attached to the pin, null, if it is a default pin
      */
-    protected Widget attachPinWidget (LocalClassMetadata node, LocalAttributeMetadata pin) {
+    protected Widget attachPinWidget (Object node, Object pin) {
         VMDPinWidget widget = new VMDPinWidget (this, scheme);
-        widget.setPinName(pin.getDisplayName());
-        JCheckBox insideCheck = new JCheckBox();
-        insideCheck.addItemListener(this);
-        //We set the type of attribute associated to the check so the filter can be created
-        insideCheck.putClientProperty("filterType", pin.getType()); //NOI18N
-        insideCheck.putClientProperty("attribute", pin); //NOI18N
-        widget.addChild(new ComponentWidget(this, insideCheck));
+
+        //This is a pin within a ClassNodeWidget
+        if (pin instanceof LocalAttributeMetadata){
+            widget.setPinName(((LocalAttributeMetadata)pin).getDisplayName());
+            JCheckBox insideCheck = new JCheckBox();
+            insideCheck.addItemListener(this);
+            //We set the type of attribute associated to the check so the filter can be created
+            insideCheck.putClientProperty("filterType", ((LocalAttributeMetadata)pin).getType()); //NOI18N
+            insideCheck.putClientProperty("attribute", pin); //NOI18N
+            widget.addChild(new ComponentWidget(this, insideCheck));
+        }
+        
         ((VMDNodeWidget) findWidget (node)).attachPinWidget (widget);
+        System.out.println("Node:"+node+"Pin:"+pin);
         widget.getActions ().addAction (createObjectHoverAction ());
         widget.getActions ().addAction (createSelectAction ());
 
@@ -195,7 +223,7 @@ public class QueryEditorScene extends GraphPinScene<LocalClassMetadata, String, 
      * @param oldSourcePin the old source pin
      * @param sourcePin the new source pin
      */
-    protected void attachEdgeSourceAnchor (String edge, LocalAttributeMetadata oldSourcePin, LocalAttributeMetadata sourcePin) {
+    protected void attachEdgeSourceAnchor (String edge, Object oldSourcePin, Object sourcePin) {
         ((ConnectionWidget) findWidget (edge)).setSourceAnchor (getPinAnchor (sourcePin));
     }
 
@@ -207,11 +235,11 @@ public class QueryEditorScene extends GraphPinScene<LocalClassMetadata, String, 
      * @param oldTargetPin the old target pin
      * @param targetPin the new target pin
      */
-    protected void attachEdgeTargetAnchor (String edge, LocalAttributeMetadata oldTargetPin, LocalAttributeMetadata targetPin) {
+    protected void attachEdgeTargetAnchor (String edge, Object oldTargetPin, Object targetPin) {
         ((ConnectionWidget) findWidget (edge)).setTargetAnchor (getPinAnchor (targetPin));
     }
 
-    private Anchor getPinAnchor (LocalAttributeMetadata pin) {
+    private Anchor getPinAnchor (Object pin) {
         if (pin == null)
             return null;
         VMDNodeWidget nodeWidget = (VMDNodeWidget) findWidget (getPinNode (pin));
@@ -232,7 +260,12 @@ public class QueryEditorScene extends GraphPinScene<LocalClassMetadata, String, 
         sceneLayout.invokeLayout ();
     }
 
-
+    public void clear(){
+        backgroundLayer.removeChildren();
+        mainLayer.removeChildren();
+        connectionLayer.removeChildren();
+        upperLayer.removeChildren();
+    }
     /**
      * Listen for checkbox selections
      * @param e
@@ -240,31 +273,11 @@ public class QueryEditorScene extends GraphPinScene<LocalClassMetadata, String, 
     public void itemStateChanged(ItemEvent e) {
         JCheckBox insideCheck = (JCheckBox) e.getSource();
         if (insideCheck.isSelected()){
-            if (insideCheck.getClientProperty("filterType").equals(LocalObjectLight.class)){ //NOI18N
-
-            }else{
-                SimpleCriteriaNodeWidget simpleFilter=null;
-                if (insideCheck.getClientProperty("filterType").equals(String.class)) //NOI18N
-                    simpleFilter = new StringFilterNodeWidget(this);
-                else
-                    if (insideCheck.getClientProperty("filterType").equals(Integer.class) || //NOI18N
-                            insideCheck.getClientProperty("filterType").equals(Float.class) || //NOI18N
-                            insideCheck.getClientProperty("filterType").equals(Long.class)) //NOI18N
-                        simpleFilter = new NumericFilterNodeWidget(this);
-                    else
-                        if (insideCheck.getClientProperty("filterType").equals(Boolean.class)) //NOI18N
-                            simpleFilter = new BooleanFilterNodeWidget(this);
-                        else
-                            if (insideCheck.getClientProperty("filterType").equals(Date.class)) //NOI18N
-                                simpleFilter = new DateFilterNodeWidget(this);
-                if (simpleFilter != null){
-                    //addEdge("");
-                    //addNode(null)
-                    setEdgeSource("",(LocalAttributeMetadata)insideCheck.getClientProperty("attribute"));
-                    //setEdgeTarget("",simpleFilter.getPin());
-                }
-            }
-
+            QueryEditorNodeWidget newNode = (QueryEditorNodeWidget) addNode(insideCheck.getClientProperty("filterType"));
+            String edgeName = "Edge_"+new Random().nextInt(100);
+            addEdge(edgeName);
+            setEdgeSource(edgeName, insideCheck.getClientProperty("attribute"));
+            setEdgeTarget(edgeName, newNode.getDefaultPinId());
         }
     }
 }

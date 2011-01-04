@@ -40,13 +40,16 @@ public class LocalClassMetadataLightImpl
     protected Boolean isPhysicalEndpoint;
     protected String className;
     protected String displayName;
-    protected String description;
-    protected String packageName;
     protected Image smallIcon;
 
     public LocalClassMetadataLightImpl(ClassInfo ci){
-        this (ci.getId(),ci.getClassName(),ci.getPackage(),ci.getDisplayName(),
-                ci.getDescription(),ci.getSmallIcon(), ci.isIsPhysicalNode(),ci.isIsPhysicalEndpoint());
+        this (ci.getId(),ci.getClassName(),ci.getDisplayName(),ci.getSmallIcon(),
+                ci.isIsPhysicalNode(),ci.isIsPhysicalEndpoint());
+    }
+
+    public LocalClassMetadataLightImpl(String className, Long oid){
+        this.id = oid;
+        this.className = className;
     }
 
     public LocalClassMetadataLightImpl(ClassInfoLight cil){
@@ -55,31 +58,22 @@ public class LocalClassMetadataLightImpl
         this.isPhysicalEndpoint = cil.isIsPhysicalEndpoint();
         this.isAbstract = cil.isIsAbstract();
         this.className = cil.getClassName();
-        this.packageName = cil.getPackage();
         this.displayName = cil.getDisplayName();
-        this.description = cil.getDescription();
         this.smallIcon = cil.getSmallIcon()==null?null:Utils.getImageFromByteArray(cil.getSmallIcon());
     }
 
-    public LocalClassMetadataLightImpl(Long _id, String _className, String _packageName,
-            String _displayName, String _description, byte[] _smallIcon,
-            Boolean _isPhysicalNode, Boolean _isPhysicalEndpoint){
+    public LocalClassMetadataLightImpl(Long _id, String _className, String _displayName,
+            byte[] _smallIcon,Boolean _isPhysicalNode, Boolean _isPhysicalEndpoint){
         this.id=_id;
         this.isPhysicalNode = _isPhysicalNode;
         this.isPhysicalEndpoint = _isPhysicalEndpoint;
         this.className = _className;
-        this.packageName = _packageName;
         this.displayName = _displayName;
-        this.description = _description;
         this.smallIcon = _smallIcon==null?null:Utils.getImageFromByteArray(_smallIcon);
     }
 
     public String getClassName() {
         return className;
-    }
-
-    public String getPackageName() {
-        return packageName;
     }
 
     public Long getOid() {
@@ -128,10 +122,6 @@ public class LocalClassMetadataLightImpl
     
     public String getDisplayName(){
         return displayName;
-    }
-    
-    public String getDescription(){
-        return description;
     }
     
     public Image getSmallIcon() {
