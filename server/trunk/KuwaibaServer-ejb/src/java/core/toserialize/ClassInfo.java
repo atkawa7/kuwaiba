@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ClassInfo extends ClassInfoLight{
-    
+    private Long [] attributeIds;
     private String [] attributeNames; 
     private String [] attributeTypes;
     private String [] attributeDisplayNames;
@@ -38,6 +38,7 @@ public class ClassInfo extends ClassInfoLight{
     private Boolean [] attributesIsMultiple; //if the attribute is a list
     private String [] attributesDescription;
     protected byte[] icon;
+    protected String description;
 
     public ClassInfo(){}
     public ClassInfo(ClassMetadata myClass){
@@ -45,6 +46,7 @@ public class ClassInfo extends ClassInfoLight{
         this.isAbstract = myClass.getIsAbstract();
         this.icon = myClass.getIcon();
         List<AttributeMetadata> ar = myClass.getAttributes();
+        this.attributeIds = new Long[ar.size()];
         this.attributeNames = new String[ar.size()];
         this.attributeTypes = new String[this.attributeNames.length];
         this.attributeDisplayNames = new String[this.attributeNames.length];
@@ -52,9 +54,10 @@ public class ClassInfo extends ClassInfoLight{
         this.attributesIsAdministrative = new Boolean[this.attributeNames.length];
         this.attributesIsMultiple = new Boolean[this.attributeNames.length];
         this.attributesDescription = new String[this.attributeNames.length];
-
+        this.description = myClass.getDescription();
         int i = 0;
         for (AttributeMetadata myAtt : ar){
+            this.attributeIds[i] = myAtt.getId();
             this.attributeNames[i] = myAtt.getName();
             this.attributeTypes[i] = myAtt.getType();
             this.attributeDisplayNames[i] = myAtt.getDisplayName() == null?
@@ -123,6 +126,22 @@ public class ClassInfo extends ClassInfoLight{
 
     public void setAttributesIsMultiple(Boolean[] attributesIsMultiple) {
         this.attributesIsMultiple = attributesIsMultiple;
+    }
+
+    public Long[] getAttributeIds() {
+        return attributeIds;
+    }
+
+    public void setAttributeIds(Long[] attributeIds) {
+        this.attributeIds = attributeIds;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public byte[] getIcon() {

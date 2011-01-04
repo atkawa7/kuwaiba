@@ -44,19 +44,19 @@ public class AttributeMetadata implements Serializable {
     private Long id;
 
     @Column(nullable=false,updatable=false)
-    private String name="";
+    private String name=""; //NOI18N
     @Column(nullable=false)
-    private String type="String";
-    private String displayName="";
+    private String type="String"; //NOI18N
+    private String displayName=""; //NOI18N
     @Column(nullable=false)
-    private Boolean isAdministrative=false; //Señala si el atributo es administrativo (cosas como id o relacionadas de alguna forma con el despliegue)
+    private Boolean isAdministrative=false; //Mark this attribute as administrative (stuff like id or parent)
     @Column(nullable=false,updatable=false)
-    private Boolean isMultiple = false;    //Señala si el atributo es un tipo básico o una enumeración/relación
+    private Boolean isMultiple = false;    //Is this attribute a basic type (int, string, etc) or a list type
     @Column(nullable=false)
-    private Boolean isVisible=true; //Señala si el atributo se muestra en la interfaz
+    private Boolean isVisible=true; //Should this be shown or hidden
     private String description;
 
-    public AttributeMetadata(){} //Requerido
+    public AttributeMetadata(){} //Required
     public AttributeMetadata(String _name, String _type, String _displayName,
             Boolean _isAdministrative, Boolean _isVisible, Boolean _isMultiple, String _description){
         this.name = _name;
@@ -64,7 +64,7 @@ public class AttributeMetadata implements Serializable {
         this.displayName = _displayName;
         this.isAdministrative = _isAdministrative;
         this.isVisible = _isVisible;
-        //De debería quitar y sacar esa info de la clase?
+        //Should this be taken from the class metadata?
         this.isMultiple = _isMultiple;
         this.description = _description;
     }
