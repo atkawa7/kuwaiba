@@ -46,9 +46,12 @@
 
 package org.inventory.queries.graphical;
 
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JCheckBox;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
@@ -74,7 +77,6 @@ import org.netbeans.api.visual.vmd.VMDConnectionWidget;
 import org.netbeans.api.visual.vmd.VMDFactory;
 import org.netbeans.api.visual.vmd.VMDNodeWidget;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
-import org.netbeans.api.visual.widget.ComponentWidget;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.EventProcessingType;
 import org.netbeans.api.visual.widget.LayerWidget;
@@ -90,6 +92,15 @@ import org.netbeans.api.visual.widget.Widget;
 public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         implements ItemListener{
 
+    /**
+     * Event raised when an attribute is used as filter(its checkbox is selected)
+     */
+    public static final int SCENE_FILTERENABLED = 1;
+    /**
+     * Event raised when an attribute is not used as filter anymore(its checkbox is deselected)
+     */
+    public static final int SCENE_FILTERDISABLED = 2;
+
     private LayerWidget backgroundLayer = new LayerWidget (this);
     private LayerWidget mainLayer = new LayerWidget (this);
     private LayerWidget connectionLayer = new LayerWidget (this);
@@ -102,6 +113,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
 
     private SceneLayout sceneLayout;
     private VMDColorScheme scheme;
+    private ArrayList<ActionListener> listeners;
 
     /**
      * Creates a Query Editor graph scene.
@@ -140,23 +152,24 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
     protected Widget attachNodeWidget (Object node) {
         QueryEditorNodeWidget widget=null;
         if (node instanceof LocalClassMetadata)
-            widget = new ClassNodeWidget(this, (LocalClassMetadata)node);
+            widget = new ClassNodeWidget(this, (LocalClassMetadata)node,VMDFactory.getOriginalScheme());
         else{
-            if (((Class)node).equals(LocalObjectLight.class)){ //NOI18N
+            String type = ((String)node).substring(0, ((String)node).indexOf('_'));
+            if (type.equals("LocalObjectLight")){ //NOI18N
 
             }else{
-                if (((Class)node).equals(String.class)) //NOI18N
+                if (type.equals("String")) //NOI18N
                     widget = new StringFilterNodeWidget(this);
                 else
-                    if (((Class)node).equals(Integer.class) || //NOI18N
-                            ((Class)node).equals(Float.class) || //NOI18N
-                            ((Class)node).equals(Long.class)) //NOI18N
+                    if (type.equals("Integer") || //NOI18N
+                            type.equals("Float") || //NOI18N
+                            type.equals("Long")) //NOI18N
                         widget = new NumericFilterNodeWidget(this);
                     else
-                        if (((Class)node).equals(Boolean.class)) //NOI18N
+                        if (type.equals("Boolean")) //NOI18N
                             widget = new BooleanFilterNodeWidget(this);
                         else
-                            if (((Class)node).equals(Date.class)) //NOI18N
+                            if (type.equals("Date")) //NOI18N
                                 widget = new DateFilterNodeWidget(this);
             }
         }
@@ -178,20 +191,8 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      */
     protected Widget attachPinWidget (Object node, Object pin) {
         VMDPinWidget widget = new VMDPinWidget (this, scheme);
-
-        //This is a pin within a ClassNodeWidget
-        if (pin instanceof LocalAttributeMetadata){
-            widget.setPinName(((LocalAttributeMetadata)pin).getDisplayName());
-            JCheckBox insideCheck = new JCheckBox();
-            insideCheck.addItemListener(this);
-            //We set the type of attribute associated to the check so the filter can be created
-            insideCheck.putClientProperty("filterType", ((LocalAttributeMetadata)pin).getType()); //NOI18N
-            insideCheck.putClientProperty("attribute", pin); //NOI18N
-            widget.addChild(new ComponentWidget(this, insideCheck));
-        }
         
         ((VMDNodeWidget) findWidget (node)).attachPinWidget (widget);
-        System.out.println("Node:"+node+"Pin:"+pin);
         widget.getActions ().addAction (createObjectHoverAction ());
         widget.getActions ().addAction (createSelectAction ());
 
@@ -261,23 +262,39 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
     }
 
     public void clear(){
-        backgroundLayer.removeChildren();
-        mainLayer.removeChildren();
-        connectionLayer.removeChildren();
-        upperLayer.removeChildren();
+//        backgroundLayer.removeChildren();
+//        mainLayer.removeChildren();
+//        connectionLayer.removeChildren();
+//        upperLayer.removeChildren();
+        while (!getNodes().isEmpty())
+            removeNode(getNodes().iterator().next());
+    }
+
+    /**
+     * To listen for scene changes implementing the observer design pattern
+     * @param listener
+     */
+    public void addActionListener(ActionListener listener){
+        if (listeners == null)
+            listeners = new ArrayList<ActionListener>();
+        listeners.add(listener);
+    }
+
+    public void removeActionListener(ActionListener listener){
+        if (listeners == null)
+            return;
+        listeners.remove(listener);
+    }
+
+    public void fireChangeEvent(ActionEvent ev){
+        for (ActionListener listener : listeners)
+            listener.actionPerformed(ev);
     }
     /**
      * Listen for checkbox selections
      * @param e
      */
     public void itemStateChanged(ItemEvent e) {
-        JCheckBox insideCheck = (JCheckBox) e.getSource();
-        if (insideCheck.isSelected()){
-            QueryEditorNodeWidget newNode = (QueryEditorNodeWidget) addNode(insideCheck.getClientProperty("filterType"));
-            String edgeName = "Edge_"+new Random().nextInt(100);
-            addEdge(edgeName);
-            setEdgeSource(edgeName, insideCheck.getClientProperty("attribute"));
-            setEdgeTarget(edgeName, newNode.getDefaultPinId());
-        }
+        fireChangeEvent(new ActionEvent(e.getSource(), SCENE_FILTERENABLED, "chechbox-enabled"));
     }
 }

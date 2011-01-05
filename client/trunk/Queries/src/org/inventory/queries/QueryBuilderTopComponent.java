@@ -19,8 +19,8 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Logger;
+import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
-import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
@@ -47,6 +47,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     private QueryEditorScene queryScene;
     private NotificationUtil nu;
     private GraphicalQueryBuilderService qbs;
+    private ButtonGroup grpLogicalConnector;
 
     public QueryBuilderTopComponent() {
         initComponents();
@@ -57,10 +58,13 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     }
 
     private void initCustomComponents(){
-        qbs = new GraphicalQueryBuilderService(this);
-        cmbClassList.addItem(null);
         queryScene = new QueryEditorScene();
+        qbs = new GraphicalQueryBuilderService(this);
+        grpLogicalConnector = new ButtonGroup();
+        cmbClassList.addItem(null);
         pnlMainScrollPanel.setViewportView(queryScene.createView());
+        grpLogicalConnector.add(chkAnd);
+        grpLogicalConnector.add(chkOr);
     }
 
     /** This method is called from within the constructor to
@@ -75,8 +79,11 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         barMain = new javax.swing.JToolBar();
         lblSearch = new javax.swing.JLabel();
         cmbClassList = new javax.swing.JComboBox();
-        btnSearch = new javax.swing.JButton();
         btnButton = new javax.swing.JButton();
+        btnSearch = new javax.swing.JButton();
+        lblConnector = new javax.swing.JLabel();
+        chkAnd = new javax.swing.JRadioButton();
+        chkOr = new javax.swing.JRadioButton();
 
         setLayout(new java.awt.BorderLayout());
         add(pnlMainScrollPanel, java.awt.BorderLayout.CENTER);
@@ -88,19 +95,35 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
 
         barMain.add(cmbClassList);
 
-        btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/search.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnSearch, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSearch.text")); // NOI18N
-        btnSearch.setFocusable(false);
-        btnSearch.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnSearch.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        barMain.add(btnSearch);
-
         btnButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/save.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnButton, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnButton.text")); // NOI18N
         btnButton.setFocusable(false);
         btnButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         barMain.add(btnButton);
+
+        btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/run-search.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnSearch, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSearch.text")); // NOI18N
+        btnSearch.setFocusable(false);
+        btnSearch.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSearch.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barMain.add(btnSearch);
+
+        org.openide.awt.Mnemonics.setLocalizedText(lblConnector, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.lblConnector.text")); // NOI18N
+        barMain.add(lblConnector);
+
+        chkAnd.setSelected(true);
+        org.openide.awt.Mnemonics.setLocalizedText(chkAnd, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.chkAnd.text")); // NOI18N
+        chkAnd.setFocusable(false);
+        chkAnd.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        chkAnd.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barMain.add(chkAnd);
+
+        org.openide.awt.Mnemonics.setLocalizedText(chkOr, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.chkOr.text")); // NOI18N
+        chkOr.setFocusable(false);
+        chkOr.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        chkOr.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barMain.add(chkOr);
 
         add(barMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
@@ -109,7 +132,10 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     private javax.swing.JToolBar barMain;
     private javax.swing.JButton btnButton;
     private javax.swing.JButton btnSearch;
+    private javax.swing.JRadioButton chkAnd;
+    private javax.swing.JRadioButton chkOr;
     private javax.swing.JComboBox cmbClassList;
+    private javax.swing.JLabel lblConnector;
     private javax.swing.JLabel lblSearch;
     private javax.swing.JScrollPane pnlMainScrollPanel;
     // End of variables declaration//GEN-END:variables
@@ -152,6 +178,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     @Override
     public void componentOpened() {
         cmbClassList.addActionListener(this);
+        queryScene.addActionListener(qbs);
         for (Object obj : qbs.getClassList())
             cmbClassList.addItem(obj);
     }
@@ -159,6 +186,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     @Override
     public void componentClosed() {
         cmbClassList.removeActionListener(this);
+        queryScene.removeActionListener(qbs);
     }
 
     void writeProperties(java.util.Properties p) {
@@ -192,6 +220,10 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         return null;
     }
 
+    public QueryEditorScene getQueryScene() {
+        return queryScene;
+    }
+
     public void actionPerformed(ActionEvent e) {
         LocalClassMetadataLight selectedItem = (LocalClassMetadataLight) ((JComboBox)e.getSource()).getSelectedItem();
         queryScene.clear();
@@ -201,7 +233,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
             if (myClass != null){
                 ClassNodeWidget myNewNode = ((ClassNodeWidget)queryScene.addNode(myClass));
                 myNewNode.build(null);
-                myNewNode.setPreferredLocation(new Point(200, 200));
+                myNewNode.setPreferredLocation(new Point(100, 50));
             }
         }
         queryScene.validate();

@@ -41,7 +41,7 @@ public class DateFilterNodeWidget extends SimpleCriteriaNodeWidget{
 
     @Override
     public void build(String id) {
-        setNodeProperties(null, "Numeric", "Filter", null);
+        setNodeProperties(null, "Date", "Filter", null);
         defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
         QueryEditorScene scene = ((QueryEditorScene)getScene());
         VMDPinWidget dummyPin = (VMDPinWidget)scene.addPin(id, defaultPinId);

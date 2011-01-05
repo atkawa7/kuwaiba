@@ -43,12 +43,13 @@ public class BooleanFilterNodeWidget extends SimpleCriteriaNodeWidget{
     public void build(String id) {
         QueryEditorScene scene = (QueryEditorScene)getScene();
         //scene.addNode("NumericFilter"+scene.getChildren().size()); //NOI18N
-        setNodeProperties(null, "Numeric", "Filter", null);
+        setNodeProperties(null, "Boolean", "Filter", null);
         defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
         VMDPinWidget dummyPin = (VMDPinWidget)scene.addPin(id, defaultPinId);
         dummyPin.addChild(new ComponentWidget(scene, new JComboBox(new Object[]{Criteria.EQUAL})));
         ButtonGroup myGroup = new ButtonGroup();
         JRadioButton myTrue = new JRadioButton("True");
+        myTrue.setSelected(true);
         JRadioButton myFalse = new JRadioButton("False");
         myGroup.add(myTrue);
         myGroup.add(myFalse);

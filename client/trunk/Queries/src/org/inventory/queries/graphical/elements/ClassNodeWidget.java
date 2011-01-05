@@ -17,11 +17,14 @@
 package org.inventory.queries.graphical.elements;
 
 import java.util.Random;
+import javax.swing.JCheckBox;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
-import org.netbeans.api.visual.vmd.VMDFactory;
+import org.netbeans.api.visual.vmd.VMDColorScheme;
+import org.netbeans.api.visual.vmd.VMDPinWidget;
+import org.netbeans.api.visual.widget.ComponentWidget;
 
 /**
  * This class represents the nodes that wrap a particular class
@@ -31,8 +34,8 @@ public class ClassNodeWidget extends QueryEditorNodeWidget{
 
     private LocalClassMetadata myClass;
 
-    public ClassNodeWidget(QueryEditorScene scene, LocalClassMetadata lcm) {
-        super(scene,VMDFactory.getOriginalScheme());
+    public ClassNodeWidget(QueryEditorScene scene, LocalClassMetadata lcm,VMDColorScheme scheme) {
+        super(scene,scheme);
         this.myClass = lcm;
         setNodeName(lcm.getClassName());
     }
@@ -52,7 +55,18 @@ public class ClassNodeWidget extends QueryEditorNodeWidget{
         for (LocalAttributeMetadata lam : myClass.getAttributes()){
             if (!lam.getIsVisible())
                 continue;
-            ((QueryEditorScene)getScene()).addPin(myClass, lam);
+            VMDPinWidget newPin = (VMDPinWidget) ((QueryEditorScene)getScene()).addPin(myClass, lam);
+            newPin.setPinName(lam.getDisplayName());
+            JCheckBox insideCheck = new JCheckBox();
+            insideCheck.addItemListener((QueryEditorScene)getScene());
+            //We set the type of attribute associated to the check so the filter can be created
+            insideCheck.putClientProperty("filterType", lam.getType()); //NOI18N
+            insideCheck.putClientProperty("attribute", lam); //NOI18N
+            
+            //If this attribute is a list type, we save the class name to create
+            if (lam.getIsMultiple())
+                insideCheck.putClientProperty("className", myClass.getTypeForAttribute(lam.getName())); //NOI18N
+            newPin.addChild(new ComponentWidget(getScene(), insideCheck));
         }
     }
 }

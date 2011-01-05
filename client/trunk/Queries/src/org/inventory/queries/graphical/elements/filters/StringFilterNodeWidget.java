@@ -31,7 +31,7 @@ public class StringFilterNodeWidget extends SimpleCriteriaNodeWidget{
     public StringFilterNodeWidget(QueryEditorScene scene) {
         super(scene);
         //scene.addNode("NumericFilter"+scene.getChildren().size()); //NOI18N
-        setNodeProperties(null, "Numeric", "Filter", null);
+        setNodeProperties(null, "String", "Filter", null);
     }
 
     @Override
