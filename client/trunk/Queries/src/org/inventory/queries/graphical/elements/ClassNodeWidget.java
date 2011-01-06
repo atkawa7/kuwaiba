@@ -18,6 +18,7 @@ package org.inventory.queries.graphical.elements;
 
 import java.util.Random;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.queries.graphical.QueryEditorNodeWidget;
@@ -56,7 +57,7 @@ public class ClassNodeWidget extends QueryEditorNodeWidget{
             if (!lam.getIsVisible())
                 continue;
             VMDPinWidget newPin = (VMDPinWidget) ((QueryEditorScene)getScene()).addPin(myClass, lam);
-            newPin.setPinName(lam.getDisplayName());
+            //newPin.setPinName(lam.getDisplayName());
             JCheckBox insideCheck = new JCheckBox();
             insideCheck.addItemListener((QueryEditorScene)getScene());
             //We set the type of attribute associated to the check so the filter can be created
@@ -67,6 +68,7 @@ public class ClassNodeWidget extends QueryEditorNodeWidget{
             if (lam.getIsMultiple())
                 insideCheck.putClientProperty("className", myClass.getTypeForAttribute(lam.getName())); //NOI18N
             newPin.addChild(new ComponentWidget(getScene(), insideCheck));
+            newPin.addChild(new ComponentWidget(getScene(), new JLabel(lam.getDisplayName())));
         }
     }
 }

@@ -54,7 +54,7 @@ public class ViewBuilder {
             this.scene = _scene;
         }
         else
-            throw new NullPointerException("A null ViewScene is not supported for this constructor");
+            throw new NullPointerException("A null ViewScene is not supported by this constructor");
     }
 
     /**

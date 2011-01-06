@@ -19,6 +19,7 @@ package org.inventory.communications.core.views;
 import java.awt.Image;
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
+/*import java.io.FileOutputStream;*/
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

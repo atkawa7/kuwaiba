@@ -46,17 +46,13 @@
 
 package org.inventory.queries.graphical;
 
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
-import java.util.Random;
 import javax.swing.JCheckBox;
-import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
-import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.queries.graphical.elements.ClassNodeWidget;
 import org.inventory.queries.graphical.elements.filters.BooleanFilterNodeWidget;
 import org.inventory.queries.graphical.elements.filters.DateFilterNodeWidget;
@@ -195,7 +191,6 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         ((VMDNodeWidget) findWidget (node)).attachPinWidget (widget);
         widget.getActions ().addAction (createObjectHoverAction ());
         widget.getActions ().addAction (createSelectAction ());
-
         return widget;
     }
 
@@ -295,6 +290,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      * @param e
      */
     public void itemStateChanged(ItemEvent e) {
-        fireChangeEvent(new ActionEvent(e.getSource(), SCENE_FILTERENABLED, "chechbox-enabled"));
+        fireChangeEvent(new ActionEvent(e.getSource(), 
+                ((JCheckBox)e.getSource()).isSelected() ? SCENE_FILTERENABLED : SCENE_FILTERDISABLED, "chechbox-enabled"));
     }
 }

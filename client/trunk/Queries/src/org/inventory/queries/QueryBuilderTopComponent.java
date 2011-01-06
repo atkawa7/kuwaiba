@@ -79,8 +79,10 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         barMain = new javax.swing.JToolBar();
         lblSearch = new javax.swing.JLabel();
         cmbClassList = new javax.swing.JComboBox();
+        sptOne = new javax.swing.JToolBar.Separator();
         btnButton = new javax.swing.JButton();
         btnSearch = new javax.swing.JButton();
+        sptTwo = new javax.swing.JToolBar.Separator();
         lblConnector = new javax.swing.JLabel();
         chkAnd = new javax.swing.JRadioButton();
         chkOr = new javax.swing.JRadioButton();
@@ -89,11 +91,14 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         add(pnlMainScrollPanel, java.awt.BorderLayout.CENTER);
 
         barMain.setRollover(true);
+        barMain.setPreferredSize(new java.awt.Dimension(326, 33));
 
         org.openide.awt.Mnemonics.setLocalizedText(lblSearch, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.lblSearch.text")); // NOI18N
+        lblSearch.setPreferredSize(new java.awt.Dimension(70, 15));
         barMain.add(lblSearch);
 
         barMain.add(cmbClassList);
+        barMain.add(sptOne);
 
         btnButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/save.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnButton, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnButton.text")); // NOI18N
@@ -108,6 +113,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         btnSearch.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSearch.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         barMain.add(btnSearch);
+        barMain.add(sptTwo);
 
         org.openide.awt.Mnemonics.setLocalizedText(lblConnector, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.lblConnector.text")); // NOI18N
         barMain.add(lblConnector);
@@ -115,14 +121,13 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         chkAnd.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(chkAnd, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.chkAnd.text")); // NOI18N
         chkAnd.setFocusable(false);
-        chkAnd.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        chkAnd.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         barMain.add(chkAnd);
 
         org.openide.awt.Mnemonics.setLocalizedText(chkOr, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.chkOr.text")); // NOI18N
         chkOr.setFocusable(false);
-        chkOr.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        chkOr.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        chkOr.setMaximumSize(new java.awt.Dimension(18, 18));
+        chkOr.setMinimumSize(new java.awt.Dimension(18, 18));
+        chkOr.setPreferredSize(new java.awt.Dimension(38, 18));
         barMain.add(chkOr);
 
         add(barMain, java.awt.BorderLayout.PAGE_START);
@@ -138,6 +143,8 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     private javax.swing.JLabel lblConnector;
     private javax.swing.JLabel lblSearch;
     private javax.swing.JScrollPane pnlMainScrollPanel;
+    private javax.swing.JToolBar.Separator sptOne;
+    private javax.swing.JToolBar.Separator sptTwo;
     // End of variables declaration//GEN-END:variables
     /**
      * Gets default instance. Do not use directly: reserved for *.settings files only,

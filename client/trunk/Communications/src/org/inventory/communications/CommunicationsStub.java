@@ -606,6 +606,14 @@ public class CommunicationsStub {
         }
     }
 
+    /**
+     * Performs a simple 
+     * @param className
+     * @param atts
+     * @param types
+     * @param values
+     * @return
+     */
     public LocalObjectLight[] searchForObjects(String className, List<String> atts,
             List<String> types, List<String> values) {
         try{
