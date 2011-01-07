@@ -19,7 +19,6 @@ package org.inventory.objectcache;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
@@ -51,7 +50,7 @@ public class Cache{
     private LocalUserGroupObject[] currentUserGroupInfo;
 
     private Cache(){
-        this.objectIndex = new ArrayList<LocalObject>();
+        //this.objectIndex = new ArrayList<LocalObject>();
         this.metadataIndex = new HashMap<String, LocalClassMetadata>();
         this.lightMetadataIndex = new HashMap<String, LocalClassMetadataLight>();
         this.possibleChildrenIndex = new HashMap<String, List<LocalClassMetadataLight>>();
@@ -84,6 +83,8 @@ public class Cache{
     }
 
     public void addObject(LocalObject lo) {
+        if (objectIndex == null)
+            objectIndex = new ArrayList<LocalObject>();
         this.objectIndex.add(lo);
     }
 
@@ -92,15 +93,7 @@ public class Cache{
     }
 
     public LocalClassMetadata[] getMetadataIndex(){
-        LocalClassMetadata[] res = new LocalClassMetadata[this.metadataIndex.size()];
-        int i = 0;
-        Set<String> keys = metadataIndex.keySet();
-        for (String key : keys){
-            res[i] = metadataIndex.get(key);
-            i++;
-        }
-
-        return res;
+        return metadataIndex.values().toArray(new LocalClassMetadata[0]);
     }
 
     public LocalClassMetadata getMetaForClass(String className) {
@@ -122,14 +115,7 @@ public class Cache{
     }
 
     public LocalClassMetadataLight[] getLightMetadataIndex() {
-        LocalClassMetadataLight[] res = new LocalClassMetadataLight[this.metadataIndex.size()];
-        int i = 0;
-        Set<String> keys = metadataIndex.keySet();
-        for (String key : keys){
-            res[i] = metadataIndex.get(key);
-            i++;
-        }
-        return res;
+        return metadataIndex.values().toArray(new LocalClassMetadataLight[0]);
     }
 
     public void addLightMeta(LocalClassMetadataLight[] all){
@@ -142,7 +128,7 @@ public class Cache{
         for (LocalClassMetadataLight lcml : children){
             LocalClassMetadataLight myLocal = lightMetadataIndex.get(lcml.getClassName());
             if (myLocal==null){
-                lightMetadataIndex.put(className, lcml);
+                lightMetadataIndex.put(lcml.getClassName(), lcml);
                 toBeAdded.add(lcml);
             }
             else
@@ -167,14 +153,7 @@ public class Cache{
         List<LocalObjectListItem> existingItems = listIndex.get(className);
         if (existingItems == null) //The list is not cached
             return null;
-
-        LocalObjectListItem[] res = new LocalObjectListItem[existingItems.size()];
-        int i = 0;
-        for (LocalObjectListItem item : existingItems){
-            res[i] = item;
-            i++;
-        }
-        return res;
+        return existingItems.toArray(new LocalObjectListItem[0]);
     }
 
     public void addListCached(String className, List<LocalObjectListItem> items){

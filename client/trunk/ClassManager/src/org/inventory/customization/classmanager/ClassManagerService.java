@@ -24,6 +24,7 @@ import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.filechooser.FileFilter;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 
@@ -93,22 +94,22 @@ public class ClassManagerService extends FileFilter implements ActionListener{
         return res;
     }
 
-    List<LocalClassMetadataLight> getAllMeta() {
-        List<LocalClassMetadataLight> res = new ArrayList<LocalClassMetadataLight>();
-        LocalClassMetadataLight[] allMeta = CommunicationsStub.getInstance().getAllLightMeta();
+    public List<LocalClassMetadata> getAllMeta() {
+        List<LocalClassMetadata> res = new ArrayList<LocalClassMetadata>();
+        LocalClassMetadata[] allMeta = CommunicationsStub.getInstance().getAllMeta();
         if (allMeta == null){
             cmf.getNotifier().showSimplePopup("Class List", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
             return res;
         }
 
-        for (LocalClassMetadataLight myLight : allMeta)
+        for (LocalClassMetadata myLight : allMeta)
             if (!myLight.getIsAbstract())
                 res.add(myLight);
         return res;
     }
 
     public void actionPerformed(ActionEvent e) {
-        LocalClassMetadataLight myClass = (LocalClassMetadataLight)((JComboBox)e.getSource()).getSelectedItem();
+        LocalClassMetadata myClass = (LocalClassMetadata)((JComboBox)e.getSource()).getSelectedItem();
         if (myClass == null)
             return;
         cmf.getTxtDisplayName().setText(myClass.getDisplayName()==null?"":myClass.getDisplayName());

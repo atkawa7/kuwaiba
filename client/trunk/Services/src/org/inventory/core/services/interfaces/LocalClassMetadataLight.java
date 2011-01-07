@@ -28,9 +28,7 @@ public interface LocalClassMetadataLight extends Transferable{
             new DataFlavor(LocalClassMetadataLight.class,"Object/LocalClassMetadataLight");
     public String getClassName();
     public String getDisplayName();
-    public String getDescription();
     public Boolean getIsAbstract();
-    public String getPackageName();
     public Long getOid();
     public Image getSmallIcon();
     public Boolean isPhysicalNode();

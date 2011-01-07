@@ -24,6 +24,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
+import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
@@ -342,8 +343,8 @@ public class ClassManagerFrame extends javax.swing.JFrame {
     }
 
     public void setRoot(){
-        List<LocalClassMetadataLight> lcml = cms.getAllMeta();
-        for (LocalClassMetadataLight lcm : lcml)
+        List<LocalClassMetadata> lcml = cms.getAllMeta();
+        for (LocalClassMetadata lcm : lcml)
             cmbClass.addItem(lcm);
         cmbClass.setSelectedIndex(-1);
         cmbClass.addActionListener(cms);
