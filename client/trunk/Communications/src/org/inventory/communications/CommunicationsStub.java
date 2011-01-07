@@ -32,6 +32,7 @@ import org.inventory.communications.core.LocalObjectListItemImpl;
 import org.inventory.communications.core.LocalSession;
 import org.inventory.communications.core.LocalUserGroupObjectImpl;
 import org.inventory.communications.core.LocalUserObjectImpl;
+import org.inventory.communications.core.queries.LocalQuery;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
@@ -50,6 +51,7 @@ import org.inventory.webservice.ObjectList.List.Entry;
 import org.inventory.webservice.ObjectUpdate;
 import org.inventory.webservice.RemoteObject;
 import org.inventory.webservice.RemoteObjectLight;
+import org.inventory.webservice.RemoteQuery;
 import org.inventory.webservice.UserGroupInfo;
 import org.inventory.webservice.UserInfo;
 import org.inventory.webservice.ViewInfo;
@@ -607,7 +609,8 @@ public class CommunicationsStub {
     }
 
     /**
-     * Performs a simple 
+     * Performs a simple object search where all conditions use an "and" operator
+     * and barely support joins
      * @param className
      * @param atts
      * @param types
@@ -627,6 +630,23 @@ public class CommunicationsStub {
                 i++;
             }
 
+            return res;
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass()+": "+ ex.getMessage();
+            return null;
+        }
+    }
+
+    public LocalObjectLight[] executeQuery(LocalQuery query){
+        try{
+            RemoteQuery remoteQuery = query.toRemoteQuery();
+            List<RemoteObjectLight> myLocalObjects = port.executeQuery(remoteQuery);
+            LocalObjectLight[] res = new LocalObjectLight[myLocalObjects.size()];
+            int i = 0;
+            for (RemoteObjectLight rol : myLocalObjects){
+                res[i] = new LocalObjectLightImpl(rol);
+                i++;
+            }
             return res;
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass()+": "+ ex.getMessage();

@@ -36,27 +36,4 @@ public abstract class SimpleCriteriaNodeWidget extends QueryEditorNodeWidget{
      * @return The component used to filter
      */
     public abstract Object getValue();
-
-    protected enum Criteria{
-        EQUAL("Equal to",0),
-        LESS_THAN("Less than",1),
-        EQUAL_OR_LESS_THAN("Equals or less than",2),
-        GREATER_THAN("Greater than",3),
-        EQUAL_OR_GREATER_THAN("Equal or greater than",4),
-        BETWEEN("Between",5),
-        LIKE("Like",6);
-        private final String label;
-        private final int id;
-
-        Criteria(String label, int id){
-            this.label = label;
-            this.id = id;
-        }
-
-        public String label(){return label;}
-        public int id(){return id;}
-
-        @Override
-        public String toString(){return label;}
-    }
 }

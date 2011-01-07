@@ -19,6 +19,7 @@ package org.inventory.queries.graphical.elements.filters;
 import java.util.Random;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
+import org.inventory.communications.core.queries.LocalQuery;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
 import org.netbeans.api.visual.widget.ComponentWidget;
@@ -46,11 +47,11 @@ public class NumericFilterNodeWidget extends SimpleCriteriaNodeWidget{
         VMDPinWidget dummyPin = (VMDPinWidget)((QueryEditorScene)getScene()).addPin(id, defaultPinId);
         dummyPin.setPinName("Dummy");
         dummyPin.addChild(new ComponentWidget(getScene(), new JComboBox(new Object[]{
-                                                Criteria.EQUAL,
-                                                Criteria.EQUAL_OR_GREATER_THAN,
-                                                Criteria.GREATER_THAN,
-                                                Criteria.EQUAL_OR_LESS_THAN,
-                                                Criteria.LESS_THAN
+                                                LocalQuery.Criteria.EQUAL,
+                                                LocalQuery.Criteria.EQUAL_OR_GREATER_THAN,
+                                                LocalQuery.Criteria.GREATER_THAN,
+                                                LocalQuery.Criteria.EQUAL_OR_LESS_THAN,
+                                                LocalQuery.Criteria.LESS_THAN
                           })));
         dummyPin.addChild(new ComponentWidget(getScene(), new JTextField("0", 10)));
     }

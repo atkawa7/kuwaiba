@@ -19,6 +19,7 @@ package org.inventory.queries.graphical.elements.filters;
 import java.util.Random;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
+import org.inventory.communications.core.queries.LocalQuery;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
 import org.netbeans.api.visual.widget.ComponentWidget;
@@ -44,8 +45,8 @@ public class StringFilterNodeWidget extends SimpleCriteriaNodeWidget{
         defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
         VMDPinWidget dummyPin = (VMDPinWidget)((QueryEditorScene)getScene()).addPin(id, defaultPinId);
         dummyPin.addChild(new ComponentWidget(getScene(), new JComboBox(new Object[]{
-                                                Criteria.EQUAL,
-                                                Criteria.LIKE
+                                                LocalQuery.Criteria.EQUAL,
+                                                LocalQuery.Criteria.LIKE
                           })));
         dummyPin.addChild(new ComponentWidget(getScene(), new JTextField(10)));
     }

@@ -54,6 +54,10 @@
 
 <xs:element name="deleteUsersResponse" type="tns:deleteUsersResponse" />
 
+<xs:element name="executeQuery" type="tns:executeQuery" />
+
+<xs:element name="executeQueryResponse" type="tns:executeQueryResponse" />
+
 <xs:element name="getChildrenOfClass" type="tns:getChildrenOfClass" />
 
 <xs:element name="getChildrenOfClassResponse" type="tns:getChildrenOfClassResponse" />
@@ -268,16 +272,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getServerStatus">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getServerStatusResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="getGroups">
 <xs:sequence>
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
@@ -318,6 +312,42 @@
 <xs:element name="creationDate" type="xs:long" minOccurs="0" />
 <xs:element name="isEnabled" type="xs:boolean" minOccurs="0" />
 <xs:element name="groups" type="tns:userGroupInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getServerStatus">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getServerStatusResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="executeQuery">
+<xs:sequence>
+<xs:element name="arg0" type="tns:remoteQuery" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteQuery">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0" />
+<xs:element name="logicalConnector" type="xs:int" />
+<xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="visibleAttributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="attributeValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="conditions" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="joins" type="tns:remoteQuery" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="isJoin" type="xs:boolean" />
+<xs:element name="limit" type="xs:int" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="executeQueryResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
