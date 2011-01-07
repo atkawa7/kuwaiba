@@ -170,6 +170,14 @@ public class MetadataUtils {
             return ObjectList.class;
     }
 
+    /**
+     * Gets the mapped value of a given attribute provided the value and type as strings
+     * TODO: Should this method be changed to throw a WrongMappingException?
+     * @param type
+     * @param valueAsString
+     * @param em
+     * @return
+     */
     public static Object getRealValue (String type, String valueAsString, EntityManager em){
         try{
             if (type.equals("Boolean"))

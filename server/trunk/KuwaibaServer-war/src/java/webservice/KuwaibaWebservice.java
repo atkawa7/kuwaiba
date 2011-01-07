@@ -27,6 +27,8 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import businesslogic.BackendBeanRemote;
+import core.exceptions.ArraySizeMismatchException;
+import core.todeserialize.RemoteQuery;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteSession;
 import core.toserialize.UserGroupInfo;
@@ -547,6 +549,27 @@ public class KuwaibaWebservice {
             Class toBeSearched = sbr.getClassFor(className);
             RemoteObjectLight[] res = sbr.searchForObjects(toBeSearched,paramNames, paramTypes,paramValues);
             return res;
+        }catch(Exception e){
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * Execute a complex query generated using the Graphical Query Builder
+     * @param query
+     * @return
+     * @throws Exception
+     */
+    @WebMethod(operationName = "executeQuery")
+    public RemoteObjectLight[] executeQuery(RemoteQuery query) throws Exception{
+        try{
+            if (sbr.getClassFor(query.getClassName()) == null)
+                throw new ClassNotFoundException(query.getClassName());
+            if (query.getAttributeNames().size() != query.getAttributeValues().size() ||
+                    query.getAttributeNames().size() != query.getConditions().size())
+                throw new ArraySizeMismatchException("attributeNames","attributeValues","conditions");
+            return sbr.executeQuery(query);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
             throw e;

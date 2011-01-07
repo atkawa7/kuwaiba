@@ -16,6 +16,7 @@
 package businesslogic;
 
 import core.todeserialize.ObjectUpdate;
+import core.todeserialize.RemoteQuery;
 import core.toserialize.ClassInfo;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.ObjectList;
@@ -56,6 +57,7 @@ public interface BackendBeanRemote {
     public boolean moveObjects(Long targetOid, Long[] objectOids, Class[] objectClasses) throws Exception;
     public RemoteObjectLight[] copyObjects(Long targetOid, Long[] templateOids, Class[] objectClasses) throws Exception;
     public RemoteObjectLight[] searchForObjects(Class searchedClass, String[] paramNames, String [] paramTypes, String[] paramValues) throws Exception;
+    public RemoteObjectLight[] executeQuery(RemoteQuery query) throws Exception;
     public Boolean setAttributePropertyValue(Long classId, String attributeName, String propertyName, String propertyValue) throws Exception;
     public Boolean setClassPlainAttribute(Long classId, String attributeName, String attributeValue) throws Exception;
     public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws Exception;
