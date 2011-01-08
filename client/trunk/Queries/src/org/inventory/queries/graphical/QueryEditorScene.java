@@ -51,8 +51,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import javax.swing.JCheckBox;
+import org.inventory.communications.core.queries.LocalQuery;
+import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
+import org.inventory.queries.graphical.elements.AttributePinWidget;
 import org.inventory.queries.graphical.elements.ClassNodeWidget;
 import org.inventory.queries.graphical.elements.filters.BooleanFilterNodeWidget;
 import org.inventory.queries.graphical.elements.filters.DateFilterNodeWidget;
@@ -110,6 +114,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
     private SceneLayout sceneLayout;
     private VMDColorScheme scheme;
     private ArrayList<ActionListener> listeners;
+    private LocalClassMetadata currentSearchedClass;
 
     /**
      * Creates a Query Editor graph scene.
@@ -186,7 +191,13 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      * @return the widget attached to the pin, null, if it is a default pin
      */
     protected Widget attachPinWidget (Object node, Object pin) {
-        VMDPinWidget widget = new VMDPinWidget (this, scheme);
+        VMDPinWidget widget;
+        if (pin instanceof LocalAttributeMetadata)
+            widget = new AttributePinWidget(this, (LocalAttributeMetadata)pin,
+                    ((LocalClassMetadata)node).getTypeForAttribute(((LocalAttributeMetadata)pin).getName()),
+                    scheme);
+        else
+            widget = new VMDPinWidget(this, scheme);
         
         ((VMDNodeWidget) findWidget (node)).attachPinWidget (widget);
         widget.getActions ().addAction (createObjectHoverAction ());
@@ -256,11 +267,28 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         sceneLayout.invokeLayout ();
     }
 
+    public void setCurrentSearchedClass(LocalClassMetadata currentSearchedClass) {
+        this.currentSearchedClass = currentSearchedClass;
+    }
+
+    public LocalQuery getLocalQuery(String queryName, int logicalConnector, int limit) {
+        LocalQuery myQuery = new LocalQuery(queryName,currentSearchedClass.getClassName(), logicalConnector, false, limit);
+        Collection<Widget> attributePins = ((ClassNodeWidget)findWidget(currentSearchedClass)).getChildren();
+        while(attributePins.iterator().hasNext()){
+            Widget myPin = attributePins.iterator().next();
+            if (myPin instanceof AttributePinWidget){
+                if (!((AttributePinWidget)myPin).getInsideCheck().isSelected())
+                    continue;
+            }
+        }
+        return myQuery;
+    }
     public void clear(){
 //        backgroundLayer.removeChildren();
 //        mainLayer.removeChildren();
 //        connectionLayer.removeChildren();
 //        upperLayer.removeChildren();
+        currentSearchedClass = null;
         while (!getNodes().isEmpty())
             removeNode(getNodes().iterator().next());
     }

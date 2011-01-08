@@ -70,8 +70,9 @@ public class LocalQuery {
      */
     private int limit=10;
 
-    public LocalQuery(String name, int logicalConnector, boolean isJoin, int limit) {
+    public LocalQuery(String name, String className, int logicalConnector, boolean isJoin, int limit) {
         this.name = name;
+        this.className = className;
         this.logicalConnector = logicalConnector;
         this.isJoin = isJoin;
         this.limit = limit;

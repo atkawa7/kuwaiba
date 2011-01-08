@@ -18,9 +18,19 @@ package org.inventory.queries;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.ParseException;
 import java.util.logging.Logger;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.InputVerifier;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
@@ -62,6 +72,8 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         qbs = new GraphicalQueryBuilderService(this);
         grpLogicalConnector = new ButtonGroup();
         cmbClassList.addItem(null);
+        lblResultLimit.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+
         pnlMainScrollPanel.setViewportView(queryScene.createView());
         grpLogicalConnector.add(chkAnd);
         grpLogicalConnector.add(chkOr);
@@ -80,12 +92,16 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         lblSearch = new javax.swing.JLabel();
         cmbClassList = new javax.swing.JComboBox();
         sptOne = new javax.swing.JToolBar.Separator();
+        btnOpen = new javax.swing.JButton();
         btnButton = new javax.swing.JButton();
         btnSearch = new javax.swing.JButton();
         sptTwo = new javax.swing.JToolBar.Separator();
         lblConnector = new javax.swing.JLabel();
         chkAnd = new javax.swing.JRadioButton();
         chkOr = new javax.swing.JRadioButton();
+        sptThree = new javax.swing.JToolBar.Separator();
+        lblResultLimit = new javax.swing.JLabel();
+        txtResultLimit = new javax.swing.JTextField();
 
         setLayout(new java.awt.BorderLayout());
         add(pnlMainScrollPanel, java.awt.BorderLayout.CENTER);
@@ -100,6 +116,14 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         barMain.add(cmbClassList);
         barMain.add(sptOne);
 
+        btnOpen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/open.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnOpen, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnOpen.text")); // NOI18N
+        btnOpen.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnOpen.toolTipText")); // NOI18N
+        btnOpen.setFocusable(false);
+        btnOpen.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnOpen.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barMain.add(btnOpen);
+
         btnButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/save.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnButton, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnButton.text")); // NOI18N
         btnButton.setFocusable(false);
@@ -112,6 +136,11 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         btnSearch.setFocusable(false);
         btnSearch.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSearch.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchActionPerformed(evt);
+            }
+        });
         barMain.add(btnSearch);
         barMain.add(sptTwo);
 
@@ -125,26 +154,52 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
 
         org.openide.awt.Mnemonics.setLocalizedText(chkOr, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.chkOr.text")); // NOI18N
         chkOr.setFocusable(false);
-        chkOr.setMaximumSize(new java.awt.Dimension(18, 18));
-        chkOr.setMinimumSize(new java.awt.Dimension(18, 18));
         chkOr.setPreferredSize(new java.awt.Dimension(38, 18));
         barMain.add(chkOr);
+        barMain.add(sptThree);
+
+        org.openide.awt.Mnemonics.setLocalizedText(lblResultLimit, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.lblResultLimit.text")); // NOI18N
+        barMain.add(lblResultLimit);
+
+        txtResultLimit.setColumns(4);
+        txtResultLimit.setText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.txtResultLimit.text")); // NOI18N
+        barMain.add(txtResultLimit);
 
         add(barMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        try{
+            Integer.valueOf(txtResultLimit.getText());
+        } catch(NumberFormatException ex){
+            JOptionPane.showMessageDialog(this, "The result limit is not valid",
+                    "Search Error",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(queryScene.getNodes().isEmpty()){
+            JOptionPane.showMessageDialog(this, "There's nothing to search",
+                    "Search Error",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        qbs.executeQuery();
+    }//GEN-LAST:event_btnSearchActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
     private javax.swing.JButton btnButton;
+    private javax.swing.JButton btnOpen;
     private javax.swing.JButton btnSearch;
     private javax.swing.JRadioButton chkAnd;
     private javax.swing.JRadioButton chkOr;
     private javax.swing.JComboBox cmbClassList;
     private javax.swing.JLabel lblConnector;
+    private javax.swing.JLabel lblResultLimit;
     private javax.swing.JLabel lblSearch;
     private javax.swing.JScrollPane pnlMainScrollPanel;
     private javax.swing.JToolBar.Separator sptOne;
+    private javax.swing.JToolBar.Separator sptThree;
     private javax.swing.JToolBar.Separator sptTwo;
+    private javax.swing.JTextField txtResultLimit;
     // End of variables declaration//GEN-END:variables
     /**
      * Gets default instance. Do not use directly: reserved for *.settings files only,
@@ -231,6 +286,15 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         return queryScene;
     }
 
+    public JRadioButton getChkAnd() {
+        return chkAnd;
+    }
+
+    public JTextField getTxtResultLimit() {
+        return txtResultLimit;
+    }
+    
+
     public void actionPerformed(ActionEvent e) {
         LocalClassMetadataLight selectedItem = (LocalClassMetadataLight) ((JComboBox)e.getSource()).getSelectedItem();
         queryScene.clear();
@@ -241,6 +305,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
                 ClassNodeWidget myNewNode = ((ClassNodeWidget)queryScene.addNode(myClass));
                 myNewNode.build(null);
                 myNewNode.setPreferredLocation(new Point(100, 50));
+                queryScene.setCurrentSearchedClass(myClass);
             }
         }
         queryScene.validate();

@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.util.Random;
 import javax.swing.JCheckBox;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.queries.LocalQuery;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
@@ -56,6 +57,12 @@ public class GraphicalQueryBuilderService implements ActionListener{
         if (res == null)
             qbtc.getNotifier().showSimplePopup("Query Builder", NotificationUtil.ERROR, com.getError());
         return res;
+    }
+
+    public void executeQuery() {
+        com.executeQuery(qbtc.getQueryScene().getLocalQuery("New Query",
+                qbtc.getChkAnd().isSelected()?LocalQuery.CONNECTOR_AND:LocalQuery.CONNECTOR_OR,
+                Integer.valueOf(qbtc.getTxtResultLimit().getText())));
     }
 
     public void actionPerformed(ActionEvent e) {

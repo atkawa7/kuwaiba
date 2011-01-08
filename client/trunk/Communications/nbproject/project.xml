@@ -59,6 +59,7 @@
                 <package>org.inventory.communications</package>
                 <package>org.inventory.communications.core</package>
                 <package>org.inventory.communications.core.connections</package>
+                <package>org.inventory.communications.core.queries</package>
                 <package>org.inventory.communications.core.views</package>
             </public-packages>
         </data>
