@@ -727,49 +727,51 @@ public class BackendBean implements BackendBeanRemote {
             CriteriaQuery query =cb.createQuery();
             Root entity = query.from(toBeSearched);
             ArrayList<Predicate> predicates = new ArrayList<Predicate>();
-
-            for (int i = 0; i< myQuery.getAttributeNames().size(); i++){
-                String attribute = myQuery.getAttributeNames().get(i);
-                Object mappedValue = MetadataUtils.getRealValue(HierarchyUtils.
-                        getField(toBeSearched, attribute).toString(),
-                        myQuery.getAttributeValues().get(i), em);
-                if (mappedValue instanceof String) {
-                    switch (myQuery.getConditions().get(i)){
-                        case RemoteQuery.EQUAL:
-                            predicates.add(cb.equal(entity.get(attribute),mappedValue));
-                            break;
-                        case RemoteQuery.LIKE:
-                            //The like here is case-sesitive (?), so we have to lowercase the string
-                            predicates.add(cb.like(cb.lower(entity.get(attribute)),"%"+((String)mappedValue).toLowerCase()+"%"));
-                            break;
-                    }
-                }
-                else{
-                    if (mappedValue instanceof Boolean)
-                        predicates.add(cb.equal(entity.get(attribute),mappedValue));
-                    else{
-                        if (mappedValue instanceof Integer || mappedValue instanceof Float){
-                            switch (myQuery.getConditions().get(i)){
-                                case RemoteQuery.EQUAL:
-                                    predicates.add(cb.equal(entity.get(attribute),mappedValue));
-                                    break;
-                                case RemoteQuery.EQUAL_OR_GREATER_THAN:
-                                    //The like here is case-sensitive (?), so we have to lowercase the string
-                                    predicates.add(cb.greaterThanOrEqualTo(entity.get(attribute),(Comparable)mappedValue));
-                                    break;
-                                case RemoteQuery.EQUAL_OR_LESS_THAN:
-                                    predicates.add(cb.lessThanOrEqualTo(entity.get(attribute),(Comparable)mappedValue));
-                                    break;
-                                case RemoteQuery.GREATER_THAN:
-                                    predicates.add(cb.greaterThan(entity.get(attribute),(Comparable)mappedValue));
-                                    break;
-                                case RemoteQuery.LESS_THAN:
-                                    predicates.add(cb.lessThan(entity.get(attribute),(Comparable)mappedValue));
-                                    break;
-                            }
+            //getAttributeNames() is null only if no attributes were chosen as filters
+            if (myQuery.getAttributeNames() != null){
+                for (int i = 0; i< myQuery.getAttributeNames().size(); i++){
+                    String attribute = myQuery.getAttributeNames().get(i);
+                    Object mappedValue = MetadataUtils.getRealValue(HierarchyUtils.
+                            getField(toBeSearched, attribute).toString(),
+                            myQuery.getAttributeValues().get(i), em);
+                    if (mappedValue instanceof String) {
+                        switch (myQuery.getConditions().get(i)){
+                            case RemoteQuery.EQUAL:
+                                predicates.add(cb.equal(entity.get(attribute),mappedValue));
+                                break;
+                            case RemoteQuery.LIKE:
+                                //The like here is case-sesitive (?), so we have to lowercase the string
+                                predicates.add(cb.like(cb.lower(entity.get(attribute)),"%"+((String)mappedValue).toLowerCase()+"%"));
+                                break;
                         }
                     }
+                    else{
+                        if (mappedValue instanceof Boolean)
+                            predicates.add(cb.equal(entity.get(attribute),mappedValue));
+                        else{
+                            if (mappedValue instanceof Integer || mappedValue instanceof Float){
+                                switch (myQuery.getConditions().get(i)){
+                                    case RemoteQuery.EQUAL:
+                                        predicates.add(cb.equal(entity.get(attribute),mappedValue));
+                                        break;
+                                    case RemoteQuery.EQUAL_OR_GREATER_THAN:
+                                        //The like here is case-sensitive (?), so we have to lowercase the string
+                                        predicates.add(cb.greaterThanOrEqualTo(entity.get(attribute),(Comparable)mappedValue));
+                                        break;
+                                    case RemoteQuery.EQUAL_OR_LESS_THAN:
+                                        predicates.add(cb.lessThanOrEqualTo(entity.get(attribute),(Comparable)mappedValue));
+                                        break;
+                                    case RemoteQuery.GREATER_THAN:
+                                        predicates.add(cb.greaterThan(entity.get(attribute),(Comparable)mappedValue));
+                                        break;
+                                    case RemoteQuery.LESS_THAN:
+                                        predicates.add(cb.lessThan(entity.get(attribute),(Comparable)mappedValue));
+                                        break;
+                                }
+                            }
+                        }
 
+                    }
                 }
             }
             if (!predicates.isEmpty()){

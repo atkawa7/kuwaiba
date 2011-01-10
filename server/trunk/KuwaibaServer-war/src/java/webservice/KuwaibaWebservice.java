@@ -556,8 +556,8 @@ public class KuwaibaWebservice {
     }
 
     /**
-     * Execute a complex query generated using the Graphical Query Builder
-     * @param query
+     * Execute a complex query generated using the Graphical Query Builder.
+     * @param query The query object.
      * @return
      * @throws Exception
      */
@@ -566,9 +566,17 @@ public class KuwaibaWebservice {
         try{
             if (sbr.getClassFor(query.getClassName()) == null)
                 throw new ClassNotFoundException(query.getClassName());
-            if (query.getAttributeNames().size() != query.getAttributeValues().size() ||
+
+            if (query.getAttributeNames() != null && query.getAttributeValues() != null &&
+                    query.getConditions() != null){
+                if (query.getAttributeNames().size() != query.getAttributeValues().size() ||
                     query.getAttributeNames().size() != query.getConditions().size())
                 throw new ArraySizeMismatchException("attributeNames","attributeValues","conditions");
+            }else{
+                if (!(query.getAttributeNames() == null && query.getAttributeValues() == null &&
+                        query.getConditions() == null))
+                    throw new ArraySizeMismatchException("attributeNames","attributeValues","conditions");
+            }
             return sbr.executeQuery(query);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
