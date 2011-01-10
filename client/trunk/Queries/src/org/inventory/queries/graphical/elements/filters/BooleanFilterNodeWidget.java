@@ -30,31 +30,34 @@ import org.netbeans.api.visual.widget.ComponentWidget;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class BooleanFilterNodeWidget extends SimpleCriteriaNodeWidget{
-    
+
+    protected JRadioButton trueButton;
+    protected JRadioButton falseButton;
+
     public BooleanFilterNodeWidget(QueryEditorScene scene) {
         super(scene);        
     }
 
     @Override
-    public Object getValue() {
-        return null;
-    }
-
-    @Override
     public void build(String id) {
         QueryEditorScene scene = (QueryEditorScene)getScene();
-        //scene.addNode("NumericFilter"+scene.getChildren().size()); //NOI18N
         setNodeProperties(null, "Boolean", "Filter", null);
         defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
         VMDPinWidget dummyPin = (VMDPinWidget)scene.addPin(id, defaultPinId);
-        dummyPin.addChild(new ComponentWidget(scene, new JComboBox(new Object[]{LocalQuery.Criteria.EQUAL})));
+        condition = new JComboBox(new Object[]{LocalQuery.Criteria.EQUAL});
+        dummyPin.addChild(new ComponentWidget(scene, condition));
         ButtonGroup myGroup = new ButtonGroup();
-        JRadioButton myTrue = new JRadioButton("True");
-        myTrue.setSelected(true);
-        JRadioButton myFalse = new JRadioButton("False");
-        myGroup.add(myTrue);
-        myGroup.add(myFalse);
-        dummyPin.addChild(new ComponentWidget(scene, myTrue));
-        dummyPin.addChild(new ComponentWidget(scene, myFalse));
+        trueButton = new JRadioButton("True");
+        trueButton.setSelected(true);
+        falseButton = new JRadioButton("False");
+        myGroup.add(trueButton);
+        myGroup.add(falseButton);
+        dummyPin.addChild(new ComponentWidget(scene, trueButton));
+        dummyPin.addChild(new ComponentWidget(scene, falseButton));
+    }
+
+    @Override
+    public String getValue() {
+        return trueButton.isSelected()?"true":"false";
     }
 }

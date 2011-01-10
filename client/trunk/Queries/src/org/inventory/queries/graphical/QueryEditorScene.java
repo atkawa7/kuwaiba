@@ -51,7 +51,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import javax.swing.JCheckBox;
 import org.inventory.communications.core.queries.LocalQuery;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
@@ -61,6 +60,7 @@ import org.inventory.queries.graphical.elements.ClassNodeWidget;
 import org.inventory.queries.graphical.elements.filters.BooleanFilterNodeWidget;
 import org.inventory.queries.graphical.elements.filters.DateFilterNodeWidget;
 import org.inventory.queries.graphical.elements.filters.NumericFilterNodeWidget;
+import org.inventory.queries.graphical.elements.filters.SimpleCriteriaNodeWidget;
 import org.inventory.queries.graphical.elements.filters.StringFilterNodeWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.WidgetAction;
@@ -271,26 +271,42 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         this.currentSearchedClass = currentSearchedClass;
     }
 
-    public LocalQuery getLocalQuery(String queryName, int logicalConnector, int limit) {
-        LocalQuery myQuery = new LocalQuery(queryName,currentSearchedClass.getClassName(), logicalConnector, false, limit);
-        Collection<Widget> attributePins = ((ClassNodeWidget)findWidget(currentSearchedClass)).getChildren();
-        while(attributePins.iterator().hasNext()){
-            Widget myPin = attributePins.iterator().next();
+    public LocalQuery getLocalQuery(LocalClassMetadata mainClass, String queryName,
+            int logicalConnector, int limit, boolean isJoin) {
+        LocalQuery myQuery = new LocalQuery(queryName,mainClass.getClassName(),
+                logicalConnector, isJoin, limit);
+        Widget[] attributePins = ((ClassNodeWidget)findWidget(mainClass)).getChildren().toArray(new Widget[0]);
+        for (Widget myPin : attributePins){
             if (myPin instanceof AttributePinWidget){
                 if (!((AttributePinWidget)myPin).getInsideCheck().isSelected())
                     continue;
+                String[] myEdges = findPinEdges(((AttributePinWidget)myPin).getAttribute(), true, false).toArray(new String[0]);
+                for (String edge : myEdges){
+                    VMDConnectionWidget myEdge = (VMDConnectionWidget)findWidget(edge);
+                    VMDNodeWidget nextHop = (VMDNodeWidget) myEdge.getTargetAnchor().getRelatedWidget().getParentWidget();
+                    if(nextHop instanceof SimpleCriteriaNodeWidget){
+                        myQuery.getAttributeNames().add(((AttributePinWidget)myPin).getAttribute().getName());
+                        myQuery.getConditions().add(((SimpleCriteriaNodeWidget)nextHop).getCondition());
+                        myQuery.getAttributeValues().add(((SimpleCriteriaNodeWidget)nextHop).getValue());
+                    }else{
+                        if (nextHop instanceof ClassNodeWidget){
+                            myQuery.getJoins().add(getLocalQuery(((ClassNodeWidget)nextHop).getWrappedClass(),
+                                    null,logicalConnector,0,true));
+                        }
+                    }
+                }
             }
         }
         return myQuery;
     }
     public void clear(){
-//        backgroundLayer.removeChildren();
-//        mainLayer.removeChildren();
-//        connectionLayer.removeChildren();
-//        upperLayer.removeChildren();
         currentSearchedClass = null;
         while (!getNodes().isEmpty())
             removeNode(getNodes().iterator().next());
+    }
+
+    public LocalClassMetadata getCurrentSearchedClass() {
+        return currentSearchedClass;
     }
 
     /**
@@ -319,6 +335,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      */
     public void itemStateChanged(ItemEvent e) {
         fireChangeEvent(new ActionEvent(e.getSource(), 
-                ((JCheckBox)e.getSource()).isSelected() ? SCENE_FILTERENABLED : SCENE_FILTERDISABLED, "chechbox-enabled"));
+                ((JCheckBox)e.getSource()).isSelected() ?
+                    SCENE_FILTERENABLED : SCENE_FILTERDISABLED, "chechbox-enabled"));
     }
 }

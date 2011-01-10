@@ -31,10 +31,12 @@ import org.netbeans.api.visual.widget.ComponentWidget;
 public class AttributePinWidget extends VMDPinWidget{
     private JCheckBox insideCheck;
     private JLabel insideLabel;
+    private LocalAttributeMetadata myAttribute;
 
     public AttributePinWidget(QueryEditorScene scene, LocalAttributeMetadata lam,
             String attributeClassName,VMDColorScheme scheme) {
         super(scene,scheme);
+        myAttribute = lam;
         insideCheck = new JCheckBox();
         insideCheck.addItemListener((QueryEditorScene)getScene());
         //We set the type of attribute associated to the check so the filter can be created
@@ -46,7 +48,6 @@ public class AttributePinWidget extends VMDPinWidget{
             insideCheck.putClientProperty("className", attributeClassName); //NOI18N
         addChild(new ComponentWidget(getScene(), insideCheck));
         insideLabel = new JLabel(lam.getDisplayName());
-        insideLabel.setName(lam.getName());
         addChild(new ComponentWidget(getScene(), insideLabel));
     }
 
@@ -54,7 +55,7 @@ public class AttributePinWidget extends VMDPinWidget{
         return insideCheck;
     }
 
-    public JLabel getInsideLabel() {
-        return insideLabel;
+    public LocalAttributeMetadata getAttribute() {
+        return myAttribute;
     }
 }

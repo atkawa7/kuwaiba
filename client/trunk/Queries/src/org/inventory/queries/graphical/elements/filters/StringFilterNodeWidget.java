@@ -29,25 +29,29 @@ import org.netbeans.api.visual.widget.ComponentWidget;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class StringFilterNodeWidget extends SimpleCriteriaNodeWidget{
+
+    protected JTextField insideText;
+
     public StringFilterNodeWidget(QueryEditorScene scene) {
         super(scene);
-        //scene.addNode("NumericFilter"+scene.getChildren().size()); //NOI18N
         setNodeProperties(null, "String", "Filter", null);
     }
 
     @Override
-    public Object getValue() {
-        return null;
+    public void build(String id) {
+        insideText = new JTextField(10);
+        defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
+        VMDPinWidget dummyPin = (VMDPinWidget)((QueryEditorScene)getScene()).addPin(id, defaultPinId);
+        condition = new JComboBox(new Object[]{
+                                                LocalQuery.Criteria.EQUAL,
+                                                LocalQuery.Criteria.LIKE
+                          });
+        dummyPin.addChild(new ComponentWidget(getScene(), condition));
+        dummyPin.addChild(new ComponentWidget(getScene(), insideText));
     }
 
     @Override
-    public void build(String id) {
-        defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
-        VMDPinWidget dummyPin = (VMDPinWidget)((QueryEditorScene)getScene()).addPin(id, defaultPinId);
-        dummyPin.addChild(new ComponentWidget(getScene(), new JComboBox(new Object[]{
-                                                LocalQuery.Criteria.EQUAL,
-                                                LocalQuery.Criteria.LIKE
-                          })));
-        dummyPin.addChild(new ComponentWidget(getScene(), new JTextField(10)));
+    public String getValue() {
+        return insideText.getText();
     }
 }

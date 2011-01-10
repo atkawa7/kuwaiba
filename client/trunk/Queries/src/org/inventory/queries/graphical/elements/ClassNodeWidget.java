@@ -37,12 +37,8 @@ public class ClassNodeWidget extends QueryEditorNodeWidget{
         setNodeName(lcm.getClassName());
     }
 
-    public LocalClassMetadata getMyClass() {
+    public LocalClassMetadata getWrappedClass() {
         return myClass;
-    }
-
-    public void setMyClass(LocalClassMetadata myClass) {
-        this.myClass = myClass;
     }
 
     @Override

@@ -31,27 +31,31 @@ import org.netbeans.api.visual.widget.ComponentWidget;
  */
 public class DateFilterNodeWidget extends SimpleCriteriaNodeWidget{
     
+    protected JTextField insideText;
+
     public DateFilterNodeWidget(QueryEditorScene scene) {
         super(scene);
     }
 
     @Override
-    public Object getValue() {
-        return null;
-    }
-
-    @Override
     public void build(String id) {
+        insideText = new JTextField(Calendar.getInstance().getTime().toString(), 10);
         setNodeProperties(null, "Date", "Filter", null);
         defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
         QueryEditorScene scene = ((QueryEditorScene)getScene());
         VMDPinWidget dummyPin = (VMDPinWidget)scene.addPin(id, defaultPinId);
-        dummyPin.addChild(new ComponentWidget(scene, new JComboBox(new Object[]{
+        condition = new JComboBox(new Object[]{
                                                 LocalQuery.Criteria.EQUAL,
                                                 LocalQuery.Criteria.BETWEEN,
                                                 LocalQuery.Criteria.GREATER_THAN,
                                                 LocalQuery.Criteria.LESS_THAN
-                          })));
-        dummyPin.addChild(new ComponentWidget(scene, new JTextField(Calendar.getInstance().getTime().toString(), 10)));
+                          });
+        dummyPin.addChild(new ComponentWidget(scene, condition));
+        dummyPin.addChild(new ComponentWidget(scene, insideText));
+    }
+
+    @Override
+    public String getValue() {
+        return insideText.getText();
     }
 }

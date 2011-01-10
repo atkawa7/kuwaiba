@@ -79,10 +79,14 @@ public class LocalQuery {
     }
 
     public ArrayList<String> getAttributeNames() {
+        if (attributeNames == null)
+            attributeNames = new ArrayList<String>();
         return attributeNames;
     }
 
     public ArrayList<String> getAttributeValues() {
+        if (attributeValues == null)
+            attributeValues = new ArrayList<String>();
         return attributeValues;
     }
 
@@ -91,6 +95,8 @@ public class LocalQuery {
     }
 
     public ArrayList<Integer> getConditions() {
+        if (conditions == null)
+            conditions = new ArrayList<Integer>();
         return conditions;
     }
 
@@ -99,6 +105,8 @@ public class LocalQuery {
     }
 
     public ArrayList<LocalQuery> getJoins() {
+        if (joins == null)
+            joins = new ArrayList<LocalQuery>();
         return joins;
     }
 
@@ -115,6 +123,8 @@ public class LocalQuery {
     }
 
     public ArrayList<String> getVisibleAttributeNames() {
+        if (visibleAttributeNames == null)
+            visibleAttributeNames = new ArrayList<String>();
         return visibleAttributeNames;
     }
 

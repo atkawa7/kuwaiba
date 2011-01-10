@@ -16,6 +16,8 @@
 
 package org.inventory.queries.graphical.elements.filters;
 
+import javax.swing.JComboBox;
+import org.inventory.communications.core.queries.LocalQuery;
 import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDFactory;
@@ -27,13 +29,15 @@ import org.netbeans.api.visual.vmd.VMDFactory;
  */
 public abstract class SimpleCriteriaNodeWidget extends QueryEditorNodeWidget{
 
+    protected JComboBox condition;
+
     public SimpleCriteriaNodeWidget(QueryEditorScene scene) {
         super(scene,VMDFactory.getOriginalScheme ());
     }
-    
-    /**
-     * Enumeration with all possible filters to be used within a criteria widget
-     * @return The component used to filter
-     */
-    public abstract Object getValue();
+
+    public int getCondition() {
+        return ((LocalQuery.Criteria)condition.getSelectedItem()).id();
+    }
+
+    public abstract String getValue();
 }

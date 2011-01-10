@@ -29,30 +29,40 @@ import org.netbeans.api.visual.widget.ComponentWidget;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class NumericFilterNodeWidget extends SimpleCriteriaNodeWidget{
-    
+
+    protected JTextField insideText;
+
     public NumericFilterNodeWidget(QueryEditorScene scene) {
         super(scene);
-        //scene.addNode("NumericFilter"+scene.getChildren().size()); //NOI18N
         setNodeProperties(null, "Numeric", "Filter", null);
     }
 
     @Override
-    public Object getValue() {
-        return null;
-    }
-
-    @Override
     public void build(String id) {
+        insideText = new JTextField("0", 10);
         defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
         VMDPinWidget dummyPin = (VMDPinWidget)((QueryEditorScene)getScene()).addPin(id, defaultPinId);
-        dummyPin.setPinName("Dummy");
-        dummyPin.addChild(new ComponentWidget(getScene(), new JComboBox(new Object[]{
+        condition = new JComboBox(new Object[]{
                                                 LocalQuery.Criteria.EQUAL,
                                                 LocalQuery.Criteria.EQUAL_OR_GREATER_THAN,
                                                 LocalQuery.Criteria.GREATER_THAN,
                                                 LocalQuery.Criteria.EQUAL_OR_LESS_THAN,
                                                 LocalQuery.Criteria.LESS_THAN
-                          })));
-        dummyPin.addChild(new ComponentWidget(getScene(), new JTextField("0", 10)));
+                          });
+        dummyPin.addChild(new ComponentWidget(getScene(), condition));
+        dummyPin.addChild(new ComponentWidget(getScene(), insideText));
+    }
+
+    @Override
+    public String getValue() {
+        try {
+            Integer.valueOf(insideText.getText());
+            Float.valueOf(insideText.getText());
+            Long.valueOf(insideText.getText());
+        }catch(NumberFormatException ex){
+            //In case of a problem, take a default value of 0
+            return "0"; //NOI18N
+        }
+        return insideText.getText();
     }
 }

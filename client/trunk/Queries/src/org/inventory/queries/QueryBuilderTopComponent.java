@@ -18,16 +18,10 @@ package org.inventory.queries;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.ParseException;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.InputVerifier;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -169,6 +163,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        //The limit must be an integer
         try{
             Integer.valueOf(txtResultLimit.getText());
         } catch(NumberFormatException ex){
@@ -176,6 +171,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
                     "Search Error",JOptionPane.ERROR_MESSAGE);
             return;
         }
+        //The query must not be empty
         if(queryScene.getNodes().isEmpty()){
             JOptionPane.showMessageDialog(this, "There's nothing to search",
                     "Search Error",JOptionPane.ERROR_MESSAGE);
