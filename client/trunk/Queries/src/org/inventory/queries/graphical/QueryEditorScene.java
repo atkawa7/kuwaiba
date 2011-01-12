@@ -284,12 +284,15 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
                 for (String edge : myEdges){
                     VMDConnectionWidget myEdge = (VMDConnectionWidget)findWidget(edge);
                     VMDNodeWidget nextHop = (VMDNodeWidget) myEdge.getTargetAnchor().getRelatedWidget().getParentWidget();
-                    if(nextHop instanceof SimpleCriteriaNodeWidget){
-                        myQuery.getAttributeNames().add(((AttributePinWidget)myPin).getAttribute().getName());
+                    myQuery.getAttributeNames().add(((AttributePinWidget)myPin).getAttribute().getName());
+                    if(nextHop instanceof SimpleCriteriaNodeWidget){                       
                         myQuery.getConditions().add(((SimpleCriteriaNodeWidget)nextHop).getCondition());
                         myQuery.getAttributeValues().add(((SimpleCriteriaNodeWidget)nextHop).getValue());
+                        myQuery.getJoins().add(null); //padding
                     }else{
                         if (nextHop instanceof ClassNodeWidget){
+                            myQuery.getConditions().add(null); //padding
+                            myQuery.getAttributeValues().add(null); //padding
                             myQuery.getJoins().add(getLocalQuery(((ClassNodeWidget)nextHop).getWrappedClass(),
                                     null,logicalConnector,0,true));
                         }

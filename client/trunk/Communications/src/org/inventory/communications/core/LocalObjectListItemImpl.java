@@ -32,7 +32,6 @@ public class LocalObjectListItemImpl extends LocalObjectLightImpl implements Loc
     public LocalObjectListItemImpl(LocalObjectLight lol){
         this.oid = lol.getOid();
         this.className = lol.getClassName();
-        this.packageName = lol.getPackageName();
         this.name = lol.getDisplayname();
     }
 

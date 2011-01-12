@@ -18,7 +18,6 @@ package org.inventory.communications.core;
 import java.util.HashMap;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalObject;
-import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.utils.Utils;
 import org.inventory.webservice.RemoteObject;
 
@@ -53,7 +52,6 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
     public LocalObjectImpl(RemoteObject ro, LocalClassMetadata lcmdt){
         this.className = ro.getClassName();
         this.myMetadata = lcmdt;
-        this.packageName = ro.getPackageName();
         this.oid = ro.getOid();
 
         attributes = new HashMap<String, Object>();

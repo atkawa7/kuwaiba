@@ -217,10 +217,9 @@
 
 <xs:complexType name="remoteObjectLight">
 <xs:sequence>
-<xs:element name="displayName" type="xs:string" minOccurs="0" />
 <xs:element name="oid" type="xs:long" minOccurs="0" />
 <xs:element name="className" type="xs:string" minOccurs="0" />
-<xs:element name="packageName" type="xs:string" minOccurs="0" />
+<xs:element name="displayName" type="xs:string" minOccurs="0" />
 <xs:element name="validators" type="tns:validator" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
@@ -272,6 +271,16 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getServerStatus">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getServerStatusResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="getGroups">
 <xs:sequence>
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
@@ -315,16 +324,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getServerStatus">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getServerStatusResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="executeQuery">
 <xs:sequence>
 <xs:element name="arg0" type="tns:remoteQuery" minOccurs="0" />
@@ -347,7 +346,14 @@
 
 <xs:complexType name="executeQueryResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="return" type="tns:resultRecord" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="resultRecord">
+<xs:sequence>
+<xs:element name="object" type="tns:remoteObjectLight" minOccurs="0" />
+<xs:element name="extraColumns" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 

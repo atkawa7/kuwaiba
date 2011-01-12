@@ -21,7 +21,6 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
 
     protected Long oid;
     protected String className;
-    protected String packageName;
     protected String displayName;
     /**
      * The list of property change listeners
@@ -41,7 +40,6 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
 
     public LocalObjectLightImpl(RemoteObjectLight rol){
         this.className = rol.getClassName();
-        this.packageName = rol.getPackageName();
         this.oid = rol.getOid();
         this.displayName = rol.getDisplayName();
         this.propertyChangeListeners = new ArrayList<PropertyChangeListener>();
@@ -66,10 +64,6 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
 
     public String getDisplayName() {
         return this.displayName;
-    }
-
-    public String getPackageName() {
-        return this.packageName;
     }
 
     public void setDisplayName(String text){

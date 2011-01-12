@@ -29,6 +29,7 @@ import org.inventory.communications.core.LocalClassMetadataLightImpl;
 import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.communications.core.LocalObjectLightImpl;
 import org.inventory.communications.core.LocalObjectListItemImpl;
+import org.inventory.communications.core.LocalResultRecord;
 import org.inventory.communications.core.LocalSession;
 import org.inventory.communications.core.LocalUserGroupObjectImpl;
 import org.inventory.communications.core.LocalUserObjectImpl;
@@ -52,6 +53,7 @@ import org.inventory.webservice.ObjectUpdate;
 import org.inventory.webservice.RemoteObject;
 import org.inventory.webservice.RemoteObjectLight;
 import org.inventory.webservice.RemoteQuery;
+import org.inventory.webservice.ResultRecord;
 import org.inventory.webservice.UserGroupInfo;
 import org.inventory.webservice.UserInfo;
 import org.inventory.webservice.ViewInfo;
@@ -637,16 +639,14 @@ public class CommunicationsStub {
         }
     }
 
-    public LocalObjectLight[] executeQuery(LocalQuery query){
+    public LocalResultRecord[] executeQuery(LocalQuery query){
         try{
             RemoteQuery remoteQuery = query.toRemoteQuery();
-            List<RemoteObjectLight> myLocalObjects = port.executeQuery(remoteQuery);
-            LocalObjectLight[] res = new LocalObjectLight[myLocalObjects.size()];
-            int i = 0;
-            for (RemoteObjectLight rol : myLocalObjects){
-                res[i] = new LocalObjectLightImpl(rol);
-                i++;
-            }
+            List<ResultRecord> myResult = port.executeQuery(remoteQuery);
+            LocalResultRecord[] res = new LocalResultRecord[myResult.size()];
+            for (int i = 0; i<res.length ; i++)
+                res[i] = new LocalResultRecord(
+                        new LocalObjectLightImpl(myResult.get(i).getObject()), myResult.get(i).getExtraColumns());
             return res;
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass()+": "+ ex.getMessage();

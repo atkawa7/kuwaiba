@@ -141,8 +141,12 @@ public class LocalQuery {
 
         ArrayList<RemoteQuery> remoteJoins =  new ArrayList<RemoteQuery>();
         if (getJoins() != null){
-            for (LocalQuery myJoin : getJoins())
-                remoteJoins.add(myJoin.toRemoteQuery());
+            for (LocalQuery myJoin : getJoins()){
+                if (myJoin == null)
+                    remoteJoins.add(null);
+                else
+                    remoteJoins.add(myJoin.toRemoteQuery());
+            }
             remoteQuery.setJoins(remoteJoins);
         }
         return remoteQuery;
