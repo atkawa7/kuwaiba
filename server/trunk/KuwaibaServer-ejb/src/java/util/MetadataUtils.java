@@ -17,6 +17,7 @@
 package util;
 
 import core.annotations.NoCopy;
+import core.todeserialize.RemoteQuery;
 import core.toserialize.ObjectList;
 import core.toserialize.RemoteObject;
 import entity.core.RootObject;
@@ -36,7 +37,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
+import javax.persistence.metamodel.EntityType;
 
 
 /**
@@ -179,6 +182,8 @@ public class MetadataUtils {
      * @return
      */
     public static Object getRealValue (String type, String valueAsString, EntityManager em){
+        if (valueAsString == null)
+            return null;
         try{
             if (type.equals("Boolean"))
                 return Boolean.valueOf(valueAsString);
@@ -239,6 +244,98 @@ public class MetadataUtils {
 		return String.format("%1$032X", i);
         }catch(NoSuchAlgorithmException nsa){
             return null;
+        }
+    }
+
+    /**
+     * Replace special characters to prevent SQL injection attacks. So far it prepends a "\" to
+     * the characters ', & and "
+     *
+     * @param poisonedString
+     * @return
+     */
+    public static String convertSpecialCharacters(String poisonedString){
+        if (poisonedString == null)
+            return null;
+        String res =poisonedString.replace("&", "\\&");
+        res = poisonedString.replace("'", "\\'");
+        res =poisonedString.replace("\"", "\\\"");
+        return res;
+    }
+
+    public static Class getClassFor(String className, EntityManager em) throws ClassNotFoundException{
+        if (classIndex == null){
+                classIndex = new HashMap<String, Class>();
+                Set<EntityType<?>> allEntities = em.getMetamodel().getEntities();
+                for (EntityType ent : allEntities)
+                    classIndex.put(ent.getJavaType().getSimpleName(), ent.getJavaType());
+            }
+            Class myClass = classIndex.get(className);
+            if (myClass != null)
+                return classIndex.get(className);
+            else throw new ClassNotFoundException(className);
+    }
+
+    public static void chainPredicates(String prefix, RemoteQuery myQuery, ArrayList<String> formerPredicates, EntityManager em)
+            throws ClassNotFoundException, NoSuchFieldException{
+
+        if (myQuery.getAttributeNames() != null){
+            Class toBeSearched = getClassFor(myQuery.getClassName(), em);
+
+            for (int i = 0; i < myQuery.getAttributeNames().size(); i++){
+                String attribute = myQuery.getAttributeNames().get(i);
+                Object mappedValue = MetadataUtils.getRealValue(HierarchyUtils.
+                        getField(toBeSearched, attribute).getType().getSimpleName(), myQuery.getAttributeValues().get(i), em);
+
+                if (mappedValue == null) { //Look for a join in the getJoins()
+                    RemoteQuery myJoin = myQuery.getJoins().get(i);
+                    if (myJoin == null) //If this is null, we're trying to match what objects has the current attribute set to null
+                        formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+"=null"); //NOI18N
+                    else {
+                        Class innerClass = getClassFor(myJoin.getClassName(),em); //Only used to check if the class is valid
+                        chainPredicates(prefix+myQuery.getAttributeNames().get(i)+".", myJoin, formerPredicates, em); //NOI18N
+                    }
+                } else { //Process a simple value
+                    if (mappedValue instanceof String) {
+                        switch (myQuery.getConditions().get(i)) {
+                            case RemoteQuery.EQUAL:
+                                formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+
+                                        "='"+MetadataUtils.convertSpecialCharacters((String)mappedValue)+"'"); //NOI18N
+                                break;
+                            case RemoteQuery.LIKE:
+                                //The like here is case-sensitive (?), so we have to lowercase the string
+                                formerPredicates.add("LOWER("+prefix+myQuery.getAttributeNames().get(i)+   //NOI18N
+                                        ") LIKE '%"+MetadataUtils.convertSpecialCharacters((String)mappedValue).toLowerCase()+"%'");  //NOI18N
+                                break;
+                        }
+                    } else {
+                        if (mappedValue instanceof Boolean)
+                            formerPredicates.add("x."+myQuery.getAttributeNames().get(i)+"="+mappedValue);  //NOI18N
+
+                        else {
+                            if (mappedValue instanceof Integer || mappedValue instanceof Float) {
+                                switch (myQuery.getConditions().get(i)) {
+                                    case RemoteQuery.EQUAL:
+                                        formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+"="+mappedValue);  //NOI18N
+                                        break;
+                                    case RemoteQuery.EQUAL_OR_GREATER_THAN:
+                                        formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+">="+mappedValue);  //NOI18N
+                                        break;
+                                    case RemoteQuery.EQUAL_OR_LESS_THAN:
+                                        formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+"<="+mappedValue);  //NOI18N
+                                        break;
+                                    case RemoteQuery.GREATER_THAN:
+                                        formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+">"+mappedValue);  //NOI18N
+                                        break;
+                                    case RemoteQuery.LESS_THAN:
+                                        formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+"<"+mappedValue);  //NOI18N
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -31,6 +31,7 @@ import core.exceptions.UnsupportedPropertyException;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectUpdate;
+import core.toserialize.ResultRecord;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.Validator;
@@ -83,16 +84,7 @@ public class BackendBean implements BackendBeanRemote {
     @Override
     public Class getClassFor(String className) throws Exception{
         if (em != null){
-            if (classIndex == null){
-                classIndex = new HashMap<String, Class>();
-                Set<EntityType<?>> allEntities = em.getMetamodel().getEntities();
-                for (EntityType ent : allEntities)
-                    classIndex.put(ent.getJavaType().getSimpleName(), ent.getJavaType());
-            }
-            Class myClass = classIndex.get(className);
-            if (myClass != null)
-                return classIndex.get(className);
-            else throw new ClassNotFoundException(className);
+            return MetadataUtils.getClassFor(className, em);
         }else
             throw new EntityManagerNotAvailableException();
     }
@@ -718,86 +710,172 @@ public class BackendBean implements BackendBeanRemote {
             throw new EntityManagerNotAvailableException();
     }
 
-    @Override
-    public RemoteObjectLight[] executeQuery(RemoteQuery myQuery) throws Exception{
+    // <editor-fold defaultstate="collapsed" desc="comment">
+    /*@Override
+    public RemoteObjectLight[] executeQuery(RemoteQuery myQuery) throws Exception {
         System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_EXECUTEQUERY"));
-        if (em != null){
+        if (em != null) {
             Class toBeSearched = getClassFor(myQuery.getClassName());
             CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery query =cb.createQuery();
+            CriteriaQuery<RootObject> query = cb.createQuery(RootObject.class);
             Root entity = query.from(toBeSearched);
             ArrayList<Predicate> predicates = new ArrayList<Predicate>();
+            Join<RootObject, RootObject> finalJoin = null;
             //getAttributeNames() is null only if no attributes were chosen as filters
-            if (myQuery.getAttributeNames() != null){
-                for (int i = 0; i< myQuery.getAttributeNames().size(); i++){
+            if (myQuery.getAttributeNames() != null) {
+                //Basic filters (strings, dates, numbers, booleans)
+                for (int i = 0; i < myQuery.getAttributeNames().size(); i++) {
                     String attribute = myQuery.getAttributeNames().get(i);
-                    Object mappedValue = MetadataUtils.getRealValue(HierarchyUtils.
-                            getField(toBeSearched, attribute).toString(),
+                    Object mappedValue = MetadataUtils.getRealValue(HierarchyUtils.getField(toBeSearched, attribute).toString(),
                             myQuery.getAttributeValues().get(i), em);
-                    if (mappedValue instanceof String) {
-                        switch (myQuery.getConditions().get(i)){
-                            case RemoteQuery.EQUAL:
-                                predicates.add(cb.equal(entity.get(attribute),mappedValue));
-                                break;
-                            case RemoteQuery.LIKE:
-                                //The like here is case-sesitive (?), so we have to lowercase the string
-                                predicates.add(cb.like(cb.lower(entity.get(attribute)),"%"+((String)mappedValue).toLowerCase()+"%"));
-                                break;
+                    if (mappedValue == null) { //Look for a join in the getJoins()
+                        RemoteQuery myJoin = myQuery.getJoins().get(i);//If this is null, we're trying to match what objects has the current attribute set to null
+                        if (myJoin == null) {
+                            predicates.add(cb.equal(entity.get(attribute), null));
+
+                        } else {
+                            Class innerClass = getClassFor(myJoin.getClassName());
+                            if (innerClass == null) {
+                                throw new ClassNotFoundException(myJoin.getClassName());
+
+                            }
+                            if (finalJoin == null) {
+                                finalJoin = entity.join(attribute);
+
+                            } else {
+                                finalJoin.join(attribute);
+                                //Root innerEntity = query.from(innerClass);
+                                //joins.add(entity.join(attribute));
+                                //query.select(entity);
+
+                            }
                         }
-                    }
-                    else{
-                        if (mappedValue instanceof Boolean)
-                            predicates.add(cb.equal(entity.get(attribute),mappedValue));
-                        else{
-                            if (mappedValue instanceof Integer || mappedValue instanceof Float){
-                                switch (myQuery.getConditions().get(i)){
-                                    case RemoteQuery.EQUAL:
-                                        predicates.add(cb.equal(entity.get(attribute),mappedValue));
-                                        break;
-                                    case RemoteQuery.EQUAL_OR_GREATER_THAN:
-                                        //The like here is case-sensitive (?), so we have to lowercase the string
-                                        predicates.add(cb.greaterThanOrEqualTo(entity.get(attribute),(Comparable)mappedValue));
-                                        break;
-                                    case RemoteQuery.EQUAL_OR_LESS_THAN:
-                                        predicates.add(cb.lessThanOrEqualTo(entity.get(attribute),(Comparable)mappedValue));
-                                        break;
-                                    case RemoteQuery.GREATER_THAN:
-                                        predicates.add(cb.greaterThan(entity.get(attribute),(Comparable)mappedValue));
-                                        break;
-                                    case RemoteQuery.LESS_THAN:
-                                        predicates.add(cb.lessThan(entity.get(attribute),(Comparable)mappedValue));
-                                        break;
+                    } else { //Process a simple value
+                        if (mappedValue instanceof String) {
+                            switch (myQuery.getConditions().get(i)) {
+                                case RemoteQuery.EQUAL:
+                                    predicates.add(cb.equal(entity.get(attribute), mappedValue));
+                                    break;
+                                case RemoteQuery.LIKE:
+                                    //The like here is case-sesitive (?), so we have to lowercase the string
+                                    predicates.add(cb.like(cb.lower(entity.get(attribute)), "%" + ((String) mappedValue).toLowerCase() + "%"));
+                                    break;
+                            }
+                        } else {
+                            if (mappedValue instanceof Boolean) {
+                                predicates.add(cb.equal(entity.get(attribute), mappedValue));
+
+                            } else {
+                                if (mappedValue instanceof Integer || mappedValue instanceof Float) {
+                                    switch (myQuery.getConditions().get(i)) {
+                                        case RemoteQuery.EQUAL:
+                                            predicates.add(cb.equal(entity.get(attribute), mappedValue));
+                                            break;
+                                        case RemoteQuery.EQUAL_OR_GREATER_THAN:
+                                            //The like here is case-sensitive (?), so we have to lowercase the string
+                                            predicates.add(cb.greaterThanOrEqualTo(entity.get(attribute), (Comparable) mappedValue));
+                                            break;
+                                        case RemoteQuery.EQUAL_OR_LESS_THAN:
+                                            predicates.add(cb.lessThanOrEqualTo(entity.get(attribute), (Comparable) mappedValue));
+                                            break;
+                                        case RemoteQuery.GREATER_THAN:
+                                            predicates.add(cb.greaterThan(entity.get(attribute), (Comparable) mappedValue));
+                                            break;
+                                        case RemoteQuery.LESS_THAN:
+                                            predicates.add(cb.lessThan(entity.get(attribute), (Comparable) mappedValue));
+                                            break;
+                                    }
                                 }
                             }
                         }
-
                     }
                 }
             }
-            if (!predicates.isEmpty()){
+
+            if (finalJoin != null) {
+                query.select(finalJoin);
+
+            }
+            if (!predicates.isEmpty()) {
                 Predicate finalPredicate = predicates.get(0);
-                for (int i = 0; i < predicates.size(); i++){
-                    if (myQuery.getLogicalConnector() == RemoteQuery.CONNECTOR_AND)
-                        finalPredicate = cb.and(predicates.get(i),finalPredicate);
-                    else
-                        finalPredicate = cb.or(predicates.get(i),finalPredicate);
+                for (int i = 0; i < predicates.size(); i++) {
+                    if (myQuery.getLogicalConnector() == RemoteQuery.CONNECTOR_AND) {
+                        finalPredicate = cb.and(predicates.get(i), finalPredicate);
+
+                    } else {
+                        finalPredicate = cb.or(predicates.get(i), finalPredicate);
+
+                    }
                 }
                 query.where(finalPredicate);
             }
-            List<Object> result = em.createQuery(query).getResultList();
+
+            List<RootObject> result = em.createQuery(query).getResultList();
             RemoteObjectLight[] res = new RemoteObjectLight[result.size()];
 
             int i = 0;
-            for (Object obj: result){
+            for (Object obj : result) {
                 res[i] = new RemoteObjectLight(obj);
                 i++;
             }
             return res;
+        } else {
+            throw new EntityManagerNotAvailableException();
+
         }
-        else
+    }*/// </editor-fold>
+    /**
+     * This is the JPQL version of the method used to perform complex queries
+     * @param myQuery The code-friendly representation of the query made using the graphical query builder
+     * @return a set of objects matching the specified criteria as ResultRecord array
+     * @throws Exception
+     */
+    @Override
+    public ResultRecord[] executeQuery(RemoteQuery myQuery) throws Exception {
+        System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_EXECUTEQUERY"));
+        if (em != null) {
+            String queryText = "SELECT "; //The complete query text //NOI18N
+            String fields = ""; //fields to be retrieved
+            String from = "FROM "+myQuery.getClassName() + " x"; //From clause
+            ArrayList<String> predicates = new ArrayList<String>(); //filters
+
+
+            if (myQuery.getVisibleAttributeNames() == null)
+                fields +=   "x.id, x.name"; //NOI18N
+            else{
+                for (String field : myQuery.getAttributeNames())
+                    fields +=   "x."+field+", "; //NOI18N
+
+                //We remove the last comma
+                fields = fields.substring(0, fields.length() - 2);
+            }
+
+            MetadataUtils.chainPredicates("x.", myQuery, predicates, em);
+
+            queryText += fields + " " +from;
+            if (!predicates.isEmpty()) {
+                String finalPredicate = " WHERE ";
+                for (String predicate : predicates)
+                    finalPredicate += predicate +
+                            ((myQuery.getLogicalConnector() == RemoteQuery.CONNECTOR_AND)?" AND ":" OR ");
+                queryText += finalPredicate.substring(0,finalPredicate.length() - 4);
+            }
+
+            System.out.println("SQL: "+queryText);
+            List<Object[]> result = em.createQuery(queryText).getResultList();
+            ResultRecord[] res = new ResultRecord[result.size()];
+            for(int i = 0; i < result.size(); i++){
+                RemoteObjectLight objectInNewRecord = new RemoteObjectLight(
+                        (Long)result.get(i)[0],myQuery.getClassName(), (String)result.get(i)[1]);
+                ArrayList<String> extraColumns = new ArrayList<String>(result.get(i).length -2 );
+                for (int j = 2; j < result.get(i).length -2 ; j++)
+                    extraColumns.add((String)result.get(i)[j]);
+                res[i] = new ResultRecord(objectInNewRecord,extraColumns);
+            }
+            return res;
+        }else
             throw new EntityManagerNotAvailableException();
     }
-
 
 
     @Override

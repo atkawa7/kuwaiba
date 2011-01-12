@@ -29,20 +29,29 @@ public class RemoteObjectLight {
     /**
      * The object's display name. It's private because a RmoteObject could provide his own display name with more information
      */
-    private String displayName; 
     protected Long oid;
     protected String className;
-    protected String packageName;
+    private String displayName;
+    
     /**
      * Misc flags used to give more information about the object
      */
     protected List<Validator> validators;
 
-    public RemoteObjectLight(){} 
+    /**
+     * Default constructor. Not used
+     */
+    protected RemoteObjectLight(){}
+
+    public RemoteObjectLight(Long oid, String className, String displayName) {
+        this.displayName = displayName;
+        this.oid = oid;
+        this.className = className;
+    }
+
 
     public RemoteObjectLight(Object obj){
         this.className = obj.getClass().getSimpleName();
-        this.packageName = obj.getClass().getPackage().getName();
         //TODO: It should be possible to the user to change the display name using a customization tool
         this.displayName = ((RootObject)obj).getName();
         this.oid = ((RootObject)obj).getId();

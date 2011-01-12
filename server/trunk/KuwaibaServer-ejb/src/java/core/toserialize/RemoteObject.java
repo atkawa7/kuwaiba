@@ -38,8 +38,10 @@ public class RemoteObject extends RemoteObjectLight {
                                  //if its sorted correctly there, so we take it too here
     private String[] values;
 
-
-    public RemoteObject(){}
+    /**
+     * Defaul constructor. Not used
+     */
+    private RemoteObject(){}
 
     public RemoteObject(Object object){
         List<Field> allAttributes = MetadataUtils.getAllFields(object.getClass());
@@ -128,13 +130,5 @@ public class RemoteObject extends RemoteObjectLight {
 
     public void setValues(String[] values) {
         this.values = values;
-    }
-
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
     }
 }
