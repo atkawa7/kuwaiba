@@ -123,7 +123,7 @@ public final class ConnectionWizardWizardAction implements ActionListener {
         try{
             LocalObject update = Lookup.getDefault().lookup(LocalObject.class);
             update.setLocalObject(myWizard.getConnectionClass(),
-                    new String[]{"name","type"}, new Object[]{name,type.getId()});
+                    new String[]{"name","type"}, new Object[]{name,type.getOid()});
             
             update.setOid(oid);
             if(!CommunicationsStub.getInstance().saveObject(update)){

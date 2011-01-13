@@ -81,5 +81,4 @@ public class LocalObjectListItemImpl extends LocalObjectLightImpl implements Loc
     public LocalObjectListItem getNull(){
         return LocalObjectListItemImpl.getNullValue();
     }
-
 }

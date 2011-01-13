@@ -83,6 +83,7 @@
             <public-packages>
                 <package>org.inventory.navigation.applicationnodes.listmanagernodes</package>
                 <package>org.inventory.navigation.applicationnodes.objectnodes</package>
+                <package>org.inventory.navigation.applicationnodes.querynodes</package>
             </public-packages>
         </data>
     </configuration>

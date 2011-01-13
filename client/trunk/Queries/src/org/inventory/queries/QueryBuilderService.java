@@ -195,7 +195,7 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
                 if (component instanceof JComboBox){
                     LocalObjectListItem item =(LocalObjectListItem)((JComboBox)component).getSelectedItem();
                     //LocalClassMetadata itemClass = com.getMetaForClass(item.getClassName());
-                    values.add(item.getId().toString());
+                    values.add(item.getOid().toString());
                     //types.add(itemClass.getPackageName()+"."+itemClass.getClassName());
                     types.add(item.getClassName());
                     continue;

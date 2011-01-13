@@ -50,7 +50,7 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
         }
     }
 
-    public final String getDisplayname(){
+    public String getDisplayname(){
         return this.displayName;
     }
 
@@ -60,10 +60,6 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
 
     public Long getOid() {
         return oid;
-    }
-
-    public String getDisplayName() {
-        return this.displayName;
     }
 
     public void setDisplayName(String text){
@@ -137,5 +133,10 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
             return this;
         else
             throw new UnsupportedFlavorException(flavor);
+    }
+
+    @Override
+    public String toString(){
+        return getDisplayname() +" ["+getClassName()+"]"; //NOI18N
     }
 }

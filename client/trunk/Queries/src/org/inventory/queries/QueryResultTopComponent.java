@@ -19,17 +19,13 @@ package org.inventory.queries;
 
 import java.awt.BorderLayout;
 import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
+import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
 import org.openide.explorer.ExplorerManager;
-import org.openide.explorer.ExplorerManager.Provider;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.ListView;
-import org.openide.nodes.AbstractNode;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -38,8 +34,7 @@ import org.openide.windows.WindowManager;
  * Shows the result of the current query
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class QueryResultTopComponent extends TopComponent implements Provider{
-
+public class QueryResultTopComponent extends TopComponent{
     private ExplorerManager em = new ExplorerManager();
     private ListView lv;
 
@@ -50,30 +45,24 @@ public class QueryResultTopComponent extends TopComponent implements Provider{
         map.put(DefaultEditorKit.cutAction, ExplorerUtils.actionCut(em));
         map.put(DefaultEditorKit.pasteAction, ExplorerUtils.actionPaste(em));
 
-        //Now the keystrokes (doesn't seem to be working)
-        InputMap keys = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        keys.put(KeyStroke.getKeyStroke("control C"), DefaultEditorKit.copyAction);
-        keys.put(KeyStroke.getKeyStroke("control X"), DefaultEditorKit.cutAction);
-        keys.put(KeyStroke.getKeyStroke("control V"), DefaultEditorKit.pasteAction);
 
         associateLookup(ExplorerUtils.createLookup(em, map));
 
-        em.setRootContext(new AbstractNode(new ObjectChildren(found)));
+        //For some weird reason NBP requires the Nodes API to be a dependency for this module
+        //but shouldn't, since I'm using RootObjectNode, ObjectChildren which are located in the
+        //ApplicationNodes module which in turn depends on the Nodes API
+        em.setRootContext(new RootObjectNode(new ObjectChildren(found)));
         setDisplayName("Search results for "+ title);
 
         setLayout(new BorderLayout());
         this.add(lv,BorderLayout.CENTER);
 
-        Mode myMode = WindowManager.getDefault().findMode("explorer");
+        Mode myMode = WindowManager.getDefault().findMode("explorer"); //NOI18N
         myMode.dockInto(this);
     }
 
     @Override
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_NEVER;
-    }
-
-    public ExplorerManager getExplorerManager() {
-        return em;
     }
 }

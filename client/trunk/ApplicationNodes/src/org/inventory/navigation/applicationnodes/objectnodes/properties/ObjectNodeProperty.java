@@ -80,7 +80,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
 
             if (t instanceof LocalObjectListItem)
                 update.setLocalObject(node.getObject().getClassName(),
-                    new String[]{this.getName()}, new Object[]{((LocalObjectListItem)t).getId()});
+                    new String[]{this.getName()}, new Object[]{((LocalObjectListItem)t).getOid()});
             else
                 update.setLocalObject(node.getObject().getClassName(),
                     new String[]{this.getName()}, new Object[]{t});

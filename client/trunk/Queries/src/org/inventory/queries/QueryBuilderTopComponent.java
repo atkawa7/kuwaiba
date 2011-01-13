@@ -120,6 +120,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
 
         btnButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/save.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnButton, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnButton.text")); // NOI18N
+        btnButton.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnButton.toolTipText")); // NOI18N
         btnButton.setFocusable(false);
         btnButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -127,6 +128,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
 
         btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/run-search.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSearch, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSearch.text")); // NOI18N
+        btnSearch.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSearch.toolTipText")); // NOI18N
         btnSearch.setFocusable(false);
         btnSearch.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSearch.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -157,6 +159,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
 
         txtResultLimit.setColumns(4);
         txtResultLimit.setText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.txtResultLimit.text")); // NOI18N
+        txtResultLimit.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.txtResultLimit.toolTipText")); // NOI18N
         barMain.add(txtResultLimit);
 
         add(barMain, java.awt.BorderLayout.PAGE_START);

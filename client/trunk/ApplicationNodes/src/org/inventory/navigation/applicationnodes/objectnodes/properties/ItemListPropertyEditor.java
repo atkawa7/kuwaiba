@@ -41,7 +41,7 @@ public class ItemListPropertyEditor extends PropertyEditorSupport{
     @Override
     public void setAsText(String text){
         for (LocalObjectListItem loli : list)
-            if (text.equals(loli.getDisplayName())){
+            if (text.equals(loli.getDisplayname())){
                 setValue(loli);
                 break;
             }
@@ -54,8 +54,8 @@ public class ItemListPropertyEditor extends PropertyEditorSupport{
         String [] res = new String[list.length];
     
         for (int i = 0; i <list.length; i++)
-            res[i] = list[i].getDisplayName().equals("")?
-            list[i].getName():list[i].getDisplayName();
+            res[i] = list[i].getDisplayname().equals("")?
+            list[i].getName():list[i].getDisplayname();
         return res;
     }
 
