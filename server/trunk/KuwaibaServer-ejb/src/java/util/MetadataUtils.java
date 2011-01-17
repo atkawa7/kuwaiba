@@ -276,6 +276,17 @@ public class MetadataUtils {
             else throw new ClassNotFoundException(className);
     }
 
+    /**
+     * Recursive method to chain the attribute names and values to be used by the WHERE clause, this is:<br />
+     * WHERE <condition_1> <logical_connector> <condition_2> ... <logical_connector> <condition_N> <br />
+     * It's recursive because it support JOINS and they're treated as subqueries
+     * @param prefix the prefix used to refer the class alias in the JPQL statement (i.e x0.name., x0.vendor.name.)
+     * @param myQuery the current query as a RemoteQuery object
+     * @param formerPredicates the previous predicates
+     * @param em The current entity manager used to check if the query class is valid
+     * @throws ClassNotFoundException is the query class is not valid
+     * @throws NoSuchFieldException if the attribute to be used as condition is not valid
+     */
     public static void chainPredicates(String prefix, RemoteQuery myQuery, ArrayList<String> formerPredicates, EntityManager em)
             throws ClassNotFoundException, NoSuchFieldException{
 
@@ -337,5 +348,48 @@ public class MetadataUtils {
                 }
             }
         }
+    }
+
+    /**
+     * Recursive method to chain the attribute names to be used by the SELECT clause<br />
+     * SELECT x0.name x1.name FROM Building x0, LocationOwner x1 ...
+     * @param classIndex the class index. It's used to compose the alias for the chained classes (i.e. x0, x1, ..., xN)
+     * @param from The current "from" clause string. Initially the value is "FROM MySearchedClass x0"
+     * @param fields the current fields 
+     */
+//    public static void chainVisibleAttributes(RemoteQuery myQuery, List<String> from,
+//            List<String> fields, int classIndex, boolean ignoreMainFields) {
+//        if (myQuery.getVisibleAttributeNames() != null){
+//            for (String field : myQuery.getVisibleAttributeNames()){
+//                //We should ignore the attributes name and id since they have been already
+//                //added to the select clause
+//                //if (!(field.equals("id") || field.equals("name")) && ignoreMainFields){
+//                    fields.add("x"+classIndex+"."+field); //NOI18N
+//                //}
+//            }
+//            from.add(myQuery.getClassName() +" x"+classIndex);
+//        }
+//        if (myQuery.getJoins() != null)
+//            for (RemoteQuery myJoin : myQuery.getJoins())
+//                if (myJoin != null)
+//                    chainVisibleAttributes(myJoin, from, fields, classIndex + 1, false);
+//    }
+        public static void chainVisibleAttributes(RemoteQuery myQuery, 
+            List<String> fields, String prefix, boolean ignoreMainFields) {
+            if (myQuery.getVisibleAttributeNames() != null){
+                for (String field : myQuery.getVisibleAttributeNames()){
+                    //We should ignore the attributes name and id since they have been already
+                    //added to the select clause
+                    //if (!(field.equals("id") || field.equals("name")) && ignoreMainFields){
+                        fields.add(prefix+field); //NOI18N
+                    //}
+                }
+            }
+            if (myQuery.getAttributeNames() != null){
+                for (int i = 0; i < myQuery.getAttributeNames().size(); i++)
+                    if (myQuery.getJoins().get(i) != null)
+                        chainVisibleAttributes(myQuery.getJoins().get(i),
+                                fields, prefix+myQuery.getAttributeNames().get(i)+".", ignoreMainFields);
+            }
     }
 }

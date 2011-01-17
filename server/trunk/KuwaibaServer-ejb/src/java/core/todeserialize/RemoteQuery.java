@@ -39,6 +39,11 @@ public class RemoteQuery {
      * AND logical connector
      */
     public static final int CONNECTOR_AND = 1;
+
+    /**
+     * The following constants must be synchronized with those at client side
+     */
+
     /**
      * Equal comparison
      */
@@ -104,6 +109,10 @@ public class RemoteQuery {
      * Results limit. Not used if @isJoin is true. Default value is 10
      */
     private int limit = 10;
+    /**
+     * Current result page
+     */
+    private int page = 1;
 
     public RemoteQuery() {
     }
@@ -142,5 +151,8 @@ public class RemoteQuery {
 
     public int getLimit() {
         return limit;
+    }
+    public int getPage(){
+        return page;
     }
 }

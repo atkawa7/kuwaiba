@@ -29,11 +29,4 @@ public class OperatingSystem extends GenericObjectList implements Serializable {
     public void setReleaseDate(Date releaseDate) {
         this.releaseDate = releaseDate;
     }
-
-
-    @Override
-    public String toString() {
-        return "entity.multichoice.systems.OperatingSystem[id=" + id + "]";
-    }
-
 }

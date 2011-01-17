@@ -20,16 +20,11 @@ import entity.core.ViewableObject;
 import javax.persistence.Entity;
 
 /**
- *
+ * A simple State/Department within a country. The word "State" is reserved in SQL
+ * so StateObject had to be used instead
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-//El nombre de clase State podía tener problemas, al parecer
 public class StateObject extends ViewableObject {
-
-    @Override
-    public String toString() {
-        return "entity.location.State[id=" + id + "]";
-    }
 
 }

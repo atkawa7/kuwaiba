@@ -71,7 +71,7 @@ public class ClientDetail implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.session.ClientDetail[id=" + id + "]";
+        return "ClientDetail[id=" + id + "]";
     }
 
 }

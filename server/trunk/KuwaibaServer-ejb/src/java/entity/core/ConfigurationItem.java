@@ -97,10 +97,4 @@ public abstract class ConfigurationItem extends ViewableObject  {
         }
         return true;
     }
-
-    @Override
-    public String toString() {
-        return "entity.ConfigurationItem[id=" + id + "]";
-    }
-
 }

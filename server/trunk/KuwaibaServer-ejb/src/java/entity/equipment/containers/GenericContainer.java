@@ -29,9 +29,4 @@ import javax.persistence.InheritanceType;
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericContainer extends RootObject{
 
-    @Override
-    public String toString() {
-        return "entity.equipment.forniture.GenericForniture[id=" + id + "]";
-    }
-
 }

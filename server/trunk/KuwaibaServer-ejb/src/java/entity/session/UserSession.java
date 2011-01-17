@@ -138,7 +138,7 @@ public class UserSession implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.session.UserSession[id=" + id + "]";
+        return getUser() +"["+getLoginTime()+"]"; //NOI18N
     }
 
 }

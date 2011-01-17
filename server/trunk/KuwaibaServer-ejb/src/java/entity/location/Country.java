@@ -21,7 +21,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 
 /**
- *
+ * A simple country
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
@@ -36,10 +36,4 @@ public class Country extends ViewableObject {
     public void setAcronym(String acronym) {
         this.acronym = acronym;
     }
-    
-    @Override
-    public String toString() {
-        return "entity.location.Country[id=" + id + "]";
-    }
-
 }

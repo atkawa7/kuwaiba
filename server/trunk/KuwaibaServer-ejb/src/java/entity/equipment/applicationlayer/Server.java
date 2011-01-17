@@ -20,15 +20,10 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- *
+ * A computer/appliance working as a server
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
 public class Server extends GenericApplicationElement implements Serializable {
-
-    @Override
-    public String toString() {
-        return "entity.equipment.applicationlayer.Server[id=" + id + "]";
-    }
 
 }

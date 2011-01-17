@@ -36,9 +36,4 @@ public class City extends ViewableObject {
     public void setAcronym(String acronym) {
         this.acronym = acronym;
     }
-
-    @Override
-    public String toString() {
-        return "entity.location.City[id=" + id + "]";
-    }
 }

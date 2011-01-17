@@ -61,7 +61,7 @@ public class DummyRoot implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.core.DummyRoot[id=" + id + "]";
+        return "DummyRoot"; //NOI18N
     }
 
 }

@@ -102,7 +102,7 @@ public class PackageMetadata implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.core.metamodel.PackageMetadata[id=" + id + "]";
+        return getName();
     }
 
 }

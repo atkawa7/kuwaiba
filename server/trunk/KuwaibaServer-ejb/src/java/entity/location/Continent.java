@@ -20,14 +20,9 @@ import entity.core.ViewableObject;
 import javax.persistence.Entity;
 
 /**
- *
+ * A simple continent
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
 public class Continent extends ViewableObject {
-    @Override
-    public String toString() {
-        return "entity.location.Continent[id=" + id + "]";
-    }
-
 }

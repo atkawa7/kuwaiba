@@ -835,24 +835,27 @@ public class BackendBean implements BackendBeanRemote {
         System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_EXECUTEQUERY"));
         if (em != null) {
             String queryText = "SELECT "; //The complete query text //NOI18N
-            String fields = ""; //fields to be retrieved
-            String from = "FROM "+myQuery.getClassName() + " x"; //From clause
+            ArrayList<String> fields = new ArrayList<String>(); //fields to be retrieved
+            String from = " FROM "+myQuery.getClassName()+ " x0"; //From clause
             ArrayList<String> predicates = new ArrayList<String>(); //filters
 
+            //These fields are necessary to build the RemoteObjectLights
+            fields.add("x0.id");
+            fields.add("x0.name");
 
-            if (myQuery.getVisibleAttributeNames() == null)
-                fields +=   "x.id, x.name"; //NOI18N
-            else{
-                for (String field : myQuery.getAttributeNames())
-                    fields +=   "x."+field+", "; //NOI18N
+            //The default classIndex is 0 (that's why the main class )
+            MetadataUtils.chainVisibleAttributes(myQuery, fields, "x0.", true);
+            
+            MetadataUtils.chainPredicates("x0.", myQuery, predicates, em);
 
-                //We remove the last comma
-                fields = fields.substring(0, fields.length() - 2);
-            }
+            for (String myFields : fields)
+                queryText += myFields +", ";
 
-            MetadataUtils.chainPredicates("x.", myQuery, predicates, em);
+            //We remove the last comma
+            queryText = queryText.substring(0, queryText.length() - 2);
 
-            queryText += fields + " " +from;
+            queryText += from;
+
             if (!predicates.isEmpty()) {
                 String finalPredicate = " WHERE ";
                 for (String predicate : predicates)
@@ -862,14 +865,17 @@ public class BackendBean implements BackendBeanRemote {
             }
 
             System.out.println("SQL: "+queryText);
-            List<Object[]> result = em.createQuery(queryText).getResultList();
+            Query query = em.createQuery(queryText);
+            query.setFirstResult(myQuery.getLimit() * (myQuery.getPage()-1));
+            query.setMaxResults(myQuery.getLimit());
+            List<Object[]> result = query.getResultList();
             ResultRecord[] res = new ResultRecord[result.size()];
             for(int i = 0; i < result.size(); i++){
                 RemoteObjectLight objectInNewRecord = new RemoteObjectLight(
                         (Long)result.get(i)[0],myQuery.getClassName(), (String)result.get(i)[1]);
-                ArrayList<String> extraColumns = new ArrayList<String>(result.get(i).length -2 );
-                for (int j = 2; j < result.get(i).length -2 ; j++)
-                    extraColumns.add((String)result.get(i)[j]);
+                ArrayList<String> extraColumns = new ArrayList<String>();
+                for (int j = 2; j < result.get(i).length ; j++)
+                    extraColumns.add(result.get(i)[j] == null ? "": result.get(i)[j].toString());
                 res[i] = new ResultRecord(objectInNewRecord,extraColumns);
             }
             return res;

@@ -108,7 +108,7 @@ public class UserGroup implements Serializable { //Group is a keyword in JPQL
 
     @Override
     public String toString() {
-        return "entity.config.Groups[id=" + id + "]";
+        return getName();
     }
 
     public Date getCreationDate() {

@@ -48,10 +48,4 @@ public abstract class GenericObjectList extends AdministrativeItem{
         if (_value == null) return null;
         else return (Long)_value;
     }
-
-    @Override
-    public String toString() {
-        return "entity.multichoice.GenericMultichoice[id=" + id + "]";
-    }
-
 }

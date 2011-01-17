@@ -174,7 +174,7 @@ public class AttributeMetadata implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.core.metadata.AttributeRegistry[id=" + id + "]";
+        return getName();
     }
 
 }

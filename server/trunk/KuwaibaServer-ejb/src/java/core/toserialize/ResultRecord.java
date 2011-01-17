@@ -45,6 +45,6 @@ public class ResultRecord {
 
     public ResultRecord(RemoteObjectLight object, ArrayList<String> columns) {
         this.object = object;
-        extraColumns = columns;
+        this.extraColumns = columns;
     }
 }

@@ -261,7 +261,7 @@ public class ClassMetadata implements Serializable {
 
     @Override
     public String toString() {
-        return "meta.ClassMetadata[id=" + id + "]";
+        return getName();
     }
 
     public Boolean getIsAbstract() {

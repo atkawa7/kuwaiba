@@ -147,7 +147,7 @@ public abstract class RootObject implements Serializable, Cloneable {
 
     @Override
     public String toString() {
-        return "entity.core.Object[id=" + id + "]";
+        return getName() +" ["+getClass().getSimpleName()+"]"; //NOI18N
     }
 
 }

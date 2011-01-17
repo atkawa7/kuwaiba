@@ -29,10 +29,4 @@ import javax.persistence.InheritanceType;
 @Administrative
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class AdministrativeItem extends ViewableObject {
-    
-    @Override
-    public String toString() {
-        return "entity.core.AdministrativeItem[id=" + id + "]";
-    }
-
 }

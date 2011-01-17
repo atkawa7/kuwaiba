@@ -177,7 +177,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.config.Users[id=" + id + "]";
+        return getUsername();
     }
 
 }
