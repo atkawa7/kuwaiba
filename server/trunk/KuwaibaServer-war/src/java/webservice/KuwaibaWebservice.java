@@ -559,9 +559,11 @@ public class KuwaibaWebservice {
     }
 
     /**
-     * Execute a complex query generated using the Graphical Query Builder.
-     * @param query The query object.
-     * @return
+     * Execute a complex query generated using the Graphical Query Builder.  Please note
+     * that the first record is reserved for the column headers, so and empty result set
+     * will have at least one record.
+     * @param query The RemoteQuery object (a code friendly version of the graphical query designed at client side).
+     * @return An array of records
      * @throws Exception
      */
     @WebMethod(operationName = "executeQuery")

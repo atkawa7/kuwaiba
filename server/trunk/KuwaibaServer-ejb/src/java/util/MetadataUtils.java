@@ -375,13 +375,14 @@ public class MetadataUtils {
 //                    chainVisibleAttributes(myJoin, from, fields, classIndex + 1, false);
 //    }
         public static void chainVisibleAttributes(RemoteQuery myQuery, 
-            List<String> fields, String prefix, boolean ignoreMainFields) {
+            List<String> fields, List<String> columnNames, String prefix) {
             if (myQuery.getVisibleAttributeNames() != null){
                 for (String field : myQuery.getVisibleAttributeNames()){
                     //We should ignore the attributes name and id since they have been already
                     //added to the select clause
                     //if (!(field.equals("id") || field.equals("name")) && ignoreMainFields){
-                        fields.add(prefix+field); //NOI18N
+                    columnNames.add(myQuery.getClassName()+"."+field); //NOI18N
+                    fields.add(prefix+field); //NOI18N
                     //}
                 }
             }
@@ -389,7 +390,7 @@ public class MetadataUtils {
                 for (int i = 0; i < myQuery.getAttributeNames().size(); i++)
                     if (myQuery.getJoins().get(i) != null)
                         chainVisibleAttributes(myQuery.getJoins().get(i),
-                                fields, prefix+myQuery.getAttributeNames().get(i)+".", ignoreMainFields);
+                                fields, columnNames, prefix+myQuery.getAttributeNames().get(i)+".");
             }
     }
 }

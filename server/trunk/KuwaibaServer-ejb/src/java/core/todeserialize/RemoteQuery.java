@@ -110,7 +110,7 @@ public class RemoteQuery {
      */
     private int limit = 10;
     /**
-     * Current result page
+     * Current result page. If its value is less than 1, means that no pagination should be used
      */
     private int page = 1;
 

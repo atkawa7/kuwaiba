@@ -825,7 +825,9 @@ public class BackendBean implements BackendBeanRemote {
         }
     }*/// </editor-fold>
     /**
-     * This is the JPQL version of the method used to perform complex queries
+     * This is the JPQL version of the method used to perform complex queries. Please note
+     * that the first record is reserved for the column headers, so and empty result set
+     * will have at least one record.
      * @param myQuery The code-friendly representation of the query made using the graphical query builder
      * @return a set of objects matching the specified criteria as ResultRecord array
      * @throws Exception
@@ -838,13 +840,14 @@ public class BackendBean implements BackendBeanRemote {
             ArrayList<String> fields = new ArrayList<String>(); //fields to be retrieved
             String from = " FROM "+myQuery.getClassName()+ " x0"; //From clause
             ArrayList<String> predicates = new ArrayList<String>(); //filters
+            ArrayList<String> columnNames = new ArrayList<String>(); // The labels to be used as column headers
 
             //These fields are necessary to build the RemoteObjectLights
             fields.add("x0.id");
             fields.add("x0.name");
 
             //The default classIndex is 0 (that's why the main class )
-            MetadataUtils.chainVisibleAttributes(myQuery, fields, "x0.", true);
+            MetadataUtils.chainVisibleAttributes(myQuery, fields, columnNames, "x0.");
             
             MetadataUtils.chainPredicates("x0.", myQuery, predicates, em);
 
@@ -866,17 +869,22 @@ public class BackendBean implements BackendBeanRemote {
 
             System.out.println("SQL: "+queryText);
             Query query = em.createQuery(queryText);
-            query.setFirstResult(myQuery.getLimit() * (myQuery.getPage()-1));
-            query.setMaxResults(myQuery.getLimit());
+
+            //If the page is 0, we show all results
+            if (myQuery.getPage() > 0){
+                query.setFirstResult(myQuery.getLimit() * (myQuery.getPage()-1));
+                query.setMaxResults(myQuery.getLimit());
+            }
             List<Object[]> result = query.getResultList();
-            ResultRecord[] res = new ResultRecord[result.size()];
+            ResultRecord[] res = new ResultRecord[result.size() + 1]; //An additional record for column headers
+            res[0] = new ResultRecord(null, columnNames);
             for(int i = 0; i < result.size(); i++){
                 RemoteObjectLight objectInNewRecord = new RemoteObjectLight(
                         (Long)result.get(i)[0],myQuery.getClassName(), (String)result.get(i)[1]);
                 ArrayList<String> extraColumns = new ArrayList<String>();
                 for (int j = 2; j < result.get(i).length ; j++)
                     extraColumns.add(result.get(i)[j] == null ? "": result.get(i)[j].toString());
-                res[i] = new ResultRecord(objectInNewRecord,extraColumns);
+                res[i + 1] = new ResultRecord(objectInNewRecord,extraColumns);
             }
             return res;
         }else
