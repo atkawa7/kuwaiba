@@ -68,14 +68,20 @@ public class LocalQuery {
     /**
      * Results limit. Not used if @isJoin is true. Default value is 10
      */
-    private int limit=10;
+    private int limit = 10;
+    /**
+     * Current result page. If its value is less than 1, means that no pagination should be used
+     */
+    private int page = 1;
 
-    public LocalQuery(String name, String className, int logicalConnector, boolean isJoin, int limit) {
+    public LocalQuery(String name, String className, int logicalConnector, 
+            boolean isJoin, int limit, int page) {
         this.name = name;
         this.className = className;
         this.logicalConnector = logicalConnector;
         this.isJoin = isJoin;
         this.limit = limit;
+        this.page = page;
     }
 
     public ArrayList<String> getAttributeNames() {
@@ -114,6 +120,10 @@ public class LocalQuery {
         return limit;
     }
 
+    public int getPage() {
+        return page;
+    }
+
     public int getLogicalConnector() {
         return logicalConnector;
     }
@@ -136,6 +146,7 @@ public class LocalQuery {
         remoteQuery.setConditions(getConditions());
         remoteQuery.setIsJoin(false);
         remoteQuery.setLimit(getLimit());
+        remoteQuery.setPage(page);
         remoteQuery.setLogicalConnector(getLogicalConnector());
         remoteQuery.setVisibleAttributeNames(getVisibleAttributeNames());
 

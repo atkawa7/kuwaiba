@@ -644,7 +644,9 @@ public class CommunicationsStub {
             RemoteQuery remoteQuery = query.toRemoteQuery();
             List<ResultRecord> myResult = port.executeQuery(remoteQuery);
             LocalResultRecord[] res = new LocalResultRecord[myResult.size()];
-            for (int i = 0; i<res.length ; i++)
+            //The first record is used to store the table headers
+            res[0] = new LocalResultRecord(null, myResult.get(0).getExtraColumns());
+            for (int i = 1; i<res.length ; i++)
                 res[i] = new LocalResultRecord(
                         new LocalObjectLightImpl(myResult.get(i).getObject()), myResult.get(i).getExtraColumns());
             return res;

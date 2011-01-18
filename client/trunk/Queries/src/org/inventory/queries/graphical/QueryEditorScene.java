@@ -272,12 +272,15 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
     }
 
     public LocalQuery getLocalQuery(LocalClassMetadata mainClass, String queryName,
-            int logicalConnector, int limit, boolean isJoin) {
+            int logicalConnector, int limit, int page, boolean isJoin) {
         LocalQuery myQuery = new LocalQuery(queryName,mainClass.getClassName(),
-                logicalConnector, isJoin, limit);
+                logicalConnector, isJoin, limit, page);
         Widget[] attributePins = ((ClassNodeWidget)findWidget(mainClass)).getChildren().toArray(new Widget[0]);
         for (Widget myPin : attributePins){
             if (myPin instanceof AttributePinWidget){
+                if (((AttributePinWidget)myPin).getIsVisible().isSelected()){
+                    myQuery.getVisibleAttributeNames().add(((AttributePinWidget)myPin).getAttribute().getName());
+                }
                 if (!((AttributePinWidget)myPin).getInsideCheck().isSelected())
                     continue;
                 String[] myEdges = findPinEdges(((AttributePinWidget)myPin).getAttribute(), true, false).toArray(new String[0]);
@@ -294,7 +297,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
                             myQuery.getConditions().add(null); //padding
                             myQuery.getAttributeValues().add(null); //padding
                             myQuery.getJoins().add(getLocalQuery(((ClassNodeWidget)nextHop).getWrappedClass(),
-                                    null,logicalConnector,0,true));
+                                    null,logicalConnector,0,0,true));
                         }
                     }
                 }

@@ -17,16 +17,17 @@
 package org.inventory.queries.graphical;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.table.TableModel;
 import org.inventory.communications.core.LocalResultRecord;
 import org.inventory.queries.GraphicalQueryBuilderService;
 import org.netbeans.swing.etable.ETable;
-import org.openide.explorer.ExplorerManager;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -35,42 +36,34 @@ import org.openide.windows.WindowManager;
  * Query results for the new Graphical Query builder
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ComplexQueryResultTopComponent extends TopComponent implements ExplorerManager.Provider{
+public class ComplexQueryResultTopComponent extends TopComponent{
     private JToolBar barMain ;
     private JButton btnNext;
     private JButton btnPrevious;
     private JButton btnAll;
     private JButton btnExport;
     private JScrollPane pnlScrollMain;
-    private ExplorerManager em = new ExplorerManager();
     private ETable myTable;
+    private int currentPage = 1;
+    private int pageSize;
+    /**
+     * Reference to the controller
+     */
+    private GraphicalQueryBuilderService qbs;
 
     /**
      * Two pages can be buffered so we don't have to ask for the results every time
      * the user switch the page
      */
-    private Object[][] page1;
-    private Object[][] page2;
 
-    public ComplexQueryResultTopComponent() {
-    }
-
-    public ComplexQueryResultTopComponent(LocalResultRecord[] res, List<String> columnNames,
-            GraphicalQueryBuilderService aThis) {
-        ArrayList<String> myColumns= new ArrayList<String>();
-        myColumns.add(""); // The first column is the object itself
-        myColumns.addAll(columnNames);
-        page1 = new Object[res.length][columnNames.size() +1];
-        for (int i = 0; i < res.length ; i++){
-            page1[i][0] = res[i].getObject();
-            for (int j = 1; j <= columnNames.size(); j++){
-                page1[i][j] = res[i].getExtraColumns().get(j-1);
-            }
-        }
-        myTable = new ETable(page1, myColumns.toArray());
+    public ComplexQueryResultTopComponent(LocalResultRecord[] res, int pageSize,
+            GraphicalQueryBuilderService qbs) {
+        this.qbs = qbs;
+        this.pageSize = pageSize;
+        TableModel model = new QueryResultTableModel(res);
+        myTable = new ETable(model);
         initComponents();
 
-        //em.setRootContext(new RootObjectNode(new QueryResultChildren<LocalResultRecord>(res)));
     }
 
     private void initComponents(){
@@ -99,6 +92,31 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expl
         barMain.add(btnNext);
         barMain.add(btnAll);
 
+        //Actions
+        btnPrevious.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                btnPreviousActionPerformed();
+            }
+        });
+
+        btnNext.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                btnNextActionPerformed();
+            }
+        });
+
+        btnAll.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                btnAllActionPerformed();
+            }
+        });
+
+        btnExport.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                btnExportActionPerformed();
+            }
+        });
+
         barMain.setRollover(true);
         barMain.setPreferredSize(new java.awt.Dimension(326, 33));
 
@@ -112,12 +130,59 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expl
         revalidate();
     }
 
+    /**
+     * Actions listeners for buttons
+     */
+    public void btnNextActionPerformed(){
+        LocalResultRecord[] res = qbs.executeQuery(++currentPage);
+        if (res != null){
+            if (res.length < pageSize)
+                btnNext.setEnabled(false);
+            else
+                btnPrevious.setEnabled(true);
+
+            if (res.length == 1){ //One including the table header
+                JOptionPane.showMessageDialog(this, "No more search results were found");
+                currentPage--;
+            }
+            else{
+                ((QueryResultTableModel)myTable.getModel()).updateTableModel(res);
+                revalidate();
+            }
+        }else currentPage--;
+    }
+
+    public void btnPreviousActionPerformed(){
+        LocalResultRecord[] res = qbs.executeQuery(--currentPage);
+        if (res != null){
+            if (currentPage == 1)
+                btnPrevious.setEnabled(false);
+            btnNext.setEnabled(true);
+            ((QueryResultTableModel)myTable.getModel()).updateTableModel(res);
+            revalidate();
+        }else currentPage++;
+    }
+
+    public void btnAllActionPerformed(){
+        LocalResultRecord[] res = qbs.executeQuery(0);
+        if (res != null){
+            btnNext.setEnabled(false);
+            btnPrevious.setEnabled(false);
+            //For some reason I can't figure out, updateTableModel *only here*
+            //makes the rendering to throw a IndexOutOfBoundsException
+            //((QueryResultTableModel)myTable.getModel()).updateTableModel(res);
+            myTable.setModel(new QueryResultTableModel(res));
+            revalidate();
+        }
+        
+    }
+
+    public void btnExportActionPerformed(){
+        JOptionPane.showMessageDialog(this, "Not working yet...");
+    }
+
     @Override
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_NEVER;
-    }
-
-    public ExplorerManager getExplorerManager() {
-        return em;
     }
 }

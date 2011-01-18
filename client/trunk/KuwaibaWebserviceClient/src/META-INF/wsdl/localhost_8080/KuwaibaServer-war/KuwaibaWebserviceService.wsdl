@@ -781,23 +781,11 @@
 <message name="executeQueryResponse">
 <part name="parameters" element="tns:executeQueryResponse" />
 </message>
-<message name="getGroups">
-<part name="parameters" element="tns:getGroups" />
-</message>
-<message name="getGroupsResponse">
-<part name="parameters" element="tns:getGroupsResponse" />
-</message>
 <message name="createObject">
 <part name="parameters" element="tns:createObject" />
 </message>
 <message name="createObjectResponse">
 <part name="parameters" element="tns:createObjectResponse" />
-</message>
-<message name="copyObjects">
-<part name="parameters" element="tns:copyObjects" />
-</message>
-<message name="copyObjectsResponse">
-<part name="parameters" element="tns:copyObjectsResponse" />
 </message>
 <message name="getServerStatus">
 <part name="parameters" element="tns:getServerStatus" />
@@ -913,6 +901,12 @@
 <message name="getDummyRootIdResponse">
 <part name="parameters" element="tns:getDummyRootIdResponse" />
 </message>
+<message name="copyObjects">
+<part name="parameters" element="tns:copyObjects" />
+</message>
+<message name="copyObjectsResponse">
+<part name="parameters" element="tns:copyObjectsResponse" />
+</message>
 <message name="moveObjects">
 <part name="parameters" element="tns:moveObjects" />
 </message>
@@ -991,6 +985,12 @@
 <message name="getUsersResponse">
 <part name="parameters" element="tns:getUsersResponse" />
 </message>
+<message name="getGroups">
+<part name="parameters" element="tns:getGroups" />
+</message>
+<message name="getGroupsResponse">
+<part name="parameters" element="tns:getGroupsResponse" />
+</message>
 <message name="createUser">
 <part name="parameters" element="tns:createUser" />
 </message>
@@ -1061,20 +1061,10 @@
 <output wsam:Action="http://webservice/KuwaibaWebservice/executeQueryResponse" message="tns:executeQueryResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/executeQuery/Fault/Exception" />
 </operation>
-<operation name="getGroups">
-<input wsam:Action="http://webservice/KuwaibaWebservice/getGroupsRequest" message="tns:getGroups" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/getGroupsResponse" message="tns:getGroupsResponse" />
-<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/getGroups/Fault/Exception" />
-</operation>
 <operation name="createObject">
 <input wsam:Action="http://webservice/KuwaibaWebservice/createObjectRequest" message="tns:createObject" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/createObjectResponse" message="tns:createObjectResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/createObject/Fault/Exception" />
-</operation>
-<operation name="copyObjects">
-<input wsam:Action="http://webservice/KuwaibaWebservice/copyObjectsRequest" message="tns:copyObjects" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/copyObjectsResponse" message="tns:copyObjectsResponse" />
-<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/copyObjects/Fault/Exception" />
 </operation>
 <operation name="getServerStatus">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getServerStatusRequest" message="tns:getServerStatus" />
@@ -1169,6 +1159,11 @@
 <input wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootIdRequest" message="tns:getDummyRootId" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootIdResponse" message="tns:getDummyRootIdResponse" />
 </operation>
+<operation name="copyObjects">
+<input wsam:Action="http://webservice/KuwaibaWebservice/copyObjectsRequest" message="tns:copyObjects" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/copyObjectsResponse" message="tns:copyObjectsResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/copyObjects/Fault/Exception" />
+</operation>
 <operation name="moveObjects">
 <input wsam:Action="http://webservice/KuwaibaWebservice/moveObjectsRequest" message="tns:moveObjects" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/moveObjectsResponse" message="tns:moveObjectsResponse" />
@@ -1233,6 +1228,11 @@
 <input wsam:Action="http://webservice/KuwaibaWebservice/getUsersRequest" message="tns:getUsers" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getUsersResponse" message="tns:getUsersResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/getUsers/Fault/Exception" />
+</operation>
+<operation name="getGroups">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getGroupsRequest" message="tns:getGroups" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getGroupsResponse" message="tns:getGroupsResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/getGroups/Fault/Exception" />
 </operation>
 <operation name="createUser">
 <input wsam:Action="http://webservice/KuwaibaWebservice/createUserRequest" message="tns:createUser" />
@@ -1320,18 +1320,6 @@
 <soap:fault name="Exception" use="literal" />
 </fault>
 </operation>
-<operation name="getGroups">
-<soap:operation soapAction="" />
-<input>
-<soap:body use="literal" />
-</input>
-<output>
-<soap:body use="literal" />
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal" />
-</fault>
-</operation>
 <operation name="createObject">
 <soap:operation soapAction="" />
 <input>
@@ -1340,20 +1328,6 @@
 </input>
 <output>
 <wsp:PolicyReference URI="#MainWSPortBinding_createObject_Output_Policy" />
-<soap:body use="literal" />
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal" />
-</fault>
-</operation>
-<operation name="copyObjects">
-<soap:operation soapAction="" />
-<input>
-<wsp:PolicyReference URI="#MainWSPortBinding_copyObjects_Input_Policy" />
-<soap:body use="literal" />
-</input>
-<output>
-<wsp:PolicyReference URI="#MainWSPortBinding_copyObjects_Output_Policy" />
 <soap:body use="literal" />
 </output>
 <fault name="Exception">
@@ -1600,6 +1574,20 @@
 <soap:body use="literal" />
 </output>
 </operation>
+<operation name="copyObjects">
+<soap:operation soapAction="" />
+<input>
+<wsp:PolicyReference URI="#MainWSPortBinding_copyObjects_Input_Policy" />
+<soap:body use="literal" />
+</input>
+<output>
+<wsp:PolicyReference URI="#MainWSPortBinding_copyObjects_Output_Policy" />
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
 <operation name="moveObjects">
 <soap:operation soapAction="" />
 <input>
@@ -1755,6 +1743,18 @@
 </fault>
 </operation>
 <operation name="getUsers">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
+<operation name="getGroups">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />

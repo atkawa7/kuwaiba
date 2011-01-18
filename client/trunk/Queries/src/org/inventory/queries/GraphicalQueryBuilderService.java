@@ -21,7 +21,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
 import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalResultRecord;
 import org.inventory.communications.core.queries.LocalQuery;
@@ -29,10 +28,8 @@ import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
-import org.inventory.queries.graphical.ComplexQueryResultTopComponent;
 import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
-import org.openide.windows.TopComponent;
 
 /**
  * This class will replace the old QueryBuilderService in next releases
@@ -63,24 +60,14 @@ public class GraphicalQueryBuilderService implements ActionListener{
         return res;
     }
 
-    public void executeQuery() {
+    public LocalResultRecord[] executeQuery(int page) {
         currentQuery = qbtc.getQueryScene().getLocalQuery(qbtc.getQueryScene().getCurrentSearchedClass(),"New Query",
                         qbtc.getChkAnd().isSelected()?LocalQuery.CONNECTOR_AND:LocalQuery.CONNECTOR_OR,
-                        Integer.valueOf(qbtc.getTxtResultLimit().getText()), false);
+                        Integer.valueOf(qbtc.getTxtResultLimit().getText()), page, false);
         LocalResultRecord[] res = com.executeQuery(currentQuery);
         if (res == null)
             qbtc.getNotifier().showSimplePopup("Query Execution", NotificationUtil.ERROR, com.getError());
-        else{
-            if (res.length == 0)
-                JOptionPane.showMessageDialog(null, "No results were found",
-                        "Query Results",JOptionPane.INFORMATION_MESSAGE);
-            else{
-                TopComponent tc = new ComplexQueryResultTopComponent(res,currentQuery.getVisibleAttributeNames(),this);
-                tc.open();
-                tc.requestActive();
-                tc.requestAttention(true);
-            }
-        }
+        return res;
     }
 
     public LocalQuery getCurrentQuery() {

@@ -16,8 +16,11 @@
 
 package org.inventory.queries.graphical.elements;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JToggleButton;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDColorScheme;
@@ -29,9 +32,21 @@ import org.netbeans.api.visual.widget.ComponentWidget;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class AttributePinWidget extends VMDPinWidget{
+    /**
+     * Checkbox that enables an attribute to be used as filter
+     */
     private JCheckBox insideCheck;
+    /**
+     * This button is used to indicate if this attribute should be shown as a column 
+     * in the result list
+     */
+    private JToggleButton isVisible;
     private JLabel insideLabel;
     private LocalAttributeMetadata myAttribute;
+    private static Icon isVisibleIcon =
+            new ImageIcon(AttributePinWidget.class.getResource("/org/inventory/queries/res/eye.png"));
+    private static Icon isVisibleIconDeselected =
+            new ImageIcon(AttributePinWidget.class.getResource("/org/inventory/queries/res/no-eye.png"));
 
     public AttributePinWidget(QueryEditorScene scene, LocalAttributeMetadata lam,
             String attributeClassName,VMDColorScheme scheme) {
@@ -47,12 +62,28 @@ public class AttributePinWidget extends VMDPinWidget{
         if (lam.getIsMultiple())
             insideCheck.putClientProperty("className", attributeClassName); //NOI18N
         addChild(new ComponentWidget(getScene(), insideCheck));
+
+        isVisible = new JToggleButton(isVisibleIcon);
+        isVisible.setSelectedIcon(isVisibleIconDeselected);
+        isVisible.setRolloverEnabled(false);
+        isVisible.setToolTipText("Show/hide this attribute in the query results");
+        addChild(new ComponentWidget(scene, isVisible));
+
+        if (lam.getIsMultiple()){ //If this is a list type attribute, force to select the columns
+                                  //to be shown manually
+            isVisible.setEnabled(false);
+            isVisible.setToolTipText("Select the columns for this list type attribute manually (select the checkbox)");
+        }
         insideLabel = new JLabel(lam.getDisplayName());
         addChild(new ComponentWidget(getScene(), insideLabel));
     }
 
     public JCheckBox getInsideCheck() {
         return insideCheck;
+    }
+
+    public JToggleButton getIsVisible(){
+        return this.isVisible;
     }
 
     public LocalAttributeMetadata getAttribute() {

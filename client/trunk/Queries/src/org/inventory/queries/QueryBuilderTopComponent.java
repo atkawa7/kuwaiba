@@ -25,9 +25,11 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import org.inventory.communications.core.LocalResultRecord;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.queries.graphical.ComplexQueryResultTopComponent;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.inventory.queries.graphical.elements.ClassNodeWidget;
 import org.openide.util.NbBundle;
@@ -124,6 +126,12 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         btnButton.setFocusable(false);
         btnButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnButtonActionPerformed(evt);
+            }
+        });
         barMain.add(btnButton);
 
         btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/run-search.png"))); // NOI18N
@@ -180,8 +188,24 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
                     "Search Error",JOptionPane.ERROR_MESSAGE);
             return;
         }
-        qbs.executeQuery();
+        LocalResultRecord[] res = qbs.executeQuery(1);
+        if (res != null){
+            if (res.length == 1) //Remember: the first record is used to set the column names
+                JOptionPane.showMessageDialog(null, "No results were found",
+                        "Query Results",JOptionPane.INFORMATION_MESSAGE);
+            else{
+                TopComponent tc = new ComplexQueryResultTopComponent(res,
+                        qbs.getCurrentQuery().getLimit(), qbs);
+                tc.open();
+                tc.requestActive();
+                tc.requestAttention(true);
+            }
+        }
     }//GEN-LAST:event_btnSearchActionPerformed
+
+    private void btnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnButtonActionPerformed
+        JOptionPane.showMessageDialog(this, "Not working yet...");
+    }//GEN-LAST:event_btnButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
