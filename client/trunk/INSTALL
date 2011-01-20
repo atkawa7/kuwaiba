@@ -1,1 +1,22 @@
-Please refer to http://kuwaiba.sourceforge.net
+REQUIREMENTS
+-------------
+* JRE 1.6 or higher
+* 20 MB of disc space
+
+INSTALLATION STEPS
+------------------
+
+Windows
+-------
+* Unzip the bundle in your preferred location
+* Execute $INSTALL_DIRECTORY/kuwaibainventory/bin/kuwaibainventory.exe
+
+Unix-like OS
+------------
+* Unzip the bundle in your preferred location
+* Chmod the main binary to allow execution "chmod 755 $INSTALL_DIRECTORY/kuwaibainventory/bin/kuwaibainventory"
+* Execute $INSTALL_DIRECTORY/kuwaibainventory/bin/kuwaibainventory
+
+TROUBLESHOOTING
+---------------
+* Be sure the JRE is in your path, so it can be found by the executable

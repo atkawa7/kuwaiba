@@ -191,7 +191,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     }
 
     public void refresh(){
-        
+        sheet = null;
         //Force to retrieve the object info again
         if (object instanceof LocalObjectLight)
             object = com.getObjectInfoLight(object.getClassName(), object.getOid());

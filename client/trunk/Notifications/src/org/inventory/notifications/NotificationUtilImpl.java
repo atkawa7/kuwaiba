@@ -1,6 +1,8 @@
 package org.inventory.notifications;
 
 import java.awt.event.ActionListener;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -24,6 +26,7 @@ public class NotificationUtilImpl extends NotificationDisplayer
      * Temporal workaround to clear the last notification from the tray
      */
     private Notification lastNotification;
+    private Timer controller;
 
     @Override
     public Notification notify(String string, Icon icon, String string1, ActionListener al, Priority prt) {
@@ -49,9 +52,20 @@ public class NotificationUtilImpl extends NotificationDisplayer
                 popupIcon = new ImageIcon(getClass().getResource(INFO_ICON_PATH));
         }
         if (NotificationDisplayer.getDefault() != null){
-            if (lastNotification != null)
-                lastNotification.clear();
             lastNotification = NotificationDisplayer.getDefault().notify(title,popupIcon, details, null);
+
+            //Thanks to Luca Dazi for this suggestion
+            if (lastNotification != null){
+                if (null == controller)
+                    controller = new Timer();
+                TimerTask tt = new TimerTask() {
+                        @Override
+                        public void run() {
+                            lastNotification.clear();
+                        }
+                    };
+                controller.schedule(tt, 10000);
+            }
         }
     }
 

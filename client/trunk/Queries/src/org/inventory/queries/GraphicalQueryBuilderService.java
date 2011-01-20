@@ -103,7 +103,8 @@ public class GraphicalQueryBuilderService implements ActionListener{
                 qbtc.getQueryScene().validate();
                 break;
             case QueryEditorScene.SCENE_FILTERDISABLED:
-                qbtc.getQueryScene().removeNode(insideCheck.getClientProperty("related-node"));
+                //qbtc.getQueryScene().removeNode(insideCheck.getClientProperty("related-node"));
+                ((QueryEditorScene)qbtc.getQueryScene()).removeAllRelatedNodes(insideCheck.getClientProperty("related-node"));
                 insideCheck.putClientProperty("related-node",null);
                 qbtc.getQueryScene().validate();
                 break;

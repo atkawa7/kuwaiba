@@ -51,6 +51,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JCheckBox;
 import org.inventory.communications.core.queries.LocalQuery;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
@@ -305,6 +306,33 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         }
         return myQuery;
     }
+
+    /**
+     * The default removeNode implementation removes the provided node plus the related
+     * pins, however, as this editor chains many nodes in a tree fashion is necessary to
+     * remove the whole branch, not only the one provided
+     * @param node
+     */
+    public void removeAllRelatedNodes(Object node){
+        if (node instanceof LocalClassMetadata){ //It's a leaf node
+            ClassNodeWidget currentNode = ((ClassNodeWidget)findWidget(node));
+            List<Widget> widgetsInside = currentNode.getChildren();
+            for (Widget widget : widgetsInside){
+                if (widget instanceof AttributePinWidget){
+                    if (((AttributePinWidget)widget).getInsideCheck().isSelected()){
+                        String[] myEdges = findPinEdges(((AttributePinWidget)widget).getAttribute(), true, false).toArray(new String[0]);
+                        for (String edge : myEdges){
+                            VMDConnectionWidget myEdge = (VMDConnectionWidget)findWidget(edge);
+                            VMDNodeWidget nextHop = (VMDNodeWidget) myEdge.getTargetAnchor().getRelatedWidget().getParentWidget();
+                            removeAllRelatedNodes(findObject(nextHop));
+                        }
+                    }
+                }
+            }
+        }
+        removeNode(node);
+    }
+
     public void clear(){
         currentSearchedClass = null;
         while (!getNodes().isEmpty())
