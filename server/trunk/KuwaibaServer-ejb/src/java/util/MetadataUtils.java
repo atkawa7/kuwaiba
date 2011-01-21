@@ -321,7 +321,7 @@ public class MetadataUtils {
                         }
                     } else {
                         if (mappedValue instanceof Boolean)
-                            formerPredicates.add("x."+myQuery.getAttributeNames().get(i)+"="+mappedValue);  //NOI18N
+                            formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+"="+mappedValue);  //NOI18N
 
                         else {
                             if (mappedValue instanceof Integer || mappedValue instanceof Float) {
@@ -357,40 +357,44 @@ public class MetadataUtils {
      * @param from The current "from" clause string. Initially the value is "FROM MySearchedClass x0"
      * @param fields the current fields 
      */
-//    public static void chainVisibleAttributes(RemoteQuery myQuery, List<String> from,
-//            List<String> fields, int classIndex, boolean ignoreMainFields) {
-//        if (myQuery.getVisibleAttributeNames() != null){
-//            for (String field : myQuery.getVisibleAttributeNames()){
-//                //We should ignore the attributes name and id since they have been already
-//                //added to the select clause
-//                //if (!(field.equals("id") || field.equals("name")) && ignoreMainFields){
-//                    fields.add("x"+classIndex+"."+field); //NOI18N
-//                //}
-//            }
-//            from.add(myQuery.getClassName() +" x"+classIndex);
-//        }
-//        if (myQuery.getJoins() != null)
-//            for (RemoteQuery myJoin : myQuery.getJoins())
-//                if (myJoin != null)
-//                    chainVisibleAttributes(myJoin, from, fields, classIndex + 1, false);
-//    }
-        public static void chainVisibleAttributes(RemoteQuery myQuery, 
-            List<String> fields, List<String> columnNames, String prefix) {
-            if (myQuery.getVisibleAttributeNames() != null){
-                for (String field : myQuery.getVisibleAttributeNames()){
-                    //We should ignore the attributes name and id since they have been already
-                    //added to the select clause
-                    //if (!(field.equals("id") || field.equals("name")) && ignoreMainFields){
-                    columnNames.add(myQuery.getClassName()+"."+field); //NOI18N
-                    fields.add(prefix+field); //NOI18N
-                    //}
+      public static void chainVisibleAttributes(RemoteQuery myQuery, 
+        List<String> fields, List<String> columnNames, List<String> joins,String prefix) {
+        if (myQuery.getVisibleAttributeNames() != null){
+            for (String field : myQuery.getVisibleAttributeNames()){
+                //We should ignore the attributes name and id since they have been already
+                //added to the select clause
+                columnNames.add(myQuery.getClassName()+"."+field); //NOI18N
+                fields.add(prefix+field); //NOI18N
+            }
+        }
+        if (myQuery.getAttributeNames() != null){
+            for (int i = 0; i < myQuery.getAttributeNames().size(); i++)
+                if (myQuery.getJoins().get(i) != null){
+                    joins.add(prefix+myQuery.getAttributeNames().get(i)+" "+
+                            myQuery.getJoins().get(i).getClassName().toLowerCase()+i);
+                    chainVisibleAttributes(myQuery.getJoins().get(i),
+                            fields, columnNames, joins,
+                            myQuery.getJoins().get(i).getClassName().toLowerCase()+i+".");
                 }
-            }
-            if (myQuery.getAttributeNames() != null){
-                for (int i = 0; i < myQuery.getAttributeNames().size(); i++)
-                    if (myQuery.getJoins().get(i) != null)
-                        chainVisibleAttributes(myQuery.getJoins().get(i),
-                                fields, columnNames, prefix+myQuery.getAttributeNames().get(i)+".");
-            }
+        }
     }
+//        public static void chainVisibleAttributes(RemoteQuery myQuery,
+//            List<String> fields, List<String> columnNames, String prefix) {
+//            if (myQuery.getVisibleAttributeNames() != null){
+//                for (String field : myQuery.getVisibleAttributeNames()){
+//                    //We should ignore the attributes name and id since they have been already
+//                    //added to the select clause
+//                    //if (!(field.equals("id") || field.equals("name")) && ignoreMainFields){
+//                    columnNames.add(myQuery.getClassName()+"."+field); //NOI18N
+//                    fields.add(prefix+field); //NOI18N
+//                    //}
+//                }
+//            }
+//            if (myQuery.getAttributeNames() != null){
+//                for (int i = 0; i < myQuery.getAttributeNames().size(); i++)
+//                    if (myQuery.getJoins().get(i) != null)
+//                        chainVisibleAttributes(myQuery.getJoins().get(i),
+//                                fields, columnNames, prefix+myQuery.getAttributeNames().get(i)+".");
+//            }
+//    }
 }

@@ -836,18 +836,19 @@ public class BackendBean implements BackendBeanRemote {
     public ResultRecord[] executeQuery(RemoteQuery myQuery) throws Exception {
         System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_EXECUTEQUERY"));
         if (em != null) {
-            String queryText = "SELECT "; //The complete query text //NOI18N
+            String queryText = "SELECT DISTINCT "; //The complete query text //NOI18N
             ArrayList<String> fields = new ArrayList<String>(); //fields to be retrieved
             String from = " FROM "+myQuery.getClassName()+ " x0"; //From clause
             ArrayList<String> predicates = new ArrayList<String>(); //filters
             ArrayList<String> columnNames = new ArrayList<String>(); // The labels to be used as column headers
+            ArrayList<String> joins = new ArrayList<String>();
 
             //These fields are necessary to build the RemoteObjectLights
             fields.add("x0.id");
             fields.add("x0.name");
 
             //The default classIndex is 0 (that's why the main class )
-            MetadataUtils.chainVisibleAttributes(myQuery, fields, columnNames, "x0.");
+            MetadataUtils.chainVisibleAttributes(myQuery, fields, columnNames, joins,"x0.");
             
             MetadataUtils.chainPredicates("x0.", myQuery, predicates, em);
 
@@ -857,7 +858,12 @@ public class BackendBean implements BackendBeanRemote {
             //We remove the last comma
             queryText = queryText.substring(0, queryText.length() - 2);
 
+            //From
             queryText += from;
+
+            //Joins
+            for (String myJoin : joins)
+                queryText += " LEFT JOIN "+myJoin;
 
             if (!predicates.isEmpty()) {
                 String finalPredicate = " WHERE ";
@@ -867,7 +873,7 @@ public class BackendBean implements BackendBeanRemote {
                 queryText += finalPredicate.substring(0,finalPredicate.length() - 4);
             }
 
-            System.out.println("SQL: "+queryText);
+            //System.out.println("SQL: "+queryText);
             Query query = em.createQuery(queryText);
 
             //If the page is 0, we show all results

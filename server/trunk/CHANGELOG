@@ -35,3 +35,7 @@
 * copyObjects method rewritten
 * Performance improvements
 * Several bugfixes
+
+0.3 Alpha (17012011)
+* Preliminary support for advanced queries
+* executeQuery method written using type-safe JPQL
