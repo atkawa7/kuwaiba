@@ -27,6 +27,7 @@ import javax.swing.JToolBar;
 import javax.swing.table.TableModel;
 import org.inventory.communications.core.LocalResultRecord;
 import org.inventory.queries.GraphicalQueryBuilderService;
+import org.inventory.queries.graphical.windows.ExportSettingsFrame;
 import org.netbeans.swing.etable.ETable;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
@@ -51,11 +52,6 @@ public class ComplexQueryResultTopComponent extends TopComponent{
      */
     private GraphicalQueryBuilderService qbs;
 
-    /**
-     * Two pages can be buffered so we don't have to ask for the results every time
-     * the user switch the page
-     */
-
     public ComplexQueryResultTopComponent(LocalResultRecord[] res, int pageSize,
             GraphicalQueryBuilderService qbs) {
         this.qbs = qbs;
@@ -63,7 +59,6 @@ public class ComplexQueryResultTopComponent extends TopComponent{
         TableModel model = new QueryResultTableModel(res);
         myTable = new ETable(model);
         initComponents();
-
     }
 
     private void initComponents(){
@@ -178,7 +173,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
     }
 
     public void btnExportActionPerformed(){
-        JOptionPane.showMessageDialog(this, "Not working yet...");
+        new ExportSettingsFrame(qbs).setVisible(false);
     }
 
     @Override

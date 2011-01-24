@@ -87,4 +87,8 @@ public class QueryResultTableModel implements TableModel{
                 currentResults[i][j] = res[i+1].getExtraColumns().get(j - 1);
         }
     }
+
+    public Object[][] getCurrentResults() {
+        return currentResults;
+    }
 }

@@ -332,6 +332,5 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
             }
         }
         queryScene.validate();
-        queryScene.repaint();
     }
 }

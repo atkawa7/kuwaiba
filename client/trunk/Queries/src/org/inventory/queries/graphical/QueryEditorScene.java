@@ -314,20 +314,19 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      * @param node
      */
     public void removeAllRelatedNodes(Object node){
-        if (node instanceof LocalClassMetadata){ //It's a leaf node
-            ClassNodeWidget currentNode = ((ClassNodeWidget)findWidget(node));
-            List<Widget> widgetsInside = currentNode.getChildren();
-            for (Widget widget : widgetsInside){
-                if (widget instanceof AttributePinWidget){
-                    if (((AttributePinWidget)widget).getInsideCheck().isSelected()){
-                        String[] myEdges = findPinEdges(((AttributePinWidget)widget).getAttribute(), true, false).toArray(new String[0]);
-                        for (String edge : myEdges){
-                            VMDConnectionWidget myEdge = (VMDConnectionWidget)findWidget(edge);
-                            VMDNodeWidget nextHop = (VMDNodeWidget) myEdge.getTargetAnchor().getRelatedWidget().getParentWidget();
-                            removeAllRelatedNodes(findObject(nextHop));
-                        }
-                    }
+        QueryEditorNodeWidget currentNode = ((QueryEditorNodeWidget)findWidget(node));
+        List<Widget> widgetsInside = currentNode.getChildren();
+        for (Widget widget : widgetsInside){
+            if (widget instanceof VMDPinWidget){
+                String[] forwardEdges = findPinEdges(findObject(widget), true, false).toArray(new String[0]);
+                for (String edge : forwardEdges){
+                    VMDConnectionWidget myEdge = (VMDConnectionWidget)findWidget(edge);
+                    VMDNodeWidget nextHop = (VMDNodeWidget) myEdge.getTargetAnchor().getRelatedWidget().getParentWidget();
+                    removeAllRelatedNodes(findObject(nextHop));
                 }
+                String[] backwardEdges = findPinEdges(findObject(widget), false, true).toArray(new String[0]);
+                for (String edge : backwardEdges)
+                    removeEdge(edge);
             }
         }
         removeNode(node);

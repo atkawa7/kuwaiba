@@ -40,4 +40,20 @@ public class LocalResultRecord {
     public LocalObjectLight getObject() {
         return object;
     }
+
+    public static Object[][] toMatrix(LocalResultRecord[] results){
+        if (results == null)
+            return null;
+        if (results.length == 0)
+            return new Object[0][0];
+
+        Object[][] asMatrix =new Object[results.length][results[0].getExtraColumns().size() + 1];
+        for (int i = 0; i < results.length; i++){
+            asMatrix[i][0] = results[i].getObject();
+            for (int j = 0; j < results[i].getExtraColumns().size();j++)
+                asMatrix[i][j + 1] = results[i].getExtraColumns().get(j);
+        }
+        
+        return asMatrix;
+    }
 }
