@@ -194,7 +194,7 @@ public class ExportSettingsDialog extends JDialog {
         fChooser.setDialogTitle("Select a directory");
         if (fChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
             txtLocation.setText(fChooser.getSelectedFile().getAbsolutePath()+
-                    +File.pathSeparatorChar+"view"+Calendar.getInstance().get(Calendar.DAY_OF_YEAR)+ //NOI18N
+                    File.separator+"view"+Calendar.getInstance().get(Calendar.DAY_OF_YEAR)+ //NOI18N
                     "-"+Calendar.getInstance().get(Calendar.MINUTE)+ //NOI18N
                     (cmbFormat.getSelectedIndex() == 0?".jpg":".png")); //NOI18N
     }//GEN-LAST:event_btnLocationActionPerformed

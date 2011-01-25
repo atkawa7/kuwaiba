@@ -27,8 +27,10 @@ import javax.swing.JToolBar;
 import javax.swing.table.TableModel;
 import org.inventory.communications.core.LocalResultRecord;
 import org.inventory.queries.GraphicalQueryBuilderService;
-import org.inventory.queries.graphical.windows.ExportSettingsFrame;
+import org.inventory.queries.graphical.windows.ExportSettingsPanel;
 import org.netbeans.swing.etable.ETable;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -173,11 +175,17 @@ public class ComplexQueryResultTopComponent extends TopComponent{
     }
 
     public void btnExportActionPerformed(){
-        new ExportSettingsFrame(qbs).setVisible(false);
+        ExportSettingsPanel exportPanel = new ExportSettingsPanel(qbs, this);
+        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true,exportPanel);
+        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }
 
     @Override
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_NEVER;
+    }
+
+    public Object[][] getCurrentResults(){
+        return ((QueryResultTableModel)myTable.getModel()).getCurrentResults();
     }
 }

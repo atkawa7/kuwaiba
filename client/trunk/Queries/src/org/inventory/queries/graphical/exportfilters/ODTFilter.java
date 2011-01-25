@@ -33,4 +33,8 @@ public class ODTFilter implements ExportFilter{
     public boolean export(Object[][] result, String fileName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    @Override
+    public String toString() {
+        return getDisplayName();
+    }
 }

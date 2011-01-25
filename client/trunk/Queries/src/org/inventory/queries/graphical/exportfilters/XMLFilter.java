@@ -34,4 +34,8 @@ public class XMLFilter implements ExportFilter{
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public String toString() {
+        return getDisplayName();
+    }
 }

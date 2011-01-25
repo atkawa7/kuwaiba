@@ -56,6 +56,7 @@ public class CSVFilter implements ExportFilter{
                     currentRecord += column+separator.toString();
                 currentRecord = currentRecord.substring(0,currentRecord.length() - 1);
                 writer.write(currentRecord);
+                writer.write('\n');
             }
             writer.flush();
             writer.close();
@@ -72,5 +73,10 @@ public class CSVFilter implements ExportFilter{
 
     public void setSeparator(Character separator) {
         this.separator = separator;
+    }
+
+    @Override
+    public String toString() {
+        return getDisplayName();
     }
 }

@@ -16,32 +16,37 @@
 
 package org.inventory.queries.graphical.windows;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.Calendar;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalResultRecord;
 import org.inventory.queries.GraphicalQueryBuilderService;
+import org.inventory.queries.graphical.ComplexQueryResultTopComponent;
 import org.inventory.queries.graphical.exportfilters.CSVFilter;
 import org.inventory.queries.graphical.exportfilters.DOCFilter;
 import org.inventory.queries.graphical.exportfilters.ExportFilter;
 import org.inventory.queries.graphical.exportfilters.ODTFilter;
 import org.inventory.queries.graphical.exportfilters.XMLFilter;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 
 /**
- * Holds the options when exporting a search result
+ *
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ExportSettingsFrame extends javax.swing.JFrame {
+public class ExportSettingsPanel extends javax.swing.JPanel implements ActionListener{
 
     /**
-     * Array with the particular settings to apply to a given filter. I.e, CSV needs a 
-     * separator to be set, and that's done using the "Configure filter" button. When the 
+     * Array with the particular settings to apply to a given filter. I.e, CSV needs a
+     * separator to be set, and that's done using the "Configure filter" button. When the
      * separator is selected, this array is set to contain such separator
      */
     private Object[] settings;
     private GraphicalQueryBuilderService qbs;
+    private ComplexQueryResultTopComponent qrtc;
 
     private enum Range{
         ALL(0,"All"),
@@ -62,11 +67,12 @@ public class ExportSettingsFrame extends javax.swing.JFrame {
         }
     };
 
-    /** Creates new form ExportSettingsFrame */
-    public ExportSettingsFrame(GraphicalQueryBuilderService qbs) {
+    /** Creates new form ExportSettingsPanel */
+    public ExportSettingsPanel(GraphicalQueryBuilderService qbs, ComplexQueryResultTopComponent qrtc) {
         initComponents();
         initCustomComponents();
         this.qbs = qbs;
+        this.qrtc = qrtc;
     }
 
     private void initCustomComponents() {
@@ -76,7 +82,6 @@ public class ExportSettingsFrame extends javax.swing.JFrame {
         cmbExportTo.addItem(new XMLFilter());
         cmbExportTo.addItem(new DOCFilter());
         cmbExportTo.addItem(new ODTFilter());
-        this.setLocationRelativeTo(getRootPane());
     }
 
     /** This method is called from within the constructor to
@@ -88,49 +93,33 @@ public class ExportSettingsFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lblExportTo = new javax.swing.JLabel();
-        cmbExportTo = new javax.swing.JComboBox();
         btnExportToSettings = new javax.swing.JButton();
-        lblOutputFile = new javax.swing.JLabel();
         txtOutputFile = new javax.swing.JTextField();
+        lblOutputFile = new javax.swing.JLabel();
         lblRange = new javax.swing.JLabel();
         cmbRange = new javax.swing.JComboBox();
-        btnCancel = new javax.swing.JButton();
-        btnOK = new javax.swing.JButton();
         btnOutputFileSet = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        lblExportTo.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.lblExportTo.text")); // NOI18N
+        lblExportTo = new javax.swing.JLabel();
+        cmbExportTo = new javax.swing.JComboBox();
 
         btnExportToSettings.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/configure.png"))); // NOI18N
-        btnExportToSettings.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.btnExportToSettings.text")); // NOI18N
-        btnExportToSettings.setToolTipText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.btnExportToSettings.toolTipText")); // NOI18N
+        btnExportToSettings.setText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.btnExportToSettings.text")); // NOI18N
+        btnExportToSettings.setToolTipText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.btnExportToSettings.toolTipText")); // NOI18N
         btnExportToSettings.setPreferredSize(new java.awt.Dimension(24, 24));
-
-        lblOutputFile.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.lblOutputFile.text")); // NOI18N
-
-        txtOutputFile.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.txtOutputFile.text")); // NOI18N
-
-        lblRange.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.lblRange.text")); // NOI18N
-
-        btnCancel.setMnemonic('c');
-        btnCancel.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.btnCancel.text")); // NOI18N
-        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+        btnExportToSettings.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelActionPerformed(evt);
+                btnExportToSettingsActionPerformed(evt);
             }
         });
 
-        btnOK.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.btnOK.text")); // NOI18N
-        btnOK.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnOKActionPerformed(evt);
-            }
-        });
+        txtOutputFile.setText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.txtOutputFile.text")); // NOI18N
 
-        btnOutputFileSet.setText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.btnOutputFileSet.text")); // NOI18N
-        btnOutputFileSet.setToolTipText(org.openide.util.NbBundle.getMessage(ExportSettingsFrame.class, "ExportSettingsFrame.btnOutputFileSet.toolTipText")); // NOI18N
+        lblOutputFile.setText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.lblOutputFile.text")); // NOI18N
+
+        lblRange.setText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.lblRange.text")); // NOI18N
+
+        btnOutputFileSet.setText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.btnOutputFileSet.text")); // NOI18N
+        btnOutputFileSet.setToolTipText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.btnOutputFileSet.toolTipText")); // NOI18N
         btnOutputFileSet.setPreferredSize(new java.awt.Dimension(24, 24));
         btnOutputFileSet.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -138,38 +127,33 @@ public class ExportSettingsFrame extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        lblExportTo.setText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.lblExportTo.text")); // NOI18N
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblOutputFile)
-                            .addComponent(lblExportTo)
-                            .addComponent(lblRange))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cmbRange, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cmbExportTo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtOutputFile, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE))
-                        .addGap(6, 6, 6)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnExportToSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnOutputFileSet, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnOK, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnCancel)))
-                .addContainerGap(31, Short.MAX_VALUE))
+                    .addComponent(lblOutputFile)
+                    .addComponent(lblExportTo)
+                    .addComponent(lblRange))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(cmbRange, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cmbExportTo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtOutputFile, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnExportToSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnOutputFileSet, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(31, 31, 31)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnExportToSettings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -188,38 +172,18 @@ public class ExportSettingsFrame extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(cmbRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCancel)
-                    .addComponent(btnOK))
-                .addContainerGap())
+                .addContainerGap(22, Short.MAX_VALUE))
         );
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        dispose();
-    }//GEN-LAST:event_btnCancelActionPerformed
-
-    private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
+    private void btnExportToSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportToSettingsActionPerformed
         ExportFilter selectedFilter = (ExportFilter)cmbExportTo.getSelectedItem();
-        String fileName = txtOutputFile.getText().substring(0,txtOutputFile.getText().lastIndexOf(".")); //NOI18N
-
-        if (selectedFilter instanceof CSVFilter)
-            ((CSVFilter)selectedFilter).setSeparator((settings == null) ?
-                null : (Character)settings[0]);
-
-        if (cmbRange.getSelectedItem().equals(Range.ALL)){
-            Object[][] allResults = LocalResultRecord.toMatrix(qbs.executeQuery(0));
-            if (allResults != null){
-                if (!selectedFilter.export(allResults, fileName))
-                   JOptionPane.showMessageDialog(this, "Invalid file name", "Error",JOptionPane.ERROR_MESSAGE);
-                else
-                   JOptionPane.showMessageDialog(this, "Invalid file name", "Error",JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }//GEN-LAST:event_btnOKActionPerformed
+        if (selectedFilter instanceof CSVFilter){
+            CSVExportSettingsPanel settingsPanel = new CSVExportSettingsPanel(settings);
+            DialogDescriptor dd = new DialogDescriptor(settingsPanel, "CSV Filter Settings", true, settingsPanel);
+            DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+        }else JOptionPane.showMessageDialog(this, "No advanced settings required","Exporting",JOptionPane.INFORMATION_MESSAGE);
+}//GEN-LAST:event_btnExportToSettingsActionPerformed
 
     private void btnOutputFileSetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOutputFileSetActionPerformed
         JFileChooser fChooser = new JFileChooser();
@@ -227,15 +191,14 @@ public class ExportSettingsFrame extends javax.swing.JFrame {
         fChooser.setDialogTitle("Select a directory");
         if (fChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
             txtOutputFile.setText(fChooser.getSelectedFile().getAbsolutePath()+
-                    +File.pathSeparatorChar+"query_result"+Calendar.getInstance().get(Calendar.DAY_OF_YEAR)+ //NOI18N
+                    File.separator+"query_result"+Calendar.getInstance().get(Calendar.DAY_OF_YEAR)+ //NOI18N
                     "-"+Calendar.getInstance().get(Calendar.MINUTE)+ //NOI18N
                     (((ExportFilter)cmbExportTo.getSelectedItem()).getExtension())); //NOI18N
-    }//GEN-LAST:event_btnOutputFileSetActionPerformed
+}//GEN-LAST:event_btnOutputFileSetActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnExportToSettings;
-    private javax.swing.JButton btnOK;
     private javax.swing.JButton btnOutputFileSet;
     private javax.swing.JComboBox cmbExportTo;
     private javax.swing.JComboBox cmbRange;
@@ -245,4 +208,37 @@ public class ExportSettingsFrame extends javax.swing.JFrame {
     private javax.swing.JTextField txtOutputFile;
     // End of variables declaration//GEN-END:variables
 
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == DialogDescriptor.OK_OPTION){
+            if (txtOutputFile.getText().trim().equals("")){//NOI18N
+                JOptionPane.showMessageDialog(this, "Invalid file name", "Error",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            ExportFilter selectedFilter = (ExportFilter)cmbExportTo.getSelectedItem();
+            String fileName;
+
+            if (txtOutputFile.getText().lastIndexOf(".") != -1)
+                fileName = txtOutputFile.getText().substring(0,txtOutputFile.getText().lastIndexOf(".")); //NOI18N
+            else fileName = txtOutputFile.getText();
+
+            Object[][] allResults = null;
+
+            if (selectedFilter instanceof CSVFilter)
+                ((CSVFilter)selectedFilter).setSeparator((settings == null) ?
+                    null : (Character)settings[0]);
+
+            if (cmbRange.getSelectedItem().equals(Range.ALL))
+                allResults = LocalResultRecord.toMatrix(qbs.executeQuery(0));
+            else
+                allResults = qrtc.getCurrentResults();
+
+            if (allResults != null){
+                if (!selectedFilter.export(allResults, fileName+selectedFilter.getExtension()))
+                    JOptionPane.showMessageDialog(this, "Invalid file name", "Error",JOptionPane.ERROR_MESSAGE);
+                else
+                    JOptionPane.showMessageDialog(this, "Results exported successfully", "Success",JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
 }
