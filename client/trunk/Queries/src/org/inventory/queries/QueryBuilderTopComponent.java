@@ -126,7 +126,6 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         btnButton.setFocusable(false);
         btnButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnButtonActionPerformed(evt);
@@ -153,12 +152,16 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
 
         chkAnd.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(chkAnd, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.chkAnd.text")); // NOI18N
+        chkAnd.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.chkAnd.toolTipText")); // NOI18N
         chkAnd.setFocusable(false);
         barMain.add(chkAnd);
 
         org.openide.awt.Mnemonics.setLocalizedText(chkOr, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.chkOr.text")); // NOI18N
+        chkOr.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.chkOr.toolTipText")); // NOI18N
         chkOr.setFocusable(false);
-        chkOr.setPreferredSize(new java.awt.Dimension(38, 18));
+        chkOr.setMaximumSize(new java.awt.Dimension(50, 27));
+        chkOr.setMinimumSize(new java.awt.Dimension(50, 27));
+        chkOr.setPreferredSize(new java.awt.Dimension(45, 18));
         barMain.add(chkOr);
         barMain.add(sptThree);
 

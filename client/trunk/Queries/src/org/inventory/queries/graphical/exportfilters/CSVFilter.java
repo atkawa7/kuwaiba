@@ -53,7 +53,7 @@ public class CSVFilter implements ExportFilter{
             for (Object[] record : results){
                 String currentRecord="";
                 for (Object column : record)
-                    currentRecord += column+separator.toString();
+                    currentRecord += (column==null ? "" : column)+separator.toString(); //NOI18N
                 currentRecord = currentRecord.substring(0,currentRecord.length() - 1);
                 writer.write(currentRecord);
                 writer.write('\n');
