@@ -836,7 +836,7 @@ public class BackendBean implements BackendBeanRemote {
     public ResultRecord[] executeQuery(RemoteQuery myQuery) throws Exception {
         System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_EXECUTEQUERY"));
         if (em != null) {
-            String queryText = "SELECT DISTINCT "; //The complete query text //NOI18N
+            String queryText = "SELECT "; //The complete query text //NOI18N
             ArrayList<String> fields = new ArrayList<String>(); //fields to be retrieved
             String from = " FROM "+myQuery.getClassName()+ " x0"; //From clause
             ArrayList<String> predicates = new ArrayList<String>(); //filters
@@ -863,7 +863,7 @@ public class BackendBean implements BackendBeanRemote {
 
             //Joins
             for (String myJoin : joins)
-                queryText += " LEFT JOIN "+myJoin;
+                queryText += " JOIN "+myJoin; //Check again!!!!
 
             if (!predicates.isEmpty()) {
                 String finalPredicate = " WHERE ";
