@@ -135,6 +135,10 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
      */
     public final static int SCENE_OBJECTSELECTED = 3;
     /**
+     * Version of the XML format used to store this view (see getAsXML method)
+     */
+    private final static String FORMAT_VERSION = "1.0";
+    /**
      * Default notifier
      */
     private NotificationUtil notifier;
@@ -357,7 +361,8 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
         ByteArrayOutputStream bas = new ByteArrayOutputStream();
         WAX xmlWriter = new WAX(bas);
         StartTagWAX mainTag = xmlWriter.start("view");
-        //TODO: Send this to a config file
+        mainTag.attr("version", FORMAT_VERSION); //NOI18N
+        //TODO: Get the class name from some else
         mainTag.start("class").text("DefaultView").end();
         StartTagWAX nodesTag = mainTag.start("nodes");
         for (Widget nodeWidget : nodesLayer.getChildren())
