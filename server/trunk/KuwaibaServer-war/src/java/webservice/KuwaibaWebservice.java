@@ -528,6 +528,10 @@ public class KuwaibaWebservice {
         }
     }
 
+    /********************************
+     * Queries
+     ********************************/
+
     /**
      * Searches for objects given some criteria
      * @param className
@@ -585,6 +589,15 @@ public class KuwaibaWebservice {
                     throw new ArraySizeMismatchException("attributeNames","attributeValues","conditions","joins");
             }
             return sbr.executeQuery(query);
+        }catch(Exception e){
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
+            throw e;
+        }
+    }
+
+    public RemoteObjectLight saveQuery(byte[] query) throws Exception{
+        try{
+            return sbr.saveQuery(query);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
             throw e;

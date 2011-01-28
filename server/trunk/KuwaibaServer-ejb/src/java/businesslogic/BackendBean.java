@@ -897,6 +897,10 @@ public class BackendBean implements BackendBeanRemote {
             throw new EntityManagerNotAvailableException();
     }
 
+    @Override
+    public RemoteObjectLight saveQuery(byte[] query) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     @Override
     public Boolean setAttributePropertyValue(Long classId, String attributeName, 

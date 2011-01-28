@@ -85,4 +85,5 @@ public interface BackendBeanRemote {
     public RemoteObject[] getChildrenOfClass(Long parentOid, Class myClass) throws Exception;
     public Class getClassFor(String objectClass) throws Exception;
     public boolean validateCall(String method, String ipAddress, String token) throws Exception;
+    public RemoteObjectLight saveQuery(byte[] query);
 }
