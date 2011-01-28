@@ -16,6 +16,8 @@
 
 package org.inventory.queries.graphical.elements;
 
+import java.awt.Color;
+import java.awt.Paint;
 import java.util.Random;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadata;

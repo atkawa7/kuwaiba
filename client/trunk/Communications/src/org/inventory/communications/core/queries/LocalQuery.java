@@ -16,6 +16,9 @@
 
 package org.inventory.communications.core.queries;
 
+import com.ociweb.xml.StartTagWAX;
+import com.ociweb.xml.WAX;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import org.inventory.webservice.RemoteQuery;
 
@@ -30,15 +33,28 @@ import org.inventory.webservice.RemoteQuery;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class LocalQuery {
+    /**
+     * Logical connector OR
+     */
     public static final int CONNECTOR_OR = 0;
+    /**
+     * Logical connector AND
+     */
     public static final int CONNECTOR_AND = 1;
+    /**
+     * Version for the XML document created
+     */
+    private static final String FORMAT_VERSION = "1.0";
 
     private String name;
     /**
      * Instances of this class will be searched
      */
     private String className;
-    private int logicalConnector;
+    /**
+     * Logical connector. "And" by default
+     */
+    private int logicalConnector = CONNECTOR_AND;
     /**
      * Attributes that will be used to build the criteria
      */
@@ -74,8 +90,17 @@ public class LocalQuery {
      */
     private int page = 1;
 
+    private LocalQuery() {
+        this.attributeNames = new ArrayList<String>();
+        this.attributeValues = new ArrayList<String>();
+        this.conditions = new ArrayList<Integer>();
+        this.joins = new ArrayList<LocalQuery>();
+        visibleAttributeNames = new ArrayList<String>();
+    }
+
     public LocalQuery(String name, String className, int logicalConnector, 
             boolean isJoin, int limit, int page) {
+        this();
         this.name = name;
         this.className = className;
         this.logicalConnector = logicalConnector;
@@ -84,15 +109,15 @@ public class LocalQuery {
         this.page = page;
     }
 
-    public ArrayList<String> getAttributeNames() {
-        if (attributeNames == null)
-            attributeNames = new ArrayList<String>();
+    public LocalQuery(byte [] queryAsXML) {
+        this();
+    }
+
+    public ArrayList<String> getAttributeNames() {           
         return attributeNames;
     }
 
-    public ArrayList<String> getAttributeValues() {
-        if (attributeValues == null)
-            attributeValues = new ArrayList<String>();
+    public ArrayList<String> getAttributeValues() {           
         return attributeValues;
     }
 
@@ -100,9 +125,7 @@ public class LocalQuery {
         return className;
     }
 
-    public ArrayList<Integer> getConditions() {
-        if (conditions == null)
-            conditions = new ArrayList<Integer>();
+    public ArrayList<Integer> getConditions() {           
         return conditions;
     }
 
@@ -110,9 +133,7 @@ public class LocalQuery {
         return isJoin;
     }
 
-    public ArrayList<LocalQuery> getJoins() {
-        if (joins == null)
-            joins = new ArrayList<LocalQuery>();
+    public ArrayList<LocalQuery> getJoins() {            
         return joins;
     }
 
@@ -132,9 +153,7 @@ public class LocalQuery {
         return name;
     }
 
-    public ArrayList<String> getVisibleAttributeNames() {
-        if (visibleAttributeNames == null)
-            visibleAttributeNames = new ArrayList<String>();
+    public ArrayList<String> getVisibleAttributeNames() {            
         return visibleAttributeNames;
     }
 
@@ -161,6 +180,53 @@ public class LocalQuery {
             remoteQuery.setJoins(remoteJoins);
         }
         return remoteQuery;
+    }
+
+    /**
+     * Creates a valid XML document describing this object in the format exposed at the <a href="http://is.gd/kcl1a">project's wiki</a>
+     * @return a byte array ready serialized somehow (file, webservice, etc)
+     */
+    public byte[] toXML(){
+        ByteArrayOutputStream writer = new ByteArrayOutputStream();
+        WAX xmlWriter = new WAX(writer);
+        StartTagWAX mainTag = xmlWriter.start("query");     //NOI18N
+        mainTag.attr("version", FORMAT_VERSION);      //NOI18N
+        mainTag.attr("name", name);      //NOI18N
+        mainTag.attr("logicalconnector", logicalConnector);      //NOI18N
+        mainTag.attr("limit", limit);      //NOI18N
+
+        buildClassNode(mainTag, this);
+
+        mainTag.end().close();
+        return writer.toByteArray();
+    }
+
+    private void buildClassNode(StartTagWAX rootTag, LocalQuery currentJoin){
+        StartTagWAX classTag = rootTag.start("class");     //NOI18N
+        rootTag.attr("classname", currentJoin.getClassName());     //NOI18N
+        StartTagWAX visibleAttributesTag = classTag.start("visibleattributes");     //NOI18N
+        for (String attr : currentJoin.getVisibleAttributeNames()){
+            StartTagWAX attributeTag = visibleAttributesTag.start("attribute");     //NOI18N
+            attributeTag.text(attr);
+            attributeTag.end();
+        }
+        visibleAttributesTag.end();
+
+        StartTagWAX filtersTag = classTag.start("filters");     //NOI18N
+
+        //Filters for simple attributes (numbers, strings, etc)
+        for (int i = 0; i< currentJoin.getAttributeNames().size(); i++){
+            StartTagWAX filterTag = filtersTag.start("filter");     //NOI18N
+            filterTag.attr("attribute", currentJoin.getAttributeNames().get(i));     //NOI18N
+            filterTag.attr("condition", currentJoin.getConditions().get(i) == null ?      //NOI18N
+                                            0 : currentJoin.getConditions().get(i));
+            if (currentJoin.getJoins().get(i) != null)
+                buildClassNode(filterTag, currentJoin.getJoins().get(i));
+
+            filterTag.end();
+        }
+        filtersTag.end();
+        classTag.end();
     }
 
     public enum Criteria{

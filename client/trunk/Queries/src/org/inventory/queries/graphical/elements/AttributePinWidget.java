@@ -16,6 +16,7 @@
 
 package org.inventory.queries.graphical.elements;
 
+import java.awt.Dimension;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -58,12 +59,15 @@ public class AttributePinWidget extends VMDPinWidget{
         insideCheck.putClientProperty("filterType", lam.getType()); //NOI18N
         insideCheck.putClientProperty("attribute", lam); //NOI18N
 
+        insideCheck.setOpaque(false);
+
         //If this attribute is a list type, we save the class name to create
         if (lam.getIsMultiple())
             insideCheck.putClientProperty("className", attributeClassName); //NOI18N
         addChild(new ComponentWidget(getScene(), insideCheck));
 
         isVisible = new JToggleButton(isVisibleIcon);
+        isVisible.setPreferredSize(new Dimension(17, 17));
         isVisible.setSelectedIcon(isVisibleIconDeselected);
         isVisible.setRolloverEnabled(false);
         isVisible.setToolTipText("Show/hide this attribute in the query results");

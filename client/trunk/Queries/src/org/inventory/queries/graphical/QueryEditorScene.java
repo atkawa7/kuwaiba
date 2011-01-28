@@ -58,6 +58,7 @@ import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.queries.graphical.elements.AttributePinWidget;
 import org.inventory.queries.graphical.elements.ClassNodeWidget;
+import org.inventory.queries.graphical.elements.CustomizableColorScheme;
 import org.inventory.queries.graphical.elements.filters.BooleanFilterNodeWidget;
 import org.inventory.queries.graphical.elements.filters.DateFilterNodeWidget;
 import org.inventory.queries.graphical.elements.filters.NumericFilterNodeWidget;
@@ -147,14 +148,22 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
     }
 
     /**
-     * Implements attaching a widget to a node. The widget is VMDNodeWidget and has object-hover, select, popup-menu and move actions.
+     * Implements attaching a widget to a node. The widget is VMDNodeWidget and has select and move actions.
      * @param node the node
      * @return the widget attached to the node
      */
     protected Widget attachNodeWidget (Object node) {
-        QueryEditorNodeWidget widget=null;
-        if (node instanceof LocalClassMetadata)
-            widget = new ClassNodeWidget(this, (LocalClassMetadata)node,VMDFactory.getOriginalScheme());
+        QueryEditorNodeWidget widget = null;
+        if (node instanceof LocalClassMetadata){
+            if(getNodes().isEmpty()) //It's the first node, this is, the root one. In this case we use a different scheme
+                widget = new ClassNodeWidget(this, (LocalClassMetadata)node, 
+                        CustomizableColorScheme.getGreenScheme());
+            else
+                //widget = new ClassNodeWidget(this, (LocalClassMetadata)node,VMDFactory.getNetBeans60Scheme());
+                widget = new ClassNodeWidget(this, (LocalClassMetadata)node,
+                        CustomizableColorScheme.getYellowScheme());
+                
+        }
         else{
             String type = ((String)node).substring(0, ((String)node).indexOf('_'));
             if (type.equals("LocalObjectLight")){ //NOI18N
@@ -177,7 +186,6 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         }
         
         mainLayer.addChild (widget);
-        widget.getHeader ().getActions ().addAction (createObjectHoverAction ());
         widget.getActions ().addAction (createSelectAction ());
         widget.getActions ().addAction (moveAction);
 
@@ -193,16 +201,17 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      */
     protected Widget attachPinWidget (Object node, Object pin) {
         VMDPinWidget widget;
-        if (pin instanceof LocalAttributeMetadata)
+        if (pin instanceof LocalAttributeMetadata){
             widget = new AttributePinWidget(this, (LocalAttributeMetadata)pin,
                     ((LocalClassMetadata)node).getTypeForAttribute(((LocalAttributeMetadata)pin).getName()),
                     scheme);
+            widget.getActions ().addAction (createSelectAction ());
+        }
         else
             widget = new VMDPinWidget(this, scheme);
         
         ((VMDNodeWidget) findWidget (node)).attachPinWidget (widget);
-        widget.getActions ().addAction (createObjectHoverAction ());
-        widget.getActions ().addAction (createSelectAction ());
+        
         return widget;
     }
 

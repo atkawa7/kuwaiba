@@ -177,20 +177,8 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
-        //The limit must be an integer
-        try{
-            Integer.valueOf(txtResultLimit.getText());
-        } catch(NumberFormatException ex){
-            JOptionPane.showMessageDialog(this, "The result limit is not valid",
-                    "Search Error",JOptionPane.ERROR_MESSAGE);
+        if (!validateQuery())
             return;
-        }
-        //The query must not be empty
-        if(queryScene.getNodes().isEmpty()){
-            JOptionPane.showMessageDialog(this, "There's nothing to search",
-                    "Search Error",JOptionPane.ERROR_MESSAGE);
-            return;
-        }
         LocalResultRecord[] res = qbs.executeQuery(1);
         if (res != null){
             if (res.length == 1) //Remember: the first record is used to set the column names
@@ -207,7 +195,9 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     }//GEN-LAST:event_btnSearchActionPerformed
 
     private void btnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not working yet...");
+        if (!validateQuery())
+            return;
+        qbs.saveQuery();
     }//GEN-LAST:event_btnButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -335,5 +325,27 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
             }
         }
         queryScene.validate();
+    }
+
+    /**
+     * Checks if the current query is valid (has elements, the parameters are correct)
+     * @return valid or not valid
+     */
+    private boolean validateQuery() {
+        //The limit must be an integer
+        try{
+            Integer.valueOf(txtResultLimit.getText());
+        } catch(NumberFormatException ex){
+            JOptionPane.showMessageDialog(this, "The result limit is not valid",
+                    "Search Error",JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        //The query must not be empty
+        if(queryScene.getNodes().isEmpty()){
+            JOptionPane.showMessageDialog(this, "There's nothing to search",
+                    "Search Error",JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
     }
 }

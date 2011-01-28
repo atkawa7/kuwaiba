@@ -20,7 +20,7 @@ import javax.swing.JComboBox;
 import org.inventory.communications.core.queries.LocalQuery;
 import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
-import org.netbeans.api.visual.vmd.VMDFactory;
+import org.inventory.queries.graphical.elements.CustomizableColorScheme;
 
 /**
  * This class represents a simple searching criteria, this is, related to a simple data type.
@@ -32,7 +32,7 @@ public abstract class SimpleCriteriaNodeWidget extends QueryEditorNodeWidget{
     protected JComboBox condition;
 
     public SimpleCriteriaNodeWidget(QueryEditorScene scene) {
-        super(scene,VMDFactory.getOriginalScheme ());
+        super(scene,CustomizableColorScheme.getBlueScheme());
     }
 
     public int getCondition() {

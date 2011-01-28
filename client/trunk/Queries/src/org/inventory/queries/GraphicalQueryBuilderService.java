@@ -70,6 +70,23 @@ public class GraphicalQueryBuilderService implements ActionListener{
         return res;
     }
 
+    public void saveQuery(){
+        currentQuery = qbtc.getQueryScene().getLocalQuery(qbtc.getQueryScene().getCurrentSearchedClass(),"New Query",
+                        qbtc.getChkAnd().isSelected()?LocalQuery.CONNECTOR_AND:LocalQuery.CONNECTOR_OR,
+                        Integer.valueOf(qbtc.getTxtResultLimit().getText()), 0, false);
+        /*
+         * Only for debugging purposes
+         try{
+            FileOutputStream fos = new FileOutputStream("/home/zim/query.xml");
+            fos.write(currentQuery.toXML());
+            fos.flush();
+            fos.close();
+            JOptionPane.showMessageDialog(qbtc, "Query Saved Successfully","Success",JOptionPane.INFORMATION_MESSAGE);
+        }catch(IOException e){
+            e.printStackTrace();
+        }*/
+    }
+
     public LocalQuery getCurrentQuery() {
         return currentQuery;
     }
