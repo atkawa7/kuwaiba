@@ -38,6 +38,10 @@
 
 <xs:element name="createPhysicalContainerConnectionResponse" type="tns:createPhysicalContainerConnectionResponse" />
 
+<xs:element name="createQuery" type="tns:createQuery" />
+
+<xs:element name="createQueryResponse" type="tns:createQueryResponse" />
+
 <xs:element name="createSession" type="tns:createSession" />
 
 <xs:element name="createSessionResponse" type="tns:createSessionResponse" />
@@ -49,6 +53,10 @@
 <xs:element name="deleteGroups" type="tns:deleteGroups" />
 
 <xs:element name="deleteGroupsResponse" type="tns:deleteGroupsResponse" />
+
+<xs:element name="deleteQuery" type="tns:deleteQuery" />
+
+<xs:element name="deleteQueryResponse" type="tns:deleteQueryResponse" />
 
 <xs:element name="deleteUsers" type="tns:deleteUsers" />
 
@@ -114,6 +122,14 @@
 
 <xs:element name="getPossibleChildrenResponse" type="tns:getPossibleChildrenResponse" />
 
+<xs:element name="getQueries" type="tns:getQueries" />
+
+<xs:element name="getQueriesResponse" type="tns:getQueriesResponse" />
+
+<xs:element name="getQuery" type="tns:getQuery" />
+
+<xs:element name="getQueryResponse" type="tns:getQueryResponse" />
+
 <xs:element name="getRackView" type="tns:getRackView" />
 
 <xs:element name="getRackViewResponse" type="tns:getRackViewResponse" />
@@ -158,6 +174,10 @@
 
 <xs:element name="saveObjectViewResponse" type="tns:saveObjectViewResponse" />
 
+<xs:element name="saveQuery" type="tns:saveQuery" />
+
+<xs:element name="saveQueryResponse" type="tns:saveQueryResponse" />
+
 <xs:element name="searchForObjects" type="tns:searchForObjects" />
 
 <xs:element name="searchForObjectsResponse" type="tns:searchForObjectsResponse" />
@@ -190,44 +210,15 @@
 
 <xs:element name="updateObjectResponse" type="tns:updateObjectResponse" />
 
-<xs:complexType name="getChildrenOfClass">
+<xs:complexType name="closeSession">
 <xs:sequence>
-<xs:element name="parentOid" type="xs:long" minOccurs="0" />
-<xs:element name="childrenClass" type="xs:string" minOccurs="0" />
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getChildrenOfClassResponse">
+<xs:complexType name="closeSessionResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:remoteObject" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="remoteObject">
-<xs:complexContent>
-<xs:extension base="tns:remoteObjectLight">
-<xs:sequence>
-<xs:element name="attributes" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="values" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-
-<xs:complexType name="remoteObjectLight">
-<xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="className" type="xs:string" minOccurs="0" />
-<xs:element name="displayName" type="xs:string" minOccurs="0" />
-<xs:element name="validators" type="tns:validator" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="validator">
-<xs:sequence>
-<xs:element name="label" type="xs:string" minOccurs="0" />
-<xs:element name="value" type="xs:boolean" minOccurs="0" />
+<xs:element name="return" type="xs:boolean" />
 </xs:sequence>
 </xs:complexType>
 
@@ -259,15 +250,449 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="closeSession">
+<xs:complexType name="getServerStatus">
+<xs:sequence />
+</xs:complexType>
+
+<xs:complexType name="getServerStatusResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="executeQuery">
+<xs:sequence>
+<xs:element name="query" type="tns:transientQuery" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="transientQuery">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0" />
+<xs:element name="logicalConnector" type="xs:int" />
+<xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="visibleAttributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="attributeValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="conditions" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="joins" type="tns:transientQuery" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="isJoin" type="xs:boolean" />
+<xs:element name="limit" type="xs:int" />
+<xs:element name="page" type="xs:int" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="executeQueryResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:resultRecord" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="resultRecord">
+<xs:sequence>
+<xs:element name="object" type="tns:remoteObjectLight" minOccurs="0" />
+<xs:element name="extraColumns" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteObjectLight">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="className" type="xs:string" minOccurs="0" />
+<xs:element name="displayName" type="xs:string" minOccurs="0" />
+<xs:element name="validators" type="tns:validator" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="validator">
+<xs:sequence>
+<xs:element name="label" type="xs:string" minOccurs="0" />
+<xs:element name="value" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="moveObjects">
+<xs:sequence>
+<xs:element name="targetOid" type="xs:long" minOccurs="0" />
+<xs:element name="objectsClasses" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="objectsOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="moveObjectsResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="copyObjects">
+<xs:sequence>
+<xs:element name="targetOid" type="xs:long" minOccurs="0" />
+<xs:element name="objectClases" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="templateObjects" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="copyObjectsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setAttributePropertyValue">
+<xs:sequence>
+<xs:element name="classId" type="xs:long" minOccurs="0" />
+<xs:element name="attributeName" type="xs:string" minOccurs="0" />
+<xs:element name="propertyName" type="xs:string" minOccurs="0" />
+<xs:element name="propertyValue" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setAttributePropertyValueResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getMetadata">
 <xs:sequence>
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="closeSessionResponse">
+<xs:complexType name="getMetadataResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfo" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="classInfo">
+<xs:complexContent>
+<xs:extension base="tns:classInfoLight">
+<xs:sequence>
+<xs:element name="attributeIds" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="attributeTypes" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="attributeDisplayNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="attributesIsVisible" type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="attributesIsAdministrative" type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="attributesIsMultiple" type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="attributesDescription" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="icon" type="xs:base64Binary" minOccurs="0" />
+<xs:element name="description" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="classInfoLight">
+<xs:sequence>
+<xs:element name="id" type="xs:long" minOccurs="0" />
+<xs:element name="isAbstract" type="xs:boolean" minOccurs="0" />
+<xs:element name="isPhysicalNode" type="xs:boolean" minOccurs="0" />
+<xs:element name="isPhysicalConnection" type="xs:boolean" minOccurs="0" />
+<xs:element name="isPhysicalEndpoint" type="xs:boolean" minOccurs="0" />
+<xs:element name="className" type="xs:string" minOccurs="0" />
+<xs:element name="displayName" type="xs:string" minOccurs="0" />
+<xs:element name="smallIcon" type="xs:base64Binary" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getUsers">
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getUsersResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:userInfo" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="userInfo">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="userName" type="xs:string" minOccurs="0" />
+<xs:element name="firstName" type="xs:string" minOccurs="0" />
+<xs:element name="lastName" type="xs:string" minOccurs="0" />
+<xs:element name="creationDate" type="xs:long" minOccurs="0" />
+<xs:element name="isEnabled" type="xs:boolean" minOccurs="0" />
+<xs:element name="groups" type="tns:userGroupInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="userGroupInfoLight">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="name" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removePossibleChildren">
+<xs:sequence>
+<xs:element name="parentClassId" type="xs:long" minOccurs="0" />
+<xs:element name="childrenToBeRemoved" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removePossibleChildrenResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getInstanceableListTypes">
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getInstanceableListTypesResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setGroupProperties">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="propertiesNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="propertiesValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setGroupPropertiesResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addGroupsToUser">
+<xs:sequence>
+<xs:element name="groupsOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="userOid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addGroupsToUserResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getMultipleChoice">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getMultipleChoiceResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:objectList" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="objectList">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0" />
+<xs:element name="list">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="key" minOccurs="0" type="xs:long" />
+<xs:element name="value" minOccurs="0" type="xs:string" />
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addUsersToGroup">
+<xs:sequence>
+<xs:element name="usersOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="groupOid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addUsersToGroupResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getRootPossibleChildren">
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getRootPossibleChildrenResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createPhysicalConnection">
+<xs:sequence>
+<xs:element name="endpointAOid" type="xs:long" minOccurs="0" />
+<xs:element name="endpointBOid" type="xs:long" minOccurs="0" />
+<xs:element name="connectionClass" type="xs:string" minOccurs="0" />
+<xs:element name="parentObjectOid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createPhysicalConnectionResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObject" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteObject">
+<xs:complexContent>
+<xs:extension base="tns:remoteObjectLight">
+<xs:sequence>
+<xs:element name="attributes" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="values" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="getDummyRootId">
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getDummyRootIdResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getQuery">
+<xs:sequence>
+<xs:element name="queryOid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getQueryResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteQuery" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteQuery">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="name" type="xs:string" minOccurs="0" />
+<xs:element name="description" type="xs:string" minOccurs="0" />
+<xs:element name="content" type="xs:base64Binary" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteUsers">
+<xs:sequence>
+<xs:element name="tobeDeleted" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteUsersResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getQueries">
+<xs:sequence>
+<xs:element name="showPublic" type="xs:boolean" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getQueriesResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getObjectInfoLight">
+<xs:sequence>
+<xs:element name="objectclass" type="xs:string" minOccurs="0" />
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getObjectInfoLightResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="updateObject">
+<xs:sequence>
+<xs:element name="objectupdate" type="tns:objectUpdate" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="objectUpdate">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="classname" type="xs:string" minOccurs="0" />
+<xs:element name="updatedAttributes" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="newValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="updateObjectResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getRoomView">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getRoomViewResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:viewInfo" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getChildrenOfClass">
+<xs:sequence>
+<xs:element name="parentOid" type="xs:long" minOccurs="0" />
+<xs:element name="childrenClass" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getChildrenOfClassResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObject" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -293,84 +718,6 @@
 </xs:sequence>
 </xs:extension>
 </xs:complexContent>
-</xs:complexType>
-
-<xs:complexType name="userGroupInfoLight">
-<xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="name" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="userInfo">
-<xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="userName" type="xs:string" minOccurs="0" />
-<xs:element name="firstName" type="xs:string" minOccurs="0" />
-<xs:element name="lastName" type="xs:string" minOccurs="0" />
-<xs:element name="creationDate" type="xs:long" minOccurs="0" />
-<xs:element name="isEnabled" type="xs:boolean" minOccurs="0" />
-<xs:element name="groups" type="tns:userGroupInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getServerStatus">
-<xs:sequence />
-</xs:complexType>
-
-<xs:complexType name="getServerStatusResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="executeQuery">
-<xs:sequence>
-<xs:element name="arg0" type="tns:remoteQuery" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="remoteQuery">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0" />
-<xs:element name="logicalConnector" type="xs:int" />
-<xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="visibleAttributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="attributeValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="conditions" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="joins" type="tns:remoteQuery" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="isJoin" type="xs:boolean" />
-<xs:element name="limit" type="xs:int" />
-<xs:element name="page" type="xs:int" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="executeQueryResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:resultRecord" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="resultRecord">
-<xs:sequence>
-<xs:element name="object" type="tns:remoteObjectLight" minOccurs="0" />
-<xs:element name="extraColumns" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="moveObjects">
-<xs:sequence>
-<xs:element name="targetOid" type="xs:long" minOccurs="0" />
-<xs:element name="objectsClasses" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="objectsOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="moveObjectsResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="removeGroupsFromUser">
@@ -400,43 +747,16 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="classInfoLight">
-<xs:sequence>
-<xs:element name="id" type="xs:long" minOccurs="0" />
-<xs:element name="isAbstract" type="xs:boolean" minOccurs="0" />
-<xs:element name="isPhysicalNode" type="xs:boolean" minOccurs="0" />
-<xs:element name="isPhysicalConnection" type="xs:boolean" minOccurs="0" />
-<xs:element name="isPhysicalEndpoint" type="xs:boolean" minOccurs="0" />
-<xs:element name="className" type="xs:string" minOccurs="0" />
-<xs:element name="displayName" type="xs:string" minOccurs="0" />
-<xs:element name="smallIcon" type="xs:base64Binary" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="deleteGroups">
 <xs:sequence>
 <xs:element name="toBeDeleted" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="deleteGroupsResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="copyObjects">
-<xs:sequence>
-<xs:element name="targetOid" type="xs:long" minOccurs="0" />
-<xs:element name="objectClases" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="templateObjects" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="copyObjectsResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -495,34 +815,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="setAttributePropertyValue">
-<xs:sequence>
-<xs:element name="classId" type="xs:long" minOccurs="0" />
-<xs:element name="attributeName" type="xs:string" minOccurs="0" />
-<xs:element name="propertyName" type="xs:string" minOccurs="0" />
-<xs:element name="propertyValue" type="xs:string" minOccurs="0" />
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="setAttributePropertyValueResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getUsers">
-<xs:sequence>
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getUsersResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:userInfo" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="getObjectChildren">
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0" />
@@ -537,37 +829,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getMetadata">
-<xs:sequence>
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getMetadataResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:classInfo" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="classInfo">
-<xs:complexContent>
-<xs:extension base="tns:classInfoLight">
-<xs:sequence>
-<xs:element name="attributeIds" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="attributeTypes" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="attributeDisplayNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="attributesIsVisible" type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="attributesIsAdministrative" type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="attributesIsMultiple" type="xs:boolean" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="attributesDescription" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="icon" type="xs:base64Binary" minOccurs="0" />
-<xs:element name="description" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-
 <xs:complexType name="removeObject">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0" />
@@ -579,20 +840,6 @@
 <xs:complexType name="removeObjectResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getDefaultView">
-<xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="objectClass" type="xs:string" minOccurs="0" />
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getDefaultViewResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:viewInfo" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -612,15 +859,30 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getInstanceableListTypes">
+<xs:complexType name="getDefaultView">
 <xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="objectClass" type="xs:string" minOccurs="0" />
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getInstanceableListTypesResponse">
+<xs:complexType name="getDefaultViewResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="return" type="tns:viewInfo" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteQuery">
+<xs:sequence>
+<xs:element name="queryOid" type="xs:long" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteQueryResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" />
 </xs:sequence>
 </xs:complexType>
 
@@ -644,49 +906,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="removePossibleChildren">
-<xs:sequence>
-<xs:element name="parentClassId" type="xs:long" minOccurs="0" />
-<xs:element name="childrenToBeRemoved" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="removePossibleChildrenResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="setGroupProperties">
-<xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="propertiesNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="propertiesValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="setGroupPropertiesResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="addGroupsToUser">
-<xs:sequence>
-<xs:element name="groupsOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="userOid" type="xs:long" minOccurs="0" />
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="addGroupsToUserResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="saveObjectView">
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0" />
@@ -697,53 +916,6 @@
 </xs:complexType>
 
 <xs:complexType name="saveObjectViewResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getMultipleChoice">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0" />
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getMultipleChoiceResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:objectList" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="objectList">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0" />
-<xs:element name="list">
-<xs:complexType>
-<xs:sequence>
-<xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
-<xs:complexType>
-<xs:sequence>
-<xs:element name="key" minOccurs="0" type="xs:long" />
-<xs:element name="value" minOccurs="0" type="xs:string" />
-</xs:sequence>
-</xs:complexType>
-</xs:element>
-</xs:sequence>
-</xs:complexType>
-</xs:element>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="addUsersToGroup">
-<xs:sequence>
-<xs:element name="usersOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="groupOid" type="xs:long" minOccurs="0" />
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="addUsersToGroupResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
@@ -761,18 +933,6 @@
 <xs:complexType name="setObjectLockResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getRootPossibleChildren">
-<xs:sequence>
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getRootPossibleChildrenResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -832,46 +992,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="createPhysicalConnection">
-<xs:sequence>
-<xs:element name="endpointAOid" type="xs:long" minOccurs="0" />
-<xs:element name="endpointBOid" type="xs:long" minOccurs="0" />
-<xs:element name="connectionClass" type="xs:string" minOccurs="0" />
-<xs:element name="parentObjectOid" type="xs:long" minOccurs="0" />
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="createPhysicalConnectionResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteObject" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getDummyRootId">
-<xs:sequence>
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getDummyRootIdResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:long" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteUsers">
-<xs:sequence>
-<xs:element name="tobeDeleted" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteUsersResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="setClassPlainAttribute">
 <xs:sequence>
 <xs:element name="classId" type="xs:long" minOccurs="0" />
@@ -902,6 +1022,18 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getLightMetadata">
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getLightMetadataResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="createGroup">
 <xs:sequence>
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
@@ -914,15 +1046,19 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getLightMetadata">
+<xs:complexType name="saveQuery">
 <xs:sequence>
+<xs:element name="queryOid" type="xs:long" minOccurs="0" />
+<xs:element name="queryName" type="xs:string" minOccurs="0" />
+<xs:element name="ownerOid" type="xs:long" minOccurs="0" />
+<xs:element name="queryStructure" type="xs:base64Binary" nillable="true" minOccurs="0" />
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getLightMetadataResponse">
+<xs:complexType name="saveQueryResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="return" type="xs:boolean" />
 </xs:sequence>
 </xs:complexType>
 
@@ -941,52 +1077,18 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getObjectInfoLight">
+<xs:complexType name="createQuery">
 <xs:sequence>
-<xs:element name="objectclass" type="xs:string" minOccurs="0" />
-<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="queryName" type="xs:string" minOccurs="0" />
+<xs:element name="ownerOid" type="xs:long" minOccurs="0" />
+<xs:element name="queryStructure" type="xs:base64Binary" nillable="true" minOccurs="0" />
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getObjectInfoLightResponse">
+<xs:complexType name="createQueryResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObjectLight" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="updateObject">
-<xs:sequence>
-<xs:element name="objectupdate" type="tns:objectUpdate" minOccurs="0" />
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="objectUpdate">
-<xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="classname" type="xs:string" minOccurs="0" />
-<xs:element name="updatedAttributes" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="newValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="updateObjectResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getRoomView">
-<xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getRoomViewResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:viewInfo" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 </xs:schema>

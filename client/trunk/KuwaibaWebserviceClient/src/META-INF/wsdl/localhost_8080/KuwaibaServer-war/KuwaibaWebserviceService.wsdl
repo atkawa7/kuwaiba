@@ -760,14 +760,20 @@
 <xsd:import namespace="http://webservice/" schemaLocation="http://localhost:8080/KuwaibaServer-war/KuwaibaWebserviceService?xsd=1" />
 </xsd:schema>
 </types>
+<message name="getQuery">
+<part name="parameters" element="tns:getQuery" />
+</message>
+<message name="getQueryResponse">
+<part name="parameters" element="tns:getQueryResponse" />
+</message>
+<message name="Exception">
+<part name="fault" element="tns:Exception" />
+</message>
 <message name="createGroup">
 <part name="parameters" element="tns:createGroup" />
 </message>
 <message name="createGroupResponse">
 <part name="parameters" element="tns:createGroupResponse" />
-</message>
-<message name="Exception">
-<part name="fault" element="tns:Exception" />
 </message>
 <message name="getMetadata">
 <part name="parameters" element="tns:getMetadata" />
@@ -919,6 +925,30 @@
 <message name="searchForObjectsResponse">
 <part name="parameters" element="tns:searchForObjectsResponse" />
 </message>
+<message name="createQuery">
+<part name="parameters" element="tns:createQuery" />
+</message>
+<message name="createQueryResponse">
+<part name="parameters" element="tns:createQueryResponse" />
+</message>
+<message name="saveQuery">
+<part name="parameters" element="tns:saveQuery" />
+</message>
+<message name="saveQueryResponse">
+<part name="parameters" element="tns:saveQueryResponse" />
+</message>
+<message name="deleteQuery">
+<part name="parameters" element="tns:deleteQuery" />
+</message>
+<message name="deleteQueryResponse">
+<part name="parameters" element="tns:deleteQueryResponse" />
+</message>
+<message name="getQueries">
+<part name="parameters" element="tns:getQueries" />
+</message>
+<message name="getQueriesResponse">
+<part name="parameters" element="tns:getQueriesResponse" />
+</message>
 <message name="setAttributePropertyValue">
 <part name="parameters" element="tns:setAttributePropertyValue" />
 </message>
@@ -1046,6 +1076,11 @@
 <part name="parameters" element="tns:removeGroupsFromUserResponse" />
 </message>
 <portType name="KuwaibaWebservice">
+<operation name="getQuery">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getQueryRequest" message="tns:getQuery" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getQueryResponse" message="tns:getQueryResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/getQuery/Fault/Exception" />
+</operation>
 <operation name="createGroup">
 <input wsam:Action="http://webservice/KuwaibaWebservice/createGroupRequest" message="tns:createGroup" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/createGroupResponse" message="tns:createGroupResponse" />
@@ -1158,6 +1193,7 @@
 <operation name="getDummyRootId">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootIdRequest" message="tns:getDummyRootId" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootIdResponse" message="tns:getDummyRootIdResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/getDummyRootId/Fault/Exception" />
 </operation>
 <operation name="copyObjects">
 <input wsam:Action="http://webservice/KuwaibaWebservice/copyObjectsRequest" message="tns:copyObjects" />
@@ -1173,6 +1209,26 @@
 <input wsam:Action="http://webservice/KuwaibaWebservice/searchForObjectsRequest" message="tns:searchForObjects" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/searchForObjectsResponse" message="tns:searchForObjectsResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/searchForObjects/Fault/Exception" />
+</operation>
+<operation name="createQuery">
+<input wsam:Action="http://webservice/KuwaibaWebservice/createQueryRequest" message="tns:createQuery" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/createQueryResponse" message="tns:createQueryResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/createQuery/Fault/Exception" />
+</operation>
+<operation name="saveQuery">
+<input wsam:Action="http://webservice/KuwaibaWebservice/saveQueryRequest" message="tns:saveQuery" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/saveQueryResponse" message="tns:saveQueryResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/saveQuery/Fault/Exception" />
+</operation>
+<operation name="deleteQuery">
+<input wsam:Action="http://webservice/KuwaibaWebservice/deleteQueryRequest" message="tns:deleteQuery" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/deleteQueryResponse" message="tns:deleteQueryResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/deleteQuery/Fault/Exception" />
+</operation>
+<operation name="getQueries">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getQueriesRequest" message="tns:getQueries" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getQueriesResponse" message="tns:getQueriesResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/getQueries/Fault/Exception" />
 </operation>
 <operation name="setAttributePropertyValue">
 <input wsam:Action="http://webservice/KuwaibaWebservice/setAttributePropertyValueRequest" message="tns:setAttributePropertyValue" />
@@ -1282,6 +1338,18 @@
 </portType>
 <binding name="KuwaibaWebservicePortBinding" type="tns:KuwaibaWebservice">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+<operation name="getQuery">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
 <operation name="createGroup">
 <soap:operation soapAction="" />
 <input>
@@ -1573,6 +1641,9 @@
 <output>
 <soap:body use="literal" />
 </output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
 </operation>
 <operation name="copyObjects">
 <soap:operation soapAction="" />
@@ -1603,6 +1674,54 @@
 </fault>
 </operation>
 <operation name="searchForObjects">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
+<operation name="createQuery">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
+<operation name="saveQuery">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
+<operation name="deleteQuery">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
+<operation name="getQueries">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
