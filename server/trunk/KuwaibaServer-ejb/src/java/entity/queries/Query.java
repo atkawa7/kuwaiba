@@ -22,6 +22,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 /**
  * Represents a query designed using the client and having XML as format
@@ -34,20 +35,58 @@ public class Query implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private String description;
 
+    @ManyToOne
     private User owner;
+    private byte[] content;
 
+    public Query() {
+    }
+
+    public Query(String name, User owner) {
+        this.name = name;
+        this.owner = owner;
+    }
 
     public Long getId() {
         return id;
     }
 
-    
-
     @Override
     public String toString() {
-        return "entity.queries.Query[id=" + id + "]";
+        return getName();
     }
 
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

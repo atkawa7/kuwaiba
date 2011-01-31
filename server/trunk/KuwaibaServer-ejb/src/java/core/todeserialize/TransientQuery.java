@@ -21,15 +21,18 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
- * This is a representation in a code friendly fashion of a complex query.
+ * This is a representation in a code friendly flavor of a complex query.
  * Pay attention that the JOIN will be treated as small queries, ie.:<br/><br/>
  * <code>SELECT * FROM building b. vendor v WHERE b.name LIKE '%my_building%' INNER JOIN vendor ON v.vendor_id=b.id and v.name ='Nokia'</code><br/>
  * There will be two queries: One (the master) having the condition "name LIKE '%my_building%'" and a "subquery"
  * with the join information.<br /> <br />
+ * Don't confuse with the representation of entitity.queries.Query (RemoteQuery). That one is used
+ * to <b>store</b> the queries and eventually to send them to the client to be reconstructed, This
+ * one is used only for query execution purposes
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteQuery {
+public class TransientQuery {
     
     /**
      * OR logical connector
@@ -98,7 +101,7 @@ public class RemoteQuery {
     /**
      * As stated before, joins will be treated like simple subqueries
      */
-    private ArrayList<RemoteQuery> joins;
+    private ArrayList<TransientQuery> joins;
     /**
      * Indicates if the current LocalQuery object is a join or the master query. It will
      * be used later to determine if
@@ -114,7 +117,7 @@ public class RemoteQuery {
      */
     private int page = 1;
 
-    public RemoteQuery() {
+    public TransientQuery() {
     }
 
     public ArrayList<String> getAttributeNames() {
@@ -133,7 +136,7 @@ public class RemoteQuery {
         return isJoin;
     }
 
-    public ArrayList<RemoteQuery> getJoins() {
+    public ArrayList<TransientQuery> getJoins() {
         return joins;
     }
 

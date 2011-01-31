@@ -17,7 +17,7 @@
 package util;
 
 import core.annotations.NoCopy;
-import core.todeserialize.RemoteQuery;
+import core.todeserialize.TransientQuery;
 import core.toserialize.ObjectList;
 import core.toserialize.RemoteObject;
 import entity.core.RootObject;
@@ -281,13 +281,13 @@ public class MetadataUtils {
      * WHERE <condition_1> <logical_connector> <condition_2> ... <logical_connector> <condition_N> <br />
      * It's recursive because it support JOINS and they're treated as subqueries
      * @param prefix the prefix used to refer the class alias in the JPQL statement (i.e x0.name., x0.vendor.name.)
-     * @param myQuery the current query as a RemoteQuery object
+     * @param myQuery the current query as a TransientQuery object
      * @param formerPredicates the previous predicates
      * @param em The current entity manager used to check if the query class is valid
      * @throws ClassNotFoundException is the query class is not valid
      * @throws NoSuchFieldException if the attribute to be used as condition is not valid
      */
-    public static void chainPredicates(String prefix, RemoteQuery myQuery, ArrayList<String> formerPredicates, EntityManager em)
+    public static void chainPredicates(String prefix, TransientQuery myQuery, ArrayList<String> formerPredicates, EntityManager em)
             throws ClassNotFoundException, NoSuchFieldException{
 
         if (myQuery.getAttributeNames() != null){
@@ -299,7 +299,7 @@ public class MetadataUtils {
                         getField(toBeSearched, attribute).getType().getSimpleName(), myQuery.getAttributeValues().get(i), em);
 
                 if (mappedValue == null) { //Look for a join in the getJoins()
-                    RemoteQuery myJoin = myQuery.getJoins().get(i);
+                    TransientQuery myJoin = myQuery.getJoins().get(i);
                     if (myJoin == null) //If this is null, we're trying to match what objects has the current attribute set to null
                         formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+"=null"); //NOI18N
                     else {
@@ -309,11 +309,11 @@ public class MetadataUtils {
                 } else { //Process a simple value
                     if (mappedValue instanceof String) {
                         switch (myQuery.getConditions().get(i)) {
-                            case RemoteQuery.EQUAL:
+                            case TransientQuery.EQUAL:
                                 formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+
                                         "='"+MetadataUtils.convertSpecialCharacters((String)mappedValue)+"'"); //NOI18N
                                 break;
-                            case RemoteQuery.LIKE:
+                            case TransientQuery.LIKE:
                                 //The like here is case-sensitive (?), so we have to lowercase the string
                                 formerPredicates.add("LOWER("+prefix+myQuery.getAttributeNames().get(i)+   //NOI18N
                                         ") LIKE '%"+MetadataUtils.convertSpecialCharacters((String)mappedValue).toLowerCase()+"%'");  //NOI18N
@@ -326,19 +326,19 @@ public class MetadataUtils {
                         else {
                             if (mappedValue instanceof Integer || mappedValue instanceof Float) {
                                 switch (myQuery.getConditions().get(i)) {
-                                    case RemoteQuery.EQUAL:
+                                    case TransientQuery.EQUAL:
                                         formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+"="+mappedValue);  //NOI18N
                                         break;
-                                    case RemoteQuery.EQUAL_OR_GREATER_THAN:
+                                    case TransientQuery.EQUAL_OR_GREATER_THAN:
                                         formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+">="+mappedValue);  //NOI18N
                                         break;
-                                    case RemoteQuery.EQUAL_OR_LESS_THAN:
+                                    case TransientQuery.EQUAL_OR_LESS_THAN:
                                         formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+"<="+mappedValue);  //NOI18N
                                         break;
-                                    case RemoteQuery.GREATER_THAN:
+                                    case TransientQuery.GREATER_THAN:
                                         formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+">"+mappedValue);  //NOI18N
                                         break;
-                                    case RemoteQuery.LESS_THAN:
+                                    case TransientQuery.LESS_THAN:
                                         formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+"<"+mappedValue);  //NOI18N
                                         break;
                                 }
@@ -357,7 +357,7 @@ public class MetadataUtils {
      * @param from The current "from" clause string. Initially the value is "FROM MySearchedClass x0"
      * @param fields the current fields 
      */
-      public static void chainVisibleAttributes(RemoteQuery myQuery, 
+      public static void chainVisibleAttributes(TransientQuery myQuery,
         List<String> fields, List<String> columnNames, List<String> joins,String prefix) {
         if (myQuery.getVisibleAttributeNames() != null){
             for (String field : myQuery.getVisibleAttributeNames()){
@@ -378,7 +378,7 @@ public class MetadataUtils {
                 }
         }
     }
-//        public static void chainVisibleAttributes(RemoteQuery myQuery,
+//        public static void chainVisibleAttributes(TransientQuery myQuery,
 //            List<String> fields, List<String> columnNames, String prefix) {
 //            if (myQuery.getVisibleAttributeNames() != null){
 //                for (String field : myQuery.getVisibleAttributeNames()){

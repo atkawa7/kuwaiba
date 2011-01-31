@@ -15,7 +15,7 @@
  */
 package businesslogic;
 
-import core.todeserialize.RemoteQuery;
+import core.todeserialize.TransientQuery;
 import core.toserialize.ClassInfo;
 import core.toserialize.ObjectList;
 import core.toserialize.RemoteObject;
@@ -31,6 +31,7 @@ import core.exceptions.UnsupportedPropertyException;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectUpdate;
+import core.toserialize.RemoteQuery;
 import core.toserialize.ResultRecord;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
@@ -59,6 +60,7 @@ import java.util.Set;
 import javax.ejb.Stateful;
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -712,7 +714,7 @@ public class BackendBean implements BackendBeanRemote {
 
     // <editor-fold defaultstate="collapsed" desc="comment">
     /*@Override
-    public RemoteObjectLight[] executeQuery(RemoteQuery myQuery) throws Exception {
+    public RemoteObjectLight[] executeQuery(TransientQuery myQuery) throws Exception {
         System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_EXECUTEQUERY"));
         if (em != null) {
             Class toBeSearched = getClassFor(myQuery.getClassName());
@@ -729,7 +731,7 @@ public class BackendBean implements BackendBeanRemote {
                     Object mappedValue = MetadataUtils.getRealValue(HierarchyUtils.getField(toBeSearched, attribute).toString(),
                             myQuery.getAttributeValues().get(i), em);
                     if (mappedValue == null) { //Look for a join in the getJoins()
-                        RemoteQuery myJoin = myQuery.getJoins().get(i);//If this is null, we're trying to match what objects has the current attribute set to null
+                        TransientQuery myJoin = myQuery.getJoins().get(i);//If this is null, we're trying to match what objects has the current attribute set to null
                         if (myJoin == null) {
                             predicates.add(cb.equal(entity.get(attribute), null));
 
@@ -753,10 +755,10 @@ public class BackendBean implements BackendBeanRemote {
                     } else { //Process a simple value
                         if (mappedValue instanceof String) {
                             switch (myQuery.getConditions().get(i)) {
-                                case RemoteQuery.EQUAL:
+                                case TransientQuery.EQUAL:
                                     predicates.add(cb.equal(entity.get(attribute), mappedValue));
                                     break;
-                                case RemoteQuery.LIKE:
+                                case TransientQuery.LIKE:
                                     //The like here is case-sesitive (?), so we have to lowercase the string
                                     predicates.add(cb.like(cb.lower(entity.get(attribute)), "%" + ((String) mappedValue).toLowerCase() + "%"));
                                     break;
@@ -768,20 +770,20 @@ public class BackendBean implements BackendBeanRemote {
                             } else {
                                 if (mappedValue instanceof Integer || mappedValue instanceof Float) {
                                     switch (myQuery.getConditions().get(i)) {
-                                        case RemoteQuery.EQUAL:
+                                        case TransientQuery.EQUAL:
                                             predicates.add(cb.equal(entity.get(attribute), mappedValue));
                                             break;
-                                        case RemoteQuery.EQUAL_OR_GREATER_THAN:
+                                        case TransientQuery.EQUAL_OR_GREATER_THAN:
                                             //The like here is case-sensitive (?), so we have to lowercase the string
                                             predicates.add(cb.greaterThanOrEqualTo(entity.get(attribute), (Comparable) mappedValue));
                                             break;
-                                        case RemoteQuery.EQUAL_OR_LESS_THAN:
+                                        case TransientQuery.EQUAL_OR_LESS_THAN:
                                             predicates.add(cb.lessThanOrEqualTo(entity.get(attribute), (Comparable) mappedValue));
                                             break;
-                                        case RemoteQuery.GREATER_THAN:
+                                        case TransientQuery.GREATER_THAN:
                                             predicates.add(cb.greaterThan(entity.get(attribute), (Comparable) mappedValue));
                                             break;
-                                        case RemoteQuery.LESS_THAN:
+                                        case TransientQuery.LESS_THAN:
                                             predicates.add(cb.lessThan(entity.get(attribute), (Comparable) mappedValue));
                                             break;
                                     }
@@ -799,7 +801,7 @@ public class BackendBean implements BackendBeanRemote {
             if (!predicates.isEmpty()) {
                 Predicate finalPredicate = predicates.get(0);
                 for (int i = 0; i < predicates.size(); i++) {
-                    if (myQuery.getLogicalConnector() == RemoteQuery.CONNECTOR_AND) {
+                    if (myQuery.getLogicalConnector() == TransientQuery.CONNECTOR_AND) {
                         finalPredicate = cb.and(predicates.get(i), finalPredicate);
 
                     } else {
@@ -833,7 +835,7 @@ public class BackendBean implements BackendBeanRemote {
      * @throws Exception
      */
     @Override
-    public ResultRecord[] executeQuery(RemoteQuery myQuery) throws Exception {
+    public ResultRecord[] executeQuery(TransientQuery myQuery) throws Exception {
         System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_EXECUTEQUERY"));
         if (em != null) {
             String queryText = "SELECT "; //The complete query text //NOI18N
@@ -869,7 +871,7 @@ public class BackendBean implements BackendBeanRemote {
                 String finalPredicate = " WHERE ";
                 for (String predicate : predicates)
                     finalPredicate += predicate +
-                            ((myQuery.getLogicalConnector() == RemoteQuery.CONNECTOR_AND)?" AND ":" OR ");
+                            ((myQuery.getLogicalConnector() == TransientQuery.CONNECTOR_AND)?" AND ":" OR ");
                 queryText += finalPredicate.substring(0,finalPredicate.length() - 4);
             }
 
@@ -898,8 +900,87 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     @Override
-    public RemoteObjectLight saveQuery(byte[] query) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public entity.queries.Query createQuery(String queryName, Long ownerOid, byte[] queryStructure) throws Exception{
+        System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_CREATEQUERY")); //NOI18N
+        if (em != null) {
+            User owner = null;
+            if (ownerOid != null){
+                owner = em.find(User.class, ownerOid);
+                if (owner == null)
+                    throw new ObjectNotFoundException("User", ownerOid); //NOI18N
+            }
+            entity.queries.Query newQuery = new entity.queries.Query(queryName, owner);
+            newQuery.setContent(queryStructure);
+            em.persist(newQuery);
+            return newQuery;
+        }else
+            throw new EntityManagerNotAvailableException();
+    }
+
+    @Override
+    public boolean saveQuery(Long queryOid, String queryName, Long ownerOid, byte[] queryStructure) throws Exception{
+        System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_SAVEQUERY")); //NOI18N
+        if (em != null) {
+            entity.queries.Query myQuery = em.find(entity.queries.Query.class, queryOid);
+            if (myQuery == null)
+                throw new ObjectNotFoundException("Query", queryOid); //NOI18N
+
+            User owner = null;
+            if (ownerOid != null){
+                owner = em.find(User.class, ownerOid);
+                if (owner == null)
+                    throw new ObjectNotFoundException("User", ownerOid); //NOI18N
+            }
+            myQuery.setContent(queryStructure);
+            myQuery.setName(queryName);
+            em.merge(myQuery);
+            return true;
+        }else
+            throw new EntityManagerNotAvailableException();
+    }
+
+    @Override
+    public boolean deleteQuery(Long queryOid) throws Exception{
+        System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_DELETEQUERY")); //NOI18N
+        if (em != null) {
+            entity.queries.Query toBeDeleted = em.find(entity.queries.Query.class, queryOid);
+            if (toBeDeleted == null)
+                throw new ObjectNotFoundException("Query", queryOid); //NOI18N
+            em.remove(toBeDeleted);
+            return true;
+        }else
+            throw new EntityManagerNotAvailableException();
+    }
+
+    @Override
+    public RemoteObjectLight[] getQueries(Long ownerId, boolean showPublic) throws Exception {
+        System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETQUERIES"));
+        if (em != null){
+            String sentence = "SELECT x.id, x.name FROM Query x WHERE x.owner.id="+ownerId; //NOI18N
+            if (showPublic)
+                sentence += " OR owner = null";
+            List<Object[]> allQueries = em.createQuery(sentence).getResultList();
+            RemoteObjectLight[] res = new RemoteObjectLight[allQueries.size()];
+
+            for (int i = 0; i < allQueries.size(); i++){
+                res[i] = new RemoteObjectLight((Long)allQueries.get(i)[0], "Query", (String)allQueries.get(i)[1]);
+                i++;
+            }
+            return res;
+        }else
+            throw new EntityManagerNotAvailableException();
+    }
+
+    @Override
+    public RemoteQuery getQuery(Long queryOid) throws Exception {
+        System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETQUERY")); //NOI18N
+        if (em != null){
+            entity.queries.Query query = em.find(entity.queries.Query.class, queryOid);
+            if (query == null)
+                throw new ObjectNotFoundException("Query", queryOid); //NOI18
+            return new RemoteQuery(query);
+        }else
+            throw new EntityManagerNotAvailableException();
     }
 
     @Override
@@ -1046,6 +1127,27 @@ public class BackendBean implements BackendBeanRemote {
         }else
             throw new EntityManagerNotAvailableException();
     }
+
+    /**
+     * Gets an open session given the session id (session token)
+     * @param sessionId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public UserSession getSession(String sessionId) throws Exception{
+        if (em != null){
+            try{
+                Object session = em.createQuery("SELECT x FROM UserSession x WHERE x.token = '"+
+                    MetadataUtils.convertSpecialCharacters(sessionId)+"'").getSingleResult();
+                return (UserSession)session;
+            }catch(NoResultException nre){
+                return null;
+            }
+        }else
+            throw new EntityManagerNotAvailableException();
+    }
+
 
     /**
      * Authenticate the user and creates a session if the login was successful

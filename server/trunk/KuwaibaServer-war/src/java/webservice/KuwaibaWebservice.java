@@ -29,8 +29,9 @@ import javax.jws.WebService;
 import businesslogic.BackendBeanRemote;
 import core.exceptions.ArraySizeMismatchException;
 import core.exceptions.MiscException;
-import core.todeserialize.RemoteQuery;
+import core.todeserialize.TransientQuery;
 import core.toserialize.ClassInfoLight;
+import core.toserialize.RemoteQuery;
 import core.toserialize.RemoteSession;
 import core.toserialize.ResultRecord;
 import core.toserialize.UserGroupInfo;
@@ -39,6 +40,7 @@ import core.toserialize.ViewInfo;
 import entity.connections.physical.GenericPhysicalConnection;
 import entity.core.RootObject;
 import entity.core.ViewableObject;
+import entity.session.UserSession;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -142,6 +144,7 @@ public class KuwaibaWebservice {
             @WebParam(name="childrenClass")String childrenClass,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getChildrenOfClass", getIPAddress(), sessionId);
             Class myClass = sbr.getClassFor(childrenClass);
             if (myClass == null)
                 throw new ClassNotFoundException(childrenClass);
@@ -166,6 +169,7 @@ public class KuwaibaWebservice {
             @WebParam(name = "oid") Long oid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getObjectInfo", getIPAddress(), sessionId);
             Class myClass = sbr.getClassFor(objectClass);
             return sbr.getObjectInfo(myClass, oid);
         }catch(Exception e){
@@ -187,6 +191,7 @@ public class KuwaibaWebservice {
             @WebParam(name = "oid") Long oid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getObjectInfoLight", getIPAddress(), sessionId);
             Class myClass = sbr.getClassFor(objectClass);
             return sbr.getObjectInfoLight(myClass, oid);
         }catch(Exception e){
@@ -206,6 +211,7 @@ public class KuwaibaWebservice {
     public boolean updateObject(@WebParam(name = "objectupdate")ObjectUpdate update,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("updatObject", getIPAddress(), sessionId);
             boolean res;
             res = sbr.updateObject(update);
             return res;
@@ -230,6 +236,7 @@ public class KuwaibaWebservice {
             @WebParam(name = "value")Boolean value,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("setObjectLock", getIPAddress(), sessionId);
             Boolean res = sbr.setObjectLock(oid, objectclass, value);
             return res;
         }catch(Exception e){
@@ -250,6 +257,7 @@ public class KuwaibaWebservice {
             @WebParam(name = "parentClass")String _parentClass,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getPossibleChildren", getIPAddress(), sessionId);
             Class parentClass;
             parentClass = sbr.getClassFor(_parentClass);
             return sbr.getPossibleChildren(parentClass);
@@ -271,6 +279,7 @@ public class KuwaibaWebservice {
             @WebParam(name = "parentClass")String _parentClass,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getPossibleChildrenNoRecursive", getIPAddress(), sessionId);
             Class parentClass = sbr.getClassFor(_parentClass);
             return sbr.getPossibleChildrenNoRecursive(parentClass);
         }catch(Exception e){
@@ -288,6 +297,7 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "getRootPossibleChildren")
     public ClassInfoLight[] getRootPossibleChildren(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getRootPossibleChildren", getIPAddress(), sessionId);
             return sbr.getRootPossibleChildren();
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
@@ -311,6 +321,7 @@ public class KuwaibaWebservice {
              @WebParam(name = "parentOid")Long parentOid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("createObject", getIPAddress(), sessionId);
             Class myClass = sbr.getClassFor(objectClass);
             return sbr.createObject(myClass,parentOid,template);
         }catch(Exception e){
@@ -328,6 +339,7 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "getMetadata")
     public List<ClassInfo> getMetadata(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getMetadata", getIPAddress(), sessionId);
             return sbr.getMetadata();
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
@@ -346,6 +358,7 @@ public class KuwaibaWebservice {
     public ClassInfo getMetadataForClass(@WebParam(name = "className")String className,
                         @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getMetadataForClass", getIPAddress(), sessionId);
             Class myClass = sbr.getClassFor(className);
             return sbr.getMetadataForClass(myClass);
         }catch(Exception e){
@@ -365,6 +378,7 @@ public class KuwaibaWebservice {
     public ObjectList getMultipleChoice(@WebParam(name = "className")String className,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getMultipleChoice", getIPAddress(), sessionId);
             Class myClass = sbr.getClassFor(className);
             ObjectList res = sbr.getMultipleChoice(myClass);
             return res;
@@ -387,6 +401,7 @@ public class KuwaibaWebservice {
             @WebParam(name = "possibleChildren")Long[] possibleChildren,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("addPosibleChildren", getIPAddress(), sessionId);
             Boolean res = sbr.addPossibleChildren(parentClassId, possibleChildren);
             return res;
         }catch(Exception e){
@@ -408,6 +423,7 @@ public class KuwaibaWebservice {
             @WebParam(name = "childrenToBeRemoved")Long[] childrenToBeRemoved,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("removeChildren", getIPAddress(), sessionId);
             Boolean res = sbr.removePossibleChildren(parentClassId, childrenToBeRemoved);
             return res;
         }catch(Exception e){
@@ -429,6 +445,7 @@ public class KuwaibaWebservice {
             @WebParam(name = "oid")Long oid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("removeObject", getIPAddress(), sessionId);
             Class myClass = sbr.getClassFor(className);
             Boolean res = sbr.removeObject(myClass, oid);
             return res;
@@ -447,6 +464,7 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "getLightMetadata")
     public List<ClassInfoLight> getLightMetadata(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getLightMetadata", getIPAddress(), sessionId);
             return sbr.getLightMetadata();
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
@@ -460,12 +478,13 @@ public class KuwaibaWebservice {
      * @return the Id that should be used to reference the root object
      */
     @WebMethod(operationName = "getDummyRootId")
-    public Long getDummyRootId(@WebParam(name = "sessionId")String sessionId) {
+    public Long getDummyRootId(@WebParam(name = "sessionId")String sessionId) throws Exception{
+        sbr.validateCall("getDummyRootId", getIPAddress(), sessionId);
         return sbr.getDummyRootId();
     }
 
     /**
-     * Copy objects from its current parent to a target.
+     * Copy objects from its current parent to a target. This is <b>not</b> a deep copy. Only the selected object will be copied, not the children
      * Note: This method does *not* check if the parent change is possible according to the container hierarchy
      * the developer must check it on his side!
      * @param targetOid The new parent oid
@@ -481,6 +500,7 @@ public class KuwaibaWebservice {
             @WebParam(name = "templateObjects")Long[] templateObjects,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("copyObjects", getIPAddress(), sessionId);
             Class[] objectClasses = new Class[_objectClasses.length];
 
             for (int i = 0; i < _objectClasses.length;i++){
@@ -514,6 +534,7 @@ public class KuwaibaWebservice {
             @WebParam(name = "objectsOids")Long[] objectOids,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("moveObjects", getIPAddress(), sessionId);
             Class[] objectClasses = new Class[_objectClasses.length];
 
             for (int i = 0; i < _objectClasses.length;i++){
@@ -549,6 +570,7 @@ public class KuwaibaWebservice {
             @WebParam(name="paramValues")String[] paramValues,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("searchForObjects", getIPAddress(), sessionId);
             if (paramNames.length != paramValues.length || paramTypes.length != paramValues.length)
                 throw new Exception(java.util.ResourceBundle.
                         getBundle("internationalization/Bundle").getString("LBL_ARRAYSIZESDONTMATCH")+"paramNames,paramValues, paramTypes");
@@ -566,13 +588,15 @@ public class KuwaibaWebservice {
      * Execute a complex query generated using the Graphical Query Builder.  Please note
      * that the first record is reserved for the column headers, so and empty result set
      * will have at least one record.
-     * @param query The RemoteQuery object (a code friendly version of the graphical query designed at client side).
+     * @param query The TransientQuery object (a code friendly version of the graphical query designed at client side).
      * @return An array of records
      * @throws Exception
      */
     @WebMethod(operationName = "executeQuery")
-    public ResultRecord[] executeQuery(RemoteQuery query) throws Exception{
+    public ResultRecord[] executeQuery(@WebParam(name="query")TransientQuery query,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("executeQuery", getIPAddress(), sessionId);
             Class queryClass = sbr.getClassFor(query.getClassName());
             
             if (!HierarchyUtils.isSubclass(queryClass, RootObject.class))
@@ -595,11 +619,99 @@ public class KuwaibaWebservice {
         }
     }
 
-    public RemoteObjectLight saveQuery(byte[] query) throws Exception{
+    /**
+     * Creates a query designed using the graphical query editor
+     * @param queryName Query name
+     * @param ownerOid OwnerOid. Null if public
+     * @param queryStructure XML document as a byte array
+     * @param sessionId session id to check permissions
+     * @return a RemoteObjectLight wrapping the newly created query
+     * @throws Exception in case something goes wrong
+     */
+    @WebMethod(operationName = "createQuery")
+    public RemoteObjectLight createQuery(@WebParam(name="queryName")String queryName,
+            @WebParam(name="ownerOid")Long ownerOid, 
+            @WebParam(name="queryStructure")byte[] queryStructure,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            return sbr.saveQuery(query);
+            sbr.validateCall("createQuery", getIPAddress(), sessionId);
+            return new RemoteObjectLight(sbr.createQuery(queryName, ownerOid, queryStructure));
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, 
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    /**
+     *
+     * @param queryOid query oid to be updated
+     * @param queryName query name (the same if unchanged)
+     * @param ownerOid owneroid (if unchanged)
+     * @param queryStructure XML document if unchanged
+     * @param sessionId session id to check permissions
+     * @return success or failure
+     * @throws Exception
+     */
+    @WebMethod(operationName = "saveQuery")
+    public boolean saveQuery(@WebParam(name="queryOid")Long queryOid,
+            @WebParam(name = "queryName")String queryName,
+            @WebParam(name = "ownerOid")Long ownerOid,
+            @WebParam(name = "queryStructure")byte[] queryStructure,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            sbr.validateCall("saveQuery", getIPAddress(), sessionId);
+            return sbr.saveQuery(queryOid,queryName, ownerOid, queryStructure);
+        }catch(Exception e){
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    /**
+     * Deletes a query
+     * @param queryOid query oid to be deleted
+     * @param sessionId session id to check permissions
+     * @return success or failure
+     * @throws Exception
+     */
+    @WebMethod(operationName = "deleteQuery")
+    public boolean deleteQuery(@WebParam(name="queryOid")Long queryOid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            sbr.validateCall("deleteQuery", getIPAddress(), sessionId);
+            return sbr.deleteQuery(queryOid);
+        }catch(Exception e){
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "getQueries")
+    public RemoteObjectLight[] getQueries(@WebParam(name="showPublic")boolean showPublic,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            sbr.validateCall("getQueries", getIPAddress(), sessionId);
+            UserSession session = sbr.getSession(sessionId);
+            return sbr.getQueries(session.getUser().getId(),showPublic);
+        }catch(Exception e){
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "getQuery")
+    public RemoteQuery getQuery(@WebParam(name="queryOid")Long queryOid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            sbr.validateCall("getQuery", getIPAddress(), sessionId);
+            return sbr.getQuery(queryOid);
+        }catch(Exception e){
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -626,6 +738,7 @@ public class KuwaibaWebservice {
             @WebParam(name = "propertyValue")String propertyValue,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("setAttributePropertyValue", getIPAddress(), sessionId);
             return sbr.setAttributePropertyValue(classId, attributeName, propertyName, propertyValue);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
@@ -648,6 +761,7 @@ public class KuwaibaWebservice {
             @WebParam(name = "attributeValue")String attributeValue,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("setClassPlainAttribute", getIPAddress(), sessionId);
             return sbr.setClassPlainAttribute(classId,attributeName,attributeValue);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
@@ -670,6 +784,7 @@ public class KuwaibaWebservice {
             @WebParam(name = "iconImage")byte[] iconImage,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("setClassIcon", getIPAddress(), sessionId);
             return sbr.setClassIcon(classId, iconAttribute, iconImage);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
@@ -686,6 +801,7 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "getInstanceableListTypes")
     public ClassInfoLight[] getInstanceableListTypes(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getInstanceableListTypes", getIPAddress(), sessionId);
             ClassInfoLight[] res = sbr.getInstanceableListTypes();
             return res;
         }catch(Exception e){
@@ -711,6 +827,7 @@ public class KuwaibaWebservice {
             @WebParam(name="objectClass")String objectClass,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
        try{
+           sbr.validateCall("getDefaultView", getIPAddress(), sessionId);
             ViewInfo res;
             Class myClass = sbr.getClassFor(objectClass);
             if (!HierarchyUtils.isSubclass(myClass, ViewableObject.class))
@@ -735,6 +852,7 @@ public class KuwaibaWebservice {
     public ViewInfo getRoomView(@WebParam(name="oid")Long oid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getRoomView", getIPAddress(), sessionId);
             ViewInfo res = sbr.getRoomView(oid);
             return res;
         }catch(Exception e){
@@ -755,6 +873,7 @@ public class KuwaibaWebservice {
     public ViewInfo getRackView(@WebParam(name="oid")Long oid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getRackView", getIPAddress(), sessionId);
             ViewInfo res = sbr.getRackView(oid);
             return res;
         }catch(Exception e){
@@ -778,6 +897,7 @@ public class KuwaibaWebservice {
             @WebParam(name="view") ViewInfo view,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("saveObjectView", getIPAddress(), sessionId);
             Class myClass = sbr.getClassFor(objectClass);
             if (!HierarchyUtils.isSubclass(myClass, ViewableObject.class))
                 throw new Exception(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOVIEWS") + objectClass);
@@ -806,6 +926,7 @@ public class KuwaibaWebservice {
             @WebParam(name="parentObjectOid")Long parentObjectOid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("createPhysicalContainerConnection", getIPAddress(), sessionId);
             Class myClass = sbr.getClassFor(containerClass);
             RemoteObjectLight res = sbr.createPhysicalContainerConnection(sourceObjectOid,targetObjectOid,myClass,parentObjectOid);
             return res;
@@ -831,6 +952,7 @@ public class KuwaibaWebservice {
             @WebParam(name="parentObjectOid")Long parentObjectOid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("createPhysicalConnection", getIPAddress(), sessionId);
             Class myClass = sbr.getClassFor(connectionClass);
             if(!HierarchyUtils.isSubclass(myClass, GenericPhysicalConnection.class))
                 throw new Exception(java.util.ResourceBundle.
@@ -855,6 +977,7 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "getUsers")
     public UserInfo[] getUsers(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getUsers", getIPAddress(), sessionId);
             return sbr.getUsers();
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
@@ -871,6 +994,7 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "getGroups")
     public UserGroupInfo[] getGroups(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("getGroups", getIPAddress(), sessionId);
             return sbr.getGroups();
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
@@ -888,6 +1012,7 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "createUser")
     public UserInfo createUser(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("createUser", getIPAddress(), sessionId);
             return sbr.createUser();
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
@@ -902,8 +1027,10 @@ public class KuwaibaWebservice {
      * @throws Exception
      */
     @WebMethod(operationName = "deleteUsers")
-    public Boolean deleteUsers(@WebParam(name="tobeDeleted")Long[] toBeDeleted) throws Exception{
+    public Boolean deleteUsers(@WebParam(name="tobeDeleted")Long[] toBeDeleted,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("deleteUsers", getIPAddress(), sessionId);
             return sbr.deleteUsers(toBeDeleted);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
@@ -920,6 +1047,7 @@ public class KuwaibaWebservice {
     @WebMethod(operationName = "createGroup")
     public UserGroupInfo createGroup(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("createGroup", getIPAddress(), sessionId);
             return sbr.createGroup();
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
@@ -934,8 +1062,10 @@ public class KuwaibaWebservice {
      * @throws Exception
      */
     @WebMethod(operationName = "deleteGroups")
-    public Boolean deleteGroups(@WebParam(name="toBeDeleted")Long[] toBeDeleted) throws Exception{
+    public Boolean deleteGroups(@WebParam(name="toBeDeleted")Long[] toBeDeleted,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("deleteGroups", getIPAddress(), sessionId);
             return sbr.deleteGroups(toBeDeleted);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
@@ -958,6 +1088,7 @@ public class KuwaibaWebservice {
             @WebParam(name="propertiesValues")String[] propertiesValues,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("setUserProperties", getIPAddress(), sessionId);
             if (propertiesNames.length != propertiesValues.length)
                 throw new Exception(java.util.ResourceBundle.
                         getBundle("internationalization/Bundle").getString("LBL_ARRAYSIZESDONTMATCH")+ "propertiesNames, propertiesValues");
@@ -984,6 +1115,7 @@ public class KuwaibaWebservice {
             @WebParam(name="propertiesValues")String[] propertiesValues,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("setGroupProperties", getIPAddress(), sessionId);
             if (propertiesNames.length != propertiesValues.length)
                 throw new Exception(java.util.ResourceBundle.
                     getBundle("internationalization/Bundle").getString("LBL_ARRAYSIZESDONTMATCH")+ "propertiesNames, propertiesValues");
@@ -1009,6 +1141,7 @@ public class KuwaibaWebservice {
             @WebParam(name="groupOid")Long groupOid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("addUsersToGroup", getIPAddress(), sessionId);
             return sbr.addUsersToGroup(usersOids, groupOid);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
@@ -1028,6 +1161,7 @@ public class KuwaibaWebservice {
             @WebParam(name="groupOid")Long groupOid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("removeUsersFromGroup", getIPAddress(), sessionId);
             return sbr.removeUsersFromGroup(usersOids, groupOid);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
@@ -1048,6 +1182,7 @@ public class KuwaibaWebservice {
             @WebParam(name="userOid")Long userOid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("addGroupsToUser", getIPAddress(), sessionId);
             return sbr.addGroupsToUser(groupsOids, userOid);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
@@ -1068,6 +1203,7 @@ public class KuwaibaWebservice {
             @WebParam(name="userOid")Long userOid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            sbr.validateCall("removeGroupsFromUser", getIPAddress(), sessionId);
             return sbr.removeGroupsFromUser(groupsOids, userOid);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
