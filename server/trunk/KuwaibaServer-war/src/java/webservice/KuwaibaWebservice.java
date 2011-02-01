@@ -32,6 +32,7 @@ import core.exceptions.MiscException;
 import core.todeserialize.TransientQuery;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteQuery;
+import core.toserialize.RemoteQueryLight;
 import core.toserialize.RemoteSession;
 import core.toserialize.ResultRecord;
 import core.toserialize.UserGroupInfo;
@@ -105,7 +106,8 @@ public class KuwaibaWebservice {
             String remoteAddress = getIPAddress();
             return sbr.closeSession(sessionId, remoteAddress);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "", new Object[]{e.getClass(),e.getMessage()});
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -127,7 +129,8 @@ public class KuwaibaWebservice {
             RemoteObjectLight[] res = sbr.getObjectChildren(oid,objectClassId);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -151,7 +154,8 @@ public class KuwaibaWebservice {
                 RemoteObject[] res = sbr.getChildrenOfClass(parentOid,myClass);
                 return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -173,7 +177,8 @@ public class KuwaibaWebservice {
             Class myClass = sbr.getClassFor(objectClass);
             return sbr.getObjectInfo(myClass, oid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -195,7 +200,8 @@ public class KuwaibaWebservice {
             Class myClass = sbr.getClassFor(objectClass);
             return sbr.getObjectInfoLight(myClass, oid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -216,7 +222,8 @@ public class KuwaibaWebservice {
             res = sbr.updateObject(update);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -240,7 +247,8 @@ public class KuwaibaWebservice {
             Boolean res = sbr.setObjectLock(oid, objectclass, value);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -262,7 +270,8 @@ public class KuwaibaWebservice {
             parentClass = sbr.getClassFor(_parentClass);
             return sbr.getPossibleChildren(parentClass);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -283,7 +292,8 @@ public class KuwaibaWebservice {
             Class parentClass = sbr.getClassFor(_parentClass);
             return sbr.getPossibleChildrenNoRecursive(parentClass);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -300,7 +310,8 @@ public class KuwaibaWebservice {
             sbr.validateCall("getRootPossibleChildren", getIPAddress(), sessionId);
             return sbr.getRootPossibleChildren();
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -325,7 +336,8 @@ public class KuwaibaWebservice {
             Class myClass = sbr.getClassFor(objectClass);
             return sbr.createObject(myClass,parentOid,template);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -342,7 +354,8 @@ public class KuwaibaWebservice {
             sbr.validateCall("getMetadata", getIPAddress(), sessionId);
             return sbr.getMetadata();
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -362,7 +375,8 @@ public class KuwaibaWebservice {
             Class myClass = sbr.getClassFor(className);
             return sbr.getMetadataForClass(myClass);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -383,7 +397,8 @@ public class KuwaibaWebservice {
             ObjectList res = sbr.getMultipleChoice(myClass);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -405,7 +420,8 @@ public class KuwaibaWebservice {
             Boolean res = sbr.addPossibleChildren(parentClassId, possibleChildren);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -427,7 +443,8 @@ public class KuwaibaWebservice {
             Boolean res = sbr.removePossibleChildren(parentClassId, childrenToBeRemoved);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -450,7 +467,8 @@ public class KuwaibaWebservice {
             Boolean res = sbr.removeObject(myClass, oid);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -467,7 +485,8 @@ public class KuwaibaWebservice {
             sbr.validateCall("getLightMetadata", getIPAddress(), sessionId);
             return sbr.getLightMetadata();
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -512,7 +531,8 @@ public class KuwaibaWebservice {
             RemoteObjectLight[] res = sbr.copyObjects(targetOid, templateObjects, objectClasses);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "", new Object[]{e.getClass(),e.getMessage()});
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -544,7 +564,8 @@ public class KuwaibaWebservice {
             }
             return sbr.moveObjects(targetOid, objectOids,objectClasses);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -579,7 +600,8 @@ public class KuwaibaWebservice {
             RemoteObjectLight[] res = sbr.searchForObjects(toBeSearched,paramNames, paramTypes,paramValues);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -614,7 +636,8 @@ public class KuwaibaWebservice {
             }
             return sbr.executeQuery(query);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -629,13 +652,14 @@ public class KuwaibaWebservice {
      * @throws Exception in case something goes wrong
      */
     @WebMethod(operationName = "createQuery")
-    public RemoteObjectLight createQuery(@WebParam(name="queryName")String queryName,
+    public RemoteQueryLight createQuery(@WebParam(name="queryName")String queryName,
             @WebParam(name="ownerOid")Long ownerOid, 
             @WebParam(name="queryStructure")byte[] queryStructure,
+            @WebParam(name="description")String description,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             sbr.validateCall("createQuery", getIPAddress(), sessionId);
-            return new RemoteObjectLight(sbr.createQuery(queryName, ownerOid, queryStructure));
+            return new RemoteQueryLight(sbr.createQuery(queryName, ownerOid, queryStructure, description));
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, 
                     e.getClass()+": {0}",e.getMessage()); //NOI18N
@@ -658,6 +682,7 @@ public class KuwaibaWebservice {
             @WebParam(name = "queryName")String queryName,
             @WebParam(name = "ownerOid")Long ownerOid,
             @WebParam(name = "queryStructure")byte[] queryStructure,
+            @WebParam(name = "description")String description,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             sbr.validateCall("saveQuery", getIPAddress(), sessionId);
@@ -690,7 +715,7 @@ public class KuwaibaWebservice {
     }
 
     @WebMethod(operationName = "getQueries")
-    public RemoteObjectLight[] getQueries(@WebParam(name="showPublic")boolean showPublic,
+    public RemoteQueryLight[] getQueries(@WebParam(name="showPublic")boolean showPublic,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             sbr.validateCall("getQueries", getIPAddress(), sessionId);
@@ -741,7 +766,8 @@ public class KuwaibaWebservice {
             sbr.validateCall("setAttributePropertyValue", getIPAddress(), sessionId);
             return sbr.setAttributePropertyValue(classId, attributeName, propertyName, propertyValue);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -764,7 +790,8 @@ public class KuwaibaWebservice {
             sbr.validateCall("setClassPlainAttribute", getIPAddress(), sessionId);
             return sbr.setClassPlainAttribute(classId,attributeName,attributeValue);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -787,7 +814,8 @@ public class KuwaibaWebservice {
             sbr.validateCall("setClassIcon", getIPAddress(), sessionId);
             return sbr.setClassIcon(classId, iconAttribute, iconImage);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -805,7 +833,8 @@ public class KuwaibaWebservice {
             ClassInfoLight[] res = sbr.getInstanceableListTypes();
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -836,7 +865,8 @@ public class KuwaibaWebservice {
                 res = sbr.getDefaultView(oid, myClass);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -856,7 +886,8 @@ public class KuwaibaWebservice {
             ViewInfo res = sbr.getRoomView(oid);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -877,7 +908,8 @@ public class KuwaibaWebservice {
             ViewInfo res = sbr.getRackView(oid);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -905,7 +937,8 @@ public class KuwaibaWebservice {
             else return sbr.saveObjectView(oid, myClass,view);
 
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -931,7 +964,8 @@ public class KuwaibaWebservice {
             RemoteObjectLight res = sbr.createPhysicalContainerConnection(sourceObjectOid,targetObjectOid,myClass,parentObjectOid);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -959,7 +993,8 @@ public class KuwaibaWebservice {
                         getBundle("internationalization/Bundle").getString("LBL_WRONGCLASS")+ connectionClass);
             return sbr.createPhysicalConnection(endpointAOid,endpointBOid,myClass,parentObjectOid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -980,7 +1015,8 @@ public class KuwaibaWebservice {
             sbr.validateCall("getUsers", getIPAddress(), sessionId);
             return sbr.getUsers();
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, "",new Object[]{e.getClass(),e.getMessage()});
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -997,7 +1033,8 @@ public class KuwaibaWebservice {
             sbr.validateCall("getGroups", getIPAddress(), sessionId);
             return sbr.getGroups();
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
         
@@ -1015,7 +1052,8 @@ public class KuwaibaWebservice {
             sbr.validateCall("createUser", getIPAddress(), sessionId);
             return sbr.createUser();
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1033,7 +1071,8 @@ public class KuwaibaWebservice {
             sbr.validateCall("deleteUsers", getIPAddress(), sessionId);
             return sbr.deleteUsers(toBeDeleted);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1050,7 +1089,8 @@ public class KuwaibaWebservice {
             sbr.validateCall("createGroup", getIPAddress(), sessionId);
             return sbr.createGroup();
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1068,7 +1108,8 @@ public class KuwaibaWebservice {
             sbr.validateCall("deleteGroups", getIPAddress(), sessionId);
             return sbr.deleteGroups(toBeDeleted);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1095,7 +1136,8 @@ public class KuwaibaWebservice {
 
             return sbr.setUserProperties(oid, propertiesNames,propertiesValues);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1122,7 +1164,8 @@ public class KuwaibaWebservice {
         
             return true;//sbr.setGroupProperties(oid, propertiesNames,propertiesValues);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
         
@@ -1144,10 +1187,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("addUsersToGroup", getIPAddress(), sessionId);
             return sbr.addUsersToGroup(usersOids, groupOid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
-        }
-        
+        }        
     }
 
     /**
@@ -1164,7 +1207,8 @@ public class KuwaibaWebservice {
             sbr.validateCall("removeUsersFromGroup", getIPAddress(), sessionId);
             return sbr.removeUsersFromGroup(usersOids, groupOid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1185,7 +1229,8 @@ public class KuwaibaWebservice {
             sbr.validateCall("addGroupsToUser", getIPAddress(), sessionId);
             return sbr.addGroupsToUser(groupsOids, userOid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -1206,7 +1251,8 @@ public class KuwaibaWebservice {
             sbr.validateCall("removeGroupsFromUser", getIPAddress(), sessionId);
             return sbr.removeGroupsFromUser(groupsOids, userOid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, null, e.getClass()+": "+e.getMessage());
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+                    e.getClass()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }

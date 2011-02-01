@@ -42,15 +42,32 @@ public class ObjectUpdate {
         return classname;
     }
 
-   public String[] getNewValues() {
+    public void setNewValues(String[] newValues) {
+        this.newValues = newValues;
+    }
+
+    public String[] getNewValues() {
         return newValues;
     }
 
-   public Long getOid() {
+    public Long getOid() {
         return oid;
     }
 
     public String[] getUpdatedAttributes() {
         return updatedAttributes;
     }
+
+    public void setClassname(String classname) {
+        this.classname = classname;
+    }
+
+    public void setOid(Long oid) {
+        this.oid = oid;
+    }
+
+    public void setUpdatedAttributes(String[] updatedAttributes) {
+        this.updatedAttributes = updatedAttributes;
+    }
+
 }

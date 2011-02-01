@@ -27,21 +27,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteQuery {
-
-    private Long oid;
-    private String name;
-    private String description;
+public class RemoteQuery extends RemoteQueryLight{
     private byte[] content;
 
     public RemoteQuery() {
     }
 
     public RemoteQuery(Query query) {
-        this.oid = query.getId();
-        this.name = query.getName();
+        super (query.getId(), query.getName(),query.getDescription(),query.getOwner() == null);
         this.content = query.getContent();
-        this.description = query.getDescription();
     }
 
     public byte[] getContent() {
@@ -50,29 +44,5 @@ public class RemoteQuery {
 
     public void setContent(byte[] content) {
         this.content = content;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getOid() {
-        return oid;
-    }
-
-    public void setOid(Long oid) {
-        this.oid = oid;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }

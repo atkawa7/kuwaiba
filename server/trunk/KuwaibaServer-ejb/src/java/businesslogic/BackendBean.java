@@ -32,6 +32,7 @@ import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteObjectUpdate;
 import core.toserialize.RemoteQuery;
+import core.toserialize.RemoteQueryLight;
 import core.toserialize.ResultRecord;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
@@ -900,7 +901,7 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     @Override
-    public entity.queries.Query createQuery(String queryName, Long ownerOid, byte[] queryStructure) throws Exception{
+    public entity.queries.Query createQuery(String queryName, Long ownerOid, byte[] queryStructure, String description) throws Exception{
         System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_CREATEQUERY")); //NOI18N
         if (em != null) {
             User owner = null;
@@ -911,6 +912,7 @@ public class BackendBean implements BackendBeanRemote {
             }
             entity.queries.Query newQuery = new entity.queries.Query(queryName, owner);
             newQuery.setContent(queryStructure);
+            newQuery.setDescription(description);
             em.persist(newQuery);
             return newQuery;
         }else
@@ -953,17 +955,21 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     @Override
-    public RemoteObjectLight[] getQueries(Long ownerId, boolean showPublic) throws Exception {
+    public RemoteQueryLight[] getQueries(Long ownerId, boolean showPublic) throws Exception {
         System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETQUERIES"));
         if (em != null){
-            String sentence = "SELECT x.id, x.name FROM Query x WHERE x.owner.id="+ownerId; //NOI18N
+            //String sentence = "SELECT x.id, x.name, x.description, x.owner FROM Query x WHERE x.owner.id="+ownerId; //NOI18N
+            String sentence = "SELECT x.id, x.name, x.description, x.owner FROM Query x"; //NOI18N
             if (showPublic)
-                sentence += " OR owner = null";
+                sentence += " OR x.owner IS NULL";
             List<Object[]> allQueries = em.createQuery(sentence).getResultList();
-            RemoteObjectLight[] res = new RemoteObjectLight[allQueries.size()];
+            RemoteQueryLight[] res = new RemoteQueryLight[allQueries.size()];
 
             for (int i = 0; i < allQueries.size(); i++){
-                res[i] = new RemoteObjectLight((Long)allQueries.get(i)[0], "Query", (String)allQueries.get(i)[1]);
+                res[i] = new RemoteQueryLight((Long)allQueries.get(i)[0],
+                                              (String)allQueries.get(i)[1],
+                                              (String)allQueries.get(i)[2],
+                                              allQueries.get(i)[3] == null);
                 i++;
             }
             return res;
