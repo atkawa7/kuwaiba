@@ -599,12 +599,25 @@
 </xs:complexType>
 
 <xs:complexType name="remoteQuery">
+<xs:complexContent>
+<xs:extension base="tns:remoteQueryLight">
 <xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="name" type="xs:string" minOccurs="0" />
-<xs:element name="description" type="xs:string" minOccurs="0" />
 <xs:element name="content" type="xs:base64Binary" minOccurs="0" />
 </xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="remoteQueryLight">
+<xs:complexContent>
+<xs:extension base="tns:remoteObjectLight">
+<xs:sequence>
+<xs:element name="description" type="xs:string" minOccurs="0" />
+<xs:element name="name" type="xs:string" minOccurs="0" />
+<xs:element name="isPublic" type="xs:boolean" />
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
 </xs:complexType>
 
 <xs:complexType name="deleteUsers">
@@ -629,7 +642,7 @@
 
 <xs:complexType name="getQueriesResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="return" type="tns:remoteQueryLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -903,6 +916,7 @@
 <xs:sequence>
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
 <xs:element name="username" type="xs:string" minOccurs="0" />
+<xs:element name="userId" type="xs:long" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -1052,6 +1066,7 @@
 <xs:element name="queryName" type="xs:string" minOccurs="0" />
 <xs:element name="ownerOid" type="xs:long" minOccurs="0" />
 <xs:element name="queryStructure" type="xs:base64Binary" nillable="true" minOccurs="0" />
+<xs:element name="description" type="xs:string" minOccurs="0" />
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
@@ -1082,13 +1097,14 @@
 <xs:element name="queryName" type="xs:string" minOccurs="0" />
 <xs:element name="ownerOid" type="xs:long" minOccurs="0" />
 <xs:element name="queryStructure" type="xs:base64Binary" nillable="true" minOccurs="0" />
+<xs:element name="description" type="xs:string" minOccurs="0" />
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="createQueryResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:remoteObjectLight" minOccurs="0" />
+<xs:element name="return" type="tns:remoteQueryLight" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 </xs:schema>

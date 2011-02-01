@@ -53,7 +53,7 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JCheckBox;
-import org.inventory.communications.core.queries.LocalQuery;
+import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.queries.graphical.elements.AttributePinWidget;
@@ -281,9 +281,9 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         this.currentSearchedClass = currentSearchedClass;
     }
 
-    public LocalQuery getLocalQuery(LocalClassMetadata mainClass, String queryName,
+    public LocalTransientQuery getTransientQuery(LocalClassMetadata mainClass, String queryName,
             int logicalConnector, int limit, int page, boolean isJoin) {
-        LocalQuery myQuery = new LocalQuery(queryName,mainClass.getClassName(),
+        LocalTransientQuery myQuery = new LocalTransientQuery(queryName,mainClass.getClassName(),
                 logicalConnector, isJoin, limit, page);
         Widget[] attributePins = ((ClassNodeWidget)findWidget(mainClass)).getChildren().toArray(new Widget[0]);
         for (Widget myPin : attributePins){
@@ -306,7 +306,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
                         if (nextHop instanceof ClassNodeWidget){
                             myQuery.getConditions().add(null); //padding
                             myQuery.getAttributeValues().add(null); //padding
-                            myQuery.getJoins().add(getLocalQuery(((ClassNodeWidget)nextHop).getWrappedClass(),
+                            myQuery.getJoins().add(getTransientQuery(((ClassNodeWidget)nextHop).getWrappedClass(),
                                     null,logicalConnector,0,0,true));
                         }
                     }

@@ -19,23 +19,26 @@ package org.inventory.communications.core;
 import org.inventory.webservice.RemoteSession;
 
 /**
- *
+ * Local representation of a session containing the basic information about it.
+ * Attributes are read only
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class LocalSession {
     private String sessionId;
     private String username;
+    private Long userId;
 
     public LocalSession(RemoteSession session) {
         this. sessionId = session.getSessionId();
         this.username = session.getUsername();
+        this.userId = session.getUserId();
     }
 
     public String getSessionId() {
         return sessionId;
     }
 
-    public void setSessionId(String sessionId) {
+    private void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
 
@@ -43,7 +46,16 @@ public class LocalSession {
         return username;
     }
 
-    public void setUsername(String username) {
+    private void setUsername(String username) {
         this.username = username;
     }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    private void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
 }

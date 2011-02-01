@@ -20,7 +20,7 @@ import java.util.Calendar;
 import java.util.Random;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
-import org.inventory.communications.core.queries.LocalQuery;
+import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
 import org.netbeans.api.visual.widget.ComponentWidget;
@@ -45,10 +45,10 @@ public class DateFilterNodeWidget extends SimpleCriteriaNodeWidget{
         QueryEditorScene scene = ((QueryEditorScene)getScene());
         VMDPinWidget dummyPin = (VMDPinWidget)scene.addPin(id, defaultPinId);
         condition = new JComboBox(new Object[]{
-                                                LocalQuery.Criteria.EQUAL,
-                                                LocalQuery.Criteria.BETWEEN,
-                                                LocalQuery.Criteria.GREATER_THAN,
-                                                LocalQuery.Criteria.LESS_THAN
+                                                LocalTransientQuery.Criteria.EQUAL,
+                                                LocalTransientQuery.Criteria.BETWEEN,
+                                                LocalTransientQuery.Criteria.GREATER_THAN,
+                                                LocalTransientQuery.Criteria.LESS_THAN
                           });
         dummyPin.addChild(new ComponentWidget(scene, condition));
         dummyPin.addChild(new ComponentWidget(scene, insideText));

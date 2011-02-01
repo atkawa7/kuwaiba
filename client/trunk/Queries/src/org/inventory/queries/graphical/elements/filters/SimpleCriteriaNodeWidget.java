@@ -17,7 +17,7 @@
 package org.inventory.queries.graphical.elements.filters;
 
 import javax.swing.JComboBox;
-import org.inventory.communications.core.queries.LocalQuery;
+import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.inventory.queries.graphical.elements.CustomizableColorScheme;
@@ -36,7 +36,7 @@ public abstract class SimpleCriteriaNodeWidget extends QueryEditorNodeWidget{
     }
 
     public int getCondition() {
-        return ((LocalQuery.Criteria)condition.getSelectedItem()).id();
+        return ((LocalTransientQuery.Criteria)condition.getSelectedItem()).id();
     }
 
     public abstract String getValue();

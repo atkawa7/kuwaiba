@@ -26,17 +26,22 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import org.inventory.communications.core.LocalResultRecord;
+import org.inventory.communications.core.queries.LocalQueryLight;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.queries.graphical.ComplexQueryResultTopComponent;
 import org.inventory.queries.graphical.QueryEditorScene;
+import org.inventory.queries.graphical.dialogs.CreateQueryPanel;
+import org.inventory.queries.graphical.dialogs.QueryListPanel;
 import org.inventory.queries.graphical.elements.ClassNodeWidget;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 import org.openide.util.Lookup;
 
 /**
@@ -54,6 +59,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     private NotificationUtil nu;
     private GraphicalQueryBuilderService qbs;
     private ButtonGroup grpLogicalConnector;
+    private boolean isSaved = true;
 
     public QueryBuilderTopComponent() {
         initComponents();
@@ -89,7 +95,8 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         cmbClassList = new javax.swing.JComboBox();
         sptOne = new javax.swing.JToolBar.Separator();
         btnOpen = new javax.swing.JButton();
-        btnButton = new javax.swing.JButton();
+        btnSave = new javax.swing.JButton();
+        btnConfigure = new javax.swing.JButton();
         btnSearch = new javax.swing.JButton();
         sptTwo = new javax.swing.JToolBar.Separator();
         lblConnector = new javax.swing.JLabel();
@@ -118,20 +125,38 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         btnOpen.setFocusable(false);
         btnOpen.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnOpen.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        barMain.add(btnOpen);
-
-        btnButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/save.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnButton, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnButton.text")); // NOI18N
-        btnButton.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnButton.toolTipText")); // NOI18N
-        btnButton.setFocusable(false);
-        btnButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnButton.addActionListener(new java.awt.event.ActionListener() {
+        btnOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnButtonActionPerformed(evt);
+                btnOpenActionPerformed(evt);
             }
         });
-        barMain.add(btnButton);
+        barMain.add(btnOpen);
+
+        btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/save.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSave.text")); // NOI18N
+        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSave.toolTipText")); // NOI18N
+        btnSave.setFocusable(false);
+        btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
+        barMain.add(btnSave);
+
+        btnConfigure.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/configure-22.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnConfigure, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnConfigure.text")); // NOI18N
+        btnConfigure.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnConfigure.toolTipText")); // NOI18N
+        btnConfigure.setFocusable(false);
+        btnConfigure.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnConfigure.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnConfigure.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConfigureActionPerformed(evt);
+            }
+        });
+        barMain.add(btnConfigure);
 
         btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/run-search.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSearch, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSearch.text")); // NOI18N
@@ -186,7 +211,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
                         "Query Results",JOptionPane.INFORMATION_MESSAGE);
             else{
                 TopComponent tc = new ComplexQueryResultTopComponent(res,
-                        qbs.getCurrentQuery().getLimit(), qbs);
+                        qbs.getCurrentTransientQuery().getLimit(), qbs);
                 tc.open();
                 tc.requestActive();
                 tc.requestAttention(true);
@@ -194,16 +219,63 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         }
     }//GEN-LAST:event_btnSearchActionPerformed
 
-    private void btnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnButtonActionPerformed
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         if (!validateQuery())
             return;
+        if(qbs.getCurrentLocalQuery() == null)
+            btnConfigureActionPerformed(new ActionEvent(this, 0, "configure-new-query")); //NOI18N
         qbs.saveQuery();
-    }//GEN-LAST:event_btnButtonActionPerformed
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
+        if (!checkForUnsavedQuery(true))
+            return;
+        
+        boolean showAll;
+        if (JOptionPane.showConfirmDialog(this,
+                "Show only your saved queries? (Press Cancel to show public saved queries too)",
+                "Query List",
+                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
+            showAll = true;
+        else showAll = false;
+        LocalQueryLight[] queries  = qbs.getQueries(showAll);
+        if (queries != null){
+            final QueryListPanel qlp = new QueryListPanel(queries);
+            DialogDescriptor dd = new DialogDescriptor(qlp,
+                    "Choose a query", true, new ActionListener() {
+                                public void actionPerformed(ActionEvent e) {
+                                    if (e.getSource() == DialogDescriptor.OK_OPTION){
+                                        if (checkForUnsavedQuery(true))
+                                            qbs.renderQuery(qlp.getSelectedQuery());
+                                    }
+                                    qlp.releaseListeners();
+                                }
+                            });
+            DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+        }
+    }//GEN-LAST:event_btnOpenActionPerformed
+
+    private void btnConfigureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfigureActionPerformed
+        if (!validateQuery())
+            return;
+        final CreateQueryPanel cqp = new CreateQueryPanel((String)qbs.getQueryProperties()[0],
+                                        (String)qbs.getQueryProperties()[1],(Boolean)qbs.getQueryProperties()[2]);
+            DialogDescriptor dd = new DialogDescriptor(cqp,
+                    "Choose a query", true, new ActionListener() {
+                                public void actionPerformed(ActionEvent e) {
+                                    if (e.getSource() == DialogDescriptor.OK_OPTION){
+                                        qbs.setQueryProperties(cqp.getValues());
+                                    }
+                                }
+                            });
+            DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+    }//GEN-LAST:event_btnConfigureActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
-    private javax.swing.JButton btnButton;
+    private javax.swing.JButton btnConfigure;
     private javax.swing.JButton btnOpen;
+    private javax.swing.JButton btnSave;
     private javax.swing.JButton btnSearch;
     private javax.swing.JRadioButton chkAnd;
     private javax.swing.JRadioButton chkOr;
@@ -312,9 +384,10 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     
 
     public void actionPerformed(ActionEvent e) {
+        if (!checkForUnsavedQuery(true))
+            return;
         LocalClassMetadataLight selectedItem = (LocalClassMetadataLight) ((JComboBox)e.getSource()).getSelectedItem();
         queryScene.clear();
-
         if(selectedItem != null){
             LocalClassMetadata myClass = qbs.getClassDetails(selectedItem.getClassName());
             if (myClass != null){
@@ -322,6 +395,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
                 myNewNode.build(null);
                 myNewNode.setPreferredLocation(new Point(100, 50));
                 queryScene.setCurrentSearchedClass(myClass);
+                qbs.resetLocalQuery();
             }
         }
         queryScene.validate();
@@ -342,10 +416,25 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         }
         //The query must not be empty
         if(queryScene.getNodes().isEmpty()){
-            JOptionPane.showMessageDialog(this, "There's nothing to search",
+            JOptionPane.showMessageDialog(this, "Nothing to do here",
                     "Search Error",JOptionPane.ERROR_MESSAGE);
             return false;
         }
+        return true;
+    }
+
+        public boolean checkForUnsavedQuery(boolean showCancel) {
+        if (!isSaved){
+            switch (JOptionPane.showConfirmDialog(null, "This query has not been saved, do you want to save it?",
+                    "Confirmation",showCancel?JOptionPane.YES_NO_CANCEL_OPTION:JOptionPane.YES_NO_OPTION)){
+                case JOptionPane.YES_OPTION:
+                    btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
+                    break;
+                case JOptionPane.CANCEL_OPTION:
+                    return false;
+            }
+        }
+        isSaved = true;
         return true;
     }
 }

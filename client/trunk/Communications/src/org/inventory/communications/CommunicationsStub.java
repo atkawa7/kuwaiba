@@ -34,6 +34,8 @@ import org.inventory.communications.core.LocalSession;
 import org.inventory.communications.core.LocalUserGroupObjectImpl;
 import org.inventory.communications.core.LocalUserObjectImpl;
 import org.inventory.communications.core.queries.LocalQuery;
+import org.inventory.communications.core.queries.LocalQueryLight;
+import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
@@ -52,8 +54,9 @@ import org.inventory.webservice.ObjectList.List.Entry;
 import org.inventory.webservice.ObjectUpdate;
 import org.inventory.webservice.RemoteObject;
 import org.inventory.webservice.RemoteObjectLight;
-import org.inventory.webservice.RemoteQuery;
+import org.inventory.webservice.RemoteQueryLight;
 import org.inventory.webservice.ResultRecord;
+import org.inventory.webservice.TransientQuery;
 import org.inventory.webservice.UserGroupInfo;
 import org.inventory.webservice.UserInfo;
 import org.inventory.webservice.ViewInfo;
@@ -538,9 +541,14 @@ public class CommunicationsStub {
 
 
     public Long getRootId(){
-        if (cache.getRootId() == null)
-            cache.setRootId(port.getDummyRootId(this.session.getSessionId()));
-        return cache.getRootId();
+        try{
+            if (cache.getRootId() == null)
+                cache.setRootId(port.getDummyRootId(this.session.getSessionId()));
+            return cache.getRootId();
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass()+": "+ ex.getMessage();
+            return new Long(0);
+        }
     }
 
     public LocalClassMetadata getDummyRootClass(){
@@ -611,6 +619,10 @@ public class CommunicationsStub {
     }
 
     /**
+     * QUERIES
+     */
+
+    /**
      * Performs a simple object search where all conditions use an "and" operator
      * and barely support joins
      * @param className
@@ -639,10 +651,15 @@ public class CommunicationsStub {
         }
     }
 
-    public LocalResultRecord[] executeQuery(LocalQuery query){
+    /**
+     * Call to remote executeQuery method
+     * @param query Query to be executed in an execution (code)-friendly format
+     * @return an array with results
+     */
+    public LocalResultRecord[] executeQuery(LocalTransientQuery query){
         try{
-            RemoteQuery remoteQuery = query.toRemoteQuery();
-            List<ResultRecord> myResult = port.executeQuery(remoteQuery);
+            TransientQuery remoteQuery = query.toTransientQuery();
+            List<ResultRecord> myResult = port.executeQuery(remoteQuery,session.getSessionId());
             LocalResultRecord[] res = new LocalResultRecord[myResult.size()];
             //The first record is used to store the table headers
             res[0] = new LocalResultRecord(null, myResult.get(0).getExtraColumns());
@@ -657,15 +674,112 @@ public class CommunicationsStub {
     }
 
     /**
-     * Reset the cache to the default, this is, only:
-     * -Root id and class
+     * Call to remote createQuery method
+     * @param queryName
+     * @param queryStructure
+     * @param description
+     * @return success or failure
+     */
+    public LocalQueryLight createQuery(String queryName, byte[] queryStructure, String description, boolean isPublic){
+        try{
+            return new LocalQueryLight(port.createQuery(queryName,
+                                                            isPublic ? null : session.getUserId(),
+                                                            queryStructure,
+                                                            description,
+                                                            session.getSessionId()
+                                                            ));
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass()+": "+ ex.getMessage();
+            return null;
+        }
+    }
+
+    /**
+     * Call to remote saveQuery method
+     * @param query query to be saved in a store-friendly format
+     * @return
+     */
+    public boolean saveQuery(LocalQuery query){
+        try{
+            return port.saveQuery(query.getId(),query.getName(),
+                    query.getIsPublic() ? null : session.getUserId(),
+                    query.getStructure(),
+                    query.getDescription(),
+                    session.getSessionId());
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass()+": "+ ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Call to remote deleteQuery method
+     * @param queryId query to be deleted
+     * @return success or failure
+     */
+    public boolean deleteQuery(Long queryId){
+        try{
+            return port.deleteQuery(queryId, session.getSessionId());
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass()+": "+ ex.getMessage();
+            return false;
+        }
+    }
+
+    /**
+     * Call to remote getQueries method
+     * @param showAll True to show all queries (public and owned by this user) False to show only the queries
+     * owned by this user
+     * @return An array with the list of available queries
+     */
+    public LocalQueryLight[] getQueries(boolean showAll){
+        try{
+            List<RemoteQueryLight> queries = port.getQueries(showAll, session.getSessionId());
+            LocalQueryLight[] res = new LocalQueryLight[queries.size()];
+            int i = 0;
+            for (RemoteQueryLight query : queries){
+                res[i] = new LocalQueryLight(query);
+                i++;
+            }
+            return res;
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass()+": "+ ex.getMessage();
+            return null;
+        }
+    }
+
+    /**
+     * Call to remote getQueries method
+     * @param queryId query to be retrieved
+     * @return The query
+     */
+    public LocalQuery getQuery(Long queryId){
+        try{
+            return new LocalQuery(port.getQuery(queryId, session.getSessionId()));
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass()+": "+ ex.getMessage();
+            return null;
+        }
+    }
+
+    /**
+     * MISC
+     */
+
+    /**
+     * Reset the cache to the default cleaning all hashes:
      */
     public void resetCache(){
 
         //Set the new values
-        cache.setRootId(port.getDummyRootId(this.session.getSessionId()));
+        try{
+            cache.setRootId(port.getDummyRootId(this.session.getSessionId()));
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass()+": "+ ex.getMessage();
+            //TODO: Put some log4j here
+        }
 
-        //Wipe out the dictionaries
+        //Wipe out hashes
         cache.resetMetadataIndex();
         cache.resetLightMetadataIndex();
         cache.resetPossibleChildrenCached();
@@ -846,7 +960,7 @@ public class CommunicationsStub {
      */
     public boolean deleteUsers(Long[] oids){
         try{
-            return port.deleteUsers(Arrays.asList(oids));
+            return port.deleteUsers(Arrays.asList(oids), session.getSessionId());
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass()+": "+ ex.getMessage();
             return false;
@@ -860,7 +974,7 @@ public class CommunicationsStub {
      */
     public boolean deleteGroups(Long[] oids){
         try{
-            return port.deleteGroups(Arrays.asList(oids));
+            return port.deleteGroups(Arrays.asList(oids),session.getSessionId());
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass()+": "+ ex.getMessage();
             return false;

@@ -581,11 +581,6 @@ public final class ObjectViewTopComponent extends TopComponent
                 nu.showSimplePopup("Object View", NotificationUtil.INFO, "The view has been saved automatically");
                 break;
             case ViewScene.SCENE_OBJECTSELECTED:
-//                    try{
-//                        em.getRootContext().destroy();
-//                    }catch(IOException ioe){
-//                        Exceptions.printStackTrace(ioe);
-//                    }
                 ObjectNode widgetNode = new ObjectNode((LocalObjectLight)e.getSource(),true);
                 em.setRootContext(widgetNode);
                 setActivatedNodes(new Node[]{widgetNode});

@@ -27,7 +27,7 @@ import javax.swing.JToolBar;
 import javax.swing.table.TableModel;
 import org.inventory.communications.core.LocalResultRecord;
 import org.inventory.queries.GraphicalQueryBuilderService;
-import org.inventory.queries.graphical.panels.ExportSettingsPanel;
+import org.inventory.queries.graphical.dialogs.ExportSettingsPanel;
 import org.netbeans.swing.etable.ETable;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;

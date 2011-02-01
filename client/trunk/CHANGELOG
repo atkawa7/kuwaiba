@@ -45,3 +45,8 @@
 0.3 Alpha (17012011)
 * Export views to PNG/JPG formats
 * Preliminary support for graphiical query design
+
+0.3. Beta (31012011)
+* Search results can be exported to CSV and XML formats
+* Searches can be saved and restored
+* Logging methods enhanced

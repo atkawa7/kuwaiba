@@ -24,6 +24,8 @@ import javax.swing.JCheckBox;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalResultRecord;
 import org.inventory.communications.core.queries.LocalQuery;
+import org.inventory.communications.core.queries.LocalQueryLight;
+import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObjectLight;
@@ -38,10 +40,20 @@ import org.inventory.queries.graphical.QueryEditorScene;
 public class GraphicalQueryBuilderService implements ActionListener{
     private QueryBuilderTopComponent qbtc;
     private CommunicationsStub com = CommunicationsStub.getInstance();
-    private LocalQuery currentQuery;
+    //This has the execution details
+    private LocalTransientQuery currentTransientQuery;
+    //This has the storing details
+    private LocalQuery localQuery;
+    /**
+     * Array containing the query properties set by using the "configure" button 
+     * (name, description and share as public)
+     */
+    private Object[] queryProperties;
 
     public GraphicalQueryBuilderService(QueryBuilderTopComponent qbtc) {
         this.qbtc = qbtc;
+        queryProperties = new Object[3];
+        resetProperties();
     }
 
     public LocalClassMetadataLight[] getClassList(){
@@ -61,34 +73,73 @@ public class GraphicalQueryBuilderService implements ActionListener{
     }
 
     public LocalResultRecord[] executeQuery(int page) {
-        currentQuery = qbtc.getQueryScene().getLocalQuery(qbtc.getQueryScene().getCurrentSearchedClass(),"New Query",
-                        qbtc.getChkAnd().isSelected()?LocalQuery.CONNECTOR_AND:LocalQuery.CONNECTOR_OR,
+        currentTransientQuery = qbtc.getQueryScene().getTransientQuery(qbtc.getQueryScene().getCurrentSearchedClass(),"New Query",
+                        qbtc.getChkAnd().isSelected()?LocalTransientQuery.CONNECTOR_AND:LocalTransientQuery.CONNECTOR_OR,
                         Integer.valueOf(qbtc.getTxtResultLimit().getText()), page, false);
-        LocalResultRecord[] res = com.executeQuery(currentQuery);
+        LocalResultRecord[] res = com.executeQuery(currentTransientQuery);
         if (res == null)
             qbtc.getNotifier().showSimplePopup("Query Execution", NotificationUtil.ERROR, com.getError());
         return res;
     }
 
-    public void saveQuery(){
-        currentQuery = qbtc.getQueryScene().getLocalQuery(qbtc.getQueryScene().getCurrentSearchedClass(),"New Query",
-                        qbtc.getChkAnd().isSelected()?LocalQuery.CONNECTOR_AND:LocalQuery.CONNECTOR_OR,
-                        Integer.valueOf(qbtc.getTxtResultLimit().getText()), 0, false);
-        /*
-         * Only for debugging purposes
-         try{
-            FileOutputStream fos = new FileOutputStream("/home/zim/query.xml");
-            fos.write(currentQuery.toXML());
-            fos.flush();
-            fos.close();
-            JOptionPane.showMessageDialog(qbtc, "Query Saved Successfully","Success",JOptionPane.INFORMATION_MESSAGE);
-        }catch(IOException e){
-            e.printStackTrace();
-        }*/
+    public LocalQueryLight[] getQueries(boolean showAll){
+        LocalQueryLight[] res = com.getQueries(showAll);
+        if (res == null){
+            qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+            return null;
+        }
+        else return res;
     }
 
-    public LocalQuery getCurrentQuery() {
-        return currentQuery;
+    public void saveQuery(){
+        currentTransientQuery = qbtc.getQueryScene().getTransientQuery(qbtc.getQueryScene().getCurrentSearchedClass(),"New Query",
+                            qbtc.getChkAnd().isSelected()?LocalTransientQuery.CONNECTOR_AND:LocalTransientQuery.CONNECTOR_OR,
+                            Integer.valueOf(qbtc.getTxtResultLimit().getText()), 0, false);
+
+        if (localQuery == null){ //It's a new query
+            
+            if (com.createQuery((String)queryProperties[0], currentTransientQuery.toXML(), (String)queryProperties[1], (Boolean)queryProperties[2]) != null)
+                qbtc.getNotifier().showSimplePopup("Sucess", NotificationUtil.INFO, "Query created successfully");
+            else
+                qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.INFO, com.getError());
+            /*
+             * Only for debugging purposes
+             try{
+                FileOutputStream fos = new FileOutputStream("/home/zim/query.xml");
+                fos.write(currentTransientQuery.toXML());
+                fos.flush();
+                fos.close();
+                JOptionPane.showMessageDialog(qbtc, "Query Saved Successfully","Success",JOptionPane.INFORMATION_MESSAGE);
+            }catch(IOException e){
+                e.printStackTrace();
+            }*/
+        }else{ //It's an old query. An update is necessary
+            localQuery.setName((String)queryProperties[0]);
+            localQuery.setStructure(currentTransientQuery.toXML());
+            localQuery.setDescription((String)queryProperties[1]);
+            localQuery.setIsPublic((Boolean)queryProperties[2]);
+
+            if (com.saveQuery(localQuery))
+                qbtc.getNotifier().showSimplePopup("Sucess", NotificationUtil.INFO, "Query saved successfully");
+            else
+                qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.INFO, com.getError());
+        }
+    }
+
+    LocalTransientQuery getCurrentTransientQuery() {
+        return currentTransientQuery;
+    }
+
+    LocalQuery getCurrentLocalQuery(){
+        return localQuery;
+    }
+
+    Object[] getQueryProperties(){
+        return queryProperties;
+    }
+
+    void setQueryProperties(Object[] newProperties){
+        queryProperties = newProperties;
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -125,5 +176,32 @@ public class GraphicalQueryBuilderService implements ActionListener{
                 qbtc.getQueryScene().validate();
                 break;
         }
+    }
+
+    /**
+     * Renders a query extracted from the database
+     * @param selectedQuery query to be rendered
+     */
+    public void renderQuery(LocalQueryLight selectedQuery) {
+        localQuery = com.getQuery(selectedQuery.getId());
+        if (localQuery == null){
+            qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+            return;
+        }
+        queryProperties[0] = localQuery.getName();
+        queryProperties[1] = localQuery.getDescription();
+        queryProperties[2] = localQuery.getIsPublic();
+        qbtc.getQueryScene().clear();
+    }
+
+    public void resetLocalQuery(){
+        this.localQuery = null;
+        resetProperties();
+    }
+
+    private void resetProperties() {
+        queryProperties[0] = "New Query "+ new Random().nextInt(10000);
+        queryProperties[1] = "";
+        queryProperties[2] = false; //By default the views are private
     }
 }

@@ -20,7 +20,7 @@ import java.util.Random;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JRadioButton;
-import org.inventory.communications.core.queries.LocalQuery;
+import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
 import org.netbeans.api.visual.widget.ComponentWidget;
@@ -44,7 +44,7 @@ public class BooleanFilterNodeWidget extends SimpleCriteriaNodeWidget{
         setNodeProperties(null, "Boolean", "Filter", null);
         defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
         VMDPinWidget dummyPin = (VMDPinWidget)scene.addPin(id, defaultPinId);
-        condition = new JComboBox(new Object[]{LocalQuery.Criteria.EQUAL});
+        condition = new JComboBox(new Object[]{LocalTransientQuery.Criteria.EQUAL});
         dummyPin.addChild(new ComponentWidget(scene, condition));
         ButtonGroup myGroup = new ButtonGroup();
         trueButton = new JRadioButton("True");
