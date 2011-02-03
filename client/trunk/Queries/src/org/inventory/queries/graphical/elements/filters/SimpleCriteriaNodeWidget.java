@@ -39,5 +39,9 @@ public abstract class SimpleCriteriaNodeWidget extends QueryEditorNodeWidget{
         return ((LocalTransientQuery.Criteria)condition.getSelectedItem()).id();
     }
 
+    public void setCondition(LocalTransientQuery.Criteria condition){
+        this.condition.setSelectedItem(condition);
+    }
+
     public abstract String getValue();
 }

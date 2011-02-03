@@ -49,7 +49,9 @@ public class BooleanFilterNodeWidget extends SimpleCriteriaNodeWidget{
         ButtonGroup myGroup = new ButtonGroup();
         trueButton = new JRadioButton("True");
         trueButton.setSelected(true);
+        trueButton.setOpaque(false);
         falseButton = new JRadioButton("False");
+        falseButton.setOpaque(false);
         myGroup.add(trueButton);
         myGroup.add(falseButton);
         dummyPin.addChild(new ComponentWidget(scene, trueButton));

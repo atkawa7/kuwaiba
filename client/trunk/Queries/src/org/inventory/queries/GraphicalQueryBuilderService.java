@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
 import javax.swing.JCheckBox;
+import javax.xml.stream.XMLStreamException;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalResultRecord;
 import org.inventory.communications.core.queries.LocalQuery;
@@ -32,6 +33,7 @@ import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
+import org.inventory.queries.graphical.elements.ClassNodeWidget;
 
 /**
  * This class will replace the old QueryBuilderService in next releases
@@ -40,15 +42,27 @@ import org.inventory.queries.graphical.QueryEditorScene;
 public class GraphicalQueryBuilderService implements ActionListener{
     private QueryBuilderTopComponent qbtc;
     private CommunicationsStub com = CommunicationsStub.getInstance();
-    //This has the execution details
+    /**
+     * This one has the execution details
+     */
     private LocalTransientQuery currentTransientQuery;
-    //This has the storing details
+    /**
+     * This one has the storing details
+     */
     private LocalQuery localQuery;
     /**
      * Array containing the query properties set by using the "configure" button 
      * (name, description and share as public)
      */
     private Object[] queryProperties;
+    /**
+     * Offset to place the nodes horizontally
+     **/
+    private static int X_OFFSET = 50;
+    /**
+     * Offset to place the nodes vertically
+     **/
+    private static int Y_OFFSET = 50;
 
     public GraphicalQueryBuilderService(QueryBuilderTopComponent qbtc) {
         this.qbtc = qbtc;
@@ -73,7 +87,7 @@ public class GraphicalQueryBuilderService implements ActionListener{
     }
 
     public LocalResultRecord[] executeQuery(int page) {
-        currentTransientQuery = qbtc.getQueryScene().getTransientQuery(qbtc.getQueryScene().getCurrentSearchedClass(),"New Query",
+        currentTransientQuery = qbtc.getQueryScene().getTransientQuery(qbtc.getQueryScene().getCurrentSearchedClass(),
                         qbtc.getChkAnd().isSelected()?LocalTransientQuery.CONNECTOR_AND:LocalTransientQuery.CONNECTOR_OR,
                         Integer.valueOf(qbtc.getTxtResultLimit().getText()), page, false);
         LocalResultRecord[] res = com.executeQuery(currentTransientQuery);
@@ -92,7 +106,7 @@ public class GraphicalQueryBuilderService implements ActionListener{
     }
 
     public void saveQuery(){
-        currentTransientQuery = qbtc.getQueryScene().getTransientQuery(qbtc.getQueryScene().getCurrentSearchedClass(),"New Query",
+        currentTransientQuery = qbtc.getQueryScene().getTransientQuery(qbtc.getQueryScene().getCurrentSearchedClass(),
                             qbtc.getChkAnd().isSelected()?LocalTransientQuery.CONNECTOR_AND:LocalTransientQuery.CONNECTOR_OR,
                             Integer.valueOf(qbtc.getTxtResultLimit().getText()), 0, false);
 
@@ -149,12 +163,16 @@ public class GraphicalQueryBuilderService implements ActionListener{
                 QueryEditorNodeWidget newNode;
                 if (insideCheck.getClientProperty("filterType").equals(LocalObjectLight.class)){
                     LocalClassMetadata myMetadata = com.getMetaForClass((String)insideCheck.getClientProperty("className"),false);
-                    newNode = (QueryEditorNodeWidget) qbtc.getQueryScene().addNode(myMetadata);
-                    newNode.build(null);
+                    newNode = (ClassNodeWidget)qbtc.getQueryScene().findWidget(myMetadata);
+                    if (newNode == null){
+                        newNode = (QueryEditorNodeWidget) qbtc.getQueryScene().addNode(myMetadata);
+                        newNode.build(null);
+                        qbtc.getQueryScene().validate();
+                    }
                     insideCheck.putClientProperty("related-node", myMetadata);
                 }else{
                     String newNodeId = ((Class)insideCheck.getClientProperty("filterType")).
-                            getSimpleName()+"_"+new Random().nextInt(1000);
+                            getSimpleName()+"_"+new Random().nextInt(10000);
                     newNode = (QueryEditorNodeWidget)qbtc.getQueryScene().addNode(newNodeId);
                     newNode.build(newNodeId);
                     insideCheck.putClientProperty("related-node", newNodeId);
@@ -165,7 +183,8 @@ public class GraphicalQueryBuilderService implements ActionListener{
                 qbtc.getQueryScene().setEdgeSource(edgeName, insideCheck.getClientProperty("attribute"));
                 qbtc.getQueryScene().setEdgeTarget(edgeName, newNode.getDefaultPinId());
 
-                newNode.setPreferredLocation(new Point(qbtc.getQueryScene().getView().getMousePosition().x + 200,
+                if (qbtc.getQueryScene().getView().getMousePosition() != null)
+                    newNode.setPreferredLocation(new Point(qbtc.getQueryScene().getView().getMousePosition().x + 200,
                             qbtc.getQueryScene().getView().getMousePosition().y));
                 
                 qbtc.getQueryScene().validate();
@@ -188,10 +207,44 @@ public class GraphicalQueryBuilderService implements ActionListener{
             qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
             return;
         }
+        try {
+            LocalTransientQuery transientQuery = new LocalTransientQuery(localQuery);
+            qbtc.getQueryScene().clear();
+            ClassNodeWidget rootNode = renderClassNode(transientQuery);
+            qbtc.getQueryScene().setCurrentSearchedClass(rootNode.getWrappedClass());
+            qbtc.getQueryScene().organizeNodes(rootNode, X_OFFSET, Y_OFFSET);
+            qbtc.getQueryScene().validate();
+        } catch (XMLStreamException ex) {
+            qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, "Error parsing XML file");
+            return;
+        }
         queryProperties[0] = localQuery.getName();
         queryProperties[1] = localQuery.getDescription();
         queryProperties[2] = localQuery.getIsPublic();
-        qbtc.getQueryScene().clear();
+        
+    }
+
+    private ClassNodeWidget renderClassNode(LocalTransientQuery subQuery){
+        LocalClassMetadata classMetadata = com.getMetaForClass(subQuery.getClassName(), false);
+        if (classMetadata == null){
+            qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+            return null;
+        }
+        ClassNodeWidget currentNode = ((ClassNodeWidget)qbtc.getQueryScene().addNode(classMetadata));
+        currentNode.build(null);
+        currentNode.setVisibleAttributes(subQuery.getVisibleAttributeNames());
+
+        //Marking the scene to validate is necessary for the newlycreated node to be painted
+        //providing the clientArea necessary to calculate locations of new nodes
+        qbtc.getQueryScene().validate();
+
+        for (LocalTransientQuery join : subQuery.getJoins()){
+            if (join != null)
+                renderClassNode(join);
+        }
+        currentNode.setFilteredAttributes(subQuery.getAttributeNames(), subQuery.getConditions());
+        
+        return currentNode;
     }
 
     public void resetLocalQuery(){

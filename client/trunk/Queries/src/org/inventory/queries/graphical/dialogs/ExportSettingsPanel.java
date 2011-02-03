@@ -18,8 +18,11 @@ package org.inventory.queries.graphical.dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.Calendar;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalResultRecord;
@@ -82,6 +85,12 @@ public class ExportSettingsPanel extends javax.swing.JPanel implements ActionLis
         cmbExportTo.addItem(new XMLFilter());
         cmbExportTo.addItem(new DOCFilter());
         cmbExportTo.addItem(new ODTFilter());
+        cmbExportTo.addItemListener(new ItemListener() {
+
+            public void itemStateChanged(ItemEvent e) {
+                updateExtension(e.getSource());
+            }
+        });
     }
 
     /** This method is called from within the constructor to
@@ -218,6 +227,13 @@ public class ExportSettingsPanel extends javax.swing.JPanel implements ActionLis
             }
 
             ExportFilter selectedFilter = (ExportFilter)cmbExportTo.getSelectedItem();
+
+            if (selectedFilter instanceof DOCFilter || selectedFilter instanceof ODTFilter){
+                JOptionPane.showMessageDialog(this, "This filter has not been implemented yet. Try XML or CSV by now","Sorry",JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+
             String fileName;
 
             if (txtOutputFile.getText().lastIndexOf(".") != -1)
@@ -242,5 +258,14 @@ public class ExportSettingsPanel extends javax.swing.JPanel implements ActionLis
                     JOptionPane.showMessageDialog(this, "Results exported successfully", "Success",JOptionPane.INFORMATION_MESSAGE);
             }
         }
+    }
+
+    private void updateExtension(Object source) {
+        if (!txtOutputFile.getText().trim().equals(""))
+            txtOutputFile.setText(
+                    txtOutputFile.getText().substring(0, txtOutputFile.getText().lastIndexOf('.'))+
+                    ((ExportFilter)((JComboBox)source).getSelectedItem()).getExtension());
+
+
     }
 }

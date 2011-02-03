@@ -46,6 +46,7 @@
 
 package org.inventory.queries.graphical;
 
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -184,7 +185,8 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
                                 widget = new DateFilterNodeWidget(this);
             }
         }
-        
+
+
         mainLayer.addChild (widget);
         widget.getActions ().addAction (createSelectAction ());
         widget.getActions ().addAction (moveAction);
@@ -281,9 +283,9 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         this.currentSearchedClass = currentSearchedClass;
     }
 
-    public LocalTransientQuery getTransientQuery(LocalClassMetadata mainClass, String queryName,
+    public LocalTransientQuery getTransientQuery(LocalClassMetadata mainClass,
             int logicalConnector, int limit, int page, boolean isJoin) {
-        LocalTransientQuery myQuery = new LocalTransientQuery(queryName,mainClass.getClassName(),
+        LocalTransientQuery myQuery = new LocalTransientQuery(mainClass.getClassName(),
                 logicalConnector, isJoin, limit, page);
         Widget[] attributePins = ((ClassNodeWidget)findWidget(mainClass)).getChildren().toArray(new Widget[0]);
         for (Widget myPin : attributePins){
@@ -306,8 +308,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
                         if (nextHop instanceof ClassNodeWidget){
                             myQuery.getConditions().add(null); //padding
                             myQuery.getAttributeValues().add(null); //padding
-                            myQuery.getJoins().add(getTransientQuery(((ClassNodeWidget)nextHop).getWrappedClass(),
-                                    null,logicalConnector,0,0,true));
+                            myQuery.getJoins().add(getTransientQuery(((ClassNodeWidget)nextHop).getWrappedClass(),logicalConnector,0,0,true));
                         }
                     }
                 }
@@ -341,6 +342,33 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         removeNode(node);
     }
 
+    public void organizeNodes(ClassNodeWidget rootNode, int x, int y){
+
+        rootNode.setPreferredLocation(new Point(x, y));
+
+        Widget[] attributePins = rootNode.getChildren().toArray(new Widget[0]);
+        int nextX = x + rootNode.getClientArea().width +100;
+        int nextY = y;
+
+        for (Widget myPin : attributePins){
+            if (myPin instanceof AttributePinWidget){
+
+                if (!((AttributePinWidget)myPin).getInsideCheck().isSelected())
+                    continue;
+                String[] myEdges = findPinEdges(((AttributePinWidget)myPin).getAttribute(), true, false).toArray(new String[0]);
+
+                VMDConnectionWidget myEdge = (VMDConnectionWidget)findWidget(myEdges[0]);
+                VMDNodeWidget nextHop = (VMDNodeWidget) myEdge.getTargetAnchor().getRelatedWidget().getParentWidget();
+                if(nextHop instanceof SimpleCriteriaNodeWidget)
+                    nextHop.setPreferredLocation(new Point(nextX, nextY));
+                else{
+                    if (nextHop instanceof ClassNodeWidget)
+                        organizeNodes((ClassNodeWidget)nextHop, nextX,nextY);
+                }
+                nextY += nextHop.getClientArea().height + 50;
+            }
+        }
+    }
     public void clear(){
         currentSearchedClass = null;
         while (!getNodes().isEmpty())

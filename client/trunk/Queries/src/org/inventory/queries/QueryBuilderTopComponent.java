@@ -245,8 +245,12 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
                     "Choose a query", true, new ActionListener() {
                                 public void actionPerformed(ActionEvent e) {
                                     if (e.getSource() == DialogDescriptor.OK_OPTION){
-                                        if (checkForUnsavedQuery(true))
-                                            qbs.renderQuery(qlp.getSelectedQuery());
+                                        if (checkForUnsavedQuery(true)){
+                                            if (qlp.getSelectedQuery() != null)
+                                                qbs.renderQuery(qlp.getSelectedQuery());
+                                            else
+                                                JOptionPane.showConfirmDialog(null, "Select a query, please","Error", JOptionPane.ERROR_MESSAGE);
+                                        }
                                     }
                                     qlp.releaseListeners();
                                 }

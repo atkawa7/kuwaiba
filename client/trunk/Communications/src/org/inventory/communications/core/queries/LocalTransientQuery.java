@@ -18,8 +18,14 @@ package org.inventory.communications.core.queries;
 
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import org.inventory.webservice.TransientQuery;
 
 /**
@@ -48,8 +54,6 @@ public class LocalTransientQuery {
      * Version for the XML document created
      */
     private static final String FORMAT_VERSION = "1.0";
-
-    private String name;
     /**
      * Instances of this class will be searched
      */
@@ -92,6 +96,10 @@ public class LocalTransientQuery {
      * Current result page. If its value is less than 1, means that no pagination should be used
      */
     private int page = 1;
+    /**
+     * Document version applicable to this query. By default all new queries have FORMAT_VERSION version
+     */
+    private String version = FORMAT_VERSION;
 
     private LocalTransientQuery() {
         this.attributeNames = new ArrayList<String>();
@@ -101,10 +109,9 @@ public class LocalTransientQuery {
         visibleAttributeNames = new ArrayList<String>();
     }
 
-    public LocalTransientQuery(String name, String className, int logicalConnector,
+    public LocalTransientQuery(String className, int logicalConnector,
             boolean isJoin, int limit, int page) {
         this();
-        this.name = name;
         this.className = className;
         this.logicalConnector = logicalConnector;
         this.isJoin = isJoin;
@@ -112,8 +119,8 @@ public class LocalTransientQuery {
         this.page = page;
     }
 
-    public LocalTransientQuery(byte [] queryAsXML) {
-        this();
+    public LocalTransientQuery(LocalQuery localQuery) throws XMLStreamException{
+        parseXML(localQuery.getStructure());
     }
 
     public ArrayList<String> getAttributeNames() {           
@@ -150,10 +157,6 @@ public class LocalTransientQuery {
 
     public int getLogicalConnector() {
         return logicalConnector;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public ArrayList<String> getVisibleAttributeNames() {            
@@ -193,8 +196,7 @@ public class LocalTransientQuery {
         ByteArrayOutputStream writer = new ByteArrayOutputStream();
         WAX xmlWriter = new WAX(writer);
         StartTagWAX mainTag = xmlWriter.start("query");     //NOI18N
-        mainTag.attr("version", FORMAT_VERSION);      //NOI18N
-        mainTag.attr("name", name);      //NOI18N
+        mainTag.attr("version", version);      //NOI18N
         mainTag.attr("logicalconnector", logicalConnector);      //NOI18N
         mainTag.attr("limit", limit);      //NOI18N
 
@@ -206,11 +208,11 @@ public class LocalTransientQuery {
 
     private void buildClassNode(StartTagWAX rootTag, LocalTransientQuery currentJoin){
         StartTagWAX classTag = rootTag.start("class");     //NOI18N
-        rootTag.attr("classname", currentJoin.getClassName());     //NOI18N
+        rootTag.attr("name", currentJoin.getClassName());     //NOI18N
         StartTagWAX visibleAttributesTag = classTag.start("visibleattributes");     //NOI18N
         for (String attr : currentJoin.getVisibleAttributeNames()){
             StartTagWAX attributeTag = visibleAttributesTag.start("attribute");     //NOI18N
-            attributeTag.text(attr);
+            attributeTag.attr("name", attr); //NO18N
             attributeTag.end();
         }
         visibleAttributesTag.end();
@@ -232,6 +234,114 @@ public class LocalTransientQuery {
         classTag.end();
     }
 
+    private void parseXML(byte[] structure) throws XMLStreamException {
+        /*
+         * Use this for debugging purposes
+        try{
+            FileOutputStream fos = new FileOutputStream("/home/zim/query.xml");
+            fos.write(structure);
+            fos.flush();
+            fos.close();
+
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+         
+         */
+        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+
+        QName qQuery = new QName("query"); //NOI18N
+        QName qClass = new QName("class"); //NOI18N
+
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(structure);
+        XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+
+        while (reader.hasNext()){
+            int event = reader.next();
+            if (event == XMLStreamConstants.START_ELEMENT){
+                if (reader.getName().equals(qQuery)){
+                    this.version = reader.getAttributeValue(null, "version"); //NOI18N
+                    this.logicalConnector = Integer.valueOf(reader.getAttributeValue(null, "logicalconnector")); //NOI18N
+                    this.limit = Integer.valueOf(reader.getAttributeValue(null, "limit")); //NOI18N
+                }else{
+                    if (reader.getName().equals(qClass)){
+                        LocalTransientQuery me = processClassTag(reader);
+                        this.attributeNames = me.getAttributeNames();
+                        this.conditions = me.getConditions();
+                        this.isJoin = false;
+                        this.visibleAttributeNames = me.getVisibleAttributeNames();
+                        this.joins = me.getJoins();
+                        this.className = me.getClassName();
+                    }
+                }
+            }
+        }
+        reader.close();
+    }
+
+    private LocalTransientQuery processClassTag(XMLStreamReader reader) throws XMLStreamException {
+        LocalTransientQuery newJoin = new LocalTransientQuery(reader.getAttributeValue(null,"name"),  //NOI18N
+                                                                logicalConnector,true, limit, 0);
+        
+        newJoin.visibleAttributeNames = new ArrayList<String>();
+        newJoin.attributeNames = new ArrayList<String>();
+        newJoin.joins = new ArrayList<LocalTransientQuery>();
+        
+        QName qVisibleAttributes = new QName("visibleattributes"); //NOI18N
+        QName qAttribute = new QName("attribute"); //NOI18N
+        QName qFilters = new QName("filters"); //NOI18N
+        QName qFilter = new QName("filter"); //NOI18N
+        QName qClass = new QName("class"); //NOI18N
+
+        while (true){
+            int event = reader.next();
+            if (event == XMLStreamConstants.START_ELEMENT){
+                if (reader.getName().equals(qVisibleAttributes)){
+                    while (true){
+                        int localEvent = reader.next();
+                        if (localEvent == XMLStreamConstants.END_ELEMENT){
+                            if (reader.getName().equals(qVisibleAttributes))
+                                break;
+                        }else{
+                            if (localEvent == XMLStreamConstants.START_ELEMENT){
+                                if (reader.getName().equals(qAttribute))
+                                    newJoin.visibleAttributeNames.add(reader.getAttributeValue(null, "name")); //NOI18N
+                            }
+                        }
+                        
+                    }
+                }else{
+                    if (reader.getName().equals(qFilters)){
+                        while (true){
+                            int localEvent = reader.next();
+                            if (localEvent == XMLStreamConstants.END_ELEMENT){
+                                if (reader.getName().equals(qFilters))
+                                    break;
+                            }else{
+                                if (localEvent == XMLStreamConstants.START_ELEMENT){
+                                    if (reader.getName().equals(qFilter)){
+                                        newJoin.attributeNames.add(reader.getAttributeValue(null, "attribute"));     //NOI18N
+                                        newJoin.conditions.add(Integer.valueOf(reader.getAttributeValue(null, "condition")));     //NOI18N
+                                        if (reader.nextTag() != XMLStreamConstants.END_ELEMENT){ //There's a nested subquery
+                                            newJoin.joins.add(processClassTag(reader));
+                                        }else newJoin.joins.add(null); //padding
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }else{
+                if (event == XMLStreamConstants.END_ELEMENT){
+                    if (reader.getName().equals(qClass))
+                        break;
+                }
+            }
+        }
+        return newJoin;
+    }
+
     public enum Criteria{
         EQUAL("Equal to",0),
         LESS_THAN("Less than",1),
@@ -250,6 +360,26 @@ public class LocalTransientQuery {
 
         public String label(){return label;}
         public int id(){return id;}
+
+        public static Criteria fromId(int i){
+            switch (i){
+                default:
+                case 0:
+                    return EQUAL;
+                case 1:
+                    return LESS_THAN;
+                case 2:
+                    return EQUAL_OR_LESS_THAN;
+                case 3:
+                    return GREATER_THAN;
+                case 4:
+                    return EQUAL_OR_GREATER_THAN;
+                case 5:
+                    return BETWEEN;
+                case 6:
+                    return LIKE;                    
+            }
+        }
 
         @Override
         public String toString(){return label;}

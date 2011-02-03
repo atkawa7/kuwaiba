@@ -14,12 +14,6 @@
  * 
  */
 
-/*
- * QueryListPanel.java
- *
- * Created on Jan 31, 2011, 4:07:48 PM
- */
-
 package org.inventory.queries.graphical.dialogs;
 
 import javax.swing.JList;

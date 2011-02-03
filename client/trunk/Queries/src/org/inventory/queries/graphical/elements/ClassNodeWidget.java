@@ -16,14 +16,17 @@
 
 package org.inventory.queries.graphical.elements;
 
-import java.awt.Color;
-import java.awt.Paint;
+import java.util.List;
 import java.util.Random;
+import javax.swing.JCheckBox;
+import org.inventory.communications.core.queries.LocalTransientQuery.Criteria;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
+import org.inventory.queries.graphical.elements.filters.SimpleCriteriaNodeWidget;
 import org.netbeans.api.visual.vmd.VMDColorScheme;
+import org.netbeans.api.visual.widget.Widget;
 
 /**
  * This class represents the nodes that wrap a particular class
@@ -38,7 +41,7 @@ public class ClassNodeWidget extends QueryEditorNodeWidget{
         this.myClass = lcm;
         setNodeName(lcm.getClassName());
     }
-
+    
     public LocalClassMetadata getWrappedClass() {
         return myClass;
     }
@@ -51,6 +54,34 @@ public class ClassNodeWidget extends QueryEditorNodeWidget{
             if (!lam.getIsVisible())
                 continue;
             ((QueryEditorScene)getScene()).addPin(myClass, lam);
+        }
+    }
+
+    public void setVisibleAttributes(List<String> visibleAttributes){
+        for (Widget child : getChildren()){
+            if (child instanceof AttributePinWidget){
+                if (visibleAttributes.contains(((AttributePinWidget)child).getAttribute().getName()))
+                    ((AttributePinWidget)child).getIsVisible().setSelected(true);
+            }
+        }
+    }
+
+    public void setFilteredAttributes(List<String> visibleAttributes, List<Integer> conditions){
+        for (Widget child : getChildren()){
+            if (child instanceof AttributePinWidget){
+                for (int i = 0; i < visibleAttributes.size(); i++)
+                    if (visibleAttributes.get(i).equals(((AttributePinWidget)child).getAttribute().getName())){
+                        JCheckBox insideCheck = ((AttributePinWidget)child).getInsideCheck();
+                        insideCheck.setSelected(true);
+                        //If the related node is not a ClassNodeWidget, we set the condition
+                        if (!((AttributePinWidget)child).getAttribute().getIsMultiple()){
+                            String filterNodeKey = (String) insideCheck.getClientProperty("related-node");
+                            SimpleCriteriaNodeWidget filterNode = (SimpleCriteriaNodeWidget) ((QueryEditorScene)getScene()).findWidget(filterNodeKey); //NOI18N
+                            filterNode.setCondition(Criteria.fromId(conditions.get(i)));
+                        }
+                        break;
+                    }
+            }
         }
     }
 }
