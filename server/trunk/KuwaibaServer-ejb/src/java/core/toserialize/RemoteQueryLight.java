@@ -34,6 +34,7 @@ public class RemoteQueryLight extends RemoteObjectLight{
 
     public RemoteQueryLight(Long id, String name, String description, boolean isPublic) {
         this.oid = id;
+        this.name = name;
         this.description = description;
         this.className = "Query"; //NOI18N
         this.isPublic = isPublic;

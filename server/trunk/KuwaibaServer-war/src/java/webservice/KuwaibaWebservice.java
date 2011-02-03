@@ -686,7 +686,7 @@ public class KuwaibaWebservice {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             sbr.validateCall("saveQuery", getIPAddress(), sessionId);
-            return sbr.saveQuery(queryOid,queryName, ownerOid, queryStructure);
+            return sbr.saveQuery(queryOid,queryName, ownerOid, queryStructure, description);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
                     e.getClass()+": {0}",e.getMessage()); //NOI18N

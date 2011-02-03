@@ -920,7 +920,7 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     @Override
-    public boolean saveQuery(Long queryOid, String queryName, Long ownerOid, byte[] queryStructure) throws Exception{
+    public boolean saveQuery(Long queryOid, String queryName, Long ownerOid, byte[] queryStructure, String queryDescription) throws Exception{
         System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_SAVEQUERY")); //NOI18N
         if (em != null) {
             entity.queries.Query myQuery = em.find(entity.queries.Query.class, queryOid);
@@ -935,6 +935,7 @@ public class BackendBean implements BackendBeanRemote {
             }
             myQuery.setContent(queryStructure);
             myQuery.setName(queryName);
+            myQuery.setDescription(queryDescription);
             em.merge(myQuery);
             return true;
         }else
@@ -958,19 +959,19 @@ public class BackendBean implements BackendBeanRemote {
     public RemoteQueryLight[] getQueries(Long ownerId, boolean showPublic) throws Exception {
         System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETQUERIES"));
         if (em != null){
-            //String sentence = "SELECT x.id, x.name, x.description, x.owner FROM Query x WHERE x.owner.id="+ownerId; //NOI18N
-            String sentence = "SELECT x.id, x.name, x.description, x.owner FROM Query x"; //NOI18N
+//            String sentence = "SELECT x.id, x.name, x.description, x.owner FROM Query x WHERE x.owner.id="+ownerId; //NOI18N
+            String sentence = "SELECT query.id, query.name, query.description, users.name FROM query JOIN users on users.id = query.owner_id and users.id="+ownerId; //NOI18N
             if (showPublic)
-                sentence += " OR x.owner IS NULL";
-            List<Object[]> allQueries = em.createQuery(sentence).getResultList();
-            RemoteQueryLight[] res = new RemoteQueryLight[allQueries.size()];
+                //sentence += " OR x.owner IS NULL";
+                sentence = "SELECT query.id, query.name, query.description, users.name FROM query LEFT JOIN users on users.id = query.owner_id and users.id="+ownerId; //NOI18N
 
+            List<Object[]> allQueries = em.createNativeQuery(sentence).getResultList();
+            RemoteQueryLight[] res = new RemoteQueryLight[allQueries.size()];
             for (int i = 0; i < allQueries.size(); i++){
                 res[i] = new RemoteQueryLight((Long)allQueries.get(i)[0],
                                               (String)allQueries.get(i)[1],
                                               (String)allQueries.get(i)[2],
                                               allQueries.get(i)[3] == null);
-                i++;
             }
             return res;
         }else

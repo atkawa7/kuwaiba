@@ -63,7 +63,7 @@ public interface BackendBeanRemote {
     public RemoteObjectLight[] searchForObjects(Class searchedClass, String[] paramNames, String [] paramTypes, String[] paramValues) throws Exception;
     public ResultRecord[] executeQuery(TransientQuery query) throws Exception;
     public Query createQuery(String queryName, Long ownerOid, byte[] queryStructure, String description) throws Exception;
-    public boolean saveQuery(Long queryOid, String queryName, Long ownerOid, byte[] queryStructure) throws Exception;
+    public boolean saveQuery(Long queryOid, String queryName, Long ownerOid, byte[] queryStructure, String description) throws Exception;
     public boolean deleteQuery(Long queryOid) throws Exception;
     public RemoteQueryLight[] getQueries(Long ownerId, boolean showPublic) throws Exception;
     public RemoteQuery getQuery(Long queryOid) throws Exception;
