@@ -556,12 +556,12 @@ public class BackendBean implements BackendBeanRemote {
                        
             String sentence = "SELECT x FROM ClassMetadata x WHERE x.name ='"+
                     className.getSimpleName()+"'";
-            System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_EXECUTINGSQL")+sentence);
+            //System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_EXECUTINGSQL")+sentence);
             Query query = em.createQuery(sentence);
             ClassMetadata myClass = (ClassMetadata)query.getSingleResult();
             for (ClassMetadata possibleChild : myClass.getPossibleChildren()){
                 sentence = "SELECT x FROM "+possibleChild.getName()+" x WHERE x.parent="+obj.getId();
-                System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_EXECUTINGSQL")+sentence);
+                //System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_EXECUTINGSQL")+sentence);
                 query = em.createQuery(sentence);
                 for (Object removable : query.getResultList()){
                     RootObject myRemovable = (RootObject)removable;
@@ -638,6 +638,7 @@ public class BackendBean implements BackendBeanRemote {
      * and efficient. maybe requesting for a RemoteObjectLight[] would be better.
      * We'll try that when we do some code cleanup
      * @param targetOid the new parent
+     * TODO: Should this use http://www.eclipse.org/eclipselink/api/2.1/org/eclipse/persistence/sessions/Session.html#copy ?
      */
     @Override
     public RemoteObjectLight[] copyObjects(Long targetOid, Long[] templateOids,
@@ -652,7 +653,7 @@ public class BackendBean implements BackendBeanRemote {
                     
                     if (template == null)
                         throw new ObjectNotFoundException(objectClasses[i].getSimpleName(), templateOids[i]);
-                    
+
                     Object clone = MetadataUtils.clone(new RemoteObject(template),objectClasses[i],em);
                     ((RootObject)clone).setParent(targetOid);
                     ((RootObject)clone).setIsLocked(false);

@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
+import javax.persistence.Transient;
 import javax.persistence.metamodel.EntityType;
 
 
@@ -61,7 +62,10 @@ public class MetadataUtils {
     public static List<Field> getAllFields(Class<?> aClass){
         List<Field> myAtts = new ArrayList<Field>();
         for (Field f : aClass.getDeclaredFields())
-            if (Modifier.isProtected(f.getModifiers()) && !Modifier.isTransient(f.getModifiers()))
+            if (Modifier.isProtected(f.getModifiers())
+                    && !Modifier.isTransient(f.getModifiers())
+                    && f.getAnnotation(Transient.class) == null) //This last has to do with the introduction since EclipseLink 2.1.0
+                                                                 //AttributeGroups http://wiki.eclipse.org/EclipseLink/Examples/JPA/AttributeGroup
                 myAtts.add(f);
 
         if (aClass != RootObject.class && aClass.getSuperclass() != null) //At least for this application
