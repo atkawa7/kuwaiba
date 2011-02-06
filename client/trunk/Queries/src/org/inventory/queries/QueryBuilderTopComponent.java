@@ -265,7 +265,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         final CreateQueryPanel cqp = new CreateQueryPanel((String)qbs.getQueryProperties()[0],
                                         (String)qbs.getQueryProperties()[1],(Boolean)qbs.getQueryProperties()[2]);
             DialogDescriptor dd = new DialogDescriptor(cqp,
-                    "Choose a query", true, new ActionListener() {
+                    "Query metadata", true, new ActionListener() {
                                 public void actionPerformed(ActionEvent e) {
                                     if (e.getSource() == DialogDescriptor.OK_OPTION){
                                         qbs.setQueryProperties(cqp.getValues());

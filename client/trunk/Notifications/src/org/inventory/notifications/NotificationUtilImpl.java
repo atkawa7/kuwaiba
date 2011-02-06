@@ -25,7 +25,6 @@ public class NotificationUtilImpl extends NotificationDisplayer
     /**
      * Temporal workaround to clear the last notification from the tray
      */
-    private Notification lastNotification;
     private Timer controller;
 
     @Override
@@ -52,7 +51,7 @@ public class NotificationUtilImpl extends NotificationDisplayer
                 popupIcon = new ImageIcon(getClass().getResource(INFO_ICON_PATH));
         }
         if (NotificationDisplayer.getDefault() != null){
-            lastNotification = NotificationDisplayer.getDefault().notify(title,popupIcon, details, null);
+            final Notification lastNotification = NotificationDisplayer.getDefault().notify(title,popupIcon, details, null);
 
             //Thanks to Luca Dazi for this suggestion
             if (lastNotification != null){
