@@ -842,19 +842,20 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null) {
             String queryText = "SELECT "; //The complete query text //NOI18N
             ArrayList<String> fields = new ArrayList<String>(); //fields to be retrieved
-            String from = " FROM "+myQuery.getClassName()+ " x0"; //From clause
+            String from = " FROM "+myQuery.getClassName()+ " x0"; //From clause  //NOI18N
             ArrayList<String> predicates = new ArrayList<String>(); //filters
             ArrayList<String> columnNames = new ArrayList<String>(); // The labels to be used as column headers
             ArrayList<String> joins = new ArrayList<String>();
 
             //These fields are necessary to build the RemoteObjectLights
-            fields.add("x0.id");
-            fields.add("x0.name");
+            fields.add("x0.id"); //NOI18N
+            fields.add("x0.name"); //NOI18N
+            fields.add("TYPE(x0)"); //NOI18N
 
             //The default classIndex is 0 (that's why the main class )
-            MetadataUtils.chainVisibleAttributes(myQuery, fields, columnNames, joins,"x0.");
+            MetadataUtils.chainVisibleAttributes(myQuery, fields, columnNames, joins,"x0."); //NOI18N
             
-            MetadataUtils.chainPredicates("x0.", myQuery, predicates, em);
+            MetadataUtils.chainPredicates("x0.", myQuery, predicates, em); //NOI18N
 
             for (String myFields : fields)
                 queryText += myFields +", ";
@@ -870,12 +871,14 @@ public class BackendBean implements BackendBeanRemote {
                 queryText += " JOIN "+myJoin; //Check again!!!!
 
             if (!predicates.isEmpty()) {
-                String finalPredicate = " WHERE ";
+                String finalPredicate = " WHERE ";  //NOI18N
                 for (String predicate : predicates)
                     finalPredicate += predicate +
-                            ((myQuery.getLogicalConnector() == TransientQuery.CONNECTOR_AND)?" AND ":" OR ");
+                            ((myQuery.getLogicalConnector() == TransientQuery.CONNECTOR_AND)?" AND ":" OR ");  //NOI18N
                 queryText += finalPredicate.substring(0,finalPredicate.length() - 4);
             }
+
+            queryText += " ORDER BY x0.name"; //NOI18N
 
             //System.out.println("SQL: "+queryText);
             Query query = em.createQuery(queryText);
@@ -890,9 +893,9 @@ public class BackendBean implements BackendBeanRemote {
             res[0] = new ResultRecord(null, columnNames);
             for(int i = 0; i < result.size(); i++){
                 RemoteObjectLight objectInNewRecord = new RemoteObjectLight(
-                        (Long)result.get(i)[0],myQuery.getClassName(), (String)result.get(i)[1]);
+                        (Long)result.get(i)[0],((Class)result.get(i)[2]).getSimpleName(), (String)result.get(i)[1]);
                 ArrayList<String> extraColumns = new ArrayList<String>();
-                for (int j = 2; j < result.get(i).length ; j++)
+                for (int j = 3; j < result.get(i).length ; j++)
                     extraColumns.add(result.get(i)[j] == null ? "": result.get(i)[j].toString());
                 res[i + 1] = new ResultRecord(objectInNewRecord,extraColumns);
             }
