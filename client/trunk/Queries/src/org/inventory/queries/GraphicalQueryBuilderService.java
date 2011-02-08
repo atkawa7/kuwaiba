@@ -55,14 +55,6 @@ public class GraphicalQueryBuilderService implements ActionListener{
      * (name, description and share as public)
      */
     private Object[] queryProperties;
-    /**
-     * Offset to place the nodes horizontally
-     **/
-    private static int X_OFFSET = 50;
-    /**
-     * Offset to place the nodes vertically
-     **/
-    private static int Y_OFFSET = 50;
 
     public GraphicalQueryBuilderService(QueryBuilderTopComponent qbtc) {
         this.qbtc = qbtc;
@@ -134,10 +126,22 @@ public class GraphicalQueryBuilderService implements ActionListener{
             localQuery.setIsPublic((Boolean)queryProperties[2]);
 
             if (com.saveQuery(localQuery))
-                qbtc.getNotifier().showSimplePopup("Sucess", NotificationUtil.INFO, "Query saved successfully");
+                qbtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO, "Query saved successfully");
             else
-                qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.INFO, com.getError());
+                qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
         }
+    }
+
+    public void deleteQuery(){
+        if (com.deleteQuery(localQuery.getId())){
+            qbtc.getQueryScene().clear();
+            qbtc.getQueryScene().setCurrentSearchedClass(null);
+            localQuery = null;
+            qbtc.getQueryScene().validate();
+            qbtc.getCmbClassList().setSelectedItem(null);
+            qbtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO, "Saved query deleted successfully");
+        }else
+            qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
     }
 
     LocalTransientQuery getCurrentTransientQuery() {
@@ -212,7 +216,7 @@ public class GraphicalQueryBuilderService implements ActionListener{
             qbtc.getQueryScene().clear();
             ClassNodeWidget rootNode = renderClassNode(transientQuery);
             qbtc.getQueryScene().setCurrentSearchedClass(rootNode.getWrappedClass());
-            qbtc.getQueryScene().organizeNodes(rootNode, X_OFFSET, Y_OFFSET);
+            qbtc.getQueryScene().organizeNodes(rootNode.getWrappedClass(), QueryEditorScene.X_OFFSET, QueryEditorScene.Y_OFFSET);
             qbtc.getQueryScene().validate();
         } catch (XMLStreamException ex) {
             qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, "Error parsing XML file");

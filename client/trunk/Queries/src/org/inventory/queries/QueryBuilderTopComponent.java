@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -96,7 +97,9 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         sptOne = new javax.swing.JToolBar.Separator();
         btnOpen = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
         btnConfigure = new javax.swing.JButton();
+        btnOrganize = new javax.swing.JButton();
         btnSearch = new javax.swing.JButton();
         sptTwo = new javax.swing.JToolBar.Separator();
         lblConnector = new javax.swing.JLabel();
@@ -145,6 +148,19 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         });
         barMain.add(btnSave);
 
+        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/delete.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnDelete, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnDelete.text")); // NOI18N
+        btnDelete.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnDelete.toolTipText")); // NOI18N
+        btnDelete.setFocusable(false);
+        btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
+        barMain.add(btnDelete);
+
         btnConfigure.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/configure-22.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnConfigure, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnConfigure.text")); // NOI18N
         btnConfigure.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnConfigure.toolTipText")); // NOI18N
@@ -157,6 +173,19 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
             }
         });
         barMain.add(btnConfigure);
+
+        btnOrganize.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/organize.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnOrganize, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnOrganize.text")); // NOI18N
+        btnOrganize.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnOrganize.toolTipText")); // NOI18N
+        btnOrganize.setFocusable(false);
+        btnOrganize.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnOrganize.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnOrganize.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOrganizeActionPerformed(evt);
+            }
+        });
+        barMain.add(btnOrganize);
 
         btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/run-search.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSearch, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSearch.text")); // NOI18N
@@ -222,9 +251,20 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         if (!validateQuery())
             return;
-        if(qbs.getCurrentLocalQuery() == null)
-            btnConfigureActionPerformed(new ActionEvent(this, 0, "configure-new-query")); //NOI18N
-        qbs.saveQuery();
+        if(qbs.getCurrentLocalQuery() == null){
+            final CreateQueryPanel cqp = new CreateQueryPanel((String)qbs.getQueryProperties()[0],
+                                        (String)qbs.getQueryProperties()[1],(Boolean)qbs.getQueryProperties()[2]);
+            DialogDescriptor dd = new DialogDescriptor(cqp,
+                    "Set query settings", true, new ActionListener() {
+                                public void actionPerformed(ActionEvent e){
+                                    if (e.getSource() == DialogDescriptor.OK_OPTION){
+                                        qbs.setQueryProperties(cqp.getValues());
+                                        qbs.saveQuery();
+                                    }
+                                }
+                            });
+            DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+        }
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
@@ -265,20 +305,43 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         final CreateQueryPanel cqp = new CreateQueryPanel((String)qbs.getQueryProperties()[0],
                                         (String)qbs.getQueryProperties()[1],(Boolean)qbs.getQueryProperties()[2]);
             DialogDescriptor dd = new DialogDescriptor(cqp,
-                    "Query metadata", true, new ActionListener() {
-                                public void actionPerformed(ActionEvent e) {
-                                    if (e.getSource() == DialogDescriptor.OK_OPTION){
+                    "Set query settings", true, new ActionListener() {
+                                public void actionPerformed(ActionEvent e){
+                                    if (e.getSource() == DialogDescriptor.OK_OPTION)
                                         qbs.setQueryProperties(cqp.getValues());
-                                    }
                                 }
                             });
             DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnConfigureActionPerformed
 
+    private void btnOrganizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrganizeActionPerformed
+        this.queryScene.organizeNodes((LocalClassMetadata)queryScene.getNodes().iterator().next(), QueryEditorScene.X_OFFSET, QueryEditorScene.Y_OFFSET);
+        this.queryScene.validate();
+    }//GEN-LAST:event_btnOrganizeActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        if(qbs.getCurrentLocalQuery() == null){ //It's a transient query
+            if (JOptionPane.showConfirmDialog(this, "Are you sure you want to clear the current query?", //NOI18N
+                    "Cleaning temporal query",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){  //NOI18N
+                queryScene.clear();
+                queryScene.setCurrentSearchedClass(null);
+                cmbClassList.setSelectedItem(null);
+                queryScene.validate();
+            }
+        }else{
+            if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current query?", //NOI18N
+                    "Delete saved query",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){  //NOI18N
+                qbs.deleteQuery();
+            }
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
     private javax.swing.JButton btnConfigure;
+    private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnOpen;
+    private javax.swing.JButton btnOrganize;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnSearch;
     private javax.swing.JRadioButton chkAnd;
@@ -380,6 +443,10 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
 
     public JRadioButton getChkAnd() {
         return chkAnd;
+    }
+
+    public JComboBox getCmbClassList(){
+        return cmbClassList;
     }
 
     public JTextField getTxtResultLimit() {

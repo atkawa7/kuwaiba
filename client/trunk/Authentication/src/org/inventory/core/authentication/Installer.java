@@ -19,14 +19,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
 import org.inventory.communications.CommunicationsStub;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.LifecycleManager;
 import org.openide.modules.ModuleInstall;
+import org.openide.util.Exceptions;
 
 /**
  * This installer shows the login window
@@ -85,12 +90,20 @@ public class Installer extends ModuleInstall {
                        containedPanel.getTxtWSDLPath().getText());
         }
     }
+
     public void showMeAgain(String errorText, String user, String serverAddress, String serverPort, String WSDLPath){
         showExceptions(errorText);
+        Timer controller = new Timer();
+        TimerTask tt = new TimerTask() {
+                        @Override
+                        public void run() {
+                            JDialog dialog = (JDialog) DialogDisplayer.getDefault().createDialog(dd);
+                            dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+                            dialog.setVisible(true);
+                        }
+                    };
+                controller.schedule(tt, 100);
 
-        JDialog dialog = (JDialog)DialogDisplayer.getDefault().createDialog(dd);
-        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        dialog.setVisible(true);
     }
 
     private void showExceptions(String errorText){

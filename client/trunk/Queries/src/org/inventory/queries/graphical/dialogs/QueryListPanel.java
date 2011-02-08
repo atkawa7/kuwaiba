@@ -16,7 +16,11 @@
 
 package org.inventory.queries.graphical.dialogs;
 
+import java.awt.Color;
+import java.awt.Component;
+import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.inventory.communications.core.queries.LocalQueryLight;
@@ -34,6 +38,17 @@ public class QueryListPanel extends javax.swing.JPanel implements ListSelectionL
         elements = queries;
         initComponents();
         lstQueryList.addListSelectionListener(this);
+        //Public queries are painted green
+        lstQueryList.setCellRenderer(new ListCellRenderer() {
+
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                JLabel item = new JLabel(((LocalQueryLight)value).getName());
+                item.setOpaque(false);
+                if (((LocalQueryLight)value).getIsPublic())
+                    item.setForeground(Color.green);
+                return item;
+            }
+        });
     }
 
     /** This method is called from within the constructor to

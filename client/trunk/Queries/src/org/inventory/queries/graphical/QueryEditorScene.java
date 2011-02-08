@@ -103,6 +103,14 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      * Event raised when an attribute is not used as filter anymore(its checkbox is deselected)
      */
     public static final int SCENE_FILTERDISABLED = 2;
+    /**
+     * Offset to place the nodes horizontally
+     **/
+    public static final int X_OFFSET = 50;
+    /**
+     * Offset to place the nodes vertically
+     **/
+    public static final int Y_OFFSET = 50;
 
     private LayerWidget backgroundLayer = new LayerWidget (this);
     private LayerWidget mainLayer = new LayerWidget (this);
@@ -342,7 +350,11 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         removeNode(node);
     }
 
-    public void organizeNodes(ClassNodeWidget rootNode, int x, int y){
+    public void organizeNodes(LocalClassMetadata rootObject, int x, int y){
+
+        ClassNodeWidget rootNode = (ClassNodeWidget)findWidget(rootObject);
+
+        assert (rootNode != null);
 
         rootNode.setPreferredLocation(new Point(x, y));
 
@@ -363,7 +375,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
                     nextHop.setPreferredLocation(new Point(nextX, nextY));
                 else{
                     if (nextHop instanceof ClassNodeWidget)
-                        organizeNodes((ClassNodeWidget)nextHop, nextX,nextY);
+                        organizeNodes(((ClassNodeWidget)nextHop).getWrappedClass(), nextX,nextY);
                 }
                 nextY += nextHop.getClientArea().height + 50;
             }
