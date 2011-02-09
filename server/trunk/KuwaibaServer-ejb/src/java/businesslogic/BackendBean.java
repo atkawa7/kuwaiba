@@ -545,8 +545,6 @@ public class BackendBean implements BackendBeanRemote {
 
         if (em != null){
 
-            //em.getTransaction().begin();
-
             RootObject obj = (RootObject)em.find(className, oid);
             if (obj == null)
                 throw new Exception(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT")+className+java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid.toString());
@@ -559,6 +557,7 @@ public class BackendBean implements BackendBeanRemote {
             //System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_EXECUTINGSQL")+sentence);
             Query query = em.createQuery(sentence);
             ClassMetadata myClass = (ClassMetadata)query.getSingleResult();
+            List<Object> toBeRemoved = new ArrayList<Object>();
             for (ClassMetadata possibleChild : myClass.getPossibleChildren()){
                 sentence = "SELECT x FROM "+possibleChild.getName()+" x WHERE x.parent="+obj.getId();
                 //System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_EXECUTINGSQL")+sentence);
@@ -567,17 +566,27 @@ public class BackendBean implements BackendBeanRemote {
                     RootObject myRemovable = (RootObject)removable;
                     //If any of the children is locked, throw an exception
                     if (!myRemovable.getIsLocked())
-                        em.remove(myRemovable);
+                        toBeRemoved.add(myRemovable);
                     else
                         throw new OperationNotPermittedException(ResourceBundle.getBundle("internationalization/Bundle").
                                 getString("LBL_OBJECTREMOVAL"),ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_OBJECTLOCKED")+
                                 myRemovable.getId()+" ("+myRemovable.getClass()+")");
                 }
             }
-            em.remove(obj);
-            
+            toBeRemoved.add(obj);
+            for (Object removable : toBeRemoved){
+                if (removable instanceof ViewableObject){
+                    List<GenericView> views = ((ViewableObject)removable).getViews();
+                    if (views != null){
+                        for (GenericView view : views)
+                            em.remove(view);
+                        views.clear();
+                    }
+                    em.remove(removable);
+                 }
+            }
         }
-        else //*************em.getTransaction().commit();**************
+        else 
             throw new EntityManagerNotAvailableException();
         
         return true;

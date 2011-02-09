@@ -18,10 +18,13 @@ package entity.queries;
 
 import entity.config.User;
 import java.io.Serializable;
+import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 /**
@@ -39,6 +42,7 @@ public class Query implements Serializable {
 
     @ManyToOne
     private User owner;
+    @Lob @Basic(fetch=FetchType.LAZY)
     private byte[] content;
 
     public Query() {

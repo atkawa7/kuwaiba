@@ -36,7 +36,7 @@ import javax.persistence.OneToMany;
 @Administrative
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class ViewableObject extends RootObject {
-    @OneToMany(cascade=CascadeType.PERSIST)//(mappedBy = "elements")
+    @OneToMany(cascade=CascadeType.ALL)//(mappedBy = "elements")
     @NoSerialize
     @NoCopy
     protected List<GenericView> views;
