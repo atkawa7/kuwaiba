@@ -3,8 +3,8 @@
 <filesystem>
     <folder name="Actions">
         <folder name="View">
-            <file name="org-inventory-core-services-actions-Refresh.instance">
-                <attr name="delegate" newvalue="org.inventory.core.services.actions.Refresh"/>
+            <file name="org-inventory-core-services-actions-RefreshComponent.instance">
+                <attr name="delegate" newvalue="org.inventory.core.services.actions.RefreshComponent"/>
                 <attr name="displayName" bundlevalue="org.inventory.core.services.Bundle#CTL_Refresh"/>
                 <attr name="iconBase" stringvalue="org/inventory/core/services/res/view-refresh.png"/>
                 <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
@@ -15,20 +15,20 @@
     <folder name="Menu">
         <folder name="View">
             <file name="org-inventory-core-services-actions-Refresh.shadow">
-                <attr name="originalFile" stringvalue="Actions/View/org-inventory-core-services-actions-Refresh.instance"/>
+                <attr name="originalFile" stringvalue="Actions/View/org-inventory-core-services-actions-RefreshComponent.instance"/>
                 <attr name="position" intvalue="100"/>
             </file>
         </folder>
     </folder>
     <folder name="Shortcuts">
         <file name="F5.shadow">
-            <attr name="originalFile" stringvalue="Actions/View/org-inventory-core-services-actions-Refresh.instance"/>
+            <attr name="originalFile" stringvalue="Actions/View/org-inventory-core-services-actions-RefreshComponent.instance"/>
         </file>
     </folder>
     <folder name="Toolbars">
         <folder name="View">
             <file name="org-inventory-core-services-actions-Refresh.shadow">
-                <attr name="originalFile" stringvalue="Actions/View/org-inventory-core-services-actions-Refresh.instance"/>
+                <attr name="originalFile" stringvalue="Actions/View/org-inventory-core-services-actions-RefreshComponent.instance"/>
                 <attr name="position" intvalue="0"/>
             </file>
         </folder>

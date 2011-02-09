@@ -21,27 +21,24 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
-import org.inventory.navigation.applicationnodes.objectnodes.windows.ObjectEditorTopComponent;
-import org.openide.nodes.Node;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 
-/*
- * Provides the necessary functionality to show a dedicated editor (using PropertySheetView)
+/**
+ * Refreshes the node
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public final class Edit extends AbstractAction {
-    private Node node;
+public final class RefreshObject extends AbstractAction {
+    private ObjectNode node;
 
-    public Edit(Node _node) {
+    public RefreshObject(ObjectNode _node) {
         this.node = _node;
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EDIT"));
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E,InputEvent.CTRL_MASK));
-        putValue(MNEMONIC_KEY,KeyEvent.VK_E);
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_REFRESH"));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_R,InputEvent.CTRL_MASK));
+        putValue(MNEMONIC_KEY,KeyEvent.VK_R);
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        ObjectEditorTopComponent component = new ObjectEditorTopComponent(new Node[]{node});
-        component.open();
-        component.requestActive();
+        node.refresh();
     }
 }

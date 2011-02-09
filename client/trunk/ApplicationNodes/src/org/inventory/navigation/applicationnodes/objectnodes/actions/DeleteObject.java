@@ -22,20 +22,30 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.actions.ObjectAction;
+import org.inventory.core.services.exceptions.ObjectActionException;
+import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.ServiceProvider;
 
-public final class Delete extends AbstractAction {
+@ServiceProvider(service=ObjectAction.class)
+public final class DeleteObject extends AbstractAction implements ObjectAction {
 
     private ObjectNode node;
 
-    public Delete(ObjectNode _node) {
+    public DeleteObject() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE"));
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
         putValue(MNEMONIC_KEY,KeyEvent.VK_D);
+    }
+
+
+    public DeleteObject(ObjectNode _node) {
+        this();
         this.node = _node;
     }
 
@@ -48,12 +58,24 @@ public final class Delete extends AbstractAction {
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             if (CommunicationsStub.getInstance().removeObject(node.getObject().getClassName(),
                     node.getObject().getOid())){
-                ((ObjectChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
+                if (node.getParentNode() != null) //Delete can be call for nodes outside the tree structure
+                                                  //e.g. In a search result list
+                    ((ObjectChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
                 nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
             }
             else
                 nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_ERROR"),
                         NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
         }
+    }
+
+    @Override
+    public void setObject(LocalObjectLight lol) throws ObjectActionException {
+        this.node = new ObjectNode(lol);
+    }
+
+    @Override
+    public int getType() {
+        return ObjectAction.DELETE;
     }
 }

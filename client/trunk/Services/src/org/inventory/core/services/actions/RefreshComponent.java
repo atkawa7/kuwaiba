@@ -26,7 +26,7 @@ import org.openide.windows.WindowManager;
  * Refreshes the focused component
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public final class Refresh extends AbstractAction implements ActionListener {
+public final class RefreshComponent extends AbstractAction implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         Object activeTopComponent = WindowManager.getDefault().getRegistry().getActivated();

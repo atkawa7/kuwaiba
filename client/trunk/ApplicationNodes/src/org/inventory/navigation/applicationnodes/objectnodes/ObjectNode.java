@@ -32,10 +32,10 @@ import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
 import org.inventory.core.services.interfaces.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.Create;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.Delete;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.Edit;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.Refresh;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateObject;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteObject;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObject;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObject;
 import org.inventory.navigation.applicationnodes.objectnodes.properties.ObjectNodeProperty;
 import org.openide.actions.CopyAction;
 import org.openide.actions.CutAction;
@@ -66,10 +66,10 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
     protected CommunicationsStub com;
 
-    protected Create createAction;
-    protected Delete deleteAction;
-    protected Refresh refreshAction;
-    protected Edit editAction;
+    protected CreateObject createAction;
+    protected DeleteObject deleteAction;
+    protected RefreshObject refreshAction;
+    protected EditObject editAction;
 
     protected Sheet sheet;
     protected Image icon;
@@ -84,9 +84,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         icon = (com.getMetaForClass(_lol.getClassName(),false)).getSmallIcon();
 
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
-        editAction = new Edit(this);
-        deleteAction = new Delete(this);
-        refreshAction = new Refresh(this);
+        editAction = new EditObject(this);
+        deleteAction = new DeleteObject(this);
+        refreshAction = new RefreshObject(this);
     }
     
     public ObjectNode(LocalObjectLight _lol){
@@ -99,10 +99,10 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         icon = (com.getMetaForClass(_lol.getClassName(),false)).getSmallIcon();
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
 
-        createAction = new Create(this);
-        deleteAction = new Delete(this);
-        editAction = new Edit(this);
-        refreshAction = new Refresh(this);
+        createAction = new CreateObject(this);
+        deleteAction = new DeleteObject(this);
+        editAction = new EditObject(this);
+        refreshAction = new RefreshObject(this);
     }
 
     /*

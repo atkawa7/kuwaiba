@@ -17,20 +17,29 @@
 package org.inventory.queries.graphical;
 
 import java.awt.BorderLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.table.TableModel;
 import org.inventory.communications.core.LocalResultRecord;
+import org.inventory.core.services.actions.ObjectActionFactory;
+import org.inventory.core.services.exceptions.ObjectActionException;
+import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.queries.GraphicalQueryBuilderService;
 import org.inventory.queries.graphical.dialogs.ExportSettingsPanel;
 import org.netbeans.swing.etable.ETable;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
+import org.openide.util.Lookup;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -53,6 +62,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
      * Reference to the controller
      */
     private GraphicalQueryBuilderService qbs;
+    private NotificationUtil nu;
 
     public ComplexQueryResultTopComponent(LocalResultRecord[] res, int pageSize,
             GraphicalQueryBuilderService qbs) {
@@ -61,6 +71,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
         TableModel model = new QueryResultTableModel(res);
         myTable = new ETable(model);
         initComponents();
+        myTable.addMouseListener(new PopupProvider());
     }
 
     private void initComponents(){
@@ -88,6 +99,8 @@ public class ComplexQueryResultTopComponent extends TopComponent{
         barMain.add(btnPrevious);
         barMain.add(btnNext);
         barMain.add(btnAll);
+
+
 
         //Actions
         btnPrevious.addActionListener(new ActionListener() {
@@ -125,6 +138,11 @@ public class ComplexQueryResultTopComponent extends TopComponent{
         Mode myMode = WindowManager.getDefault().findMode("bottomSlidingSide"); //NOI18N
         myMode.dockInto(this);
         revalidate();
+    }
+
+    @Override
+    protected void componentClosed() {
+        myTable.removeAll();
     }
 
     /**
@@ -185,7 +203,38 @@ public class ComplexQueryResultTopComponent extends TopComponent{
         return TopComponent.PERSISTENCE_NEVER;
     }
 
+    public NotificationUtil getNotifier(){
+        if (this.nu == null)
+            nu = Lookup.getDefault().lookup(NotificationUtil.class);
+        return nu;
+    }
+
     public Object[][] getCurrentResults(){
         return ((QueryResultTableModel)myTable.getModel()).getCurrentResults();
+    }
+
+    private class PopupProvider extends MouseAdapter{
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+          showPopup(e);
+        }
+        @Override
+        public void mouseReleased(MouseEvent e) {
+          showPopup(e);
+        }
+        private void showPopup(MouseEvent e) {
+          if (e.isPopupTrigger()) {
+            LocalObjectLight singleRecord = (LocalObjectLight)myTable.getValueAt(myTable.rowAtPoint(new Point(e.getX(), e.getY())), 0);
+            JPopupMenu  menu = new JPopupMenu();
+            try{
+                menu.add(ObjectActionFactory.createEditAction(singleRecord));
+                menu.add(ObjectActionFactory.createDeleteAction(singleRecord));
+                menu.show(e.getComponent(), e.getX(), e.getY());
+            }catch(ObjectActionException ex){
+                getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, ex.getMessage());
+            }
+          }
+        }
     }
 }

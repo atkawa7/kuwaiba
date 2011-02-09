@@ -18,7 +18,7 @@ package org.inventory.navigation.applicationnodes.objectnodes;
 
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLightImpl;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.Create;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateObject;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.lookup.Lookups;
@@ -39,7 +39,7 @@ public class RootObjectNode extends AbstractNode{
 
     @Override
     public Action[] getActions(boolean context){
-        Create createAction = new Create(this);
+        CreateObject createAction = new CreateObject(this);
         return new Action[]{createAction};
     }
 

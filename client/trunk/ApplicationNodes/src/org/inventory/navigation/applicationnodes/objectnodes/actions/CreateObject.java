@@ -32,21 +32,21 @@ import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter.Popup;
 
 
-public final class Create extends AbstractAction implements Popup{
+public final class CreateObject extends AbstractAction implements Popup{
     private Node node;
     private CommunicationsStub com;
 
-    public Create(){
+    public CreateObject(){
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
         com = CommunicationsStub.getInstance();
     }
 
-    public Create(ObjectNode _node) {
+    public CreateObject(ObjectNode _node) {
         this();
         this.node = _node;
     }
 
-    public Create (RootObjectNode _ron){
+    public CreateObject (RootObjectNode _ron){
         this();
         node = _ron;
     }
