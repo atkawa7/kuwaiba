@@ -335,6 +335,9 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
         moveAction.clearActionListeners();
         addRemoveControlPointAction.clearActionListeners();
         moveControlPointAction.clearActionListeners();
+        nodesLayer.removeChildren();
+        edgesLayer.removeChildren();
+        backgroundLayer.removeChildren();
     }
 
     public void fireChangeEvent(ActionEvent ev){

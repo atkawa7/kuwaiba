@@ -17,6 +17,7 @@ package org.inventory.views.objectview;
 
 import org.inventory.views.objectview.dialogs.ExportSettingsDialog;
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Logger;
@@ -27,8 +28,9 @@ import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.interfaces.RefreshableTopComponent;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.inventory.views.objectview.dialogs.FormatTextDialog;
+import org.inventory.views.objectview.dialogs.FormatTextPanel;
 import org.inventory.views.objectview.scene.ObjectConnectionWidget;
+import org.inventory.views.objectview.scene.ObjectNodeWidget;
 import org.inventory.views.objectview.scene.ViewScene;
 import org.openide.explorer.ExplorerManager;
 import org.openide.util.NbBundle;
@@ -36,6 +38,9 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.netbeans.api.visual.widget.Widget;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 import org.openide.explorer.ExplorerManager.Provider;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.nodes.Node;
@@ -123,6 +128,7 @@ public final class ObjectViewTopComponent extends TopComponent
         btnAddBackgroundImage = new javax.swing.JButton();
         btnRemoveBackground = new javax.swing.JButton();
         btnFormatText = new javax.swing.JButton();
+        btnShowNodeLabels = new javax.swing.JToggleButton();
         btnSave = new javax.swing.JButton();
         btnSelect = new javax.swing.JToggleButton();
         btnConnect = new javax.swing.JToggleButton();
@@ -186,6 +192,20 @@ public final class ObjectViewTopComponent extends TopComponent
             }
         });
         barMain.add(btnFormatText);
+
+        btnShowNodeLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/hide_node_labels.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnShowNodeLabels, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnShowNodeLabels.text")); // NOI18N
+        btnShowNodeLabels.setToolTipText(org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnShowNodeLabels.toolTipText")); // NOI18N
+        btnShowNodeLabels.setEnabled(false);
+        btnShowNodeLabels.setFocusable(false);
+        btnShowNodeLabels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnShowNodeLabels.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnShowNodeLabels.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnShowNodeLabelsActionPerformed(evt);
+            }
+        });
+        barMain.add(btnShowNodeLabels);
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/save.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnSave.text")); // NOI18N
@@ -433,8 +453,42 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_btnExportActionPerformed
 
     private void btnFormatTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFormatTextActionPerformed
-        new FormatTextDialog(scene).setVisible(true);
+        final FormatTextPanel pnlFormat = new FormatTextPanel();
+        DialogDescriptor dd = new DialogDescriptor(pnlFormat,"Text Settings",true,new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == DialogDescriptor.OK_OPTION){
+                    for (Widget node : scene.getNodesLayer().getChildren()){
+                        if (pnlFormat.getNodesFontColor() != null)
+                            ((ObjectNodeWidget)node).getLabelWidget().setForeground(pnlFormat.getNodesFontColor());
+                        if (pnlFormat.getNodesFontType() != null)
+                            ((ObjectNodeWidget)node).getLabelWidget().setFont(pnlFormat.getNodesFontType());
+                        if (pnlFormat.getNodesFontSize() != null){
+                            Font newFont = new Font(((ObjectNodeWidget)node).getLabelWidget().getFont().getFontName(),Font.BOLD,pnlFormat.getNodesFontSize());
+                            ((ObjectNodeWidget)node).getLabelWidget().setFont(newFont);
+                        }
+                    }
+                    for (Widget node : scene.getEdgesLayer().getChildren()){
+                        if (pnlFormat.getEdgesFontColor() != null)
+                            ((ObjectConnectionWidget)node).setForeground(pnlFormat.getNodesFontColor());
+                        if (pnlFormat.getEdgesFontType() != null)
+                            ((ObjectConnectionWidget)node).setFont(pnlFormat.getNodesFontType());
+                        if (pnlFormat.getEdgesFontSize() != null){
+                            Font newFont = new Font(((ObjectNodeWidget)node).getLabelWidget().getFont().getFontName(),Font.BOLD,pnlFormat.getNodesFontSize());
+                            ((ObjectConnectionWidget)node).setFont(newFont);
+                        }
+                    }
+                }
+            }
+        });
+        DialogDisplayer.getDefault().notify(dd);
     }//GEN-LAST:event_btnFormatTextActionPerformed
+
+    private void btnShowNodeLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodeLabelsActionPerformed
+        for (Widget node : scene.getNodesLayer().getChildren())
+            ((ObjectNodeWidget)node).getLabelWidget().setVisible(!btnShowNodeLabels.isSelected());
+        scene.validate();
+    }//GEN-LAST:event_btnShowNodeLabelsActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barConnections;
@@ -450,6 +504,7 @@ public final class ObjectViewTopComponent extends TopComponent
     private javax.swing.JButton btnRemoveBackground;
     private javax.swing.JButton btnSave;
     private javax.swing.JToggleButton btnSelect;
+    private javax.swing.JToggleButton btnShowNodeLabels;
     private javax.swing.JToggleButton btnWireContainer;
     private javax.swing.JToggleButton btnWirelessContainer;
     private javax.swing.JToggleButton btnWirelessLink;
@@ -615,6 +670,8 @@ public final class ObjectViewTopComponent extends TopComponent
         btnZoomIn.setEnabled(enabled);
         btnZoomOut.setEnabled(enabled);
         btnExport.setEnabled(enabled);
+        btnFormatText.setEnabled(enabled);
         btnRefresh.setEnabled(enabled);
+        btnShowNodeLabels.setEnabled(enabled);
     }
 }

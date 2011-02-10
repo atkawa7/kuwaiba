@@ -16,6 +16,7 @@
 
 package org.inventory.core.services.utils;
 
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -233,5 +234,35 @@ public class Utils {
             }
         }
         return new Object[]{groupA,groupB};
+    }
+
+    /**
+     * Returns string based on a given color. For now is pretty simple making a plain comparison
+     * it could be extended by guessing the name base on the RGB value
+     * @param value The color to be evaluated
+     * @return The string representing the color
+     */
+    public static String getColorName(Color value){
+        if (value.equals(Color.black))
+                    return "Black";
+                else
+                    if (value.equals(Color.white))
+                        return "White";
+                    else
+                        if (value.equals(Color.red))
+                            return "Red";
+                        else
+                            if (value.equals(Color.blue))
+                                return "Blue";
+                            else
+                                if (value.equals(Color.green))
+                                    return "Green";
+                                else
+                                    if (value.equals(Color.orange))
+                                        return "Orange";
+                                    else
+                                        if (value.equals(Color.yellow))
+                                            return "Yellow";
+        return "Other";
     }
 }

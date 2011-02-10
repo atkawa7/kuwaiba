@@ -46,7 +46,7 @@ import org.openide.util.Utilities;
 public class ObjectViewService implements LookupListener{
     
     private ObjectViewTopComponent vrtc;
-    private Lookup.Result selectedNodes;
+    private Lookup.Result<LocalObjectLight> selectedNodes;
     private CommunicationsStub com;
     private ViewBuilder viewBuilder;
 
@@ -62,6 +62,8 @@ public class ObjectViewService implements LookupListener{
     public void initializeLookListener(){
         selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
         selectedNodes.addLookupListener(this);
+        if (selectedNodes.allInstances().size() == 1) //There's a node already selected
+            loadView(selectedNodes.allInstances().iterator().next());
     }
 
     /**
@@ -97,45 +99,52 @@ public class ObjectViewService implements LookupListener{
            vrtc.getScene().getInteractionLayer().removeChildren();
            vrtc.getScene().getLabelsLayer().removeChildren();
 
-           //If the selected node is the root
-           if (myObject.getOid() == null){
-               vrtc.setDisplayName(null);
-               vrtc.setHtmlDisplayName(null);
-               vrtc.toggleButtons(false);
-               return;
-           }
-
-           vrtc.toggleButtons(true);
-
-           vrtc.getScene().setCurrentObject(myObject);
-           
-           LocalObjectView defaultView = com.getObjectDefaultView(myObject.getOid(),myObject.getClassName());
-           if(defaultView == null){
-               List<LocalObjectLight> myChildren = com.getObjectChildren(myObject.getOid(), com.getMetaForClass(myObject.getClassName(),false).getOid());
-               List<LocalObject> myConnections = com.getChildrenOfClass(myObject.getOid(), LocalEdge.CLASS_GENERICCONNECTION);
-               //TODO: Change for a ViewFactory
-               viewBuilder = new ViewBuilder(null, vrtc.getScene());
-               viewBuilder.buildDefaultView(myChildren, myConnections);
-           }
-           else{
-               viewBuilder = new ViewBuilder(defaultView, vrtc.getScene());
-               viewBuilder.buildView();
-               if (viewBuilder.getMyView().getIsDirty()){
-                   vrtc.getNotifier().showSimplePopup("View changes", NotificationUtil.WARNING, "Some elements in the view has been deleted since the last time it was opened. They were removed");
-                   vrtc.getScene().fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGETOSAVE, "Removing old objects"));
-                   viewBuilder.getMyView().setIsDirty(false);
-               }
-           }
-
-           vrtc.getScene().validate();
-           vrtc.getScene().repaint();
-           vrtc.setDisplayName(myObject.getDisplayname() + " ["+myObject.getClassName()+"]");
+           loadView(myObject);
         }else{
             if(!lookupResult.allInstances().isEmpty()){
                vrtc.getNotifier().showStatusMessage("More than one object selected. No view available", false);
                vrtc.toggleButtons(false);
             }
         }
+    }
+
+    private void loadView(LocalObjectLight myObject){
+       //If the selected node is the root
+       if (myObject.getOid() == null){
+           vrtc.setDisplayName(null);
+           vrtc.setHtmlDisplayName(null);
+           vrtc.getScene().clear();
+           vrtc.toggleButtons(false);
+           vrtc.getScene().validate();
+           vrtc.getScene().setCurrentObject(null);
+           return;
+       }
+
+       vrtc.toggleButtons(true);
+
+       vrtc.getScene().setCurrentObject(myObject);
+
+       LocalObjectView defaultView = com.getObjectDefaultView(myObject.getOid(),myObject.getClassName());
+       if(defaultView == null){
+           List<LocalObjectLight> myChildren = com.getObjectChildren(myObject.getOid(), com.getMetaForClass(myObject.getClassName(),false).getOid());
+           List<LocalObject> myConnections = com.getChildrenOfClass(myObject.getOid(), LocalEdge.CLASS_GENERICCONNECTION);
+           //TODO: Change for a ViewFactory
+           viewBuilder = new ViewBuilder(null, vrtc.getScene());
+           viewBuilder.buildDefaultView(myChildren, myConnections);
+       }
+       else{
+           viewBuilder = new ViewBuilder(defaultView, vrtc.getScene());
+           viewBuilder.buildView();
+           if (viewBuilder.getMyView().getIsDirty()){
+               vrtc.getNotifier().showSimplePopup("View changes", NotificationUtil.WARNING, "Some elements in the view has been deleted since the last time it was opened. They were removed");
+               vrtc.getScene().fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGETOSAVE, "Removing old objects"));
+               viewBuilder.getMyView().setIsDirty(false);
+           }
+       }
+
+       vrtc.getScene().validate();
+       vrtc.getScene().repaint();
+       vrtc.setDisplayName(myObject.getDisplayname() + " ["+myObject.getClassName()+"]");
     }
 
     /**
