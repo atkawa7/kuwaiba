@@ -16,6 +16,7 @@
 
 package org.inventory.views.objectview;
 
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -141,7 +142,10 @@ public class ObjectViewService implements LookupListener{
                viewBuilder.getMyView().setIsDirty(false);
            }
        }
-
+       for (Widget node : vrtc.getScene().getNodesLayer().getChildren()){
+           ((ObjectNodeWidget)node).getLabelWidget().setFont(vrtc.getCurrentFont());
+           ((ObjectNodeWidget)node).getLabelWidget().setForeground(vrtc.getCurrentColor());
+       }
        vrtc.getScene().validate();
        vrtc.getScene().repaint();
        vrtc.setDisplayName(myObject.getDisplayname() + " ["+myObject.getClassName()+"]");

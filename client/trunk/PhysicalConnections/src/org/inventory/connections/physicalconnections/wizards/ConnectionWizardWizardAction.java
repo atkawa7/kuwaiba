@@ -126,7 +126,8 @@ public final class ConnectionWizardWizardAction implements ActionListener {
                     new String[]{"name","type"}, new Object[]{name,type.getOid()});
             
             update.setOid(oid);
-            if(!CommunicationsStub.getInstance().saveObject(update)){
+            newConnection = CommunicationsStub.getInstance().saveObject(update);
+            if(newConnection == null){
                 JOptionPane.showMessageDialog(null, "The object could not be updated \n"+CommunicationsStub.getInstance().getError(),
                         "New Connection",JOptionPane.ERROR_MESSAGE);
                 return false;

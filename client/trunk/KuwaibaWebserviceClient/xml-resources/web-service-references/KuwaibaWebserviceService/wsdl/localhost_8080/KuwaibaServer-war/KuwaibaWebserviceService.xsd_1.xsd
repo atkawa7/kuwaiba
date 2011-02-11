@@ -678,7 +678,7 @@
 
 <xs:complexType name="updateObjectResponse">
 <xs:sequence>
-<xs:element name="return" type="xs:boolean" />
+<xs:element name="return" type="tns:remoteObject" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -799,7 +799,7 @@
 
 <xs:complexType name="createPhysicalContainerConnectionResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:remoteObjectLight" minOccurs="0" />
+<xs:element name="return" type="tns:remoteObject" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 

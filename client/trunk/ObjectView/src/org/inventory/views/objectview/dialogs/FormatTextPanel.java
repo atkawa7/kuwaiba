@@ -37,7 +37,7 @@ public class FormatTextPanel extends javax.swing.JPanel {
     public FormatTextPanel() {
         initComponents();
         pnlTabMain.addTab("Node", new SingleFormatPanel());
-        pnlTabMain.addTab("Connections",new SingleFormatPanel());
+        //pnlTabMain.addTab("Connections",new SingleFormatPanel());
     }
 
     public Color getNodesFontColor(){
@@ -138,17 +138,17 @@ public class FormatTextPanel extends javax.swing.JPanel {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(lblFontType)
-                            .addGap(36, 36, 36)
+                            .addGap(32, 32, 32)
                             .addComponent(cmbFontType, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(lblFontColor)
                                 .addComponent(lblFontSize))
                                 
-                            .addGap(36, 36, 36)
+                            .addGap(32, 32, 32)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(cmbFontColor, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(cmbFontSize, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(cmbFontSize, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             );
             layout.setVerticalGroup(
@@ -165,8 +165,7 @@ public class FormatTextPanel extends javax.swing.JPanel {
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(lblFontSize)
-                        .addComponent(cmbFontSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap(33, Short.MAX_VALUE))
+                        .addComponent(cmbFontSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             );
         }// </editor-fold>
 
@@ -176,13 +175,28 @@ public class FormatTextPanel extends javax.swing.JPanel {
             Color[] colors = new Color []{Color.black, Color.white, Color.red,
                                         Color.blue,Color.green,Color.orange, Color.yellow};
 
-            //cmbFontSize.addItem(null);
+            cmbFontSize.addItem(null);
             for (int i = 6; i < 30; i++){
                 if (i%2 == 0)
                     cmbFontSize.addItem(i);
             }
 
-            //cmbFontColor.addItem(null);
+            cmbFontSize.setRenderer(new ListCellRenderer() {
+
+                public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    JLabel item = new JLabel();
+                    if (value != null)
+                        item.setText(String.valueOf(value));
+                    else
+                        item.setText("Current Value");
+
+                    item.setBackground(UIManager.getColor("ComboBox.selectionBackground")); //NOI18N
+                    item.setOpaque(isSelected);
+                    return item;
+                }
+            });
+
+            cmbFontColor.addItem(null);
             for (Color color : colors)
                 cmbFontColor.addItem(color);
 
@@ -190,17 +204,21 @@ public class FormatTextPanel extends javax.swing.JPanel {
 
                 public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                     JLabel item = new JLabel();
-                    if (value != null)
-                        item.setText(Utils.getColorName((Color)value));
+                    if (value != null){
+                        if (value instanceof Color){
+                            item.setText(Utils.getColorName((Color)value));
+                            item.setForeground((Color)value);
+                        }
+                    }else
+                        item.setText("Current Value");
 
                     item.setBackground(UIManager.getColor("ComboBox.selectionBackground")); //NOI18N
-                    item.setForeground((Color)value);
                     item.setOpaque(isSelected);
                     return item;
                 }
             });
 
-            //cmbFontType.addItem(null);
+            cmbFontType.addItem(null);
             for (Font font : GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts())
                 cmbFontType.addItem(font);
 
@@ -208,11 +226,16 @@ public class FormatTextPanel extends javax.swing.JPanel {
 
                 public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                     JLabel item = new JLabel();
-                    if (value != null)
-                        item.setText(((Font)value).getFontName());
+                    if (value != null){
+                        if (value instanceof Font){ //Weird, the -1 index is a String, not null
+                            item.setFont(new Font(((Font)value).getFontName(),Font.PLAIN,12));
+                            item.setText(((Font)value).getFontName());
+                        }
+                    }else
+                        item.setText("Current Value");
 
                     item.setBackground(UIManager.getColor("ComboBox.selectionBackground")); //NOI18N
-                    //item.setFont((Font)value);
+                    
                     item.setOpaque(isSelected);
                     return item;
                 }
@@ -228,7 +251,7 @@ public class FormatTextPanel extends javax.swing.JPanel {
         }
 
         public int getSelectedSize(){
-            return (Integer)cmbFontSize.getSelectedItem();
+            return cmbFontSize.getSelectedItem() == null? -1: (Integer)cmbFontSize.getSelectedItem();
         }
     }
 }

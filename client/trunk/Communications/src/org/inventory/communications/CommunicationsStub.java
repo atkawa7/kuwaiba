@@ -217,7 +217,7 @@ public class CommunicationsStub {
      *            every field within the "original". it only has field(s) to be updated
      * @return success or failure
      */
-    public boolean saveObject(LocalObject obj){
+    public LocalObject saveObject(LocalObject obj){
         try{
             ObjectUpdate update = new ObjectUpdate();
             List<String> atts = new ArrayList<String>();
@@ -234,11 +234,12 @@ public class CommunicationsStub {
             update.setUpdatedAttributes(atts);
             update.setNewValues(vals);
 
+            LocalClassMetadata lcmd = getMetaForClass(obj.getClassName(), false);
 
-            return port.updateObject(update,this.session.getSessionId());
+            return new LocalObjectImpl(port.updateObject(update,this.session.getSessionId()),lcmd);
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return false;
+            return null;
         }
         
     }
@@ -1026,8 +1027,9 @@ public class CommunicationsStub {
 
     public LocalObject createPhysicalContainerConnection(Long sourceNode, Long targetNode, String connectionClass, Long parentNode) {
         try{
-            RemoteObjectLight rol = port.createPhysicalContainerConnection(sourceNode, targetNode, connectionClass, parentNode,this.session.getSessionId());
-            return new LocalObjectImpl(rol.getClassName(), rol.getOid(), new String[0], new Object[0]);
+            RemoteObject myObject = port.createPhysicalContainerConnection(sourceNode, targetNode, connectionClass, parentNode,this.session.getSessionId());
+            LocalClassMetadata lcmd = getMetaForClass(myObject.getClassName(), false);
+            return new LocalObjectImpl(myObject, lcmd);
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return null;

@@ -15,11 +15,13 @@
  */
 package org.inventory.views.objectview;
 
-import org.inventory.views.objectview.dialogs.ExportSettingsDialog;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
@@ -28,6 +30,7 @@ import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.interfaces.RefreshableTopComponent;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.views.objectview.dialogs.ExportSettingsPanel;
 import org.inventory.views.objectview.dialogs.FormatTextPanel;
 import org.inventory.views.objectview.scene.ObjectConnectionWidget;
 import org.inventory.views.objectview.scene.ObjectNodeWidget;
@@ -38,6 +41,7 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.netbeans.api.visual.export.SceneExporter;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -66,6 +70,8 @@ public final class ObjectViewTopComponent extends TopComponent
     public static final int CONNECTION_WIRELESSLINK = 5;
     
 
+    private Font currentFont = ObjectNodeWidget.defaultFont;
+    private Color currentColor = Color.black;
     private ButtonGroup buttonGroupUpperToolbar;
     private ButtonGroup buttonGroupRightToolbar;
     private NotificationUtil nu;
@@ -92,7 +98,7 @@ public final class ObjectViewTopComponent extends TopComponent
     public final void initCustomComponents(){
 
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
-        
+
         vrs = new ObjectViewService(this);
 
         scene = new ViewScene(getNotifier());
@@ -449,7 +455,29 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
-        new ExportSettingsDialog(scene).setVisible(true);
+        final ExportSettingsPanel myPanel = new ExportSettingsPanel();
+        DialogDescriptor dd = new DialogDescriptor(myPanel,"Export Settings",true,new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == DialogDescriptor.OK_OPTION){
+                    try {
+                        SceneExporter.createImage(scene,
+                                                  new File(myPanel.getFileName()),
+                                                  myPanel.getSelectedFormat() == ExportSettingsPanel.FORMAT_JPG ? SceneExporter.ImageType.JPG:SceneExporter.ImageType.PNG,
+                                                  myPanel.getSelectedZoom() == ExportSettingsPanel.ZOOM_NORMAL ? SceneExporter.ZoomType.ACTUAL_SIZE : SceneExporter.ZoomType.CURRENT_ZOOM_LEVEL,
+                                                  false,
+                                                  false,
+                                                  100,
+                                                  0,  //Not used
+                                                  0); //Not used
+                        JOptionPane.showMessageDialog(null, "The image was exported successfully", "Success!", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(null,"The file name is not valid or you don't have enough permissions","Error",JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+        DialogDisplayer.getDefault().notify(dd);
     }//GEN-LAST:event_btnExportActionPerformed
 
     private void btnFormatTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFormatTextActionPerformed
@@ -458,26 +486,40 @@ public final class ObjectViewTopComponent extends TopComponent
 
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == DialogDescriptor.OK_OPTION){
+                    if (pnlFormat.getNodesFontColor() != null)
+                        currentColor = pnlFormat.getNodesFontColor();
+                    if (pnlFormat.getNodesFontType() != null)
+                        currentFont = pnlFormat.getNodesFontType();
+                    if (pnlFormat.getNodesFontSize() != -1)
+                        currentFont = currentFont.deriveFont(Float.valueOf(pnlFormat.getNodesFontSize()+".0")); //NOI18N
+
                     for (Widget node : scene.getNodesLayer().getChildren()){
                         if (pnlFormat.getNodesFontColor() != null)
                             ((ObjectNodeWidget)node).getLabelWidget().setForeground(pnlFormat.getNodesFontColor());
-                        if (pnlFormat.getNodesFontType() != null)
-                            ((ObjectNodeWidget)node).getLabelWidget().setFont(pnlFormat.getNodesFontType());
-                        if (pnlFormat.getNodesFontSize() != null){
-                            Font newFont = new Font(((ObjectNodeWidget)node).getLabelWidget().getFont().getFontName(),Font.BOLD,pnlFormat.getNodesFontSize());
+
+                        if (pnlFormat.getNodesFontType() != null){
+                            Font newFont = new Font(pnlFormat.getNodesFontType().getFontName(),
+                                    ((ObjectNodeWidget)node).getLabelWidget().getFont().getStyle(),
+                                    ((ObjectNodeWidget)node).getLabelWidget().getFont().getSize());
+                            ((ObjectNodeWidget)node).getLabelWidget().setFont(newFont);
+                        }
+                        if (pnlFormat.getNodesFontSize() != -1){
+                            Font newFont = new Font(((ObjectNodeWidget)node).getLabelWidget().getFont().getFontName(),
+                                    ((ObjectNodeWidget)node).getLabelWidget().getFont().getStyle(),
+                                    pnlFormat.getNodesFontSize());
                             ((ObjectNodeWidget)node).getLabelWidget().setFont(newFont);
                         }
                     }
-                    for (Widget node : scene.getEdgesLayer().getChildren()){
-                        if (pnlFormat.getEdgesFontColor() != null)
-                            ((ObjectConnectionWidget)node).setForeground(pnlFormat.getNodesFontColor());
-                        if (pnlFormat.getEdgesFontType() != null)
-                            ((ObjectConnectionWidget)node).setFont(pnlFormat.getNodesFontType());
-                        if (pnlFormat.getEdgesFontSize() != null){
-                            Font newFont = new Font(((ObjectNodeWidget)node).getLabelWidget().getFont().getFontName(),Font.BOLD,pnlFormat.getNodesFontSize());
-                            ((ObjectConnectionWidget)node).setFont(newFont);
-                        }
-                    }
+//                    for (Widget node : scene.getEdgesLayer().getChildren()){
+//                        if (pnlFormat.getEdgesFontColor() != null)
+//                            ((ObjectConnectionWidget)node).setForeground(pnlFormat.getNodesFontColor());
+//                        if (pnlFormat.getEdgesFontType() != null)
+//                            ((ObjectConnectionWidget)node).setFont(pnlFormat.getNodesFontType());
+//                        if (pnlFormat.getEdgesFontSize() != null){
+//                            Font newFont = new Font(((ObjectConnectionWidget)node).getFont().getFontName(),Font.BOLD,pnlFormat.getNodesFontSize());
+//                            ((ObjectConnectionWidget)node).setFont(newFont);
+//                        }
+//                    }
                 }
             }
         });
@@ -567,7 +609,9 @@ public final class ObjectViewTopComponent extends TopComponent
         // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
         p.setProperty("version", "1.0");
-        // TODO store your settings
+        p.setProperty("fontName", currentFont.getFontName());
+        p.setProperty("fontSize", String.valueOf(currentFont.getSize()));
+        p.setProperty("fontColor", String.valueOf(currentColor.getRGB()));
     }
 
     Object readProperties(java.util.Properties p) {
@@ -580,7 +624,10 @@ public final class ObjectViewTopComponent extends TopComponent
 
     private void readPropertiesImpl(java.util.Properties p) {
         String version = p.getProperty("version");
-        // TODO read your settings according to their version
+        currentFont = new Font(p.getProperty("fontName") == null ? ObjectNodeWidget.defaultFont.getFontName() : p.getProperty("fontName"),
+                ObjectNodeWidget.defaultFont.getStyle(),
+                p.getProperty("fontSize")== null ? ObjectNodeWidget.defaultFont.getSize() : Integer.valueOf(p.getProperty("fontSize")));
+        currentColor = p.getProperty("fontColor") == null ? Color.black : new Color(Integer.valueOf(p.getProperty("fontColor")));
     }
 
     @Override
@@ -624,6 +671,14 @@ public final class ObjectViewTopComponent extends TopComponent
             this.setHtmlDisplayName(this.getDisplayName());
         else
             this.setHtmlDisplayName("<html><b>"+ getDisplayName()+" [Modified]</b></html>");
+    }
+
+    public Color getCurrentColor() {
+        return currentColor;
+    }
+
+    public Font getCurrentFont() {
+        return currentFont;
     }
 
     public void actionPerformed(ActionEvent e) {

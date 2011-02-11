@@ -18,6 +18,8 @@ package org.inventory.views.objectview.scene;
 
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
