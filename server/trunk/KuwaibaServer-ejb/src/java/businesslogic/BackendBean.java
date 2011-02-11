@@ -242,7 +242,7 @@ public class BackendBean implements BackendBeanRemote {
      * @throws ObjectNotFoundException if the oid provided doesn't exist
      */
     @Override
-    public boolean updateObject(ObjectUpdate _obj) throws Exception{
+    public RemoteObject updateObject(ObjectUpdate _obj) throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_UPDATEOBJECT"));
 
         if (em != null){
@@ -259,7 +259,7 @@ public class BackendBean implements BackendBeanRemote {
                 myObject.getClass().getMethod("set"+MetadataUtils.capitalize(obj.getUpdatedAttributes()[i].getName()),
                         obj.getUpdatedAttributes()[i].getType()).invoke(myObject, obj.getNewValues()[i]);
             em.merge(myObject);
-            return true;
+            return new RemoteObject(myObject);
         }
         else
             throw new EntityManagerNotAvailableException();

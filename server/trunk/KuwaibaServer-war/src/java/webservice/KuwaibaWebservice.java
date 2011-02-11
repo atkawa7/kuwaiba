@@ -212,17 +212,15 @@ public class KuwaibaWebservice {
      * Updates attributes of a given object
      * @param update ObjectUpdate object representing only the changes to be committed
      * @param sessionId
-     * @return Success or failure
+     * @return the updated object
      * @throws Exception
      */
     @WebMethod(operationName = "updateObject")
-    public boolean updateObject(@WebParam(name = "objectupdate")ObjectUpdate update,
+    public RemoteObject updateObject(@WebParam(name = "objectupdate")ObjectUpdate update,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             sbr.validateCall("updatObject", getIPAddress(), sessionId);
-            boolean res;
-            res = sbr.updateObject(update);
-            return res;
+            return sbr.updateObject(update);
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
@@ -958,14 +956,14 @@ public class KuwaibaWebservice {
      * @throws Exception
      */
     @WebMethod(operationName = "createPhysicalContainerConnection")
-    public RemoteObjectLight createPhysicalContainerConnection(@WebParam(name="sourceObjectOid")Long sourceObjectOid,
+    public RemoteObject createPhysicalContainerConnection(@WebParam(name="sourceObjectOid")Long sourceObjectOid,
             @WebParam(name="targetObjectOid")Long targetObjectOid,@WebParam(name="containerClass")String containerClass,
             @WebParam(name="parentObjectOid")Long parentObjectOid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             sbr.validateCall("createPhysicalContainerConnection", getIPAddress(), sessionId);
             Class myClass = sbr.getClassFor(containerClass);
-            RemoteObjectLight res = sbr.createPhysicalContainerConnection(sourceObjectOid,targetObjectOid,myClass,parentObjectOid);
+            RemoteObject res = sbr.createPhysicalContainerConnection(sourceObjectOid,targetObjectOid,myClass,parentObjectOid);
             return res;
         }catch(Exception e){
             Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,

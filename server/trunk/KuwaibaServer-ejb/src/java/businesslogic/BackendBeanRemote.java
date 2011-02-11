@@ -43,7 +43,7 @@ public interface BackendBeanRemote {
     public Long getDummyRootId() throws Exception;
     public RemoteObject getObjectInfo(Class objectClass, Long oid) throws Exception;
     public RemoteObjectLight getObjectInfoLight(Class objectClass, Long oid) throws Exception;
-    public boolean updateObject(ObjectUpdate obj) throws Exception;
+    public RemoteObject updateObject(ObjectUpdate obj) throws Exception;
     public boolean setObjectLock(Long oid, String objectClass, Boolean value) throws Exception;
     public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId)  throws Exception;
     public RemoteObjectLight createObject(Class objectClass, Long parentOid, String template) throws Exception;
