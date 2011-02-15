@@ -23,6 +23,5 @@ public interface LocalObjectListItem extends LocalObjectLight{
     //Represents the null ID
     public static final Long NULL_ID = new Long(0);
     
-    public LocalObjectListItem getNull();
     public String getName();
 }

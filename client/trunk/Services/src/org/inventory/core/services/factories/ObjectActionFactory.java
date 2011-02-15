@@ -14,8 +14,9 @@
  * 
  */
 
-package org.inventory.core.services.actions;
+package org.inventory.core.services.factories;
 
+import org.inventory.core.services.actions.ObjectAction;
 import org.inventory.core.services.exceptions.ObjectActionException;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.openide.util.Lookup;
@@ -24,7 +25,7 @@ import org.openide.util.Lookup;
  * This factory is used to get common actions over object nodes
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ObjectActionFactory {
+public abstract class ObjectActionFactory {
 
     public static ObjectAction createEditAction(LocalObjectLight lol) throws ObjectActionException{
          for (ObjectAction action : Lookup.getDefault().lookupAll(ObjectAction.class)){

@@ -34,6 +34,7 @@
             <public-packages>
                 <package>org.inventory.core.services.actions</package>
                 <package>org.inventory.core.services.exceptions</package>
+                <package>org.inventory.core.services.factories</package>
                 <package>org.inventory.core.services.interfaces</package>
                 <package>org.inventory.core.services.utils</package>
             </public-packages>

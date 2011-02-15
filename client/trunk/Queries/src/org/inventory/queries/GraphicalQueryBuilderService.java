@@ -34,6 +34,7 @@ import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.inventory.queries.graphical.elements.ClassNodeWidget;
+import org.inventory.queries.graphical.elements.filters.ListTypeFilter;
 
 /**
  * This class will replace the old QueryBuilderService in next releases
@@ -166,11 +167,12 @@ public class GraphicalQueryBuilderService implements ActionListener{
             case QueryEditorScene.SCENE_FILTERENABLED:
                 QueryEditorNodeWidget newNode;
                 if (insideCheck.getClientProperty("filterType").equals(LocalObjectLight.class)){
-                    LocalClassMetadata myMetadata = com.getMetaForClass((String)insideCheck.getClientProperty("className"),false);
+                    LocalClassMetadataLight myMetadata = com.getLightMetaForClass((String)insideCheck.getClientProperty("className"),false);
                     newNode = (ClassNodeWidget)qbtc.getQueryScene().findWidget(myMetadata);
                     if (newNode == null){
                         newNode = (QueryEditorNodeWidget) qbtc.getQueryScene().addNode(myMetadata);
-                        newNode.build(null);
+                        if (newNode instanceof ListTypeFilter)
+                        ((ListTypeFilter)newNode).build(com.getList(((ListTypeFilter)newNode).getWrappedClass().getClassName(), false));
                         qbtc.getQueryScene().validate();
                     }
                     insideCheck.putClientProperty("related-node", myMetadata);
@@ -187,9 +189,7 @@ public class GraphicalQueryBuilderService implements ActionListener{
                 qbtc.getQueryScene().setEdgeSource(edgeName, insideCheck.getClientProperty("attribute"));
                 qbtc.getQueryScene().setEdgeTarget(edgeName, newNode.getDefaultPinId());
 
-                if (qbtc.getQueryScene().getView().getMousePosition() != null)
-                    newNode.setPreferredLocation(new Point(qbtc.getQueryScene().getView().getMousePosition().x + 200,
-                            qbtc.getQueryScene().getView().getMousePosition().y));
+                newNode.setPreferredLocation(new Point(insideCheck.getParent().getLocation().x + 200, insideCheck.getParent().getLocation().y));
                 
                 qbtc.getQueryScene().validate();
                 break;
@@ -243,8 +243,11 @@ public class GraphicalQueryBuilderService implements ActionListener{
         qbtc.getQueryScene().validate();
 
         for (LocalTransientQuery join : subQuery.getJoins()){
-            if (join != null)
-                renderClassNode(join);
+            if (join != null){
+                if (join.getAttributeNames().size() > 0)
+                    if (!join.getAttributeNames().get(0).equals("id")) //NOI18N //In this case, show an expanded class node widget
+                        renderClassNode(join);                         //Any other way around show a simplified version
+            }
         }
         currentNode.setFilteredAttributes(subQuery.getAttributeNames(), subQuery.getConditions());
         

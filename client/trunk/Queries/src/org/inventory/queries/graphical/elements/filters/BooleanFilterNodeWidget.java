@@ -59,7 +59,7 @@ public class BooleanFilterNodeWidget extends SimpleCriteriaNodeWidget{
     }
 
     @Override
-    public String getValue() {
+    public Object getValue() {
         return trueButton.isSelected()?"true":"false";
     }
 }

@@ -30,7 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.table.TableModel;
 import org.inventory.communications.core.LocalResultRecord;
-import org.inventory.core.services.actions.ObjectActionFactory;
+import org.inventory.core.services.factories.ObjectActionFactory;
 import org.inventory.core.services.exceptions.ObjectActionException;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;

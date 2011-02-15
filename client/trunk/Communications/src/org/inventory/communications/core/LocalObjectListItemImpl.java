@@ -27,6 +27,7 @@ public class LocalObjectListItemImpl extends LocalObjectLightImpl implements Loc
 
 
     public LocalObjectListItemImpl(){
+        oid = LocalObjectListItem.NULL_ID;
     }
 
     public LocalObjectListItemImpl(LocalObjectLight lol){
@@ -71,14 +72,5 @@ public class LocalObjectListItemImpl extends LocalObjectLightImpl implements Loc
             if (!this.displayName.trim().equals(""))
                 return this.displayName;
         return this.name;
-    }
-
-    public static LocalObjectListItem getNullValue() {
-        return new LocalObjectListItemImpl(LocalObjectListItemImpl.NULL_ID,null,"NULL","None");
-    }
-
-    //Workaround
-    public LocalObjectListItem getNull(){
-        return LocalObjectListItemImpl.getNullValue();
     }
 }

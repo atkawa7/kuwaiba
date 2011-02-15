@@ -263,7 +263,8 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
                                 }
                             });
             DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
-        }
+        }else
+            qbs.saveQuery();
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed

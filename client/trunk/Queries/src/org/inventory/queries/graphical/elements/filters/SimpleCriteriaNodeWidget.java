@@ -35,13 +35,13 @@ public abstract class SimpleCriteriaNodeWidget extends QueryEditorNodeWidget{
         super(scene,CustomizableColorScheme.getBlueScheme());
     }
 
-    public int getCondition() {
-        return ((LocalTransientQuery.Criteria)condition.getSelectedItem()).id();
+    public LocalTransientQuery.Criteria getCondition() {
+        return (LocalTransientQuery.Criteria)condition.getSelectedItem();
     }
 
     public void setCondition(LocalTransientQuery.Criteria condition){
         this.condition.setSelectedItem(condition);
     }
 
-    public abstract String getValue();
+    public abstract Object getValue();
 }

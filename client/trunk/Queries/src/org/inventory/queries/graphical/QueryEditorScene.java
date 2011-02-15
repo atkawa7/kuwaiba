@@ -55,13 +55,17 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JCheckBox;
 import org.inventory.communications.core.queries.LocalTransientQuery;
+import org.inventory.core.services.factories.ObjectFactory;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
+import org.inventory.core.services.interfaces.LocalClassMetadataLight;
+import org.inventory.core.services.interfaces.LocalObjectListItem;
 import org.inventory.queries.graphical.elements.AttributePinWidget;
 import org.inventory.queries.graphical.elements.ClassNodeWidget;
 import org.inventory.queries.graphical.elements.CustomizableColorScheme;
 import org.inventory.queries.graphical.elements.filters.BooleanFilterNodeWidget;
 import org.inventory.queries.graphical.elements.filters.DateFilterNodeWidget;
+import org.inventory.queries.graphical.elements.filters.ListTypeFilter;
 import org.inventory.queries.graphical.elements.filters.NumericFilterNodeWidget;
 import org.inventory.queries.graphical.elements.filters.SimpleCriteriaNodeWidget;
 import org.inventory.queries.graphical.elements.filters.StringFilterNodeWidget;
@@ -163,21 +167,21 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      */
     protected Widget attachNodeWidget (Object node) {
         QueryEditorNodeWidget widget = null;
-        if (node instanceof LocalClassMetadata){
+        if (node instanceof LocalClassMetadata){ //A complex class filter node
             if(getNodes().isEmpty()) //It's the first node, this is, the root one. In this case we use a different scheme
                 widget = new ClassNodeWidget(this, (LocalClassMetadata)node, 
                         CustomizableColorScheme.getGreenScheme());
-            else
-                //widget = new ClassNodeWidget(this, (LocalClassMetadata)node,VMDFactory.getNetBeans60Scheme());
+            else{
                 widget = new ClassNodeWidget(this, (LocalClassMetadata)node,
                         CustomizableColorScheme.getYellowScheme());
-                
+            }
         }
         else{
-            String type = ((String)node).substring(0, ((String)node).indexOf('_'));
-            if (type.equals("LocalObjectLight")){ //NOI18N
-
+            if (node instanceof LocalClassMetadataLight){ //A simplified class filter node
+                widget = new ListTypeFilter(this, (LocalClassMetadataLight)node);
             }else{
+                String type = ((String)node).substring(0, ((String)node).indexOf('_'));
+
                 if (type.equals("String")) //NOI18N
                     widget = new StringFilterNodeWidget(this);
                 else
@@ -308,10 +312,25 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
                     VMDConnectionWidget myEdge = (VMDConnectionWidget)findWidget(edge);
                     VMDNodeWidget nextHop = (VMDNodeWidget) myEdge.getTargetAnchor().getRelatedWidget().getParentWidget();
                     myQuery.getAttributeNames().add(((AttributePinWidget)myPin).getAttribute().getName());
-                    if(nextHop instanceof SimpleCriteriaNodeWidget){                       
-                        myQuery.getConditions().add(((SimpleCriteriaNodeWidget)nextHop).getCondition());
-                        myQuery.getAttributeValues().add(((SimpleCriteriaNodeWidget)nextHop).getValue());
-                        myQuery.getJoins().add(null); //padding
+                    if(nextHop instanceof SimpleCriteriaNodeWidget){
+                        if (nextHop instanceof ListTypeFilter){
+                            myQuery.getConditions().add(null); //padding
+                            myQuery.getAttributeValues().add(null); //padding
+                            if (((LocalObjectListItem)((ListTypeFilter)nextHop).getValue()).equals(ObjectFactory.createNullItem())){
+                                myQuery.getJoins().add(null);
+                            }else{
+                                LocalTransientQuery simplifiedQuery = new LocalTransientQuery(((ListTypeFilter)nextHop).getNodeName(),logicalConnector,false,0,0);
+                                simplifiedQuery.getAttributeNames().add("id"); //NOI18N
+                                simplifiedQuery.getAttributeValues().add(((LocalObjectListItem)((ListTypeFilter)nextHop).getValue()).getOid().toString());
+                                simplifiedQuery.getJoins().add(null); //padding
+                                simplifiedQuery.getConditions().add(((ListTypeFilter)nextHop).getCondition().id());
+                                myQuery.getJoins().add(simplifiedQuery);
+                            }
+                        }else{
+                            myQuery.getConditions().add(((SimpleCriteriaNodeWidget)nextHop).getCondition().id());
+                            myQuery.getAttributeValues().add(String.valueOf(((SimpleCriteriaNodeWidget)nextHop).getValue()));
+                            myQuery.getJoins().add(null); //padding
+                        }
                     }else{
                         if (nextHop instanceof ClassNodeWidget){
                             myQuery.getConditions().add(null); //padding

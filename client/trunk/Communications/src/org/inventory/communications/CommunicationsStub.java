@@ -37,6 +37,7 @@ import org.inventory.communications.core.queries.LocalQuery;
 import org.inventory.communications.core.queries.LocalQueryLight;
 import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.communications.core.views.LocalObjectView;
+import org.inventory.core.services.factories.ObjectFactory;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObject;
@@ -459,7 +460,7 @@ public class CommunicationsStub {
             List<LocalObjectListItem> loli = new ArrayList<LocalObjectListItem>();
             //The +1 represents the empty room left for the "null" value
             res = new LocalObjectListItemImpl[remoteList.getList().getEntry().size() + 1];
-            res[0] = LocalObjectListItemImpl.getNullValue();
+            res[0] = ObjectFactory.createNullItem();
             loli.add(res[0]);
             int i = 1;
             for(Entry entry : remoteList.getList().getEntry()){
