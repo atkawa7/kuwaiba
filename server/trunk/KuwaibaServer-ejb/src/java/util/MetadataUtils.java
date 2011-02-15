@@ -305,7 +305,7 @@ public class MetadataUtils {
                 if (mappedValue == null) { //Look for a join in the getJoins()
                     TransientQuery myJoin = myQuery.getJoins().get(i);
                     if (myJoin == null) //If this is null, we're trying to match what objects has the current attribute set to null
-                        formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+"=null"); //NOI18N
+                        formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+" IS NULL"); //NOI18N
                     else {
                         Class innerClass = getClassFor(myJoin.getClassName(),em); //Only used to check if the class is valid
                         chainPredicates(prefix+myQuery.getAttributeNames().get(i)+".", myJoin, formerPredicates, em); //NOI18N
@@ -328,7 +328,7 @@ public class MetadataUtils {
                             formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+"="+mappedValue);  //NOI18N
 
                         else {
-                            if (mappedValue instanceof Integer || mappedValue instanceof Float) {
+                            if (mappedValue instanceof Integer || mappedValue instanceof Float || mappedValue instanceof Long) {
                                 switch (myQuery.getConditions().get(i)) {
                                     case TransientQuery.EQUAL:
                                         formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+"="+mappedValue);  //NOI18N
