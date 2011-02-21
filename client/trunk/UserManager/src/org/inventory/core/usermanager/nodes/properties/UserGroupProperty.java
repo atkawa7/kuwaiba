@@ -63,7 +63,7 @@ public class UserGroupProperty extends ReadWrite{
         update.setLocalObject("UserGroup",
                 new String[]{this.getName()}, new Object[]{t});
         update.setOid(this.object.getOid());
-        if(com.saveObject(update)){
+        if(com.saveObject(update) != null){
             if(!this.getName().equals("password")) //NOI18N
                 this.value = t;
         }
