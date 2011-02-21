@@ -15,16 +15,11 @@
  */
 package entity.core.metamodel;
 
-import core.annotations.Metadata;
+import entity.core.MetadataObject;
 import entity.multiple.GenericObjectList;
-import entity.relations.GenericRelation;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.metamodel.Attribute;
 import util.HierarchyUtils;
@@ -36,29 +31,40 @@ import util.HierarchyUtils;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Metadata //Custon annotation to mark this class as an utility class, no a business class
 @NamedQuery(name="flushAttributeMetadata", query="DELETE FROM AttributeMetadata x")
-public class AttributeMetadata implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @Column(nullable=false,updatable=false)
-    private String name=""; //NOI18N
+public class AttributeMetadata extends MetadataObject {
+    
     @Column(nullable=false)
-    private String type="String"; //NOI18N
+    private String type=""; //NOI18N
     private String displayName=""; //NOI18N
+    /**
+     * Mark this attribute as administrative (stuff like id or parent)
+     */
     @Column(nullable=false)
-    private Boolean isAdministrative=false; //Mark this attribute as administrative (stuff like id or parent)
+    private Boolean isAdministrative=false;
+    /**
+     * Is this attribute a basic type (int, string, etc) or a list type
+     */
     @Column(nullable=false,updatable=false)
-    private Boolean isMultiple = false;    //Is this attribute a basic type (int, string, etc) or a list type
+    private Boolean isMultiple = false;
+     /**
+      * Should this be shown or hidden
+      */
     @Column(nullable=false)
-    private Boolean isVisible=true; //Should this be shown or hidden
+    private Boolean isVisible=true;
+    /**
+     * Attribute description. Used for documentation purposes
+     */
     private String description;
+    /**
+     * Is this attribute read only?
+     */
+    private Boolean isReadOnly;
 
     public AttributeMetadata(){} //Required
     public AttributeMetadata(String _name, String _type, String _displayName,
-            Boolean _isAdministrative, Boolean _isVisible, Boolean _isMultiple, String _description){
+            Boolean _isAdministrative, Boolean _isVisible, Boolean _isMultiple,
+            Boolean _isReadonly, String _description){
         this.name = _name;
         this.type= _type;
         this.displayName = _displayName;
@@ -66,6 +72,7 @@ public class AttributeMetadata implements Serializable {
         this.isVisible = _isVisible;
         //Should this be taken from the class metadata?
         this.isMultiple = _isMultiple;
+        this.isReadOnly = _isReadonly;
         this.description = _description;
     }
 
@@ -73,8 +80,7 @@ public class AttributeMetadata implements Serializable {
         this.name = att.getName();
         this.type= att.getJavaType().getSimpleName();
 
-        if (HierarchyUtils.isSubclass(att.getJavaType(), GenericRelation.class) ||
-                HierarchyUtils.isSubclass(att.getJavaType(), GenericRelation.class))
+        if (HierarchyUtils.isSubclass(att.getJavaType(), GenericObjectList.class))
                 this.isMultiple = true;
         this.description = "Attribute "+this.name;
     }
@@ -82,8 +88,7 @@ public class AttributeMetadata implements Serializable {
     public AttributeMetadata(Field att){
         this.name = att.getName();
         this.type= att.getType().getSimpleName();
-        if (HierarchyUtils.isSubclass(att.getType(), GenericRelation.class) ||
-                HierarchyUtils.isSubclass(att.getType(), GenericObjectList.class))
+        if (HierarchyUtils.isSubclass(att.getType(), GenericObjectList.class))
                 this.isMultiple = true;
         this.description = "Attribute "+this.name;
     }
@@ -92,15 +97,15 @@ public class AttributeMetadata implements Serializable {
         return isAdministrative;
     }
 
-    public void setIsAdministrative(Boolean isAdministrative) {
+    public void setAdministrative(Boolean isAdministrative) {
         this.isAdministrative = isAdministrative;
     }
 
-    public Boolean IsVisible() {
+    public Boolean isVisible() {
         return isVisible;
     }
 
-    public void setIsVisible(Boolean isVisible) {
+    public void setVisible(Boolean isVisible) {
         this.isVisible = isVisible;
     }
     
@@ -120,14 +125,6 @@ public class AttributeMetadata implements Serializable {
         this.displayName = displayName;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getType() {
         return type;
     }
@@ -136,40 +133,20 @@ public class AttributeMetadata implements Serializable {
         this.type = type;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Boolean isMultiple() {
         return isMultiple;
     }
 
-    public void setIsMultiple(Boolean isMultiple) {
+    public void setMultiple(Boolean isMultiple) {
         this.isMultiple = isMultiple;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
+    public Boolean isReadOnly() {
+        return isReadOnly;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof AttributeMetadata)) {
-            return false;
-        }
-        AttributeMetadata other = (AttributeMetadata) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+    public void setReadOnly(Boolean isReadOnly) {
+        this.isReadOnly = isReadOnly;
     }
 
     @Override

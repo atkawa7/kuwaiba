@@ -14,25 +14,20 @@
  *  limitations under the License.
  *  under the License.
  */
-package core.annotations;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package core.exceptions;
+
+import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 /**
- * Classes decorated with this annotation are used to keep metadata information and should not be
- * returned to to the client.
+ * Should be thrown when an operation is not permitted
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-@Documented
-@Target(ElementType.TYPE)
-@Inherited
-@Retention(RetentionPolicy.RUNTIME) //Don't discard this annotation after compiling the class
-                                    //we need it at runtime
-public @interface Metadata {
+public class InvalidSessionException extends InventoryException{
+
+    public InvalidSessionException(String msg) {
+        super(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOACTIVESESSION")+": "+msg, Level.WARNING);
+    }
 
 }

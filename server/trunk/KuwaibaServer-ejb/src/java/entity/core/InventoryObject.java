@@ -13,56 +13,46 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package entity.config;
+package entity.core;
 
 import core.annotations.NoCopy;
-import entity.core.ApplicationObject;
-import java.util.ArrayList;
+import core.annotations.ReadOnly;
+
 import java.util.Date;
-import java.util.List;
+import java.util.Calendar;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+
 /**
- * This class represents a group of users. Those users will have the same privileges
- * @author Charles Edward Bedón Cortázar <charles.bedon@zoho.com>
+ * The Root of all hierarchy
+ * @author Charles Bedon <charles.bedon@zoho.com>
  */
 @Entity
-@Table(name="Groups")
-public class UserGroup extends ApplicationObject { //Group is a keyword in JPQL
+public abstract class InventoryObject extends RootObject{
+
+    public static final Long PARENT_ROOT = new Long(0); // This is the id for the single instance of the root object
+    public static final Class ROOT_CLASS = DummyRoot.class; // this is the class that represents the root object
 
     @NoCopy
+    protected Long parent = null;
+    /**
+     * When was the object created?
+     */
+    @NoCopy
+    @ReadOnly
     @Temporal(value=TemporalType.TIMESTAMP)
-    private Date creationDate;
-    private String description;
-    
-    @ManyToMany(mappedBy = "groups")
-    @JoinColumn(nullable=true)
-    protected List<User> users = new ArrayList<User>();
+    protected Date creationDate = Calendar.getInstance().getTime();
 
-    public List<User> getUsers() {
-        return users;
+    public InventoryObject(){}
+
+    public Long getParent() {
+        return parent;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
+    public void setParent(Long parent) {
+        this.parent = parent;
     }
 
     public Date getCreationDate() {

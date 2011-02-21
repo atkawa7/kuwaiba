@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
- * This is a wrapper class for ClassMetadata, containing the info requiered for the clients
+ * This is a wrapper class for ClassMetadata, containing the info required for the clients
  * to render the object attributes in the right way
  *
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
@@ -34,7 +34,6 @@ public class ClassInfo extends ClassInfoLight{
     private String [] attributeTypes;
     private String [] attributeDisplayNames;
     private Boolean [] attributesIsVisible;
-    private Boolean [] attributesIsAdministrative;
     private Boolean [] attributesIsMultiple; //if the attribute is a list
     private String [] attributesDescription;
     protected byte[] icon;
@@ -43,7 +42,7 @@ public class ClassInfo extends ClassInfoLight{
     public ClassInfo(){}
     public ClassInfo(ClassMetadata myClass){
         super (myClass);
-        this.isAbstract = myClass.getIsAbstract();
+        this.isAbstract = myClass.isAbstract();
         this.icon = myClass.getIcon();
         List<AttributeMetadata> ar = myClass.getAttributes();
         this.attributeIds = new Long[ar.size()];
@@ -51,7 +50,6 @@ public class ClassInfo extends ClassInfoLight{
         this.attributeTypes = new String[this.attributeNames.length];
         this.attributeDisplayNames = new String[this.attributeNames.length];
         this.attributesIsVisible = new Boolean[this.attributeNames.length];
-        this.attributesIsAdministrative = new Boolean[this.attributeNames.length];
         this.attributesIsMultiple = new Boolean[this.attributeNames.length];
         this.attributesDescription = new String[this.attributeNames.length];
         this.description = myClass.getDescription();
@@ -62,8 +60,7 @@ public class ClassInfo extends ClassInfoLight{
             this.attributeTypes[i] = myAtt.getType();
             this.attributeDisplayNames[i] = myAtt.getDisplayName() == null?
                 "":myAtt.getDisplayName();
-            this.attributesIsAdministrative[i] = myAtt.isAdministrative();
-            this.attributesIsVisible[i] = myAtt.IsVisible();
+            this.attributesIsVisible[i] = myAtt.isVisible();
             this.attributesIsMultiple[i] = myAtt.isMultiple();
 
             this.attributesDescription[i] = myAtt.getDescription()==null?
@@ -102,14 +99,6 @@ public class ClassInfo extends ClassInfoLight{
 
     public void setAttributesDescription(String[] attributesDescription) {
         this.attributesDescription = attributesDescription;
-    }
-
-    public Boolean[] getAttributesIsAdministrative() {
-        return attributesIsAdministrative;
-    }
-
-    public void setAttributesIsAdministrative(Boolean[] attributesIsAdministrative) {
-        this.attributesIsAdministrative = attributesIsAdministrative;
     }
 
     public Boolean[] getAttributesIsVisible() {

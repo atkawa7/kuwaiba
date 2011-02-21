@@ -17,16 +17,17 @@
 package core.exceptions;
 
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 /**
  * Thrown when a certain property is not known or currently supported
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class UnsupportedPropertyException extends Exception{
+public class UnsupportedPropertyException extends InventoryException{
 
     public UnsupportedPropertyException(String propertyName) {
         super(ResourceBundle.getBundle("internationalization/Bundle").
-                getString("LBL_UNSUPPORTEDPROPERTY")+propertyName);
+                getString("LBL_UNSUPPORTEDPROPERTY")+propertyName, Level.SEVERE);
     }
 
 }

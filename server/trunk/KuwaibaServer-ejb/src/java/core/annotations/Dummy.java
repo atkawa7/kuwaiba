@@ -8,8 +8,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Mark some classes as dummy, it is to say, classes useful only for special and particular purposes,
- * like DummyRoot
+ * Mark some classes as dummy, it is to say, classes useful only for special and particular purposes.
+ * They're not part of the data model itself like DummyRoot. Usually these dummy classes have only one instance
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Documented

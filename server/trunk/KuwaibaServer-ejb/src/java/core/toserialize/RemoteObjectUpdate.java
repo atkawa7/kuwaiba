@@ -23,7 +23,7 @@ import util.HierarchyUtils;
 import util.MetadataUtils;
 
 /**
- * Represents an object's update, but deserialized (from the application's point of view)
+ * Represents an object update. It's basically a RemoteObject containing only the changes to be done
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class RemoteObjectUpdate {
@@ -65,35 +65,4 @@ public class RemoteObjectUpdate {
     public Field[] getUpdatedAttributes() {
         return updatedAttributes;
     }
-
-     /**
-     * Generates a native SQL Query to be executed in order to perform the update
-     * @return The native SQL text to update a given object
-     */
-/*    public String generateQueryText(){
-    String query="UPDATE "+this.objectClass.getSimpleName()+" obj SET ";
-    for (int i=0; i<this.updatedAttributes.length;i++){
-        String value = "";
-        String att="";
-        if(this.updatedAttributes[i].getType().equals(String.class))
-            value="'"+(String)this.newValues[i]+"'";
-        else
-            value = this.newValues[i].toString();
-        if (HierarchyUtils.isSubclass(updatedAttributes[i].getType(),GenericObjectList.class) ||
-                           HierarchyUtils.
-                                isSubclass(updatedAttributes[i].getType(),GenericRelation.class)){
-            att= this.updatedAttributes[i].getName()+"_id";
-            if (value.equals("0")) //If this is a relationship and the id is 0 its because the user chose "None". This is, a NULL value
-                value="NULL";
-        }
-        else
-            att= this.updatedAttributes[i].getName();
-        query+=att+"="+value+",";
-    }
-    query = query.substring(0, query.length()-1);
-    query +=" WHERE obj.id="+this.oid;
-    return query;
-    }
- *
- */
 }

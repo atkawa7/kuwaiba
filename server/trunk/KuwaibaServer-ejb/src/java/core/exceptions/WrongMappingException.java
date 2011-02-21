@@ -17,18 +17,19 @@
 package core.exceptions;
 
 import java.util.Formatter;
+import java.util.logging.Level;
 
 /**
  * This exception is raised when a pair attribute type - attribute value is not valid
  * (i.e. type Integer, value "aaaaa") and the latter can't be converted
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class WrongMappingException extends Exception{
+public class WrongMappingException extends InventoryException{
 
     public WrongMappingException(String className, String attributeName,
             String attributeType, String attributeValue) {
         super (new Formatter().format("The value %1s can't mapped to a type %2s for the attribute %3s in class %4s",
-                attributeValue, attributeType,attributeName,className).toString());
+                attributeValue, attributeType,attributeName,className).toString(), Level.WARNING);
     }
 
 }

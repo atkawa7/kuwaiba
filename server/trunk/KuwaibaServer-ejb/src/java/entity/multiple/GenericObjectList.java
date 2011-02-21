@@ -15,8 +15,6 @@
  */
 package entity.multiple;
 
-import core.annotations.Administrative;
-import core.annotations.Hidden;
 import entity.core.AdministrativeItem;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -26,8 +24,6 @@ import javax.persistence.InheritanceType;
  * Represents a generic list type attribute
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-@Administrative
-@Hidden
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericObjectList extends AdministrativeItem{
@@ -41,11 +37,18 @@ public abstract class GenericObjectList extends AdministrativeItem{
         this.displayName = displayName;
     }
 
-    //Al final, las relaciones se identifican con un id, que es una clave foránea
-    //dentro del elemento que los referencia y obviamente es la clave primaria
-    //de su tabla
+    /**
+     * This method
+     * @param _value
+     * @return
+     */
     public static Long valueOf(Object _value){
         if (_value == null) return null;
-        else return (Long)_value;
+        else {
+            if (_value instanceof Long)
+                return (Long)_value;
+            else
+                throw new IllegalArgumentException("The object provided is not a reference to an list type item: "+_value);
+        }
     }
 }

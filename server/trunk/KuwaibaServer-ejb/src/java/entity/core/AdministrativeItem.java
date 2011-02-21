@@ -16,7 +16,6 @@
 
 package entity.core;
 
-import core.annotations.Administrative;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -26,7 +25,6 @@ import javax.persistence.InheritanceType;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Administrative
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class AdministrativeItem extends ViewableObject {
 }

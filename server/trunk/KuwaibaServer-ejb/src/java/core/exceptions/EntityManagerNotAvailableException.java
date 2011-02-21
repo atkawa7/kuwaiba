@@ -16,13 +16,15 @@
 
 package core.exceptions;
 
+import java.util.logging.Level;
+
 /**
  * Use this exception when the entity manager is null
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class EntityManagerNotAvailableException extends Exception{
+public class EntityManagerNotAvailableException extends InventoryException{
 
     public EntityManagerNotAvailableException() {
-        super (java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER"));
+        super (java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NO_ENTITY_MANAGER"), Level.SEVERE);
     }
 }

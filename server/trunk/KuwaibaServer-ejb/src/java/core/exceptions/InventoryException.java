@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -12,18 +12,31 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *  under the License.
  */
-package entity.equipment.misc;
 
-import entity.core.InventoryObject;
-import java.io.Serializable;
-import javax.persistence.Entity;
+package core.exceptions;
+
+import java.util.logging.Level;
 
 /**
- * Represents a slot where a board can be fit
+ * Root class for all custom exceptions in this package
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-@Entity
-public class Slot extends InventoryObject implements Serializable{
+public abstract class InventoryException extends Exception{
+    private Level level;
+
+    public InventoryException(String msg, Level level) {
+        super (msg);
+        this.level = level;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public void setLevel(Level level) {
+        this.level = level;
+    }
 
 }

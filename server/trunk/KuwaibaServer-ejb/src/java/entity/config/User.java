@@ -15,16 +15,11 @@
  */
 package entity.config;
 
-import core.annotations.Administrative;
-import core.annotations.Hidden;
-import java.io.Serializable;
+import entity.core.ApplicationObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -39,14 +34,8 @@ import javax.persistence.TemporalType;
  * @author Charles Edward Bedón Cortázar <charles.bedon@zoho.com>
  */
 @Entity
-@Administrative
-@Hidden
 @Table(name="Users") //Table name "User" is a reserved keyword
-public class User implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
-    private Long id;
+public class User extends ApplicationObject {
     /**
      * User's username
      */
@@ -56,7 +45,6 @@ public class User implements Serializable {
     private Boolean isEnabled;
     @Temporal(value=TemporalType.TIMESTAMP)
     private Date creationDate = Calendar.getInstance().getTime();
-    private String firstName;
     private String lastName;
     private String phone;
     private String cellphone;
@@ -65,30 +53,12 @@ public class User implements Serializable {
     @JoinColumn(nullable=true)
     private List<UserGroup> groups = new ArrayList<UserGroup>();
 
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getCellphone() {
         return cellphone;
     }
 
     public void setCellphone(String cellphone) {
         this.cellphone = cellphone;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
     }
 
     public List<UserGroup> getGroups() {
@@ -147,32 +117,12 @@ public class User implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public Boolean getIsEnabled() {
+    public Boolean isEnabled() {
         return isEnabled;
     }
 
-    public void setIsEnabled(Boolean enabled) {
+    public void setEnabled(Boolean enabled) {
         this.isEnabled = enabled;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof User)) {
-            return false;
-        }
-        User other = (User) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override

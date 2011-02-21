@@ -25,7 +25,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation decorates the attributes that shouldn't be copied in a copy operation
+ * Used to decorate fields that shouldn't be cloned in a copy operation
+ * (i.e. id, creationDate, object views)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Documented

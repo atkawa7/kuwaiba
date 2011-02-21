@@ -24,8 +24,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Decorates a field to keep it from being serialized. Field marked like these are supposed to
- * be retrieved directly (say containers associated to a node or endpoints)
+ * Decorates a field to keep it from being serialized. Field marked like these are supposed
+ * to be retrieved directly (say containers associated to a node or endpoints). Most of them
+ * are one to many or many to one relationships
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Documented

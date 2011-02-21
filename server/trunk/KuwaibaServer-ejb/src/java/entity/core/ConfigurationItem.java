@@ -16,7 +16,6 @@
 
 package entity.core;
 
-import core.annotations.Administrative;
 import entity.multiple.companies.Vendor;
 import entity.multiple.misc.EnvironmentalCondition;
 import entity.multiple.states.OperationalState;
@@ -34,7 +33,6 @@ import javax.persistence.ManyToOne;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Administrative
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class ConfigurationItem extends ViewableObject  {
 

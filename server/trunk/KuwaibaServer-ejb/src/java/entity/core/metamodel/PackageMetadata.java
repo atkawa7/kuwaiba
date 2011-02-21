@@ -15,36 +15,23 @@
  */
 package entity.core.metamodel;
 
-import core.annotations.Metadata;
-import java.io.Serializable;
+import entity.core.MetadataObject;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
 /**
- * Esta clase representa un paquete, que desde el punto de vista de la aplicación
- * vendrían a ser como categorías
+ * This class represents the different packages used to hold the entity classes. From the application
+ * point of view, it's like a category, and will be used later, when the data model goes dynamic
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Metadata //Anotación personalizada para marcarla como que no se debe pasar a los
-          //clientes para que administren su meta, ya que ella es una clase de utilidad
 @NamedQuery(name="flushPackageMetadata", query="DELETE FROM PackageMetadata x")
-public class PackageMetadata implements Serializable {
-    private static final long serialVersionUID = 1L;
-    
-    @Column(nullable=false,unique=true,updatable=false)
-    private String name;
+public class PackageMetadata extends MetadataObject{
+
     private String displayName;
     @Column(length=500)
     private String description;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
     public PackageMetadata() {
     }
@@ -61,43 +48,6 @@ public class PackageMetadata implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PackageMetadata)) {
-            return false;
-        }
-        PackageMetadata other = (PackageMetadata) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     @Override

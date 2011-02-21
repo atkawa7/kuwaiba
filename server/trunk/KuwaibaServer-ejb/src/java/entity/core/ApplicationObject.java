@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,17 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package entity.equipment.misc;
 
-import entity.core.InventoryObject;
-import java.io.Serializable;
+package entity.core;
+
 import javax.persistence.Entity;
 
 /**
- * Represents a slot where a board can be fit
+ * Instances of this class are persisted as support to the system normal operation, but they're not
+ * actually part of the inventory
+ *
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Slot extends InventoryObject implements Serializable{
-
+public abstract class ApplicationObject extends RootObject {
+    
 }

@@ -17,14 +17,16 @@
 
 package core.exceptions;
 
+import java.util.logging.Level;
+
 /**
  * Should be thrown when an operation is not permitted
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class NotAuthorizedException extends Exception{
+public class NotAuthorizedException extends InventoryException{
 
     public NotAuthorizedException(String msg) {
-        super("NotAuthorized Exception: "+msg);
+        super("Not enough privileges to perform this operation "+msg, Level.WARNING);
     }
 
 }

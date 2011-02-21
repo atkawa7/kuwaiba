@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,43 +13,35 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package entity.core;
 
-import core.annotations.Administrative;
 import core.annotations.NoCopy;
+import core.annotations.ReadOnly;
 import java.io.Serializable;
-
-//Annotations
-import java.util.Date;
-import java.util.Calendar;
 import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
- * The Root of all hierarchy
- * @author Charles Bedon <charles.bedon@zoho.com>
+ * This is the root of the class hierarchy
+ * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Administrative
 @Inheritance(strategy=InheritanceType.JOINED) //Default is SINGLE_TABLE, so all data will be stored in a single table
-public abstract class RootObject implements Serializable, Cloneable {
-
-    public static final Long PARENT_ROOT = new Long(0); // This is the id for the single instance of the root object
-    public static final Class ROOT_CLASS = DummyRoot.class; // this is the class that represents the root object
-
+public abstract class RootObject implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE) //How to generate the primary key (SEQUENCE makes it customizable)
     @NoCopy
     @Column(updatable=false)
+    @ReadOnly
     protected Long id; //Primary key
+
     @Column(nullable=false)
     protected String name = ""; //Name
     /**
@@ -58,23 +50,13 @@ public abstract class RootObject implements Serializable, Cloneable {
     @Column(nullable=false)
     @NoCopy
     protected Boolean isLocked= false;
-    @NoCopy
-    protected Long parent = null;
-    /**
-     * When was the object created?
-     */
-    @NoCopy
-    @Temporal(value=TemporalType.TIMESTAMP)
-    protected Date creationDate = Calendar.getInstance().getTime();
 
-    public RootObject(){}
-
-    public Long getParent() {
-        return parent;
+    public Long getId() {
+        return id;
     }
 
-    public void setParent(Long parent) {
-        this.parent = parent;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Boolean getIsLocked() {
@@ -93,15 +75,6 @@ public abstract class RootObject implements Serializable, Cloneable {
         this.name = name;
     }
 
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -109,39 +82,20 @@ public abstract class RootObject implements Serializable, Cloneable {
         return hash;
     }
 
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-    
-
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final RootObject other = (RootObject) obj;
-        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
 
-    //@Override
-    public boolean equals(RootObject object) {
-        if (!(object instanceof RootObject)) {
+        if (!(obj instanceof RootObject))
             return false;
-        }
-        RootObject other = (RootObject) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+
+        if (this.id == null || ((RootObject) obj).id == null)
             return false;
-        }
+
+        if (this.id.longValue() != ((RootObject) obj).id.longValue())
+            return false;
+
         return true;
     }
 
@@ -149,5 +103,4 @@ public abstract class RootObject implements Serializable, Cloneable {
     public String toString() {
         return getName() +" ["+getClass().getSimpleName()+"]"; //NOI18N
     }
-
 }

@@ -16,17 +16,12 @@
 
 package entity.session;
 
-import core.annotations.Administrative;
-import core.annotations.Hidden;
 import entity.config.User;
-import java.io.Serializable;
+import entity.core.ApplicationObject;
 import java.util.Calendar;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -38,10 +33,7 @@ import util.MetadataUtils;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Administrative
-@Hidden
-public class UserSession implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class UserSession extends ApplicationObject{
     @OneToOne
     @JoinColumn(nullable=false)
     protected User user;
@@ -56,9 +48,6 @@ public class UserSession implements Serializable {
      */
     @OneToOne
     protected ClientDetail detail;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
     public UserSession() {
     }
@@ -66,34 +55,6 @@ public class UserSession implements Serializable {
     public UserSession(User user) {
         this.user = user;
         this.token = user.getId() + MetadataUtils.getMD5Hash(loginTime.toString());
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UserSession)) {
-            return false;
-        }
-        UserSession other = (UserSession) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 
     public ClientDetail getDetail() {

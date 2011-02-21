@@ -16,15 +16,17 @@
 
 package core.exceptions;
 
+import java.util.logging.Level;
+
 /**
  * Thrown when an object (or one of its children) have relations that have to be removed manually
  * e.g. containers and nodes, connections and endpoints
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ObjectWithRelationsException extends Exception{
+public class ObjectWithRelationsException extends InventoryException{
 
     public ObjectWithRelationsException() {
-        super ("The object could no be deleted since it (or one of its children) has relationships that have to be removed manually");
+        super ("The object could no be deleted since it (or one of its children) has relationships that have to be removed manually",Level.INFO);
     }
 
 }

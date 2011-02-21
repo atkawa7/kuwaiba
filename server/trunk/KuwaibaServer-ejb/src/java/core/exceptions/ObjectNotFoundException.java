@@ -15,15 +15,17 @@
  */
 package core.exceptions;
 
+import java.util.logging.Level;
+
 /**
  * Thrown if you're trying to access to a not existing exception
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ObjectNotFoundException extends Exception{
+public class ObjectNotFoundException extends InventoryException{
 
     public ObjectNotFoundException(String objectClass, Long oid) {
         super(java.util.ResourceBundle.getBundle("internationalization/Bundle").
                 getString("LBL_NOSUCHOBJECT")+objectClass+java.util.
-                ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid);
+                ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid,Level.WARNING);
     }
 }

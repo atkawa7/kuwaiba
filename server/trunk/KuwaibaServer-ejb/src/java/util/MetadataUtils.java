@@ -37,10 +37,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.Transient;
-import javax.persistence.metamodel.EntityType;
 
 
 /**
@@ -48,28 +46,26 @@ import javax.persistence.metamodel.EntityType;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class MetadataUtils {
-    
+
     /**
-     * This is a singleton dictionary used to retrieve classes used later
-     * in queries
-     */
-    private static HashMap<String,Class> classIndex;
-    /**
-     * Retrieves recursively through the class hierarchy the <b>protected</b> attributes of a given class
+     * Retrieves recursively through the class hierarchy the attributes of a given class. this means it will include even those inherited
      * @param aClass The class to be tested
+     * @param includePrivate should the private attribute be included?
      * @return A list with the protected attributes
      */
-    public static List<Field> getAllFields(Class<?> aClass){
+    public static List<Field> getAllFields(Class<?> aClass, boolean includePrivate){
         List<Field> myAtts = new ArrayList<Field>();
-        for (Field f : aClass.getDeclaredFields())
-            if (Modifier.isProtected(f.getModifiers())
+        for (Field f : aClass.getDeclaredFields()){
+            boolean showPrivate = includePrivate && Modifier.isPrivate(f.getModifiers());
+            if ((showPrivate || Modifier.isProtected(f.getModifiers()))
                     && !Modifier.isTransient(f.getModifiers())
+                    && !Modifier.isFinal(f.getModifiers())
                     && f.getAnnotation(Transient.class) == null) //This last has to do with the introduction since EclipseLink 2.1.0
                                                                  //AttributeGroups http://wiki.eclipse.org/EclipseLink/Examples/JPA/AttributeGroup
                 myAtts.add(f);
-
-        if (aClass != RootObject.class && aClass.getSuperclass() != null) //At least for this application
-            myAtts.addAll(getAllFields(aClass.getSuperclass()));
+        }
+        if (aClass != RootObject.class && aClass.getSuperclass() != null && aClass != Object.class)
+            myAtts.addAll(getAllFields(aClass.getSuperclass(), includePrivate));
         return myAtts;
     }
 
@@ -122,7 +118,7 @@ public class MetadataUtils {
     public static Object clone(RemoteObject clonnable, Class objectClass, EntityManager em){
         try{
             Object newObject = objectClass.newInstance();
-            List<Field> allFields = getAllFields(objectClass);
+            List<Field> allFields = getAllFields(objectClass, false);
             Field myField = null;
             for (int i = 0; i< clonnable.getAttributes().length; i++){
                 for (Field field : allFields){
@@ -267,17 +263,11 @@ public class MetadataUtils {
         return res;
     }
 
-    public static Class getClassFor(String className, EntityManager em) throws ClassNotFoundException{
-        if (classIndex == null){
-                classIndex = new HashMap<String, Class>();
-                Set<EntityType<?>> allEntities = em.getMetamodel().getEntities();
-                for (EntityType ent : allEntities)
-                    classIndex.put(ent.getJavaType().getSimpleName(), ent.getJavaType());
-            }
-            Class myClass = classIndex.get(className);
-            if (myClass != null)
-                return classIndex.get(className);
-            else throw new ClassNotFoundException(className);
+    public static Class getClassFor(String className, HashMap<String,Class> classIndex) throws ClassNotFoundException{
+        Class myClass = classIndex.get(className);
+        if (myClass != null)
+            return myClass;
+        else throw new ClassNotFoundException(className);
     }
 
     /**
@@ -291,11 +281,12 @@ public class MetadataUtils {
      * @throws ClassNotFoundException is the query class is not valid
      * @throws NoSuchFieldException if the attribute to be used as condition is not valid
      */
-    public static void chainPredicates(String prefix, TransientQuery myQuery, ArrayList<String> formerPredicates, EntityManager em)
+    public static void chainPredicates(String prefix, TransientQuery myQuery, 
+            ArrayList<String> formerPredicates, EntityManager em, HashMap<String, Class> classIndex)
             throws ClassNotFoundException, NoSuchFieldException{
 
         if (myQuery.getAttributeNames() != null){
-            Class toBeSearched = getClassFor(myQuery.getClassName(), em);
+            Class toBeSearched = getClassFor(myQuery.getClassName(), classIndex);
 
             for (int i = 0; i < myQuery.getAttributeNames().size(); i++){
                 String attribute = myQuery.getAttributeNames().get(i);
@@ -307,8 +298,8 @@ public class MetadataUtils {
                     if (myJoin == null) //If this is null, we're trying to match what objects has the current attribute set to null
                         formerPredicates.add(prefix+myQuery.getAttributeNames().get(i)+" IS NULL"); //NOI18N
                     else {
-                        Class innerClass = getClassFor(myJoin.getClassName(),em); //Only used to check if the class is valid
-                        chainPredicates(prefix+myQuery.getAttributeNames().get(i)+".", myJoin, formerPredicates, em); //NOI18N
+                        Class innerClass = getClassFor(myJoin.getClassName(),classIndex); //Only used to check if the class is valid
+                        chainPredicates(prefix+myQuery.getAttributeNames().get(i)+".", myJoin, formerPredicates, em, classIndex); //NOI18N
                     }
                 } else { //Process a simple value
                     if (mappedValue instanceof String) {

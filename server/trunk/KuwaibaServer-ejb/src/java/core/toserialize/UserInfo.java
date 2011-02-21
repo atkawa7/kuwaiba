@@ -61,8 +61,8 @@ public class UserInfo {
 
         this.oid = _user.getId();
         this.userName = _user.getUsername();
-        this.isEnabled = _user.getIsEnabled();
-        this.firstName = _user.getFirstName();
+        this.isEnabled = _user.isEnabled();
+        this.firstName = _user.getName();
         this.lastName = _user.getLastName();
         if (_user.getCreationDate() == null)
             this.creationDate = null;

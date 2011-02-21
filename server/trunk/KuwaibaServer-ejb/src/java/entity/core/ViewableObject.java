@@ -16,7 +16,6 @@
 
 package entity.core;
 
-import core.annotations.Administrative;
 import core.annotations.NoCopy;
 import core.annotations.NoSerialize;
 import entity.views.GenericView;
@@ -33,9 +32,8 @@ import javax.persistence.OneToMany;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Administrative
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class ViewableObject extends RootObject {
+public abstract class ViewableObject extends InventoryObject {
     @OneToMany(cascade=CascadeType.ALL)//(mappedBy = "elements")
     @NoSerialize
     @NoCopy

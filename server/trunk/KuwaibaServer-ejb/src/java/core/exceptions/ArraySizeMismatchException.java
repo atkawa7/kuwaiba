@@ -16,13 +16,16 @@
 
 package core.exceptions;
 
+import java.util.logging.Level;
+
 /**
  * Thrown when the size of two (or more arrays) does not match, but should
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ArraySizeMismatchException extends Exception {
+public class ArraySizeMismatchException extends InventoryException {
 
     public ArraySizeMismatchException(String... arrayNames) {
+        super("",Level.SEVERE); //NOI18N
         String arrays="";
         for (String arrayName: arrayNames)
             arrays+=arrayName+',';

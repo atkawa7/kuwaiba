@@ -15,19 +15,23 @@
  */
 package util;
 
-import core.annotations.Administrative;
+import com.ociweb.xml.StartTagWAX;
 import core.annotations.Dummy;
-import core.annotations.Hidden;
 import core.annotations.NoSerialize;
 import core.interfaces.PhysicalConnection;
 import core.interfaces.PhysicalEndpoint;
 import core.interfaces.PhysicalNode;
+import entity.core.ApplicationObject;
+import entity.core.MetadataObject;
+import entity.core.RootObject;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
 import entity.core.metamodel.PackageMetadata;
+import entity.multiple.GenericObjectList;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -82,19 +86,17 @@ public class HierarchyUtils {
         return false;
     }
 
-    public static List<ClassMetadata> getInstanceableSubclasses(Long classId, EntityManager em){
-        String sentence = "SELECT x FROM ClassMetadata x WHERE x.parent = "+classId;
-        Query query = em.createQuery(sentence);
-        List<Object> subClasses = query.getResultList();
-        List<ClassMetadata> result = new ArrayList<ClassMetadata>();
-        for (Object obj : subClasses){
-            ClassMetadata cm = (ClassMetadata)obj;
-            if(cm.getIsAbstract())
-                result.addAll(getInstanceableSubclasses(cm.getId(), em));
-            else
-                result.add(cm);
+    public static List<Class> getInstanceableSubclasses(Class myClass, Collection<Class> allClasses){
+        List<Class> res = new ArrayList<Class>();
+        for (Class aClass : allClasses){
+            if (aClass.equals(myClass))
+                continue;
+            if (isSubclass(aClass, myClass)){
+                if (!Modifier.isAbstract(aClass.getModifiers()))
+                    res.add(aClass);
+            }
         }
-        return result;
+        return res;
     }
 
 
@@ -116,7 +118,7 @@ public class HierarchyUtils {
         }
 
         List<AttributeMetadata> atts = new ArrayList<AttributeMetadata>();
-        List<Field> metaAtts = MetadataUtils.getAllFields(entity.getJavaType());
+        List<Field> metaAtts = MetadataUtils.getAllFields(entity.getJavaType(), false);
         PackageMetadata pm;
         sentence = "SELECT x FROM PackageMetadata x WHERE x.name = '"+entity.getJavaType().getPackage().getName()+"'";
         query = em.createQuery(sentence);
@@ -153,13 +155,10 @@ public class HierarchyUtils {
                                              entity.getJavaType().getSimpleName(),
                                              false,Modifier.isAbstract(entity.getJavaType().getModifiers()),
                                              entity.getJavaType().getAnnotation(Dummy.class)!=null,
-                                             entity.getJavaType().getAnnotation(Administrative.class)!=null,
-                                             entity.getJavaType().getAnnotation(Hidden.class)!=null,
                                              implementsInterface(entity.getJavaType(),PhysicalNode.class),
                                              implementsInterface(entity.getJavaType(),PhysicalConnection.class),
                                              implementsInterface(entity.getJavaType(),PhysicalEndpoint.class),
-                                             null,atts,parentId
-                                             );
+                                             isSubclass(entity.getJavaType(), GenericObjectList.class),null,atts);
 
         em.persist(cm);
         return cm.getId();
@@ -180,5 +179,65 @@ public class HierarchyUtils {
             throw new NoSuchFieldException(fieldName);
 
         return getField(aClass.getSuperclass(), fieldName);
+    }
+
+    public static List<Class> getDirectSubClasses(Class parentClass, List<Class> allClasses){
+        List<Class> subClasses = new ArrayList<Class>();
+        for (Class aClass : allClasses){
+            if (aClass.getSuperclass().equals(parentClass))
+                subClasses.add(aClass);
+        }
+        return subClasses;
+    }
+
+    public static ClassWrapper createTree(Class root, List<Class> remainingClasses){
+        int classType;
+        if (isSubclass(root, ApplicationObject.class))
+            classType = ClassWrapper.TYPE_INVENTORY;
+        else
+            if (isSubclass(root, ApplicationObject.class))
+                classType = ClassWrapper.TYPE_APPLICATION;
+            else
+                if (isSubclass(root, MetadataObject.class))
+                    classType = ClassWrapper.TYPE_METADATA;
+                else
+                    if (isSubclass(root, RootObject.class))
+                        classType = ClassWrapper.TYPE_METADATA;
+                    else
+                        classType = ClassWrapper.TYPE_OTHER;
+
+        ClassWrapper thisClass = new ClassWrapper(root, classType);
+        List<Class> subClasses = getDirectSubClasses(root, remainingClasses);
+
+        for (Class aSubClass : subClasses){
+            remainingClasses.remove(aSubClass);
+            thisClass.getDirectSubClasses().add(createTree(aSubClass, remainingClasses));
+        }
+        return thisClass;
+    }
+
+    public static void getXMLNodeForClass(ClassWrapper root, StartTagWAX rootTag) {
+        StartTagWAX currentTag = rootTag.start("class"); //NOI18N
+        currentTag.attr("name", root.getName());
+        currentTag.attr("javaModifiers",root.getJavaModifiers());
+        currentTag.attr("applicationModifiers",root.getApplicationModifiers());
+        currentTag.attr("classType",root.getClassType());
+
+        StartTagWAX attributesTag = currentTag.start("attributes");
+        for (AttributeWrapper myAttribute : root.getAttributes()){
+            StartTagWAX attributeTag = attributesTag.start("atrribute");
+            attributeTag.attr("javaModifiers", myAttribute.getJavaModifiers());
+            attributeTag.attr("applicationModifiers", myAttribute.getApplicationModifiers());
+            attributeTag.text(myAttribute.getName());
+            attributeTag.end();
+        }
+        attributesTag.end();
+
+        StartTagWAX subclassesTag = currentTag.start("subclasses");
+        for (ClassWrapper subClass: root.getDirectSubClasses())
+            getXMLNodeForClass(subClass, currentTag);
+
+        subclassesTag.end();
+        currentTag.end();
     }
 }

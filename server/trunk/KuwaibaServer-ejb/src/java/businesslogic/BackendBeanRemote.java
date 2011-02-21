@@ -50,14 +50,15 @@ public interface BackendBeanRemote {
     public List<ClassInfo> getMetadata() throws Exception;
     public List<ClassInfoLight> getLightMetadata() throws Exception;
     public ClassInfo getMetadataForClass(Class className) throws Exception;
+    public byte[] getClassHierarchy(Boolean showAll) throws Exception;
     public void buildMetaModel() throws Exception;
     public ObjectList getMultipleChoice(Class className) throws Exception;
     public Boolean addPossibleChildren(Long parentClassId, Long[] possibleChildren) throws Exception;
     public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws Exception;
     public boolean removeObject(Class className, Long oid) throws Exception;
-    public ClassInfoLight[] getPossibleChildren(Class parentClass) throws Exception;
-    public ClassInfoLight[] getPossibleChildrenNoRecursive(Class parentClass) throws Exception;
-    public ClassInfoLight[] getRootPossibleChildren() throws Exception;
+    public List<ClassInfoLight> getPossibleChildren(Class parentClass) throws Exception;
+    public List<ClassInfoLight> getPossibleChildrenNoRecursive(Class parentClass) throws Exception;
+    public List<ClassInfoLight> getRootPossibleChildren() throws Exception;
     public boolean moveObjects(Long targetOid, Long[] objectOids, Class[] objectClasses) throws Exception;
     public RemoteObjectLight[] copyObjects(Long targetOid, Long[] templateOids, Class[] objectClasses) throws Exception;
     public RemoteObjectLight[] searchForObjects(Class searchedClass, String[] paramNames, String [] paramTypes, String[] paramValues) throws Exception;
@@ -70,7 +71,7 @@ public interface BackendBeanRemote {
     public Boolean setAttributePropertyValue(Long classId, String attributeName, String propertyName, String propertyValue) throws Exception;
     public Boolean setClassPlainAttribute(Long classId, String attributeName, String attributeValue) throws Exception;
     public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws Exception;
-    public ClassInfoLight[] getInstanceableListTypes() throws Exception;
+    public List<ClassInfoLight> getInstanceableListTypes() throws Exception;
     public UserSession createSession(String username, String password, String remoteAddress) throws Exception;
     public Boolean closeSession(String sessionId, String remoteAddress) throws Exception;
     public ViewInfo getDefaultView(Long oid, Class className) throws Exception;

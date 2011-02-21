@@ -39,13 +39,26 @@ public class ClassInfoLight {
 
     public ClassInfoLight(ClassMetadata cm) {
         this.id = cm.getId();
-        this.isAbstract = cm.getIsAbstract();
-        this.isPhysicalNode = cm.getIsPhysicalNode();
-        this.isPhysicalConnection = cm.getIsPhysicalConnection();
-        this.isPhysicalEndpoint = cm.getIsPhysicalEndpoint();
+        this.isAbstract = cm.isAbstract();
+        this.isPhysicalNode = cm.isPhysicalNode();
+        this.isPhysicalConnection = cm.isPhysicalConnection();
+        this.isPhysicalEndpoint = cm.isPhysicalEndpoint();
         this.className = cm.getName();
         this.displayName = cm.getDisplayName();
         this.smallIcon = cm.getSmallIcon();
+    }
+
+    public ClassInfoLight(Long id, String name, String displayName,boolean isAbstract,
+                        boolean isPhysicalNode, boolean isPhysicalConnection,
+                        boolean isPhysicalEndpoint, byte[] smallIcon){
+        this.id = id;
+        this.isAbstract = isAbstract;
+        this.isPhysicalNode = isPhysicalNode;
+        this.isPhysicalConnection = isPhysicalConnection;
+        this.isPhysicalEndpoint = isPhysicalEndpoint;
+        this.className = name;
+        this.displayName = displayName;
+        this.smallIcon = smallIcon;
     }
 
     public String getClassName() {

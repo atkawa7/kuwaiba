@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -12,21 +12,16 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 
-package core.exceptions;
+package entity.core;
 
-import java.util.ResourceBundle;
+import javax.persistence.Entity;
 
 /**
- * Should be thrown when an operation is not permitted
+ * Represents the root of all metadata-related class
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class SessionNotValidException extends Exception{
-
-    public SessionNotValidException() {
-        super(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOACTIVESESSION"));
-    }
-
+@Entity
+public abstract class MetadataObject extends RootObject{
 }

@@ -15,9 +15,8 @@
  */
 package core.toserialize;
 
-import core.annotations.Administrative;
 import core.annotations.NoSerialize;
-import entity.core.RootObject;
+import entity.core.InventoryObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -44,7 +43,7 @@ public class RemoteObject extends RemoteObjectLight {
     private RemoteObject(){}
 
     public RemoteObject(Object object){
-        List<Field> allAttributes = MetadataUtils.getAllFields(object.getClass());
+        List<Field> allAttributes = MetadataUtils.getAllFields(object.getClass(), false);
         attributes = new String [allAttributes.size()];
         values = new String [allAttributes.size()];
         
@@ -54,8 +53,7 @@ public class RemoteObject extends RemoteObjectLight {
         for (Field f : allAttributes ){
 
             //Administrative fields and those decorated as NoSerialize shouldn't be serialized
-            if(f.getAnnotation(Administrative.class) != null ||
-                    f.getAnnotation(NoSerialize.class) != null)
+            if(f.getAnnotation(NoSerialize.class) != null)
                 continue;
             attributes[i]=f.getName();
 
@@ -70,8 +68,8 @@ public class RemoteObject extends RemoteObjectLight {
                 else{
                     //If this attribute is a reference to any other business object, we use a lazy approach
                     //by setting as value the object id
-                    if(value instanceof RootObject)
-                        values[i]=String.valueOf(((RootObject)value).getId());
+                    if(value instanceof InventoryObject)
+                        values[i]=String.valueOf(((InventoryObject)value).getId());
                     else
                         if (value instanceof Date)
                             values[i] = String.valueOf(((Date)value).getTime());

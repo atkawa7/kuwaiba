@@ -17,16 +17,17 @@
 package core.exceptions;
 
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 /**
  * Thrown when a certain operation can't be performed because a system restriction or illegal state
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class OperationNotPermittedException extends Exception{
+public class OperationNotPermittedException extends InventoryException{
 
     public OperationNotPermittedException(String operationName, String reason) {
         super(ResourceBundle.getBundle("internationalization/Bundle").
-                getString("LBL_OPERATIONNOTPERMITTED")+operationName+", "+reason);
+                getString("LBL_OPERATIONNOTPERMITTED")+operationName+", "+reason, Level.WARNING);
     }
 
 }

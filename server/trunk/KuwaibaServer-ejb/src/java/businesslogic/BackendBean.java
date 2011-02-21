@@ -15,18 +15,19 @@
  */
 package businesslogic;
 
+import com.ociweb.xml.StartTagWAX;
+import com.ociweb.xml.WAX;
 import core.todeserialize.TransientQuery;
 import core.toserialize.ClassInfo;
 import core.toserialize.ObjectList;
 import core.toserialize.RemoteObject;
 import core.toserialize.RemoteObjectLight;
-import core.annotations.Metadata;
 import core.exceptions.EntityManagerNotAvailableException;
 import core.exceptions.MiscException;
 import core.exceptions.NotAuthorizedException;
 import core.exceptions.ObjectNotFoundException;
 import core.exceptions.OperationNotPermittedException;
-import core.exceptions.SessionNotValidException;
+import core.exceptions.InvalidSessionException;
 import core.exceptions.UnsupportedPropertyException;
 import core.todeserialize.ObjectUpdate;
 import core.toserialize.ClassInfoLight;
@@ -42,6 +43,8 @@ import entity.config.User;
 import entity.config.UserGroup;
 import entity.connections.physical.GenericPhysicalConnection;
 import entity.connections.physical.containers.GenericPhysicalContainer;
+import entity.core.InventoryObject;
+import entity.core.MetadataObject;
 import entity.core.RootObject;
 import entity.core.ViewableObject;
 import entity.core.metamodel.AttributeMetadata;
@@ -52,7 +55,9 @@ import entity.multiple.GenericObjectList;
 import entity.session.UserSession;
 import entity.views.GenericView;
 import entity.views.DefaultView;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -68,6 +73,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
+import util.ClassWrapper;
 import util.HierarchyUtils;
 import util.MetadataUtils;
 
@@ -82,12 +88,22 @@ public class BackendBean implements BackendBeanRemote {
     //application server. If we'd like to do it manually, we should use an EntityManagerFactory
     @PersistenceContext
     private EntityManager em;
-    private HashMap<String,Class> classIndex;
+    /**
+     * This is a singleton dictionary used to retrieve classes used later
+     * in queries
+     */
+    private static HashMap<String,Class> classIndex;
+    private static final String SERVER_VERSION = "0.3";
 
     @Override
     public Class getClassFor(String className) throws Exception{
         if (em != null){
-            return MetadataUtils.getClassFor(className, em);
+            if (classIndex == null)
+                generateClassIndex();
+            Class res = classIndex.get(className);
+            if (res == null)
+                throw new ClassNotFoundException(className);
+            return res;
         }else
             throw new EntityManagerNotAvailableException();
     }
@@ -116,7 +132,7 @@ public class BackendBean implements BackendBeanRemote {
             HashMap<String, EntityType> alreadyPersisted = new HashMap<String, EntityType>();
 
             for (EntityType entity : ent){
-                if(entity.getJavaType().getAnnotation(Metadata.class)!=null)
+                if(HierarchyUtils.isSubclass(entity.getJavaType(), MetadataObject.class))
                         continue;
                 if (alreadyPersisted.get(entity.getJavaType().getSimpleName())!=null)
                     continue;
@@ -133,7 +149,7 @@ public class BackendBean implements BackendBeanRemote {
      */
     @Override
     public Long getDummyRootId(){
-        return RootObject.PARENT_ROOT;
+        return InventoryObject.PARENT_ROOT;
     }
 
     /**
@@ -294,7 +310,7 @@ public class BackendBean implements BackendBeanRemote {
      * @return an array with the list of classes
      */
     @Override
-    public ClassInfoLight[] getPossibleChildren(Class parentClass) throws Exception{
+    public List<ClassInfoLight> getPossibleChildren(Class parentClass) throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETPOSSIBLECHILDREN"));
         List<ClassInfoLight> res = new ArrayList();
         if (em != null){
@@ -305,7 +321,7 @@ public class BackendBean implements BackendBeanRemote {
             //Now we have to iterate to find the inherited containing capacity
             myClass = parentClass;
             List<ClassMetadata> allPossibleChildren = new ArrayList<ClassMetadata>(); //This list includes the abstract classes
-            while (!myClass.equals(RootObject.class) && !myClass.equals(Object.class)){
+            while (!myClass.equals(InventoryObject.class) && !myClass.equals(Object.class)){
                 sentence = "SELECT x.possibleChildren FROM ClassMetadata x WHERE x.name='"+myClass.getSimpleName()+"'";
                 query = em.createQuery(sentence);
                 List partialResult = query.getResultList();
@@ -319,17 +335,33 @@ public class BackendBean implements BackendBeanRemote {
             //Now we filter the abstract and expand them to normal ones. This code also remove all repeated classes
             //i.e. if a possible children is "GenericBoard" (abstract), this part will find the instanceable subclasses
             //returning something like IPBoard, SDHBoard and so on
+            if (classIndex == null)
+                generateClassIndex();
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery cQuery = cb.createQuery();
+            Root entity = cQuery.from(ClassMetadata.class);
+            Predicate predicate = null;
             for (ClassMetadata cm : allPossibleChildren){
-                if (cm.getIsAbstract()){
-                    List<ClassMetadata> morePossibleChildren =
-                            HierarchyUtils.getInstanceableSubclasses(cm.getId(), em);
-                    for (ClassMetadata moreCm : morePossibleChildren)
-                        res.add(new ClassInfoLight(moreCm));
+                if (cm.isAbstract()){
+                    List<Class> morePossibleChildren = HierarchyUtils.getInstanceableSubclasses(classIndex.get(cm.getName()), classIndex.values());
+
+                    for (Class moreCm : morePossibleChildren){
+                        if (predicate == null)
+                            predicate = cb.equal(entity.get("name"), moreCm.getSimpleName());
+                        else
+                            predicate = cb.or(cb.equal(entity.get("name"), moreCm.getSimpleName()), predicate);
+                    }
                 }
                 else
                     res.add(new ClassInfoLight(cm));
             }
-            return res.toArray(new ClassInfoLight[0]);
+            if (predicate != null){
+                cQuery.where(predicate);
+                List<ClassMetadata> expandedContainment = em.createQuery(cQuery).getResultList();
+                for (ClassMetadata expandedClass : expandedContainment)
+                    res.add(new ClassInfoLight(expandedClass));
+            }
+            return res;
         }
         else
             throw new EntityManagerNotAvailableException();
@@ -342,7 +374,7 @@ public class BackendBean implements BackendBeanRemote {
      * @return The list of possible children
      */
     @Override
-    public ClassInfoLight[] getPossibleChildrenNoRecursive(Class parentClass) throws Exception{
+    public List<ClassInfoLight> getPossibleChildrenNoRecursive(Class parentClass) throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETPOSSIBLECHILDRENNORECURSIVE"));
         List<ClassInfoLight> res = new ArrayList();
          if (em != null){
@@ -351,7 +383,7 @@ public class BackendBean implements BackendBeanRemote {
              Query query;
 
              myClass = parentClass;
-             while (!myClass.equals(RootObject.class) && !myClass.equals(Object.class)){
+             while (!myClass.equals(InventoryObject.class) && !myClass.equals(Object.class)){
                  sentence = "SELECT x.possibleChildren FROM ClassMetadata x WHERE x.name='"+myClass.getSimpleName()+"'";
                  query = em.createQuery(sentence);
                  List partialResult = query.getResultList();
@@ -360,7 +392,7 @@ public class BackendBean implements BackendBeanRemote {
                          res.add(new ClassInfoLight((ClassMetadata)obj));
                  myClass = myClass.getSuperclass();
              }
-             return res.toArray(new ClassInfoLight[0]);
+             return res;
           }
           else throw new EntityManagerNotAvailableException();
     }
@@ -370,8 +402,8 @@ public class BackendBean implements BackendBeanRemote {
      * @return
      */
     @Override
-    public ClassInfoLight[] getRootPossibleChildren() throws Exception{
-        return getPossibleChildren(RootObject.ROOT_CLASS);
+    public List<ClassInfoLight> getRootPossibleChildren() throws Exception{
+        return getPossibleChildren(InventoryObject.ROOT_CLASS);
     }
 
     /**
@@ -405,16 +437,12 @@ public class BackendBean implements BackendBeanRemote {
     public List<ClassInfo> getMetadata() throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETMETADATA"));
         if (em != null){
-            String sentence = "SELECT x FROM ClassMetadata x WHERE x.isAdministrative=false ORDER BY x.name ";
+            String sentence = "SELECT x FROM ClassMetadata x WHERE x.isDummy=false ORDER BY x.name ";
             Query q = em.createQuery(sentence);
             List<ClassMetadata> cr = q.getResultList();
             List<ClassInfo> cm = new ArrayList<ClassInfo>();
-            int i=0;
-            for (ClassMetadata myClass : cr){
-                if (myClass.getIsHidden() || myClass.getIsDummy())
-                    continue;
+            for (ClassMetadata myClass : cr)
                 cm.add(new ClassInfo(myClass));
-            }
             return cm;
         }
         else
@@ -440,6 +468,37 @@ public class BackendBean implements BackendBeanRemote {
 
             res = (ClassMetadata)q.getSingleResult();
             return new ClassInfo(res);
+        }
+        else
+            throw new EntityManagerNotAvailableException();
+    }
+
+    @Override
+    public byte[] getClassHierarchy(Boolean showAll) throws Exception {
+        if (em != null){
+            if (classIndex == null)
+                generateClassIndex();
+            List<Class> remainingClasses = new ArrayList<Class>(classIndex.values());
+            List<ClassWrapper> roots = new ArrayList<ClassWrapper>();
+            roots.add(HierarchyUtils.createTree(RootObject.class, remainingClasses));
+            if (!remainingClasses.isEmpty()){
+                for (Class anExtraClass : remainingClasses)
+                    roots.add(new ClassWrapper(anExtraClass, ClassWrapper.TYPE_OTHER));
+            }
+            ByteArrayOutputStream bas = new ByteArrayOutputStream();
+            WAX xmlWriter = new WAX(bas);
+            StartTagWAX rootTag = xmlWriter.start("hierarchy");
+            rootTag.attr("documentVersion", "1.0");
+            rootTag.attr("serverVersion", SERVER_VERSION);
+            rootTag.attr("date", Calendar.getInstance().getTime());
+            StartTagWAX inventoryTag = rootTag.start("inventory");
+            StartTagWAX classesTag = inventoryTag.start("classes");
+            for (ClassWrapper aRoot : roots)
+                HierarchyUtils.getXMLNodeForClass(aRoot, classesTag);
+            classesTag.end();
+            inventoryTag.end();
+            rootTag.end().close();
+            return bas.toByteArray();
         }
         else
             throw new EntityManagerNotAvailableException();
@@ -545,7 +604,7 @@ public class BackendBean implements BackendBeanRemote {
 
         if (em != null){
 
-            RootObject obj = (RootObject)em.find(className, oid);
+            InventoryObject obj = (InventoryObject)em.find(className, oid);
             if (obj == null)
                 throw new Exception(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT")+className+java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid.toString());
 
@@ -563,7 +622,7 @@ public class BackendBean implements BackendBeanRemote {
                 //System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_EXECUTINGSQL")+sentence);
                 query = em.createQuery(sentence);
                 for (Object removable : query.getResultList()){
-                    RootObject myRemovable = (RootObject)removable;
+                    InventoryObject myRemovable = (InventoryObject)removable;
                     //If any of the children is locked, throw an exception
                     if (!myRemovable.getIsLocked())
                         toBeRemoved.add(myRemovable);
@@ -592,20 +651,24 @@ public class BackendBean implements BackendBeanRemote {
         return true;
     }
 
+    /**
+     * Retrieves the simplified list of classes
+     * @return the list of classes
+     * @throws Exception EntityManagerNotAvailableException or something unexpected
+     */
     @Override
     public List<ClassInfoLight> getLightMetadata() throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETLIGHTMETADATA"));
         if (em != null){
-            String sentence = "SELECT x FROM ClassMetadata x ORDER BY x.name";
+            String sentence = "SELECT x.id, x.name, x.displayName, x.isAbstract,x.isPhysicalNode, x.isPhysicalConnection, x.isPhysicalEndpoint, x.smallIcon FROM ClassMetadata x ORDER BY x.name";
             Query q = em.createQuery(sentence);
-            List<ClassMetadata> cr = q.getResultList();
+            List<Object[]> cr = q.getResultList();
             List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
 
-            for (ClassMetadata myClass : cr){
-                if (myClass.getIsHidden() || myClass.getIsDummy())
-                    continue;
-                cml.add(new ClassInfoLight(myClass));
-            }
+            for (Object[] myRecord : cr)
+                cml.add(new ClassInfoLight((Long)myRecord[0], (String)myRecord[1], (String)myRecord[2],
+                                            (Boolean)myRecord[3], (Boolean)myRecord[4], (Boolean)myRecord[5],
+                                            (Boolean)myRecord[6], (byte[])myRecord[7]));
             return cml;
         }
         else
@@ -627,7 +690,7 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             if (objectOids.length == objectClasses.length){
                 for (int i = 0; i<objectClasses.length;i++){
-                    RootObject currentObject = (RootObject)em.find(objectClasses[i], objectOids[i]);
+                    InventoryObject currentObject = (InventoryObject)em.find(objectClasses[i], objectOids[i]);
                     if (currentObject == null)
                         throw new ObjectNotFoundException(objectClasses[i].getSimpleName(), objectOids[i]);
 
@@ -658,14 +721,14 @@ public class BackendBean implements BackendBeanRemote {
                 RemoteObjectLight[] res = new RemoteObjectLight[objectClasses.length];
                 for (int i = 0; i<objectClasses.length;i++){
                     //TODO: A more efficient way? maybe retrieving two or more objects at a time?
-                    RootObject template = (RootObject)em.find(objectClasses[i], templateOids[i]);
+                    InventoryObject template = (InventoryObject)em.find(objectClasses[i], templateOids[i]);
                     
                     if (template == null)
                         throw new ObjectNotFoundException(objectClasses[i].getSimpleName(), templateOids[i]);
 
                     Object clone = MetadataUtils.clone(new RemoteObject(template),objectClasses[i],em);
-                    ((RootObject)clone).setParent(targetOid);
-                    ((RootObject)clone).setIsLocked(false);
+                    ((InventoryObject)clone).setParent(targetOid);
+                    ((InventoryObject)clone).setIsLocked(false);
                     em.persist(clone);
                     res[i] = new RemoteObjectLight(clone);
                 }
@@ -730,10 +793,10 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null) {
             Class toBeSearched = getClassFor(myQuery.getClassName());
             CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<RootObject> query = cb.createQuery(RootObject.class);
+            CriteriaQuery<InventoryObject> query = cb.createQuery(InventoryObject.class);
             Root entity = query.from(toBeSearched);
             ArrayList<Predicate> predicates = new ArrayList<Predicate>();
-            Join<RootObject, RootObject> finalJoin = null;
+            Join<InventoryObject, InventoryObject> finalJoin = null;
             //getAttributeNames() is null only if no attributes were chosen as filters
             if (myQuery.getAttributeNames() != null) {
                 //Basic filters (strings, dates, numbers, booleans)
@@ -823,7 +886,7 @@ public class BackendBean implements BackendBeanRemote {
                 query.where(finalPredicate);
             }
 
-            List<RootObject> result = em.createQuery(query).getResultList();
+            List<InventoryObject> result = em.createQuery(query).getResultList();
             RemoteObjectLight[] res = new RemoteObjectLight[result.size()];
 
             int i = 0;
@@ -863,8 +926,10 @@ public class BackendBean implements BackendBeanRemote {
 
             //The default classIndex is 0 (that's why the main class )
             MetadataUtils.chainVisibleAttributes(myQuery, fields, columnNames, joins,"x0."); //NOI18N
-            
-            MetadataUtils.chainPredicates("x0.", myQuery, predicates, em); //NOI18N
+
+            if (classIndex == null)
+                generateClassIndex();
+            MetadataUtils.chainPredicates("x0.", myQuery, predicates, em, classIndex); //NOI18N
 
             for (String myFields : fields)
                 queryText += myFields +", ";
@@ -1021,13 +1086,9 @@ public class BackendBean implements BackendBeanRemote {
                             att.setDescription(propertyValue);
                         else
                             if (propertyName.equals("isVisible"))
-                                att.setIsVisible(Boolean.valueOf(propertyValue));
+                                att.setVisible(Boolean.valueOf(propertyValue));
                             else
-                                if (propertyName.equals("isAdministrative"))
-                                    att.setIsAdministrative(Boolean.valueOf(propertyValue));
-                                else{
-                                    throw new UnsupportedPropertyException(propertyName);
-                                }
+                                throw new UnsupportedPropertyException(propertyName);
                     em.merge(att);
                     return true;
                 }
@@ -1068,7 +1129,7 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     /**
-     * Set a class' icon (big or small)
+     * Set a class icon (big or small)
      * @param classId
      * @param attributeName
      * @param iconImage
@@ -1100,18 +1161,18 @@ public class BackendBean implements BackendBeanRemote {
      * @return List of possible types
      */
     @Override
-    public ClassInfoLight[] getInstanceableListTypes() throws Exception{
+    public List<ClassInfoLight> getInstanceableListTypes() throws Exception{
         if (em != null){
-            Long id = (Long) em.createQuery("SELECT x.id FROM ClassMetadata x WHERE x.name ='GenericObjectList'").getSingleResult();
-            List<ClassMetadata> listTypes =HierarchyUtils.getInstanceableSubclasses(id, em);
-            ClassInfoLight[] res = new ClassInfoLight[listTypes.size()];
+            String sentence = "SELECT x.id, x.name, x.displayName, x.isAbstract,x.isPhysicalNode, x.isPhysicalConnection, x.isPhysicalEndpoint, x.smallIcon FROM ClassMetadata x WHERE x.isListType=true AND x.isAbstract=false ORDER BY x.name";
+            Query q = em.createQuery(sentence);
+            List<Object[]> cr = q.getResultList();
+            List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
 
-            int i=0;
-            for (ClassMetadata cm : listTypes){
-                res[i] = new ClassInfoLight(cm);
-                i++;
-            }
-            return res;
+            for (Object[] myRecord : cr)
+                cml.add(new ClassInfoLight((Long)myRecord[0], (String)myRecord[1], (String)myRecord[2],
+                                            (Boolean)myRecord[3], (Boolean)myRecord[4], (Boolean)myRecord[5],
+                                            (Boolean)myRecord[6], (byte[])myRecord[7]));
+            return cml;
 
         }else
             throw new EntityManagerNotAvailableException();
@@ -1134,16 +1195,18 @@ public class BackendBean implements BackendBeanRemote {
             predicate = cb.and(cb.equal(entity.get("password"), MetadataUtils.
                     getMD5Hash(password)),predicate);
             cQuery.where(predicate);
-            List result = em.createQuery(cQuery).getResultList();
-            if (!result.isEmpty()){
-                UserSession mySession = new UserSession((User)result.get(0));
-                mySession.setIpAddress(remoteAddress);
-                em.persist(mySession);
-                return mySession;
-            }
-            else
+            try{
+                User user = (User)em.createQuery(cQuery).getSingleResult();
+                if (user.isEnabled()){
+                    UserSession mySession = new UserSession(user);
+                    mySession.setIpAddress(remoteAddress);
+                    em.persist(mySession);
+                    return mySession;
+                }else
+                    throw new InvalidSessionException("The user "+user.getUsername()+" is disabled");
+            }catch(NoResultException e){
                 throw new NotAuthorizedException(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_BADLOGIN"));
-                
+            }
         }else
             throw new EntityManagerNotAvailableException();
     }
@@ -1613,9 +1676,19 @@ public class BackendBean implements BackendBeanRemote {
 
             List result = em.createQuery(myQuery).getResultList();
             if (result.isEmpty())
-                throw new SessionNotValidException();
+                throw new InvalidSessionException("The session expired or is not valid anymore");
             //TODO: Check for the allowed methods
             return true;
         }else throw new EntityManagerNotAvailableException();
+    }
+
+    /**
+     * HELPERS
+     */
+    private void generateClassIndex(){
+        classIndex = new HashMap<String, Class>();
+        Set<EntityType<?>> allEntities = em.getMetamodel().getEntities();
+        for (EntityType ent : allEntities)
+            classIndex.put(ent.getJavaType().getSimpleName(), ent.getJavaType());
     }
 }

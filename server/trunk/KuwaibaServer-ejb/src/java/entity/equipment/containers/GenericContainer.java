@@ -16,7 +16,7 @@
 
 package entity.equipment.containers;
 
-import entity.core.RootObject;
+import entity.core.InventoryObject;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -27,6 +27,6 @@ import javax.persistence.InheritanceType;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class GenericContainer extends RootObject{
+public abstract class GenericContainer extends InventoryObject{
 
 }

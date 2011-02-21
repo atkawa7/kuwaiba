@@ -15,9 +15,8 @@
  */
 package entity.views;
 
-import core.annotations.Hidden;
 import core.toserialize.ViewInfo;
-import entity.core.RootObject;
+import entity.core.ApplicationObject;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,9 +30,8 @@ import util.HierarchyUtils;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Hidden
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class GenericView extends RootObject{
+public abstract class GenericView extends ApplicationObject{
     /**
      * An XML document containing the view
      */

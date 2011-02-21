@@ -16,11 +16,10 @@
 
 package core.interfaces;
 
-import java.io.Serializable;
 
 /**
  * Classes implementing this interface can be used to connect two elements using a physical medium
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public interface PhysicalNode extends Serializable{
+public interface PhysicalNode{
 }
