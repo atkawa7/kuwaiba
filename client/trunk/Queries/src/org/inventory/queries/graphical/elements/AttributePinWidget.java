@@ -62,7 +62,7 @@ public class AttributePinWidget extends VMDPinWidget{
         insideCheck.setOpaque(false);
 
         //If this attribute is a list type, we save the class name to create
-        if (lam.getIsMultiple())
+        if (lam.isMultiple())
             insideCheck.putClientProperty("className", attributeClassName); //NOI18N
         addChild(new ComponentWidget(getScene(), insideCheck));
 
@@ -73,7 +73,7 @@ public class AttributePinWidget extends VMDPinWidget{
         isVisible.setToolTipText("Show/hide this attribute in the query results");
         addChild(new ComponentWidget(scene, isVisible));
 
-        if (lam.getIsMultiple()){ //If this is a list type attribute, force to select the columns
+        if (lam.isMultiple()){ //If this is a list type attribute, force to select the columns
                                   //to be shown manually
             isVisible.setEnabled(false);
             isVisible.setToolTipText("Select the columns for this list type attribute manually (select the checkbox)");

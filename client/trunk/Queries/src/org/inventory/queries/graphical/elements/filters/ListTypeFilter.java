@@ -52,7 +52,10 @@ public class ListTypeFilter extends SimpleCriteriaNodeWidget{
     @Override
     public void build(String id) {
         defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
-        VMDPinWidget dummyPin = (VMDPinWidget)((QueryEditorScene)this.getScene()).addPin(wrappedClass, defaultPinId);
+        //Add the default pin to be used as anchor for all incoming connections
+        ((QueryEditorScene)this.getScene()).addPin(wrappedClass, defaultPinId);
+        //Add another pin to hold de actual combobox
+        VMDPinWidget dummyPin = (VMDPinWidget)((QueryEditorScene)this.getScene()).addPin(wrappedClass, defaultPinId+"_2"); //NOI18N
         if (listItems == null)
             listItems = new JComboBox(new LocalObjectListItem[0]);
         dummyPin.addChild(new ComponentWidget(this.getScene(), listItems));

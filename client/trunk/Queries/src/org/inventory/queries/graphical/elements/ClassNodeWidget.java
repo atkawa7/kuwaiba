@@ -51,7 +51,7 @@ public class ClassNodeWidget extends QueryEditorNodeWidget{
         defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
         ((QueryEditorScene)getScene()).addPin(myClass, defaultPinId);
         for (LocalAttributeMetadata lam : myClass.getAttributes()){
-            if (!lam.getIsVisible())
+            if (!lam.isVisible())
                 continue;
             ((QueryEditorScene)getScene()).addPin(myClass, lam);
         }
@@ -74,7 +74,7 @@ public class ClassNodeWidget extends QueryEditorNodeWidget{
                         JCheckBox insideCheck = ((AttributePinWidget)child).getInsideCheck();
                         insideCheck.setSelected(true);
                         //If the related node is not a ClassNodeWidget, we set the condition
-                        if (!((AttributePinWidget)child).getAttribute().getIsMultiple()){
+                        if (!((AttributePinWidget)child).getAttribute().isMultiple()){
                             String filterNodeKey = (String) insideCheck.getClientProperty("related-node");
                             SimpleCriteriaNodeWidget filterNode = (SimpleCriteriaNodeWidget) ((QueryEditorScene)getScene()).findWidget(filterNodeKey); //NOI18N
                             filterNode.setCondition(Criteria.fromId(conditions.get(i)));

@@ -134,11 +134,11 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
             lo = com.getObjectInfo(object.getClassName(), object.getOid());
 
         for(LocalAttributeMetadata lam:meta.getAttributes()){
-            if(lam.getIsVisible()){
+            if(lam.isVisible()){
 
                 ObjectNodeProperty property = null;
 
-                if (lam.getIsMultiple()){
+                if (lam.isMultiple()){
                     //If so, this can be a reference to an object list item or a 1:1 to any other RootObject subclass
                     LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(),false);
                     LocalObjectListItem val = null;
@@ -168,12 +168,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                                                             lam.getDisplayName().equals("")?lam.getName():lam.getDisplayName(),
                                                             lam.getDescription(),this);
                 }
-                if (property != null){
-                    if(lam.getIsAdministrative())
-                        administrativePropertySet.put(property);
-                    else
-                        generalPropertySet.put(property);
-                }
+                generalPropertySet.put(property);
             }         
         }
 

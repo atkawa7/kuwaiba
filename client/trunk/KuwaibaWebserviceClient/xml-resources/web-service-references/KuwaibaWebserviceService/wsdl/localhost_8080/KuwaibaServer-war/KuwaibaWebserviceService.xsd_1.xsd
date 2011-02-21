@@ -70,6 +70,10 @@
 
 <xs:element name="getChildrenOfClassResponse" type="tns:getChildrenOfClassResponse" />
 
+<xs:element name="getClassHierarchy" type="tns:getClassHierarchy" />
+
+<xs:element name="getClassHierarchyResponse" type="tns:getClassHierarchyResponse" />
+
 <xs:element name="getDefaultView" type="tns:getDefaultView" />
 
 <xs:element name="getDefaultViewResponse" type="tns:getDefaultViewResponse" />
@@ -543,6 +547,19 @@
 <xs:complexType name="getRootPossibleChildrenResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:classInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getClassHierarchy">
+<xs:sequence>
+<xs:element name="showAll" type="xs:boolean" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getClassHierarchyResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:base64Binary" nillable="true" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -1036,18 +1053,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getLightMetadata">
-<xs:sequence>
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getLightMetadataResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="createGroup">
 <xs:sequence>
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
@@ -1057,6 +1062,18 @@
 <xs:complexType name="createGroupResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:userGroupInfo" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getLightMetadata">
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getLightMetadataResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 

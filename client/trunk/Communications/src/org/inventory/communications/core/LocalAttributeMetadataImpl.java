@@ -30,7 +30,6 @@ public class LocalAttributeMetadataImpl
     private Class type;
     private String displayName;
     private Boolean isVisible;
-    private Boolean isAdministrative;
     private Boolean isMultiple;
     private String description;
 
@@ -38,13 +37,12 @@ public class LocalAttributeMetadataImpl
 
     public LocalAttributeMetadataImpl(){}
     public LocalAttributeMetadataImpl(Long oid, String _name, String _type, String _displayName,
-            Boolean _isVisible, Boolean _isAdministrative, Boolean _isMultiple, String _description){
+            Boolean _isVisible, Boolean _isMultiple, String _description){
         this.id = oid;
         this.name = _name;
         this.type = Utils.getRealType(_type);
         this.displayName = _displayName;
         this.isVisible = _isVisible;
-        this.isAdministrative = _isAdministrative;
         this.isMultiple = _isMultiple;
         this.description = _description;
 
@@ -68,19 +66,11 @@ public class LocalAttributeMetadataImpl
         this.displayName = displayName;
     }
 
-    public Boolean getIsAdministrative() {
-        return isAdministrative;
-    }
-
-    public void setIsAdministrative(Boolean isAdministrative) {
-        this.isAdministrative = isAdministrative;
-    }
-
-    public Boolean getIsVisible() {
+    public Boolean isVisible() {
         return isVisible;
     }
 
-    public void setIsVisible(Boolean isVisible) {
+    public void setVisible(Boolean isVisible) {
         this.isVisible = isVisible;
     }
 
@@ -115,7 +105,7 @@ public class LocalAttributeMetadataImpl
         this.id =_id;
     }
 
-    public Boolean getIsMultiple() {
+    public Boolean isMultiple() {
         return this.isMultiple;
     }
 

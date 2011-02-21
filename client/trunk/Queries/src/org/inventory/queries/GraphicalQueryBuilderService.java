@@ -41,6 +41,7 @@ import org.inventory.queries.graphical.elements.filters.ListTypeFilter;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public class GraphicalQueryBuilderService implements ActionListener{
+
     private QueryBuilderTopComponent qbtc;
     private CommunicationsStub com = CommunicationsStub.getInstance();
     /**

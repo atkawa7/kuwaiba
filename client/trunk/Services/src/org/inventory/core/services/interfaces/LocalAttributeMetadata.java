@@ -26,11 +26,9 @@ public interface LocalAttributeMetadata {
     public void setDescription(String description);
     public String getDisplayName();
     public void setDisplayName(String displayName);
-    public Boolean getIsAdministrative();
-    public void setIsAdministrative(Boolean isAdministrative);
-    public Boolean getIsVisible();
-    public Boolean getIsMultiple();
-    public void setIsVisible(Boolean isVisible);
+    public Boolean isVisible();
+    public Boolean isMultiple();
+    public void setVisible(Boolean isVisible);
     public String getName();
     public void setName(String name);
     public Class getType();

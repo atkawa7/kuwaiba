@@ -440,6 +440,15 @@ public class CommunicationsStub {
         }
     }
 
+    public byte[] getClassHierarchy(boolean showAll) {
+        try{
+            return port.getClassHierarchy(showAll, session.getSessionId());
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
+    }
+
     /**
      * Retrieves a List type attribute.
      * @param className attribute class (usually descendant of GenericListType)

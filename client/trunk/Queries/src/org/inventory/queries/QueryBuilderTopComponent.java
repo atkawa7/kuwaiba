@@ -315,6 +315,8 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     }//GEN-LAST:event_btnConfigureActionPerformed
 
     private void btnOrganizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrganizeActionPerformed
+        if (!validateQuery())
+            return;
         this.queryScene.organizeNodes((LocalClassMetadata)queryScene.getNodes().iterator().next(), QueryEditorScene.X_OFFSET, QueryEditorScene.Y_OFFSET);
         this.queryScene.validate();
     }//GEN-LAST:event_btnOrganizeActionPerformed

@@ -52,8 +52,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
+import javax.swing.JPopupMenu;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.core.services.factories.ObjectFactory;
 import org.inventory.core.services.interfaces.LocalAttributeMetadata;
@@ -70,6 +74,7 @@ import org.inventory.queries.graphical.elements.filters.NumericFilterNodeWidget;
 import org.inventory.queries.graphical.elements.filters.SimpleCriteriaNodeWidget;
 import org.inventory.queries.graphical.elements.filters.StringFilterNodeWidget;
 import org.netbeans.api.visual.action.ActionFactory;
+import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.anchor.Anchor;
 import org.netbeans.api.visual.anchor.AnchorFactory;
@@ -174,11 +179,27 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
             else{
                 widget = new ClassNodeWidget(this, (LocalClassMetadata)node,
                         CustomizableColorScheme.getYellowScheme());
+                widget.getActions().addAction(ActionFactory.createPopupMenuAction(new PopupMenuProvider() {
+
+                            public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
+                                JPopupMenu myMenu = new JPopupMenu();
+                                myMenu.add(new SwitchClassNodeWidgetFilterAction((ClassNodeWidget)widget));
+                                return myMenu;
+                            }
+                        }));
             }
         }
         else{
             if (node instanceof LocalClassMetadataLight){ //A simplified class filter node
                 widget = new ListTypeFilter(this, (LocalClassMetadataLight)node);
+                widget.getActions().addAction(ActionFactory.createPopupMenuAction(new PopupMenuProvider() {
+
+                            public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
+                                JPopupMenu myMenu = new JPopupMenu();
+                                myMenu.add(new SwitchClassNodeWidgetFilterAction((ListTypeFilter)widget));
+                                return myMenu;
+                            }
+                        }));
             }else{
                 String type = ((String)node).substring(0, ((String)node).indexOf('_'));
 
@@ -201,8 +222,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
 
         mainLayer.addChild (widget);
         widget.getActions ().addAction (createSelectAction ());
-        widget.getActions ().addAction (moveAction);
-
+        widget.getActions ().addAction (moveAction);            
         return widget;
     }
 
@@ -437,6 +457,62 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
     public void itemStateChanged(ItemEvent e) {
         fireChangeEvent(new ActionEvent(e.getSource(), 
                 ((JCheckBox)e.getSource()).isSelected() ?
-                    SCENE_FILTERENABLED : SCENE_FILTERDISABLED, "chechbox-enabled"));
+                    SCENE_FILTERENABLED : SCENE_FILTERDISABLED, "chechbox-enabled")); //NOI18N
+    }
+
+    public class SwitchClassNodeWidgetFilterAction extends AbstractAction{
+
+        private Widget classNode;
+
+        public SwitchClassNodeWidgetFilterAction() {
+            putValue(NAME, "Toggle Simple/Detailed view");
+        }
+
+        public SwitchClassNodeWidgetFilterAction(ClassNodeWidget node){
+            this();
+            classNode = node;
+        }
+
+        public SwitchClassNodeWidgetFilterAction(ListTypeFilter node){
+            this();
+            classNode = node;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (classNode instanceof ClassNodeWidget){ //Extended to simple
+                ClassNodeWidget node = (ClassNodeWidget)classNode;
+                node.getParentWidget().removeChild(node);
+                ListTypeFilter newNode = (ListTypeFilter) ((QueryEditorScene)node.
+                        getScene()).addNode((LocalClassMetadataLight)node.getWrappedClass());
+                LocalObjectListItem[] items = CommunicationsStub.getInstance().getList(node.getWrappedClass().getClassName(), false);
+                if (items == null)
+                    newNode.build(new LocalObjectListItem[0]);
+                else
+                    newNode.build(items);
+                newNode.setPreferredLocation(node.getPreferredLocation());
+                //Now we transfer the default pin (used to anchor all incoming connections)
+                VMDPinWidget defaultPin = (VMDPinWidget) ((QueryEditorScene)node.getScene()).findWidget(node.getDefaultPinId());
+                defaultPin.removeFromParent();
+                newNode.addChild(defaultPin);
+            }else{ //Simple to extended
+               ListTypeFilter node = (ListTypeFilter)classNode;
+               VMDPinWidget defaultPin = defaultPin = (VMDPinWidget) ((QueryEditorScene)node.getScene()).findWidget(node.getDefaultPinId());
+               Collection<String> aa = ((QueryEditorScene)node.getScene()).findPinEdges(defaultPin, false, true);
+               defaultPin.removeFromParent();
+               ((QueryEditorScene)node.getScene()).removeNode(node.getWrappedClass());
+               LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(node.getNodeName(), false);
+               ClassNodeWidget newNode = null;
+               if (lcm != null)
+                    newNode = (ClassNodeWidget) ((QueryEditorScene)node.getScene()).addNode(lcm);
+               else return;
+               newNode.build(null);
+               newNode.getScene().validate();
+               newNode.setPreferredLocation(node.getPreferredLocation());
+               //Now we transfer the default pin (used to anchor all incoming connections)
+               newNode.addChild(defaultPin);
+            }
+
+            
+        }
     }
 }

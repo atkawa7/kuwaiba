@@ -16,7 +16,6 @@
 
 package org.inventory.queries;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -95,11 +94,8 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
         ParallelGroup checkboxes = ((GroupLayout)qtf.getLeftPanel().getLayout()).createParallelGroup();
 
         for (LocalAttributeMetadata lam : currentLocalClassMetadata.getAttributes()){
-            if (lam.getIsVisible()){
+            if (lam.isVisible()){
                 JLabel lblAttribute = new JLabel(lam.getDisplayName());
-
-                if(lam.getIsAdministrative())
-                    lblAttribute.setForeground(Color.red);
 
                 JComponent component=null;
                 if (lam.getType().equals(Boolean.class)){
@@ -107,7 +103,7 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
                     component = chkValue;
                 }
                 else{
-                    if(lam.getIsMultiple()){
+                    if(lam.isMultiple()){
                         LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(),false);
 
                         JComboBox cmbValue = new JComboBox(list);

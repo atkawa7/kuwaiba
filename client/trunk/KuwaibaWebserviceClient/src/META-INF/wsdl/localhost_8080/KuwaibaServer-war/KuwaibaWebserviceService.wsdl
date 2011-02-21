@@ -859,6 +859,18 @@
 <message name="setObjectLockResponse">
 <part name="parameters" element="tns:setObjectLockResponse" />
 </message>
+<message name="addPossibleChildren">
+<part name="parameters" element="tns:addPossibleChildren" />
+</message>
+<message name="addPossibleChildrenResponse">
+<part name="parameters" element="tns:addPossibleChildrenResponse" />
+</message>
+<message name="removePossibleChildren">
+<part name="parameters" element="tns:removePossibleChildren" />
+</message>
+<message name="removePossibleChildrenResponse">
+<part name="parameters" element="tns:removePossibleChildrenResponse" />
+</message>
 <message name="getPossibleChildren">
 <part name="parameters" element="tns:getPossibleChildren" />
 </message>
@@ -883,23 +895,17 @@
 <message name="getMetadataForClassResponse">
 <part name="parameters" element="tns:getMetadataForClassResponse" />
 </message>
+<message name="getClassHierarchy">
+<part name="parameters" element="tns:getClassHierarchy" />
+</message>
+<message name="getClassHierarchyResponse">
+<part name="parameters" element="tns:getClassHierarchyResponse" />
+</message>
 <message name="getMultipleChoice">
 <part name="parameters" element="tns:getMultipleChoice" />
 </message>
 <message name="getMultipleChoiceResponse">
 <part name="parameters" element="tns:getMultipleChoiceResponse" />
-</message>
-<message name="addPossibleChildren">
-<part name="parameters" element="tns:addPossibleChildren" />
-</message>
-<message name="addPossibleChildrenResponse">
-<part name="parameters" element="tns:addPossibleChildrenResponse" />
-</message>
-<message name="removePossibleChildren">
-<part name="parameters" element="tns:removePossibleChildren" />
-</message>
-<message name="removePossibleChildrenResponse">
-<part name="parameters" element="tns:removePossibleChildrenResponse" />
 </message>
 <message name="removeObject">
 <part name="parameters" element="tns:removeObject" />
@@ -1155,6 +1161,16 @@
 <output wsam:Action="http://webservice/KuwaibaWebservice/setObjectLockResponse" message="tns:setObjectLockResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/setObjectLock/Fault/Exception" />
 </operation>
+<operation name="addPossibleChildren">
+<input wsam:Action="http://webservice/KuwaibaWebservice/addPossibleChildrenRequest" message="tns:addPossibleChildren" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/addPossibleChildrenResponse" message="tns:addPossibleChildrenResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/addPossibleChildren/Fault/Exception" />
+</operation>
+<operation name="removePossibleChildren">
+<input wsam:Action="http://webservice/KuwaibaWebservice/removePossibleChildrenRequest" message="tns:removePossibleChildren" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/removePossibleChildrenResponse" message="tns:removePossibleChildrenResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/removePossibleChildren/Fault/Exception" />
+</operation>
 <operation name="getPossibleChildren">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getPossibleChildrenRequest" message="tns:getPossibleChildren" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getPossibleChildrenResponse" message="tns:getPossibleChildrenResponse" />
@@ -1175,20 +1191,15 @@
 <output wsam:Action="http://webservice/KuwaibaWebservice/getMetadataForClassResponse" message="tns:getMetadataForClassResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/getMetadataForClass/Fault/Exception" />
 </operation>
+<operation name="getClassHierarchy">
+<input wsam:Action="http://webservice/KuwaibaWebservice/getClassHierarchyRequest" message="tns:getClassHierarchy" />
+<output wsam:Action="http://webservice/KuwaibaWebservice/getClassHierarchyResponse" message="tns:getClassHierarchyResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/getClassHierarchy/Fault/Exception" />
+</operation>
 <operation name="getMultipleChoice">
 <input wsam:Action="http://webservice/KuwaibaWebservice/getMultipleChoiceRequest" message="tns:getMultipleChoice" />
 <output wsam:Action="http://webservice/KuwaibaWebservice/getMultipleChoiceResponse" message="tns:getMultipleChoiceResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/getMultipleChoice/Fault/Exception" />
-</operation>
-<operation name="addPossibleChildren">
-<input wsam:Action="http://webservice/KuwaibaWebservice/addPossibleChildrenRequest" message="tns:addPossibleChildren" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/addPossibleChildrenResponse" message="tns:addPossibleChildrenResponse" />
-<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/addPossibleChildren/Fault/Exception" />
-</operation>
-<operation name="removePossibleChildren">
-<input wsam:Action="http://webservice/KuwaibaWebservice/removePossibleChildrenRequest" message="tns:removePossibleChildren" />
-<output wsam:Action="http://webservice/KuwaibaWebservice/removePossibleChildrenResponse" message="tns:removePossibleChildrenResponse" />
-<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/KuwaibaWebservice/removePossibleChildren/Fault/Exception" />
 </operation>
 <operation name="removeObject">
 <input wsam:Action="http://webservice/KuwaibaWebservice/removeObjectRequest" message="tns:removeObject" />
@@ -1535,6 +1546,34 @@
 <soap:fault name="Exception" use="literal" />
 </fault>
 </operation>
+<operation name="addPossibleChildren">
+<soap:operation soapAction="" />
+<input>
+<wsp:PolicyReference URI="#MainWSPortBinding_addPossibleChildren_Input_Policy" />
+<soap:body use="literal" />
+</input>
+<output>
+<wsp:PolicyReference URI="#MainWSPortBinding_addPossibleChildren_Output_Policy" />
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
+<operation name="removePossibleChildren">
+<soap:operation soapAction="" />
+<input>
+<wsp:PolicyReference URI="#MainWSPortBinding_removePossibleChildren_Input_Policy" />
+<soap:body use="literal" />
+</input>
+<output>
+<wsp:PolicyReference URI="#MainWSPortBinding_removePossibleChildren_Output_Policy" />
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
 <operation name="getPossibleChildren">
 <soap:operation soapAction="" />
 <input>
@@ -1589,6 +1628,18 @@
 <soap:fault name="Exception" use="literal" />
 </fault>
 </operation>
+<operation name="getClassHierarchy">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
 <operation name="getMultipleChoice">
 <soap:operation soapAction="" />
 <input>
@@ -1597,34 +1648,6 @@
 </input>
 <output>
 <wsp:PolicyReference URI="#MainWSPortBinding_getMultipleChoice_Output_Policy" />
-<soap:body use="literal" />
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal" />
-</fault>
-</operation>
-<operation name="addPossibleChildren">
-<soap:operation soapAction="" />
-<input>
-<wsp:PolicyReference URI="#MainWSPortBinding_addPossibleChildren_Input_Policy" />
-<soap:body use="literal" />
-</input>
-<output>
-<wsp:PolicyReference URI="#MainWSPortBinding_addPossibleChildren_Output_Policy" />
-<soap:body use="literal" />
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal" />
-</fault>
-</operation>
-<operation name="removePossibleChildren">
-<soap:operation soapAction="" />
-<input>
-<wsp:PolicyReference URI="#MainWSPortBinding_removePossibleChildren_Input_Policy" />
-<soap:body use="literal" />
-</input>
-<output>
-<wsp:PolicyReference URI="#MainWSPortBinding_removePossibleChildren_Output_Policy" />
 <soap:body use="literal" />
 </output>
 <fault name="Exception">
