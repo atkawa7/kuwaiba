@@ -28,8 +28,8 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import businesslogic.BackendBeanRemote;
 import core.exceptions.ArraySizeMismatchException;
+import core.exceptions.InventoryException;
 import core.exceptions.MiscException;
-import core.exceptions.ObjectWithRelationsException;
 import core.todeserialize.TransientQuery;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteQuery;
@@ -40,12 +40,11 @@ import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.ViewInfo;
 import entity.connections.physical.GenericPhysicalConnection;
-import entity.core.RootObject;
+import entity.core.InventoryObject;
 import entity.core.ViewableObject;
 import entity.session.UserSession;
 import java.util.List;
 import javax.annotation.Resource;
-import javax.ejb.EJBException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import util.HierarchyUtils;
@@ -91,7 +90,11 @@ public class KuwaibaWebservice {
             
             return new RemoteSession(sbr.createSession(username,password, remoteAddress));
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.WARNING, e.getClass().getSimpleName()+": {0}",e.getMessage());
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
@@ -108,14 +111,17 @@ public class KuwaibaWebservice {
             String remoteAddress = getIPAddress();
             return sbr.closeSession(sessionId, remoteAddress);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
 
     /**
-     * Get the children of a given object
+     * Gets the children of a given object
      * @param oid
      * @param objectClassId
      * @param sessionId
@@ -131,7 +137,10 @@ public class KuwaibaWebservice {
             RemoteObjectLight[] res = sbr.getObjectChildren(oid,objectClassId);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -156,7 +165,10 @@ public class KuwaibaWebservice {
                 RemoteObject[] res = sbr.getChildrenOfClass(parentOid,myClass);
                 return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -179,7 +191,10 @@ public class KuwaibaWebservice {
             Class myClass = sbr.getClassFor(objectClass);
             return sbr.getObjectInfo(myClass, oid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -202,7 +217,10 @@ public class KuwaibaWebservice {
             Class myClass = sbr.getClassFor(objectClass);
             return sbr.getObjectInfoLight(myClass, oid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -222,7 +240,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("updatObject", getIPAddress(), sessionId);
             return sbr.updateObject(update);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -247,7 +268,62 @@ public class KuwaibaWebservice {
             Boolean res = sbr.setObjectLock(oid, objectclass, value);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    /**
+     * Updates the container hierarchy for a given class
+     * @param parentClassId Class id where the possible children class will be attached
+     * @param possibleChildren Array with all new possible children classes
+     * @param sessionId
+     * @return true if succeed, false otherwise
+     * @throws Exception
+     */
+    @WebMethod(operationName = "addPossibleChildren")
+    public Boolean addPossibleChildren(@WebParam(name = "parentClassId")Long parentClassId,
+            @WebParam(name = "possibleChildren")Long[] possibleChildren,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            sbr.validateCall("addPosibleChildren", getIPAddress(), sessionId);
+            Boolean res = sbr.addPossibleChildren(parentClassId, possibleChildren);
+            return res;
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    /**
+     * Remove a possible children in the container hierarchy
+     * @param parentClassId
+     * @param childrenToBeRemoved
+     * @param sessionId
+     * @return Success or failure
+     * @throws Exception
+     */
+    @WebMethod(operationName = "removePossibleChildren")
+    public Boolean removePossibleChildren(@WebParam(name = "parentClassId")Long parentClassId,
+            @WebParam(name = "childrenToBeRemoved")Long[] childrenToBeRemoved,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            sbr.validateCall("removeChildren", getIPAddress(), sessionId);
+            Boolean res = sbr.removePossibleChildren(parentClassId, childrenToBeRemoved);
+            return res;
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -261,7 +337,7 @@ public class KuwaibaWebservice {
      * @throws Exception
      */
     @WebMethod(operationName = "getPossibleChildren")
-    public ClassInfoLight[] getPossibleChildren(
+    public List<ClassInfoLight> getPossibleChildren(
             @WebParam(name = "parentClass")String _parentClass,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
@@ -270,7 +346,10 @@ public class KuwaibaWebservice {
             parentClass = sbr.getClassFor(_parentClass);
             return sbr.getPossibleChildren(parentClass);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -284,7 +363,7 @@ public class KuwaibaWebservice {
      * @throws Exception
      */
     @WebMethod(operationName = "getPossibleChildrenNoRecursive")
-    public ClassInfoLight[] getPossibleChildrenNoRecursive(
+    public List<ClassInfoLight> getPossibleChildrenNoRecursive(
             @WebParam(name = "parentClass")String _parentClass,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
@@ -292,7 +371,10 @@ public class KuwaibaWebservice {
             Class parentClass = sbr.getClassFor(_parentClass);
             return sbr.getPossibleChildrenNoRecursive(parentClass);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -305,12 +387,15 @@ public class KuwaibaWebservice {
      * @throws Exception
      */
     @WebMethod(operationName = "getRootPossibleChildren")
-    public ClassInfoLight[] getRootPossibleChildren(@WebParam(name = "sessionId")String sessionId) throws Exception{
+    public List<ClassInfoLight> getRootPossibleChildren(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             sbr.validateCall("getRootPossibleChildren", getIPAddress(), sessionId);
             return sbr.getRootPossibleChildren();
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -336,11 +421,18 @@ public class KuwaibaWebservice {
             Class myClass = sbr.getClassFor(objectClass);
             return sbr.createObject(myClass,parentOid,template);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
     }
+
+    /**
+     * METADATA
+     */
 
     /**
      * Retrieves all the class metadata
@@ -354,7 +446,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("getMetadata", getIPAddress(), sessionId);
             return sbr.getMetadata();
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -375,7 +470,33 @@ public class KuwaibaWebservice {
             Class myClass = sbr.getClassFor(className);
             return sbr.getMetadataForClass(myClass);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    /**
+     * Creates an XML document describing the class hierarchy
+     * @param should this method return all entity classes or only InventoryObject subclasses
+     * @param sessionId session identifier
+     * @return A byte array containing the class hierarchy as an XML document
+     * @throws Exception
+     */
+    @WebMethod(operationName = "getClassHierarchy")
+    public byte[] getClassHierarchy(@WebParam(name = "showAll")Boolean showAll,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            sbr.validateCall("getClassHierarchy", getIPAddress(), sessionId); //NOI18N
+            return sbr.getClassHierarchy(showAll);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -397,53 +518,10 @@ public class KuwaibaWebservice {
             ObjectList res = sbr.getMultipleChoice(myClass);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-            throw e;
-        }
-    }
-
-    /**
-     * Updates the container hierarchy for a given class
-     * @param parentClassId Class id where the possible children class will be attached
-     * @param possibleChildren Array with all new possible children classes
-     * @param sessionId
-     * @return true if succeed, false otherwise
-     * @throws Exception
-     */
-    @WebMethod(operationName = "addPossibleChildren")
-    public Boolean addPossibleChildren(@WebParam(name = "parentClassId")Long parentClassId, 
-            @WebParam(name = "possibleChildren")Long[] possibleChildren,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
-        try{
-            sbr.validateCall("addPosibleChildren", getIPAddress(), sessionId);
-            Boolean res = sbr.addPossibleChildren(parentClassId, possibleChildren);
-            return res;
-        }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-            throw e;
-        }
-    }
-
-    /**
-     * Remove a possible children in the container hierarchy
-     * @param parentClassId
-     * @param childrenToBeRemoved
-     * @param sessionId
-     * @return Success or failure
-     * @throws Exception
-     */
-    @WebMethod(operationName = "removePossibleChildren")
-    public Boolean removePossibleChildren(@WebParam(name = "parentClassId")Long parentClassId,
-            @WebParam(name = "childrenToBeRemoved")Long[] childrenToBeRemoved,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
-        try{
-            sbr.validateCall("removeChildren", getIPAddress(), sessionId);
-            Boolean res = sbr.removePossibleChildren(parentClassId, childrenToBeRemoved);
-            return res;
-        }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -467,10 +545,11 @@ public class KuwaibaWebservice {
             Boolean res = sbr.removeObject(myClass, oid);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-            if (e instanceof EJBException)
-                throw new ObjectWithRelationsException();
             throw e;
         }
     }
@@ -487,7 +566,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("getLightMetadata", getIPAddress(), sessionId);
             return sbr.getLightMetadata();
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -500,8 +582,17 @@ public class KuwaibaWebservice {
      */
     @WebMethod(operationName = "getDummyRootId")
     public Long getDummyRootId(@WebParam(name = "sessionId")String sessionId) throws Exception{
-        sbr.validateCall("getDummyRootId", getIPAddress(), sessionId);
-        return sbr.getDummyRootId();
+        try{
+            sbr.validateCall("getDummyRootId", getIPAddress(), sessionId);
+            return sbr.getDummyRootId();
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
     }
 
     /**
@@ -533,7 +624,10 @@ public class KuwaibaWebservice {
             RemoteObjectLight[] res = sbr.copyObjects(targetOid, templateObjects, objectClasses);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -566,7 +660,10 @@ public class KuwaibaWebservice {
             }
             return sbr.moveObjects(targetOid, objectOids,objectClasses);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -602,7 +699,10 @@ public class KuwaibaWebservice {
             RemoteObjectLight[] res = sbr.searchForObjects(toBeSearched,paramNames, paramTypes,paramValues);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -623,7 +723,7 @@ public class KuwaibaWebservice {
             sbr.validateCall("executeQuery", getIPAddress(), sessionId);
             Class queryClass = sbr.getClassFor(query.getClassName());
             
-            if (!HierarchyUtils.isSubclass(queryClass, RootObject.class))
+            if (!HierarchyUtils.isSubclass(queryClass, InventoryObject.class))
                 throw new MiscException("Only subclasses of RootObject can be searched using this method:"+queryClass.getSimpleName());
             if (query.getAttributeNames() != null && query.getAttributeValues() != null &&
                     query.getConditions() != null && query.getJoins() != null){
@@ -638,7 +738,10 @@ public class KuwaibaWebservice {
             }
             return sbr.executeQuery(query);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -663,7 +766,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("createQuery", getIPAddress(), sessionId);
             return new RemoteQueryLight(sbr.createQuery(queryName, ownerOid, queryStructure, description));
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE, 
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -690,7 +796,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("saveQuery", getIPAddress(), sessionId);
             return sbr.saveQuery(queryOid,queryName, ownerOid, queryStructure, description);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -710,7 +819,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("deleteQuery", getIPAddress(), sessionId);
             return sbr.deleteQuery(queryOid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -724,7 +836,10 @@ public class KuwaibaWebservice {
             UserSession session = sbr.getSession(sessionId);
             return sbr.getQueries(session.getUser().getId(),showPublic);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -737,7 +852,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("getQuery", getIPAddress(), sessionId);
             return sbr.getQuery(queryOid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -768,7 +886,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("setAttributePropertyValue", getIPAddress(), sessionId);
             return sbr.setAttributePropertyValue(classId, attributeName, propertyName, propertyValue);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -792,7 +913,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("setClassPlainAttribute", getIPAddress(), sessionId);
             return sbr.setClassPlainAttribute(classId,attributeName,attributeValue);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -816,7 +940,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("setClassIcon", getIPAddress(), sessionId);
             return sbr.setClassIcon(classId, iconAttribute, iconImage);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -829,13 +956,15 @@ public class KuwaibaWebservice {
      * @throws Exception
      */
     @WebMethod(operationName = "getInstanceableListTypes")
-    public ClassInfoLight[] getInstanceableListTypes(@WebParam(name = "sessionId")String sessionId) throws Exception{
+    public List<ClassInfoLight> getInstanceableListTypes(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             sbr.validateCall("getInstanceableListTypes", getIPAddress(), sessionId);
-            ClassInfoLight[] res = sbr.getInstanceableListTypes();
-            return res;
+            return  sbr.getInstanceableListTypes();
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -867,7 +996,10 @@ public class KuwaibaWebservice {
                 res = sbr.getDefaultView(oid, myClass);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -888,7 +1020,10 @@ public class KuwaibaWebservice {
             ViewInfo res = sbr.getRoomView(oid);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -910,7 +1045,10 @@ public class KuwaibaWebservice {
             ViewInfo res = sbr.getRackView(oid);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -939,7 +1077,10 @@ public class KuwaibaWebservice {
             else return sbr.saveObjectView(oid, myClass,view);
 
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -966,7 +1107,10 @@ public class KuwaibaWebservice {
             RemoteObject res = sbr.createPhysicalContainerConnection(sourceObjectOid,targetObjectOid,myClass,parentObjectOid);
             return res;
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -995,7 +1139,10 @@ public class KuwaibaWebservice {
                         getBundle("internationalization/Bundle").getString("LBL_WRONGCLASS")+ connectionClass);
             return sbr.createPhysicalConnection(endpointAOid,endpointBOid,myClass,parentObjectOid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1017,7 +1164,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("getUsers", getIPAddress(), sessionId);
             return sbr.getUsers();
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1035,7 +1185,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("getGroups", getIPAddress(), sessionId);
             return sbr.getGroups();
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1054,7 +1207,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("createUser", getIPAddress(), sessionId);
             return sbr.createUser();
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1073,7 +1229,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("deleteUsers", getIPAddress(), sessionId);
             return sbr.deleteUsers(toBeDeleted);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1091,7 +1250,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("createGroup", getIPAddress(), sessionId);
             return sbr.createGroup();
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1110,7 +1272,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("deleteGroups", getIPAddress(), sessionId);
             return sbr.deleteGroups(toBeDeleted);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1138,7 +1303,10 @@ public class KuwaibaWebservice {
 
             return sbr.setUserProperties(oid, propertiesNames,propertiesValues);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1166,7 +1334,10 @@ public class KuwaibaWebservice {
         
             return true;//sbr.setGroupProperties(oid, propertiesNames,propertiesValues);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1189,7 +1360,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("addUsersToGroup", getIPAddress(), sessionId);
             return sbr.addUsersToGroup(usersOids, groupOid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }        
@@ -1209,7 +1383,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("removeUsersFromGroup", getIPAddress(), sessionId);
             return sbr.removeUsersFromGroup(usersOids, groupOid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1231,7 +1408,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("addGroupsToUser", getIPAddress(), sessionId);
             return sbr.addGroupsToUser(groupsOids, userOid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1253,7 +1433,10 @@ public class KuwaibaWebservice {
             sbr.validateCall("removeGroupsFromUser", getIPAddress(), sessionId);
             return sbr.removeGroupsFromUser(groupsOids, userOid);
         }catch(Exception e){
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(Level.SEVERE,
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1268,6 +1451,6 @@ public class KuwaibaWebservice {
      */
     private String getIPAddress(){
         return ((HttpServletRequest)context.getMessageContext().
-                    get("javax.xml.ws.servlet.request")).getRemoteAddr().toString();
+                    get("javax.xml.ws.servlet.request")).getRemoteAddr().toString(); //NOI18N
     }
 }
