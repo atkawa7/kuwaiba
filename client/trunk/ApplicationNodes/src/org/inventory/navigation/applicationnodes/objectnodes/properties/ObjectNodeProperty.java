@@ -21,6 +21,7 @@ import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.factories.ObjectFactory;
 import org.inventory.core.services.interfaces.LocalObject;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
 import org.inventory.core.services.interfaces.NotificationUtil;
@@ -62,7 +63,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
             this.value = _value;
         else
             //If it is a null value, we create a dummy null value from the generic method available in the interface
-            this.value = Lookup.getDefault().lookup(LocalObjectListItem.class).getNull();
+            this.value = ObjectFactory.createNullItem();
         this.list = _list;
         this.node = _node;
         this.getPropertyEditor().addPropertyChangeListener(this);
