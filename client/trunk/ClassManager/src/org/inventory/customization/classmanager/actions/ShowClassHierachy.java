@@ -17,14 +17,22 @@ package org.inventory.customization.classmanager.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileOutputStream;
-import java.io.IOException;
+//import java.io.FileOutputStream;
+//import java.io.IOException;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.customization.classmanager.ClassHierarchyTopComponent;
+import org.openide.util.Lookup;
 
 public final class ShowClassHierachy implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
-        byte[] xml = CommunicationsStub.getInstance().getClassHierarchy(true);
+        byte[] hierarchyAsXML = CommunicationsStub.getInstance().getClassHierarchy(true);
+        if (hierarchyAsXML == null){
+            NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
+            nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+        }
+        /**
         try{
             FileOutputStream fos = new FileOutputStream("/home/zim/classhierarchy.xml");
             fos.write(xml);
@@ -33,5 +41,7 @@ public final class ShowClassHierachy implements ActionListener {
         }catch(IOException ex){
             ex.printStackTrace();
         }
+         */
+        new ClassHierarchyTopComponent(hierarchyAsXML).setVisible(true);
     }
 }

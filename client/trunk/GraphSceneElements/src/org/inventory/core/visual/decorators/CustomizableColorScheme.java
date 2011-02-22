@@ -14,12 +14,11 @@
  * 
  */
 
-package org.inventory.queries.graphical.elements;
+package org.inventory.core.visual.decorators;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
-import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import org.netbeans.api.visual.anchor.AnchorShape;
 import org.netbeans.api.visual.anchor.PointShape;
@@ -46,16 +45,6 @@ public class CustomizableColorScheme extends VMDColorScheme{
     private Color bodyColor;
     private Color edgeColor;
 
-    public static final int COLOR_GREEN = 1;
-    public static final int COLOR_BLUE = 2;
-    public static final int COLOR_YELLOW = 3;
-    public static final int COLOR_GRAY = 4;
-
-    private static CustomizableColorScheme greenScheme = null;
-    private static CustomizableColorScheme blueScheme = null;
-    private static CustomizableColorScheme yellowScheme = null;
-    private static CustomizableColorScheme grayScheme = null;
-
     static final PointShape POINT_SHAPE_IMAGE = PointShapeFactory.createImagePointShape (ImageUtilities.loadImage ("org/netbeans/modules/visual/resources/vmd-pin.png")); // NOI18N
 
     /**
@@ -63,37 +52,12 @@ public class CustomizableColorScheme extends VMDColorScheme{
      * @param bodyColor
      * @param edgeColor
      */
-    public CustomizableColorScheme(Color bodyColor,Color edgeColor) {
+    public CustomizableColorScheme(Color bodyColor,Color edgeColor, Border border) {
         this.edgeColor = edgeColor;
         this.bodyColor = bodyColor;
         this.headerColor = bodyColor.darker();
-        this.nodeBorder = BorderFactory.createLineBorder(bodyColor.darker());
+        this.nodeBorder = border;
     }
-
-    /**
-     * Pick the colors combination from a default style
-     * @param defaultScheme
-     */
-    private CustomizableColorScheme(int defaultScheme) {
-        switch (defaultScheme){
-            case COLOR_GREEN:
-                this.bodyColor = new Color(230, 255, 100);
-                break;
-            case COLOR_BLUE:
-                this.bodyColor = new Color(195, 195, 255);
-                break;
-            case COLOR_YELLOW:
-                this.bodyColor = new Color(255, 230, 130);
-                break;
-            default:
-            case COLOR_GRAY:
-                this.bodyColor = new Color(220, 220, 220);
-        }
-        this.edgeColor = Color.black;
-        this.headerColor = bodyColor.darker();
-        this.nodeBorder = BorderFactory.createLineBorder(bodyColor.darker());
-    }
-
 
     @Override
     public void installUI(VMDNodeWidget widget) {
@@ -193,29 +157,5 @@ public class CustomizableColorScheme extends VMDColorScheme{
         label.setAlignment (LabelWidget.Alignment.CENTER);
         label.setCheckClipping (true);
         return label;
-    }
-
-    public static CustomizableColorScheme getGreenScheme(){
-        if (greenScheme == null)
-            greenScheme = new CustomizableColorScheme(COLOR_GREEN);
-        return greenScheme;
-    }
-
-    public static CustomizableColorScheme getBlueScheme(){
-        if (blueScheme == null)
-            blueScheme = new CustomizableColorScheme(COLOR_BLUE);
-        return blueScheme;
-    }
-
-    public static CustomizableColorScheme getYellowScheme(){
-        if (yellowScheme == null)
-            yellowScheme = new CustomizableColorScheme(COLOR_YELLOW);
-        return yellowScheme;
-    }
-
-    public static CustomizableColorScheme getGrayScheme(){
-        if (grayScheme == null)
-            grayScheme = new CustomizableColorScheme(COLOR_GRAY);
-        return grayScheme;
     }
 }

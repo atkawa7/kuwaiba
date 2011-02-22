@@ -33,7 +33,7 @@ public final class RefreshComponent extends AbstractAction implements ActionList
         if (activeTopComponent == null)
             return;
         boolean refreshable = false;
-        //Ignore the TopComponent that don't implement the RefreshableTopComponent interface
+        //Ignore the TopComponent that doesn't implement the RefreshableTopComponent interface
         for (Class intz : activeTopComponent.getClass().getInterfaces()){
             if (intz.equals(RefreshableTopComponent.class)){
                 refreshable = true;

@@ -64,9 +64,9 @@ import org.inventory.core.services.interfaces.LocalAttributeMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.core.visual.decorators.ColorSchemeFactory;
 import org.inventory.queries.graphical.elements.AttributePinWidget;
 import org.inventory.queries.graphical.elements.ClassNodeWidget;
-import org.inventory.queries.graphical.elements.CustomizableColorScheme;
 import org.inventory.queries.graphical.elements.filters.BooleanFilterNodeWidget;
 import org.inventory.queries.graphical.elements.filters.DateFilterNodeWidget;
 import org.inventory.queries.graphical.elements.filters.ListTypeFilter;
@@ -175,10 +175,10 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         if (node instanceof LocalClassMetadata){ //A complex class filter node
             if(getNodes().isEmpty()) //It's the first node, this is, the root one. In this case we use a different scheme
                 widget = new ClassNodeWidget(this, (LocalClassMetadata)node, 
-                        CustomizableColorScheme.getGreenScheme());
+                        ColorSchemeFactory.getGreenScheme());
             else{
                 widget = new ClassNodeWidget(this, (LocalClassMetadata)node,
-                        CustomizableColorScheme.getYellowScheme());
+                        ColorSchemeFactory.getYellowScheme());
                 widget.getActions().addAction(ActionFactory.createPopupMenuAction(new PopupMenuProvider() {
 
                             public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
