@@ -20,12 +20,16 @@ import core.annotations.NoCopy;
 import java.lang.reflect.Field;
 
 /**
- *
+ * This is a bare representation of an attribute (aka field). It's used mainly to build
+ * a class hierarchy tree, and it adds some extra attributes to the Field class, such as
+ * application modifiers, which are gotten from custom annotations. Don't confuse with the entity
+ * class AttributeMetadata, which holds information such as display names, descriptions, etc
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class AttributeWrapper {
     public static int MODIFIER_NOCOPY = 1;
     public static int MODIFIER_NOSERIALIZE = 2;
+
     private String name;
     private int javaModifiers;
     private int applicationModifiers = 0;

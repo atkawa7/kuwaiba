@@ -19,25 +19,26 @@ package util;
 import core.annotations.Dummy;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
- *
+ * This is a bare wrapper for a class in order to facilitate the serialization process
+ * to an XML format.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ClassWrapper {
-    public static int TYPE_ROOT = 0;
-    public static int TYPE_INVENTORY = 1;
-    public static int TYPE_APPLICATION = 2;
-    public static int TYPE_METADATA = 3;
-    public static int TYPE_OTHER = 4;
+    public static final int TYPE_ROOT = 0;
+    public static final int TYPE_INVENTORY = 1;
+    public static final int TYPE_APPLICATION = 2;
+    public static final int TYPE_METADATA = 3;
+    public static final int TYPE_OTHER = 4;
+
+    public static final int MODIFIER_DUMMY = 1;
 
     private String name;
     private int javaModifiers;
     private int applicationModifiers;
     private int classType;
-    private List<Class> interfaces;
     private List<ClassWrapper> directSubClasses;
     private List<AttributeWrapper> attributes;
 
@@ -45,8 +46,7 @@ public class ClassWrapper {
     public ClassWrapper(Class toBeWrapped, int classType) {
         this.name = toBeWrapped.getSimpleName();
         this.javaModifiers = toBeWrapped.getModifiers();
-        this.applicationModifiers = toBeWrapped.getAnnotation(Dummy.class) == null ? 0 : 1;
-        this.interfaces = Arrays.asList(toBeWrapped.getInterfaces());
+        this.applicationModifiers = toBeWrapped.getAnnotation(Dummy.class) == null ? 0 : MODIFIER_DUMMY;
         attributes = new ArrayList<AttributeWrapper>();
         for (Field field : MetadataUtils.getAllFields(toBeWrapped, true))
             attributes.add(new AttributeWrapper(field));
@@ -77,14 +77,6 @@ public class ClassWrapper {
 
     public void setDirectSubClasses(List<ClassWrapper> directSubClasses) {
         this.directSubClasses = directSubClasses;
-    }
-
-    public List<Class> getInterfaces() {
-        return interfaces;
-    }
-
-    public void setInterfaces(List<Class> interfaces) {
-        this.interfaces = interfaces;
     }
 
     public int getJavaModifiers() {

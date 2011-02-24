@@ -73,6 +73,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
+import util.AttributeWrapper;
 import util.ClassWrapper;
 import util.HierarchyUtils;
 import util.MetadataUtils;
@@ -480,6 +481,8 @@ public class BackendBean implements BackendBeanRemote {
                 generateClassIndex();
             List<Class> remainingClasses = new ArrayList<Class>(classIndex.values());
             List<ClassWrapper> roots = new ArrayList<ClassWrapper>();
+            
+            remainingClasses.remove(RootObject.class);
             roots.add(HierarchyUtils.createTree(RootObject.class, remainingClasses));
             if (!remainingClasses.isEmpty()){
                 for (Class anExtraClass : remainingClasses)
@@ -490,11 +493,11 @@ public class BackendBean implements BackendBeanRemote {
             StartTagWAX rootTag = xmlWriter.start("hierarchy");
             rootTag.attr("documentVersion", "1.0");
             rootTag.attr("serverVersion", SERVER_VERSION);
-            rootTag.attr("date", Calendar.getInstance().getTime());
+            rootTag.attr("date", Calendar.getInstance().getTimeInMillis());
             StartTagWAX inventoryTag = rootTag.start("inventory");
             StartTagWAX classesTag = inventoryTag.start("classes");
             for (ClassWrapper aRoot : roots)
-                HierarchyUtils.getXMLNodeForClass(aRoot, classesTag);
+                getXMLNodeForClass(aRoot, classesTag);
             classesTag.end();
             inventoryTag.end();
             rootTag.end().close();
@@ -1685,10 +1688,44 @@ public class BackendBean implements BackendBeanRemote {
     /**
      * HELPERS
      */
+    /**
+     * Fills the entity class list used as cache by various methods
+     */
     private void generateClassIndex(){
         classIndex = new HashMap<String, Class>();
         Set<EntityType<?>> allEntities = em.getMetamodel().getEntities();
         for (EntityType ent : allEntities)
             classIndex.put(ent.getJavaType().getSimpleName(), ent.getJavaType());
+    }
+
+    /**
+     * recursive method used to generate a single "class" node (see the <a href="http://sourceforge.net/apps/mediawiki/kuwaiba/index.php?title=XML_Documents#To_describe_the_data_model">wiki</a> for details)
+     * @param root the class to be added
+     * @param rootTag the root tag (node) to attach the new class node
+     */
+    private void getXMLNodeForClass(ClassWrapper root, StartTagWAX rootTag) {
+        StartTagWAX currentTag = rootTag.start("class"); //NOI18N
+        currentTag.attr("name", root.getName());
+        currentTag.attr("javaModifiers",root.getJavaModifiers());
+        currentTag.attr("applicationModifiers",root.getApplicationModifiers());
+        currentTag.attr("classType",root.getClassType());
+
+        StartTagWAX attributesTag = currentTag.start("attributes");
+        for (AttributeWrapper myAttribute : root.getAttributes()){
+            StartTagWAX attributeTag = attributesTag.start("attribute");
+            attributeTag.attr("name", myAttribute.getName());
+            attributeTag.attr("type", myAttribute.getType().getSimpleName());
+            attributeTag.attr("javaModifiers", myAttribute.getJavaModifiers());
+            attributeTag.attr("applicationModifiers", myAttribute.getApplicationModifiers());
+            attributeTag.end();
+        }
+        attributesTag.end();
+
+        StartTagWAX subclassesTag = currentTag.start("subclasses");
+        for (ClassWrapper subClass: root.getDirectSubClasses())
+            getXMLNodeForClass(subClass, currentTag);
+
+        subclassesTag.end();
+        currentTag.end();
     }
 }

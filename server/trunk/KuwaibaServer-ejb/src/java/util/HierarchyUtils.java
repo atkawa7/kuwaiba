@@ -15,15 +15,14 @@
  */
 package util;
 
-import com.ociweb.xml.StartTagWAX;
 import core.annotations.Dummy;
 import core.annotations.NoSerialize;
 import core.interfaces.PhysicalConnection;
 import core.interfaces.PhysicalEndpoint;
 import core.interfaces.PhysicalNode;
 import entity.core.ApplicationObject;
+import entity.core.InventoryObject;
 import entity.core.MetadataObject;
-import entity.core.RootObject;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
 import entity.core.metamodel.PackageMetadata;
@@ -181,6 +180,12 @@ public class HierarchyUtils {
         return getField(aClass.getSuperclass(), fieldName);
     }
 
+    /**
+     * Gets all possible direct subclasses of a given class
+     * @param parentClass the class from where we're going to get its subclasses
+     * @param allClasses a list of all available classes
+     * @return
+     */
     public static List<Class> getDirectSubClasses(Class parentClass, List<Class> allClasses){
         List<Class> subClasses = new ArrayList<Class>();
         for (Class aClass : allClasses){
@@ -190,9 +195,15 @@ public class HierarchyUtils {
         return subClasses;
     }
 
+    /**
+     *
+     * @param root
+     * @param remainingClasses
+     * @return
+     */
     public static ClassWrapper createTree(Class root, List<Class> remainingClasses){
         int classType;
-        if (isSubclass(root, ApplicationObject.class))
+        if (isSubclass(root, InventoryObject.class))
             classType = ClassWrapper.TYPE_INVENTORY;
         else
             if (isSubclass(root, ApplicationObject.class))
@@ -201,10 +212,7 @@ public class HierarchyUtils {
                 if (isSubclass(root, MetadataObject.class))
                     classType = ClassWrapper.TYPE_METADATA;
                 else
-                    if (isSubclass(root, RootObject.class))
-                        classType = ClassWrapper.TYPE_METADATA;
-                    else
-                        classType = ClassWrapper.TYPE_OTHER;
+                    classType = ClassWrapper.TYPE_OTHER;
 
         ClassWrapper thisClass = new ClassWrapper(root, classType);
         List<Class> subClasses = getDirectSubClasses(root, remainingClasses);
@@ -214,30 +222,5 @@ public class HierarchyUtils {
             thisClass.getDirectSubClasses().add(createTree(aSubClass, remainingClasses));
         }
         return thisClass;
-    }
-
-    public static void getXMLNodeForClass(ClassWrapper root, StartTagWAX rootTag) {
-        StartTagWAX currentTag = rootTag.start("class"); //NOI18N
-        currentTag.attr("name", root.getName());
-        currentTag.attr("javaModifiers",root.getJavaModifiers());
-        currentTag.attr("applicationModifiers",root.getApplicationModifiers());
-        currentTag.attr("classType",root.getClassType());
-
-        StartTagWAX attributesTag = currentTag.start("attributes");
-        for (AttributeWrapper myAttribute : root.getAttributes()){
-            StartTagWAX attributeTag = attributesTag.start("atrribute");
-            attributeTag.attr("javaModifiers", myAttribute.getJavaModifiers());
-            attributeTag.attr("applicationModifiers", myAttribute.getApplicationModifiers());
-            attributeTag.text(myAttribute.getName());
-            attributeTag.end();
-        }
-        attributesTag.end();
-
-        StartTagWAX subclassesTag = currentTag.start("subclasses");
-        for (ClassWrapper subClass: root.getDirectSubClasses())
-            getXMLNodeForClass(subClass, currentTag);
-
-        subclassesTag.end();
-        currentTag.end();
     }
 }
