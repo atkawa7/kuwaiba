@@ -160,36 +160,18 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
         setActiveTool(ACTION_SELECT);
         addObjectSceneListener(new ObjectSceneListener() {
 
-            public void objectAdded(ObjectSceneEvent ose, Object o) {
-
-            }
-
-            public void objectRemoved(ObjectSceneEvent ose, Object o) {
-
-            }
-
-            public void objectStateChanged(ObjectSceneEvent ose, Object o, ObjectState os, ObjectState os1) {
-
-            }
-
+            public void objectAdded(ObjectSceneEvent ose, Object o) {}
+            public void objectRemoved(ObjectSceneEvent ose, Object o) {}
+            public void objectStateChanged(ObjectSceneEvent ose, Object o, ObjectState os, ObjectState os1) {}
             public void selectionChanged(ObjectSceneEvent ose, Set<Object> oldSelection, Set<Object> newSelection) {
                 if (newSelection.size() == 1){
                     fireChangeEvent(new ActionEvent(newSelection.iterator().next(),
                             SCENE_OBJECTSELECTED, "object-selected-operation"));
                 }
             }
-
-            public void highlightingChanged(ObjectSceneEvent ose, Set<Object> set, Set<Object> set1) {
-                System.out.println("");
-            }
-
-            public void hoverChanged(ObjectSceneEvent ose, Object o, Object o1) {
-                System.out.println("");
-            }
-
-            public void focusChanged(ObjectSceneEvent ose, Object o, Object o1) {
-
-            }
+            public void highlightingChanged(ObjectSceneEvent ose, Set<Object> set, Set<Object> set1) {}
+            public void hoverChanged(ObjectSceneEvent ose, Object o, Object o1) {}
+            public void focusChanged(ObjectSceneEvent ose, Object o, Object o1) {}
         }, ObjectSceneEventType.OBJECT_SELECTION_CHANGED);
         this.notifier = notifier;
     }

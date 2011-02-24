@@ -17,7 +17,7 @@
 package org.inventory.customization.classmanager.scene.xml;
 
 import java.io.ByteArrayInputStream;
-import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.xml.namespace.QName;
@@ -25,8 +25,12 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.inventory.communications.core.LocalAttributeWrapperImpl;
+import org.inventory.communications.core.LocalClassWrapperImpl;
+import org.inventory.core.services.interfaces.LocalAttributeWrapper;
 import org.inventory.core.services.interfaces.LocalClassWrapper;
 import org.inventory.core.services.interfaces.xml.ClassHierarchyReader;
+//import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -38,39 +42,84 @@ public class ClassHierarchyReaderImpl implements ClassHierarchyReader{
     private String documentVersion;
     private String serverVersion;
     private Date date;
+    private List<LocalClassWrapper> roots;
 
     public String getDocumentVersion() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return documentVersion;
     }
 
     public String getServerVersion() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return serverVersion;
     }
 
     public Date getDate() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return date;
     }
 
     public List<LocalClassWrapper> getRootClasses() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return roots;
     }
 
-    public void read(byte[] xmlDocument) throws XMLStreamException{
+    public void read(byte[] xmlDocument) throws Exception{
         QName hierarchyTag = new QName("hierarchy"); //NOI18N
+        QName classTag = new QName("class"); //NOI18N
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         ByteArrayInputStream bais = new ByteArrayInputStream(xmlDocument);
         XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+        roots = new ArrayList<LocalClassWrapper>();
 
         while (reader.hasNext()){
             int event = reader.next();
             if (event == XMLStreamConstants.START_ELEMENT){
                 if (reader.getName().equals(hierarchyTag)){
-                    this.documentVersion = reader.getAttributeValue(null, "documentVersion");
-                    this.serverVersion = reader.getAttributeValue(null, "serverVersion");
-                    //this.date = new DateFormat() {}
+                    this.documentVersion = reader.getAttributeValue(null, "documentVersion"); //NOI18N
+                    this.serverVersion = reader.getAttributeValue(null, "serverVersion"); //NOI18N
+                    this.date = new Date(Long.valueOf(reader.getAttributeValue(null, "date"))); //NOI18N
+                }else
+                    if (reader.getName().equals(classTag)){
+                        roots.add(readClassNode(reader));
+                    }
+            }
+        }
+        reader.close();
+    }
+
+    /**
+     * Recursive method that reads a single "class" node
+     * @param reader the pointer pointing to a class "node"
+     */
+    private LocalClassWrapper readClassNode(XMLStreamReader reader) throws XMLStreamException{
+        //LocalClassWrapper aClass = Lookup.getDefault().lookup(LocalClassWrapper.class);
+        LocalClassWrapper aClass = new LocalClassWrapperImpl();
+        aClass.setName(reader.getAttributeValue(null, "name"));
+        aClass.setApplicationModifiers(Integer.valueOf(reader.getAttributeValue(null, "applicationModifiers")));
+        aClass.setJavaModifiers(Integer.valueOf(reader.getAttributeValue(null, "javaModifiers")));
+        aClass.setClassType(Integer.valueOf(reader.getAttributeValue(null, "classType")));
+        QName attributeTag = new QName("attribute"); //NOI18N
+        QName classTag = new QName("class"); //NOI18N
+        while (true){
+            int event = reader.next();
+            if (event == XMLStreamConstants.START_ELEMENT){
+                if (reader.getName().equals(classTag)){
+                    aClass.getDirectSubClasses().add(readClassNode(reader));
+                }else
+                    if (reader.getName().equals(attributeTag)){
+                        //LocalAttributeWrapper att = Lookup.getDefault().lookup(LocalAttributeWrapper.class);
+                        LocalAttributeWrapper att = new LocalAttributeWrapperImpl();
+                        att.setName(reader.getAttributeValue(null, "name"));
+                        att.setType(reader.getAttributeValue(null, "type"));
+                        att.setApplicationModifiers(Integer.valueOf(reader.getAttributeValue(null, "applicationModifiers")));
+                        att.setJavaModifiers(Integer.valueOf(reader.getAttributeValue(null, "javaModifiers")));
+                        aClass.getAttributes().add(att);
+                    }
+            }
+            else{
+                if (event == XMLStreamConstants.END_ELEMENT){
+                    if (reader.getName().equals(classTag))
+                        break;
                 }
             }
         }
+        return aClass;
     }
-
 }

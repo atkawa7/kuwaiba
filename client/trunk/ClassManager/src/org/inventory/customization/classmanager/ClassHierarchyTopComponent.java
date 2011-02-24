@@ -17,9 +17,17 @@
 package org.inventory.customization.classmanager;
 
 import java.awt.BorderLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
+import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.services.interfaces.xml.ClassHierarchyReader;
+import org.inventory.core.visual.actions.ExportSceneAction;
 import org.inventory.customization.classmanager.scene.ClassHierarchyScene;
+import org.inventory.customization.classmanager.scene.xml.ClassHierarchyReaderImpl;
 import org.openide.util.ImageUtilities;
+import org.openide.util.Lookup;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -32,18 +40,41 @@ public class ClassHierarchyTopComponent extends TopComponent{
 
     private ClassHierarchyScene scene;
     private JScrollPane pnlScrollMain;
+    private JToolBar toolMain;
+    private JButton btnExport;
+    private NotificationUtil nu;
 
     public ClassHierarchyTopComponent(byte[] hierarchyAsXML) {
         this.setName("Current Class Hierarchy");
-        //scene = new ClassHierarchyScene();
-        Mode editorMode = WindowManager.getDefault().findMode("editor"); //NOI18N
-        editorMode.dockInto(this);
-        setIcon(ImageUtilities.loadImage("org/inventory/customization/classmanager/res/class-hierarchy.png"));
-        setLayout(new BorderLayout());
-        pnlScrollMain = new JScrollPane();
-        add(pnlScrollMain, BorderLayout.CENTER);
-        pnlScrollMain.setViewportView(scene.getView());
-        add(scene.createSatelliteView(), BorderLayout.SOUTH);
+        ClassHierarchyReader xmlReader = new ClassHierarchyReaderImpl();
+        try{
+            xmlReader.read(hierarchyAsXML);
+            scene = new ClassHierarchyScene(xmlReader.getRootClasses());
+            toolMain = new JToolBar();
+            btnExport = new JButton(new ExportSceneAction(scene));
+            btnExport.setIcon(ImageUtilities.image2Icon(ImageUtilities.loadImage("org/inventory/customization/classmanager/res/export.png")));
+            btnExport.setToolTipText("Export as image...");
+            toolMain.add(btnExport);
+            Mode editorMode = WindowManager.getDefault().findMode("editor"); //NOI18N
+            editorMode.dockInto(this);
+            setIcon(ImageUtilities.loadImage("org/inventory/customization/classmanager/res/class-hierarchy.png"));
+            setLayout(new BorderLayout());
+            pnlScrollMain = new JScrollPane();
+            add(toolMain,BorderLayout.NORTH);
+            add(pnlScrollMain, BorderLayout.CENTER);
+            pnlScrollMain.setViewportView(scene.createView());
+            pnlScrollMain.validate();
+            add(scene.createSatelliteView(), BorderLayout.SOUTH);
+        }catch(Exception e){
+            getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, "Error parsing class hierarchy: ["+e.getClass().getSimpleName()+"]"+e.getMessage()); //NOI18N
+            //e.printStackTrace();
+        }
+    }
+
+    public final NotificationUtil getNotifier(){
+        if (nu == null)
+            nu = Lookup.getDefault().lookup(NotificationUtil.class);
+        return nu;
     }
 
     @Override
@@ -53,13 +84,11 @@ public class ClassHierarchyTopComponent extends TopComponent{
 
     @Override
     protected void componentClosed() {
-        super.componentClosed();
+        scene.cleanScene();
     }
 
     @Override
     protected void componentOpened() {
-        scene.cleanScene();
+        
     }
-
-
 }

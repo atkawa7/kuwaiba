@@ -29,7 +29,7 @@ import org.openide.util.lookup.ServiceProvider;
  * containment hierarchy and the like. This one is a bare representation of a class
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@ServiceProvider(service=LocalClassWrapperImpl.class)
+@ServiceProvider(service=LocalClassWrapper.class)
 public class LocalClassWrapperImpl implements LocalClassWrapper{
     private String name;
     private int javaModifiers;
@@ -93,5 +93,21 @@ public class LocalClassWrapperImpl implements LocalClassWrapper{
 
     public boolean isDummy(){
         return (applicationModifiers & MODIFIER_DUMMY) == MODIFIER_DUMMY;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if (obj == null)
+            return false;
+        if (!(obj instanceof LocalClassWrapper))
+            return false;
+        return ((LocalClassWrapper)obj).getName().equals(getName());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + (this.name != null ? this.name.hashCode() : 0);
+        return hash;
     }
 }

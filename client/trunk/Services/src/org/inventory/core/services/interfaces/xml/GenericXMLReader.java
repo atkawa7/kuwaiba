@@ -16,13 +16,11 @@
 
 package org.inventory.core.services.interfaces.xml;
 
-import javax.xml.stream.XMLStreamException;
-
 /**
  * This interface is the root of all further XML readers. AN XML reader is basically a class
  * which reads an XML document and converts it into a code-friendly object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public interface GenericXMLReader {
-    public void read(byte[] xmlDocument) throws XMLStreamException;
+    public void read(byte[] xmlDocument) throws Exception;
 }

@@ -16,7 +16,6 @@
 
 package org.inventory.views.objectview;
 
-import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;

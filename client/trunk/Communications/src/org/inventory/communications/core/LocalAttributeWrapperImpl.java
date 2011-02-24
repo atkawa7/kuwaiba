@@ -16,6 +16,7 @@
 
 package org.inventory.communications.core;
 
+import java.util.Random;
 import org.inventory.core.services.interfaces.LocalAttributeWrapper;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -25,12 +26,20 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ServiceProvider(service=LocalAttributeWrapper.class)
 public class LocalAttributeWrapperImpl implements LocalAttributeWrapper{
+    /**
+     * This prefix is used to identify a LocalAttributeWrapper as unique. This is 
+     * necessary because when represented as a pin in the class hierarchy viewer, the 
+     * "equals" method is called to check its uniqueness and only the name is not enough
+     */
+    private int prefix;
     private String name;
     private int javaModifiers;
     private int applicationModifiers = 0;
     private String type;
 
-    public LocalAttributeWrapperImpl() {}
+    public LocalAttributeWrapperImpl() {
+        this.prefix = new Random().nextInt(1000000);
+    }
 
 
     public int getApplicationModifiers() {
@@ -65,11 +74,35 @@ public class LocalAttributeWrapperImpl implements LocalAttributeWrapper{
         this.type = type;
     }
 
+    public int getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(int prefix) {
+        this.prefix = prefix;
+    }
+
     public boolean canCopy(){
         return (applicationModifiers & MODIFIER_NOCOPY) != MODIFIER_NOCOPY;
     }
 
     public boolean canSerialize(){
         return (applicationModifiers & MODIFIER_NOSERIALIZE) != MODIFIER_NOSERIALIZE;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if (obj == null)
+            return false;
+        if (!(obj instanceof LocalAttributeWrapper))
+            return false;
+        return (((LocalAttributeWrapperImpl)obj).getName() + ((LocalAttributeWrapperImpl)obj).getPrefix()).equals(getName()+getPrefix());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + (this.name != null ? this.name.hashCode() : 0);
+        return hash;
     }
 }

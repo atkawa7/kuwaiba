@@ -20,8 +20,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
@@ -29,8 +27,8 @@ import org.inventory.communications.core.views.LocalEdge;
 import org.inventory.core.services.interfaces.LocalObjectLight;
 import org.inventory.core.services.interfaces.NotificationUtil;
 import org.inventory.core.services.interfaces.RefreshableTopComponent;
+import org.inventory.core.visual.actions.ExportSceneAction;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.inventory.views.objectview.dialogs.ExportSettingsPanel;
 import org.inventory.views.objectview.dialogs.FormatTextPanel;
 import org.inventory.views.objectview.scene.ObjectConnectionWidget;
 import org.inventory.views.objectview.scene.ObjectNodeWidget;
@@ -41,7 +39,6 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
-import org.netbeans.api.visual.export.SceneExporter;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -455,29 +452,7 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
-        final ExportSettingsPanel myPanel = new ExportSettingsPanel();
-        DialogDescriptor dd = new DialogDescriptor(myPanel,"Export Settings",true,new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == DialogDescriptor.OK_OPTION){
-                    try {
-                        SceneExporter.createImage(scene,
-                                                  new File(myPanel.getFileName()),
-                                                  myPanel.getSelectedFormat() == ExportSettingsPanel.FORMAT_JPG ? SceneExporter.ImageType.JPG:SceneExporter.ImageType.PNG,
-                                                  myPanel.getSelectedZoom() == ExportSettingsPanel.ZOOM_NORMAL ? SceneExporter.ZoomType.ACTUAL_SIZE : SceneExporter.ZoomType.CURRENT_ZOOM_LEVEL,
-                                                  false,
-                                                  false,
-                                                  100,
-                                                  0,  //Not used
-                                                  0); //Not used
-                        JOptionPane.showMessageDialog(null, "The image was exported successfully", "Success!", JOptionPane.INFORMATION_MESSAGE);
-                    } catch (IOException ex) {
-                        JOptionPane.showMessageDialog(null,"The file name is not valid or you don't have enough permissions","Error",JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
-        });
-        DialogDisplayer.getDefault().notify(dd);
+        new ExportSceneAction(scene).actionPerformed(evt);
     }//GEN-LAST:event_btnExportActionPerformed
 
     private void btnFormatTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFormatTextActionPerformed

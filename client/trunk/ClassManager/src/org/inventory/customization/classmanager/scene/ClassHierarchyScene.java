@@ -18,18 +18,22 @@ package org.inventory.customization.classmanager.scene;
 
 import java.awt.Image;
 import java.awt.Point;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.inventory.core.services.interfaces.LocalAttributeWrapper;
 import org.inventory.core.services.interfaces.LocalClassWrapper;
 import org.inventory.core.visual.decorators.ColorSchemeFactory;
 import org.netbeans.api.visual.action.ActionFactory;
-import org.netbeans.api.visual.graph.GraphPinScene;
-import org.netbeans.api.visual.router.RouterFactory;
+import org.netbeans.api.visual.anchor.AnchorFactory;
+import org.netbeans.api.visual.anchor.PointShape;
+import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.vmd.VMDColorScheme;
-import org.netbeans.api.visual.vmd.VMDConnectionWidget;
 import org.netbeans.api.visual.vmd.VMDNodeWidget;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
+import org.netbeans.api.visual.widget.ConnectionWidget;
+import org.netbeans.api.visual.widget.EventProcessingType;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.ImageUtilities;
@@ -38,16 +42,19 @@ import org.openide.util.ImageUtilities;
  * Scene to contain the application's data model as a VMD scene
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ClassHierarchyScene extends GraphPinScene<LocalClassWrapper, String, LocalAttributeWrapper>{
+public class ClassHierarchyScene extends GraphScene<LocalClassWrapper, String>{
 
     private LayerWidget nodesLayer;
     private LayerWidget connectionsLayer;
     private LayerWidget interactionsLayer;
     private Image glyphDummy = ImageUtilities.loadImage("org/inventory/customization/classmanager/res/dummy-glyph.png");
+    private Image glyphAbstract = ImageUtilities.loadImage("org/inventory/customization/classmanager/res/abstract-glyph.png");
     private Image glyphNoCopy = ImageUtilities.loadImage("org/inventory/customization/classmanager/res/no-copy-glyph.png");
     private Image glyphNoSerialize = ImageUtilities.loadImage("org/inventory/customization/classmanager/res/no-serialize-glyph.png");
+    private HashMap<Integer, List<VMDNodeWidget>> levels;
 
     public ClassHierarchyScene(List<LocalClassWrapper> roots) {
+        setKeyEventProcessingType (EventProcessingType.FOCUSED_WIDGET_AND_ITS_PARENTS);
         nodesLayer = new LayerWidget(this);
         connectionsLayer = new LayerWidget(this);
         interactionsLayer = new LayerWidget(this);
@@ -57,7 +64,9 @@ public class ClassHierarchyScene extends GraphPinScene<LocalClassWrapper, String
 
         getActions ().addAction (ActionFactory.createPanAction ());
         getActions ().addAction (ActionFactory.createRectangularSelectAction (this, interactionsLayer));
+        levels = new HashMap<Integer, List<VMDNodeWidget>>();
         renderLevel(roots,0);
+        organizeLevels();
     }
 
     @Override
@@ -78,12 +87,13 @@ public class ClassHierarchyScene extends GraphPinScene<LocalClassWrapper, String
                 break;
         }
         VMDNodeWidget nodeWidget = new VMDNodeWidget(this, scheme);
-        if (nodeClass.getApplicationModifiers() != 0){
-            List<Image> glyphs = new ArrayList<Image>();
-            glyphs.add (glyphDummy); //NOI18N
-            nodeWidget.setGlyphs(glyphs);
-        }
-        //ClassNodeWidget myClassNode = new ClassNodeWidget(nodeClass, this, ColorSchemeFactory.);
+        List<Image> glyphs = new ArrayList<Image>();
+        if (nodeClass.getApplicationModifiers() != 0)
+            glyphs.add (glyphDummy);
+        if (Modifier.isAbstract(nodeClass.getJavaModifiers()))
+            glyphs.add (glyphAbstract);
+        nodeWidget.setGlyphs(glyphs);
+        nodeWidget.setNodeName(nodeClass.getName());
         nodeWidget.getActions().addAction(createSelectAction());
         nodeWidget.getActions().addAction(ActionFactory.createMoveAction());
         nodesLayer.addChild(nodeWidget);
@@ -92,37 +102,22 @@ public class ClassHierarchyScene extends GraphPinScene<LocalClassWrapper, String
 
     @Override
     protected Widget attachEdgeWidget(String edge) {
-        VMDConnectionWidget connectionWidget = new VMDConnectionWidget(this, RouterFactory.createOrthogonalSearchRouter(nodesLayer,connectionsLayer));
-        connectionsLayer.addChild(connectionWidget);
+        ConnectionWidget connectionWidget = new ConnectionWidget(this);
         connectionWidget.getActions ().addAction (createObjectHoverAction ());
         connectionWidget.getActions ().addAction (createSelectAction ());
         connectionWidget.getActions ().addAction (ActionFactory.createMoveAction());
+        connectionsLayer.addChild(connectionWidget);
         return connectionWidget;
     }
 
     @Override
-    protected Widget attachPinWidget(LocalClassWrapper node, LocalAttributeWrapper pin) {
-       VMDPinWidget pinWidget = new VMDPinWidget(this);
-       pinWidget.setPinName(pin.getName() + " ["+pin.getType()+"]"); //NOI18N
-       List<Image> glyphs = new ArrayList<Image>();
-       if (!pin.canCopy())
-           glyphs.add(glyphNoCopy);
-       if (!pin.canSerialize())
-           glyphs.add(glyphNoSerialize);
-       VMDNodeWidget nodeWidget = (VMDNodeWidget) findWidget(node);
-       assert nodeWidget != null;
-       nodeWidget.addChild(pinWidget);
-       return pinWidget;
+    protected void attachEdgeSourceAnchor(String edge, LocalClassWrapper oldSourceNode, LocalClassWrapper sourceNode) {
+        //This is done in the renderLevel method, since it's easier
     }
 
     @Override
-    protected void attachEdgeSourceAnchor(String edge, LocalAttributeWrapper oldSourcePin, LocalAttributeWrapper sourcePin) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    protected void attachEdgeTargetAnchor(String edge, LocalAttributeWrapper oldTargetPin, LocalAttributeWrapper targetPin) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    protected void attachEdgeTargetAnchor(String edge, LocalClassWrapper oldTargetNode, LocalClassWrapper targetNode) {
+        //This is done in the renderLevel method, since it's easier
     }
 
     /**
@@ -136,12 +131,48 @@ public class ClassHierarchyScene extends GraphPinScene<LocalClassWrapper, String
      * Recursive method that renders a different leven in the class hierarchy tree
      * @param roots
      */
-    private void renderLevel(List<LocalClassWrapper> roots, int yOffset) {
-        int xOffset = 0;
-        for (LocalClassWrapper aClass : roots){
-            addNode(aClass).setPreferredLocation(new Point(xOffset, yOffset));
-            renderLevel(aClass.getDirectSubClasses(), yOffset + 200);
-            xOffset += 70;
+    private List<VMDNodeWidget> renderLevel(List<LocalClassWrapper> roots, int currentLevel) {
+        List<VMDNodeWidget> level = new ArrayList<VMDNodeWidget>(roots.size());
+        for (LocalClassWrapper aClassWrapper : roots){
+            VMDNodeWidget newClassNode = (VMDNodeWidget) addNode(aClassWrapper);
+            for (LocalAttributeWrapper anAttribute : aClassWrapper.getAttributes()){
+                VMDPinWidget pinWidget = new VMDPinWidget(this);
+                pinWidget.setPinName(anAttribute.getName() + " ["+anAttribute.getType()+"]"); //NOI18N
+                List<Image> glyphs = new ArrayList<Image>();
+                if (!anAttribute.canCopy())
+                   glyphs.add(glyphNoCopy);
+                if (!anAttribute.canSerialize())
+                   glyphs.add(glyphNoSerialize);
+                pinWidget.setGlyphs(glyphs);
+                newClassNode.attachPinWidget(pinWidget);
+            }
+            for (VMDNodeWidget aChild : renderLevel(aClassWrapper.getDirectSubClasses(), currentLevel + 1)){
+                String edgeName = aClassWrapper.getName()+aChild.getNodeName();
+                ConnectionWidget newEdge = (ConnectionWidget) addEdge(edgeName);
+                newEdge.setEndPointShape(PointShape.SQUARE_FILLED_SMALL);
+                newEdge.setSourceAnchor(AnchorFactory.createFreeRectangularAnchor(newClassNode, true));
+                newEdge.setTargetAnchor(AnchorFactory.createFreeRectangularAnchor(aChild, true));
+            }
+            level.add(newClassNode);
+        }
+        if (levels.get(currentLevel) == null)
+            levels.put(currentLevel,level);
+        else
+            ((List)levels.get(currentLevel)).addAll(level);
+        return level;
+    }
+
+    private void organizeLevels() {
+        int yOffset = 0;
+        for (int i = 0 ; i < levels.size(); i++){
+            if (levels.get(i).isEmpty())
+                continue;
+            int xOffset = 0;
+            for (VMDNodeWidget aNode : levels.get(i)){
+                aNode.setPreferredLocation(new Point(xOffset, yOffset));
+                xOffset += 200;
+            }
+            yOffset += 300;
         }
     }
 }

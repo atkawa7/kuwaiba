@@ -31,17 +31,22 @@ public final class ShowClassHierachy implements ActionListener {
         if (hierarchyAsXML == null){
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+        }else{
+            ClassHierarchyTopComponent tc = new ClassHierarchyTopComponent(hierarchyAsXML);
+            tc.open();
+            tc.requestActive();
         }
         /**
-        try{
+         * Enable for debugging purposes
+         try{
             FileOutputStream fos = new FileOutputStream("/home/zim/classhierarchy.xml");
-            fos.write(xml);
+            fos.write(hierarchyAsXML);
             fos.flush();
             fos.close();
         }catch(IOException ex){
             ex.printStackTrace();
-        }
-         */
-        new ClassHierarchyTopComponent(hierarchyAsXML).setVisible(true);
+        }*/
+         
+        
     }
 }
