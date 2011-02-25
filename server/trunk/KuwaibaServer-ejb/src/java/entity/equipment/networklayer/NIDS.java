@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -12,19 +12,16 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
-package entity.location;
 
-import entity.core.ViewableObject;
+package entity.equipment.networklayer;
+
 import javax.persistence.Entity;
 
 /**
- * A simple State/Department within a country. The word "State" is reserved in SQL
- * so StateObject had to be used instead
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * A simple Network Intrusion Detection System
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class StateObject extends ViewableObject {
-
+public class NIDS extends GenericAppliance{
 }

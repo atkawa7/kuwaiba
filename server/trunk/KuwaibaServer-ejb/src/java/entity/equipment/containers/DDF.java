@@ -16,16 +16,12 @@
 
 package entity.equipment.containers;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 /**
  * Represents a digital distribution frame
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class DDF extends GenericDistributionFrame implements Serializable {
+public class DDF extends GenericDistributionFrame{
 }

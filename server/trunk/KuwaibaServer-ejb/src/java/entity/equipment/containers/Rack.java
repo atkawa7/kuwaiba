@@ -15,11 +15,9 @@
  */
 package entity.equipment.containers;
 
-import entity.multiple.companies.EquipmentProvider;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 
 /**
  * Represents a simple rack
@@ -29,8 +27,6 @@ import javax.persistence.ManyToOne;
 public class Rack extends GenericContainer implements Serializable {
     @Column(length=3)
     protected Integer rackUnits;
-    @ManyToOne
-    protected EquipmentProvider vendor;
 
     public Integer getRackUnits() {
         return rackUnits;
@@ -38,13 +34,5 @@ public class Rack extends GenericContainer implements Serializable {
 
     public void setRackUnits(Integer rackUnits) {
         this.rackUnits = rackUnits;
-    }
-
-    public EquipmentProvider getVendor() {
-        return vendor;
-    }
-
-    public void setVendor(EquipmentProvider vendor) {
-        this.vendor = vendor;
     }
 }

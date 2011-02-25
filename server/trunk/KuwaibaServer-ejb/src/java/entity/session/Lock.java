@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package entity.core.metamodel;
+package entity.session;
 
 import entity.core.ApplicationObject;
 import javax.persistence.Entity;
@@ -27,5 +27,5 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="locks")
-public class LockEntry extends ApplicationObject {
+public class Lock extends ApplicationObject {
 }

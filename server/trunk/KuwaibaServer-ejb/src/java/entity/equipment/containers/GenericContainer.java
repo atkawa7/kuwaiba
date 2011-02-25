@@ -16,7 +16,8 @@
 
 package entity.equipment.containers;
 
-import entity.core.InventoryObject;
+import entity.core.ConfigurationItem;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -27,6 +28,36 @@ import javax.persistence.InheritanceType;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class GenericContainer extends InventoryObject{
+public abstract class GenericContainer extends ConfigurationItem{
+    protected Float height;
+    protected Float width;
+    /**
+     * Not all containers have depth but surely most of them
+     */
+    @Column(name="container_depth") //Depth is a reserved SQL word
+    protected Float depth;
 
+    public Float getHeight() {
+        return height;
+    }
+
+    public void setHeight(Float height) {
+        this.height = height;
+    }
+
+    public Float getDepth() {
+        return depth;
+    }
+
+    public void setDepth(Float depth) {
+        this.depth = depth;
+    }
+
+    public Float getWidth() {
+        return width;
+    }
+
+    public void setWidth(Float width) {
+        this.width = width;
+    }
 }

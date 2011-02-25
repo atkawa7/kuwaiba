@@ -16,6 +16,7 @@
  */
 package entity.location;
 
+import core.annotations.NoCount;
 import entity.core.ViewableObject;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +26,7 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
+@NoCount
 public class Country extends ViewableObject {
     @Column(length=3)
     protected String acronym;

@@ -21,7 +21,7 @@ import entity.multiple.systems.OperatingSystem;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 /**
  * This is a generic application layer equipment typically a sort of computer
@@ -32,7 +32,7 @@ import javax.persistence.OneToOne;
 public abstract class GenericApplicationElement extends ConfigurationItem{
     protected String service;
     
-    @OneToOne
+    @ManyToOne
     protected OperatingSystem operatingSystem;
 
     public String getService() {
@@ -42,5 +42,4 @@ public abstract class GenericApplicationElement extends ConfigurationItem{
     public void setService(String service) {
         this.service = service;
     }
-
 }

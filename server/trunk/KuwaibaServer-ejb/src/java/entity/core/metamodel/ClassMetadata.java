@@ -57,10 +57,11 @@ public class ClassMetadata extends MetadataObject {
     @Column(nullable=false)
     private Boolean isAbstract=false;
     /**
-     * Indicates if the instance of this class is a physical active
+     * Indicates if the instances of this class are physical assets (in other words, if it's meaningful to have a count on them)
+     * Classes marked with the annotation NoCount (Slot, Port and the like) have this attribute set as false
      */
     @Column(nullable=false)
-    private Boolean isAccountable=true;
+    private Boolean isCountable=true;
     /**
      * Is this a dummy class as described in the Dummy annotation?
      */
@@ -118,7 +119,7 @@ public class ClassMetadata extends MetadataObject {
     public ClassMetadata(String _name, PackageMetadata _myPackage, String _description,
             Boolean _isCustom, Boolean _isAbstract, Boolean _isDummy, Boolean _isPhysicalNode,
             Boolean _isPhysicalConnection, Boolean _isPhysicalEndpoint, Boolean _isListType,
-            List<ClassMetadata> _children, List <AttributeMetadata> _attributes){
+            Boolean _isCountable, List<ClassMetadata> _children, List <AttributeMetadata> _attributes){
         this.name = _name;
         this.packageInfo = _myPackage;
         this.description = _description;
@@ -129,6 +130,7 @@ public class ClassMetadata extends MetadataObject {
         this.isPhysicalConnection = _isPhysicalConnection;
         this.isPhysicalEndpoint = _isPhysicalEndpoint;
         this.isListType = _isListType;
+        this.isCountable = _isCountable;
         this.possibleChildren = _children;
         this.attributes = _attributes;
     }
@@ -231,11 +233,11 @@ public class ClassMetadata extends MetadataObject {
     }
 
     public Boolean isAccountable() {
-        return isAccountable;
+        return isCountable;
     }
 
-    public void setAccountable(Boolean isAccountable) {
-        this.isAccountable = isAccountable;
+    public void setAccountable(Boolean isCountable) {
+        this.isCountable = isCountable;
     }
 
     public Boolean isDummy() {

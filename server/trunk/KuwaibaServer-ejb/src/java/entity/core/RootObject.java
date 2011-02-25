@@ -17,6 +17,7 @@
 package entity.core;
 
 import core.annotations.NoCopy;
+import core.annotations.NoSerialize;
 import core.annotations.ReadOnly;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -40,6 +41,7 @@ public abstract class RootObject implements Serializable {
     @NoCopy
     @Column(updatable=false)
     @ReadOnly
+    @NoSerialize
     protected Long id; //Primary key
 
     @Column(nullable=false)

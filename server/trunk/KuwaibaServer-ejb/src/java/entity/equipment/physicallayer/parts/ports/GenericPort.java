@@ -17,6 +17,7 @@
 package entity.equipment.physicallayer.parts.ports;
 
 import core.annotations.NoCopy;
+import core.annotations.NoCount;
 import core.annotations.NoSerialize;
 import core.interfaces.PhysicalEndpoint;
 import entity.connections.physical.GenericPhysicalConnection;
@@ -31,6 +32,7 @@ import javax.persistence.OneToOne;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
+@NoCount
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericPort extends GenericPart implements PhysicalEndpoint {
     /**

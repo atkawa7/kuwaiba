@@ -21,10 +21,11 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
 /**
- * This class is the root of all non-operative elements
+ * This class is the root of all elements not related directly with the operation of services,
+ * (i.e. Services, SLAs, etc)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class AdministrativeItem extends ViewableObject {
+public abstract class AdministrativeItem extends InventoryObject {
 }

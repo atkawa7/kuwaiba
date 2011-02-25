@@ -16,8 +16,7 @@
 
 package entity.equipment.misc;
 
-import entity.core.InventoryObject;
-import java.io.Serializable;
+import entity.core.ConfigurationItem;
 import javax.persistence.Entity;
 
 /**
@@ -25,7 +24,7 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class AirConditioning extends InventoryObject implements Serializable {
+public class AirConditioning extends ConfigurationItem {
     protected Integer supportedBTU;
 
     public Integer getSupportedBTU() {

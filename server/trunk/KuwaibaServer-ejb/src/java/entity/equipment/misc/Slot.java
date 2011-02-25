@@ -15,8 +15,8 @@
  */
 package entity.equipment.misc;
 
-import entity.core.InventoryObject;
-import java.io.Serializable;
+import core.annotations.NoCount;
+import entity.core.ViewableObject;
 import javax.persistence.Entity;
 
 /**
@@ -24,6 +24,7 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Slot extends InventoryObject implements Serializable{
+@NoCount
+public class Slot extends ViewableObject{
 
 }

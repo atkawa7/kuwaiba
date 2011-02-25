@@ -17,14 +17,10 @@
 package entity.queries;
 
 import entity.config.User;
-import java.io.Serializable;
+import entity.core.ApplicationObject;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 /**
@@ -32,17 +28,13 @@ import javax.persistence.ManyToOne;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Query implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    private String name;
+public class Query extends ApplicationObject{
+
     private String description;
 
     @ManyToOne
     private User owner;
-    @Lob @Basic(fetch=FetchType.LAZY)
+    @Basic(fetch=FetchType.LAZY)
     private byte[] content;
 
     public Query() {
@@ -53,21 +45,9 @@ public class Query implements Serializable {
         this.owner = owner;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     @Override
     public String toString() {
         return getName();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public User getOwner() {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -12,9 +12,9 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
-package entity.equipment.applicationlayer;
+
+package entity.equipment.networklayer;
 
 import core.annotations.NoSerialize;
 import entity.multiple.systems.NetworkService;
@@ -23,13 +23,13 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 
 /**
- * A computer working as a server
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * A simple firewall
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class Server extends GenericApplicationElement {
+public class Firewall extends GenericAppliance {
     /**
-     * Servers usually run many services like DHCP, web, DNS, etc
+     * Firewalls usually run many services like DHCP, routing, DNS, etc
      */
     @ManyToMany
     @NoSerialize //Just for now because we don't have editor for this kind of relationships

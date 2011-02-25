@@ -20,7 +20,7 @@ import core.annotations.NoCopy;
 import core.annotations.NoSerialize;
 import core.interfaces.PhysicalNode;
 import entity.connections.physical.containers.GenericPhysicalContainer;
-import entity.core.AdministrativeItem;
+import entity.core.ViewableObject;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -33,7 +33,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class GenericPhysicalNode extends AdministrativeItem implements PhysicalNode{
+public abstract class GenericPhysicalNode extends ViewableObject implements PhysicalNode{
 
      /**
      * This one has all pipes and ducts connected to the node

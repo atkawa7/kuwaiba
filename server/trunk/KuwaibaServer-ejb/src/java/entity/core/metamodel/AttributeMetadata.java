@@ -15,6 +15,7 @@
  */
 package entity.core.metamodel;
 
+import core.annotations.ReadOnly;
 import entity.core.MetadataObject;
 import entity.multiple.GenericObjectList;
 import java.lang.reflect.Field;
@@ -89,7 +90,9 @@ public class AttributeMetadata extends MetadataObject {
         this.name = att.getName();
         this.type= att.getType().getSimpleName();
         if (HierarchyUtils.isSubclass(att.getType(), GenericObjectList.class))
-                this.isMultiple = true;
+            this.isMultiple = true;
+        if (att.getAnnotation(ReadOnly.class) != null)
+            this.isReadOnly = true;
         this.description = "Attribute "+this.name;
     }
 

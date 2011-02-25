@@ -16,6 +16,7 @@
 package util;
 
 import core.annotations.Dummy;
+import core.annotations.NoCount;
 import core.annotations.NoSerialize;
 import core.interfaces.PhysicalConnection;
 import core.interfaces.PhysicalEndpoint;
@@ -134,14 +135,14 @@ public class HierarchyUtils {
         query = em.createQuery(sentence);
         try{
             parentId = (Long)query.getSingleResult();
-        }catch(NoResultException nre){ // if the parent class has not been create yet, we do
+        }catch(NoResultException nre){ // if the parent class has not been create yet, we do it
             if ((EntityType)entity.getSupertype() == null) //The parent is not an entity
                 parentId = ClassMetadata.ROOT_CLASS_ID;
             else
                 parentId = persistClass((EntityType)entity.getSupertype(), em);
         }
         for(Field att : metaAtts){
-            //Ignore the fields marked as non serializables
+            //Ignore the fields marked as non serializables or having a private/static modifier
             if (att.getAnnotation(NoSerialize.class) != null)
                 continue;
             if (Modifier.isPrivate(att.getModifiers()) || Modifier.isStatic(att.getModifiers()))
@@ -153,11 +154,12 @@ public class HierarchyUtils {
                                              pm,
                                              entity.getJavaType().getSimpleName(),
                                              false,Modifier.isAbstract(entity.getJavaType().getModifiers()),
-                                             entity.getJavaType().getAnnotation(Dummy.class)!=null,
+                                             entity.getJavaType().getAnnotation(Dummy.class) != null,
                                              implementsInterface(entity.getJavaType(),PhysicalNode.class),
                                              implementsInterface(entity.getJavaType(),PhysicalConnection.class),
                                              implementsInterface(entity.getJavaType(),PhysicalEndpoint.class),
-                                             isSubclass(entity.getJavaType(), GenericObjectList.class),null,atts);
+                                             isSubclass(entity.getJavaType(), GenericObjectList.class),
+                                             entity.getJavaType().getAnnotation(NoCount.class) !=null , null, atts);
 
         em.persist(cm);
         return cm.getId();

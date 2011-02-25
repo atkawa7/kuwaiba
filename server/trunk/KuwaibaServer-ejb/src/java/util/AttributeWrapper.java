@@ -17,6 +17,7 @@
 package util;
 
 import core.annotations.NoCopy;
+import core.annotations.NoSerialize;
 import java.lang.reflect.Field;
 
 /**
@@ -45,7 +46,7 @@ public class AttributeWrapper {
         this.type = field.getType();
         if (field.getAnnotation(NoCopy.class) != null)
             this.applicationModifiers = MODIFIER_NOCOPY;
-        if (field.getAnnotation(NoCopy.class) != null)
+        if (field.getAnnotation(NoSerialize.class) != null)
             this.applicationModifiers |= MODIFIER_NOSERIALIZE;
         this.memberOf = field.getDeclaringClass();
     }

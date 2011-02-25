@@ -16,9 +16,11 @@
 
 package entity.core;
 
+import core.annotations.NoCopy;
 import entity.multiple.companies.Vendor;
 import entity.multiple.misc.EnvironmentalCondition;
 import entity.multiple.states.OperationalState;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -36,6 +38,8 @@ import javax.persistence.ManyToOne;
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class ConfigurationItem extends ViewableObject  {
 
+    @NoCopy
+    @Column(unique=true)
     protected String serialNumber;
     @ManyToOne
     protected Vendor vendor;

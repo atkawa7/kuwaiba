@@ -21,6 +21,7 @@ import core.annotations.ReadOnly;
 import java.util.Date;
 import java.util.Calendar;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -36,7 +37,8 @@ public abstract class InventoryObject extends RootObject{
     public static final Class ROOT_CLASS = DummyRoot.class; // this is the class that represents the root object
 
     @NoCopy
-    protected Long parent = null;
+    @ManyToOne
+    protected InventoryObject parent = null;
     /**
      * When was the object created?
      */
@@ -47,11 +49,11 @@ public abstract class InventoryObject extends RootObject{
 
     public InventoryObject(){}
 
-    public Long getParent() {
+    public InventoryObject getParent() {
         return parent;
     }
 
-    public void setParent(Long parent) {
+    public void setParent(InventoryObject parent) {
         this.parent = parent;
     }
 
