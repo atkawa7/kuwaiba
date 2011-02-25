@@ -49,7 +49,7 @@ import entity.core.RootObject;
 import entity.core.ViewableObject;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
-import entity.equipment.physicallayer.parts.ports.GenericPort;
+import entity.equipment.ports.GenericPort;
 import entity.location.GenericPhysicalNode;
 import entity.multiple.GenericObjectList;
 import entity.session.UserSession;

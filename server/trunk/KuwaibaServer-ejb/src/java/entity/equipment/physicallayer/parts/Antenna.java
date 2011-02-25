@@ -16,7 +16,7 @@
 
 package entity.equipment.physicallayer.parts;
 
-import entity.multiple.companies.CorporativeCustomer;
+import entity.multiple.people.CorporativeCustomer;
 import entity.multiple.types.parts.AntennaType;
 import java.io.Serializable;
 import javax.persistence.Entity;
@@ -31,12 +31,24 @@ public class Antenna extends GenericPart implements Serializable {
     @ManyToOne
     protected AntennaType type;
     protected Float gain;
+    /**
+     * Operation frequency
+     */
     protected String band;
-    protected Integer segment; //In which segment is the antenna located
-    protected Integer edge; //In which edge is the antenna located
-    protected Float orientation; //In degrees
+    /**
+     * Which segment is the antenna located on
+     */
+    protected Integer segment;
+    /**
+     * Which edge is the antenna located on
+     */
+    protected Integer edge;
+    /**
+     *In degrees
+     */
+    protected Float orientation;
     @ManyToOne
-    protected CorporativeCustomer owner; //In case the antenna actaully belongs to a customer
+    protected CorporativeCustomer owner; //In case the antenna belongs to a customer
 
     public String getBand() {
         return band;

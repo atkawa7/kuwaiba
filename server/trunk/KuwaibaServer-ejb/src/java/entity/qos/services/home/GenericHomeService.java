@@ -14,16 +14,15 @@
  *  limitations under the License.
  */
 
-package entity.multiple.people;
+package entity.qos.services.home;
 
+import entity.qos.services.GenericService;
 import javax.persistence.Entity;
 
-
 /**
- * Represents a home customer
+ * Represents a service provided to home customers
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class HomeCustomer extends GenericCustomer {
-    
+public abstract class GenericHomeService extends GenericService{
 }

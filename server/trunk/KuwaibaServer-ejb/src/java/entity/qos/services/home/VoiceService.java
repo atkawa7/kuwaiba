@@ -12,18 +12,29 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *  under the License.
  */
 
-package entity.multiple.people;
+package entity.qos.services.home;
 
+import java.io.Serializable;
 import javax.persistence.Entity;
 
 
 /**
- * Represents a home customer
+ * Represents a simple voice service, usually related to PSTN
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class HomeCustomer extends GenericCustomer {
+public class VoiceService extends GenericHomeService implements Serializable {
+    protected String suscriberLineNumber;
+
+    public String getSuscriberLineNumber() {
+        return suscriberLineNumber;
+    }
+
+    public void setSuscriberLineNumber(String suscriberLineNumber) {
+        this.suscriberLineNumber = suscriberLineNumber;
+    }
     
 }

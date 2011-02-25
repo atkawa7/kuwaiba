@@ -17,7 +17,6 @@
 
 package entity.multiple.people;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
@@ -25,7 +24,7 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Employee extends GenericPerson implements Serializable {
+public class Employee extends GenericPerson {
     protected String companyId;
 
     public String getCompanyId() {

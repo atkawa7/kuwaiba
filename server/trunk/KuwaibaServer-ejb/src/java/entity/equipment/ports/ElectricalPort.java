@@ -14,16 +14,15 @@
  *  limitations under the License.
  */
 
-package entity.multiple.people;
+package entity.equipment.ports;
 
 import javax.persistence.Entity;
 
-
 /**
- * Represents a home customer
+ * Represents an electrical interface
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class HomeCustomer extends GenericCustomer {
-    
+public class ElectricalPort extends GenericCommunicationsPort {
+
 }

@@ -12,45 +12,43 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *  under the License.
  */
+package entity.equipment.ports;
 
-package entity.connections.physical;
-
-import core.interfaces.PhysicalConnection;
-import entity.connections.GenericConnection;
-import entity.equipment.ports.GenericPort;
+import core.annotations.NoCopy;
+import core.annotations.NoCount;
+import core.annotations.NoSerialize;
+import entity.connections.physical.GenericPhysicalConnection;
+import entity.core.InventoryObject;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToOne;
 
 /**
- * This class represents a generic physical connection
- * Note: The endpoints should be PhysicalEndpoints, but since no interfaces can be referenced
- * as fields in an entity class, it's necessary to use GenericPorts
+ * Represents a generic Port
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
+@NoCount
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class GenericPhysicalConnection extends GenericConnection implements PhysicalConnection {
+public abstract class GenericPort extends InventoryObject{
+    /**
+     *The connected cable/fiber/radio channel. Can't use mappedBy here since the
+     * connection has two endpoints (A or B) and it's not possible to know which
+     * of them will be connected at design time
+     */
     @OneToOne
-    protected GenericPort endpointA;
-    @OneToOne
-    protected GenericPort endpointB;
+    @NoSerialize
+    @NoCopy
+    protected GenericPhysicalConnection connectedConnection;
 
-    public GenericPort getEndpointA() {
-        return endpointA;
+    public GenericPhysicalConnection getConnectedConnection() {
+        return connectedConnection;
     }
 
-    public void setEndpointA(GenericPort endpointA) {
-        this.endpointA = endpointA;
-    }
-
-    public GenericPort getEndpointB() {
-        return endpointB;
-    }
-
-    public void setEndpointB(GenericPort endpointB) {
-        this.endpointB = endpointB;
+    public void setConnectedConnection(GenericPhysicalConnection connectedConnection) {
+        this.connectedConnection = connectedConnection;
     }
 }

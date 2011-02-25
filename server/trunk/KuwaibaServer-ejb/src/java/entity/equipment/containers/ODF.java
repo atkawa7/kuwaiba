@@ -16,14 +16,25 @@
 
 package entity.equipment.containers;
 
+import entity.multiple.types.equipment.containers.DistributionFrameType;
 import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
- * Represents an optical distribution frame
+ * Represents a distribution frame with optical ports
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
 public class ODF extends GenericDistributionFrame implements Serializable {
+    @ManyToOne
+    protected DistributionFrameType type;
 
+    public DistributionFrameType getType() {
+        return type;
+    }
+
+    public void setType(DistributionFrameType type) {
+        this.type = type;
+    }
 }

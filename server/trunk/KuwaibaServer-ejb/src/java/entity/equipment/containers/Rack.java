@@ -15,9 +15,11 @@
  */
 package entity.equipment.containers;
 
+import entity.multiple.types.equipment.containers.RackType;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
  * Represents a simple rack
@@ -27,6 +29,8 @@ import javax.persistence.Entity;
 public class Rack extends GenericContainer implements Serializable {
     @Column(length=3)
     protected Integer rackUnits;
+    @ManyToOne
+    protected RackType type;
 
     public Integer getRackUnits() {
         return rackUnits;
@@ -34,5 +38,13 @@ public class Rack extends GenericContainer implements Serializable {
 
     public void setRackUnits(Integer rackUnits) {
         this.rackUnits = rackUnits;
+    }
+
+    public RackType getType() {
+        return type;
+    }
+
+    public void setType(RackType type) {
+        this.type = type;
     }
 }

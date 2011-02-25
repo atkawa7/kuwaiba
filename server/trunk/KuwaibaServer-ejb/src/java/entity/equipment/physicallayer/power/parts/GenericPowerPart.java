@@ -16,8 +16,7 @@
 
 package entity.equipment.physicallayer.power.parts;
 
-import entity.equipment.physicallayer.power.GenericPowerElement;
-import java.io.Serializable;
+import entity.core.InventoryObject;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -28,6 +27,6 @@ import javax.persistence.InheritanceType;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class GenericPowerPart extends GenericPowerElement{
+public abstract class GenericPowerPart extends InventoryObject{
 
 }

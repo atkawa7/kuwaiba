@@ -14,16 +14,14 @@
  *  limitations under the License.
  */
 
-package entity.multiple.people;
+package entity.qos.services.corporate;
 
 import javax.persistence.Entity;
 
-
 /**
- * Represents a home customer
+ * Represents a service over the SDH network
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class HomeCustomer extends GenericCustomer {
-    
+public class SDHService extends GenericCorporateService{
 }

@@ -1,12 +1,12 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
- * 
+ *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,15 +14,15 @@
  *  limitations under the License.
  */
 
-package entity.multiple.companies;
+package entity.multiple.types.equipment.containers;
 
-import java.io.Serializable;
+import entity.multiple.GenericObjectList;
 import javax.persistence.Entity;
 
 /**
- * Represents a company that requieres services from the host company
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ *
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class CorporativeCustomer extends GenericCompany implements Serializable {
+public class RackType extends GenericObjectList {
 }

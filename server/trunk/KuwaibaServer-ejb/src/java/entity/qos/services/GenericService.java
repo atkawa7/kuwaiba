@@ -18,44 +18,15 @@
 package entity.qos.services;
 
 import entity.core.AdministrativeItem;
-import entity.multiple.people.Employee;
-import entity.qos.OLA;
-import entity.qos.SLA;
-import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
 
 /**
  * Represents a simple service
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public abstract class GenericService extends AdministrativeItem implements Serializable {
+public abstract class GenericService extends AdministrativeItem {
     protected String serviceId;
-    @OneToOne
-    protected SLA sla; //To the customer
-    @OneToOne
-    protected OLA ola; //To the company
-    @ManyToMany
-    protected List<Employee> responsibles;
-
-    public OLA getOla() {
-        return ola;
-    }
-
-    public void setOla(OLA ola) {
-        this.ola = ola;
-    }
-
-    public List<Employee> getResponsibles() {
-        return responsibles;
-    }
-
-    public void setResponsibles(List<Employee> responsibles) {
-        this.responsibles = responsibles;
-    }
 
     public String getServiceId() {
         return serviceId;
@@ -63,13 +34,5 @@ public abstract class GenericService extends AdministrativeItem implements Seria
 
     public void setServiceId(String serviceId) {
         this.serviceId = serviceId;
-    }
-
-    public SLA getSla() {
-    return sla;
-    }
-
-    public void setSla(SLA sla) {
-    this.sla = sla;
     }
 }

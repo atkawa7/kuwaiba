@@ -16,12 +16,24 @@
 
 package entity.equipment.containers;
 
+import entity.multiple.types.equipment.containers.DistributionFrameType;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
- * Represents a digital distribution frame
+ * Represents a distribution frame with electrical ports
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
 public class DDF extends GenericDistributionFrame{
+    @ManyToOne
+    protected DistributionFrameType type;
+
+    public DistributionFrameType getType() {
+        return type;
+    }
+
+    public void setType(DistributionFrameType type) {
+        this.type = type;
+    }
 }
