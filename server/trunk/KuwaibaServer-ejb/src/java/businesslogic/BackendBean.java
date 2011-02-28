@@ -696,8 +696,10 @@ public class BackendBean implements BackendBeanRemote {
                     InventoryObject currentObject = (InventoryObject)em.find(objectClasses[i], objectOids[i]);
                     if (currentObject == null)
                         throw new ObjectNotFoundException(objectClasses[i].getSimpleName(), objectOids[i]);
-
-                    currentObject.setParent(targetOid);
+                    InventoryObject parentObject = (InventoryObject)em.find(InventoryObject.class, targetOid);
+                    if (parentObject == null)
+                        throw new ObjectNotFoundException("InventoryObject", targetOid); //NOI18N
+                    currentObject.setParent(parentObject);
                     em.merge(currentObject);
                 }
                 return true;
@@ -730,7 +732,12 @@ public class BackendBean implements BackendBeanRemote {
                         throw new ObjectNotFoundException(objectClasses[i].getSimpleName(), templateOids[i]);
 
                     Object clone = MetadataUtils.clone(new RemoteObject(template),objectClasses[i],em);
-                    ((InventoryObject)clone).setParent(targetOid);
+                    
+                    InventoryObject parentObject  = em.find(InventoryObject.class, targetOid);
+                    if (parentObject == null)
+                        throw new ObjectNotFoundException("InventoryObject", targetOid); //NOI18N
+
+                    ((InventoryObject)clone).setParent(parentObject);
                     ((InventoryObject)clone).setIsLocked(false);
                     em.persist(clone);
                     res[i] = new RemoteObjectLight(clone);
@@ -1361,6 +1368,10 @@ public class BackendBean implements BackendBeanRemote {
             Class connectionClass, Long parent) throws Exception{
         if (em != null){
 
+            InventoryObject parentObject  = em.find(InventoryObject.class, parent);
+            if (parentObject == null)
+                throw new ObjectNotFoundException("InventoryObject", parent); //NOI18N
+
             GenericPort portA = em.find(GenericPort.class, endpointA);
             if (portA == null)
                 throw new ObjectNotFoundException("GenericPort",endpointA);//NOI18N
@@ -1372,14 +1383,15 @@ public class BackendBean implements BackendBeanRemote {
             if (portB == null)
                 throw new ObjectNotFoundException("GenericPort",endpointB);//NOI18N
 
-
             if (portB.getConnectedConnection() != null)
                 throw new MiscException("Port B is already connnected");
 
             GenericPhysicalConnection conn = (GenericPhysicalConnection) connectionClass.newInstance();
             conn.setEndpointA(portA);
             conn.setEndpointB(portB);
-            conn.setParent(parent);
+
+
+            conn.setParent(parentObject);
 
             portA.setConnectedConnection(conn);
             portB.setConnectedConnection(conn);
@@ -1405,6 +1417,10 @@ public class BackendBean implements BackendBeanRemote {
             Class containerClass, Long parentNode) throws Exception{
         if (em != null){
 
+            InventoryObject parentObject  = em.find(InventoryObject.class, parentNode);
+            if (parentObject == null)
+                throw new ObjectNotFoundException("InventoryObject", parentNode); //NOI18N
+
             GenericPhysicalNode nodeA = (GenericPhysicalNode)em.find(GenericPhysicalNode.class, sourceNode);
             if (nodeA ==null)
                 throw new ObjectNotFoundException("GenericPhysicalNode",sourceNode); //NOI18N
@@ -1416,7 +1432,7 @@ public class BackendBean implements BackendBeanRemote {
             GenericPhysicalContainer conn = (GenericPhysicalContainer) containerClass.newInstance();
             conn.setNodeA(nodeA);
             conn.setNodeB(nodeB);
-            conn.setParent(parentNode);
+            conn.setParent(parentObject);
             nodeA.getContainers().add(conn);
             nodeB.getContainers().add(conn);
             em.persist(conn);
