@@ -17,14 +17,13 @@
 package entity.multiple.misc;
 
 import entity.multiple.GenericObjectList;
-import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- * 
+ * Environmental conditions such as humidity, direct sunlight or subject to voltage peaks
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class EnvironmentalCondition extends GenericObjectList implements Serializable {
+public class EnvironmentalCondition extends GenericObjectList {
     
 }

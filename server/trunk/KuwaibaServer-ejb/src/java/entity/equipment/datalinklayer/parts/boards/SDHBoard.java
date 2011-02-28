@@ -14,8 +14,9 @@
  *  limitations under the License.
  *  under the License.
  */
-package entity.equipment.physicallayer.parts.boards;
+package entity.equipment.datalinklayer.parts.boards;
 
+import entity.equipment.physicallayer.parts.boards.GenericBoard;
 import java.io.Serializable;
 import javax.persistence.Entity;
 

@@ -16,14 +16,40 @@
 
 package entity.equipment.physicallayer.parts.computers;
 
+import entity.multiple.types.equipment.ComputerMonitorType;
 import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
- * A simple monitor
+ * A simple computer monitor
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
 public class Monitor extends GenericComputerPart implements Serializable {
-    protected Float screenSize; //In inches
+    /**
+     * In inches
+     */
+    protected Float screenSize;
+    /**
+     * Flat, CRT, etc
+     */
+    @ManyToOne
+    protected ComputerMonitorType type;
+
+    public Float getScreenSize() {
+        return screenSize;
+    }
+
+    public void setScreenSize(Float screenSize) {
+        this.screenSize = screenSize;
+    }
+
+    public ComputerMonitorType getType() {
+        return type;
+    }
+
+    public void setType(ComputerMonitorType type) {
+        this.type = type;
+    }
 }

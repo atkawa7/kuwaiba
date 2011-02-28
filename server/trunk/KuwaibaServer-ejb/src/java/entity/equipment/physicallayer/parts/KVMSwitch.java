@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,25 +14,14 @@
  *  limitations under the License.
  */
 
-package entity.multiple.people;
+package entity.equipment.physicallayer.parts;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 
 /**
- * A corporative customer
+ *
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class CorporativeCustomer extends GenericCustomer {
-    @ManyToOne
-    protected Employee accountManager;
-
-    public Employee getAccountManager() {
-        return accountManager;
-    }
-
-    public void setAccountManager(Employee accountManager) {
-        this.accountManager = accountManager;
-    }
+public class KVMSwitch extends GenericPart {
 }

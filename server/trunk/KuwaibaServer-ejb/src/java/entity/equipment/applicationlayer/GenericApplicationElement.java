@@ -42,4 +42,12 @@ public abstract class GenericApplicationElement extends ConfigurationItem{
     public void setService(String service) {
         this.service = service;
     }
+
+    public OperatingSystem getOperatingSystem() {
+        return operatingSystem;
+    }
+
+    public void setOperatingSystem(OperatingSystem operatingSystem) {
+        this.operatingSystem = operatingSystem;
+    }
 }

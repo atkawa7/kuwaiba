@@ -16,7 +16,6 @@
 
 package entity.equipment.physicallayer.power.parts;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
 
 
@@ -25,7 +24,7 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Fuse extends GenericPowerPart implements Serializable {
+public class Fuse extends GenericPowerPart {
     protected Float breakingCapacity; //Maximum approved current at rated voltage
     protected Float currentRating; //Nominal amperage value of the fuse
     protected Float voltageRating; //Voltage in which the fuse safely inturrupt its rated short circuit current

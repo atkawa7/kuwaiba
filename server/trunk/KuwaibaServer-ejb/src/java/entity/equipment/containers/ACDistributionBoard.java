@@ -16,14 +16,36 @@
 
 package entity.equipment.containers;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- * Represents a distribution board for DC connections
+ * Represents a distribution board for AC connections
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class ACDistributionBoard extends GenericContainer implements Serializable {
+public class ACDistributionBoard extends GenericContainer{
+    /**
+     * Maximum supported voltage
+     */
+    protected Float maxVoltage;
+    /**
+     * Maximum supported current
+     */
+    protected Float maxCurrent;
 
+    public Float getMaxCurrent() {
+        return maxCurrent;
+    }
+
+    public void setMaxCurrent(Float maxCurrent) {
+        this.maxCurrent = maxCurrent;
+    }
+
+    public Float getMaxVoltage() {
+        return maxVoltage;
+    }
+
+    public void setMaxVoltage(Float maxVoltage) {
+        this.maxVoltage = maxVoltage;
+    }
 }

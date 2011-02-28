@@ -16,7 +16,7 @@
 
 package entity.equipment.physicallayer.parts;
 
-import entity.multiple.people.CorporativeCustomer;
+import entity.multiple.people.CorporateCustomer;
 import entity.multiple.types.parts.AntennaType;
 import java.io.Serializable;
 import javax.persistence.Entity;
@@ -48,7 +48,7 @@ public class Antenna extends GenericPart implements Serializable {
      */
     protected Float orientation;
     @ManyToOne
-    protected CorporativeCustomer owner; //In case the antenna belongs to a customer
+    protected CorporateCustomer owner; //In case the antenna belongs to a customer
 
     public String getBand() {
         return band;
@@ -82,11 +82,11 @@ public class Antenna extends GenericPart implements Serializable {
         this.orientation = orientation;
     }
 
-    public CorporativeCustomer getOwner() {
+    public CorporateCustomer getOwner() {
         return owner;
     }
 
-    public void setOwner(CorporativeCustomer owner) {
+    public void setOwner(CorporateCustomer owner) {
         this.owner = owner;
     }
 

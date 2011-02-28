@@ -16,7 +16,6 @@
 
 package entity.multiple.companies;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
@@ -26,6 +25,6 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class EquipmentProvider extends GenericCompany implements Serializable {
+public class EquipmentProvider extends GenericCompany{
     
 }

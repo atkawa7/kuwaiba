@@ -26,5 +26,16 @@ import javax.persistence.Entity;
  */
 @Entity
 public class Breaker extends GenericPowerPart implements Serializable {
-    protected Float maxCurrent; //Max current before triggering
+    /**
+     * Max current before triggering
+     */
+    protected Float maxCurrent;
+
+    public Float getMaxCurrent() {
+        return maxCurrent;
+    }
+
+    public void setMaxCurrent(Float maxCurrent) {
+        this.maxCurrent = maxCurrent;
+    }
 }

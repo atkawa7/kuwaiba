@@ -29,8 +29,14 @@ import javax.persistence.InheritanceType;
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericCompany extends GenericObjectList{
     protected String corporativeId;
-    protected String phoneNumber; //The normal one
-    protected String supportPhoneNumber; //This is used for providing support
+    /**
+     * The main one
+     */
+    protected String phoneNumber;
+    /**
+     * This is used for providing support
+     */
+    protected String supportPhoneNumber;
 
     public String getCorporativeId() {
         return corporativeId;
