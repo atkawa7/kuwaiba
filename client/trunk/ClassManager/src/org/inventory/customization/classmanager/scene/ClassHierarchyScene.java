@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import org.inventory.core.services.interfaces.LocalAttributeWrapper;
 import org.inventory.core.services.interfaces.LocalClassWrapper;
+import org.inventory.core.visual.actions.providers.MultipleWidgetMoveActionProvider;
 import org.inventory.core.visual.decorators.ColorSchemeFactory;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.AnchorFactory;
@@ -54,9 +55,11 @@ public class ClassHierarchyScene extends GraphScene<LocalClassWrapper, String>{
     private Image glyphNoSerialize = ImageUtilities.loadImage("org/inventory/customization/classmanager/res/no-serialize-glyph.png");
     private Image glyphReadOnly = ImageUtilities.loadImage("org/inventory/customization/classmanager/res/read-only-glyph.png");
     private HashMap<Integer, List<VMDNodeWidget>> levels;
+    private MultipleWidgetMoveActionProvider moveProvider;
 
     public ClassHierarchyScene(List<LocalClassWrapper> roots) {
         setKeyEventProcessingType (EventProcessingType.FOCUSED_WIDGET_AND_ITS_PARENTS);
+        moveProvider= new MultipleWidgetMoveActionProvider(this);
         nodesLayer = new LayerWidget(this);
         connectionsLayer = new LayerWidget(this);
         interactionsLayer = new LayerWidget(this);
@@ -99,7 +102,7 @@ public class ClassHierarchyScene extends GraphScene<LocalClassWrapper, String>{
         nodeWidget.setGlyphs(glyphs);
         nodeWidget.setNodeName(nodeClass.getName());
         nodeWidget.getActions().addAction(createSelectAction());
-        nodeWidget.getActions().addAction(ActionFactory.createMoveAction());
+        nodeWidget.getActions().addAction(ActionFactory.createMoveAction(moveProvider,moveProvider));
         nodesLayer.addChild(nodeWidget);
         return nodeWidget;
     }
@@ -107,9 +110,8 @@ public class ClassHierarchyScene extends GraphScene<LocalClassWrapper, String>{
     @Override
     protected Widget attachEdgeWidget(String edge) {
         ConnectionWidget connectionWidget = new ConnectionWidget(this);
-        connectionWidget.getActions ().addAction (createObjectHoverAction ());
         connectionWidget.getActions ().addAction (createSelectAction ());
-        connectionWidget.getActions ().addAction (ActionFactory.createMoveAction());
+        connectionWidget.getActions ().addAction (ActionFactory.createAddRemoveControlPointAction());
         connectionsLayer.addChild(connectionWidget);
         return connectionWidget;
     }
@@ -156,6 +158,8 @@ public class ClassHierarchyScene extends GraphScene<LocalClassWrapper, String>{
                 String edgeName = aClassWrapper.getName()+aChild.getNodeName();
                 ConnectionWidget newEdge = (ConnectionWidget) addEdge(edgeName);
                 newEdge.setEndPointShape(PointShape.SQUARE_FILLED_SMALL);
+                newEdge.setControlPointShape(PointShape.SQUARE_FILLED_SMALL);
+                newEdge.getActions().addAction(ActionFactory.createFreeMoveControlPointAction());
                 newEdge.setSourceAnchor(AnchorFactory.createFreeRectangularAnchor(newClassNode, true));
                 newEdge.setTargetAnchor(AnchorFactory.createFreeRectangularAnchor(aChild, true));
             }
@@ -176,9 +180,9 @@ public class ClassHierarchyScene extends GraphScene<LocalClassWrapper, String>{
             int xOffset = 0;
             for (VMDNodeWidget aNode : levels.get(i)){
                 aNode.setPreferredLocation(new Point(xOffset, yOffset));
-                xOffset += 200;
+                xOffset += 300;
             }
-            yOffset += 300;
+            yOffset += 350;
         }
     }
 }
