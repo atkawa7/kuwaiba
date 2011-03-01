@@ -95,6 +95,10 @@ public class LocalClassWrapperImpl implements LocalClassWrapper{
         return (applicationModifiers & MODIFIER_DUMMY) == MODIFIER_DUMMY;
     }
 
+    public boolean isCountable() {
+        return (applicationModifiers & MODIFIER_NOCOUNT) != MODIFIER_NOCOUNT;
+    }
+
     @Override
     public boolean equals(Object obj){
         if (obj == null)

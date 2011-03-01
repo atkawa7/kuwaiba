@@ -49,8 +49,10 @@ public class ClassHierarchyScene extends GraphScene<LocalClassWrapper, String>{
     private LayerWidget interactionsLayer;
     private Image glyphDummy = ImageUtilities.loadImage("org/inventory/customization/classmanager/res/dummy-glyph.png");
     private Image glyphAbstract = ImageUtilities.loadImage("org/inventory/customization/classmanager/res/abstract-glyph.png");
+    private Image glyphNoCount = ImageUtilities.loadImage("org/inventory/customization/classmanager/res/no-count-glyph.png");
     private Image glyphNoCopy = ImageUtilities.loadImage("org/inventory/customization/classmanager/res/no-copy-glyph.png");
     private Image glyphNoSerialize = ImageUtilities.loadImage("org/inventory/customization/classmanager/res/no-serialize-glyph.png");
+    private Image glyphReadOnly = ImageUtilities.loadImage("org/inventory/customization/classmanager/res/read-only-glyph.png");
     private HashMap<Integer, List<VMDNodeWidget>> levels;
 
     public ClassHierarchyScene(List<LocalClassWrapper> roots) {
@@ -88,10 +90,12 @@ public class ClassHierarchyScene extends GraphScene<LocalClassWrapper, String>{
         }
         VMDNodeWidget nodeWidget = new VMDNodeWidget(this, scheme);
         List<Image> glyphs = new ArrayList<Image>();
-        if (nodeClass.getApplicationModifiers() != 0)
+        if (nodeClass.isDummy())
             glyphs.add (glyphDummy);
         if (Modifier.isAbstract(nodeClass.getJavaModifiers()))
             glyphs.add (glyphAbstract);
+        if (!nodeClass.isCountable())
+            glyphs.add (glyphNoCount);
         nodeWidget.setGlyphs(glyphs);
         nodeWidget.setNodeName(nodeClass.getName());
         nodeWidget.getActions().addAction(createSelectAction());
@@ -143,6 +147,8 @@ public class ClassHierarchyScene extends GraphScene<LocalClassWrapper, String>{
                    glyphs.add(glyphNoCopy);
                 if (!anAttribute.canSerialize())
                    glyphs.add(glyphNoSerialize);
+                if (!anAttribute.canWrite())
+                   glyphs.add(glyphReadOnly);
                 pinWidget.setGlyphs(glyphs);
                 newClassNode.attachPinWidget(pinWidget);
             }

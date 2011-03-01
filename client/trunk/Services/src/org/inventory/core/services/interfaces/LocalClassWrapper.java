@@ -34,6 +34,7 @@ public interface LocalClassWrapper {
     public final static int TYPE_OTHER = 4;
 
     public static int MODIFIER_DUMMY = 1;
+    public static int MODIFIER_NOCOUNT = 2;
 
     public int getApplicationModifiers();
     public void setApplicationModifiers(int applicationModifiers);
@@ -48,4 +49,5 @@ public interface LocalClassWrapper {
     public int getClassType();
     public void setClassType(int classType);
     public boolean isDummy();
+    public boolean isCountable();
 }

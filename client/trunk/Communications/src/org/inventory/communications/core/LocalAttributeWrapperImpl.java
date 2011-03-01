@@ -86,6 +86,10 @@ public class LocalAttributeWrapperImpl implements LocalAttributeWrapper{
         return (applicationModifiers & MODIFIER_NOCOPY) != MODIFIER_NOCOPY;
     }
 
+    public boolean canWrite() {
+        return (applicationModifiers & MODIFIER_READONLY) != MODIFIER_READONLY;
+    }
+
     public boolean canSerialize(){
         return (applicationModifiers & MODIFIER_NOSERIALIZE) != MODIFIER_NOSERIALIZE;
     }

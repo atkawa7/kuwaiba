@@ -27,6 +27,7 @@ package org.inventory.core.services.interfaces;
 public interface LocalAttributeWrapper {
     public static int MODIFIER_NOCOPY = 1;
     public static int MODIFIER_NOSERIALIZE = 2;
+    public static int MODIFIER_READONLY = 4;
 
     public int getApplicationModifiers();
     public void setApplicationModifiers(int applicationModifiers);
@@ -37,5 +38,6 @@ public interface LocalAttributeWrapper {
     public String getType();
     public void setType(String type);
     public boolean canCopy();
+    public boolean canWrite();
     public boolean canSerialize();
 }
