@@ -16,6 +16,7 @@
 
 package entity.equipment.physicallayer.power.parts;
 
+import core.annotations.NoCount;
 import entity.core.InventoryObject;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -26,6 +27,7 @@ import javax.persistence.InheritanceType;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
+@NoCount
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericPowerPart extends InventoryObject{
 

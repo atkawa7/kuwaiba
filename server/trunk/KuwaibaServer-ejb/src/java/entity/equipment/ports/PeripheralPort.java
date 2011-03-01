@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
  * 
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,15 +14,26 @@
  *  limitations under the License.
  */
 
-package entity.multiple.types.parts;
+package entity.equipment.ports;
 
-import entity.multiple.GenericType;
+import entity.multiple.types.parts.PeripheralPortType;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
- * Represents a type for a given antenna (Yagi, log-periodic, etc)
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * A simple port to connect peripherals
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class AntennaType extends GenericType{
+public class PeripheralPort extends GenericPort {
+    @ManyToOne
+    protected PeripheralPortType type;
+
+    public PeripheralPortType getType() {
+        return type;
+    }
+
+    public void setType(PeripheralPortType type) {
+        this.type = type;
+    }
 }

@@ -16,13 +16,13 @@
 
 package entity.multiple.types.equipment.containers;
 
-import entity.multiple.GenericObjectList;
+import entity.multiple.GenericType;
 import javax.persistence.Entity;
 
 /**
- *
+ * A rack type (enclosed, two/four posts)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class RackType extends GenericObjectList {
+public class RackType extends GenericType {
 }

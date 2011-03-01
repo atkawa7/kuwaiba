@@ -16,7 +16,7 @@
 
 package entity.multiple.types.equipment;
 
-import entity.multiple.GenericObjectList;
+import entity.multiple.GenericType;
 import javax.persistence.Entity;
 
 /**
@@ -24,7 +24,7 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class TimeSourceType extends GenericObjectList{
+public class TimeSourceType extends GenericType {
     /**
      * As seen in http://www.symmetricom.com/products/gps-solutions/telecom-primary-reference-sources/
      */

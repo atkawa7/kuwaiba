@@ -15,7 +15,7 @@
  */
 package entity.multiple.types.parts;
 
-import entity.multiple.GenericObjectList;
+import entity.multiple.GenericType;
 import javax.persistence.Entity;
 
 /**
@@ -23,6 +23,6 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class CommunicationsPortType extends GenericObjectList{
+public class CommunicationsPortType extends GenericType {
 
 }

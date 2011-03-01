@@ -16,14 +16,14 @@
 
 package entity.multiple.types.parts;
 
-import entity.multiple.GenericObjectList;
+import entity.multiple.GenericType;
 import javax.persistence.Entity;
 
 
 /**
- * Represents the possible tower types, this is, masts, electrical, normals
+ * Represents the possible tower types, this is: radio mast, power tower, etc
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class TowerType extends GenericObjectList{
+public class TowerType extends GenericType{
 }

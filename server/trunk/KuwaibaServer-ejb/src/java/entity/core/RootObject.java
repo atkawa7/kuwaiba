@@ -51,6 +51,7 @@ public abstract class RootObject implements Serializable {
      */
     @Column(nullable=false)
     @NoCopy
+    @NoSerialize
     protected Boolean isLocked= false;
 
     public Long getId() {

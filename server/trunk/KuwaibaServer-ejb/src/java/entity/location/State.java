@@ -16,6 +16,7 @@
  */
 package entity.location;
 
+import core.annotations.NoCount;
 import entity.core.ViewableObject;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -27,6 +28,6 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="StateObject")
+@NoCount
 public class State extends ViewableObject {
-
 }

@@ -18,6 +18,7 @@ package util;
 
 import core.annotations.NoCopy;
 import core.annotations.NoSerialize;
+import core.annotations.ReadOnly;
 import java.lang.reflect.Field;
 
 /**
@@ -30,6 +31,7 @@ import java.lang.reflect.Field;
 public class AttributeWrapper {
     public static int MODIFIER_NOCOPY = 1;
     public static int MODIFIER_NOSERIALIZE = 2;
+    public static int MODIFIER_READONLY = 4;
 
     private String name;
     private int javaModifiers;
@@ -45,9 +47,11 @@ public class AttributeWrapper {
         this.name = field.getName();
         this.type = field.getType();
         if (field.getAnnotation(NoCopy.class) != null)
-            this.applicationModifiers = MODIFIER_NOCOPY;
+            this.applicationModifiers |= MODIFIER_NOCOPY;
         if (field.getAnnotation(NoSerialize.class) != null)
             this.applicationModifiers |= MODIFIER_NOSERIALIZE;
+        if (field.getAnnotation(ReadOnly.class) != null)
+            this.applicationModifiers |= MODIFIER_READONLY;
         this.memberOf = field.getDeclaringClass();
     }
 

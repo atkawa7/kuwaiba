@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -12,18 +12,17 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *  under the License.
  */
+package entity.equipment.physicallayer.parts.boards;
 
-package entity.multiple.types.equipment;
-
-import entity.multiple.GenericObjectList;
 import javax.persistence.Entity;
 
 /**
- * A monitor type such as flat, CRT Color, Color Monochromatic, etc
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * Represents a card that supports multiple technologies (this is, electrical and optical port, for example)
+ * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class ComputerMonitorType extends GenericObjectList {
+public class HybridBoard extends GenericBoard {
 
 }

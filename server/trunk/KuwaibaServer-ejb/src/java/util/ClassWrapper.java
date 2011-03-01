@@ -17,6 +17,7 @@
 package util;
 
 import core.annotations.Dummy;
+import core.annotations.NoCount;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +35,11 @@ public class ClassWrapper {
     public static final int TYPE_OTHER = 4;
 
     public static final int MODIFIER_DUMMY = 1;
+    public static final int MODIFIER_NOCOUNT = 2;
 
     private String name;
     private int javaModifiers;
-    private int applicationModifiers;
+    private int applicationModifiers = 0;
     private int classType;
     private List<ClassWrapper> directSubClasses;
     private List<AttributeWrapper> attributes;
@@ -46,8 +48,11 @@ public class ClassWrapper {
     public ClassWrapper(Class toBeWrapped, int classType) {
         this.name = toBeWrapped.getSimpleName();
         this.javaModifiers = toBeWrapped.getModifiers();
-        this.applicationModifiers = toBeWrapped.getAnnotation(Dummy.class) == null ? 0 : MODIFIER_DUMMY;
-        attributes = new ArrayList<AttributeWrapper>();
+        if (toBeWrapped.getAnnotation(Dummy.class) != null)
+            this.applicationModifiers |= MODIFIER_DUMMY;
+        if (toBeWrapped.getAnnotation(NoCount.class) != null)
+            this.applicationModifiers |= MODIFIER_NOCOUNT;
+        this.attributes = new ArrayList<AttributeWrapper>();
         for (Field field : MetadataUtils.getAllFields(toBeWrapped, true))
             attributes.add(new AttributeWrapper(field));
         this.directSubClasses = new ArrayList<ClassWrapper>();

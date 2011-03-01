@@ -16,8 +16,8 @@
 
 package core.toserialize;
 
-import entity.config.User;
-import entity.config.UserGroup;
+import entity.session.User;
+import entity.session.UserGroup;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -34,7 +34,7 @@ public class UserGroupInfo extends UserGroupInfoLight{
      */
     protected Long creationDate;
     /**
-     * Group's description
+     * UserGroup's description
      */
     protected String description;
     //private PrivilegeInfo privileges;

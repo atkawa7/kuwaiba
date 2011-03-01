@@ -15,7 +15,7 @@
  */
 package entity.multiple;
 
-import entity.core.AdministrativeItem;
+import entity.core.ApplicationObject;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -26,7 +26,7 @@ import javax.persistence.InheritanceType;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class GenericObjectList extends AdministrativeItem{
+public abstract class GenericObjectList extends ApplicationObject{
     protected String displayName;
 
     public String getDisplayName() {

@@ -16,7 +16,7 @@
 
 package entity.multiple.types.parts;
 
-import entity.multiple.GenericObjectList;
+import entity.multiple.GenericType;
 import javax.persistence.Entity;
 
 /**
@@ -24,5 +24,5 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class PeripheralPortType extends GenericObjectList {
+public class PeripheralPortType extends GenericType {
 }

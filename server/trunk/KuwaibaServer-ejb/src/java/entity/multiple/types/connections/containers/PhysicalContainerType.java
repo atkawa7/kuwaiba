@@ -16,7 +16,7 @@
 
 package entity.multiple.types.connections.containers;
 
-import entity.multiple.GenericObjectList;
+import entity.multiple.GenericType;
 import javax.persistence.Entity;
 
 /**
@@ -24,6 +24,6 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class PhysicalContainerType extends GenericObjectList{
+public class PhysicalContainerType extends GenericType{
     
 }

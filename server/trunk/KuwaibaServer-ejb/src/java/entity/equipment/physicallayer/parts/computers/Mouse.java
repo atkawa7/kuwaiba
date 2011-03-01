@@ -16,24 +16,24 @@
 
 package entity.equipment.physicallayer.parts.computers;
 
-import entity.multiple.types.parts.PeripheralPortType;
+import entity.multiple.types.parts.MouseType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 /**
- * A simple mouse (peripheral)
+ * A simple mouse (computer peripheral)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
 public class Mouse extends GenericComputerPart {
     @ManyToOne
-    protected PeripheralPortType type;
+    protected MouseType type;
 
-    public PeripheralPortType getType() {
+    public MouseType getType() {
         return type;
     }
 
-    public void setType(PeripheralPortType type) {
+    public void setType(MouseType type) {
         this.type = type;
     }
 }

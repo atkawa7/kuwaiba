@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -12,18 +12,29 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
-package entity.equipment.physicallayer.parts.boards;
 
-import java.io.Serializable;
+package entity.multiple.types.parts;
+
+import entity.multiple.GenericType;
 import javax.persistence.Entity;
 
 /**
- * Represents a card that supports multiple technologies
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * A monitor (computer peripheral) type (Flat, CRT, etc). The screen size is set here too
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class MixedBoard extends GenericBoard implements Serializable {
+public class ComputerMonitorType extends GenericType {
+    /**
+     * In inches
+     */
+    protected Float screenSize;
 
+    public Float getScreenSize() {
+        return screenSize;
+    }
+
+    public void setScreenSize(Float screenSize) {
+        this.screenSize = screenSize;
+    }
 }

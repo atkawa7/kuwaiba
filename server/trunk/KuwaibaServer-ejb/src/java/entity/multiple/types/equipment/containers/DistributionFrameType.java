@@ -16,7 +16,7 @@
 
 package entity.multiple.types.equipment.containers;
 
-import entity.multiple.GenericObjectList;
+import entity.multiple.GenericType;
 import javax.persistence.Entity;
 
 /**
@@ -24,6 +24,6 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class DistributionFrameType extends GenericObjectList {
+public class DistributionFrameType extends GenericType {
 
 }

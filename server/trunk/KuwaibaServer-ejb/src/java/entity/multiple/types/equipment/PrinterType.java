@@ -16,7 +16,7 @@
 
 package entity.multiple.types.equipment;
 
-import entity.multiple.GenericObjectList;
+import entity.multiple.GenericType;
 import javax.persistence.Entity;
 
 /**
@@ -24,5 +24,5 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class PrinterType extends GenericObjectList {
+public class PrinterType extends GenericType {
 }

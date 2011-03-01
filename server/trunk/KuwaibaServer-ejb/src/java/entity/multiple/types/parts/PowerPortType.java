@@ -15,14 +15,14 @@
  */
 package entity.multiple.types.parts;
 
-import entity.multiple.GenericObjectList;
+import entity.multiple.GenericType;
 import javax.persistence.Entity;
 
 /**
- * Represents a connector for a power connection (NEMA 5-15P, NEMA 5-15R, etc)
+ * Represents a socket for a power connection (NEMA 5-15P, NEMA 5-15R, etc)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class PowerPortType extends GenericObjectList{
+public class PowerPortType extends GenericType{
 
 }

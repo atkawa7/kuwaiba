@@ -16,7 +16,7 @@
 
 package entity.queries;
 
-import entity.config.User;
+import entity.session.User;
 import entity.core.ApplicationObject;
 import javax.persistence.Basic;
 import javax.persistence.Entity;

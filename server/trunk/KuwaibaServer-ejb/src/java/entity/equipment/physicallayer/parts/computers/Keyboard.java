@@ -16,14 +16,24 @@
 
 package entity.equipment.physicallayer.parts.computers;
 
-import java.io.Serializable;
+import entity.multiple.types.parts.KeyboardType;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
- * A simple keyboard
+ * A simple keyboard (computer peripheral)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Keyboard extends GenericComputerPart implements Serializable {
+public class Keyboard extends GenericComputerPart {
+    @ManyToOne
+    protected KeyboardType type;
 
+    public KeyboardType getType() {
+        return type;
+    }
+
+    public void setType(KeyboardType type) {
+        this.type = type;
+    }
 }

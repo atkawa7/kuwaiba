@@ -16,8 +16,8 @@
 
 package core.toserialize;
 
-import entity.config.User;
-import entity.config.UserGroup;
+import entity.session.User;
+import entity.session.UserGroup;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

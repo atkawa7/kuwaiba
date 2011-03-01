@@ -16,7 +16,6 @@
 
 package entity.session;
 
-import entity.config.User;
 import entity.core.ApplicationObject;
 import java.util.Calendar;
 import java.util.Date;
