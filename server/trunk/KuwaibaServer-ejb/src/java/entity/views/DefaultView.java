@@ -20,7 +20,7 @@ import core.toserialize.ViewInfo;
 import javax.persistence.Entity;
 
 /**
- * Represents the default view for any object. It's basically the children (includin physical connections)
+ * Represents the default view for any object. It's basically the children (including physical connections)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity

@@ -36,6 +36,7 @@ import core.toserialize.RemoteQuery;
 import core.toserialize.RemoteQueryLight;
 import core.toserialize.RemoteSession;
 import core.toserialize.ResultRecord;
+import core.toserialize.ServerStatus;
 import core.toserialize.UserGroupInfo;
 import core.toserialize.UserInfo;
 import core.toserialize.ViewInfo;
@@ -47,6 +48,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
+import util.Constants;
 import util.HierarchyUtils;
 
 /**
@@ -71,8 +73,8 @@ public class KuwaibaWebservice {
      * @return a boolean showing if the server up or down
      */
     @WebMethod(operationName = "getServerStatus")
-    public boolean getServerStatus(){
-        return true;
+    public ServerStatus getServerStatus(){
+        return new ServerStatus(Constants.SERVER_VERSION);
     }
 
     /**

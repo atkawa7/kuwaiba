@@ -18,7 +18,6 @@ package entity.location;
 
 import core.annotations.NoCopy;
 import core.annotations.NoSerialize;
-import core.interfaces.PhysicalNode;
 import entity.connections.physical.containers.GenericPhysicalContainer;
 import entity.core.ViewableObject;
 import java.util.List;
@@ -33,7 +32,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class GenericPhysicalNode extends ViewableObject implements PhysicalNode{
+public abstract class GenericPhysicalNode extends ViewableObject {
 
      /**
      * This one has all pipes and ducts connected to the node

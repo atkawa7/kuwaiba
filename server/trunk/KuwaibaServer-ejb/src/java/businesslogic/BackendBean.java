@@ -75,6 +75,7 @@ import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import util.AttributeWrapper;
 import util.ClassWrapper;
+import util.Constants;
 import util.HierarchyUtils;
 import util.MetadataUtils;
 
@@ -94,7 +95,6 @@ public class BackendBean implements BackendBeanRemote {
      * in queries
      */
     private static HashMap<String,Class> classIndex;
-    private static final String SERVER_VERSION = "0.3";
 
     @Override
     public Class getClassFor(String className) throws Exception{
@@ -491,8 +491,8 @@ public class BackendBean implements BackendBeanRemote {
             ByteArrayOutputStream bas = new ByteArrayOutputStream();
             WAX xmlWriter = new WAX(bas);
             StartTagWAX rootTag = xmlWriter.start("hierarchy");
-            rootTag.attr("documentVersion", "1.0");
-            rootTag.attr("serverVersion", SERVER_VERSION);
+            rootTag.attr("documentVersion", Constants.CLASSHIERARCHY_DOCUMENT_VERSION);
+            rootTag.attr("serverVersion", Constants.SERVER_VERSION);
             rootTag.attr("date", Calendar.getInstance().getTimeInMillis());
             StartTagWAX inventoryTag = rootTag.start("inventory");
             StartTagWAX classesTag = inventoryTag.start("classes");

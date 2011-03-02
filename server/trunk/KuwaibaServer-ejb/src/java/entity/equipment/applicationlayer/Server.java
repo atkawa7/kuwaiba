@@ -34,4 +34,12 @@ public class Server extends GenericApplicationElement {
     @ManyToMany
     @NoSerialize //Just for now because we don't have editor for this kind of relationships
     protected List<NetworkService> services;
+
+    public List<NetworkService> getServices() {
+        return services;
+    }
+
+    public void setServices(List<NetworkService> services) {
+        this.services = services;
+    }
 }

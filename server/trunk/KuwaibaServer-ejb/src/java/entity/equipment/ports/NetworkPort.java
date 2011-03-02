@@ -13,30 +13,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package entity.equipment.ports;
 
-import entity.multiple.types.parts.CommunicationsPortType;
+import core.annotations.NoSerialize;
+import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
 
 /**
- * Represents a port used for communication equipment to send/receive data
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * A port used un LAN/WAN environment (Ethernet, Coaxial, etc)
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-@Inheritance(strategy=InheritanceType.JOINED)
-public abstract class GenericCommunicationsPort extends GenericPort{
+public class NetworkPort extends GenericCommunicationsPort {
+    @NoSerialize //For now, since we don't have a proper editor for this
+    protected List<String> ipAddresses;
 
-    @ManyToOne
-    protected CommunicationsPortType type; //RJ-45, RJ-11, FC/PC, etc
-
-    public CommunicationsPortType getType() {
-        return type;
+    public List<String> getIpAddresses() {
+        return ipAddresses;
     }
 
-    public void setType(CommunicationsPortType type) {
-        this.type = type;
+    public void setIpAddresses(List<String> ipAddresses) {
+        this.ipAddresses = ipAddresses;
     }
 }

@@ -18,15 +18,15 @@ package util;
 import core.annotations.Dummy;
 import core.annotations.NoCount;
 import core.annotations.NoSerialize;
-import core.interfaces.PhysicalConnection;
-import core.interfaces.PhysicalEndpoint;
-import core.interfaces.PhysicalNode;
+import entity.connections.GenericConnection;
 import entity.core.ApplicationObject;
 import entity.core.InventoryObject;
 import entity.core.MetadataObject;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
 import entity.core.metamodel.PackageMetadata;
+import entity.equipment.ports.GenericPort;
+import entity.location.GenericPhysicalNode;
 import entity.multiple.GenericObjectList;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -155,9 +155,9 @@ public class HierarchyUtils {
                                              entity.getJavaType().getSimpleName(),
                                              false,Modifier.isAbstract(entity.getJavaType().getModifiers()),
                                              entity.getJavaType().getAnnotation(Dummy.class) != null,
-                                             implementsInterface(entity.getJavaType(),PhysicalNode.class),
-                                             implementsInterface(entity.getJavaType(),PhysicalConnection.class),
-                                             implementsInterface(entity.getJavaType(),PhysicalEndpoint.class),
+                                             isSubclass(entity.getJavaType(),GenericPhysicalNode.class),
+                                             isSubclass(entity.getJavaType(),GenericConnection.class),
+                                             implementsInterface(entity.getJavaType(),GenericPort.class),
                                              isSubclass(entity.getJavaType(), GenericObjectList.class),
                                              entity.getJavaType().getAnnotation(NoCount.class) !=null , null, atts);
 

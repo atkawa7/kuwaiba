@@ -16,7 +16,6 @@
 
 package entity.connections.physical;
 
-import core.interfaces.PhysicalConnection;
 import entity.connections.GenericConnection;
 import entity.equipment.ports.GenericPort;
 import javax.persistence.Entity;
@@ -32,7 +31,7 @@ import javax.persistence.OneToOne;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class GenericPhysicalConnection extends GenericConnection implements PhysicalConnection {
+public abstract class GenericPhysicalConnection extends GenericConnection {
     @OneToOne
     protected GenericPort endpointA;
     @OneToOne

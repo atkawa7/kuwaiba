@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,16 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-package core.interfaces;
-
-import java.io.Serializable;
-
-
+package util;
 
 /**
- * Classes implementing this interface can be endpoints to a physical connection
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * Helper class to hold some constants
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface PhysicalEndpoint extends Serializable{
+public class Constants {
+    public static final String SERVER_VERSION = "0.3beta";
+    public static final String CLASSHIERARCHY_DOCUMENT_VERSION = "1.0";
 }

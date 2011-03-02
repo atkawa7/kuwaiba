@@ -16,7 +16,6 @@
 
 package entity.connections.physical.containers;
 
-import core.interfaces.PhysicalContainer;
 import entity.connections.GenericConnection;
 import entity.location.GenericPhysicalNode;
 import javax.persistence.Entity;
@@ -30,7 +29,7 @@ import javax.persistence.OneToOne;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class GenericPhysicalContainer extends GenericConnection implements PhysicalContainer {
+public abstract class GenericPhysicalContainer extends GenericConnection {
 
     @OneToOne
     protected GenericPhysicalNode nodeA;
