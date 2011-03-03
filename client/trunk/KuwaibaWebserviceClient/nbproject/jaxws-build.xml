@@ -18,22 +18,22 @@
             <classpath path="${libs.jaxws21.classpath}"/>
         </taskdef>
     </target>
-    <target name="wsimport-client-KuwaibaWebserviceService" depends="wsimport-init">
-        <mkdir dir="${build.generated.dir}/jax-wsCache/KuwaibaWebserviceService"/>
-        <property name="wsdl-KuwaibaWebserviceService" location="xml-resources/web-service-references/KuwaibaWebserviceService/wsdl/localhost_8080/KuwaibaServer-war/KuwaibaWebserviceService.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/KuwaibaWebserviceService" destdir="${build.generated.dir}/jax-wsCache/KuwaibaWebserviceService" wsdl="${wsdl-KuwaibaWebserviceService}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="http://localhost:8080/KuwaibaServer-war/KuwaibaWebserviceService?wsdl" xendorsed="true" package="org.inventory.webservice">
-            <depends file="${wsdl-KuwaibaWebserviceService}"/>
-            <produces dir="${build.generated.dir}/jax-wsCache/KuwaibaWebserviceService"/>
+    <target name="wsimport-client-KuwaibaService" depends="wsimport-init">
+        <mkdir dir="${build.generated.dir}/jax-wsCache/KuwaibaService"/>
+        <property name="wsdl-KuwaibaService" location="xml-resources/web-service-references/KuwaibaService/wsdl/localhost_8080/kuwaiba/KuwaibaService.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/KuwaibaService" destdir="${build.generated.dir}/jax-wsCache/KuwaibaService" wsdl="${wsdl-KuwaibaService}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="http://localhost:8080/kuwaiba/KuwaibaService?wsdl" xendorsed="true" package="org.inventory.webservice">
+            <depends file="${wsdl-KuwaibaService}"/>
+            <produces dir="${build.generated.dir}/jax-wsCache/KuwaibaService"/>
         </wsimport>
         <copy todir="${build.generated.sources.dir}/jax-ws">
-            <fileset dir="${build.generated.dir}/jax-wsCache/KuwaibaWebserviceService">
+            <fileset dir="${build.generated.dir}/jax-wsCache/KuwaibaService">
                 <include name="**/*.java"/>
             </fileset>
         </copy>
     </target>
-    <target name="wsimport-client-clean-KuwaibaWebserviceService" depends="-init-project">
-        <delete dir="${build.generated.dir}/jax-wsCache/KuwaibaWebserviceService"/>
-        <delete dir="${build.generated.sources.dir}/jax-ws/test"/>
+    <target name="wsimport-client-clean-KuwaibaService" depends="-init-project">
+        <delete dir="${build.generated.dir}/jax-wsCache/KuwaibaService"/>
+        <delete dir="${build.generated.sources.dir}/jax-ws/org/inventory/webservice"/>
     </target>
-    <target name="wsimport-client-generate" depends="wsimport-client-KuwaibaWebserviceService"/>
+    <target name="wsimport-client-generate" depends="wsimport-client-KuwaibaService"/>
 </project>

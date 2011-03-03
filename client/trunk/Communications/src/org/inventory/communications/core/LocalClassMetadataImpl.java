@@ -34,7 +34,6 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
     private String [] attributeTypes;
     private String [] attributeDisplayNames;
     private Boolean [] attributesIsVisible;
-    private Boolean [] attributesIsAdministrative;
     private Boolean [] attributesIsMultiple;
     private String [] attributesDescription;
 
@@ -49,7 +48,6 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         this.attributeTypes = cm.getAttributeTypes().toArray(new String[0]);
         this.attributeDisplayNames = cm.getAttributeDisplayNames().toArray(new String[0]);
         this.attributesIsVisible = cm.getAttributesIsVisible().toArray(new Boolean[0]);
-        this.attributesIsAdministrative = cm.getAttributesIsAdministrative().toArray(new Boolean[0]);
         this.attributesIsMultiple = cm.getAttributesIsMultiple().toArray(new Boolean[0]);
         this.attributesDescription = cm.getAttributesDescription().toArray(new String[0]);
     }
@@ -98,14 +96,6 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         this.attributesDescription = attributesDescription;
     }
 
-    public Boolean[] getAttributesIsAdministrative() {
-        return attributesIsAdministrative;
-    }
-
-    public void setAttributesIsAdministrative(Boolean[] attributesIsAdministrative) {
-        this.attributesIsAdministrative = attributesIsAdministrative;
-    }
-
     public Boolean[] getAttributesIsVisible() {
         return attributesIsVisible;
     }
@@ -119,13 +109,6 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
             if(this.attributeNames[i].equals(att))
                 return this.attributeDisplayNames[i].equals("")?att:this.attributeDisplayNames[i];
         return att;
-    }
-
-    public Boolean isAdministrative(String att){
-        for (int i=0; i< this.attributeNames.length;i++)
-            if(this.attributeNames[i].equals(att))
-                return this.attributesIsAdministrative[i];
-        return false;
     }
 
     public Boolean isMultiple(String att){

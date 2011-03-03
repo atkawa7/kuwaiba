@@ -190,9 +190,6 @@ public class AuthenticationPanel extends javax.swing.JPanel {
             contained.setVisible(true);
             ((TitledBorder)pnlSettingsContainer.getBorder()).setTitle("[-] Connection Settings");
         }
-
-        //validate();
-        //pnlSettingsContainer.repaint();
         ((JDialog)SwingUtilities.getAncestorOfClass(JDialog.class,this)).pack();
     }
 

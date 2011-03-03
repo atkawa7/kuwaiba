@@ -48,8 +48,8 @@ import org.inventory.core.services.interfaces.LocalUserObject;
 import org.inventory.objectcache.Cache;
 import org.inventory.webservice.ClassInfo;
 import org.inventory.webservice.ClassInfoLight;
-import org.inventory.webservice.KuwaibaWebservice;
-import org.inventory.webservice.KuwaibaWebserviceService;
+import org.inventory.webservice.Kuwaiba;
+import org.inventory.webservice.KuwaibaService;
 import org.inventory.webservice.ObjectList;
 import org.inventory.webservice.ObjectList.List.Entry;
 import org.inventory.webservice.ObjectUpdate;
@@ -69,8 +69,8 @@ import org.inventory.webservice.ViewInfo;
  */
 public class CommunicationsStub {
     private static CommunicationsStub instance=null;
-    private KuwaibaWebserviceService service;
-    private KuwaibaWebservice port;
+    private KuwaibaService service;
+    private Kuwaiba port;
     private static URL serverURL = null;
     private String error=java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_ERROR");
     private Cache cache;
@@ -81,13 +81,13 @@ public class CommunicationsStub {
         if (serverURL == null){
             try{
                 //Default values
-                serverURL = new URL("http", "localhost", 8080,"/KuwaibaServer-war/KuwaibaWebserviceService?wsdl"); //NOI18n
+                serverURL = new URL("http", "localhost", 8080,"/kuwaiba/KuwaibaService?wsdl"); //NOI18n
             }catch (MalformedURLException mue){
                 Logger.getAnonymousLogger("Malformed URL: "+mue.getMessage());
             }
         }
-        this.service = new KuwaibaWebserviceService(serverURL);
-        this.port = service.getKuwaibaWebservicePort();
+        this.service = new KuwaibaService(serverURL);
+        this.port = service.getKuwaibaPort();
         cache = Cache.getInstace();
     }
 
@@ -150,8 +150,6 @@ public class CommunicationsStub {
     public LocalObjectLight[] getRootNodeChildren(){
         try{
             
-            if (cache.getRootId()==null)
-                cache.setRootId(port.getDummyRootId(this.session.getSessionId()));
             if (cache.getMetaForClass("DummyRoot")==null){
                 cache.addMeta(
                         new LocalClassMetadataImpl[]{new LocalClassMetadataImpl(
@@ -159,7 +157,7 @@ public class CommunicationsStub {
 
             }
 
-            List<RemoteObjectLight> result = port.getObjectChildren(cache.getRootId(),
+            List<RemoteObjectLight> result = port.getObjectChildren(null,
                                                                     cache.getMetaForClass("DummyRoot").getOid(),
                                                                     this.session.getSessionId());
             LocalObjectLightImpl[] children = new LocalObjectLightImpl[result.size()];
@@ -550,18 +548,6 @@ public class CommunicationsStub {
         }
     }
 
-
-    public Long getRootId(){
-        try{
-            if (cache.getRootId() == null)
-                cache.setRootId(port.getDummyRootId(this.session.getSessionId()));
-            return cache.getRootId();
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return new Long(0);
-        }
-    }
-
     public LocalClassMetadata getDummyRootClass(){
         return getMetaForClass("DummyRoot",false);
     }
@@ -781,15 +767,6 @@ public class CommunicationsStub {
      * Reset the cache to the default cleaning all hashes:
      */
     public void resetCache(){
-
-        //Set the new values
-        try{
-            cache.setRootId(port.getDummyRootId(this.session.getSessionId()));
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            //TODO: Put some log4j here
-        }
-
         //Wipe out hashes
         cache.resetMetadataIndex();
         cache.resetLightMetadataIndex();
