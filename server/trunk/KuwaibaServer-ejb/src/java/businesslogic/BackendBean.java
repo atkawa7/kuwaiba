@@ -43,6 +43,7 @@ import entity.session.User;
 import entity.session.UserGroup;
 import entity.connections.physical.GenericPhysicalConnection;
 import entity.connections.physical.containers.GenericPhysicalContainer;
+import entity.core.DummyRoot;
 import entity.core.InventoryObject;
 import entity.core.MetadataObject;
 import entity.core.RootObject;
@@ -145,15 +146,6 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     /**
-     * Returns the id that will be use to reference the root object
-     * @return the id assigned to the dummy root
-     */
-    @Override
-    public Long getDummyRootId(){
-        return InventoryObject.PARENT_ROOT;
-    }
-
-    /**
      * Retrieves a given object's children
      * @param oid Parent object oid
      * @param objectClassId Parent object's class oid
@@ -173,7 +165,10 @@ public class BackendBean implements BackendBeanRemote {
             for (ClassMetadata possibleChildren : objectClass.getPossibleChildren()){
                 CriteriaQuery query = criteriaBuilder.createQuery();
                 Root entity = query.from(getClassFor(possibleChildren.getName()));
-                query.where(criteriaBuilder.equal(entity.get("parent").get("id"),oid));
+                if (oid == null)
+                    query.where(criteriaBuilder.isNull(entity.get("parent")));
+                else
+                    query.where(criteriaBuilder.equal(entity.get("parent").get("id"),oid));
                 subQuery = em.createQuery(query);
                 result.addAll(subQuery.getResultList());
             }
@@ -201,7 +196,7 @@ public class BackendBean implements BackendBeanRemote {
     @Override
     public RemoteObject[] getChildrenOfClass(Long parentOid, Class myClass) throws Exception {
         if (em !=null){
-            Query query = em.createQuery("SELECT x FROM "+myClass.getSimpleName()+" x WHERE x.parent="+parentOid);
+            Query query = em.createQuery("SELECT x FROM "+myClass.getSimpleName()+" x WHERE x.parent.id="+parentOid);
             List<Object> res = query.getResultList();
             return RemoteObject.toArray(res);
         }else
@@ -404,7 +399,7 @@ public class BackendBean implements BackendBeanRemote {
      */
     @Override
     public List<ClassInfoLight> getRootPossibleChildren() throws Exception{
-        return getPossibleChildren(InventoryObject.ROOT_CLASS);
+        return getPossibleChildren(DummyRoot.class);
     }
 
     /**

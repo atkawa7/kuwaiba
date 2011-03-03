@@ -13,6 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package webservice;
 
 import core.toserialize.ClassInfo;
@@ -52,11 +53,11 @@ import util.Constants;
 import util.HierarchyUtils;
 
 /**
- * Represents the main webservice
- * @author Charles Edward Bedón Cortázar <charles.bedon@zoho.com>
+ *
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@WebService
-public class KuwaibaWebservice {
+@WebService()
+public class Kuwaiba {
     /**
      * The backend bean with all business logic
      */
@@ -67,7 +68,7 @@ public class KuwaibaWebservice {
      */
     @Resource
     private WebServiceContext context;
-    
+
     /**
      * This method is useful to test if the server is actually running. By now, it always says "true"
      * @return a boolean showing if the server up or down
@@ -89,13 +90,13 @@ public class KuwaibaWebservice {
             @WebParam(name = "password") String password) throws Exception{
         try{
             String remoteAddress = getIPAddress();
-            
+
             return new RemoteSession(sbr.createSession(username,password, remoteAddress));
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -116,7 +117,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -131,7 +132,7 @@ public class KuwaibaWebservice {
      * @throws Exception
      */
     @WebMethod(operationName = "getObjectChildren")
-    public RemoteObjectLight[] getObjectChildren(@WebParam(name = "oid") Long oid, 
+    public RemoteObjectLight[] getObjectChildren(@WebParam(name = "oid") Long oid,
             @WebParam(name = "objectClassId") Long objectClassId,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
@@ -142,7 +143,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -170,7 +171,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -185,7 +186,7 @@ public class KuwaibaWebservice {
       * @throws Exception
       */
     @WebMethod(operationName = "getObjectInfo")
-    public RemoteObject getObjectInfo(@WebParam(name = "objectClass") String objectClass, 
+    public RemoteObject getObjectInfo(@WebParam(name = "objectClass") String objectClass,
             @WebParam(name = "oid") Long oid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
@@ -196,7 +197,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -211,7 +212,7 @@ public class KuwaibaWebservice {
      * @throws Exception
      */
     @WebMethod(operationName = "getObjectInfoLight")
-    public RemoteObjectLight getObjectInfoLight(@WebParam(name = "objectclass") String objectClass, 
+    public RemoteObjectLight getObjectInfoLight(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") Long oid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
@@ -222,7 +223,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -245,7 +246,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -261,7 +262,7 @@ public class KuwaibaWebservice {
      * @throws Exception
      */
     @WebMethod(operationName = "setObjectLock")
-    public Boolean setObjectLock(@WebParam(name = "oid")Long oid, 
+    public Boolean setObjectLock(@WebParam(name = "oid")Long oid,
             @WebParam(name = "objectclass")String objectclass,
             @WebParam(name = "value")Boolean value,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
@@ -273,7 +274,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -299,7 +300,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -325,7 +326,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -351,7 +352,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -376,7 +377,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -397,7 +398,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -426,7 +427,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -451,7 +452,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -475,7 +476,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -498,7 +499,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -523,7 +524,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -550,7 +551,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -571,27 +572,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-            throw e;
-        }
-    }
-
-    /**
-     * Gets the id that should be used for the root object
-     * @param sessionId
-     * @return the Id that should be used to reference the root object
-     */
-    @WebMethod(operationName = "getDummyRootId")
-    public Long getDummyRootId(@WebParam(name = "sessionId")String sessionId) throws Exception{
-        try{
-            sbr.validateCall("getDummyRootId", getIPAddress(), sessionId);
-            return sbr.getDummyRootId();
-        }catch(Exception e){
-            Level level = Level.SEVERE;
-            if (e instanceof InventoryException)
-                level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -629,7 +610,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -665,7 +646,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -704,7 +685,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -724,9 +705,9 @@ public class KuwaibaWebservice {
         try{
             sbr.validateCall("executeQuery", getIPAddress(), sessionId);
             Class queryClass = sbr.getClassFor(query.getClassName());
-            
+
             if (!HierarchyUtils.isSubclass(queryClass, InventoryObject.class))
-                throw new MiscException("Only subclasses of RootObject can be searched using this method:"+queryClass.getSimpleName());
+                throw new MiscException("Only subclasses of InventoryObject can be searched using this method:"+queryClass.getSimpleName());
             if (query.getAttributeNames() != null && query.getAttributeValues() != null &&
                     query.getConditions() != null && query.getJoins() != null){
                 if (query.getAttributeNames().size() != query.getAttributeValues().size() ||
@@ -743,7 +724,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -760,7 +741,7 @@ public class KuwaibaWebservice {
      */
     @WebMethod(operationName = "createQuery")
     public RemoteQueryLight createQuery(@WebParam(name="queryName")String queryName,
-            @WebParam(name="ownerOid")Long ownerOid, 
+            @WebParam(name="ownerOid")Long ownerOid,
             @WebParam(name="queryStructure")byte[] queryStructure,
             @WebParam(name="description")String description,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
@@ -771,7 +752,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -801,7 +782,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -824,7 +805,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -841,7 +822,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -857,7 +838,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -891,7 +872,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -918,7 +899,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -945,7 +926,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -966,7 +947,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1001,7 +982,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1025,7 +1006,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1050,7 +1031,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1082,7 +1063,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1112,7 +1093,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1144,7 +1125,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1169,7 +1150,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1190,11 +1171,11 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
-        
+
     }
 
     /**
@@ -1212,7 +1193,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1234,7 +1215,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1255,7 +1236,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1277,7 +1258,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1308,7 +1289,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1333,17 +1314,17 @@ public class KuwaibaWebservice {
             if (propertiesNames.length != propertiesValues.length)
                 throw new Exception(java.util.ResourceBundle.
                     getBundle("internationalization/Bundle").getString("LBL_ARRAYSIZESDONTMATCH")+ "propertiesNames, propertiesValues");
-        
+
             return true;//sbr.setGroupProperties(oid, propertiesNames,propertiesValues);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
-        
+
     }
 
     /**
@@ -1365,10 +1346,10 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
-        }        
+        }
     }
 
     /**
@@ -1388,7 +1369,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1413,7 +1394,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
@@ -1438,7 +1419,7 @@ public class KuwaibaWebservice {
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
                 level = ((InventoryException)e).getLevel();
-            Logger.getLogger(KuwaibaWebservice.class.getName()).log(level,
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }

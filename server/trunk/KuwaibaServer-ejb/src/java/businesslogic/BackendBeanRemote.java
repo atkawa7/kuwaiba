@@ -34,13 +34,12 @@ import java.util.List;
 import javax.ejb.Remote;
 
 /**
- * Interface exposing the methods within BackEndbean
+ * Interface exposing the methods within Backendbean
  *
  * @author Charles Edward Bedón Cortázar <charles.bedon@zoho.com>
  */
 @Remote
 public interface BackendBeanRemote {
-    public Long getDummyRootId() throws Exception;
     public RemoteObject getObjectInfo(Class objectClass, Long oid) throws Exception;
     public RemoteObjectLight getObjectInfoLight(Class objectClass, Long oid) throws Exception;
     public RemoteObject updateObject(ObjectUpdate obj) throws Exception;

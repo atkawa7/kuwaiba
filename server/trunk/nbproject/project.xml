@@ -8,11 +8,11 @@
             <web-module-libraries/>
             <web-module-additional-libraries>
                 <library>
-                    <file>${reference.KuwaibaServer-war.dist-ear}</file>
+                    <file>${reference.KuwaibaServer-ejb.dist-ear}</file>
                     <path-in-war>/</path-in-war>
                 </library>
                 <library>
-                    <file>${reference.KuwaibaServer-ejb.dist-ear}</file>
+                    <file>${reference.KuwaibaServer-war.dist-ear}</file>
                     <path-in-war>/</path-in-war>
                 </library>
             </web-module-additional-libraries>
