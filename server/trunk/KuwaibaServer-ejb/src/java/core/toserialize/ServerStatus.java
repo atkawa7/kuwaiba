@@ -50,6 +50,9 @@ public class ServerStatus {
      */
     private int status;
 
+    public ServerStatus() {
+    }
+
     public ServerStatus(String serverVersion) {
         this.version = serverVersion;
         this.status = STATUS_UP;
@@ -61,5 +64,13 @@ public class ServerStatus {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

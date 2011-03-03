@@ -23,9 +23,9 @@ import java.util.logging.Level;
  */
 public class ObjectNotFoundException extends InventoryException{
 
-    public ObjectNotFoundException(String objectClass, Long oid) {
+    public ObjectNotFoundException(Class objectClass, Long oid) {
         super(java.util.ResourceBundle.getBundle("internationalization/Bundle").
-                getString("LBL_NOSUCHOBJECT")+objectClass+java.util.
+                getString("LBL_NOSUCHOBJECT")+objectClass.getSimpleName()+java.util.
                 ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid,Level.WARNING);
     }
 }

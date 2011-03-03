@@ -172,8 +172,8 @@ public class BackendBean implements BackendBeanRemote {
 
             for (ClassMetadata possibleChildren : objectClass.getPossibleChildren()){
                 CriteriaQuery query = criteriaBuilder.createQuery();
-                Root entity = query.from(Class.forName(possibleChildren.getPackageInfo().getName() + "." + possibleChildren.getName()));
-                query.where(criteriaBuilder.equal(entity.get("parent"),oid));
+                Root entity = query.from(getClassFor(possibleChildren.getName()));
+                query.where(criteriaBuilder.equal(entity.get("parent").get("id"),oid));
                 subQuery = em.createQuery(query);
                 result.addAll(subQuery.getResultList());
             }
@@ -221,7 +221,7 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             Object result = em.find(objectClass, oid);           
             if (result==null)
-                throw new ObjectNotFoundException(objectClass.getSimpleName(),oid);
+                throw new ObjectNotFoundException(objectClass,oid);
              else
                 return new RemoteObject(result);
         }
@@ -242,7 +242,7 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             Object result = em.find(objectClass, oid);
             if (result==null)
-                throw new ObjectNotFoundException(objectClass.getSimpleName(),oid);
+                throw new ObjectNotFoundException(objectClass,oid);
             else
                 return new RemoteObjectLight(result);
             
@@ -271,7 +271,7 @@ public class BackendBean implements BackendBeanRemote {
 
             Object myObject = em.find(obj.getObjectClass(), obj.getOid());
             if(myObject == null)
-                throw new ObjectNotFoundException(obj.getObjectClass().getSimpleName(),obj.getOid());
+                throw new ObjectNotFoundException(obj.getObjectClass(),obj.getOid());
             for (int i = 0; i< obj.getNewValues().length; i++)
                 myObject.getClass().getMethod("set"+MetadataUtils.capitalize(obj.getUpdatedAttributes()[i].getName()),
                         obj.getUpdatedAttributes()[i].getType()).invoke(myObject, obj.getNewValues()[i]);
@@ -417,12 +417,18 @@ public class BackendBean implements BackendBeanRemote {
     @Override
     public RemoteObjectLight createObject(Class objectClass, Long parentOid, String template) throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_CREATEOBJECT"));
-        Object newObject = null;
+        InventoryObject newObject = null;
         if (em != null){
-            newObject = objectClass.newInstance();
-            if (parentOid != null)
-                newObject.getClass().getMethod("setParent", Long.class).
-                        invoke(newObject, parentOid);
+            if (!HierarchyUtils.isSubclass(objectClass, InventoryObject.class))
+                throw new IllegalArgumentException("The class provided is not an InventoryObject subclass: "+ objectClass.getSimpleName());
+            newObject = (InventoryObject)objectClass.newInstance();
+
+            if (parentOid != null){
+                InventoryObject parentObject = em.find(InventoryObject.class, parentOid);
+                if (parentObject == null)
+                    throw new ObjectNotFoundException(InventoryObject.class, parentOid);
+                newObject.setParent(parentObject);
+            }
             em.persist(newObject);
             return new RemoteObjectLight(newObject);
         }
@@ -695,10 +701,10 @@ public class BackendBean implements BackendBeanRemote {
                 for (int i = 0; i<objectClasses.length;i++){
                     InventoryObject currentObject = (InventoryObject)em.find(objectClasses[i], objectOids[i]);
                     if (currentObject == null)
-                        throw new ObjectNotFoundException(objectClasses[i].getSimpleName(), objectOids[i]);
+                        throw new ObjectNotFoundException(objectClasses[i], objectOids[i]);
                     InventoryObject parentObject = (InventoryObject)em.find(InventoryObject.class, targetOid);
                     if (parentObject == null)
-                        throw new ObjectNotFoundException("InventoryObject", targetOid); //NOI18N
+                        throw new ObjectNotFoundException(InventoryObject.class, targetOid); //NOI18N
                     currentObject.setParent(parentObject);
                     em.merge(currentObject);
                 }
@@ -729,13 +735,13 @@ public class BackendBean implements BackendBeanRemote {
                     InventoryObject template = (InventoryObject)em.find(objectClasses[i], templateOids[i]);
                     
                     if (template == null)
-                        throw new ObjectNotFoundException(objectClasses[i].getSimpleName(), templateOids[i]);
+                        throw new ObjectNotFoundException(objectClasses[i], templateOids[i]);
 
                     Object clone = MetadataUtils.clone(new RemoteObject(template),objectClasses[i],em);
                     
                     InventoryObject parentObject  = em.find(InventoryObject.class, targetOid);
                     if (parentObject == null)
-                        throw new ObjectNotFoundException("InventoryObject", targetOid); //NOI18N
+                        throw new ObjectNotFoundException(InventoryObject.class, targetOid); //NOI18N
 
                     ((InventoryObject)clone).setParent(parentObject);
                     ((InventoryObject)clone).setIsLocked(false);
@@ -996,7 +1002,7 @@ public class BackendBean implements BackendBeanRemote {
             if (ownerOid != null){
                 owner = em.find(User.class, ownerOid);
                 if (owner == null)
-                    throw new ObjectNotFoundException("User", ownerOid); //NOI18N
+                    throw new ObjectNotFoundException(User.class, ownerOid); //NOI18N
             }
             entity.queries.Query newQuery = new entity.queries.Query(queryName, owner);
             newQuery.setContent(queryStructure);
@@ -1013,13 +1019,13 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null) {
             entity.queries.Query myQuery = em.find(entity.queries.Query.class, queryOid);
             if (myQuery == null)
-                throw new ObjectNotFoundException("Query", queryOid); //NOI18N
+                throw new ObjectNotFoundException(Query.class, queryOid); //NOI18N
 
             User owner = null;
             if (ownerOid != null){
                 owner = em.find(User.class, ownerOid);
                 if (owner == null)
-                    throw new ObjectNotFoundException("User", ownerOid); //NOI18N
+                    throw new ObjectNotFoundException(User.class, ownerOid); //NOI18N
             }
             myQuery.setContent(queryStructure);
             myQuery.setName(queryName);
@@ -1036,7 +1042,7 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null) {
             entity.queries.Query toBeDeleted = em.find(entity.queries.Query.class, queryOid);
             if (toBeDeleted == null)
-                throw new ObjectNotFoundException("Query", queryOid); //NOI18N
+                throw new ObjectNotFoundException(Query.class, queryOid); //NOI18N
             em.remove(toBeDeleted);
             return true;
         }else
@@ -1072,7 +1078,7 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             entity.queries.Query query = em.find(entity.queries.Query.class, queryOid);
             if (query == null)
-                throw new ObjectNotFoundException("Query", queryOid); //NOI18
+                throw new ObjectNotFoundException(Query.class, queryOid); //NOI18
             return new RemoteQuery(query);
         }else
             throw new EntityManagerNotAvailableException();
@@ -1198,6 +1204,8 @@ public class BackendBean implements BackendBeanRemote {
     public UserSession createSession(String username, String password, String remoteAddress) throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_CREATESESSION"));
         if (em != null){
+            if (classIndex == null)
+                generateClassIndex();
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery cQuery = cb.createQuery();
             Root entity = cQuery.from(User.class);
@@ -1322,7 +1330,7 @@ public class BackendBean implements BackendBeanRemote {
 
             Object obj = em.find(myClass, oid);
             if (obj == null)
-                throw new ObjectNotFoundException(myClass.getSimpleName(),oid);
+                throw new ObjectNotFoundException(myClass,oid);
                 
             List<GenericView> views = ((ViewableObject)obj).getViews();
             GenericView myView = null;
@@ -1370,18 +1378,18 @@ public class BackendBean implements BackendBeanRemote {
 
             InventoryObject parentObject  = em.find(InventoryObject.class, parent);
             if (parentObject == null)
-                throw new ObjectNotFoundException("InventoryObject", parent); //NOI18N
+                throw new ObjectNotFoundException(InventoryObject.class, parent); //NOI18N
 
             GenericPort portA = em.find(GenericPort.class, endpointA);
             if (portA == null)
-                throw new ObjectNotFoundException("GenericPort",endpointA);//NOI18N
+                throw new ObjectNotFoundException(GenericPort.class,endpointA);//NOI18N
 
             if (portA.getConnectedConnection() != null)
                 throw new MiscException("Port A is already connnected");
 
             GenericPort portB = em.find(GenericPort.class, endpointB);
             if (portB == null)
-                throw new ObjectNotFoundException("GenericPort",endpointB);//NOI18N
+                throw new ObjectNotFoundException(GenericPort.class,endpointB);//NOI18N
 
             if (portB.getConnectedConnection() != null)
                 throw new MiscException("Port B is already connnected");
@@ -1419,15 +1427,15 @@ public class BackendBean implements BackendBeanRemote {
 
             InventoryObject parentObject  = em.find(InventoryObject.class, parentNode);
             if (parentObject == null)
-                throw new ObjectNotFoundException("InventoryObject", parentNode); //NOI18N
+                throw new ObjectNotFoundException(InventoryObject.class, parentNode); //NOI18N
 
             GenericPhysicalNode nodeA = (GenericPhysicalNode)em.find(GenericPhysicalNode.class, sourceNode);
             if (nodeA ==null)
-                throw new ObjectNotFoundException("GenericPhysicalNode",sourceNode); //NOI18N
+                throw new ObjectNotFoundException(GenericPhysicalNode.class,sourceNode); //NOI18N
 
             GenericPhysicalNode nodeB = (GenericPhysicalNode)em.find(GenericPhysicalNode.class, targetNode);
             if (nodeB ==null)
-                throw new ObjectNotFoundException("GenericPhysicalNode",targetNode); //NOI18N
+                throw new ObjectNotFoundException(GenericPhysicalNode.class,targetNode); //NOI18N
 
             GenericPhysicalContainer conn = (GenericPhysicalContainer) containerClass.newInstance();
             conn.setNodeA(nodeA);
@@ -1501,7 +1509,7 @@ public class BackendBean implements BackendBeanRemote {
     public Boolean removeUsersFromGroup(Long[] usersOids, Long groupOid) throws Exception{
         UserGroup group = em.find(UserGroup.class, groupOid);
         if (group == null)
-            throw new ObjectNotFoundException("UserGroup ",groupOid); //I18N
+            throw new ObjectNotFoundException(UserGroup.class,groupOid); //I18N
 
         for (Long oid : usersOids){
             User user = em.find(User.class,oid);
@@ -1520,7 +1528,7 @@ public class BackendBean implements BackendBeanRemote {
     public Boolean addUsersToGroup(Long[] usersOids, Long groupOid) throws Exception{
         UserGroup group = em.find(UserGroup.class, groupOid);
         if (group == null)
-            throw new ObjectNotFoundException("UserGroup",groupOid); //I18N
+            throw new ObjectNotFoundException(UserGroup.class,groupOid); //I18N
             
         for (Long oid : usersOids){
             User user = em.find(User.class,oid);
@@ -1621,7 +1629,7 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             User user = em.find(User.class, userOid);
             if (user == null)
-                throw new ObjectNotFoundException("User",userOid);
+                throw new ObjectNotFoundException(User.class,userOid);
 
             for (Long oid : groupsOids){
                 UserGroup group = em.find(UserGroup.class,oid);
@@ -1649,7 +1657,7 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             User user = em.find(User.class, userOid);
             if (user == null)
-                throw new ObjectNotFoundException("User", userOid);
+                throw new ObjectNotFoundException(User.class, userOid);
 
             UserGroup group = null;
 
