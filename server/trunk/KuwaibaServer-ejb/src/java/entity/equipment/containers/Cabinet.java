@@ -31,7 +31,7 @@ public class Cabinet extends GenericContainer{
     /**
      * Is the current object mounted on a wall?
      */
-    protected Boolean isMountedInWall = false;
+    protected Boolean mountedInWall = false;
 
     public Float getMountingWidth() {
         return mountingWidth;
@@ -41,11 +41,11 @@ public class Cabinet extends GenericContainer{
         this.mountingWidth = mountingWidth;
     }
 
-    public Boolean getIsMountedInWall() {
-        return isMountedInWall;
+    public Boolean isMountedInWall() {
+        return mountedInWall;
     }
 
-    public void setIsMountedInWall(Boolean isMountedInWall) {
-        this.isMountedInWall = isMountedInWall;
+    public void setMountedInWall(Boolean isMountedInWall) {
+        this.mountedInWall = isMountedInWall;
     }
 }

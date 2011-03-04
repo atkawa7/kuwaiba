@@ -14,29 +14,18 @@
  *  limitations under the License.
  */
 
-package entity.equipment.applicationlayer;
+package core.exceptions;
 
-import entity.multiple.types.equipment.TimeSourceType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import java.util.logging.Level;
 
 /**
- * A time source for synchronous networks. Place here clocks, NTP servers, etc
+ * Yeah, there's already an IllegalArgumentException, but this wrapper let me set the severity
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@Entity
-public class TimeSource extends GenericApplicationElement {
-    /**
-     * The accuracy and other parameters related to the time source are included in the TimeSourceType
-     */
-    @ManyToOne
-    protected TimeSourceType type;
+public class InvalidArgumentException extends InventoryException{
 
-    public TimeSourceType getType() {
-        return type;
+    public InvalidArgumentException(String msg, Level level) {
+        super(msg,level);
     }
 
-    public void setType(TimeSourceType type) {
-        this.type = type;
-    }
 }

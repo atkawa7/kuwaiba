@@ -42,17 +42,17 @@ public class AttributeMetadata extends MetadataObject {
      * Mark this attribute as administrative (stuff like id or parent)
      */
     @Column(nullable=false)
-    private Boolean isAdministrative=false;
+    private Boolean administrative=false;
     /**
      * Is this attribute a basic type (int, string, etc) or a list type
      */
     @Column(nullable=false,updatable=false)
-    private Boolean isMultiple = false;
+    private Boolean multiple = false;
      /**
       * Should this be shown or hidden
       */
     @Column(nullable=false)
-    private Boolean isVisible=true;
+    private Boolean visible=true;
     /**
      * Attribute description. Used for documentation purposes
      */
@@ -60,7 +60,7 @@ public class AttributeMetadata extends MetadataObject {
     /**
      * Is this attribute read only?
      */
-    private Boolean isReadOnly;
+    private Boolean readOnly;
 
     public AttributeMetadata(){} //Required
     public AttributeMetadata(String _name, String _type, String _displayName,
@@ -69,11 +69,11 @@ public class AttributeMetadata extends MetadataObject {
         this.name = _name;
         this.type= _type;
         this.displayName = _displayName;
-        this.isAdministrative = _isAdministrative;
-        this.isVisible = _isVisible;
+        this.administrative = _isAdministrative;
+        this.visible = _isVisible;
         //Should this be taken from the class metadata?
-        this.isMultiple = _isMultiple;
-        this.isReadOnly = _isReadonly;
+        this.multiple = _isMultiple;
+        this.readOnly = _isReadonly;
         this.description = _description;
     }
 
@@ -82,7 +82,7 @@ public class AttributeMetadata extends MetadataObject {
         this.type= att.getJavaType().getSimpleName();
 
         if (HierarchyUtils.isSubclass(att.getJavaType(), GenericObjectList.class))
-                this.isMultiple = true;
+                this.multiple = true;
         this.description = "Attribute "+this.name;
     }
 
@@ -90,26 +90,26 @@ public class AttributeMetadata extends MetadataObject {
         this.name = att.getName();
         this.type= att.getType().getSimpleName();
         if (HierarchyUtils.isSubclass(att.getType(), GenericObjectList.class))
-            this.isMultiple = true;
+            this.multiple = true;
         if (att.getAnnotation(ReadOnly.class) != null)
-            this.isReadOnly = true;
+            this.readOnly = true;
         this.description = "Attribute "+this.name;
     }
 
     public Boolean isAdministrative() {
-        return isAdministrative;
+        return administrative;
     }
 
     public void setAdministrative(Boolean isAdministrative) {
-        this.isAdministrative = isAdministrative;
+        this.administrative = isAdministrative;
     }
 
     public Boolean isVisible() {
-        return isVisible;
+        return visible;
     }
 
     public void setVisible(Boolean isVisible) {
-        this.isVisible = isVisible;
+        this.visible = isVisible;
     }
     
     public String getDescription() {
@@ -137,19 +137,19 @@ public class AttributeMetadata extends MetadataObject {
     }
 
     public Boolean isMultiple() {
-        return isMultiple;
+        return multiple;
     }
 
     public void setMultiple(Boolean isMultiple) {
-        this.isMultiple = isMultiple;
+        this.multiple = isMultiple;
     }
 
     public Boolean isReadOnly() {
-        return isReadOnly;
+        return readOnly;
     }
 
     public void setReadOnly(Boolean isReadOnly) {
-        this.isReadOnly = isReadOnly;
+        this.readOnly = isReadOnly;
     }
 
     @Override

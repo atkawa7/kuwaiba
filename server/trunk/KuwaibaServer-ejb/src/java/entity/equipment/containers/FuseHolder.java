@@ -25,5 +25,16 @@ import javax.persistence.Entity;
  */
 @Entity
 public class FuseHolder extends GenericContainer implements Serializable {
-    protected Integer capacity; //How many fuses can it hold
+    /**
+     * How many fuses can it hold
+     */
+    protected Integer capacity;
+
+    public Integer getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
+    }
 }

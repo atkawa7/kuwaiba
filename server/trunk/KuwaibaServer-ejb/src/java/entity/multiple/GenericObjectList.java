@@ -15,7 +15,9 @@
  */
 package entity.multiple;
 
+import core.exceptions.InvalidArgumentException;
 import entity.core.ApplicationObject;
+import java.util.logging.Level;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -42,13 +44,13 @@ public abstract class GenericObjectList extends ApplicationObject{
      * @param _value
      * @return
      */
-    public static Long valueOf(Object _value){
+    public static Long valueOf(Object _value) throws InvalidArgumentException{
         if (_value == null) return null;
         else {
             if (_value instanceof Long)
                 return (Long)_value;
             else
-                throw new IllegalArgumentException("The object provided is not a reference to an list type item: "+_value);
+                throw new InvalidArgumentException("The object provided is not a reference to an list type item: "+ _value,Level.WARNING);
         }
     }
 }

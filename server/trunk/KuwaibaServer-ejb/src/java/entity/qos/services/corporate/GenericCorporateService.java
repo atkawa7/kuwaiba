@@ -61,19 +61,28 @@ public abstract class GenericCorporateService extends GenericService{
         this.rate = rate;
     }
 
-    public OLA getOLA() {
+    public OLA getOla() {
         return ola;
     }
 
-    public void setOLA(OLA ola) {
+    public void setOla(OLA ola) {
         this.ola = ola;
     }
 
-    public SLA getSLA() {
+    public SLA getSla() {
     return sla;
     }
 
-    public void setSLA(SLA sla) {
+    public void setSla(SLA sla) {
     this.sla = sla;
     }
+
+    public List<Employee> getResponsibles() {
+        return responsibles;
+    }
+
+    public void setResponsibles(List<Employee> responsibles) {
+        this.responsibles = responsibles;
+    }
+
 }

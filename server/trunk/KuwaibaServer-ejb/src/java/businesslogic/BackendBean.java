@@ -23,6 +23,7 @@ import core.toserialize.ObjectList;
 import core.toserialize.RemoteObject;
 import core.toserialize.RemoteObjectLight;
 import core.exceptions.EntityManagerNotAvailableException;
+import core.exceptions.InvalidArgumentException;
 import core.exceptions.MiscException;
 import core.exceptions.NotAuthorizedException;
 import core.exceptions.ObjectNotFoundException;
@@ -64,7 +65,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
-import javax.ejb.Stateful;
+import java.util.logging.Level;
+import javax.ejb.Stateless;
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -84,7 +86,7 @@ import util.MetadataUtils;
  * Handles the logic of all calls so far
  * @author Charles Edward bedon Cortazar <charles.bedon@zoho.com>
  */
-@Stateful
+@Stateless
 public class BackendBean implements BackendBeanRemote {
     //We use cointainer managed persistance, which means that we don't handle the
     //access to the database directly, but we use a persistemce unit set by the
@@ -354,8 +356,11 @@ public class BackendBean implements BackendBeanRemote {
             if (predicate != null){
                 cQuery.where(predicate);
                 List<ClassMetadata> expandedContainment = em.createQuery(cQuery).getResultList();
-                for (ClassMetadata expandedClass : expandedContainment)
-                    res.add(new ClassInfoLight(expandedClass));
+                for (ClassMetadata expandedClass : expandedContainment){
+                    ClassInfoLight newChild = new ClassInfoLight(expandedClass);
+                    if (!res.contains(newChild)) //To avoid duplicating entries
+                        res.add(newChild);
+                }
             }
             return res;
         }
@@ -415,7 +420,7 @@ public class BackendBean implements BackendBeanRemote {
         InventoryObject newObject = null;
         if (em != null){
             if (!HierarchyUtils.isSubclass(objectClass, InventoryObject.class))
-                throw new IllegalArgumentException("The class provided is not an InventoryObject subclass: "+ objectClass.getSimpleName());
+                throw new InvalidArgumentException("The class provided is not an InventoryObject subclass: "+ objectClass.getSimpleName(), Level.SEVERE);
             newObject = (InventoryObject)objectClass.newInstance();
 
             if (parentOid != null){
@@ -551,15 +556,37 @@ public class BackendBean implements BackendBeanRemote {
             ClassMetadata parentClass;
             
             List<ClassMetadata> currenPossibleChildren;
+            boolean alreadyAdded = false;
 
             parentClass = em.find(ClassMetadata.class, parentClassId);
-            currenPossibleChildren = parentClass.getPossibleChildren();
+            if (parentClass == null)
+                throw new ObjectNotFoundException(ClassMetadata.class, parentClassId);
+
+            if (!HierarchyUtils.isSubclass(getClassFor(parentClass.getName()),InventoryObject.class) && !getClassFor(parentClass.getName()).equals(DummyRoot.class))
+                throw new InvalidArgumentException("Can't perform this operation for classes other than subclasses of InventoryObject", Level.WARNING);
+
+            currenPossibleChildren = new ArrayList<ClassMetadata>(parentClass.getPossibleChildren());
 
             for (Long possibleChild : _possibleChildren){
                 ClassMetadata cm = em.find(ClassMetadata.class, possibleChild);
+                if (cm == null)
+                    throw new ObjectNotFoundException(ClassMetadata.class, possibleChild);
 
-                if (!currenPossibleChildren.contains(cm)) // If the class is already a possible child, it won't add it
+                Class cmAsClass = getClassFor(cm.getName());
+
+                for (ClassMetadata existingPossibleChild : currenPossibleChildren){
+                    Class classA = getClassFor(existingPossibleChild.getName());
+                    if (HierarchyUtils.isSubclass(classA,cmAsClass))
+                        parentClass.getPossibleChildren().remove(existingPossibleChild);
+                    else
+                        if (HierarchyUtils.isSubclass(cmAsClass,classA))
+                            alreadyAdded = true;
+                }
+
+                if (!currenPossibleChildren.contains(cm) && !alreadyAdded) // If the class is already a possible child, it won't add it
                     parentClass.getPossibleChildren().add(cm);
+                else
+                    throw new InvalidArgumentException("This class has already been added to the containment hierarchy: " + cm.getName(), Level.INFO);
             }
             em.merge(parentClass);
         }
@@ -612,7 +639,7 @@ public class BackendBean implements BackendBeanRemote {
             if (obj == null)
                 throw new Exception(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOSUCHOBJECT")+className+java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_WHICHID")+oid.toString());
 
-            if(obj.getIsLocked())
+            if(obj.isLocked())
                 throw  new Exception(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_OBJECTLOCKED"));
                        
             String sentence = "SELECT x FROM ClassMetadata x WHERE x.name ='"+
@@ -628,7 +655,7 @@ public class BackendBean implements BackendBeanRemote {
                 for (Object removable : query.getResultList()){
                     InventoryObject myRemovable = (InventoryObject)removable;
                     //If any of the children is locked, throw an exception
-                    if (!myRemovable.getIsLocked())
+                    if (!myRemovable.isLocked())
                         toBeRemoved.add(myRemovable);
                     else
                         throw new OperationNotPermittedException(ResourceBundle.getBundle("internationalization/Bundle").
@@ -664,7 +691,7 @@ public class BackendBean implements BackendBeanRemote {
     public List<ClassInfoLight> getLightMetadata() throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETLIGHTMETADATA"));
         if (em != null){
-            String sentence = "SELECT x.id, x.name, x.displayName, x.isAbstract,x.isPhysicalNode, x.isPhysicalConnection, x.isPhysicalEndpoint, x.smallIcon FROM ClassMetadata x ORDER BY x.name";
+            String sentence = "SELECT x.id, x.name, x.displayName, x.isAbstract,x.isPhysicalNode, x.isPhysicalConnection, x.isPhysicalEndpoint, x.smallIcon FROM ClassMetadata x WHERE x.isDummy = false ORDER BY x.name";
             Query q = em.createQuery(sentence);
             List<Object[]> cr = q.getResultList();
             List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
@@ -739,7 +766,7 @@ public class BackendBean implements BackendBeanRemote {
                         throw new ObjectNotFoundException(InventoryObject.class, targetOid); //NOI18N
 
                     ((InventoryObject)clone).setParent(parentObject);
-                    ((InventoryObject)clone).setIsLocked(false);
+                    ((InventoryObject)clone).setLocked(false);
                     em.persist(clone);
                     res[i] = new RemoteObjectLight(clone);
                 }

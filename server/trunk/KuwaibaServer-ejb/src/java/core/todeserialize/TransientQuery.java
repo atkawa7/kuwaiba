@@ -106,7 +106,7 @@ public class TransientQuery {
      * Indicates if the current LocalQuery object is a join or the master query. It will
      * be used later to determine if
      */
-    private boolean isJoin = false;
+    private boolean join = false;
 
     /**
      * Results limit. Not used if @isJoin is true. Default value is 10
@@ -132,8 +132,8 @@ public class TransientQuery {
         return conditions;
     }
 
-    public boolean isIsJoin() {
-        return isJoin;
+    public boolean isJoin() {
+        return join;
     }
 
     public ArrayList<TransientQuery> getJoins() {

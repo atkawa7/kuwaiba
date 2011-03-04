@@ -46,7 +46,7 @@ public abstract class GenericView extends ApplicationObject{
     /**
      * Marks the current view as outdated
      */
-    protected Boolean isOutdated;
+    protected Boolean outdated;
     /**
      * A short note on the view. This could evolve into sticky notes
      */
@@ -77,12 +77,12 @@ public abstract class GenericView extends ApplicationObject{
         this.description = description;
     }
 
-    public Boolean getIsOutdated() {
-        return isOutdated;
+    public Boolean isOutdated() {
+        return outdated;
     }
 
-    public void setIsOutdated(Boolean isOutdated) {
-        this.isOutdated = isOutdated;
+    public void setOutdated(Boolean isOutdated) {
+        this.outdated = isOutdated;
     }
 
     public byte[] getViewStructure() {

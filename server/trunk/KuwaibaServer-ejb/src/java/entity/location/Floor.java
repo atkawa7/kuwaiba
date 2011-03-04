@@ -24,13 +24,13 @@ import javax.persistence.Entity;
  */
 @Entity
 public class Floor extends GenericPhysicalNode{
-    protected Boolean hasRaisedFloor = false;
+    protected Boolean raisedFloor = false;
 
-    public Boolean hasRaisedFloor() {
-        return hasRaisedFloor;
+    public Boolean isRaisedFloor() {
+        return raisedFloor;
     }
 
     public void setRaisedFloor(Boolean hasRaisedFloor) {
-        this.hasRaisedFloor = hasRaisedFloor;
+        this.raisedFloor = hasRaisedFloor;
     }
 }

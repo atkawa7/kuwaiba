@@ -51,7 +51,7 @@ public class UserInfo {
    /**
     * Indicates if this account is enabled
     */
-    protected Boolean isEnabled;
+    protected Boolean enabled;
 
     private UserGroupInfoLight[] groups;
     //private PrivilegeInfo[] privileges;
@@ -61,7 +61,7 @@ public class UserInfo {
 
         this.oid = _user.getId();
         this.userName = _user.getUsername();
-        this.isEnabled = _user.isEnabled();
+        this.enabled = _user.isEnabled();
         this.firstName = _user.getName();
         this.lastName = _user.getLastName();
         if (_user.getCreationDate() == null)
@@ -121,12 +121,12 @@ public class UserInfo {
         this.oid = oid;
     }
 
-    public Boolean getIsEnabled() {
-        return isEnabled;
+    public Boolean isEnabled() {
+        return enabled;
     }
 
     public void setIsEnabled(Boolean isEnabled) {
-        this.isEnabled = isEnabled;
+        this.enabled = isEnabled;
     }
 
     public Long getCreationDate() {

@@ -52,7 +52,7 @@ public abstract class RootObject implements Serializable {
     @Column(nullable=false)
     @NoCopy
     @NoSerialize
-    protected Boolean isLocked= false;
+    protected Boolean locked= false;
 
     public Long getId() {
         return id;
@@ -62,12 +62,12 @@ public abstract class RootObject implements Serializable {
         this.id = id;
     }
 
-    public Boolean getIsLocked() {
-        return isLocked;
+    public Boolean isLocked() {
+        return locked;
     }
 
-    public void setIsLocked(Boolean isLocked) {
-        this.isLocked = isLocked;
+    public void setLocked(Boolean isLocked) {
+        this.locked = isLocked;
     }
 
     public String getName() {

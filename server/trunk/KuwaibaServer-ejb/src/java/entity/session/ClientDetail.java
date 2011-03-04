@@ -17,8 +17,10 @@
 package entity.session;
 
 import entity.core.ApplicationObject;
+import entity.multiple.systems.OperatingSystem;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
  * Represents the details of the terminal an user is using to operate the system
@@ -26,11 +28,14 @@ import javax.persistence.Entity;
  */
 @Entity
 public class ClientDetail extends ApplicationObject{
-    @Column(nullable=false)
-    protected String platform;
+    @ManyToOne
+    protected OperatingSystem platform;
 
-    @Override
-    public String toString() {
-        return "ClientDetail[id=" + id + "]";
+    public OperatingSystem getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(OperatingSystem platform) {
+        this.platform = platform;
     }
 }

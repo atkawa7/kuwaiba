@@ -23,6 +23,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.kuwaiba.tools.ToolsBeanRemote;
 
 /**
  * Servlet to execute common tasks such as classmetadata initialization and initial data load
@@ -30,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class Tools extends HttpServlet {
     @EJB
-    private BackendBeanRemote sbr;
+    private ToolsBeanRemote tbr;
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -40,27 +41,7 @@ public class Tools extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        try {
-            //sbr.createInitialDataset();
-            sbr.buildMetaModel();
-
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Test</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Metadata created successfully</h1>");
-            out.println("</body>");
-            out.println("</html>");
-
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        finally {
-            out.close();
-        }
+        
     } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -74,7 +55,37 @@ public class Tools extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println("<html>");
+        out.println("<head>");
+        try {
+            if (request.getParameter("tool").equals("diagnostic")){
+                out.println("<title>Test</title>");
+                out.println("</head>");
+                out.println("<body>");
+                out.println("<h1>Classes with wrong accessors</h1>");
+                for (String myClass : tbr.diagnoseAccessors())
+                    out.write(myClass + "<br />");
+
+            }
+            else{
+                out.println("<title>Test</title>");
+                out.println("</head>");
+                out.println("<body>");
+                //sbr.buildMetaModel();
+                out.println("<h1>Metadata created successfully</h1>");
+            }
+
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            out.println("</body>");
+            out.println("</html>");
+            out.close();
+        }
     } 
 
     /** 

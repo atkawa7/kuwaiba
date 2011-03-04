@@ -32,7 +32,7 @@ public class Tower extends GenericLocation{
     protected Integer edges;
     @ManyToOne
     protected TowerType type;          //Mast, electrical, normal, etc
-    protected Boolean hasSupportWires; //Support wires to help the tower or mast
+    protected Boolean supportWires; //Support wires to help the tower or mast
                                        //to stand against the wind
     public Integer getEdges() {
         return edges;
@@ -42,12 +42,12 @@ public class Tower extends GenericLocation{
         this.edges = edges;
     }
 
-    public Boolean getHasSupportWires() {
-        return hasSupportWires;
+    public Boolean isSupportWires() {
+        return supportWires;
     }
 
-    public void setHasSupportWires(Boolean hasSupportWires) {
-        this.hasSupportWires = hasSupportWires;
+    public void setSupportWires(Boolean hasSupportWires) {
+        this.supportWires = hasSupportWires;
     }
 
     public Float getHeight() {

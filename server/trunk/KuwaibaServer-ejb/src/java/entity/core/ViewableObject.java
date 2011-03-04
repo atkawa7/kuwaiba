@@ -39,8 +39,12 @@ public abstract class ViewableObject extends InventoryObject {
     @NoCopy
     protected List<GenericView> views;
 
-        public List<GenericView> getViews() {
+    public List<GenericView> getViews() {
         return views;
+    }
+
+    public void setViews(List<GenericView> views) {
+        this.views = views;
     }
 
     public void addView(GenericView view) {

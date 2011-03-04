@@ -42,7 +42,7 @@ public class User extends ApplicationObject {
     @Column(unique=true,nullable=false)
     private String username;
     private String password;
-    private Boolean isEnabled = true;
+    private Boolean enabled = true;
     @Temporal(value=TemporalType.TIMESTAMP)
     private Date creationDate = Calendar.getInstance().getTime();
     private String lastName;
@@ -118,11 +118,11 @@ public class User extends ApplicationObject {
     }
 
     public Boolean isEnabled() {
-        return isEnabled;
+        return enabled;
     }
 
     public void setEnabled(Boolean enabled) {
-        this.isEnabled = enabled;
+        this.enabled = enabled;
     }
 
     @Override

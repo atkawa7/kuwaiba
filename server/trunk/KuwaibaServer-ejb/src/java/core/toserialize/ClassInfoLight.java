@@ -27,10 +27,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ClassInfoLight {
     protected Long id;
-    protected Boolean isAbstract;
-    protected Boolean isPhysicalNode;
-    protected Boolean isPhysicalConnection;
-    protected Boolean isPhysicalEndpoint;
+    protected Boolean abstractClass;
+    protected Boolean physicalNode;
+    protected Boolean physicalConnection;
+    protected Boolean physicalEndpoint;
     protected String className;
     protected String displayName;
     protected byte[] smallIcon;
@@ -39,10 +39,10 @@ public class ClassInfoLight {
 
     public ClassInfoLight(ClassMetadata cm) {
         this.id = cm.getId();
-        this.isAbstract = cm.isAbstract();
-        this.isPhysicalNode = cm.isPhysicalNode();
-        this.isPhysicalConnection = cm.isPhysicalConnection();
-        this.isPhysicalEndpoint = cm.isPhysicalEndpoint();
+        this.abstractClass = cm.isAbstract();
+        this.physicalNode = cm.isPhysicalNode();
+        this.physicalConnection = cm.isPhysicalConnection();
+        this.physicalEndpoint = cm.isPhysicalEndpoint();
         this.className = cm.getName();
         this.displayName = cm.getDisplayName();
         this.smallIcon = cm.getSmallIcon();
@@ -52,10 +52,10 @@ public class ClassInfoLight {
                         boolean isPhysicalNode, boolean isPhysicalConnection,
                         boolean isPhysicalEndpoint, byte[] smallIcon){
         this.id = id;
-        this.isAbstract = isAbstract;
-        this.isPhysicalNode = isPhysicalNode;
-        this.isPhysicalConnection = isPhysicalConnection;
-        this.isPhysicalEndpoint = isPhysicalEndpoint;
+        this.abstractClass = isAbstract;
+        this.physicalNode = isPhysicalNode;
+        this.physicalConnection = isPhysicalConnection;
+        this.physicalEndpoint = isPhysicalEndpoint;
         this.className = name;
         this.displayName = displayName;
         this.smallIcon = smallIcon;
@@ -77,12 +77,12 @@ public class ClassInfoLight {
         this.id = id;
     }
 
-    public Boolean getIsAbstract() {
-        return isAbstract;
+    public Boolean isAbstract() {
+        return abstractClass;
     }
 
     public void setIsAbstract(Boolean isAbstract) {
-        this.isAbstract = isAbstract;
+        this.abstractClass = isAbstract;
     }
 
     public String getDisplayName() {
@@ -101,27 +101,45 @@ public class ClassInfoLight {
         this.smallIcon = smallIcon;
     }
 
-    public Boolean getIsPhysicalConnection() {
-        return isPhysicalConnection;
+    public Boolean isPhysicalConnection() {
+        return physicalConnection;
     }
 
-    public void setIsPhysicalConnection(Boolean isPhysicalConnection) {
-        this.isPhysicalConnection = isPhysicalConnection;
+    public void setPhysicalConnection(Boolean isPhysicalConnection) {
+        this.physicalConnection = isPhysicalConnection;
     }
 
-    public Boolean getIsPhysicalEndpoint() {
-        return isPhysicalEndpoint;
+    public Boolean isPhysicalEndpoint() {
+        return physicalEndpoint;
     }
 
-    public void setIsPhysicalEndpoint(Boolean isPhysicalEndpoint) {
-        this.isPhysicalEndpoint = isPhysicalEndpoint;
+    public void setPhysicalEndpoint(Boolean isPhysicalEndpoint) {
+        this.physicalEndpoint = isPhysicalEndpoint;
     }
 
-    public Boolean getIsPhysicalNode() {
-        return isPhysicalNode;
+    public Boolean isPhysicalNode() {
+        return physicalNode;
     }
 
-    public void setIsPhysicalNode(Boolean isPhysicalNode) {
-        this.isPhysicalNode = isPhysicalNode;
+    public void setPhysicalNode(Boolean isPhysicalNode) {
+        this.physicalNode = isPhysicalNode;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if (obj == null)
+            return false;
+        if (!(obj instanceof ClassInfoLight))
+            return false;
+        if (((ClassInfoLight)obj).getId().longValue() == getId().longValue())
+            return true;
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 43 * hash + (this.id != null ? this.id.hashCode() : 0);
+        return hash;
     }
 }

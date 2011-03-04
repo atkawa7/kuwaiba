@@ -27,4 +27,13 @@ import javax.persistence.Entity;
 @Entity
 public class SLA extends AdministrativeItem implements Serializable {
     protected Float indisponibility;
+
+    public Float getIndisponibility() {
+        return indisponibility;
+    }
+
+    public void setIndisponibility(Float indisponibility) {
+        this.indisponibility = indisponibility;
+    }
+    
 }

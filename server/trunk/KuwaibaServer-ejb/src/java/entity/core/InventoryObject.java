@@ -16,6 +16,7 @@
 package entity.core;
 
 import core.annotations.NoCopy;
+import core.annotations.NoSerialize;
 import core.annotations.ReadOnly;
 
 import java.util.Date;
@@ -37,6 +38,7 @@ public abstract class InventoryObject extends RootObject{
     public static final Class ROOT_CLASS = DummyRoot.class; // this is the class that represents the root object
 
     @NoCopy
+    @NoSerialize
     @ManyToOne
     protected InventoryObject parent = null;
     /**

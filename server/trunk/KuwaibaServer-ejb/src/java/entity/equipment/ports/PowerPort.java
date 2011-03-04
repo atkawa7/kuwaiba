@@ -11,9 +11,6 @@ import javax.persistence.ManyToOne;
  */
 @Entity
 public class PowerPort extends GenericPort implements Serializable {
-    //private boolean vendor; //Reuse the field as private to hide it. Uses a boolean to save diskspace
-    //private boolean conditions; //same here
-
     @ManyToOne
     protected PowerPortType connector; //RJ-45, RJ-11, FC/PC, etc
 
