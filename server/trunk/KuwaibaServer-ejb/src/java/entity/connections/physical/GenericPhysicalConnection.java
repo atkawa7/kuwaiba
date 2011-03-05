@@ -16,6 +16,7 @@
 
 package entity.connections.physical;
 
+import core.annotations.NoSerialize;
 import entity.connections.GenericConnection;
 import entity.equipment.ports.GenericPort;
 import javax.persistence.Entity;
@@ -33,8 +34,10 @@ import javax.persistence.OneToOne;
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericPhysicalConnection extends GenericConnection {
     @OneToOne
+    @NoSerialize
     protected GenericPort endpointA;
     @OneToOne
+    @NoSerialize
     protected GenericPort endpointB;
 
     public GenericPort getEndpointA() {

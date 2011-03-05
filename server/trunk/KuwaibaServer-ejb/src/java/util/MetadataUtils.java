@@ -120,18 +120,18 @@ public class MetadataUtils {
             Object newObject = objectClass.newInstance();
             List<Field> allFields = getAllFields(objectClass, false);
             Field myField = null;
-            for (int i = 0; i< clonnable.getAttributes().length; i++){
+            for (int i = 0; i< clonnable.getAttributes().size(); i++){
                 for (Field field : allFields){
-                    if (field.getName().equals(clonnable.getAttributes()[i])){
+                    if (field.getName().equals(clonnable.getAttributes().get(i))){
                         myField = field;
                         break;
                     }
                 }
                 if (myField !=null){
                     if (myField.getAnnotation(NoCopy.class) == null)
-                        newObject.getClass().getMethod("set"+capitalize(clonnable.getAttributes()[i]),
+                        newObject.getClass().getMethod("set"+capitalize(clonnable.getAttributes().get(i)),
                             myField.getType()).invoke(newObject,
-                            getRealValue(myField.getType().getSimpleName(),clonnable.getValues()[i], em));
+                            getRealValue(myField.getType().getSimpleName(),clonnable.getValues().get(i), em));
                 }
             }
             return newObject;

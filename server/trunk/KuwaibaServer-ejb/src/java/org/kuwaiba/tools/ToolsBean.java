@@ -17,15 +17,21 @@
 
 package org.kuwaiba.tools;
 
+import core.exceptions.EntityManagerNotAvailableException;
+import entity.core.MetadataObject;
+import entity.session.User;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.metamodel.EntityType;
+import util.HierarchyUtils;
 import util.MetadataUtils;
 
 /**
@@ -64,4 +70,57 @@ public class ToolsBean implements ToolsBeanRemote{
         return res;
     }
 
+        /**
+     * This method resets class metadata information
+     *
+     */
+    @Override
+    public void buildMetaModel() throws Exception{
+
+        if (em != null){
+
+            //Delete existing class metadata
+            Query query = em.createNamedQuery("flushClassMetadata");
+            query.executeUpdate();
+
+            //Delete existing attribute metadata
+            query = em.createNamedQuery("flushAttributeMetadata");
+            query.executeUpdate();
+
+            //Delete existing package metadata
+            query = em.createNamedQuery("flushPackageMetadata");
+            query.executeUpdate();
+
+            Set<EntityType<?>> ent = em.getMetamodel().getEntities();
+            HashMap<String, EntityType> alreadyPersisted = new HashMap<String, EntityType>();
+
+            for (EntityType entity : ent){
+                if(HierarchyUtils.isSubclass(entity.getJavaType(), MetadataObject.class))
+                        continue;
+                if (alreadyPersisted.get(entity.getJavaType().getSimpleName())!=null)
+                    continue;
+                HierarchyUtils.persistClass(entity,em);
+            }
+        }
+        else
+            throw new EntityManagerNotAvailableException();
+    }
+
+    @Override
+    public void resetAdmin() throws EntityManagerNotAvailableException {
+        if (em != null){
+            User admin;
+            try{
+                admin = (User) em.createQuery("SELECT x FROM User x WHERE x.username='admin'").getSingleResult();
+                admin.setPassword("60CEC2D1577E8C0F551F2272B7B163C5");
+                em.merge(admin);
+            }catch (NoResultException ex){
+                admin = new User();
+                admin.setUsername("admin");
+                admin.setPassword("60CEC2D1577E8C0F551F2272B7B163C5");
+                em.persist(admin);
+            }
+        }else
+            throw new EntityManagerNotAvailableException();
+    }
 }

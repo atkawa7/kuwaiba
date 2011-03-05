@@ -16,6 +16,7 @@
 
 package entity.connections.physical.containers;
 
+import core.annotations.NoSerialize;
 import entity.connections.GenericConnection;
 import entity.location.GenericPhysicalNode;
 import javax.persistence.Entity;
@@ -32,8 +33,10 @@ import javax.persistence.OneToOne;
 public abstract class GenericPhysicalContainer extends GenericConnection {
 
     @OneToOne
+    @NoSerialize
     protected GenericPhysicalNode nodeA;
     @OneToOne
+    @NoSerialize
     protected GenericPhysicalNode nodeB;
 
 

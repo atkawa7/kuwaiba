@@ -31,6 +31,7 @@ import businesslogic.BackendBeanRemote;
 import core.exceptions.ArraySizeMismatchException;
 import core.exceptions.InventoryException;
 import core.exceptions.MiscException;
+import core.exceptions.NotViewableObjectException;
 import core.todeserialize.TransientQuery;
 import core.toserialize.ClassInfoLight;
 import core.toserialize.RemoteQuery;
@@ -932,6 +933,24 @@ public class Kuwaiba {
         }
     }
 
+    @WebMethod(operationName = "createListType")
+    public RemoteObjectLight createListType(@WebParam(name = "className")String className,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            sbr.validateCall("createListType", getIPAddress(), sessionId);
+            Class listType = sbr.getClassFor(className);
+            if (listType == null)
+                throw new ClassNotFoundException(className);
+            return sbr.createListType(listType);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
     /**
      * Returns the list type attributes
      * @param sessionId
@@ -974,7 +993,7 @@ public class Kuwaiba {
             ViewInfo res;
             Class myClass = sbr.getClassFor(objectClass);
             if (!HierarchyUtils.isSubclass(myClass, ViewableObject.class))
-                throw new Exception(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOVIEWS") + objectClass);
+                throw new NotViewableObjectException(myClass);
             else
                 res = sbr.getDefaultView(oid, myClass);
             return res;

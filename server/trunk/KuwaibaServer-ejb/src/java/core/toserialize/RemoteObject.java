@@ -17,9 +17,11 @@ package core.toserialize;
 
 import core.annotations.NoSerialize;
 import entity.core.InventoryObject;
+import entity.core.RootObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -33,9 +35,9 @@ import util.MetadataUtils;
 @XmlAccessorType(XmlAccessType.FIELD) //This annotation tell the serializer to include all fiels
                                       //no matter its modifier. Default takes only public ones
 public class RemoteObject extends RemoteObjectLight {
-    private String[] attributes; //This information is already in the meta, but we don't know
+    private List<String> attributes; //This information is already in the meta, but we don't know
                                  //if its sorted correctly there, so we take it too here
-    private String[] values;
+    private List<String> values;
 
     /**
      * Defaul constructor. Not used
@@ -44,18 +46,19 @@ public class RemoteObject extends RemoteObjectLight {
 
     public RemoteObject(Object object){
         List<Field> allAttributes = MetadataUtils.getAllFields(object.getClass(), false);
-        attributes = new String [allAttributes.size()];
-        values = new String [allAttributes.size()];
+        attributes = new ArrayList<String>();
+        values = new ArrayList<String>();
         
         this.className = object.getClass().getSimpleName();
+        if (object instanceof RootObject)
+            this.oid = ((RootObject)object).getId();
 
-        int i = 0;
         for (Field f : allAttributes ){
 
             //Administrative fields and those decorated as NoSerialize shouldn't be serialized
             if(f.getAnnotation(NoSerialize.class) != null)
                 continue;
-            attributes[i]=f.getName();
+            attributes.add(f.getName());
 
             try{
                 //getDeclaredMethods takes private and protected methods, but NOT the inherited ones
@@ -64,20 +67,17 @@ public class RemoteObject extends RemoteObjectLight {
                 Method m = object.getClass().getMethod("get"+MetadataUtils.capitalize(f.getName()),
                                                         new Class[]{});
                 Object value = m.invoke(object, new Object[]{});
-                if (value == null)  values[i]=null;
+                if (value == null)  values.add(null);
                 else{
                     //If this attribute is a reference to any other business object, we use a lazy approach
                     //by setting as value the object id
                     if(value instanceof InventoryObject)
-                        values[i]=String.valueOf(((InventoryObject)value).getId());
+                        values.add(String.valueOf(((InventoryObject)value).getId()));
                     else
                         if (value instanceof Date)
-                            values[i] = String.valueOf(((Date)value).getTime());
+                            values.add(String.valueOf(((Date)value).getTime()));
                         else
-                            values[i]=value.toString();
-
-                    if (attributes[i].equals("id"))
-                        this.oid = (Long)value;
+                            values.add(value.toString());
                 }
             } catch (NoSuchMethodException nsme){
                 System.out.println("NoSuchM:"+nsme.getMessage());
@@ -94,7 +94,6 @@ public class RemoteObject extends RemoteObjectLight {
             catch (IllegalArgumentException iae2){
                 System.out.println("IllegalArgument "+iae2.getMessage());
             }
-            i++;
         }
     }
 
@@ -114,19 +113,19 @@ public class RemoteObject extends RemoteObjectLight {
         return res;
     }
 
-    public String[] getAttributes() {
+    public List<String> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(String[] attributes) {
+    public void setAttributes(List<String> attributes) {
         this.attributes = attributes;
     }
 
-    public String[] getValues() {
+    public List<String> getValues() {
         return values;
     }
 
-    public void setValues(String[] values) {
+    public void setValues(List<String> values) {
         this.values = values;
     }
 }

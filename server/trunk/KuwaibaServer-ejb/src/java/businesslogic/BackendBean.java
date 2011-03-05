@@ -46,7 +46,6 @@ import entity.connections.physical.GenericPhysicalConnection;
 import entity.connections.physical.containers.GenericPhysicalContainer;
 import entity.core.DummyRoot;
 import entity.core.InventoryObject;
-import entity.core.MetadataObject;
 import entity.core.RootObject;
 import entity.core.ViewableObject;
 import entity.core.metamodel.AttributeMetadata;
@@ -109,41 +108,6 @@ public class BackendBean implements BackendBeanRemote {
                 throw new ClassNotFoundException(className);
             return res;
         }else
-            throw new EntityManagerNotAvailableException();
-    }
-    /**
-     * This method resets class metadata information
-     *
-     */
-    @Override
-    public void buildMetaModel() throws Exception{
-        
-        if (em != null){
-
-            //Delete existing class metadata
-            Query query = em.createNamedQuery("flushClassMetadata");
-            query.executeUpdate();
-
-            //Delete existing attribute metadata
-            query = em.createNamedQuery("flushAttributeMetadata");
-            query.executeUpdate();
-
-            //Delete existing package metadata
-            query = em.createNamedQuery("flushPackageMetadata");
-            query.executeUpdate();
-
-            Set<EntityType<?>> ent = em.getMetamodel().getEntities();
-            HashMap<String, EntityType> alreadyPersisted = new HashMap<String, EntityType>();
-
-            for (EntityType entity : ent){
-                if(HierarchyUtils.isSubclass(entity.getJavaType(), MetadataObject.class))
-                        continue;
-                if (alreadyPersisted.get(entity.getJavaType().getSimpleName())!=null)
-                    continue;
-                HierarchyUtils.persistClass(entity,em);
-            }
-        }
-        else
             throw new EntityManagerNotAvailableException();
     }
 
@@ -649,7 +613,7 @@ public class BackendBean implements BackendBeanRemote {
             ClassMetadata myClass = (ClassMetadata)query.getSingleResult();
             List<Object> toBeRemoved = new ArrayList<Object>();
             for (ClassMetadata possibleChild : myClass.getPossibleChildren()){
-                sentence = "SELECT x FROM "+possibleChild.getName()+" x WHERE x.parent="+obj.getId();
+                sentence = "SELECT x FROM "+possibleChild.getName()+" x WHERE x.parent.id="+obj.getId();
                 //System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_EXECUTINGSQL")+sentence);
                 query = em.createQuery(sentence);
                 for (Object removable : query.getResultList()){
@@ -760,6 +724,9 @@ public class BackendBean implements BackendBeanRemote {
                         throw new ObjectNotFoundException(objectClasses[i], templateOids[i]);
 
                     Object clone = MetadataUtils.clone(new RemoteObject(template),objectClasses[i],em);
+
+                    if (clone == null)
+                        throw new MiscException("The object couldn't be cloned");
                     
                     InventoryObject parentObject  = em.find(InventoryObject.class, targetOid);
                     if (parentObject == null)
@@ -1195,6 +1162,24 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     /**
+     * TYPES
+     */
+     @Override
+    public RemoteObjectLight createListType(Class objectClass) throws Exception{
+        System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_CREATELISTTYPE"));
+        if (em != null){
+            if (!HierarchyUtils.isSubclass(objectClass, GenericObjectList.class))
+                throw new InvalidArgumentException("The class provided is not an GenericObjectList subclass: "+ objectClass.getSimpleName(), Level.SEVERE);
+            GenericObjectList newListType = null;
+            newListType = (GenericObjectList)objectClass.newInstance();
+
+            em.persist(newListType);
+            return new RemoteObjectLight(newListType);
+        }
+        else
+            throw new EntityManagerNotAvailableException();
+    }
+    /**
      * Gets the possible list types (Classes that represent a list o something)
      * @return List of possible types
      */
@@ -1294,7 +1279,7 @@ public class BackendBean implements BackendBeanRemote {
                 return true;
             }
             else
-                throw new Exception(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOACTIVSESSION"));
+                throw new Exception(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_NOACTIVESESSION"));
 
         }else
             throw new EntityManagerNotAvailableException();

@@ -18,7 +18,6 @@ package entity.session;
 
 import entity.core.ApplicationObject;
 import entity.multiple.systems.OperatingSystem;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 

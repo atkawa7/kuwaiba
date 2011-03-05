@@ -50,7 +50,6 @@ public interface BackendBeanRemote {
     public List<ClassInfoLight> getLightMetadata() throws Exception;
     public ClassInfo getMetadataForClass(Class className) throws Exception;
     public byte[] getClassHierarchy(Boolean showAll) throws Exception;
-    public void buildMetaModel() throws Exception;
     public ObjectList getMultipleChoice(Class className) throws Exception;
     public Boolean addPossibleChildren(Long parentClassId, Long[] possibleChildren) throws Exception;
     public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws Exception;
@@ -70,6 +69,7 @@ public interface BackendBeanRemote {
     public Boolean setAttributePropertyValue(Long classId, String attributeName, String propertyName, String propertyValue) throws Exception;
     public Boolean setClassPlainAttribute(Long classId, String attributeName, String attributeValue) throws Exception;
     public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws Exception;
+    public RemoteObjectLight createListType(Class objectClass) throws Exception;
     public List<ClassInfoLight> getInstanceableListTypes() throws Exception;
     public UserSession createSession(String username, String password, String remoteAddress) throws Exception;
     public Boolean closeSession(String sessionId, String remoteAddress) throws Exception;

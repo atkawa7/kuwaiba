@@ -14,7 +14,7 @@
  *  limitations under the License.
  */package core.toserialize;
 
-import entity.core.InventoryObject;
+import entity.core.RootObject;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -53,8 +53,8 @@ public class RemoteObjectLight {
     public RemoteObjectLight(Object obj){
         this.className = obj.getClass().getSimpleName();
         //TODO: It should be possible to the user to change the display name using a customization tool
-        this.displayName = ((InventoryObject)obj).getName();
-        this.oid = ((InventoryObject)obj).getId();
+        this.displayName = ((RootObject)obj).getName();
+        this.oid = ((RootObject)obj).getId();
     }
 
     public String getClassName() {

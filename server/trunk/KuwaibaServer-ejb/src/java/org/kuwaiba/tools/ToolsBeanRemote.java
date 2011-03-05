@@ -17,6 +17,7 @@
 
 package org.kuwaiba.tools;
 
+import core.exceptions.EntityManagerNotAvailableException;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -28,7 +29,16 @@ import javax.ejb.Remote;
 public interface ToolsBeanRemote {
     /**
      * Checks for entity classes without proper accessors
-     * @return
+     * @return a list of strings with the class name and the corresponding problem
      */
     public List<String> diagnoseAccessors();
+    /**
+     * Resets the class metadata information as well as the containment information
+     * @throws Exception
+     */
+    public void buildMetaModel() throws Exception;
+    /**
+     * Creates/reset the admin account (username = admin, password = kuwaiba)
+     */
+    public void resetAdmin()  throws EntityManagerNotAvailableException;
 }

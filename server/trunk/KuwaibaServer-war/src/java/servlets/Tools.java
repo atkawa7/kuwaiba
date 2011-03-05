@@ -15,7 +15,6 @@
  */
 package servlets;
 
-import businesslogic.BackendBeanRemote;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.ejb.EJB;
@@ -59,26 +58,40 @@ public class Tools extends HttpServlet {
         PrintWriter out = response.getWriter();
         out.println("<html>");
         out.println("<head>");
+        out.println("<title>Kuwaiba Web Management Tools</title>");
+        out.println("</head>");
+        out.println("<body>");
         try {
-            if (request.getParameter("tool").equals("diagnostic")){
-                out.println("<title>Test</title>");
-                out.println("</head>");
-                out.println("<body>");
-                out.println("<h1>Classes with wrong accessors</h1>");
-                for (String myClass : tbr.diagnoseAccessors())
-                    out.write(myClass + "<br />");
+            if (request.getParameter("tool") != null){
+                if (request.getParameter("tool").equals("diagnostic")){
 
+                    out.println("<h1>Classes with wrong accessors</h1>");
+                    for (String myClass : tbr.diagnoseAccessors())
+                        out.println(myClass);
+                }
+                else{
+                    if (request.getParameter("tool").equals("metadata")){
+                        tbr.buildMetaModel();
+                        out.println("<h1>Metadata created successfully</h1>");
+                    }else{
+                        if (request.getParameter("tool").equals("resetadmin")){
+                            out.println("<h1>Admin account reseted successfully</h1>");
+                            tbr.resetAdmin();
+                        }else
+                            out.println("<h1>Unknown tool</h1>");
+                    }
+                }
+                out.println("<a href=\"/kuwaiba/Tools\">Back</a>");
+            }else{
+                out.println("<h1>Kuwaiba Management Tools Portal</h1>");
+                out.println("<ul>");
+                out.println("<li><a href=\"?tool=metadata\">Reset/Build Class Metadata and Containment information</a></li>");
+                out.println("<li><a href=\"?tool=diagnostic\">Detect missing accessors</a></li>");
+                out.println("<li><a href=\"?tool=resetadmin\">Create/Reset admin account </a></li>");
+                out.println("</ul>");
             }
-            else{
-                out.println("<title>Test</title>");
-                out.println("</head>");
-                out.println("<body>");
-                //sbr.buildMetaModel();
-                out.println("<h1>Metadata created successfully</h1>");
-            }
-
-
         } catch (Exception e){
+            out.println("<h1>Oops! Houston, we have a problem</h1>");
             e.printStackTrace();
         }
         finally {
@@ -107,7 +120,7 @@ public class Tools extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "This servlet is used to perform basic installation tasks";
     }// </editor-fold>
 
 }
