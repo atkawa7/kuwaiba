@@ -26,6 +26,10 @@
 
 <xs:element name="createGroupResponse" type="tns:createGroupResponse" />
 
+<xs:element name="createListType" type="tns:createListType" />
+
+<xs:element name="createListTypeResponse" type="tns:createListTypeResponse" />
+
 <xs:element name="createObject" type="tns:createObject" />
 
 <xs:element name="createObjectResponse" type="tns:createObjectResponse" />
@@ -328,10 +332,10 @@
 <xs:complexType name="classInfoLight">
 <xs:sequence>
 <xs:element name="id" type="xs:long" minOccurs="0" />
-<xs:element name="isAbstract" type="xs:boolean" minOccurs="0" />
-<xs:element name="isPhysicalNode" type="xs:boolean" minOccurs="0" />
-<xs:element name="isPhysicalConnection" type="xs:boolean" minOccurs="0" />
-<xs:element name="isPhysicalEndpoint" type="xs:boolean" minOccurs="0" />
+<xs:element name="abstractClass" type="xs:boolean" minOccurs="0" />
+<xs:element name="physicalNode" type="xs:boolean" minOccurs="0" />
+<xs:element name="physicalConnection" type="xs:boolean" minOccurs="0" />
+<xs:element name="physicalEndpoint" type="xs:boolean" minOccurs="0" />
 <xs:element name="className" type="xs:string" minOccurs="0" />
 <xs:element name="displayName" type="xs:string" minOccurs="0" />
 <xs:element name="smallIcon" type="xs:base64Binary" minOccurs="0" />
@@ -411,7 +415,7 @@
 <xs:element name="firstName" type="xs:string" minOccurs="0" />
 <xs:element name="lastName" type="xs:string" minOccurs="0" />
 <xs:element name="creationDate" type="xs:long" minOccurs="0" />
-<xs:element name="isEnabled" type="xs:boolean" minOccurs="0" />
+<xs:element name="enabled" type="xs:boolean" minOccurs="0" />
 <xs:element name="groups" type="tns:userGroupInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
@@ -516,6 +520,19 @@
 </xs:sequence>
 </xs:extension>
 </xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="createListType">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0" />
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createListTypeResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" minOccurs="0" />
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="createObject">
@@ -798,7 +815,7 @@
 <xs:element name="attributeValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="conditions" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 <xs:element name="joins" type="tns:transientQuery" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="isJoin" type="xs:boolean" />
+<xs:element name="join" type="xs:boolean" />
 <xs:element name="limit" type="xs:int" />
 <xs:element name="page" type="xs:int" />
 </xs:sequence>

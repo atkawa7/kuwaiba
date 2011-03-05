@@ -38,7 +38,6 @@ public class Cache{
     private HashMap<String,LocalClassMetadataLight> lightMetadataIndex; //Cache for lightmetadata (usually for administrative purposes)
     private HashMap<String,List<LocalClassMetadataLight>> possibleChildrenIndex; //Cache for possible children
     private HashMap<String,List<LocalObjectListItem>> listIndex; //Cache for list-type attributes
-    private Long rootId = null;
     private Long rootClassId = null;
     /**
      * Information about the current logged user
@@ -64,14 +63,6 @@ public class Cache{
     public static Cache getInstace(){
         if(instance == null) instance = new Cache();
         return instance;
-    }
-
-    public void setRootId(Long _rootId){
-        rootId = _rootId;
-    }
-
-    public Long getRootId(){
-        return rootId;
     }
 
     public void setRootClass(Long _rootClassId){

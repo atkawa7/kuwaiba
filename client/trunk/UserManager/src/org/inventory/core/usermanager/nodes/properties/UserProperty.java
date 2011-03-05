@@ -113,7 +113,7 @@ public class UserProperty extends ReadWrite{
         update.setLocalObject("User", //NOI18N
                 new String[]{UserNode.PROP_PASSWORD}, new Object[]{Utils.getMD5Hash(passwd)}); //NOI18N
         update.setOid(this.object.getOid());
-        if(com.saveObject(update) != null){
+        if(com.saveObject(update) == null){
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             nu.showSimplePopup("User Update", NotificationUtil.ERROR, com.getError());
         }

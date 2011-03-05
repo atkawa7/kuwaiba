@@ -39,8 +39,8 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
 
     public LocalClassMetadataImpl(ClassInfo cm){
         super(cm.getId(),cm.getClassName(),cm.getDisplayName(),cm.getSmallIcon(),
-                cm.isIsPhysicalNode(),cm.isIsPhysicalEndpoint());
-        this.isAbstract = cm.isIsAbstract();
+                cm.isPhysicalNode(),cm.isPhysicalEndpoint());
+        this.isAbstract = cm.isAbstractClass();
         this.icon = cm.getIcon()==null?null:Utils.getImageFromByteArray(cm.getIcon());
         this.description = cm.getDescription();
         this.attributeIds = cm.getAttributeIds().toArray(new Long[0]);
@@ -164,19 +164,6 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
 
     public Long getId() {
         return id;
-    }
-
-    public Boolean getIsPhysicalEndpoint() {
-        return isPhysicalEndpoint;
-    }
-
-    public Boolean getIsPhysicalNode() {
-        return isPhysicalNode;
-    }
-
-    @Override
-    public String toString(){
-        return this.className;
     }
 
     public String getDescription() {

@@ -169,7 +169,7 @@ public class LocalTransientQuery {
         transientQuery.setAttributeValues(getAttributeValues());
         transientQuery.setClassName(getClassName());
         transientQuery.setConditions(getConditions());
-        transientQuery.setIsJoin(false);
+        transientQuery.setJoin(false);
         transientQuery.setLimit(getLimit());
         transientQuery.setPage(page);
         transientQuery.setLogicalConnector(getLogicalConnector());

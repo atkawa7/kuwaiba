@@ -27,7 +27,6 @@ public interface LocalClassMetadata extends LocalClassMetadataLight{
     public String getDescription();
     public String getDescriptionForAttribute(String att);
     public Boolean isVisible(String att);
-    public Boolean isAdministrative(String att);
     public Boolean isMultiple(String att);
     public String getTypeForAttribute(String att);
     public Image getIcon();

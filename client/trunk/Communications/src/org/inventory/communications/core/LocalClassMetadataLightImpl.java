@@ -44,7 +44,7 @@ public class LocalClassMetadataLightImpl
 
     public LocalClassMetadataLightImpl(ClassInfo ci){
         this (ci.getId(),ci.getClassName(),ci.getDisplayName(),ci.getSmallIcon(),
-                ci.isIsPhysicalNode(),ci.isIsPhysicalEndpoint());
+                ci.isPhysicalNode(),ci.isPhysicalEndpoint());
     }
 
     public LocalClassMetadataLightImpl(String className, Long oid){
@@ -54,12 +54,12 @@ public class LocalClassMetadataLightImpl
 
     public LocalClassMetadataLightImpl(ClassInfoLight cil){
         this.id = cil.getId();
-        this.isPhysicalNode = cil.isIsPhysicalNode();
-        this.isPhysicalEndpoint = cil.isIsPhysicalEndpoint();
-        this.isAbstract = cil.isIsAbstract();
+        this.isPhysicalNode = cil.isPhysicalNode();
+        this.isPhysicalEndpoint = cil.isPhysicalEndpoint();
+        this.isAbstract = cil.isAbstractClass();
         this.className = cil.getClassName();
         this.displayName = cil.getDisplayName();
-        this.smallIcon = cil.getSmallIcon()==null?null:Utils.getImageFromByteArray(cil.getSmallIcon());
+        this.smallIcon = cil.getSmallIcon()==null ? null : Utils.getImageFromByteArray(cil.getSmallIcon());
     }
 
     public LocalClassMetadataLightImpl(Long _id, String _className, String _displayName,
@@ -85,7 +85,7 @@ public class LocalClassMetadataLightImpl
         return className;
     }
 
-    public Boolean getIsAbstract() {
+    public Boolean isAbstract() {
         return isAbstract;
     }
 

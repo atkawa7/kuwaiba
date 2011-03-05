@@ -44,7 +44,7 @@ public class AttributeCustomizerService {
         }
         List<LocalClassMetadataLight> res = new ArrayList<LocalClassMetadataLight>();
         for (LocalClassMetadataLight lcm : allMeta)
-            if(!(lcm.getIsAbstract() || lcm.getClassName().equals("DummyRoot")))
+            if(!(lcm.isAbstract() || lcm.getClassName().equals("DummyRoot")))
                 res.add(lcm);
         return res.toArray(new LocalClassMetadataLight[0]);
     }

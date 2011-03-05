@@ -43,6 +43,18 @@
 <message name="createObjectResponse">
 <part name="parameters" element="tns:createObjectResponse" />
 </message>
+<message name="createSession">
+<part name="parameters" element="tns:createSession" />
+</message>
+<message name="createSessionResponse">
+<part name="parameters" element="tns:createSessionResponse" />
+</message>
+<message name="createQuery">
+<part name="parameters" element="tns:createQuery" />
+</message>
+<message name="createQueryResponse">
+<part name="parameters" element="tns:createQueryResponse" />
+</message>
 <message name="copyObjects">
 <part name="parameters" element="tns:copyObjects" />
 </message>
@@ -54,12 +66,6 @@
 </message>
 <message name="getServerStatusResponse">
 <part name="parameters" element="tns:getServerStatusResponse" />
-</message>
-<message name="createSession">
-<part name="parameters" element="tns:createSession" />
-</message>
-<message name="createSessionResponse">
-<part name="parameters" element="tns:createSessionResponse" />
 </message>
 <message name="closeSession">
 <part name="parameters" element="tns:closeSession" />
@@ -175,12 +181,6 @@
 <message name="searchForObjectsResponse">
 <part name="parameters" element="tns:searchForObjectsResponse" />
 </message>
-<message name="createQuery">
-<part name="parameters" element="tns:createQuery" />
-</message>
-<message name="createQueryResponse">
-<part name="parameters" element="tns:createQueryResponse" />
-</message>
 <message name="saveQuery">
 <part name="parameters" element="tns:saveQuery" />
 </message>
@@ -216,6 +216,12 @@
 </message>
 <message name="setClassIconResponse">
 <part name="parameters" element="tns:setClassIconResponse" />
+</message>
+<message name="createListType">
+<part name="parameters" element="tns:createListType" />
+</message>
+<message name="createListTypeResponse">
+<part name="parameters" element="tns:createListTypeResponse" />
 </message>
 <message name="getInstanceableListTypes">
 <part name="parameters" element="tns:getInstanceableListTypes" />
@@ -350,6 +356,16 @@
 <output wsam:Action="http://webservice/Kuwaiba/createObjectResponse" message="tns:createObjectResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/Kuwaiba/createObject/Fault/Exception" />
 </operation>
+<operation name="createSession">
+<input wsam:Action="http://webservice/Kuwaiba/createSessionRequest" message="tns:createSession" />
+<output wsam:Action="http://webservice/Kuwaiba/createSessionResponse" message="tns:createSessionResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/Kuwaiba/createSession/Fault/Exception" />
+</operation>
+<operation name="createQuery">
+<input wsam:Action="http://webservice/Kuwaiba/createQueryRequest" message="tns:createQuery" />
+<output wsam:Action="http://webservice/Kuwaiba/createQueryResponse" message="tns:createQueryResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/Kuwaiba/createQuery/Fault/Exception" />
+</operation>
 <operation name="copyObjects">
 <input wsam:Action="http://webservice/Kuwaiba/copyObjectsRequest" message="tns:copyObjects" />
 <output wsam:Action="http://webservice/Kuwaiba/copyObjectsResponse" message="tns:copyObjectsResponse" />
@@ -358,11 +374,6 @@
 <operation name="getServerStatus">
 <input wsam:Action="http://webservice/Kuwaiba/getServerStatusRequest" message="tns:getServerStatus" />
 <output wsam:Action="http://webservice/Kuwaiba/getServerStatusResponse" message="tns:getServerStatusResponse" />
-</operation>
-<operation name="createSession">
-<input wsam:Action="http://webservice/Kuwaiba/createSessionRequest" message="tns:createSession" />
-<output wsam:Action="http://webservice/Kuwaiba/createSessionResponse" message="tns:createSessionResponse" />
-<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/Kuwaiba/createSession/Fault/Exception" />
 </operation>
 <operation name="closeSession">
 <input wsam:Action="http://webservice/Kuwaiba/closeSessionRequest" message="tns:closeSession" />
@@ -459,11 +470,6 @@
 <output wsam:Action="http://webservice/Kuwaiba/searchForObjectsResponse" message="tns:searchForObjectsResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/Kuwaiba/searchForObjects/Fault/Exception" />
 </operation>
-<operation name="createQuery">
-<input wsam:Action="http://webservice/Kuwaiba/createQueryRequest" message="tns:createQuery" />
-<output wsam:Action="http://webservice/Kuwaiba/createQueryResponse" message="tns:createQueryResponse" />
-<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/Kuwaiba/createQuery/Fault/Exception" />
-</operation>
 <operation name="saveQuery">
 <input wsam:Action="http://webservice/Kuwaiba/saveQueryRequest" message="tns:saveQuery" />
 <output wsam:Action="http://webservice/Kuwaiba/saveQueryResponse" message="tns:saveQueryResponse" />
@@ -493,6 +499,11 @@
 <input wsam:Action="http://webservice/Kuwaiba/setClassIconRequest" message="tns:setClassIcon" />
 <output wsam:Action="http://webservice/Kuwaiba/setClassIconResponse" message="tns:setClassIconResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/Kuwaiba/setClassIcon/Fault/Exception" />
+</operation>
+<operation name="createListType">
+<input wsam:Action="http://webservice/Kuwaiba/createListTypeRequest" message="tns:createListType" />
+<output wsam:Action="http://webservice/Kuwaiba/createListTypeResponse" message="tns:createListTypeResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://webservice/Kuwaiba/createListType/Fault/Exception" />
 </operation>
 <operation name="getInstanceableListTypes">
 <input wsam:Action="http://webservice/Kuwaiba/getInstanceableListTypesRequest" message="tns:getInstanceableListTypes" />
@@ -654,6 +665,30 @@
 <soap:fault name="Exception" use="literal" />
 </fault>
 </operation>
+<operation name="createSession">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
+<operation name="createQuery">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
 <operation name="copyObjects">
 <soap:operation soapAction="" />
 <input>
@@ -674,18 +709,6 @@
 <output>
 <soap:body use="literal" />
 </output>
-</operation>
-<operation name="createSession">
-<soap:operation soapAction="" />
-<input>
-<soap:body use="literal" />
-</input>
-<output>
-<soap:body use="literal" />
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal" />
-</fault>
 </operation>
 <operation name="closeSession">
 <soap:operation soapAction="" />
@@ -915,18 +938,6 @@
 <soap:fault name="Exception" use="literal" />
 </fault>
 </operation>
-<operation name="createQuery">
-<soap:operation soapAction="" />
-<input>
-<soap:body use="literal" />
-</input>
-<output>
-<soap:body use="literal" />
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal" />
-</fault>
-</operation>
 <operation name="saveQuery">
 <soap:operation soapAction="" />
 <input>
@@ -988,6 +999,18 @@
 </fault>
 </operation>
 <operation name="setClassIcon">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
+<operation name="createListType">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />

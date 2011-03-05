@@ -76,7 +76,7 @@ public class HierarchyCustomizerService implements LookupListener{
             for (LocalClassMetadataLight item : allMeta){
                 listModel.add(item);
 
-                if (!item.getIsAbstract())
+                if (!item.isAbstract())
                     treeModel.add(item);
             }
         }

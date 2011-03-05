@@ -103,7 +103,7 @@ public class ClassManagerService extends FileFilter implements ActionListener{
         }
 
         for (LocalClassMetadata myLight : allMeta)
-            if (!myLight.getIsAbstract())
+            if (!myLight.isAbstract())
                 res.add(myLight);
         return res;
     }

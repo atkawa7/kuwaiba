@@ -35,7 +35,7 @@ public class UserNode extends AbstractNode{
     private LocalUserObject object;
     public static final String PROP_USERNAME="username";
     public static final String PROP_LASTNAME="lastName";
-    public static final String PROP_FIRSTNAME="firstName";
+    public static final String PROP_FIRSTNAME="name";
     public static final String PROP_GROUPS="groups";
     public static final String PROP_PASSWORD="password";
 

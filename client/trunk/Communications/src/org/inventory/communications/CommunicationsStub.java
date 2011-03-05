@@ -447,6 +447,16 @@ public class CommunicationsStub {
         }
     }
 
+    public LocalObjectLight createListType(String className){
+        try{
+            RemoteObjectLight myObject = port.createListType(className, this.session.getSessionId());
+            return new LocalObjectLightImpl(myObject);
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
+    }
+
     /**
      * Retrieves a List type attribute.
      * @param className attribute class (usually descendant of GenericListType)

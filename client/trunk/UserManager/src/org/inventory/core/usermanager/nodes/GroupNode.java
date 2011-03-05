@@ -35,7 +35,6 @@ public class GroupNode extends AbstractNode{
 
     public static final String PROP_GROUPSNAME="name";
     public static final String PROP_DESCRIPTION="description";
-    public static final String PROP_CREATIONDATE="creationDate";
 
     public LocalUserGroupObject object;
 
@@ -55,8 +54,6 @@ public class GroupNode extends AbstractNode{
         }
 
         set.put(new UserGroupProperty(PROP_GROUPSNAME, "Name", "Group's name", object.getName(), object));
-        set.put(new UserGroupProperty(PROP_CREATIONDATE, "Creation Date", "Group's creation date",
-                object.getCreationDate()==null?"":object.getCreationDate(), object));
         set.put(new UserGroupProperty(PROP_DESCRIPTION, "Description", "Group's description",
                 object.getDescription()==null?"":object.getDescription(), object));
         return sheet;
