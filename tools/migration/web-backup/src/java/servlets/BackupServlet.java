@@ -16,7 +16,7 @@
 
 package servlets;
 
-import entity.session.User;
+import entity.config.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.persistence.EntityManager;
