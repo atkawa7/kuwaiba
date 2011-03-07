@@ -406,6 +406,8 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     public void componentClosed() {
         cmbClassList.removeActionListener(this);
         queryScene.removeActionListener(qbs);
+        queryScene.clear();
+        cmbClassList.setSelectedItem(null);
     }
 
     void writeProperties(java.util.Properties p) {
