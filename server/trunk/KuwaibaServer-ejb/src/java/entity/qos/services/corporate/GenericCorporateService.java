@@ -46,11 +46,13 @@ public abstract class GenericCorporateService extends GenericService{
      * Level agreement facing to the customer
      */
     @OneToOne
+    @NoSerialize //For now, since we don't have a suitable editor for this (SLA/OLA are not subclasses of GenericObjectClass)
     protected SLA sla;
     /**
      * Level agreement facing to the company
      */
     @OneToOne
+    @NoSerialize //For now
     protected OLA ola;
 
     public Float getRate() {

@@ -18,7 +18,9 @@
 package org.kuwaiba.tools;
 
 import core.exceptions.EntityManagerNotAvailableException;
+import entity.core.ApplicationObject;
 import entity.core.MetadataObject;
+import entity.multiple.GenericObjectList;
 import entity.session.User;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -96,7 +98,11 @@ public class ToolsBean implements ToolsBeanRemote{
 
             for (EntityType entity : ent){
                 if(HierarchyUtils.isSubclass(entity.getJavaType(), MetadataObject.class))
+                    continue;
+                if(HierarchyUtils.isSubclass(entity.getJavaType(), ApplicationObject.class)){
+                    if (!HierarchyUtils.isSubclass(entity.getJavaType(), GenericObjectList.class))
                         continue;
+                }
                 if (alreadyPersisted.get(entity.getJavaType().getSimpleName())!=null)
                     continue;
                 HierarchyUtils.persistClass(entity,em);

@@ -157,7 +157,7 @@ public class HierarchyUtils {
                                              entity.getJavaType().getAnnotation(Dummy.class) != null,
                                              isSubclass(entity.getJavaType(),GenericPhysicalNode.class),
                                              isSubclass(entity.getJavaType(),GenericConnection.class),
-                                             implementsInterface(entity.getJavaType(),GenericPort.class),
+                                             isSubclass(entity.getJavaType(),GenericPort.class),
                                              isSubclass(entity.getJavaType(), GenericObjectList.class),
                                              entity.getJavaType().getAnnotation(NoCount.class) !=null , null, atts);
 

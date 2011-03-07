@@ -27,7 +27,7 @@ import javax.persistence.ManyToOne;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class GenericCommunicationsPort extends GenericPort{
+public abstract class GenericCommunicationsPort extends GenericPort {
 
     @ManyToOne
     protected CommunicationsPortType type; //RJ-45, RJ-11, FC/PC, etc

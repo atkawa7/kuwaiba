@@ -402,14 +402,14 @@ public class BackendBean implements BackendBeanRemote {
     }
 
     /**
-     * Retrieves all the class metadata
+     * Retrieves all the class metadata except for classes marked as dummy and list type
      * @return An array of classes
      */
     @Override
     public List<ClassInfo> getMetadata() throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETMETADATA"));
         if (em != null){
-            String sentence = "SELECT x FROM ClassMetadata x WHERE x.isDummy=false ORDER BY x.name ";
+            String sentence = "SELECT x FROM ClassMetadata x WHERE x.isDummy=false AND x.isListType=false ORDER BY x.name ";
             Query q = em.createQuery(sentence);
             List<ClassMetadata> cr = q.getResultList();
             List<ClassInfo> cm = new ArrayList<ClassInfo>();
@@ -656,7 +656,7 @@ public class BackendBean implements BackendBeanRemote {
     public List<ClassInfoLight> getLightMetadata() throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETLIGHTMETADATA"));
         if (em != null){
-            String sentence = "SELECT x.id, x.name, x.displayName, x.isAbstract,x.isPhysicalNode, x.isPhysicalConnection, x.isPhysicalEndpoint, x.smallIcon FROM ClassMetadata x WHERE x.isDummy = false ORDER BY x.name";
+            String sentence = "SELECT x.id, x.name, x.displayName, x.isAbstract,x.isPhysicalNode, x.isPhysicalConnection, x.isPhysicalEndpoint, x.smallIcon FROM ClassMetadata x WHERE x.isDummy = false AND x.isListType=false ORDER BY x.name";
             Query q = em.createQuery(sentence);
             List<Object[]> cr = q.getResultList();
             List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();

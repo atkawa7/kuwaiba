@@ -15,6 +15,7 @@
  */
 package entity.session;
 
+import core.annotations.NoSerialize;
 import entity.core.ApplicationObject;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,6 +51,7 @@ public class User extends ApplicationObject {
     private String cellphone;
     private String position;
     @ManyToMany
+    @NoSerialize
     @JoinColumn(nullable=true)
     private List<UserGroup> groups = new ArrayList<UserGroup>();
 

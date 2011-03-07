@@ -16,6 +16,7 @@
 package entity.session;
 
 import core.annotations.NoCopy;
+import core.annotations.NoSerialize;
 import entity.core.ApplicationObject;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,6 +42,7 @@ public class UserGroup extends ApplicationObject { //UserGroup is a keyword in J
     private String description;
     
     @ManyToMany(mappedBy = "groups")
+    @NoSerialize
     @JoinColumn(nullable=true)
     protected List<User> users = new ArrayList<User>();
 

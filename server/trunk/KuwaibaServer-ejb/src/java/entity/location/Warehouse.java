@@ -16,6 +16,7 @@
 
 package entity.location;
 
+import core.annotations.NoSerialize;
 import entity.multiple.people.Employee;
 import java.util.List;
 import javax.persistence.Entity;
@@ -31,6 +32,7 @@ import javax.persistence.ManyToMany;
 public class Warehouse extends GenericLocation{
     @ManyToMany
     @JoinColumn(name="responsibles_id")
+    @NoSerialize //Just for now
     protected List<Employee> resposibles;
 
     public List<Employee> getResposibles() {
