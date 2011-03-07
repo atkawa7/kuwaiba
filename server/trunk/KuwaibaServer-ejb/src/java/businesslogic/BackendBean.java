@@ -233,9 +233,10 @@ public class BackendBean implements BackendBeanRemote {
             Object myObject = em.find(obj.getObjectClass(), obj.getOid());
             if(myObject == null)
                 throw new ObjectNotFoundException(obj.getObjectClass(),obj.getOid());
-            for (int i = 0; i< obj.getNewValues().length; i++)
+            for (int i = 0; i< obj.getNewValues().length; i++){
                 myObject.getClass().getMethod("set"+MetadataUtils.capitalize(obj.getUpdatedAttributes()[i].getName()),
-                        obj.getUpdatedAttributes()[i].getType()).invoke(myObject, obj.getNewValues()[i]);
+                      obj.getUpdatedAttributes()[i].getType()).invoke(myObject, obj.getNewValues()[i]);
+            }
             em.merge(myObject);
             return new RemoteObject(myObject);
         }

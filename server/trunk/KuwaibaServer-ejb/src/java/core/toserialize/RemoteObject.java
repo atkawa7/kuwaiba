@@ -16,7 +16,6 @@
 package core.toserialize;
 
 import core.annotations.NoSerialize;
-import entity.core.InventoryObject;
 import entity.core.RootObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -24,6 +23,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import util.MetadataUtils;
@@ -64,15 +65,23 @@ public class RemoteObject extends RemoteObjectLight {
                 //getDeclaredMethods takes private and protected methods, but NOT the inherited ones
                 //getMethods do the opposite. Now:
                 //IMPORTANT: if a given attribute doesn't have a getter using camel case, it wil be ignored
-                Method m = object.getClass().getMethod("get"+MetadataUtils.capitalize(f.getName()),
+                //Update 07/03/2011: Accessors to booleans fields have a special naming convention: let's say out attribute is called "field".
+                //then the getter would be "isField" and the setter "setField" to converge into the standard
+                //Java naming convention
+                Method m;
+                if (f.getType().equals(Boolean.class))
+                    m = object.getClass().getMethod("is"+MetadataUtils.capitalize(f.getName()),
+                                                        new Class[]{});
+                else
+                    m = object.getClass().getMethod("get"+MetadataUtils.capitalize(f.getName()),
                                                         new Class[]{});
                 Object value = m.invoke(object, new Object[]{});
                 if (value == null)  values.add(null);
                 else{
                     //If this attribute is a reference to any other business object, we use a lazy approach
                     //by setting as value the object id
-                    if(value instanceof InventoryObject)
-                        values.add(String.valueOf(((InventoryObject)value).getId()));
+                    if(value instanceof RootObject)
+                        values.add(String.valueOf(((RootObject)value).getId()));
                     else
                         if (value instanceof Date)
                             values.add(String.valueOf(((Date)value).getTime()));
@@ -80,19 +89,19 @@ public class RemoteObject extends RemoteObjectLight {
                             values.add(value.toString());
                 }
             } catch (NoSuchMethodException nsme){
-                System.out.println("NoSuchM:"+nsme.getMessage());
+                Logger.getLogger(RemoteObject.class.getName()).log(Level.WARNING, "NoSuchM: {0}", nsme.getMessage());
             }
             catch (IllegalAccessException iae){
-                System.out.println("IllegalAccess "+iae.getMessage());
+                Logger.getLogger(RemoteObject.class.getName()).log(Level.WARNING, "IllegalAccess: {0}", iae.getMessage());
             }
             catch(InvocationTargetException ite){
-                System.out.println("invocationTarget "+ite.getMessage());
+                Logger.getLogger(RemoteObject.class.getName()).log(Level.WARNING, "invocationTarget: {0}", ite.getMessage());
             }
             catch(SecurityException se){
-                System.out.println("Security "+se.getMessage());
+                Logger.getLogger(RemoteObject.class.getName()).log(Level.WARNING, "Security: {0}", se.getMessage());
             }
             catch (IllegalArgumentException iae2){
-                System.out.println("IllegalArgument "+iae2.getMessage());
+                Logger.getLogger(RemoteObject.class.getName()).log(Level.WARNING, "IllegalArgument: {0}", iae2.getMessage());
             }
         }
     }

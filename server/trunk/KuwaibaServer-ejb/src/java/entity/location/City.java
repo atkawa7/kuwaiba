@@ -28,7 +28,7 @@ import javax.persistence.Entity;
 @Entity
 @NoCount
 public class City extends ViewableObject {
-    @Column(length=3)
+    @Column(length=5)
     protected String acronym;
 
     public String getAcronym() {
