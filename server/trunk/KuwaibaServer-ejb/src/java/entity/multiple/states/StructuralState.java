@@ -16,7 +16,6 @@
 
 package entity.multiple.states;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
@@ -25,6 +24,6 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class StructuralState extends GenericState implements Serializable {
+public class StructuralState extends GenericState {
 
 }

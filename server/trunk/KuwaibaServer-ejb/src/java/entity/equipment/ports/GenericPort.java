@@ -21,9 +21,11 @@ import core.annotations.NoCount;
 import core.annotations.NoSerialize;
 import entity.connections.physical.GenericPhysicalConnection;
 import entity.core.InventoryObject;
+import entity.multiple.states.OperationalState;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 /**
@@ -43,6 +45,9 @@ public abstract class GenericPort extends InventoryObject{
     @NoSerialize
     @NoCopy
     protected GenericPhysicalConnection connectedConnection;
+    
+    @ManyToOne
+    protected OperationalState state;
 
     public GenericPhysicalConnection getConnectedConnection() {
         return connectedConnection;
@@ -50,5 +55,13 @@ public abstract class GenericPort extends InventoryObject{
 
     public void setConnectedConnection(GenericPhysicalConnection connectedConnection) {
         this.connectedConnection = connectedConnection;
+    }
+
+    public OperationalState getState() {
+        return state;
+    }
+
+    public void setState(OperationalState state) {
+        this.state = state;
     }
 }

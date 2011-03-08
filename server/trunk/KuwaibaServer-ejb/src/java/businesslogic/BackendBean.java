@@ -1043,11 +1043,13 @@ public class BackendBean implements BackendBeanRemote {
     public RemoteQueryLight[] getQueries(Long ownerId, boolean showPublic) throws Exception {
         System.out.println(ResourceBundle.getBundle("internationalization/Bundle").getString("LBL_CALL_GETQUERIES"));
         if (em != null){
-//            String sentence = "SELECT x.id, x.name, x.description, x.owner FROM Query x WHERE x.owner.id="+ownerId; //NOI18N
-            String sentence = "SELECT query.id, query.name, query.description, users.name FROM query JOIN users on users.id = query.owner_id and users.id="+ownerId; //NOI18N
+            //String sentence = "SELECT x.id, x.name, x.description, x.owner FROM Query x WHERE x.owner.id="+ownerId; //NOI18N
+            //For now, since the JPQL did not work and I'm having delays in the deliverables. JPQL Gurus Needed!
+            String sentence = "SELECT robject.id, robject.name, q.description, q.owner_id FROM rootobject robject, query q WHERE q.owner_id="+ownerId+" AND robject.id=q.id ORDER BY robject.name"; //NOI18N
             if (showPublic)
-                //sentence += " OR x.owner IS NULL";
-                sentence = "SELECT query.id, query.name, query.description, users.name FROM query LEFT JOIN users on users.id = query.owner_id and users.id="+ownerId; //NOI18N
+                //sentence = "SELECT x.id, x.name, x.description, x.owner FROM Query x WHERE x.owner.id="+ownerId+" OR x.owner IS NULL"; //NOI18N
+                //For now, since the JPQL did not work and I'm having delays in the deliverables. JPQL Gurus Needed!
+                sentence = "SELECT robject.id, robject.name, q.description, q.owner_id FROM rootobject robject, query q WHERE q.id=robject.id AND (q.owner_id="+ownerId+" OR q.owner_id isnull) ORDER BY robject.name"; //NOI18N
 
             List<Object[]> allQueries = em.createNativeQuery(sentence).getResultList();
             RemoteQueryLight[] res = new RemoteQueryLight[allQueries.size()];

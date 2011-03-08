@@ -16,14 +16,13 @@
 
 package entity.multiple.states;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- * Represents a state to indicate how the component is working
+ * Represents a state to indicate how a component is working
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class OperationalState extends GenericState implements Serializable {
+public class OperationalState extends GenericState {
 
 }
