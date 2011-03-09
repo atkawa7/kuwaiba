@@ -17,6 +17,7 @@ package org.inventory.communications.core;
 
 import java.awt.Image;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
+import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.utils.Utils;
 import org.inventory.webservice.ClassInfo;
 
@@ -168,5 +169,9 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
 
     public String getDescription() {
         return this.description;
+    }
+
+    public LocalClassMetadataLight getLightMetadata() {
+        return new LocalClassMetadataLightImpl(className, id);
     }
 }

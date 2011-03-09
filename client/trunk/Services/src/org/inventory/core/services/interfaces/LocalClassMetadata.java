@@ -30,4 +30,5 @@ public interface LocalClassMetadata extends LocalClassMetadataLight{
     public Boolean isMultiple(String att);
     public String getTypeForAttribute(String att);
     public Image getIcon();
+    public LocalClassMetadataLight getLightMetadata();
 }

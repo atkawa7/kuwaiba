@@ -22,15 +22,16 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.interfaces.LocalClassMetadata;
 import org.inventory.core.services.interfaces.LocalClassMetadataLight;
 import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.inventory.queries.graphical.elements.ClassNodeWidget;
 import org.inventory.queries.graphical.elements.filters.ListTypeFilter;
-import org.netbeans.api.visual.vmd.VMDConnectionWidget;
-import org.netbeans.api.visual.vmd.VMDPinWidget;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * A simple action to toggle a class node into simple/complex. The simple will present
+ * a combo box with all the list type elements for the selected attribute type. If complex, the
+ * node will present instead, a list of attributes for the given list type
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SwitchClassNodeWidgetFilterAction extends AbstractAction{
@@ -52,24 +53,26 @@ public class SwitchClassNodeWidgetFilterAction extends AbstractAction{
         }
 
         public void actionPerformed(ActionEvent e) {
+            String incomingConnectionObject = ((QueryEditorScene)classNode.getScene()).
+                    findPinEdges(((QueryEditorNodeWidget)classNode).getDefaultPinId(), false, true).iterator().next();
             if (classNode instanceof ClassNodeWidget){ //Extended to simple
                 ClassNodeWidget node = (ClassNodeWidget)classNode;
-                node.getParentWidget().removeChild(node);
-                ListTypeFilter newNode = (ListTypeFilter) ((QueryEditorScene)node.
-                        getScene()).addNode((LocalClassMetadataLight)node.getWrappedClass());
+                ((QueryEditorScene)node.getScene()).removeNode(node.getWrappedClass());
+
+                ListTypeFilter newNode = (ListTypeFilter) ((QueryEditorScene)node.getScene()).
+                        addNode(node.getWrappedClass().getLightMetadata());
                 LocalObjectListItem[] items = CommunicationsStub.getInstance().getList(node.getWrappedClass().getClassName(), false);
                 if (items == null)
                     newNode.build(new LocalObjectListItem[0]);
                 else
                     newNode.build(items);
+                newNode.getScene().validate();
                 newNode.setPreferredLocation(node.getPreferredLocation());
-                //Now we transfer the default pin (used to anchor all incoming connections)
-                VMDPinWidget defaultPin = (VMDPinWidget) ((QueryEditorScene)node.getScene()).findWidget(node.getDefaultPinId());
-                defaultPin.removeFromParent();
-                newNode.addChild(defaultPin);
+                ((QueryEditorScene)node.getScene()).setEdgeTarget(incomingConnectionObject, newNode.getDefaultPinId());
+                
             }else{ //Simple to extended
                ListTypeFilter node = (ListTypeFilter)classNode;
-               String incomingConnection = ((QueryEditorScene)node.getScene()).findPinEdges(node.getDefaultPinId(), false, true).iterator().next();
+               
                ((QueryEditorScene)node.getScene()).removeNode(node.getWrappedClass());
                LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(node.getNodeName(), false);
                ClassNodeWidget newNode = null;
@@ -79,7 +82,7 @@ public class SwitchClassNodeWidgetFilterAction extends AbstractAction{
                newNode.build(null);
                newNode.getScene().validate();
                newNode.setPreferredLocation(node.getPreferredLocation());
-
+               ((QueryEditorScene)node.getScene()).setEdgeTarget(incomingConnectionObject, newNode.getDefaultPinId());
             }
 
 
