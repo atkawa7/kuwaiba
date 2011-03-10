@@ -948,7 +948,7 @@ public class BackendBean implements BackendBeanRemote {
 
             //Joins
             for (String myJoin : joins)
-                queryText += " LEFT JOIN "+myJoin; //Check again!!!!
+                queryText += " JOIN "+myJoin; //Check again!!!!
 
             if (!predicates.isEmpty()) {
                 String finalPredicate = " WHERE ";  //NOI18N

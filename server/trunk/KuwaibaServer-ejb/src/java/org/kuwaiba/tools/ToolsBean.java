@@ -20,6 +20,7 @@ package org.kuwaiba.tools;
 import core.exceptions.EntityManagerNotAvailableException;
 import entity.core.ApplicationObject;
 import entity.core.MetadataObject;
+import entity.core.RootObject;
 import entity.multiple.GenericObjectList;
 import entity.session.User;
 import java.lang.reflect.Field;

@@ -22,6 +22,7 @@ import entity.connections.GenericConnection;
 import entity.core.ApplicationObject;
 import entity.core.InventoryObject;
 import entity.core.MetadataObject;
+import entity.core.RootObject;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
 import entity.core.metamodel.PackageMetadata;
@@ -107,6 +108,11 @@ public class HierarchyUtils {
      * @return the new class id
      */
     public static Long persistClass(EntityType entity, EntityManager em){
+
+        if (entity.getJavaType().equals(RootObject.class))
+            return null;
+        if (entity.getJavaType().equals(ApplicationObject.class))
+            return null;
 
         String sentence = "SELECT x.id FROM ClassMetadata x WHERE x.name = '"+entity.getJavaType().getSimpleName()+"'";
         Query query = em.createQuery(sentence);
