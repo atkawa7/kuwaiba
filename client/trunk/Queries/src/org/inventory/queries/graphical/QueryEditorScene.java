@@ -421,6 +421,8 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         currentSearchedClass = null;
         while (!getNodes().isEmpty())
             removeNode(getNodes().iterator().next());
+        while (!getEdges().isEmpty())
+            removeEdge(getEdges().iterator().next());
     }
 
     public LocalClassMetadata getCurrentSearchedClass() {

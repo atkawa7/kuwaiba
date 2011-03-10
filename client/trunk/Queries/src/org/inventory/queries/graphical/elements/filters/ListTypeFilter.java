@@ -51,7 +51,7 @@ public class ListTypeFilter extends SimpleCriteriaNodeWidget{
 
     @Override
     public void build(String id) {
-        defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
+        defaultPinId = "DefaultPin_"+new Random().nextInt(100000);
         //Add the default pin to be used as anchor for all incoming connections
         ((QueryEditorScene)this.getScene()).addPin(wrappedClass, defaultPinId);
         //Add another pin to hold de actual combobox

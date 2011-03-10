@@ -286,8 +286,10 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
                                 public void actionPerformed(ActionEvent e) {
                                     if (e.getSource() == DialogDescriptor.OK_OPTION){
                                         if (checkForUnsavedQuery(true)){
-                                            if (qlp.getSelectedQuery() != null)
+                                            if (qlp.getSelectedQuery() != null){
+                                                queryScene.clear();
                                                 qbs.renderQuery(qlp.getSelectedQuery());
+                                            }
                                             else
                                                 JOptionPane.showConfirmDialog(null, "Select a query, please","Error", JOptionPane.ERROR_MESSAGE);
                                         }
