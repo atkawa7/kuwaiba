@@ -162,7 +162,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
             }
             else{
                 ((QueryResultTableModel)myTable.getModel()).updateTableModel(res);
-                revalidate();
+                pnlScrollMain.repaint();
             }
         }else currentPage--;
     }
@@ -174,7 +174,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
                 btnPrevious.setEnabled(false);
             btnNext.setEnabled(true);
             ((QueryResultTableModel)myTable.getModel()).updateTableModel(res);
-            revalidate();
+            pnlScrollMain.repaint();
         }else currentPage++;
     }
 
@@ -187,7 +187,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
             //makes the rendering to throw a IndexOutOfBoundsException
             //((QueryResultTableModel)myTable.getModel()).updateTableModel(res);
             myTable.setModel(new QueryResultTableModel(res));
-            revalidate();
+            pnlScrollMain.repaint();
         }
         
     }

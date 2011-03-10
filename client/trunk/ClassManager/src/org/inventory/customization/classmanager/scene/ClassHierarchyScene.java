@@ -110,7 +110,7 @@ public class ClassHierarchyScene extends GraphScene<LocalClassWrapper, String>{
     @Override
     protected Widget attachEdgeWidget(String edge) {
         ConnectionWidget connectionWidget = new ConnectionWidget(this);
-        connectionWidget.getActions ().addAction (createSelectAction ());
+        //connectionWidget.getActions ().addAction (createSelectAction ()); <-- this action seems to be causing a problem with the multiselection move action and it's not actually necessary
         connectionWidget.getActions ().addAction (ActionFactory.createAddRemoveControlPointAction());
         connectionsLayer.addChild(connectionWidget);
         return connectionWidget;

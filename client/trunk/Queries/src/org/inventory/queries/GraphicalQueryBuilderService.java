@@ -245,9 +245,10 @@ public class GraphicalQueryBuilderService implements ActionListener{
 
         for (LocalTransientQuery join : subQuery.getJoins()){
             if (join != null){
-                if (join.getAttributeNames().size() > 0)
-                    if (!join.getAttributeNames().get(0).equals("id")) //NOI18N //In this case, show an expanded class node widget
-                        renderClassNode(join);                         //Any other way around show a simplified version
+                if (join.getAttributeNames().size() > 0 || join.getVisibleAttributeNames().size() > 0){
+                    //if (!join.getAttributeNames().get(0).equals("id")) //NOI18N //In this case, show an expanded class node widget
+                    renderClassNode(join);                         //Any other way around show a simplified version
+                }
             }
         }
         currentNode.setFilteredAttributes(subQuery.getAttributeNames(), subQuery.getConditions());
