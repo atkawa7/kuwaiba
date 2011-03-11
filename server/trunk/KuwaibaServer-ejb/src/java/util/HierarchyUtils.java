@@ -23,6 +23,7 @@ import entity.core.ApplicationObject;
 import entity.core.InventoryObject;
 import entity.core.MetadataObject;
 import entity.core.RootObject;
+import entity.core.ViewableObject;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
 import entity.core.metamodel.PackageMetadata;
@@ -165,7 +166,8 @@ public class HierarchyUtils {
                                              isSubclass(entity.getJavaType(),GenericConnection.class),
                                              isSubclass(entity.getJavaType(),GenericPort.class),
                                              isSubclass(entity.getJavaType(), GenericObjectList.class),
-                                             entity.getJavaType().getAnnotation(NoCount.class) !=null , null, atts);
+                                             entity.getJavaType().getAnnotation(NoCount.class) !=null ,
+                                             isSubclass(entity.getJavaType(), ViewableObject.class), null, atts);
 
         em.persist(cm);
         return cm.getId();

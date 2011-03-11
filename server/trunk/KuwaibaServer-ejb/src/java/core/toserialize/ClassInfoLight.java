@@ -31,6 +31,7 @@ public class ClassInfoLight {
     protected Boolean physicalNode;
     protected Boolean physicalConnection;
     protected Boolean physicalEndpoint;
+    protected Boolean viewable;
     protected String className;
     protected String displayName;
     protected byte[] smallIcon;
@@ -43,6 +44,7 @@ public class ClassInfoLight {
         this.physicalNode = cm.isPhysicalNode();
         this.physicalConnection = cm.isPhysicalConnection();
         this.physicalEndpoint = cm.isPhysicalEndpoint();
+        this.viewable = cm.isViewable();
         this.className = cm.getName();
         this.displayName = cm.getDisplayName();
         this.smallIcon = cm.getSmallIcon();
@@ -123,6 +125,14 @@ public class ClassInfoLight {
 
     public void setPhysicalNode(Boolean isPhysicalNode) {
         this.physicalNode = isPhysicalNode;
+    }
+
+    public Boolean isViewable() {
+        return viewable;
+    }
+
+    public void setViewable(Boolean viewable) {
+        this.viewable = viewable;
     }
 
     @Override

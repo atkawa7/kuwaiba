@@ -75,7 +75,7 @@ public class Tools extends HttpServlet {
                         out.println("<h1>Metadata created successfully</h1>");
                     }else{
                         if (request.getParameter("tool").equals("resetadmin")){
-                            out.println("<h1>Admin account reseted successfully</h1>");
+                            out.println("<h1>Admin account reset successfully</h1>");
                             tbr.resetAdmin();
                         }else
                             out.println("<h1>Unknown tool</h1>");

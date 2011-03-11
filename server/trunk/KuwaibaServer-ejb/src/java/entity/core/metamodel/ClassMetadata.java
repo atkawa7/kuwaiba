@@ -88,6 +88,11 @@ public class ClassMetadata extends MetadataObject {
     @Column(nullable=false)
     private Boolean isListType = false;
     /**
+     * Instances of this class can have views associated (this going to be "true" for all subclasses of ViewableObject)
+     */
+    @Column(nullable=false)
+    private Boolean isViewable = true;
+    /**
      * Icon to show in trees and lists
      */
     private byte[] smallIcon;
@@ -119,7 +124,7 @@ public class ClassMetadata extends MetadataObject {
     public ClassMetadata(String _name, PackageMetadata _myPackage, String _description,
             Boolean _isCustom, Boolean _isAbstract, Boolean _isDummy, Boolean _isPhysicalNode,
             Boolean _isPhysicalConnection, Boolean _isPhysicalEndpoint, Boolean _isListType,
-            Boolean _isCountable, List<ClassMetadata> _children, List <AttributeMetadata> _attributes){
+            Boolean _isCountable, Boolean _isViewable, List<ClassMetadata> _children, List <AttributeMetadata> _attributes){
         this.name = _name;
         this.packageInfo = _myPackage;
         this.description = _description;
@@ -131,6 +136,7 @@ public class ClassMetadata extends MetadataObject {
         this.isPhysicalEndpoint = _isPhysicalEndpoint;
         this.isListType = _isListType;
         this.isCountable = _isCountable;
+        this.isViewable = _isViewable;
         this.possibleChildren = _children;
         this.attributes = _attributes;
     }
@@ -246,6 +252,14 @@ public class ClassMetadata extends MetadataObject {
 
     public void setDummy(Boolean isDummy) {
         this.isDummy = isDummy;
+    }
+
+    public Boolean isViewable() {
+        return isViewable;
+    }
+
+    public void setViewable(Boolean isViewable) {
+        this.isViewable = isViewable;
     }
 
     public Integer getColor() {
