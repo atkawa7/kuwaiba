@@ -236,20 +236,20 @@ public class ClassManagerFrame extends javax.swing.JFrame {
 
     private void btnSmallIconChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSmallIconChooserActionPerformed
         if (fChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-            txtSmallIcon.setText(fChooser.getSelectedFile().getAbsolutePath());
             Image mySmallIcon = Toolkit.getDefaultToolkit().createImage(fChooser.getSelectedFile().getAbsolutePath());
             if (mySmallIcon == null)
                 getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "Image in "+fChooser.getSelectedFile().getAbsolutePath()+" couldn't be loaded");
             else{
                 //This image trick if useful because for some 8bits gif, the getHeight/Width returns -1
                 if((new ImageIcon(mySmallIcon)).getIconHeight() > 16) //We don't accept images of more tha 16x16 pixels
-                    getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The height if the given image exceeds 16 pixels");
+                    getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The height of the image exceeds 16 pixels");
                 else{
                     if((new ImageIcon(mySmallIcon)).getIconWidth() > 16) //We don't accept images of more tha 16x16 pixels
-                        getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The widtth if the given image exceeds 16 pixels");
+                        getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The width of the image exceeds 16 pixels");
                     else{
                         try {
                             smallIcon = Utils.getByteArrayFromImageFile(fChooser.getSelectedFile(), cms.getExtension(fChooser.getSelectedFile()));
+                            txtSmallIcon.setText(fChooser.getSelectedFile().getAbsolutePath());
                         } catch (IOException ex) {
                             smallIcon = null;
                         }
@@ -267,21 +267,20 @@ public class ClassManagerFrame extends javax.swing.JFrame {
             if (mySmallIcon == null)
                 getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "Image in "+fChooser.getSelectedFile().getAbsolutePath()+" couldn't be loaded");
             else{
-                if(mySmallIcon.getHeight(null) > 48) //We don't accept images of more tha 48x48 pixels
-                    getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The height if the given image is bigger tha 16 pixels");
+                if(mySmallIcon.getHeight(null) > 32) //We don't accept images of more tha 48x48 pixels
+                    getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The height of the image is exceeds 32 pixels");
                 else{
-                    if(mySmallIcon.getWidth(null) > 48) //We don't accept images of more tha 48x48 pixels
-                        getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The widtth if the given image is bigger tha 16 pixels");
+                    if(mySmallIcon.getWidth(null) > 32) //We don't accept images of more tha 48x48 pixels
+                        getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The widtth of the image exceeds 32 pixels");
                     else{
                         try {
                             icon = Utils.getByteArrayFromImageFile(fChooser.getSelectedFile(), cms.getExtension(fChooser.getSelectedFile()));
+                            txtIcon.setText(fChooser.getSelectedFile().getAbsolutePath());
                         } catch (IOException ex) {
                             icon = null;
                         }
                         if (icon == null)
                             getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The file couldn't be converted");
-                        else
-                            txtIcon.setText(fChooser.getSelectedFile().getAbsolutePath());
                     }
                 }
             }

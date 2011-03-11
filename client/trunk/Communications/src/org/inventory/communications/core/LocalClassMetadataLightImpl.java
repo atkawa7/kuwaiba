@@ -38,13 +38,14 @@ public class LocalClassMetadataLightImpl
     protected Boolean isAbstract;
     protected Boolean isPhysicalNode;
     protected Boolean isPhysicalEndpoint;
+    protected Boolean isViewable;
     protected String className;
     protected String displayName;
     protected Image smallIcon;
 
     public LocalClassMetadataLightImpl(ClassInfo ci){
         this (ci.getId(),ci.getClassName(),ci.getDisplayName(),ci.getSmallIcon(),
-                ci.isPhysicalNode(),ci.isPhysicalEndpoint());
+                ci.isPhysicalNode(),ci.isPhysicalEndpoint(), ci.isAbstractClass(), ci.isViewable());
     }
 
     public LocalClassMetadataLightImpl(String className, Long oid){
@@ -57,19 +58,22 @@ public class LocalClassMetadataLightImpl
         this.isPhysicalNode = cil.isPhysicalNode();
         this.isPhysicalEndpoint = cil.isPhysicalEndpoint();
         this.isAbstract = cil.isAbstractClass();
+        this.isViewable = cil.isViewable();
         this.className = cil.getClassName();
         this.displayName = cil.getDisplayName();
         this.smallIcon = cil.getSmallIcon()==null ? null : Utils.getImageFromByteArray(cil.getSmallIcon());
     }
 
     public LocalClassMetadataLightImpl(Long _id, String _className, String _displayName,
-            byte[] _smallIcon,Boolean _isPhysicalNode, Boolean _isPhysicalEndpoint){
-        this.id=_id;
+            byte[] _smallIcon,Boolean _isPhysicalNode, Boolean _isPhysicalEndpoint, Boolean _isAbstract, Boolean _isViewable){
+        this.id = _id;
         this.isPhysicalNode = _isPhysicalNode;
         this.isPhysicalEndpoint = _isPhysicalEndpoint;
+        this.isAbstract = _isAbstract;
+        this.isViewable = _isViewable;
         this.className = _className;
         this.displayName = _displayName;
-        this.smallIcon = _smallIcon==null?null:Utils.getImageFromByteArray(_smallIcon);
+        this.smallIcon = _smallIcon==null ? null : Utils.getImageFromByteArray(_smallIcon);
     }
 
     public String getClassName() {
@@ -97,6 +101,9 @@ public class LocalClassMetadataLightImpl
         return isPhysicalEndpoint;
     }
 
+    public Boolean isViewable(){
+        return this.isViewable;
+    }
 
    /**
     * The equals method is overwritten in order to make the comparison based on the id, which is
@@ -126,6 +133,10 @@ public class LocalClassMetadataLightImpl
     
     public Image getSmallIcon() {
         return smallIcon;
+    }
+
+    public void setSmallIcon(Image newIcon){
+        this.smallIcon = newIcon;
     }
 
     public DataFlavor[] getTransferDataFlavors() {

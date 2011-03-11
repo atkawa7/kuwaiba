@@ -33,4 +33,5 @@ public interface LocalClassMetadataLight extends Transferable{
     public Image getSmallIcon();
     public Boolean isPhysicalNode();
     public Boolean isPhysicalEndpoint();
+    public Boolean isViewable();
 }

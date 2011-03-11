@@ -99,6 +99,13 @@ public class ObjectViewService implements LookupListener{
            vrtc.getScene().getInteractionLayer().removeChildren();
            vrtc.getScene().getLabelsLayer().removeChildren();
 
+           if (myObject != null){ //Other nodes than the root one
+               if(!com.getLightMetaForClass(myObject.getClassName(), false).isViewable()){
+                   vrtc.getNotifier().showStatusMessage("This object doesn't have any view", false);
+                   disableView();
+                   return;
+               }
+           }
            loadView(myObject);
         }else{
             if(!lookupResult.allInstances().isEmpty()){
@@ -111,12 +118,7 @@ public class ObjectViewService implements LookupListener{
     private void loadView(LocalObjectLight myObject){
        //If the selected node is the root
        if (myObject.getOid() == null){
-           vrtc.setDisplayName(null);
-           vrtc.setHtmlDisplayName(null);
-           vrtc.getScene().clear();
-           vrtc.toggleButtons(false);
-           vrtc.getScene().validate();
-           vrtc.getScene().setCurrentObject(null);
+           disableView();
            return;
        }
 
@@ -148,6 +150,15 @@ public class ObjectViewService implements LookupListener{
        vrtc.getScene().validate();
        vrtc.getScene().repaint();
        vrtc.setDisplayName(myObject.getDisplayname() + " ["+myObject.getClassName()+"]");
+    }
+
+    private void disableView(){
+       vrtc.setDisplayName(null);
+       vrtc.setHtmlDisplayName(null);
+       vrtc.getScene().clear();
+       vrtc.toggleButtons(false);
+       vrtc.getScene().validate();
+       vrtc.getScene().setCurrentObject(null);
     }
 
     /**
