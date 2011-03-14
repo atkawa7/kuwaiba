@@ -39,3 +39,9 @@
 0.3 Alpha (17012011)
 * Preliminary support for advanced queries
 * executeQuery method written using type-safe JPQL
+
+0.3 Beta2 (13032011)
+* Datamodel change (see DATAMODEL file for a full list of changes)
+* Changes in the executeQuery method
+* TestServlet renamed to Tools and enhanced to provide a way to reset the admin password and diagnose potential data model problems
+* The context path (WSDL location) was changed to /kuwaiba/<KuwaibaService?wsdl>
