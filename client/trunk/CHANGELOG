@@ -50,3 +50,8 @@
 * Search results can be exported to CSV and XML formats
 * Searches can be saved and restored
 * Logging methods enhanced
+
+0.3 Beta2 (13032011)
+* Support for a new data model
+* Support for text formatting in views
+* Multiple bugfixes
