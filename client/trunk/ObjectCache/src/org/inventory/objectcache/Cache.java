@@ -19,12 +19,12 @@ package org.inventory.objectcache;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.inventory.core.services.interfaces.LocalClassMetadataLight;
-import org.inventory.core.services.interfaces.LocalObject;
-import org.inventory.core.services.interfaces.LocalClassMetadata;
-import org.inventory.core.services.interfaces.LocalObjectListItem;
-import org.inventory.core.services.interfaces.LocalUserGroupObject;
-import org.inventory.core.services.interfaces.LocalUserObject;
+import org.inventory.core.services.api.LocalObject;
+import org.inventory.core.services.api.LocalObjectListItem;
+import org.inventory.core.services.api.metadata.LocalClassMetadata;
+import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
+import org.inventory.core.services.api.session.LocalUserGroupObject;
+import org.inventory.core.services.api.session.LocalUserObject;
 
 /**
  * This class implements the local caching functionality

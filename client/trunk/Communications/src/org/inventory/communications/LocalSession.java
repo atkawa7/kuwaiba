@@ -14,7 +14,7 @@
  * 
  */
 
-package org.inventory.communications.core;
+package org.inventory.communications;
 
 import org.inventory.webservice.RemoteSession;
 

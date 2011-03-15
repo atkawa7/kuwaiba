@@ -16,14 +16,26 @@
 
 package org.inventory.communications;
 
+import java.awt.Point;
+import javax.xml.stream.XMLStreamException;
 import org.inventory.communications.core.LocalAttributeWrapperImpl;
 import org.inventory.communications.core.LocalClassWrapperImpl;
 import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.communications.core.LocalObjectLightImpl;
+import org.inventory.communications.core.queries.LocalTransientQueryImpl;
+import org.inventory.communications.core.views.LocalEdgeImpl;
+import org.inventory.communications.core.views.LocalNodeImpl;
+import org.inventory.communications.core.views.LocalObjectViewImpl;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.metadata.LocalAttributeWrapper;
 import org.inventory.core.services.api.metadata.LocalClassWrapper;
+import org.inventory.core.services.api.queries.LocalQuery;
+import org.inventory.core.services.api.queries.LocalTransientQuery;
+import org.inventory.core.services.api.visual.LocalEdge;
+import org.inventory.core.services.api.visual.LocalLabel;
+import org.inventory.core.services.api.visual.LocalNode;
+import org.inventory.core.services.api.visual.LocalObjectView;
 
 /**
  * This is a factory used to provide implementations for all the interfaces implemented in this module
@@ -44,5 +56,33 @@ public class LocalStuffFactory {
 
     public static LocalClassWrapper createLocalClassWrapper() {
         return new LocalClassWrapperImpl();
+    }
+
+    public static LocalTransientQuery createLocalTransientQuery(LocalQuery localQuery) throws XMLStreamException {
+        return new LocalTransientQueryImpl(localQuery);
+    }
+
+    public static LocalTransientQuery createLocalTransientQuery(String nodeName, int logicalConnector, boolean isJoin, int limit, int page) {
+        return new LocalTransientQueryImpl(nodeName, logicalConnector, isJoin, limit, page);
+    }
+
+    public static LocalEdge createLocalEdge(LocalObject toAdd, LocalNode nodeA, LocalNode nodeB, Point[] controlPoints) {
+        return new LocalEdgeImpl(toAdd, nodeB, nodeB, controlPoints);
+    }
+
+    public static LocalEdge createLocalEdge(LocalObject container, Point[] controlPoints) {
+        return new LocalEdgeImpl(container, controlPoints);
+    }
+
+    public static LocalEdge createLocalEdge(LocalObject obj){
+        return new LocalEdgeImpl(obj);
+    }
+
+    public static LocalNode createLocalNode(LocalObjectLight node, int lastX, int i) {
+        return new LocalNodeImpl(node, lastX, i);
+    }
+
+    public static LocalObjectView createLocalObjectView(LocalNode[] myNodes, LocalEdge[] myEdges, LocalLabel[] myLabels) {
+        return new LocalObjectViewImpl(myNodes, myEdges, myLabels);
     }
 }

@@ -30,12 +30,11 @@ import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.communications.core.LocalObjectLightImpl;
 import org.inventory.communications.core.LocalObjectListItemImpl;
 import org.inventory.communications.core.queries.LocalResultRecordImpl;
-import org.inventory.communications.core.LocalSession;
 import org.inventory.communications.core.LocalUserGroupObjectImpl;
 import org.inventory.communications.core.LocalUserObjectImpl;
-import org.inventory.communications.core.queries.LocalQuery;
-import org.inventory.communications.core.queries.LocalQueryLight;
-import org.inventory.communications.core.queries.LocalTransientQuery;
+import org.inventory.communications.core.queries.LocalQueryImpl;
+import org.inventory.communications.core.queries.LocalQueryLightImpl;
+import org.inventory.communications.core.queries.LocalTransientQueryImpl;
 import org.inventory.communications.core.views.LocalObjectViewImpl;
 import org.inventory.core.services.factories.ObjectFactory;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
@@ -43,8 +42,13 @@ import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.LocalObjectListItem;
+import org.inventory.core.services.api.queries.LocalQuery;
+import org.inventory.core.services.api.queries.LocalQueryLight;
+import org.inventory.core.services.api.queries.LocalResultRecord;
+import org.inventory.core.services.api.queries.LocalTransientQuery;
 import org.inventory.core.services.api.session.LocalUserGroupObject;
 import org.inventory.core.services.api.session.LocalUserObject;
+import org.inventory.core.services.api.visual.LocalObjectView;
 import org.inventory.objectcache.Cache;
 import org.inventory.webservice.ClassInfo;
 import org.inventory.webservice.ClassInfoLight;
@@ -663,9 +667,9 @@ public class CommunicationsStub {
      * @param query Query to be executed in an execution (code)-friendly format
      * @return an array with results
      */
-    public LocalResultRecordImpl[] executeQuery(LocalTransientQuery query){
+    public LocalResultRecord[] executeQuery(LocalTransientQuery query){
         try{
-            TransientQuery remoteQuery = query.toTransientQuery();
+            TransientQuery remoteQuery = LocalTransientQueryImpl.toTransientQuery(query);
             List<ResultRecord> myResult = port.executeQuery(remoteQuery,session.getSessionId());
             LocalResultRecordImpl[] res = new LocalResultRecordImpl[myResult.size()];
             //The first record is used to store the table headers
@@ -689,7 +693,7 @@ public class CommunicationsStub {
      */
     public LocalQueryLight createQuery(String queryName, byte[] queryStructure, String description, boolean isPublic){
         try{
-            return new LocalQueryLight(port.createQuery(queryName,
+            return new LocalQueryLightImpl(port.createQuery(queryName,
                                                             isPublic ? null : session.getUserId(),
                                                             queryStructure,
                                                             description,
@@ -709,7 +713,7 @@ public class CommunicationsStub {
     public boolean saveQuery(LocalQuery query){
         try{
             return port.saveQuery(query.getId(),query.getName(),
-                    query.getIsPublic() ? null : session.getUserId(),
+                    query.isPublic() ? null : session.getUserId(),
                     query.getStructure(),
                     query.getDescription(),
                     session.getSessionId());
@@ -742,10 +746,10 @@ public class CommunicationsStub {
     public LocalQueryLight[] getQueries(boolean showAll){
         try{
             List<RemoteQueryLight> queries = port.getQueries(showAll, session.getSessionId());
-            LocalQueryLight[] res = new LocalQueryLight[queries.size()];
+            LocalQueryLightImpl[] res = new LocalQueryLightImpl[queries.size()];
             int i = 0;
             for (RemoteQueryLight query : queries){
-                res[i] = new LocalQueryLight(query);
+                res[i] = new LocalQueryLightImpl(query);
                 i++;
             }
             return res;
@@ -762,7 +766,7 @@ public class CommunicationsStub {
      */
     public LocalQuery getQuery(Long queryId){
         try{
-            return new LocalQuery(port.getQuery(queryId, session.getSessionId()));
+            return new LocalQueryImpl(port.getQuery(queryId, session.getSessionId()));
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return null;
@@ -1042,7 +1046,7 @@ public class CommunicationsStub {
      * @param string object class name, including the package
      * @return a view or null, if not such default view is being set
      */
-    public LocalObjectViewImpl getObjectDefaultView(Long oid, String objectClass) {
+    public LocalObjectView getObjectDefaultView(Long oid, String objectClass) {
         try{
             ViewInfo myView = port.getDefaultView(oid, objectClass,this.session.getSessionId());
             if (myView == null) //There's no default view yet

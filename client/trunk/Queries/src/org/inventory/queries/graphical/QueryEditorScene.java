@@ -55,11 +55,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JCheckBox;
 import javax.swing.JPopupMenu;
-import org.inventory.communications.core.queries.LocalTransientQuery;
+import org.inventory.communications.LocalStuffFactory;
 import org.inventory.core.services.api.LocalObjectListItem;
 import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
+import org.inventory.core.services.api.queries.LocalTransientQuery;
 import org.inventory.core.services.factories.ObjectFactory;
 import org.inventory.core.visual.decorators.ColorSchemeFactory;
 import org.inventory.queries.actions.SwitchClassNodeWidgetFilterAction;
@@ -314,7 +315,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
 
     public LocalTransientQuery getTransientQuery(LocalClassMetadata mainClass,
             int logicalConnector, int limit, int page, boolean isJoin) {
-        LocalTransientQuery myQuery = new LocalTransientQuery(mainClass.getClassName(),
+        LocalTransientQuery myQuery = LocalStuffFactory.createLocalTransientQuery(mainClass.getClassName(),
                 logicalConnector, isJoin, limit, page);
         Widget[] attributePins = ((ClassNodeWidget)findWidget(mainClass)).getChildren().toArray(new Widget[0]);
         for (Widget myPin : attributePins){
@@ -336,7 +337,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
                             if (((LocalObjectListItem)((ListTypeFilter)nextHop).getValue()).equals(ObjectFactory.createNullItem())){
                                 myQuery.getJoins().add(null);
                             }else{
-                                LocalTransientQuery simplifiedQuery = new LocalTransientQuery(((ListTypeFilter)nextHop).getNodeName(),logicalConnector,false,0,0);
+                                LocalTransientQuery simplifiedQuery = LocalStuffFactory.createLocalTransientQuery(((ListTypeFilter)nextHop).getNodeName(),logicalConnector,false,0,0);
                                 simplifiedQuery.getAttributeNames().add("id"); //NOI18N
                                 simplifiedQuery.getAttributeValues().add(((LocalObjectListItem)((ListTypeFilter)nextHop).getValue()).getOid().toString());
                                 simplifiedQuery.getJoins().add(null); //padding

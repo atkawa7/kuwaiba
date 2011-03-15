@@ -18,9 +18,9 @@ package org.inventory.queries.graphical.elements.filters;
 
 import java.util.Random;
 import javax.swing.JComboBox;
-import org.inventory.communications.core.queries.LocalTransientQuery.Criteria;
 import org.inventory.core.services.api.LocalObjectListItem;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
+import org.inventory.core.services.api.queries.LocalTransientQuery;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
 import org.netbeans.api.visual.widget.ComponentWidget;
@@ -67,8 +67,8 @@ public class ListTypeFilter extends SimpleCriteriaNodeWidget{
     }
 
     @Override
-    public Criteria getCondition() {
-        return Criteria.EQUAL;
+    public LocalTransientQuery.Criteria getCondition() {
+        return LocalTransientQuery.Criteria.EQUAL;
     }
 
     public LocalClassMetadataLight getWrappedClass() {

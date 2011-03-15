@@ -20,7 +20,7 @@ import java.util.Random;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JRadioButton;
-import org.inventory.communications.core.queries.LocalTransientQuery;
+import org.inventory.core.services.api.queries.LocalTransientQuery;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
 import org.netbeans.api.visual.widget.ComponentWidget;

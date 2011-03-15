@@ -17,7 +17,7 @@
 package org.inventory.queries.graphical.elements.filters;
 
 import javax.swing.JComboBox;
-import org.inventory.communications.core.queries.LocalTransientQuery;
+import org.inventory.core.services.api.queries.LocalTransientQuery;
 import org.inventory.core.visual.decorators.ColorSchemeFactory;
 import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;

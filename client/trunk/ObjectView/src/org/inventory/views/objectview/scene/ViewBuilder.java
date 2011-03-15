@@ -18,14 +18,12 @@ package org.inventory.views.objectview.scene;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.inventory.communications.core.views.LocalEdgeImpl;
-import org.inventory.communications.core.views.LocalLabelImpl;
-import org.inventory.communications.core.views.LocalObjectViewImpl;
-import org.inventory.communications.core.views.LocalNodeImpl;
+import org.inventory.communications.LocalStuffFactory;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.api.visual.LocalEdge;
+import org.inventory.core.services.api.visual.LocalLabel;
 import org.inventory.core.services.api.visual.LocalNode;
 import org.inventory.core.services.api.visual.LocalObjectView;
 import org.netbeans.api.visual.anchor.AnchorFactory;
@@ -51,7 +49,7 @@ public class ViewBuilder {
      * @param localView
      * @throws NullPointerException if the LocalObjectViewImpl or the ViewScene provided are null
      */
-    public ViewBuilder(LocalObjectViewImpl localView, ViewScene _scene) throws NullPointerException{
+    public ViewBuilder(LocalObjectView localView, ViewScene _scene) throws NullPointerException{
         if (_scene != null){
             this.myView = localView;
             this.scene = _scene;
@@ -114,21 +112,21 @@ public class ViewBuilder {
     public void buildDefaultView(List<LocalObjectLight> myNodes,
             List<LocalObject> myPhysicalConnections) {
         int lastX = 0;
-        List<LocalNodeImpl> myLocalNodes = new ArrayList<LocalNodeImpl>();
-        List<LocalEdgeImpl> myLocalEdges = new ArrayList<LocalEdgeImpl>();
+        List<LocalNode> myLocalNodes = new ArrayList<LocalNode>();
+        List<LocalEdge> myLocalEdges = new ArrayList<LocalEdge>();
 
         for (LocalObjectLight node : myNodes){ //Add the nodes
             //Puts an element after another
-            LocalNodeImpl ln = new LocalNodeImpl(node, lastX, 0);
+            LocalNode ln = LocalStuffFactory.createLocalNode(node, lastX, 0);
             myLocalNodes.add(ln);
             lastX +=100;
         }
 
         //TODO: This algorithm to find the endpoints for a connection could be improved in many ways
         for (LocalObject container : myPhysicalConnections){
-            LocalEdgeImpl le = new LocalEdgeImpl(container,null);
+            LocalEdge le = LocalStuffFactory.createLocalEdge(container,null);
 
-            for (LocalNodeImpl myNode : myLocalNodes){
+            for (LocalNode myNode : myLocalNodes){
                 
                 if (((Long)container.getAttribute("nodeA")).equals(myNode.getObject().getOid())) //NOI18N
                     le.setaSide(myNode);
@@ -141,7 +139,7 @@ public class ViewBuilder {
             }
             myLocalEdges.add(le);
         }
-        myView = new LocalObjectViewImpl(myLocalNodes.toArray(new LocalNodeImpl[0]), myLocalEdges.toArray(new LocalEdgeImpl[0]),new LocalLabelImpl[0]);
+        myView = LocalStuffFactory.createLocalObjectView(myLocalNodes.toArray(new LocalNode[0]), myLocalEdges.toArray(new LocalEdge[0]),new LocalLabel[0]);
         buildView();
     }
 
@@ -161,18 +159,18 @@ public class ViewBuilder {
         
         if (nodesToDelete != null){
             for (LocalObjectLight toDelete : nodesToDelete)
-                myView.getNodes().remove(new LocalNodeImpl(toDelete, 0, 0));
+                myView.getNodes().remove(LocalStuffFactory.createLocalNode(toDelete, 0, 0));
         }
 
         if (physicalConnectionsToDelete != null){
             for (LocalObject toDelete : physicalConnectionsToDelete)
-                myView.getEdges().remove(new LocalEdgeImpl(toDelete));
+                myView.getEdges().remove(LocalStuffFactory.createLocalEdge(toDelete));
         }
 
         int i = 0;
         if (newNodes != null){
             for (LocalObjectLight toAdd : newNodes){
-                myView.getNodes().add(new LocalNodeImpl(toAdd, i, 0));
+                myView.getNodes().add(LocalStuffFactory.createLocalNode(toAdd, i, 0));
                 i+=100;
             }
         }
@@ -185,7 +183,7 @@ public class ViewBuilder {
                 LocalNode nodeB = getNodeMatching(myView.getNodes(), (Long)toAdd.getAttribute("nodeB"));
                 if (nodeB == null)
                     continue;
-                myView.getEdges().add(new LocalEdgeImpl(toAdd, nodeA, nodeB, null));
+                myView.getEdges().add(LocalStuffFactory.createLocalEdge(toAdd, nodeA, nodeB, null));
             }
 
         buildView();

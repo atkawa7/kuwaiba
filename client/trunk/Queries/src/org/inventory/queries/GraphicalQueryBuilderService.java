@@ -23,14 +23,15 @@ import java.util.Random;
 import javax.swing.JCheckBox;
 import javax.xml.stream.XMLStreamException;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.queries.LocalQuery;
-import org.inventory.communications.core.queries.LocalQueryLight;
-import org.inventory.communications.core.queries.LocalTransientQuery;
+import org.inventory.communications.LocalStuffFactory;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.api.queries.LocalQuery;
+import org.inventory.core.services.api.queries.LocalQueryLight;
 import org.inventory.core.services.api.queries.LocalResultRecord;
+import org.inventory.core.services.api.queries.LocalTransientQuery;
 import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.inventory.queries.graphical.elements.ClassNodeWidget;
@@ -82,7 +83,7 @@ public class GraphicalQueryBuilderService implements ActionListener{
 
     public LocalResultRecord[] executeQuery(int page) {
         currentTransientQuery = qbtc.getQueryScene().getTransientQuery(qbtc.getQueryScene().getCurrentSearchedClass(),
-                        qbtc.getChkAnd().isSelected()?LocalTransientQuery.CONNECTOR_AND:LocalTransientQuery.CONNECTOR_OR,
+                        qbtc.getChkAnd().isSelected() ? LocalTransientQuery.CONNECTOR_AND : LocalTransientQuery.CONNECTOR_OR,
                         Integer.valueOf(qbtc.getTxtResultLimit().getText()), page, false);
         LocalResultRecord[] res = com.executeQuery(currentTransientQuery);
         if (res == null)
@@ -101,7 +102,7 @@ public class GraphicalQueryBuilderService implements ActionListener{
 
     public void saveQuery(){
         currentTransientQuery = qbtc.getQueryScene().getTransientQuery(qbtc.getQueryScene().getCurrentSearchedClass(),
-                            qbtc.getChkAnd().isSelected()?LocalTransientQuery.CONNECTOR_AND:LocalTransientQuery.CONNECTOR_OR,
+                            qbtc.getChkAnd().isSelected() ? LocalTransientQuery.CONNECTOR_AND : LocalTransientQuery.CONNECTOR_OR,
                             Integer.valueOf(qbtc.getTxtResultLimit().getText()), 0, false);
 
         if (localQuery == null){ //It's a new query
@@ -125,7 +126,7 @@ public class GraphicalQueryBuilderService implements ActionListener{
             localQuery.setName((String)queryProperties[0]);
             localQuery.setStructure(currentTransientQuery.toXML());
             localQuery.setDescription((String)queryProperties[1]);
-            localQuery.setIsPublic((Boolean)queryProperties[2]);
+            localQuery.setPublic((Boolean)queryProperties[2]);
 
             if (com.saveQuery(localQuery))
                 qbtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO, "Query saved successfully");
@@ -146,19 +147,19 @@ public class GraphicalQueryBuilderService implements ActionListener{
             qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
     }
 
-    LocalTransientQuery getCurrentTransientQuery() {
+    public LocalTransientQuery getCurrentTransientQuery() {
         return currentTransientQuery;
     }
 
-    LocalQuery getCurrentLocalQuery(){
+    public LocalQuery getCurrentLocalQuery(){
         return localQuery;
     }
 
-    Object[] getQueryProperties(){
+    public Object[] getQueryProperties(){
         return queryProperties;
     }
 
-    void setQueryProperties(Object[] newProperties){
+    public void setQueryProperties(Object[] newProperties){
         queryProperties = newProperties;
     }
 
@@ -213,7 +214,7 @@ public class GraphicalQueryBuilderService implements ActionListener{
             return;
         }
         try {
-            LocalTransientQuery transientQuery = new LocalTransientQuery(localQuery);
+            LocalTransientQuery transientQuery = LocalStuffFactory.createLocalTransientQuery(localQuery);
             qbtc.getQueryScene().clear();
             ClassNodeWidget rootNode = renderClassNode(transientQuery);
             qbtc.getQueryScene().setCurrentSearchedClass(rootNode.getWrappedClass());
@@ -225,7 +226,7 @@ public class GraphicalQueryBuilderService implements ActionListener{
         }
         queryProperties[0] = localQuery.getName();
         queryProperties[1] = localQuery.getDescription();
-        queryProperties[2] = localQuery.getIsPublic();
+        queryProperties[2] = localQuery.isPublic();
         
     }
 

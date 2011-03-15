@@ -26,7 +26,10 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.inventory.core.services.api.queries.LocalQuery;
+import org.inventory.core.services.api.queries.LocalTransientQuery;
 import org.inventory.webservice.TransientQuery;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This class represents a local query in a machine friendly format (this is made of variables, not XML elements)
@@ -36,32 +39,17 @@ import org.inventory.webservice.TransientQuery;
  * with the join information.<br /> <br />
  *
  * <b>Note:</b> This query is used ONLY for execution purposes (when an user creates a query and doesn't want) 
- * to save it, only execute it. For queries to be persisted see LocalQuery
+ * to save it, only execute it. For queries to be persisted see LocalQueryImpl
  *
  * Most of the structure of this class was borrowed from the remote (server side) implementation
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class LocalTransientQuery {
-    /**
-     * Logical connector OR
-     */
-    public static final int CONNECTOR_OR = 0;
-    /**
-     * Logical connector AND
-     */
-    public static final int CONNECTOR_AND = 1;
-    /**
-     * Version for the XML document created
-     */
-    private static final String FORMAT_VERSION = "1.0";
-    /**
+@ServiceProvider(service=LocalTransientQuery.class)
+public class LocalTransientQueryImpl implements LocalTransientQuery{
+        /**
      * Instances of this class will be searched
      */
     private String className;
-    /**
-     * Logical connector. "And" by default
-     */
-    private int logicalConnector = CONNECTOR_AND;
     /**
      * Attributes that will be used to build the criteria
      */
@@ -79,11 +67,15 @@ public class LocalTransientQuery {
      */
     private ArrayList<Integer> conditions;
     /**
+     * Logical connector. "And" by default
+     */
+    private int logicalConnector = CONNECTOR_AND;
+    /**
      * As stated before, joins will be treated like simple subqueries
      */
     private ArrayList<LocalTransientQuery> joins;
     /**
-     * Indicates if the current LocalTransientQuery object is a join or the master query. It will
+     * Indicates if the current LocalTransientQueryImpl object is a join or the master query. It will
      * be used later to determine if 
      */
     private boolean isJoin = false;
@@ -101,7 +93,7 @@ public class LocalTransientQuery {
      */
     private String version = FORMAT_VERSION;
 
-    private LocalTransientQuery() {
+    public LocalTransientQueryImpl() {
         this.attributeNames = new ArrayList<String>();
         this.attributeValues = new ArrayList<String>();
         this.conditions = new ArrayList<Integer>();
@@ -109,7 +101,7 @@ public class LocalTransientQuery {
         visibleAttributeNames = new ArrayList<String>();
     }
 
-    public LocalTransientQuery(String className, int logicalConnector,
+    public LocalTransientQueryImpl(String className, int logicalConnector,
             boolean isJoin, int limit, int page) {
         this();
         this.className = className;
@@ -119,7 +111,7 @@ public class LocalTransientQuery {
         this.page = page;
     }
 
-    public LocalTransientQuery(LocalQuery localQuery) throws XMLStreamException{
+    public LocalTransientQueryImpl(LocalQuery localQuery) throws XMLStreamException{
         parseXML(localQuery.getStructure());
     }
 
@@ -139,7 +131,7 @@ public class LocalTransientQuery {
         return conditions;
     }
 
-    public boolean isIsJoin() {
+    public boolean isJoin() {
         return isJoin;
     }
 
@@ -163,25 +155,25 @@ public class LocalTransientQuery {
         return visibleAttributeNames;
     }
 
-    public TransientQuery toTransientQuery(){
+    public static TransientQuery toTransientQuery(LocalTransientQuery localTransientQuery){
         TransientQuery transientQuery = new TransientQuery();
-        transientQuery.setAttributeNames(getAttributeNames());
-        transientQuery.setAttributeValues(getAttributeValues());
-        transientQuery.setClassName(getClassName());
-        transientQuery.setConditions(getConditions());
+        transientQuery.setAttributeNames(localTransientQuery.getAttributeNames());
+        transientQuery.setAttributeValues(localTransientQuery.getAttributeValues());
+        transientQuery.setClassName(localTransientQuery.getClassName());
+        transientQuery.setConditions(localTransientQuery.getConditions());
         transientQuery.setJoin(false);
-        transientQuery.setLimit(getLimit());
-        transientQuery.setPage(page);
-        transientQuery.setLogicalConnector(getLogicalConnector());
-        transientQuery.setVisibleAttributeNames(getVisibleAttributeNames());
+        transientQuery.setLimit(localTransientQuery.getLimit());
+        transientQuery.setPage(localTransientQuery.getPage());
+        transientQuery.setLogicalConnector(localTransientQuery.getLogicalConnector());
+        transientQuery.setVisibleAttributeNames(localTransientQuery.getVisibleAttributeNames());
 
         ArrayList<TransientQuery> remoteJoins =  new ArrayList<TransientQuery>();
-        if (getJoins() != null){
-            for (LocalTransientQuery myJoin : getJoins()){
+        if (localTransientQuery.getJoins() != null){
+            for (LocalTransientQuery myJoin : localTransientQuery.getJoins()){
                 if (myJoin == null)
                     remoteJoins.add(null);
                 else
-                    remoteJoins.add(myJoin.toTransientQuery());
+                    remoteJoins.add(toTransientQuery(myJoin));
             }
             transientQuery.setJoins(remoteJoins);
         }
@@ -281,7 +273,7 @@ public class LocalTransientQuery {
     }
 
     private LocalTransientQuery processClassTag(XMLStreamReader reader) throws XMLStreamException {
-        LocalTransientQuery newJoin = new LocalTransientQuery(reader.getAttributeValue(null,"name"),  //NOI18N
+        LocalTransientQueryImpl newJoin = new LocalTransientQueryImpl(reader.getAttributeValue(null,"name"),  //NOI18N
                                                                 logicalConnector,true, limit, 0);
         
         newJoin.visibleAttributeNames = new ArrayList<String>();
@@ -340,48 +332,5 @@ public class LocalTransientQuery {
             }
         }
         return newJoin;
-    }
-
-    public enum Criteria{
-        EQUAL("Equal to",0),
-        LESS_THAN("Less than",1),
-        EQUAL_OR_LESS_THAN("Equals or less than",2),
-        GREATER_THAN("Greater than",3),
-        EQUAL_OR_GREATER_THAN("Equal or greater than",4),
-        BETWEEN("Between",5),
-        LIKE("Like",6);
-        private final String label;
-        private final int id;
-
-        Criteria(String label, int id){
-            this.label = label;
-            this.id = id;
-        }
-
-        public String label(){return label;}
-        public int id(){return id;}
-
-        public static Criteria fromId(int i){
-            switch (i){
-                default:
-                case 0:
-                    return EQUAL;
-                case 1:
-                    return LESS_THAN;
-                case 2:
-                    return EQUAL_OR_LESS_THAN;
-                case 3:
-                    return GREATER_THAN;
-                case 4:
-                    return EQUAL_OR_GREATER_THAN;
-                case 5:
-                    return BETWEEN;
-                case 6:
-                    return LIKE;                    
-            }
-        }
-
-        @Override
-        public String toString(){return label;}
     }
 }

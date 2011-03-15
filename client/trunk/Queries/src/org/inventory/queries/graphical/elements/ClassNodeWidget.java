@@ -19,9 +19,9 @@ package org.inventory.queries.graphical.elements;
 import java.util.List;
 import java.util.Random;
 import javax.swing.JCheckBox;
-import org.inventory.communications.core.queries.LocalTransientQuery.Criteria;
 import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
+import org.inventory.core.services.api.queries.LocalTransientQuery;
 import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.inventory.queries.graphical.elements.filters.SimpleCriteriaNodeWidget;
@@ -77,7 +77,7 @@ public class ClassNodeWidget extends QueryEditorNodeWidget{
                         if (!((AttributePinWidget)child).getAttribute().isMultiple()){
                             String filterNodeKey = (String) insideCheck.getClientProperty("related-node");
                             SimpleCriteriaNodeWidget filterNode = (SimpleCriteriaNodeWidget) ((QueryEditorScene)getScene()).findWidget(filterNodeKey); //NOI18N
-                            filterNode.setCondition(Criteria.fromId(conditions.get(i)));
+                            filterNode.setCondition(LocalTransientQuery.Criteria.fromId(conditions.get(i)));
                         }
                         break;
                     }

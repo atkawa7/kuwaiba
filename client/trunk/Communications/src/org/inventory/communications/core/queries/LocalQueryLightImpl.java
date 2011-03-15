@@ -16,26 +16,31 @@
 
 package org.inventory.communications.core.queries;
 
+import org.inventory.core.services.api.queries.LocalQueryLight;
 import org.inventory.webservice.RemoteQueryLight;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
- * This is the simple version of LocalQuery {@link #LocalQuery}
+ * This is the simple version of LocalQuery {@link #LocalQueryImpl}
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class LocalQueryLight {
+@ServiceProvider(service=LocalQueryLight.class)
+public class LocalQueryLightImpl implements LocalQueryLight{
     private Long id;
     private String name;
     private boolean isPublic;
     private String description;
 
-    public LocalQueryLight(RemoteQueryLight remoteQuery) {
+    public LocalQueryLightImpl() {    }
+
+    public LocalQueryLightImpl(RemoteQueryLight remoteQuery) {
         this.id = remoteQuery.getOid();
         this.name = remoteQuery.getName();
         this.description = remoteQuery.getDescription();
         this.isPublic = remoteQuery.isIsPublic();
     }
 
-    public LocalQueryLight(Long id, String name, String description, boolean isPublic){
+    public LocalQueryLightImpl(Long id, String name, String description, boolean isPublic){
         this.id = id;
         this.name = name;
         this.description = description;
@@ -58,11 +63,11 @@ public class LocalQueryLight {
         this.name = name;
     }
 
-    public boolean getIsPublic() {
+    public boolean isPublic() {
         return isPublic;
     }
 
-    public void setIsPublic(boolean isPublic) {
+    public void setPublic(boolean isPublic) {
         this.isPublic = isPublic;
     }
 

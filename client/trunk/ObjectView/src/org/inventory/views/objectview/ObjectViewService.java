@@ -24,10 +24,10 @@ import java.util.List;
 import javax.swing.JFileChooser;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.SharedInformation;
-import org.inventory.communications.core.views.LocalObjectViewImpl;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.api.visual.LocalObjectView;
 import org.inventory.core.services.utils.Utils;
 import org.inventory.views.objectview.scene.ObjectConnectionWidget;
 import org.inventory.views.objectview.scene.ObjectNodeWidget;
@@ -126,7 +126,7 @@ public class ObjectViewService implements LookupListener{
 
        vrtc.getScene().setCurrentObject(myObject);
 
-       LocalObjectViewImpl defaultView = com.getObjectDefaultView(myObject.getOid(),myObject.getClassName());
+       LocalObjectView defaultView = com.getObjectDefaultView(myObject.getOid(),myObject.getClassName());
        if(defaultView == null){
            List<LocalObjectLight> myChildren = com.getObjectChildren(myObject.getOid(), com.getMetaForClass(myObject.getClassName(),false).getOid());
            List<LocalObject> myConnections = com.getChildrenOfClass(myObject.getOid(), SharedInformation.CLASS_GENERICCONNECTION);

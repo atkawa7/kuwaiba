@@ -25,7 +25,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.inventory.communications.core.queries.LocalQueryLight;
+import org.inventory.core.services.api.queries.LocalQueryLight;
 
 /**
  *
@@ -33,7 +33,7 @@ import org.inventory.communications.core.queries.LocalQueryLight;
  */
 public class QueryListPanel extends javax.swing.JPanel implements ListSelectionListener{
 
-    LocalQueryLight[] elements;
+    private LocalQueryLight[] elements;
 
     /** Creates new form QueryListPanel */
     public QueryListPanel(LocalQueryLight[] queries) {
@@ -47,7 +47,7 @@ public class QueryListPanel extends javax.swing.JPanel implements ListSelectionL
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel item = new JLabel(((LocalQueryLight)value).getName());
                 item.setBackground(SystemColor.controlHighlight);
-                if (((LocalQueryLight)value).getIsPublic()){
+                if (((LocalQueryLight)value).isPublic()){
                     item.setForeground(Color.blue);
                 }
 

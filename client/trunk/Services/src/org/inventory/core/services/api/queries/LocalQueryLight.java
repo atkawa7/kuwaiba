@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -14,14 +14,26 @@
  * 
  */
 
-package org.inventory.communications.core.connections;
-
-import org.inventory.communications.core.LocalObjectImpl;
+package org.inventory.core.services.api.queries;
 
 /**
- * This is the deserialized version of PhysicalConnection
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * This is the simple version of LocalQuery {@link #LocalQuery}
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class LocalPhysicalConnection extends LocalObjectImpl{
-     
+public interface LocalQueryLight {
+    public String getDescription();
+
+    public void setDescription(String description);
+
+    public String getName();
+
+    public void setName(String name);
+
+    public boolean isPublic();
+
+    public void setPublic(boolean isPublic);
+
+    public Long getId();
+
+    public void setId(Long id);
 }
