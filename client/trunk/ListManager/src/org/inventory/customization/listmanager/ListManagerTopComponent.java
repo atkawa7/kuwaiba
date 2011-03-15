@@ -17,7 +17,7 @@ package org.inventory.customization.listmanager;
 
 import java.util.logging.Logger;
 import javax.swing.ActionMap;
-import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeChildren;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;

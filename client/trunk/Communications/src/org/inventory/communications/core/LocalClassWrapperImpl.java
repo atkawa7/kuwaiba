@@ -18,8 +18,8 @@ package org.inventory.communications.core;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.inventory.core.services.interfaces.LocalAttributeWrapper;
-import org.inventory.core.services.interfaces.LocalClassWrapper;
+import org.inventory.core.services.api.metadata.LocalAttributeWrapper;
+import org.inventory.core.services.api.metadata.LocalClassWrapper;
 import org.openide.util.lookup.ServiceProvider;
 
 /**

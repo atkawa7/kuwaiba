@@ -20,10 +20,10 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.views.LocalEdge;
+import org.inventory.communications.SharedInformation;
 import org.inventory.connections.physicalconnections.wizards.ConnectionWizard;
-import org.inventory.core.services.interfaces.LocalObjectLight;
-import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.views.objectview.ObjectViewTopComponent;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -121,23 +121,23 @@ public class PhysicalConnectionProvider implements ConnectProvider{
         int wizardType;
         switch (currentConnectionSelection){
             case ObjectViewTopComponent.CONNECTION_WIRECONTAINER:
-                connectionClass = LocalEdge.CLASS_WIRECONTAINER;
+                connectionClass = SharedInformation.CLASS_WIRECONTAINER;
                 wizardType = ConnectionWizard.WIZARDTYPE_CONTAINERS;
                 break;
             case ObjectViewTopComponent.CONNECTION_WIRELESSCONTAINER:
-                connectionClass = LocalEdge.CLASS_WIRELESSCONTAINER;
+                connectionClass = SharedInformation.CLASS_WIRELESSCONTAINER;
                 wizardType = ConnectionWizard.WIZARDTYPE_CONTAINERS;
                 break;
             case ObjectViewTopComponent.CONNECTION_ELECTRICALLINK:
-                connectionClass = LocalEdge.CLASS_ELECTRICALLINK;
+                connectionClass = SharedInformation.CLASS_ELECTRICALLINK;
                 wizardType = ConnectionWizard.WIZARDTYPE_CONNECTIONS;
                 break;
             case ObjectViewTopComponent.CONNECTION_OPTICALLINK:
-                connectionClass = LocalEdge.CLASS_OPTICALLINK;
+                connectionClass = SharedInformation.CLASS_OPTICALLINK;
                 wizardType = ConnectionWizard.WIZARDTYPE_CONNECTIONS;
                 break;
             case ObjectViewTopComponent.CONNECTION_WIRELESSLINK:
-                connectionClass = LocalEdge.CLASS_WIRELESSLINK;
+                connectionClass = SharedInformation.CLASS_WIRELESSLINK;
                 wizardType = ConnectionWizard.WIZARDTYPE_CONNECTIONS;
                 break;
             default:

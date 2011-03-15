@@ -24,7 +24,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
-import org.inventory.core.services.interfaces.LocalUserGroupObjectLight;
+import org.inventory.core.services.api.session.LocalUserGroupObjectLight;
 import org.openide.explorer.propertysheet.PropertyEnv;
 
 /**

@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.webservice.RemoteObjectLight;
 import org.inventory.webservice.Validator;
 

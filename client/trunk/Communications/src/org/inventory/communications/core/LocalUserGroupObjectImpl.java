@@ -17,7 +17,7 @@
 package org.inventory.communications.core;
 
 import java.util.Date;
-import org.inventory.core.services.interfaces.LocalUserGroupObject;
+import org.inventory.core.services.api.session.LocalUserGroupObject;
 import org.inventory.webservice.UserGroupInfo;
 
 /**

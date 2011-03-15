@@ -20,7 +20,7 @@ import java.awt.event.ActionListener;
 //import java.io.FileOutputStream;
 //import java.io.IOException;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.customization.classmanager.ClassHierarchyTopComponent;
 import org.openide.util.Lookup;
 

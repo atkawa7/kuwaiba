@@ -16,7 +16,7 @@
 
 package org.inventory.communications.core;
 
-import org.inventory.core.services.interfaces.LocalUserGroupObjectLight;
+import org.inventory.core.services.api.session.LocalUserGroupObjectLight;
 import org.inventory.webservice.UserGroupInfoLight;
 
 /**

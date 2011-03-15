@@ -18,7 +18,7 @@ package org.inventory.core.services.actions;
 
 import javax.swing.Action;
 import org.inventory.core.services.exceptions.ObjectActionException;
-import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.api.LocalObjectLight;
 
 /**
  * A generic object action

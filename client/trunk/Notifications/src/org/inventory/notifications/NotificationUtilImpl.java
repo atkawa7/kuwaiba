@@ -6,7 +6,7 @@ import java.util.TimerTask;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.awt.Notification;
 import org.openide.awt.NotificationDisplayer;
 import org.openide.awt.StatusDisplayer;

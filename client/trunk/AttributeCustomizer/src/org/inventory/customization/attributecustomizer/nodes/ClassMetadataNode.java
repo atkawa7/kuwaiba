@@ -16,7 +16,7 @@
 package org.inventory.customization.attributecustomizer.nodes;
 
 import javax.swing.Action;
-import org.inventory.core.services.interfaces.LocalClassMetadataLight;
+import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.customization.attributecustomizer.actions.NewAttributeAction;
 import org.openide.nodes.AbstractNode;
 

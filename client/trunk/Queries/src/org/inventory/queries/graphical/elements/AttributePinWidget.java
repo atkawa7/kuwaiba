@@ -22,7 +22,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
-import org.inventory.core.services.interfaces.LocalAttributeMetadata;
+import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDColorScheme;
 import org.netbeans.api.visual.vmd.VMDPinWidget;

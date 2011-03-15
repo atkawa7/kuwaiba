@@ -17,7 +17,7 @@
 package org.inventory.navigation.applicationnodes.listmanagernodes;
 
 import javax.swing.Action;
-import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 
 /**

@@ -20,7 +20,7 @@ package org.inventory.queries;
 import java.awt.BorderLayout;
 import javax.swing.ActionMap;
 import javax.swing.text.DefaultEditorKit;
-import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
 import org.openide.explorer.ExplorerManager;

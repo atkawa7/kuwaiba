@@ -22,7 +22,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 import org.inventory.core.services.actions.ObjectAction;
-import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.windows.ObjectEditorTopComponent;
 import org.openide.nodes.Node;

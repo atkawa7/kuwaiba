@@ -17,7 +17,7 @@ package org.inventory.connections.physicalconnections.wizards;
 
 import javax.swing.JPanel;
 import org.inventory.connections.physicalconnections.wizards.custompanels.ExplorablePanel;
-import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.explorer.view.BeanTreeView;
 

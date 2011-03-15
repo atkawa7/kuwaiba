@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import org.inventory.core.services.interfaces.LocalClassMetadataLight;
+import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.openide.nodes.Children.Array;
 import org.openide.nodes.Node;
 

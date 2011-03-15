@@ -17,49 +17,46 @@
 package org.inventory.communications.core.views;
 
 import java.awt.Point;
-import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.api.visual.LocalLabel;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Represents a node in a view independent from the presentation. This class represents
- * an object to be render, but it's independent from the visual library so it can be rendered using anything
+ * Represents a label independent from the presentation layer. This class represents
+ * a text label but it's independent from the visual library so it can be rendered using anything
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class LocalNode {
+@ServiceProvider(service=LocalLabel.class)
+public class LocalLabelImpl implements LocalLabel{
     /**
-     * Wrapped business object
+     * The label text
      */
-    private LocalObjectLight object;
+    private String text;
     /**
-     * Node's position
+     * The label orientation
+     */
+    private int orientation;
+    /**
+     * X,Y absolute coordinates
      */
     private Point position;
 
-    public LocalNode(LocalObjectLight _object, int x, int y){
-        this.object = _object;
+    public LocalLabelImpl() {    }
+
+    public LocalLabelImpl(String _text, int _orientation, int x, int y){
+        this.text = _text;
+        this.orientation = _orientation;
         this.position = new Point(x, y);
     }
 
-    public LocalObjectLight getObject() {
-        return object;
+    public int getOrientation() {
+        return orientation;
     }
 
     public Point getPosition() {
         return position;
     }
 
-    @Override
-    public boolean equals(Object obj){
-        if (obj == null)
-            return false;
-        if (!(obj instanceof LocalNode))
-            return false;
-        return ((LocalNode)obj).getObject().getOid().equals(this.object.getOid());
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 37 * hash + (this.object != null ? this.object.hashCode() : 0);
-        return hash;
+    public String getText() {
+        return text;
     }
 }

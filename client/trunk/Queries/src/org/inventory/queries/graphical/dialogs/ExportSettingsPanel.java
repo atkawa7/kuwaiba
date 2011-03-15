@@ -25,7 +25,7 @@ import java.util.Calendar;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import org.inventory.communications.core.LocalResultRecord;
+import org.inventory.core.services.api.queries.LocalResultRecord;
 import org.inventory.queries.GraphicalQueryBuilderService;
 import org.inventory.queries.graphical.ComplexQueryResultTopComponent;
 import org.inventory.queries.graphical.exportfilters.CSVFilter;
@@ -246,8 +246,23 @@ public class ExportSettingsPanel extends javax.swing.JPanel implements ActionLis
                 ((CSVFilter)selectedFilter).setSeparator((settings == null) ?
                     null : (Character)settings[0]);
 
-            if (cmbRange.getSelectedItem().equals(Range.ALL))
-                allResults = LocalResultRecord.toMatrix(qbs.executeQuery(0));
+            if (cmbRange.getSelectedItem().equals(Range.ALL)){
+                LocalResultRecord[] results = qbs.executeQuery(0);
+                if (results == null)
+                    allResults = null;
+                else{
+                    if (results.length == 0)
+                        allResults = new Object[0][0];
+                    else{
+                        allResults =new Object[results.length][results[0].getExtraColumns().size() + 1];
+                        for (int i = 0; i < results.length; i++){
+                            allResults[i][0] = results[i].getObject();
+                            for (int j = 0; j < results[i].getExtraColumns().size();j++)
+                                allResults[i][j + 1] = results[i].getExtraColumns().get(j);
+                        }
+                    }
+                }
+            }
             else
                 allResults = qrtc.getCurrentResults();
 

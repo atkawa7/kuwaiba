@@ -33,10 +33,16 @@
             </module-dependencies>
             <public-packages>
                 <package>org.inventory.core.services.actions</package>
+                <package>org.inventory.core.services.api</package>
+                <package>org.inventory.core.services.api.behaviors</package>
+                <package>org.inventory.core.services.api.metadata</package>
+                <package>org.inventory.core.services.api.notifications</package>
+                <package>org.inventory.core.services.api.queries</package>
+                <package>org.inventory.core.services.api.session</package>
+                <package>org.inventory.core.services.api.visual</package>
+                <package>org.inventory.core.services.api.xml</package>
                 <package>org.inventory.core.services.exceptions</package>
                 <package>org.inventory.core.services.factories</package>
-                <package>org.inventory.core.services.interfaces</package>
-                <package>org.inventory.core.services.interfaces.xml</package>
                 <package>org.inventory.core.services.utils</package>
             </public-packages>
         </data>

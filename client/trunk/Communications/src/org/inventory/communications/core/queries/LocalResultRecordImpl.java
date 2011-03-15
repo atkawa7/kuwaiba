@@ -14,21 +14,26 @@
  * 
  */
 
-package org.inventory.communications.core;
+package org.inventory.communications.core.queries;
 
 import java.util.List;
-import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.api.queries.LocalResultRecord;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * A simple wrapper class representing locally the a query result record. This is basically a
  * LocalObjectLight and a variable number of extra columns
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class LocalResultRecord {
+@ServiceProvider(service=LocalResultRecord.class)
+public class LocalResultRecordImpl implements LocalResultRecord{
     private LocalObjectLight object;
     private List<String> extraColumns;
 
-    public LocalResultRecord(LocalObjectLight object, List<String> extraColumns) {
+    public LocalResultRecordImpl(){}
+
+    public LocalResultRecordImpl(LocalObjectLight object, List<String> extraColumns) {
         this.object = object;
         this.extraColumns = extraColumns;
     }
@@ -39,21 +44,5 @@ public class LocalResultRecord {
 
     public LocalObjectLight getObject() {
         return object;
-    }
-
-    public static Object[][] toMatrix(LocalResultRecord[] results){
-        if (results == null)
-            return null;
-        if (results.length == 0)
-            return new Object[0][0];
-
-        Object[][] asMatrix =new Object[results.length][results[0].getExtraColumns().size() + 1];
-        for (int i = 0; i < results.length; i++){
-            asMatrix[i][0] = results[i].getObject();
-            for (int j = 0; j < results[i].getExtraColumns().size();j++)
-                asMatrix[i][j + 1] = results[i].getExtraColumns().get(j);
-        }
-        
-        return asMatrix;
     }
 }

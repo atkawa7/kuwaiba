@@ -15,8 +15,8 @@
  */
 package org.inventory.communications.core;
 
-import org.inventory.core.services.interfaces.LocalObjectLight;
-import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.api.LocalObjectListItem;
 
 /**
  * This is a local representation of an element within a list (enumerations and so on)

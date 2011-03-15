@@ -18,7 +18,7 @@ package org.inventory.navigation.applicationnodes.objectnodes.properties;
 import java.awt.Component;
 import java.beans.PropertyEditorSupport;
 import javax.swing.JLabel;
-import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.core.services.api.LocalObjectListItem;
 
 
 /**

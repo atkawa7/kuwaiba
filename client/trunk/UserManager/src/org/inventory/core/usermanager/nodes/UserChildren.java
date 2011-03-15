@@ -19,7 +19,7 @@ package org.inventory.core.usermanager.nodes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.inventory.core.services.interfaces.LocalUserObject;
+import org.inventory.core.services.api.session.LocalUserObject;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 

@@ -17,7 +17,7 @@
 package org.inventory.customization.attributecustomizer.nodes;
 
 import org.inventory.customization.attributecustomizer.nodes.properties.AttributeCustomizerNodeProperty;
-import org.inventory.core.services.interfaces.LocalAttributeMetadata;
+import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Sheet;

@@ -23,9 +23,9 @@ import java.text.MessageFormat;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.views.LocalEdge;
-import org.inventory.core.services.interfaces.LocalObject;
-import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.communications.SharedInformation;
+import org.inventory.core.services.api.LocalObject;
+import org.inventory.core.services.api.LocalObjectListItem;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
 import org.openide.util.Lookup;
@@ -47,7 +47,7 @@ public final class ConnectionWizardWizardAction implements ActionListener {
         WizardDescriptor wizardDescriptor = new WizardDescriptor(getPanels());
         wizardDescriptor.setTitleFormat(new MessageFormat("{0}"));
         wizardDescriptor.setTitle("Physical Connections Wizard");
-        wizardDescriptor.putProperty("connectionTypeClass",LocalEdge.getConnectionType(myWizard.getConnectionClass())); //NOI18N
+        wizardDescriptor.putProperty("connectionTypeClass",SharedInformation.getConnectionType(myWizard.getConnectionClass())); //NOI18N
         wizardDescriptor.putProperty("wizardType",myWizard.getWizardType()); //NOI18N
         Dialog dialog = DialogDisplayer.getDefault().createDialog(wizardDescriptor);
 

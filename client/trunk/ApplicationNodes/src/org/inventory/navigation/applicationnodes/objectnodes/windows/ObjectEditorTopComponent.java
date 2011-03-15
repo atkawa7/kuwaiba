@@ -1,7 +1,7 @@
 package org.inventory.navigation.applicationnodes.objectnodes.windows;
 
 import java.awt.BorderLayout;
-import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.explorer.propertysheet.PropertySheetView;
 import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;

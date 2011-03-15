@@ -2,9 +2,9 @@ package org.inventory.customization.attributecustomizer.nodes.properties;
 
 import java.lang.reflect.InvocationTargetException;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.interfaces.LocalClassMetadata;
-import org.inventory.core.services.interfaces.LocalClassMetadataLight;
-import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.services.api.metadata.LocalClassMetadata;
+import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.customization.attributecustomizer.nodes.AttributeMetadataNode;
 import org.inventory.customization.attributecustomizer.nodes.ClassMetadataNode;
 import org.openide.nodes.PropertySupport;

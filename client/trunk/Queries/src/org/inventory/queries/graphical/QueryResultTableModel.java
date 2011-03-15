@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
-import org.inventory.communications.core.LocalResultRecord;
+import org.inventory.core.services.api.queries.LocalResultRecord;
 
 /**
  * This is the table model used to display the results

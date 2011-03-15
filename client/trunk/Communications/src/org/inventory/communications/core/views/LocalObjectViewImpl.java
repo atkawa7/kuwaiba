@@ -29,16 +29,22 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.interfaces.LocalObject;
-import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.api.LocalObject;
+import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.api.visual.LocalEdge;
+import org.inventory.core.services.api.visual.LocalLabel;
+import org.inventory.core.services.api.visual.LocalNode;
+import org.inventory.core.services.api.visual.LocalObjectView;
 import org.inventory.core.services.utils.Utils;
+import org.openide.util.lookup.ServiceProvider;
 
 
 /**
  * This class represents the elements inside a view as recorded in the database
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class LocalObjectView {
+@ServiceProvider(service=LocalObjectView.class)
+public class LocalObjectViewImpl  implements LocalObjectView {
     /**
      * Every possible node in the view
      */
@@ -65,7 +71,10 @@ public class LocalObjectView {
      */
     private boolean isDirty = false;
 
-    public LocalObjectView(byte[] viewStructure, byte[] _background, String viewClass) {
+    public LocalObjectViewImpl() {    }
+
+
+    public LocalObjectViewImpl(byte[] viewStructure, byte[] _background, String viewClass) {
         this.background = Utils.getImageFromByteArray(_background);
         this.viewClass = viewClass;
         nodes = new ArrayList<LocalNode>();
@@ -87,7 +96,7 @@ public class LocalObjectView {
         }
     }
 
-    public LocalObjectView(LocalNode[] myNodes, LocalEdge[] myEdges,LocalLabel[] myLabels) {
+    public LocalObjectViewImpl(LocalNode[] myNodes, LocalEdge[] myEdges,LocalLabel[] myLabels) {
         nodes = Arrays.asList(myNodes);
         edges = Arrays.asList(myEdges);
         labels = Arrays.asList(myLabels);
@@ -118,7 +127,7 @@ public class LocalObjectView {
      * @param structure
      * @throws XMLStreamException
      */
-    private void parseXML(byte[] structure) throws XMLStreamException {
+    public final void parseXML(byte[] structure) throws XMLStreamException {
         //Here is where we use Woodstox as StAX provider
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
@@ -147,7 +156,7 @@ public class LocalObjectView {
                     LocalObjectLight lol = CommunicationsStub.getInstance().
                             getObjectInfoLight(objectClass, objectId);
                     if (lol != null)
-                        nodes.add(new LocalNode(lol, xCoordinate, yCoordinate));
+                        nodes.add(new LocalNodeImpl(lol, xCoordinate, yCoordinate));
                     else
                         isDirty = true;
                 }else{
@@ -158,7 +167,7 @@ public class LocalObjectView {
 
                         String className = reader.getAttributeValue(null,"class");
                         LocalObject container = CommunicationsStub.getInstance().getObjectInfo(className, objectId);
-                        LocalEdge myLocalEdge = new LocalEdge(container,null);
+                        LocalEdgeImpl myLocalEdge = new LocalEdgeImpl(container,null);
 
                         for (LocalNode myNode : nodes){
 

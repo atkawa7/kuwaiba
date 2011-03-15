@@ -17,7 +17,7 @@
 package org.inventory.communications.core;
 
 import java.util.Random;
-import org.inventory.core.services.interfaces.LocalAttributeWrapper;
+import org.inventory.core.services.api.metadata.LocalAttributeWrapper;
 import org.openide.util.lookup.ServiceProvider;
 
 /**

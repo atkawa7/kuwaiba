@@ -17,9 +17,9 @@
 package org.inventory.core.usermanager;
 
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.interfaces.LocalUserGroupObject;
-import org.inventory.core.services.interfaces.LocalUserObject;
-import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.core.services.api.session.LocalUserGroupObject;
+import org.inventory.core.services.api.session.LocalUserObject;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.usermanager.nodes.GroupChildren;
 import org.inventory.core.usermanager.nodes.UserChildren;
 import org.openide.explorer.view.NodeTableModel;

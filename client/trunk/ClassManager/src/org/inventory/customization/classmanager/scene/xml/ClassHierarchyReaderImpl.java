@@ -25,11 +25,10 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import org.inventory.communications.core.LocalAttributeWrapperImpl;
-import org.inventory.communications.core.LocalClassWrapperImpl;
-import org.inventory.core.services.interfaces.LocalAttributeWrapper;
-import org.inventory.core.services.interfaces.LocalClassWrapper;
-import org.inventory.core.services.interfaces.xml.ClassHierarchyReader;
+import org.inventory.communications.LocalStuffFactory;
+import org.inventory.core.services.api.metadata.LocalAttributeWrapper;
+import org.inventory.core.services.api.metadata.LocalClassWrapper;
+import org.inventory.core.services.api.xml.ClassHierarchyReader;
 //import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -89,8 +88,7 @@ public class ClassHierarchyReaderImpl implements ClassHierarchyReader{
      * @param reader the pointer pointing to a class "node"
      */
     private LocalClassWrapper readClassNode(XMLStreamReader reader) throws XMLStreamException{
-        //LocalClassWrapper aClass = Lookup.getDefault().lookup(LocalClassWrapper.class);
-        LocalClassWrapper aClass = new LocalClassWrapperImpl();
+        LocalClassWrapper aClass = LocalStuffFactory.createLocalClassWrapper();
         aClass.setName(reader.getAttributeValue(null, "name"));
         aClass.setApplicationModifiers(Integer.valueOf(reader.getAttributeValue(null, "applicationModifiers")));
         aClass.setJavaModifiers(Integer.valueOf(reader.getAttributeValue(null, "javaModifiers")));
@@ -104,8 +102,7 @@ public class ClassHierarchyReaderImpl implements ClassHierarchyReader{
                     aClass.getDirectSubClasses().add(readClassNode(reader));
                 }else
                     if (reader.getName().equals(attributeTag)){
-                        //LocalAttributeWrapper att = Lookup.getDefault().lookup(LocalAttributeWrapper.class);
-                        LocalAttributeWrapper att = new LocalAttributeWrapperImpl();
+                        LocalAttributeWrapper att = LocalStuffFactory.createLocalAttributeWrapper();
                         att.setName(reader.getAttributeValue(null, "name"));
                         att.setType(reader.getAttributeValue(null, "type"));
                         att.setApplicationModifiers(Integer.valueOf(reader.getAttributeValue(null, "applicationModifiers")));

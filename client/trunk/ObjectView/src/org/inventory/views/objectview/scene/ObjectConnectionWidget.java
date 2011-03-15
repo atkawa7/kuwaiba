@@ -20,8 +20,8 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import org.inventory.communications.core.views.LocalEdge;
-import org.inventory.core.services.interfaces.LocalObject;
+import org.inventory.communications.SharedInformation;
+import org.inventory.core.services.api.LocalObject;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.Router;
 import org.netbeans.api.visual.widget.FreeConnectionWidget;
@@ -83,15 +83,15 @@ public class ObjectConnectionWidget extends FreeConnectionWidget implements Acti
     }
 
     public static Color getConnectionColor(String connectionClass){
-        if (connectionClass.equals(LocalEdge.CLASS_ELECTRICALLINK))
+        if (connectionClass.equals(SharedInformation.CLASS_ELECTRICALLINK))
             return COLOR_ELECTRICALLINK;
-        if (connectionClass.equals(LocalEdge.CLASS_OPTICALLINK))
+        if (connectionClass.equals(SharedInformation.CLASS_OPTICALLINK))
             return COLOR_OPTICALLINK;
-        if (connectionClass.equals(LocalEdge.CLASS_WIRELESSLINK))
+        if (connectionClass.equals(SharedInformation.CLASS_WIRELESSLINK))
             return COLOR_WIRELESSLINK;
-        if (connectionClass.equals(LocalEdge.CLASS_WIRECONTAINER))
+        if (connectionClass.equals(SharedInformation.CLASS_WIRECONTAINER))
             return COLOR_WIRE;
-        if (connectionClass.equals(LocalEdge.CLASS_WIRELESSCONTAINER))
+        if (connectionClass.equals(SharedInformation.CLASS_WIRELESSCONTAINER))
             return COLOR_WIRELESS;
         return Color.BLACK;
     }

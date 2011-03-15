@@ -18,7 +18,7 @@ package org.inventory.connections.physicalconnections.wizards;
 import java.awt.Component;
 import javax.swing.event.ChangeListener;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.core.services.api.LocalObjectListItem;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 

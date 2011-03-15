@@ -16,7 +16,7 @@
 
 package org.inventory.core.services.factories;
 
-import org.inventory.core.services.interfaces.LocalObjectListItem;
+import org.inventory.core.services.api.LocalObjectListItem;
 import org.openide.util.Lookup;
 
 /**

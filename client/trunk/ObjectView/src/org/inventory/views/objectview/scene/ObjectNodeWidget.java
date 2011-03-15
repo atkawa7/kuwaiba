@@ -21,8 +21,8 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.interfaces.LocalObjectLight;
-import org.inventory.communications.core.views.LocalNode;
+import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.api.visual.LocalNode;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.widget.general.IconNodeWidget;
 import org.openide.util.ImageUtilities;
@@ -62,8 +62,6 @@ public class ObjectNodeWidget extends IconNodeWidget implements ActionListener{
     public LocalObjectLight getObject(){
         return this.object;
     }
-
-
 
     public void actionPerformed(ActionEvent e) {
         ((ViewScene)getScene()).fireChangeEvent(e);

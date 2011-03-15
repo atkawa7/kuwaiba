@@ -17,7 +17,7 @@
 package org.inventory.core.usermanager.nodes;
 
 import javax.swing.Action;
-import org.inventory.core.services.interfaces.LocalUserGroupObject;
+import org.inventory.core.services.api.session.LocalUserGroupObject;
 import org.inventory.core.usermanager.UserManagerTopComponent;
 import org.inventory.core.usermanager.actions.Delete;
 import org.inventory.core.usermanager.nodes.properties.UserGroupProperty;

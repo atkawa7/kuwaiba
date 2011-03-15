@@ -20,7 +20,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import org.inventory.core.services.interfaces.LocalClassMetadataLight;
+import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.utils.Utils;
 import org.inventory.webservice.ClassInfo;
 import org.inventory.webservice.ClassInfoLight;

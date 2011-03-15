@@ -18,7 +18,7 @@ package org.inventory.core.services.factories;
 
 import org.inventory.core.services.actions.ObjectAction;
 import org.inventory.core.services.exceptions.ObjectActionException;
-import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.api.LocalObjectLight;
 import org.openide.util.Lookup;
 
 /**

@@ -29,22 +29,22 @@ import org.inventory.communications.core.LocalClassMetadataLightImpl;
 import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.communications.core.LocalObjectLightImpl;
 import org.inventory.communications.core.LocalObjectListItemImpl;
-import org.inventory.communications.core.LocalResultRecord;
+import org.inventory.communications.core.queries.LocalResultRecordImpl;
 import org.inventory.communications.core.LocalSession;
 import org.inventory.communications.core.LocalUserGroupObjectImpl;
 import org.inventory.communications.core.LocalUserObjectImpl;
 import org.inventory.communications.core.queries.LocalQuery;
 import org.inventory.communications.core.queries.LocalQueryLight;
 import org.inventory.communications.core.queries.LocalTransientQuery;
-import org.inventory.communications.core.views.LocalObjectView;
+import org.inventory.communications.core.views.LocalObjectViewImpl;
 import org.inventory.core.services.factories.ObjectFactory;
-import org.inventory.core.services.interfaces.LocalClassMetadata;
-import org.inventory.core.services.interfaces.LocalClassMetadataLight;
-import org.inventory.core.services.interfaces.LocalObject;
-import org.inventory.core.services.interfaces.LocalObjectLight;
-import org.inventory.core.services.interfaces.LocalObjectListItem;
-import org.inventory.core.services.interfaces.LocalUserGroupObject;
-import org.inventory.core.services.interfaces.LocalUserObject;
+import org.inventory.core.services.api.metadata.LocalClassMetadata;
+import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
+import org.inventory.core.services.api.LocalObject;
+import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.api.LocalObjectListItem;
+import org.inventory.core.services.api.session.LocalUserGroupObject;
+import org.inventory.core.services.api.session.LocalUserObject;
 import org.inventory.objectcache.Cache;
 import org.inventory.webservice.ClassInfo;
 import org.inventory.webservice.ClassInfoLight;
@@ -663,15 +663,15 @@ public class CommunicationsStub {
      * @param query Query to be executed in an execution (code)-friendly format
      * @return an array with results
      */
-    public LocalResultRecord[] executeQuery(LocalTransientQuery query){
+    public LocalResultRecordImpl[] executeQuery(LocalTransientQuery query){
         try{
             TransientQuery remoteQuery = query.toTransientQuery();
             List<ResultRecord> myResult = port.executeQuery(remoteQuery,session.getSessionId());
-            LocalResultRecord[] res = new LocalResultRecord[myResult.size()];
+            LocalResultRecordImpl[] res = new LocalResultRecordImpl[myResult.size()];
             //The first record is used to store the table headers
-            res[0] = new LocalResultRecord(null, myResult.get(0).getExtraColumns());
+            res[0] = new LocalResultRecordImpl(null, myResult.get(0).getExtraColumns());
             for (int i = 1; i<res.length ; i++)
-                res[i] = new LocalResultRecord(
+                res[i] = new LocalResultRecordImpl(
                         new LocalObjectLightImpl(myResult.get(i).getObject()), myResult.get(i).getExtraColumns());
             return res;
         }catch(Exception ex){
@@ -805,8 +805,7 @@ public class CommunicationsStub {
             }
 
             if (refreshList){
-                HashMap<String, List<LocalObjectListItem>> myLocalList
-                        = cache.getAllList();
+                HashMap<String, List<LocalObjectListItem>> myLocalList = cache.getAllList();
                 Set<String> keys = myLocalList.keySet();
             for (String key : keys){
                     myLocalList.remove(key);
@@ -1043,12 +1042,12 @@ public class CommunicationsStub {
      * @param string object class name, including the package
      * @return a view or null, if not such default view is being set
      */
-    public LocalObjectView getObjectDefaultView(Long oid, String objectClass) {
+    public LocalObjectViewImpl getObjectDefaultView(Long oid, String objectClass) {
         try{
             ViewInfo myView = port.getDefaultView(oid, objectClass,this.session.getSessionId());
             if (myView == null) //There's no default view yet
                 return null;
-            return new LocalObjectView(myView.getStructure(),myView.getBackground(),myView.getViewClass());
+            return new LocalObjectViewImpl(myView.getStructure(),myView.getBackground(),myView.getViewClass());
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return null;

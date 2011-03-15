@@ -19,7 +19,7 @@ package org.inventory.navigation.applicationnodes.querynodes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import org.inventory.communications.core.LocalResultRecord;
+import org.inventory.core.services.api.queries.LocalResultRecord;
 import org.openide.nodes.Children.Array;
 import org.openide.nodes.Node;
 

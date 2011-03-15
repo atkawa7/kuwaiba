@@ -16,8 +16,8 @@
 package org.inventory.communications.core;
 
 import java.awt.Image;
-import org.inventory.core.services.interfaces.LocalClassMetadata;
-import org.inventory.core.services.interfaces.LocalClassMetadataLight;
+import org.inventory.core.services.api.metadata.LocalClassMetadata;
+import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.utils.Utils;
 import org.inventory.webservice.ClassInfo;
 

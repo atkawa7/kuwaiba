@@ -15,8 +15,8 @@
  */
 package org.inventory.communications.core;
 
-import org.inventory.core.services.interfaces.LocalAttributeMetadata;
-import org.inventory.core.services.interfaces.LocalObjectLight;
+import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
+import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.utils.Utils;
 
 /**

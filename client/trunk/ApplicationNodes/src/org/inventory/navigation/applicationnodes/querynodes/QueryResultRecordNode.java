@@ -16,7 +16,7 @@
 
 package org.inventory.navigation.applicationnodes.querynodes;
 
-import org.inventory.communications.core.LocalResultRecord;
+import org.inventory.core.services.api.queries.LocalResultRecord;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.Sheet;
 

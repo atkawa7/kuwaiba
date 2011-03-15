@@ -23,10 +23,10 @@ import java.awt.event.ActionListener;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
-import org.inventory.communications.core.views.LocalEdge;
-import org.inventory.core.services.interfaces.LocalObjectLight;
-import org.inventory.core.services.interfaces.NotificationUtil;
-import org.inventory.core.services.interfaces.RefreshableTopComponent;
+import org.inventory.communications.SharedInformation;
+import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.actions.ExportSceneAction;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.views.objectview.dialogs.FormatTextPanel;
@@ -103,8 +103,8 @@ public final class ObjectViewTopComponent extends TopComponent
         pnlScrollMain.setViewportView(scene.createView());
         add(scene.createSatelliteView(),BorderLayout.SOUTH);
 
-        btnWireContainer.setName(LocalEdge.CLASS_WIRECONTAINER);
-        btnWirelessContainer.setName(LocalEdge.CLASS_WIRELESSCONTAINER);
+        btnWireContainer.setName(SharedInformation.CLASS_WIRECONTAINER);
+        btnWirelessContainer.setName(SharedInformation.CLASS_WIRELESSCONTAINER);
 
         buttonGroupUpperToolbar = new ButtonGroup();
         buttonGroupUpperToolbar.add(btnSelect);

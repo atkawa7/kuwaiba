@@ -23,11 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.views.LocalEdge;
-import org.inventory.communications.core.views.LocalObjectView;
-import org.inventory.core.services.interfaces.LocalObject;
-import org.inventory.core.services.interfaces.LocalObjectLight;
-import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.communications.SharedInformation;
+import org.inventory.communications.core.views.LocalObjectViewImpl;
+import org.inventory.core.services.api.LocalObject;
+import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
 import org.inventory.views.objectview.scene.ObjectConnectionWidget;
 import org.inventory.views.objectview.scene.ObjectNodeWidget;
@@ -126,10 +126,10 @@ public class ObjectViewService implements LookupListener{
 
        vrtc.getScene().setCurrentObject(myObject);
 
-       LocalObjectView defaultView = com.getObjectDefaultView(myObject.getOid(),myObject.getClassName());
+       LocalObjectViewImpl defaultView = com.getObjectDefaultView(myObject.getOid(),myObject.getClassName());
        if(defaultView == null){
            List<LocalObjectLight> myChildren = com.getObjectChildren(myObject.getOid(), com.getMetaForClass(myObject.getClassName(),false).getOid());
-           List<LocalObject> myConnections = com.getChildrenOfClass(myObject.getOid(), LocalEdge.CLASS_GENERICCONNECTION);
+           List<LocalObject> myConnections = com.getChildrenOfClass(myObject.getOid(), SharedInformation.CLASS_GENERICCONNECTION);
            //TODO: Change for a ViewFactory
            viewBuilder = new ViewBuilder(null, vrtc.getScene());
            viewBuilder.buildDefaultView(myChildren, myConnections);
@@ -205,7 +205,7 @@ public class ObjectViewService implements LookupListener{
         List<LocalObjectLight> childrenNodes = com.getObjectChildren(vrtc.getScene().getCurrentObject().getOid(),
                 com.getMetaForClass(vrtc.getScene().getCurrentObject().getClassName(), false).getOid());
         List<LocalObject> childrenEdges = com.getChildrenOfClass(vrtc.getScene().getCurrentObject().getOid(),
-                LocalEdge.CLASS_GENERICCONNECTION);
+                SharedInformation.CLASS_GENERICCONNECTION);
         
         List<LocalObjectLight> currentNodes = new ArrayList<LocalObjectLight>();
         List<LocalObject> currentEdges = new ArrayList<LocalObject>();

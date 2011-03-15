@@ -18,13 +18,16 @@ package org.inventory.views.objectview.scene;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.inventory.communications.core.views.LocalEdge;
-import org.inventory.communications.core.views.LocalLabel;
-import org.inventory.communications.core.views.LocalObjectView;
-import org.inventory.communications.core.views.LocalNode;
-import org.inventory.core.services.interfaces.LocalObject;
-import org.inventory.core.services.interfaces.LocalObjectLight;
-import org.inventory.core.services.interfaces.NotificationUtil;
+import org.inventory.communications.core.views.LocalEdgeImpl;
+import org.inventory.communications.core.views.LocalLabelImpl;
+import org.inventory.communications.core.views.LocalObjectViewImpl;
+import org.inventory.communications.core.views.LocalNodeImpl;
+import org.inventory.core.services.api.LocalObject;
+import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.api.visual.LocalEdge;
+import org.inventory.core.services.api.visual.LocalNode;
+import org.inventory.core.services.api.visual.LocalObjectView;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -46,9 +49,9 @@ public class ViewBuilder {
     /**
      * This constructor should be used if there's already a view
      * @param localView
-     * @throws NullPointerException if the LocalObjectView or the ViewScene provided are null
+     * @throws NullPointerException if the LocalObjectViewImpl or the ViewScene provided are null
      */
-    public ViewBuilder(LocalObjectView localView, ViewScene _scene) throws NullPointerException{
+    public ViewBuilder(LocalObjectViewImpl localView, ViewScene _scene) throws NullPointerException{
         if (_scene != null){
             this.myView = localView;
             this.scene = _scene;
@@ -111,21 +114,21 @@ public class ViewBuilder {
     public void buildDefaultView(List<LocalObjectLight> myNodes,
             List<LocalObject> myPhysicalConnections) {
         int lastX = 0;
-        List<LocalNode> myLocalNodes = new ArrayList<LocalNode>();
-        List<LocalEdge> myLocalEdges = new ArrayList<LocalEdge>();
+        List<LocalNodeImpl> myLocalNodes = new ArrayList<LocalNodeImpl>();
+        List<LocalEdgeImpl> myLocalEdges = new ArrayList<LocalEdgeImpl>();
 
         for (LocalObjectLight node : myNodes){ //Add the nodes
             //Puts an element after another
-            LocalNode ln = new LocalNode(node, lastX, 0);
+            LocalNodeImpl ln = new LocalNodeImpl(node, lastX, 0);
             myLocalNodes.add(ln);
             lastX +=100;
         }
 
         //TODO: This algorithm to find the endpoints for a connection could be improved in many ways
         for (LocalObject container : myPhysicalConnections){
-            LocalEdge le = new LocalEdge(container,null);
+            LocalEdgeImpl le = new LocalEdgeImpl(container,null);
 
-            for (LocalNode myNode : myLocalNodes){
+            for (LocalNodeImpl myNode : myLocalNodes){
                 
                 if (((Long)container.getAttribute("nodeA")).equals(myNode.getObject().getOid())) //NOI18N
                     le.setaSide(myNode);
@@ -138,7 +141,7 @@ public class ViewBuilder {
             }
             myLocalEdges.add(le);
         }
-        myView = new LocalObjectView(myLocalNodes.toArray(new LocalNode[0]), myLocalEdges.toArray(new LocalEdge[0]),new LocalLabel[0]);
+        myView = new LocalObjectViewImpl(myLocalNodes.toArray(new LocalNodeImpl[0]), myLocalEdges.toArray(new LocalEdgeImpl[0]),new LocalLabelImpl[0]);
         buildView();
     }
 
@@ -158,18 +161,18 @@ public class ViewBuilder {
         
         if (nodesToDelete != null){
             for (LocalObjectLight toDelete : nodesToDelete)
-                myView.getNodes().remove(new LocalNode(toDelete, 0, 0));
+                myView.getNodes().remove(new LocalNodeImpl(toDelete, 0, 0));
         }
 
         if (physicalConnectionsToDelete != null){
             for (LocalObject toDelete : physicalConnectionsToDelete)
-                myView.getEdges().remove(new LocalEdge(toDelete));
+                myView.getEdges().remove(new LocalEdgeImpl(toDelete));
         }
 
         int i = 0;
         if (newNodes != null){
             for (LocalObjectLight toAdd : newNodes){
-                myView.getNodes().add(new LocalNode(toAdd, i, 0));
+                myView.getNodes().add(new LocalNodeImpl(toAdd, i, 0));
                 i+=100;
             }
         }
@@ -182,7 +185,7 @@ public class ViewBuilder {
                 LocalNode nodeB = getNodeMatching(myView.getNodes(), (Long)toAdd.getAttribute("nodeB"));
                 if (nodeB == null)
                     continue;
-                myView.getEdges().add(new LocalEdge(toAdd, nodeA, nodeB, null));
+                myView.getEdges().add(new LocalEdgeImpl(toAdd, nodeA, nodeB, null));
             }
 
         buildView();

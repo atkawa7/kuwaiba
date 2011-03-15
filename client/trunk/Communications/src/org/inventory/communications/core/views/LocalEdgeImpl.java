@@ -20,7 +20,10 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.inventory.core.services.interfaces.LocalObject;
+import org.inventory.core.services.api.LocalObject;
+import org.inventory.core.services.api.visual.LocalEdge;
+import org.inventory.core.services.api.visual.LocalNode;
+import org.openide.util.lookup.ServiceProvider;
 
 
 /**
@@ -28,38 +31,8 @@ import org.inventory.core.services.interfaces.LocalObject;
  * an object to be render, but it's independent from the visual library so it can be rendered using anything
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class LocalEdge {
-    /**
-     * Some constants
-     */
-    /**
-     * Generic classes
-     */
-    public static String CLASS_GENERICCONNECTION="GenericConnection";
-
-    //TODO: Gotta send this to a config file
-    public static String CLASS_WIRECONTAINER="WireContainer";
-    public static String CLASS_WIRELESSCONTAINER="WirelessContainer";
-
-    /**
-     * Physical connection classes
-     */
-    public static String CLASS_ELECTRICALLINK = "ElectricalLink";
-    public static String CLASS_OPTICALLINK = "OpticalLink";
-    public static String CLASS_WIRELESSLINK = "RadioLink";
-
-    /**
-     * Physical connection type classes
-     */
-    public static String CLASS_ELECTRICALLINKTYPE = "ElectricalLinkType";
-    public static String CLASS_OPTICALLINKTYPE = "OpticalLinkType";
-    public static String CLASS_WIRELESSLINKTYPE = "WirelessLinkType";
-
-    /**
-     * Physical container type classes
-     */
-    public static String CLASS_WIRECONTAINERTYPE = "WireContainerType";
-    public static String CLASS_WIRELESSCONTAINERTYPE = "WirelessContainerType";
+@ServiceProvider(service=LocalEdge.class)
+public class LocalEdgeImpl implements LocalEdge {
 
     /**
      * Wrapped business object
@@ -78,18 +51,20 @@ public class LocalEdge {
      */
     private List<Point> controlPoints;
 
-    public LocalEdge(LocalObject obj) {
+    public LocalEdgeImpl() {    }
+
+    public LocalEdgeImpl(LocalObject obj) {
         this.object = obj;
     }
 
-    public LocalEdge(LocalObject _object, Point[] _controlsPoints){
+    public LocalEdgeImpl(LocalObject _object, Point[] _controlsPoints){
         this.object = _object;
         this.controlPoints = new ArrayList<Point>();
         if (_controlsPoints != null)
             this.controlPoints.addAll(Arrays.asList(_controlsPoints));
     }
 
-    public LocalEdge(LocalObject _object, LocalNode _aSide, LocalNode _bSide, Point[] _controlsPoints){
+    public LocalEdgeImpl(LocalObject _object, LocalNode _aSide, LocalNode _bSide, Point[] _controlsPoints){
         this (_object,_controlsPoints);
         this.aSide = _aSide;
         this.bSide =_bSide;
@@ -99,9 +74,9 @@ public class LocalEdge {
     public boolean equals (Object obj){
         if (obj == null)
             return false;
-        if (!(obj instanceof LocalEdge))
+        if (!(obj instanceof LocalEdgeImpl))
             return false;
-        return ((LocalEdge)obj).getObject().getOid().equals(this.object.getOid());
+        return ((LocalEdgeImpl)obj).getObject().getOid().equals(this.object.getOid());
     }
 
     @Override
@@ -132,22 +107,5 @@ public class LocalEdge {
 
     public void setbSide(LocalNode bSide) {
         this.bSide = bSide;
-    }
-
-    /**
-     * Returns the connection type class for a given connection class
-     */
-    public static String getConnectionType(String connectionClass){
-        if (connectionClass.equals(CLASS_ELECTRICALLINK))
-            return CLASS_ELECTRICALLINKTYPE;
-        if (connectionClass.equals(CLASS_OPTICALLINK))
-            return CLASS_OPTICALLINKTYPE;
-        if (connectionClass.equals(CLASS_WIRELESSLINK))
-            return CLASS_WIRELESSLINKTYPE;
-        if (connectionClass.equals(CLASS_WIRECONTAINER))
-            return CLASS_WIRECONTAINERTYPE;
-        if (connectionClass.equals(CLASS_WIRELESSCONTAINER))
-            return CLASS_WIRELESSCONTAINERTYPE;
-        return null;
     }
 }

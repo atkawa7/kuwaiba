@@ -16,8 +16,8 @@
 package org.inventory.communications.core;
 
 import java.util.HashMap;
-import org.inventory.core.services.interfaces.LocalClassMetadata;
-import org.inventory.core.services.interfaces.LocalObject;
+import org.inventory.core.services.api.metadata.LocalClassMetadata;
+import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.utils.Utils;
 import org.inventory.webservice.RemoteObject;
 

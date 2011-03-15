@@ -18,7 +18,7 @@ package org.inventory.core.services.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.AbstractAction;
-import org.inventory.core.services.interfaces.RefreshableTopComponent;
+import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
 import org.openide.windows.WindowManager;
 
 
