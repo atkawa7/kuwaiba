@@ -18,11 +18,13 @@ package org.inventory.communications.core;
 import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.utils.Utils;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Represents the metadata associated to a single attribute
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
+@ServiceProvider(service=LocalAttributeMetadata.class)
 public class LocalAttributeMetadataImpl
         implements LocalAttributeMetadata{
     private String name;

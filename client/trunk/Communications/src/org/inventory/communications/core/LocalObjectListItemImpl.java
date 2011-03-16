@@ -17,11 +17,13 @@ package org.inventory.communications.core;
 
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.LocalObjectListItem;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This is a local representation of an element within a list (enumerations and so on)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
+@ServiceProvider(service=LocalObjectListItem.class)
 public class LocalObjectListItemImpl extends LocalObjectLightImpl implements LocalObjectListItem{
     private String name;
 

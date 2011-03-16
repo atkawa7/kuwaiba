@@ -22,8 +22,9 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.utils.Utils;
-import org.inventory.webservice.ClassInfo;
-import org.inventory.webservice.ClassInfoLight;
+import org.kuwaiba.wsclient.ClassInfo;
+import org.kuwaiba.wsclient.ClassInfoLight;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Implementation of the common interface to represent the classmetadata in a simple
@@ -31,6 +32,7 @@ import org.inventory.webservice.ClassInfoLight;
  * metadata is not necessary (ie. Container Hierarchy Manager)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
+@ServiceProvider(service=LocalClassMetadataLight.class)
 public class LocalClassMetadataLightImpl
         implements LocalClassMetadataLight,Transferable{
 
@@ -42,6 +44,8 @@ public class LocalClassMetadataLightImpl
     protected String className;
     protected String displayName;
     protected Image smallIcon;
+
+    public LocalClassMetadataLightImpl() {    }
 
     public LocalClassMetadataLightImpl(ClassInfo ci){
         this (ci.getId(),ci.getClassName(),ci.getDisplayName(),ci.getSmallIcon(),

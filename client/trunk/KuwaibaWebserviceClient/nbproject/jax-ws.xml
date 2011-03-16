@@ -26,7 +26,7 @@
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>package</wsimport-option-name>
-          <wsimport-option-value>org.inventory.webservice</wsimport-option-value>
+          <wsimport-option-value>org.kuwaiba.wsclient</wsimport-option-value>
         </wsimport-option>
       </wsimport-options>
     </client>

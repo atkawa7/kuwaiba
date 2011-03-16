@@ -19,12 +19,14 @@ import java.awt.Image;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.utils.Utils;
-import org.inventory.webservice.ClassInfo;
+import org.kuwaiba.wsclient.ClassInfo;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * It's a proxy class, whose instances represent the metadata information associated to a class
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
+@ServiceProvider(service=LocalClassMetadata.class)
 public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         implements LocalClassMetadata{
 
@@ -37,6 +39,8 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
     private Boolean [] attributesIsVisible;
     private Boolean [] attributesIsMultiple;
     private String [] attributesDescription;
+
+    public LocalClassMetadataImpl() {    }
 
     public LocalClassMetadataImpl(ClassInfo cm){
         super(cm.getId(),cm.getClassName(),cm.getDisplayName(),cm.getSmallIcon(),

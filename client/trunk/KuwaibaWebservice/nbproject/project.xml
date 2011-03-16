@@ -7,7 +7,7 @@
             <suite-component/>
             <module-dependencies/>
             <public-packages>
-                <package>org.inventory.webservice</package>
+                <package>org.kuwaiba.wsclient</package>
             </public-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/KuwaibaWebserviceClient.jar</runtime-relative-path>

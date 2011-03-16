@@ -9,13 +9,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.inventory.core.services.api.LocalObjectLight;
-import org.inventory.webservice.RemoteObjectLight;
-import org.inventory.webservice.Validator;
+import org.kuwaiba.wsclient.RemoteObjectLight;
+import org.kuwaiba.wsclient.Validator;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This class is a simple representation of a business object with a very basic information
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
+@ServiceProvider(service=LocalObjectLight.class)
 public class LocalObjectLightImpl implements LocalObjectLight{ //This class implements Transferable because of
                                                                //LocalObjectLight interface extends from it
 

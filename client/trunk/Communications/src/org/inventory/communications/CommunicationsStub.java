@@ -50,21 +50,21 @@ import org.inventory.core.services.api.session.LocalUserGroupObject;
 import org.inventory.core.services.api.session.LocalUserObject;
 import org.inventory.core.services.api.visual.LocalObjectView;
 import org.inventory.objectcache.Cache;
-import org.inventory.webservice.ClassInfo;
-import org.inventory.webservice.ClassInfoLight;
-import org.inventory.webservice.Kuwaiba;
-import org.inventory.webservice.KuwaibaService;
-import org.inventory.webservice.ObjectList;
-import org.inventory.webservice.ObjectList.List.Entry;
-import org.inventory.webservice.ObjectUpdate;
-import org.inventory.webservice.RemoteObject;
-import org.inventory.webservice.RemoteObjectLight;
-import org.inventory.webservice.RemoteQueryLight;
-import org.inventory.webservice.ResultRecord;
-import org.inventory.webservice.TransientQuery;
-import org.inventory.webservice.UserGroupInfo;
-import org.inventory.webservice.UserInfo;
-import org.inventory.webservice.ViewInfo;
+import org.kuwaiba.wsclient.ClassInfo;
+import org.kuwaiba.wsclient.ClassInfoLight;
+import org.kuwaiba.wsclient.Kuwaiba;
+import org.kuwaiba.wsclient.KuwaibaService;
+import org.kuwaiba.wsclient.ObjectList;
+import org.kuwaiba.wsclient.ObjectList.List.Entry;
+import org.kuwaiba.wsclient.ObjectUpdate;
+import org.kuwaiba.wsclient.RemoteObject;
+import org.kuwaiba.wsclient.RemoteObjectLight;
+import org.kuwaiba.wsclient.RemoteQueryLight;
+import org.kuwaiba.wsclient.ResultRecord;
+import org.kuwaiba.wsclient.TransientQuery;
+import org.kuwaiba.wsclient.UserGroupInfo;
+import org.kuwaiba.wsclient.UserInfo;
+import org.kuwaiba.wsclient.ViewInfo;
 
 /**
  * Singleton class that provides communication and caching services to the rest of the modules

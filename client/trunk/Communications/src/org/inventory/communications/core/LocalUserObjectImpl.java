@@ -16,32 +16,32 @@
 
 package org.inventory.communications.core;
 
-import java.util.Date;
 import org.inventory.core.services.api.session.LocalUserGroupObjectLight;
 import org.inventory.core.services.api.session.LocalUserObject;
-import org.inventory.webservice.UserGroupInfoLight;
-import org.inventory.webservice.UserInfo;
+import org.kuwaiba.wsclient.UserGroupInfoLight;
+import org.kuwaiba.wsclient.UserInfo;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Implementation for the local representation of an application user
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
+@ServiceProvider(service=LocalUserObject.class)
 public class LocalUserObjectImpl implements LocalUserObject {
 
     private Long oid;
     private String userName;
     private String firstName;
     private String lastName;
-    private Date creationDate;
     private LocalUserGroupObjectLight[] groups;
 
+    public LocalUserObjectImpl() {    }
 
     public LocalUserObjectImpl(UserInfo user) {
         this.oid = user.getOid();
         this.userName = user.getUserName();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
-        //this.creationDate = user.getCreationDate();
         if (user.getGroups() == null)
             this.groups = null;
         else{

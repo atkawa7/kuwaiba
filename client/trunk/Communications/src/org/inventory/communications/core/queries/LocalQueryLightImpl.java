@@ -17,7 +17,7 @@
 package org.inventory.communications.core.queries;
 
 import org.inventory.core.services.api.queries.LocalQueryLight;
-import org.inventory.webservice.RemoteQueryLight;
+import org.kuwaiba.wsclient.RemoteQueryLight;
 import org.openide.util.lookup.ServiceProvider;
 
 /**

@@ -6,5 +6,6 @@
  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="mainclientconfig"
  >
     <import location="KuwaibaWebserviceService.xml" namespace="http://webservice/"/>
+    <import location="KuwaibaService.xml" namespace="http://ws.kuwaiba.org/"/>
 </definitions>
 

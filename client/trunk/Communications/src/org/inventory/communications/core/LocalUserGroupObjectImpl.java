@@ -18,12 +18,14 @@ package org.inventory.communications.core;
 
 import java.util.Date;
 import org.inventory.core.services.api.session.LocalUserGroupObject;
-import org.inventory.webservice.UserGroupInfo;
+import org.kuwaiba.wsclient.UserGroupInfo;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Implementation for the local representation of an application users group
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
+@ServiceProvider(service=LocalUserGroupObject.class)
 public class LocalUserGroupObjectImpl extends LocalUserGroupObjectLightImpl implements LocalUserGroupObject{
     /**
      * Group's creation date (actually a timestamp)
