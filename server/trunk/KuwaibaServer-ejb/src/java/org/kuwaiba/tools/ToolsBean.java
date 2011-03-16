@@ -17,12 +17,12 @@
 
 package org.kuwaiba.tools;
 
-import core.exceptions.EntityManagerNotAvailableException;
-import entity.core.ApplicationObject;
-import entity.core.MetadataObject;
-import entity.core.RootObject;
-import entity.multiple.GenericObjectList;
-import entity.session.User;
+import org.kuwaiba.core.exceptions.EntityManagerNotAvailableException;
+import org.kuwaiba.entity.core.ApplicationObject;
+import org.kuwaiba.entity.core.MetadataObject;
+import org.kuwaiba.entity.core.RootObject;
+import org.kuwaiba.entity.multiple.GenericObjectList;
+import org.kuwaiba.entity.session.User;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,8 +34,8 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.metamodel.EntityType;
-import util.HierarchyUtils;
-import util.MetadataUtils;
+import org.kuwaiba.util.HierarchyUtils;
+import org.kuwaiba.util.MetadataUtils;
 
 /**
  * This bean contains useful helper methods

@@ -17,7 +17,7 @@
 
 package org.kuwaiba.tools;
 
-import core.exceptions.EntityManagerNotAvailableException;
+import org.kuwaiba.core.exceptions.EntityManagerNotAvailableException;
 import java.util.List;
 import javax.ejb.Remote;
 

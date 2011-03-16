@@ -1,6 +1,6 @@
 0.1 Beta
 * Fixed the support for abstract classes
-* Internacionalization of server log messages
+* Internationalization of server log messages
 * Corrections to the initialization script
 * Container Manager now uses Children.Array
 
