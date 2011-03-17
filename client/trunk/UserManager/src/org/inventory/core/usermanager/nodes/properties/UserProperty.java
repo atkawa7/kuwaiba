@@ -74,11 +74,11 @@ public class UserProperty extends ReadWrite{
                 new String[]{this.getName()}, new Object[]{t});
         update.setOid(this.object.getOid());
         
-        if(com.saveObject(update) == null){
+        if(!com.setUserProperties(update)){
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             nu.showSimplePopup("User Update", NotificationUtil.ERROR, com.getError());
-        }
-        this.value = t;
+        }else
+            this.value = t;
     }
 
     /**

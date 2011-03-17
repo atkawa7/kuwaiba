@@ -61,10 +61,8 @@ public class UserGroupProperty extends ReadWrite{
         update.setLocalObject("UserGroup",
                 new String[]{this.getName()}, new Object[]{t});
         update.setOid(this.object.getOid());
-        if(com.saveObject(update) != null){
-            if(!this.getName().equals("password")) //NOI18N
-                this.value = t;
-        }
+        if(com.setGroupProperties(update))
+            this.value = t;
         else{
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             nu.showSimplePopup("User Update", NotificationUtil.ERROR, com.getError());

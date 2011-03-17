@@ -941,6 +941,64 @@ public class CommunicationsStub {
     }
 
     /**
+     * Set user attributes (group membership is managed using other methods)
+     * @param update
+     * @return success or failure
+     */
+    public boolean setUserProperties(LocalObject user) {
+        try{
+            ObjectUpdate update = new ObjectUpdate();
+            List<String> atts = new ArrayList<String>();
+            List<String> vals = new ArrayList<String>();
+
+            update.setClassname(user.getClassName());
+            update.setOid(user.getOid());
+
+            for (String key : user.getAttributes().keySet()){
+                atts.add(key);
+                vals.add(user.getAttribute(key).toString());
+            }
+
+            update.setUpdatedAttributes(atts);
+            update.setNewValues(vals);
+            return port.setUserProperties(update, this.session.getSessionId());
+
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return false;
+        }
+    }
+
+    /**
+     * Set user attributes (group membership is managed using other methods)
+     * @param update
+     * @return success or failure
+     */
+    public boolean setGroupProperties(LocalObject group) {
+        try{
+            ObjectUpdate update = new ObjectUpdate();
+            List<String> atts = new ArrayList<String>();
+            List<String> vals = new ArrayList<String>();
+
+            update.setClassname(group.getClassName());
+            update.setOid(group.getOid());
+
+            for (String key : group.getAttributes().keySet()){
+                atts.add(key);
+                vals.add(group.getAttribute(key).toString());
+            }
+
+            update.setUpdatedAttributes(atts);
+            update.setNewValues(vals);
+            return port.setGroupProperties(update, this.session.getSessionId());
+
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return false;
+        }
+    }
+
+    /**
      * Creates a new group
      * @return The newly created group
      */

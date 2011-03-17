@@ -21,10 +21,12 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyEditorSupport;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
+import java.lang.reflect.InvocationTargetException;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.usermanager.nodes.properties.UserProperty;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
 import org.openide.explorer.propertysheet.PropertyEnv;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 
 /**
@@ -89,7 +91,18 @@ public class PasswordEditorSupport extends PropertyEditorSupport
 
     @Override
     public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
-        if(evt.getNewValue().equals(PropertyEnv.STATE_VALID))
-            property.setPassword(String.valueOf(myPanel.getTxtPassword().getPassword()));
+        if(evt.getNewValue().equals(PropertyEnv.STATE_VALID)){
+            //property.setPassword(String.valueOf(myPanel.getTxtPassword().getPassword()));
+            try {
+                //property.setPassword(String.valueOf(myPanel.getTxtPassword().getPassword()));
+                property.setValue(String.valueOf(myPanel.getTxtPassword().getPassword()));
+            } catch (IllegalAccessException ex) {
+                Exceptions.printStackTrace(ex);
+            } catch (IllegalArgumentException ex) {
+                Exceptions.printStackTrace(ex);
+            } catch (InvocationTargetException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
     }
 }

@@ -348,10 +348,17 @@
 
 <xs:complexType name="setGroupProperties">
 <xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="propertiesNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="propertiesValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="group" type="tns:objectUpdate" minOccurs="0" />
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="objectUpdate">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0" />
+<xs:element name="classname" type="xs:string" minOccurs="0" />
+<xs:element name="updatedAttributes" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="newValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -505,15 +512,6 @@
 <xs:sequence>
 <xs:element name="objectupdate" type="tns:objectUpdate" minOccurs="0" />
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="objectUpdate">
-<xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="classname" type="xs:string" minOccurs="0" />
-<xs:element name="updatedAttributes" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="newValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
 </xs:sequence>
 </xs:complexType>
 
@@ -912,9 +910,7 @@
 
 <xs:complexType name="setUserProperties">
 <xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0" />
-<xs:element name="propertiesNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
-<xs:element name="propertiesValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded" />
+<xs:element name="user" type="tns:objectUpdate" minOccurs="0" />
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
