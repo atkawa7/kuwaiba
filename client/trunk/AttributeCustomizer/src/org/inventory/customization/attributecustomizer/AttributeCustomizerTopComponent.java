@@ -118,8 +118,6 @@ public final class AttributeCustomizerTopComponent extends TopComponent
         tblClassCustomizerMain = new TreeTableView();
         tblClassCustomizerMain.setRootVisible(false);
 
-        setRoot();
-
         pnlTableEnclosing.setLayout(new BorderLayout());
         pnlTableEnclosing.add(tblClassCustomizerMain,BorderLayout.CENTER);
         
@@ -168,11 +166,12 @@ public final class AttributeCustomizerTopComponent extends TopComponent
 
     @Override
     public void componentOpened() {
+        setRoot();
     }
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
     }
 
     void writeProperties(java.util.Properties p) {

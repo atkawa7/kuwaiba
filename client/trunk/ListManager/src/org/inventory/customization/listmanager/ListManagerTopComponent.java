@@ -63,11 +63,6 @@ public final class ListManagerTopComponent extends TopComponent
     public void initCustomComponents(){
         bt = new BeanTreeView();
         lms = new ListManagerService(this);
-        AbstractNode root = new AbstractNode(new ListTypeChildren(lms.getInstanceableListTypes()));
-        root.setIconBaseWithExtension(ROOT_ICON_PATH);
-        em.setRootContext(root);
-        em.getRootContext().setDisplayName("Available List Types");
-
         add(bt);
     }
 
@@ -122,12 +117,16 @@ public final class ListManagerTopComponent extends TopComponent
 
     @Override
     public void componentOpened() {
-        // TODO add custom code on component opening
+        AbstractNode root = new AbstractNode(new ListTypeChildren(lms.getInstanceableListTypes()));
+        root.setIconBaseWithExtension(ROOT_ICON_PATH);
+        em.setRootContext(root);
+        em.getRootContext().setDisplayName("Available List Types");
     }
 
     @Override
     public void componentClosed() {
         lms.refreshLists();
+        em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
     }
 
     void writeProperties(java.util.Properties p) {

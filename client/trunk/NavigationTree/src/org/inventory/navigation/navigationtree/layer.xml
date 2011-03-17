@@ -4,7 +4,7 @@
     <folder name="Actions">
         <folder name="Tools">
             <file name="org-inventory-navigation-navigationtree-NavigationTreeAction.instance">
-                <attr name="component" methodvalue="org.inventory.navigation.navigationtree.NavigationTreeTopComponent.showComponent"/>
+                <attr name="component" methodvalue="org.inventory.navigation.navigationtree.NavigationTreeTopComponent.findInstance"/>
                 <attr name="displayName" bundlevalue="org.inventory.navigation.navigationtree.Bundle#CTL_NavigationTreeAction"/>
                 <attr name="iconBase" stringvalue="org/inventory/navigation/navigationtree/res/icon.png"/>
                 <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
@@ -26,7 +26,16 @@
             </file>
         </folder>
     </folder>
-
+    <folder name="Windows2">
+        <folder name="Components">
+            <file name="NavigationTreeTopComponent.settings" url="NavigationTreeTopComponentSettings.xml"/>
+        </folder>
+        <folder name="Modes">
+            <folder name="explorer">
+                <file name="NavigationTreeTopComponent.wstcref" url="NavigationTreeTopComponentWstcref.xml"/>
+            </folder>
+        </folder>
+    </folder>
     <folder name="Shortcuts">
         <file name="D-N.shadow">
             <attr name="originalFile" stringvalue="Actions/Tools/org-inventory-navigation-navigationtree-NavigationTreeAction.instance"/>
