@@ -16,6 +16,8 @@
 package org.inventory.navigation.navigationtree;
 
 import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -33,6 +35,7 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
+import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
 
 /**
@@ -188,8 +191,13 @@ public final class NavigationTreeTopComponent extends TopComponent
     @Override
     public void refresh() {
         if (em.getRootContext() instanceof RootObjectNode){
-            for (Object child : em.getRootContext().getChildren().getNodes())
-                ((ObjectNode)child).refresh();
+            List<Node> toBeDeleted = new ArrayList<Node>();
+            for (Node child : em.getRootContext().getChildren().getNodes()){
+                if (!((ObjectNode)child).refresh())
+                    toBeDeleted.add(child);
+            }
+            for (Node deadNode : toBeDeleted)
+                ((ObjectChildren)em.getRootContext().getChildren()).remove(new Node[]{deadNode});
         }else{
             setRoot();
             revalidate();

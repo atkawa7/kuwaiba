@@ -19,16 +19,17 @@ public class ObjectEditorTopComponent extends TopComponent{
     static final String ICON_PATH = "org/inventory/navigation/applicationnodes/res/edit.png";
 
     private PropertySheetView editor;
-    private Node[] nodes;
+    private Node node;
 
     public ObjectEditorTopComponent(){}
 
-    public ObjectEditorTopComponent(Node[] _nodes) {
+    public ObjectEditorTopComponent(Node _node) {
+
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         editor = new PropertySheetView();
-        this.nodes = _nodes;
+        this.node = _node;
 
-        this.setDisplayName(nodes[0].getDisplayName());
+        this.setDisplayName(node.getDisplayName());
 
         //This requires that CoreUI to be enable in the project
         Mode myMode = WindowManager.getDefault().findMode("properties");
@@ -52,6 +53,6 @@ public class ObjectEditorTopComponent extends TopComponent{
     @Override
     public void componentOpened() {
         //This is important. If setNodes is called in the constructor, it won't work!
-        editor.setNodes(nodes);
+        editor.setNodes(new Node[]{node});
     }
 }

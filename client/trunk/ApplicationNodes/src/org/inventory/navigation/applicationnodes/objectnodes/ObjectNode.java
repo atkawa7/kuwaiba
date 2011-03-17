@@ -21,6 +21,7 @@ import java.awt.dnd.DnDConstants;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 import javax.swing.Action;
@@ -73,6 +74,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
     protected Sheet sheet;
     protected Image icon;
+    private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
 
     public ObjectNode(LocalObjectLight _lol, boolean isLeaf){
         super(Children.LEAF, Lookups.singleton(_lol));
@@ -127,11 +129,19 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         Set administrativePropertySet = Sheet.createPropertiesSet(); //Administrative attributes category
 
         LocalClassMetadata meta = com.getMetaForClass(object.getClassName(),false);
-        LocalObject lo;
-        if (object instanceof LocalObject)
-            lo = (LocalObject)object;
-        else
+        if (meta == null){
+            nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+            return sheet;
+        }
+
+        LocalObject lo = null;
+        if (!(object instanceof LocalObject))
             lo = com.getObjectInfo(object.getClassName(), object.getOid());
+
+        if (lo == null){
+            nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+            return sheet;
+        }
 
         for(LocalAttributeMetadata lam:meta.getAttributes()){
             if(lam.isVisible()){
@@ -185,12 +195,19 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         return sheet;
     }
 
-    public void refresh(){
+    public boolean refresh(){
+        LocalObjectLight refreshedObject;
         //Force to retrieve the object info again
         if (object instanceof LocalObjectLight)
-            object = com.getObjectInfoLight(object.getClassName(), object.getOid());
+            refreshedObject = com.getObjectInfoLight(object.getClassName(), object.getOid());
         else
-            object = com.getObjectInfo(object.getClassName(), object.getOid());
+            refreshedObject = com.getObjectInfo(object.getClassName(), object.getOid());
+
+        if (refreshedObject == null) //The object has been deleted or couldn'be retrieved
+            return false;
+        else
+            object = refreshedObject;
+        
         //Force to get the attributes again, but only if there's a property sheet already asigned
         if (this.sheet != null)
             setSheet(createSheet());
@@ -198,13 +215,21 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         icon = (com.getMetaForClass(object.getClassName(),false)).getSmallIcon();
         fireIconChange();
 
-        //Don't refresh anything if the node is a leaf (used only in views)
+        //Don't try to refresh the children anything if the node is a leaf (used only in views)
         if (!(getChildren() instanceof ObjectChildren))
-            return;
+            return true;
 
-        if (!((ObjectChildren)getChildren()).getKeys().isEmpty())
-            for (Node child : getChildren().getNodes())
-                ((ObjectNode)child).refresh();
+        List<Node> toBeDeleted = new ArrayList<Node>();
+        if (!((ObjectChildren)getChildren()).getKeys().isEmpty()){
+            for (Node child : getChildren().getNodes()){
+                if (!((ObjectNode)child).refresh())
+                    toBeDeleted.add(child);
+            }
+        }
+        for (Node deadNode : toBeDeleted)
+            ((ObjectChildren)getChildren()).remove(new Node[]{deadNode});
+
+        return true;
     }
 
     //This method is called for the very first time when the first context menu is created, and
@@ -259,7 +284,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
             @Override
             public Transferable paste() throws IOException {
                 boolean canMove = false;
-                NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
                 try{
                     LocalObjectLight obj = dropNode.getObject();
 
@@ -356,7 +380,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
             //So the PropertySheet reflects the changes too
             refresh();
         }catch(Exception e){
-            e.printStackTrace();
+            nu.showSimplePopup("Error", NotificationUtil.ERROR, e.getMessage());
         }
     }
 

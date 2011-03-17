@@ -61,7 +61,7 @@ public final class EditObject extends AbstractAction implements ObjectAction{
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        ObjectEditorTopComponent component = new ObjectEditorTopComponent(new Node[]{node});
+        ObjectEditorTopComponent component = new ObjectEditorTopComponent(node);
         component.open();
         component.requestActive();
     }
