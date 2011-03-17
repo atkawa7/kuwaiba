@@ -119,7 +119,7 @@ public class BackendBean implements BackendBeanRemote {
      */
     @Override
     public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId) throws Exception{
-        System.out.println(java.util.ResourceBundle.getBundle("org/kuwaiba.org/kuwaiba/internationalization/Bundle").getString("LBL_CALL_GETOBJECTCHILDREN"));
+        System.out.println(java.util.ResourceBundle.getBundle("org/kuwaiba/internationalization/Bundle").getString("LBL_CALL_GETOBJECTCHILDREN"));
         if (em != null){
            
             ClassMetadata objectClass = em.find(ClassMetadata.class, objectClassId);
@@ -178,7 +178,7 @@ public class BackendBean implements BackendBeanRemote {
      */
     @Override
     public RemoteObject getObjectInfo(Class objectClass,Long oid) throws Exception{
-        System.out.println(java.util.ResourceBundle.getBundle("org/kuwaiba.org/kuwaiba/internationalization/Bundle").getString("LBL_CALL_GETOBJECTINFO"));
+        System.out.println(java.util.ResourceBundle.getBundle("org/kuwaiba/internationalization/Bundle").getString("LBL_CALL_GETOBJECTINFO"));
         if (em != null){
             Object result = em.find(objectClass, oid);           
             if (result==null)
@@ -199,7 +199,7 @@ public class BackendBean implements BackendBeanRemote {
      */
     @Override
     public RemoteObjectLight getObjectInfoLight(Class objectClass, Long oid) throws Exception{
-        System.out.println(java.util.ResourceBundle.getBundle("org/kuwaiba.org/kuwaiba/internationalization/Bundle").getString("LBL_CALL_GETOBJECTINFO"));
+        System.out.println(java.util.ResourceBundle.getBundle("org/kuwaiba/internationalization/Bundle").getString("LBL_CALL_GETOBJECTINFO"));
         if (em != null){
             Object result = em.find(objectClass, oid);
             if (result==null)
@@ -212,15 +212,17 @@ public class BackendBean implements BackendBeanRemote {
             throw new EntityManagerNotAvailableException();
     }
 
-
     /**
      * Updates an object
      * @param _obj
+     * @param constraints Only instances of these classes (or subclasses of them) can be modified using this method. Normally,
+     * you provide a list of abstract classes (InventoryObject, GenericObjectList), but you can provide a list of
+     * non abstract classes, like "User", for example. If no constraints are specified, the default are InventoryObject and GenericObjectList
      * @return
-     * @throws ObjectNotFoundException if the oid provided doesn't exist
+     * @throws Exception ObjectNotFoundException if the oid provided doesn't exist
      */
     @Override
-    public RemoteObject updateObject(ObjectUpdate _obj) throws Exception{
+    public RemoteObject updateObject(ObjectUpdate _obj, Class...constraints) throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("org/kuwaiba/internationalization/Bundle").getString("LBL_CALL_UPDATEOBJECT"));
 
         if (em != null){
@@ -229,12 +231,20 @@ public class BackendBean implements BackendBeanRemote {
 
             if (myClass == null)
                 throw new ClassNotFoundException(_obj.getClassname());
-            
-            //It's only possible to update an object through this method if it's an InventoryObject or a list type
-            if (!HierarchyUtils.isSubclass(myClass, InventoryObject.class)){
-                if (!HierarchyUtils.isSubclass(myClass, GenericObjectList.class))
-                    throw new NotAuthorizedException("You can't update a non inventory element through this method");
+
+            if (constraints.length == 0) //Default constraints are InventoryObject and GenericObjectList
+                constraints = new Class[]{InventoryObject.class, GenericObjectList.class};
+            //According to the constraints we decide if it's safe to update
+            boolean isSafeToUpdate = false;
+            for (Class constraint : constraints){
+                if (HierarchyUtils.isSubclass(myClass, constraint)){
+                    isSafeToUpdate = true;
+                    break;
+                }
             }
+
+            if (!isSafeToUpdate)
+                throw new NotAuthorizedException("You're not allowed to update an object of class "+myClass.getSimpleName()+" through this method");
 
             obj = new RemoteObjectUpdate(myClass,_obj,em);
 

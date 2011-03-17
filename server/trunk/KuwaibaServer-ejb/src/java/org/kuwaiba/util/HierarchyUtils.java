@@ -50,7 +50,7 @@ public class HierarchyUtils {
      * This method returns is a given class is sub class of another
      * @param child Class to be tested
      * @param allegedParent Class supposed to be the parent class
-     * @return true if the given class is
+     * @return true if the given class is a subclass or if child and allegedParent are equals
      */
     public static boolean isSubclass (Class child, Class allegedParent){
         if (child == null)

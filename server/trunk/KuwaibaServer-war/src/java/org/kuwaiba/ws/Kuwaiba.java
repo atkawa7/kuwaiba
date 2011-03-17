@@ -50,8 +50,12 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
+import org.kuwaiba.core.exceptions.InvalidArgumentException;
+import org.kuwaiba.entity.session.User;
+import org.kuwaiba.entity.session.UserGroup;
 import org.kuwaiba.util.Constants;
 import org.kuwaiba.util.HierarchyUtils;
+import org.kuwaiba.util.MetadataUtils;
 
 /**
  *
@@ -1293,17 +1297,22 @@ public class Kuwaiba {
      * @throws Exception
      */
     @WebMethod(operationName = "setUserProperties")
-    public Boolean setUserProperties(@WebParam(name="oid")Long oid,
-            @WebParam(name="propertiesNames")String[] propertiesNames,
-            @WebParam(name="propertiesValues")String[] propertiesValues,
+    public Boolean setUserProperties(@WebParam(name="user")ObjectUpdate user,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             sbr.validateCall("setUserProperties", getIPAddress(), sessionId);
-            if (propertiesNames.length != propertiesValues.length)
-                throw new Exception(java.util.ResourceBundle.
-                        getBundle("org/kuwaiba/internationalization/Bundle").getString("LBL_ARRAYSIZESDONTMATCH")+ "propertiesNames, propertiesValues");
+            if (user.getUpdatedAttributes() == null || user.getNewValues() == null || user.getOid() == null)
+                throw new InvalidArgumentException("Malformed update object (null parameters)", Level.SEVERE);
 
-            return sbr.setUserProperties(oid, propertiesNames,propertiesValues);
+            if (user.getUpdatedAttributes().length != user.getNewValues().length)
+                throw new ArraySizeMismatchException("updatedAttributes", "newValues");
+
+            for (int i = 0; i < user.getUpdatedAttributes().length; i++){
+                if (user.getUpdatedAttributes()[i].equals("password"))
+                    user.getNewValues()[i] = MetadataUtils.getMD5Hash(user.getNewValues()[i]);
+            }
+            sbr.updateObject(user, User.class);
+            return true;
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
@@ -1324,17 +1333,22 @@ public class Kuwaiba {
      * @throws Exception
      */
     @WebMethod(operationName = "setGroupProperties")
-    public Boolean setGroupProperties(@WebParam(name="oid")Long oid,
-            @WebParam(name="propertiesNames")String[] propertiesNames,
-            @WebParam(name="propertiesValues")String[] propertiesValues,
+    public Boolean setGroupProperties(@WebParam(name="group")ObjectUpdate group,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             sbr.validateCall("setGroupProperties", getIPAddress(), sessionId);
-            if (propertiesNames.length != propertiesValues.length)
-                throw new Exception(java.util.ResourceBundle.
-                    getBundle("org/kuwaiba/org/kuwaiba/internationalization/Bundle").getString("LBL_ARRAYSIZESDONTMATCH")+ "propertiesNames, propertiesValues");
+            if (group.getUpdatedAttributes() == null || group.getNewValues() == null || group.getOid() == null)
+                throw new InvalidArgumentException("Malformed update object (null parameters)", Level.SEVERE);
 
-            return true;//sbr.setGroupProperties(oid, propertiesNames,propertiesValues);
+            if (group.getUpdatedAttributes().length != group.getNewValues().length)
+                throw new ArraySizeMismatchException("updatedAttributes", "newValues");
+
+            for (int i = 0; i < group.getUpdatedAttributes().length; i++){
+                if (group.getUpdatedAttributes()[i].equals("password"))
+                    group.getNewValues()[i] = MetadataUtils.getMD5Hash(group.getNewValues()[i]);
+            }
+            sbr.updateObject(group, UserGroup.class);
+            return true;
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
