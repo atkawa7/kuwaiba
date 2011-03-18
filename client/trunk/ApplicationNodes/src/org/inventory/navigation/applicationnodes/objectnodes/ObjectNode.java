@@ -22,6 +22,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
 import javax.swing.Action;
@@ -219,15 +220,32 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         if (!(getChildren() instanceof ObjectChildren))
             return true;
 
-        List<Node> toBeDeleted = new ArrayList<Node>();
-        if (!((ObjectChildren)getChildren()).getKeys().isEmpty()){
+        
+        if (!((ObjectChildren)getChildren()).getKeys().isEmpty()){ //Expanded node
+            List<LocalObjectLight> children = com.getObjectChildren(object.getOid(), com.getMetaForClass(object.getClassName(), false).getOid());
+
+            
+            List<Node> toBeDeleted = new ArrayList<Node>(Arrays.asList(getChildren().getNodes()));
+            List<LocalObjectLight> toBeAdded = new ArrayList<LocalObjectLight>(children);
+
             for (Node child : getChildren().getNodes()){
-                if (!((ObjectNode)child).refresh())
-                    toBeDeleted.add(child);
+                for (LocalObjectLight myChild : children){
+                    if (((ObjectNode)child).getObject().equals(myChild)){
+                        ((ObjectNode)child).refresh();
+                        toBeDeleted.remove(child);
+                        toBeAdded.remove(myChild);
+                    }
+                }
+                children = toBeAdded;
             }
+
+            for (Node deadNode : toBeDeleted)
+                ((ObjectChildren)getChildren()).remove(new Node[]{deadNode});
+
+            for (LocalObjectLight newChild : toBeAdded)
+                ((ObjectChildren)getChildren()).add(new Node[]{new ObjectNode(newChild)});
         }
-        for (Node deadNode : toBeDeleted)
-            ((ObjectChildren)getChildren()).remove(new Node[]{deadNode});
+        
 
         return true;
     }

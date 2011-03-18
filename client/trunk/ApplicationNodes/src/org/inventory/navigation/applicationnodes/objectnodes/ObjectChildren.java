@@ -90,4 +90,26 @@ public class ObjectChildren extends Array{
     public List<LocalObjectLight> getKeys() {
         return keys;
     }
+
+    @Override
+    public boolean add(Node[] arr) {
+        for (Node node : arr){
+            if (node instanceof ObjectNode){
+                if (!keys.contains(((ObjectNode)node).getObject()))
+                    keys.add(((ObjectNode)node).getObject());
+            }
+        }
+        return super.add(arr);
+    }
+
+    @Override
+    public boolean remove(Node[] arr) {
+        for (Node node : arr){
+            if (node instanceof ObjectNode){
+                keys.remove(((ObjectNode)node).getObject());
+            }
+        }
+        return super.remove(arr);
+    }
+
 }
