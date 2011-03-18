@@ -192,21 +192,20 @@ public class BackendBean implements BackendBeanRemote {
 
     /**
      * Implementation of the idem method exposed by the webservice
-     * TODO: This implementation is inefficient and should be corrected
-     * @param objectClass
-     * @param oid
+     * @param objectClass object class
+     * @param oid object id to search for
      * @return
      */
     @Override
     public RemoteObjectLight getObjectInfoLight(Class objectClass, Long oid) throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("org/kuwaiba/internationalization/Bundle").getString("LBL_CALL_GETOBJECTINFO"));
         if (em != null){
-            Object result = em.find(objectClass, oid);
-            if (result==null)
+            try{
+                String displayName = (String)em.createQuery("SELECT x.name FROM "+objectClass.getSimpleName()+" x WHERE x.id="+oid).getSingleResult();
+                return new RemoteObjectLight(oid,objectClass.getSimpleName(), displayName);
+            }catch (NoResultException nre){
                 throw new ObjectNotFoundException(objectClass,oid);
-            else
-                return new RemoteObjectLight(result);
-            
+            }
         }
         else
             throw new EntityManagerNotAvailableException();
@@ -621,6 +620,8 @@ public class BackendBean implements BackendBeanRemote {
 
         if (em != null){
             RootObject obj = (RootObject)em.find(className, oid);
+            if (obj == null)
+                throw new ObjectNotFoundException(className, oid);
             if (className.equals(InventoryObject.class)){ // If the object is an inventory object, we have to delete the children first
 
                 if (obj == null)

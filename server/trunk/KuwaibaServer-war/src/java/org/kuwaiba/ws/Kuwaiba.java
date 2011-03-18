@@ -222,6 +222,9 @@ public class Kuwaiba {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             sbr.validateCall("getObjectInfoLight", getIPAddress(), sessionId);
+            if (oid == null)
+                throw new InvalidArgumentException("Object id can't be null",Level.WARNING);
+
             Class myClass = sbr.getClassFor(objectClass);
             return sbr.getObjectInfoLight(myClass, oid);
         }catch(Exception e){
