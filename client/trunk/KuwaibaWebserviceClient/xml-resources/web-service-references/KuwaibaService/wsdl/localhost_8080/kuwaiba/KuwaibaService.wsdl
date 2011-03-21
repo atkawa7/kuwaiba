@@ -25,11 +25,11 @@
 <message name="getMetadataResponse">
 <part name="parameters" element="tns:getMetadataResponse" />
 </message>
-<message name="executeQuery">
-<part name="parameters" element="tns:executeQuery" />
+<message name="createSession">
+<part name="parameters" element="tns:createSession" />
 </message>
-<message name="executeQueryResponse">
-<part name="parameters" element="tns:executeQueryResponse" />
+<message name="createSessionResponse">
+<part name="parameters" element="tns:createSessionResponse" />
 </message>
 <message name="getGroups">
 <part name="parameters" element="tns:getGroups" />
@@ -37,11 +37,11 @@
 <message name="getGroupsResponse">
 <part name="parameters" element="tns:getGroupsResponse" />
 </message>
-<message name="createSession">
-<part name="parameters" element="tns:createSession" />
+<message name="createObject">
+<part name="parameters" element="tns:createObject" />
 </message>
-<message name="createSessionResponse">
-<part name="parameters" element="tns:createSessionResponse" />
+<message name="createObjectResponse">
+<part name="parameters" element="tns:createObjectResponse" />
 </message>
 <message name="copyObjects">
 <part name="parameters" element="tns:copyObjects" />
@@ -49,11 +49,11 @@
 <message name="copyObjectsResponse">
 <part name="parameters" element="tns:copyObjectsResponse" />
 </message>
-<message name="createObject">
-<part name="parameters" element="tns:createObject" />
+<message name="executeQuery">
+<part name="parameters" element="tns:executeQuery" />
 </message>
-<message name="createObjectResponse">
-<part name="parameters" element="tns:createObjectResponse" />
+<message name="executeQueryResponse">
+<part name="parameters" element="tns:executeQueryResponse" />
 </message>
 <message name="getServerStatus">
 <part name="parameters" element="tns:getServerStatus" />
@@ -341,30 +341,30 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadataResponse" message="tns:getMetadataResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadata/Fault/Exception" />
 </operation>
-<operation name="executeQuery">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryRequest" message="tns:executeQuery" />
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryResponse" message="tns:executeQueryResponse" />
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQuery/Fault/Exception" />
+<operation name="createSession">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSessionRequest" message="tns:createSession" />
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSessionResponse" message="tns:createSessionResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSession/Fault/Exception" />
 </operation>
 <operation name="getGroups">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGroupsRequest" message="tns:getGroups" />
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGroupsResponse" message="tns:getGroupsResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGroups/Fault/Exception" />
 </operation>
-<operation name="createSession">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSessionRequest" message="tns:createSession" />
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSessionResponse" message="tns:createSessionResponse" />
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSession/Fault/Exception" />
+<operation name="createObject">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectRequest" message="tns:createObject" />
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectResponse" message="tns:createObjectResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObject/Fault/Exception" />
 </operation>
 <operation name="copyObjects">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsRequest" message="tns:copyObjects" />
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsResponse" message="tns:copyObjectsResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjects/Fault/Exception" />
 </operation>
-<operation name="createObject">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectRequest" message="tns:createObject" />
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectResponse" message="tns:createObjectResponse" />
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObject/Fault/Exception" />
+<operation name="executeQuery">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryRequest" message="tns:executeQuery" />
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryResponse" message="tns:executeQueryResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQuery/Fault/Exception" />
 </operation>
 <operation name="getServerStatus">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getServerStatusRequest" message="tns:getServerStatus" />
@@ -629,7 +629,7 @@
 <soap:fault name="Exception" use="literal" />
 </fault>
 </operation>
-<operation name="executeQuery">
+<operation name="createSession">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
@@ -653,7 +653,7 @@
 <soap:fault name="Exception" use="literal" />
 </fault>
 </operation>
-<operation name="createSession">
+<operation name="createObject">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
@@ -677,7 +677,7 @@
 <soap:fault name="Exception" use="literal" />
 </fault>
 </operation>
-<operation name="createObject">
+<operation name="executeQuery">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />

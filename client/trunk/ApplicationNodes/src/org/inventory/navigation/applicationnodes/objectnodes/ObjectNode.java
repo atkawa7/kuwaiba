@@ -221,7 +221,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
             return true;
 
         
-        if (!((ObjectChildren)getChildren()).getKeys().isEmpty()){ //Expanded node
+        if (((ObjectChildren)getChildren()).getKeys() != null){ //Expanded node
             List<LocalObjectLight> children = com.getObjectChildren(object.getOid(), com.getMetaForClass(object.getClassName(), false).getOid());
 
             

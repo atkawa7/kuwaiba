@@ -103,7 +103,6 @@ public class CommunicationsStub {
 
     /**
      * Resets the singleton instance to null so it has to be created again
-     * TODO: Is there a more graceful way to do it?
      */
     public static void resetInstance() {
         serverURL = null;
@@ -962,7 +961,6 @@ public class CommunicationsStub {
             update.setUpdatedAttributes(atts);
             update.setNewValues(vals);
             return port.setUserProperties(update, this.session.getSessionId());
-
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return false;
@@ -991,7 +989,6 @@ public class CommunicationsStub {
             update.setUpdatedAttributes(atts);
             update.setNewValues(vals);
             return port.setGroupProperties(update, this.session.getSessionId());
-
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return false;
