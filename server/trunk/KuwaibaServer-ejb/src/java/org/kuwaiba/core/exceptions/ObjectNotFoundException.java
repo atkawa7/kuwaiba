@@ -25,7 +25,7 @@ public class ObjectNotFoundException extends InventoryException{
 
     public ObjectNotFoundException(Class objectClass, Long oid) {
         super(java.util.ResourceBundle.getBundle("org/kuwaiba/internationalization/Bundle").
-                getString("LBL_NOSUCHOBJECT")+objectClass.getSimpleName()+java.util.
+                getString("LBL_NOSUCHOBJECT")+objectClass.getSimpleName()+" "+java.util.
                 ResourceBundle.getBundle("org/kuwaiba/internationalization/Bundle").getString("LBL_WHICHID")+oid,Level.WARNING);
     }
 }

@@ -38,7 +38,7 @@ public class ServerStatus {
      */
     public static final int STATUS_MAINTENANCE = 2;
     /**
-     * The server is down, but the webservice is down
+     * The server is down, but the webservice is up
      */
     public static final int STATUS_DOWN = 3;
     /**

@@ -61,7 +61,7 @@ import org.kuwaiba.util.MetadataUtils;
  *
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@WebService()
+@WebService
 public class Kuwaiba {
     /**
      * The backend bean with all business logic
