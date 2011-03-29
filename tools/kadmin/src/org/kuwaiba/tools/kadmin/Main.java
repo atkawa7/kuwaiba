@@ -16,6 +16,9 @@
 
 package org.kuwaiba.tools.kadmin;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
+
 /**
  * This program is intended to be used to perform the main administrative tasks
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -26,7 +29,11 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        EntityManager em = Persistence.createEntityManagerFactory("KuwaibaToolsPersistenceUnit").createEntityManager();
+        if (em != null)
+            System.out.println("Works!");
+        else
+            System.out.println("Doesn't work :(");
     }
 
 }
