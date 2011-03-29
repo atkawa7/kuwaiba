@@ -19,6 +19,8 @@ package org.kuwaiba.tools.kadmin.migration;
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
 import entity.core.metamodel.AttributeMetadata;
+import entity.core.metamodel.ClassMetadata;
+import entity.core.metamodel.PackageMetadata;
 import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 import java.util.List;
@@ -56,8 +58,7 @@ public class BackupProviderImpl021 implements BackupProvider{
         rootTag.attr("date", Calendar.getInstance().getTimeInMillis());
         StartTagWAX entityTag = rootTag.start("entities");
         StartTagWAX metadataTag = entityTag.start("metadata");
-
-        String sql = "SELECT p.id, p.name, p.displayName, p.description FROM AttributeMetadata att";
+        String sql = "SELECT p.id, p.name, p.displayName, p.description FROM PackageMetadata p";
         StartTagWAX packagesTag = metadataTag.start("packages");
         List<Object[]> packages = em.createQuery(sql).getResultList();
         for (Object[] packageInfo : packages){
@@ -69,25 +70,25 @@ public class BackupProviderImpl021 implements BackupProvider{
             packageTag.end();
         }
         packagesTag.end();
-        sql = "SELECT cm.id, cm.name, cm.displayName, cm.isCustom, cm.color, cm.description, cm.icon, cm.smallIcon, cm.attributes FROM ClassMetadata cm";
+        sql = "SELECT cm FROM ClassMetadata cm";
         StartTagWAX classesTag = metadataTag.start("classes");
-        List<Object[]> classes = em.createQuery(sql).getResultList();
-        for (Object[] classInfo : classes){
+        List<ClassMetadata> classes = em.createQuery(sql).getResultList();
+        for (ClassMetadata classInfo : classes){
             StartTagWAX classTag = classesTag.start("class");
-            classTag.attr("id", classInfo[0]);
-            classTag.attr("name", classInfo[1]);
-            classTag.attr("displayName", classInfo[2] == null ? "" : classInfo[2]);
-            classTag.attr("isCustom", classInfo[3]);
-            classTag.attr("color", classInfo[4] == null ? "0" : classInfo[4]);
+            classTag.attr("id", classInfo.getId());
+            classTag.attr("name", classInfo.getName());
+            classTag.attr("displayName", classInfo.getDisplayName() == null ? "" : classInfo.getDisplayName());
+            classTag.attr("isCustom", classInfo.getIsCustom());
+            classTag.attr("color", classInfo.getColor() == null ? "0" : classInfo.getColor());
             StartTagWAX attributesTag = classTag.start("attributes");
-            if (classInfo[3] != null){
-                for (AttributeMetadata attributeInfo : (List<AttributeMetadata>)classInfo[3]){
+            if (classInfo.getAttributes() != null){
+                for (AttributeMetadata attributeInfo : classInfo.getAttributes()){
                     StartTagWAX attributeTag = attributesTag.start("attributes");
                     attributeTag.attr("id", attributeInfo.getId());
                     attributeTag.attr("name", attributeInfo.getName());
                     attributeTag.attr("displayName", attributeInfo.getDisplayName() == null ? "" : attributeInfo.getDisplayName());
-                    attributeTag.attr("isVisible", attributeInfo.isVisible());
-                    attributeTag.attr("isReadOnly", attributeInfo.isReadOnly());
+                    attributeTag.attr("isVisible", attributeInfo.IsVisible());
+                    attributeTag.attr("isReadOnly", false);
                     attributeTag.text(attributeInfo.getDescription() == null ? "" : attributeInfo.getDescription());
                     attributeTag.end();
                 }

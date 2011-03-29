@@ -16,8 +16,12 @@
 
 package org.kuwaiba.tools.kadmin;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
+import org.kuwaiba.tools.kadmin.migration.BackupProviderImpl021;
 
 /**
  * This program is intended to be used to perform the main administrative tasks
@@ -30,10 +34,24 @@ public class Main {
      */
     public static void main(String[] args) {
         EntityManager em = Persistence.createEntityManagerFactory("KuwaibaToolsPersistenceUnit").createEntityManager();
-        if (em != null)
-            System.out.println("Works!");
+        if (em != null){
+            System.out.println("Starting export...");
+            ByteArrayOutputStream bas = new ByteArrayOutputStream();
+            BackupProvider bp = new BackupProviderImpl021();
+            bp.startTextBackup(em, bas, "legacy", BackupProvider.TYPE_ALL);
+            try{
+                FileOutputStream fos = new FileOutputStream("/home/zim/backup.xml");
+                fos.write(bas.toByteArray());
+                fos.flush();
+                fos.close();
+                bas.close();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+            System.out.println("Export finished");
+        }
         else
-            System.out.println("Doesn't work :(");
+            System.out.println("The EntityManager couldn't be created. Please check you database connection setings");
     }
 
 }
