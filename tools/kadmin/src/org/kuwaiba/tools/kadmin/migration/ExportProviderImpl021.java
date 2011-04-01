@@ -132,6 +132,11 @@ public class ExportProviderImpl021 implements ExportProvider{
         }
         applicationTag.end();
 
+        StartTagWAX businessTag = entityTag.start("business");
+        List<Object> allInstances = em.createQuery("SELECT x FROM RootObject x").getResultList();
+        for (Object obj : allInstances)
+                createObjectNode(applicationTag, obj);
+        businessTag.end();
         entityTag.end();
         rootTag.end().close();
     }
