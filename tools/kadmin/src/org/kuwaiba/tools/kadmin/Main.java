@@ -21,7 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
-import org.kuwaiba.tools.kadmin.migration.BackupProviderImpl021;
+import org.kuwaiba.tools.kadmin.migration.ExportProviderImpl021;
 
 /**
  * This program is intended to be used to perform the main administrative tasks
@@ -37,10 +37,10 @@ public class Main {
         if (em != null){
             System.out.println("Starting export...");
             ByteArrayOutputStream bas = new ByteArrayOutputStream();
-            BackupProvider bp = new BackupProviderImpl021();
-            bp.startTextBackup(em, bas, "legacy", BackupProvider.TYPE_ALL);
+            ExportProvider bp = new ExportProviderImpl021();
+            bp.startTextBackup(em, bas, "legacy", ExportProvider.TYPE_ALL);
             try{
-                FileOutputStream fos = new FileOutputStream("/home/zim/backup.xml");
+                FileOutputStream fos = new FileOutputStream("/home/zim/export.xml");
                 fos.write(bas.toByteArray());
                 fos.flush();
                 fos.close();

@@ -18,24 +18,38 @@ package org.kuwaiba.tools.kadmin.migration;
 
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
+import entity.core.RootObject;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
-import entity.core.metamodel.PackageMetadata;
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.metamodel.EntityType;
-import org.kuwaiba.tools.kadmin.BackupProvider;
+import org.kuwaiba.tools.kadmin.ExportProvider;
+import org.kuwaiba.tools.kadmin.utils.Util;
 
 /**
  * Default implementation, used to backup 0.2.x and 0.3.x series
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class BackupProviderImpl021 implements BackupProvider{
+public class ExportProviderImpl021 implements ExportProvider{
 
     private static final String version = "1.0";
+    private static final String[] MAP_APPLICATION = new String[]{
+            "User", "UserGroup","DefaultView"
+        };
 
     @Override
     public String getDocumentVersion() {
@@ -80,6 +94,16 @@ public class BackupProviderImpl021 implements BackupProvider{
             classTag.attr("displayName", classInfo.getDisplayName() == null ? "" : classInfo.getDisplayName());
             classTag.attr("isCustom", classInfo.getIsCustom());
             classTag.attr("color", classInfo.getColor() == null ? "0" : classInfo.getColor());
+            classTag.child("description", classInfo.getDescription() == null ? "" : classInfo.getDescription());
+
+            StartTagWAX possibleChildrenTag = classTag.start("possibleChildren");
+            if (classInfo.getPossibleChildren() != null){
+                for (ClassMetadata possibleChild : classInfo.getPossibleChildren())
+                    possibleChildrenTag.child("name", possibleChild.getName());
+            }
+
+            possibleChildrenTag.end();
+            
             StartTagWAX attributesTag = classTag.start("attributes");
             if (classInfo.getAttributes() != null){
                 for (AttributeMetadata attributeInfo : classInfo.getAttributes()){
@@ -94,12 +118,79 @@ public class BackupProviderImpl021 implements BackupProvider{
                 }
             }
             attributesTag.end();
+
             classTag.end();
         }
         classesTag.end();
-
         metadataTag.end();
+
+        StartTagWAX applicationTag = entityTag.start("application");
+        for (String className : MAP_APPLICATION){
+            List<Object> allInstances = em.createQuery("SELECT x FROM " + className +" x").getResultList();
+            for (Object obj : allInstances)
+                createObjectNode(applicationTag, obj);
+        }
+        applicationTag.end();
+
         entityTag.end();
         rootTag.end().close();
+    }
+    
+    private void createObjectNode(StartTagWAX parent, Object object){
+        StartTagWAX objectTag = parent.start("object");
+        List<Field> allAttributes = Util.getAllFields(object.getClass(), true);
+
+        objectTag.attr("class", object.getClass().getSimpleName());
+
+        for (Field f : allAttributes ){
+            StartTagWAX attributeTag = objectTag.start("attribute");
+            attributeTag.attr("name", f.getName());
+            attributeTag.attr("isMultiple", f.getAnnotation(OneToOne.class) != null ||
+                                            f.getAnnotation(OneToMany.class) != null ||
+                                            f.getAnnotation(ManyToMany.class) != null ||
+                                            f.getAnnotation(ManyToOne.class) != null);
+            attributeTag.attr("isBinary", f.getType().equals(byte[].class));
+            try{
+
+                Method m;
+                if (f.getType().equals(Boolean.class))
+                    m = object.getClass().getMethod("is"+Util.capitalize(f.getName()),
+                                                        new Class[]{});
+                else
+                    m = object.getClass().getMethod("get"+Util.capitalize(f.getName()),
+                                                        new Class[]{});
+                Object value = m.invoke(object, new Object[]{});
+                if (value == null)  continue; //No need to add a "value" tag
+                else{
+                    //If this attribute is a reference to any other business object, we use a lazy approach
+                    //by setting as value the object id
+                    if(value instanceof RootObject)
+                        attributeTag.child("value",String.valueOf(((RootObject)value).getId()));
+                    else
+                        if (value instanceof Date)
+                            attributeTag.child("value",String.valueOf(((Date)value).getTime()));
+                        else
+                            attributeTag.child("value",value.toString());
+                }
+            } catch (NoSuchMethodException nsme){
+                Logger.getLogger("ExportProvider").log(Level.WARNING, "NoSuchM: {0}", nsme.getMessage());
+            }
+            catch (IllegalAccessException iae){
+                Logger.getLogger("ExportProvider").log(Level.WARNING, "IllegalAccess: {0}", iae.getMessage());
+            }
+            catch(InvocationTargetException ite){
+                Logger.getLogger("ExportProvider").log(Level.WARNING, "invocationTarget: {0}", ite.getMessage());
+            }
+            catch(SecurityException se){
+                Logger.getLogger("ExportProvider").log(Level.WARNING, "Security: {0}", se.getMessage());
+            }
+            catch (IllegalArgumentException iae2){
+                Logger.getLogger("ExportProvider").log(Level.WARNING, "IllegalArgument: {0}", iae2.getMessage());
+            }
+            finally{
+                attributeTag.end();
+            }
+        }
+        objectTag.end();
     }
 }

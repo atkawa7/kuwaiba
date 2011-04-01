@@ -25,7 +25,7 @@ import javax.persistence.metamodel.EntityType;
  * Implementors of this interface should perform a complete backup of the existing objects
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface BackupProvider {
+public interface ExportProvider {
     public static int TYPE_ALL = 0;
     public static int TYPE_METADATA = 1;
     public static int TYPE_LISTTYPES = 2;
