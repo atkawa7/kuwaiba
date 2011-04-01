@@ -25,7 +25,6 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -45,7 +44,7 @@ import org.kuwaiba.tools.kadmin.utils.Util;
  * Default implementation, used to backup 0.2.x and 0.3.x series
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ExportProviderImpl021 implements ExportProvider{
+public class ExportProviderImpl03 implements ExportProvider{
 
     private static final String version = "1.0";
     private static final String[] MAP_APPLICATION = new String[]{
@@ -151,17 +150,11 @@ public class ExportProviderImpl021 implements ExportProvider{
         for (Field f : allAttributes ){
             StartTagWAX attributeTag = objectTag.start("attribute");
             attributeTag.attr("name", f.getName());
-            boolean isMultiple = f.getAnnotation(OneToOne.class) != null ||
+            attributeTag.attr("isMultiple", f.getAnnotation(OneToOne.class) != null ||
                                             f.getAnnotation(OneToMany.class) != null ||
                                             f.getAnnotation(ManyToMany.class) != null ||
-                                            f.getAnnotation(ManyToOne.class) != null;
-            attributeTag.attr("isMultiple", isMultiple);
+                                            f.getAnnotation(ManyToOne.class) != null);
             attributeTag.attr("isBinary", f.getType().equals(byte[].class));
-            if (f.getGenericType() instanceof ParameterizedType){
-                attributeTag.attr("type",((Class)((ParameterizedType)f.getGenericType()).getActualTypeArguments()[0]).getSimpleName());
-            }
-            else
-                attributeTag.attr("type",f.getType().getSimpleName());
             try{
 
                 Method m;
@@ -172,29 +165,17 @@ public class ExportProviderImpl021 implements ExportProvider{
                     m = object.getClass().getMethod("get"+Util.capitalize(f.getName()),
                                                         new Class[]{});
                 Object value = m.invoke(object, new Object[]{});
-
                 if (value == null)  continue; //No need to add a "value" tag
-
                 else{
                     //If this attribute is a reference to any other business object, we use a lazy approach
                     //by setting as value the object id
                     if(value instanceof RootObject)
                         attributeTag.child("value",String.valueOf(((RootObject)value).getId()));
-                    else{
-                        if (value instanceof List)
-                            for (Object element : (List)value){
-                                if(element instanceof RootObject)
-                                    attributeTag.child("value",String.valueOf(((RootObject)element).getId()));
-                                else
-                                    attributeTag.child("value",element.toString());
-                            }
-                        else{
-                            if (value instanceof Date)
-                                attributeTag.child("value",String.valueOf(((Date)value).getTime()));
-                            else
-                                attributeTag.child("value",value.toString());
-                        }
-                    }
+                    else
+                        if (value instanceof Date)
+                            attributeTag.child("value",String.valueOf(((Date)value).getTime()));
+                        else
+                            attributeTag.child("value",value.toString());
                 }
             } catch (NoSuchMethodException nsme){
                 Logger.getLogger("ExportProvider").log(Level.WARNING, "NoSuchM: {0}", nsme.getMessage());
