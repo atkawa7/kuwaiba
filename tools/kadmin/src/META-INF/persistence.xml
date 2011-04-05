@@ -134,7 +134,7 @@
     <class>entity.views.GenericView</class>
     <class>entity.views.RackView</class>
     <properties>
-      <property name="eclipselink.cache.shared.default" value="false"/>
+      <property name="eclipselink.cache.shared.default" value="true"/>
       <property name="eclipselink.ddl-generation" value="none"/>
       <property name="javax.persistence.jdbc.password" value="kuwaiba"/>
       <property name="javax.persistence.jdbc.user" value="kuwaibadbuser"/>

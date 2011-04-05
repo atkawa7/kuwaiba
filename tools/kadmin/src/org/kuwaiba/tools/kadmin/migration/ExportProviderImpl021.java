@@ -18,6 +18,7 @@ package org.kuwaiba.tools.kadmin.migration;
 
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import entity.core.RootObject;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
@@ -49,7 +50,7 @@ public class ExportProviderImpl021 implements ExportProvider{
 
     private static final String version = "1.0";
     private static final String[] MAP_APPLICATION = new String[]{
-            "User", "UserGroup","DefaultView"
+            "User", "UserGroup","DefaultView","GenericObjectList"
         };
 
     @Override
@@ -96,7 +97,16 @@ public class ExportProviderImpl021 implements ExportProvider{
             classTag.attr("isCustom", classInfo.getIsCustom());
             classTag.attr("color", classInfo.getColor() == null ? "0" : classInfo.getColor());
             classTag.child("description", classInfo.getDescription() == null ? "" : classInfo.getDescription());
+            if (classInfo.getIcon() == null)
+                classTag.start("icon").end();
+            else
+                classTag.child("icon", Base64.encode((byte[])classInfo.getIcon()));
 
+            if (classInfo.getSmallIcon() == null)
+                classTag.start("smallIcon").end();
+            else
+                classTag.child("smallIcon", Base64.encode((byte[])classInfo.getSmallIcon()));
+            
             StartTagWAX possibleChildrenTag = classTag.start("possibleChildren");
             if (classInfo.getPossibleChildren() != null){
                 for (ClassMetadata possibleChild : classInfo.getPossibleChildren())
@@ -108,7 +118,7 @@ public class ExportProviderImpl021 implements ExportProvider{
             StartTagWAX attributesTag = classTag.start("attributes");
             if (classInfo.getAttributes() != null){
                 for (AttributeMetadata attributeInfo : classInfo.getAttributes()){
-                    StartTagWAX attributeTag = attributesTag.start("attributes");
+                    StartTagWAX attributeTag = attributesTag.start("attribute");
                     attributeTag.attr("id", attributeInfo.getId());
                     attributeTag.attr("name", attributeInfo.getName());
                     attributeTag.attr("displayName", attributeInfo.getDisplayName() == null ? "" : attributeInfo.getDisplayName());
@@ -156,7 +166,10 @@ public class ExportProviderImpl021 implements ExportProvider{
                                             f.getAnnotation(ManyToMany.class) != null ||
                                             f.getAnnotation(ManyToOne.class) != null;
             attributeTag.attr("isMultiple", isMultiple);
-            attributeTag.attr("isBinary", f.getType().equals(byte[].class));
+
+            boolean isBinary = f.getType().equals(byte[].class);
+            attributeTag.attr("isBinary", isBinary);
+
             if (f.getGenericType() instanceof ParameterizedType){
                 attributeTag.attr("type",((Class)((ParameterizedType)f.getGenericType()).getActualTypeArguments()[0]).getSimpleName());
             }
@@ -165,17 +178,18 @@ public class ExportProviderImpl021 implements ExportProvider{
             try{
 
                 Method m;
-                if (f.getType().equals(Boolean.class))
-                    m = object.getClass().getMethod("is"+Util.capitalize(f.getName()),
-                                                        new Class[]{});
-                else
-                    m = object.getClass().getMethod("get"+Util.capitalize(f.getName()),
+                m = object.getClass().getMethod("get"+Util.capitalize(f.getName()),
                                                         new Class[]{});
                 Object value = m.invoke(object, new Object[]{});
 
                 if (value == null)  continue; //No need to add a "value" tag
 
                 else{
+
+                    if (isBinary){
+                        attributeTag.child("value", Base64.encode((byte[])value));
+                        continue;
+                    }
                     //If this attribute is a reference to any other business object, we use a lazy approach
                     //by setting as value the object id
                     if(value instanceof RootObject)

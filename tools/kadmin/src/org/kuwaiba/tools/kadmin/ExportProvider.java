@@ -30,6 +30,7 @@ public interface ExportProvider {
     public static int TYPE_METADATA = 1;
     public static int TYPE_LISTTYPES = 2;
     public static int TYPE_OTHER_APPLICATION_OBJECTS = 4;
+    public static int TYPE_BUSINESS = 8;
     /**
      * Gets the document version used for the class implementing this interface
      * @return
