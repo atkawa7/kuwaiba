@@ -48,14 +48,13 @@ import org.kuwaiba.tools.kadmin.utils.Util;
  */
 public class ExportProviderImpl021 implements ExportProvider{
 
-    private static final String version = "1.0";
     private static final String[] MAP_APPLICATION = new String[]{
             "User", "UserGroup","DefaultView","GenericObjectList"
         };
 
     @Override
     public String getDocumentVersion() {
-        return version;
+        return SERVER_VERSION_LEGACY;
     }
 
     @Override

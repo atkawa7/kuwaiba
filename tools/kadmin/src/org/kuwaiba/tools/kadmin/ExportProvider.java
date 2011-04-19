@@ -26,11 +26,14 @@ import javax.persistence.metamodel.EntityType;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public interface ExportProvider {
-    public static int TYPE_ALL = 0;
-    public static int TYPE_METADATA = 1;
-    public static int TYPE_LISTTYPES = 2;
-    public static int TYPE_OTHER_APPLICATION_OBJECTS = 4;
-    public static int TYPE_BUSINESS = 8;
+    public static final int TYPE_ALL = 0;
+    public static final int TYPE_METADATA = 1;
+    public static final int TYPE_LISTTYPES = 2;
+    public static final int TYPE_OTHER_APPLICATION_OBJECTS = 4;
+    public static final int TYPE_BUSINESS = 8;
+
+    public static final String SERVER_VERSION_LEGACY = "legacy";
+    public static final String SERVER_VERSION_03 = "0.3";
     /**
      * Gets the document version used for the class implementing this interface
      * @return

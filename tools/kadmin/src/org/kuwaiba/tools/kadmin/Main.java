@@ -20,6 +20,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import org.kuwaiba.tools.kadmin.migration.ExportProviderImpl021;
@@ -54,27 +56,15 @@ public class Main {
         String dbPort = null;
         String dbPassword = null;
         String outputFileName =null;
+        String serverVersion = null;
 
         if (args.length == 0){
-            System.out.println("Kuwaiba command line administration tool v"+appVersion);
-            System.out.println("Allowed flags:\n"+
-                  "export Performs an export operation based on the parameters specified below\n" +
-                  "\t-u DB user (default: kuwaibadbuser)\n" +
-                  "\t-h DB host (default: localhost)\n" +
-                  "\t-d DB name (default: kuwaibadb)\n" +
-                  "\t-r DB port (default: 5432)\n" +
-                  "\t-p DB password (default: kuwaiba)\n" +
-                  "\t-o Output file name\n" +
-                  "\t-s Specifies the current server version [\"legacy\" for 0.2.x, \"0.3\" for 0.3.x]" +
-                  "\t--all Exports all elements in the database (default)\n" +
-                  "\t--types Exports the list types (EquipmentProvider, LocationOwner, etc)\n" +
-                  "\t--meta Exports the metadata information\n" +
-                  "\t--application Exports \n" +
-                  "\t--business Exports the business objects\n");
+            showHelp();
             System.exit(0);
         }
 
-        int scope = 0;
+        int scope = ExportProvider.TYPE_ALL;
+
         if (args[0].equals("export")){
             for (int i = 1; i < args.length ; i++){
                 if (args[i].startsWith("--")){ //a simple flag
@@ -116,7 +106,9 @@ public class Main {
                                                     outputFileName = args[i+1];
                                                 else
                                                     if (args[i].equals("-s"))
-                                                    outputFileName = args[i+1];
+                                                        serverVersion = args[i+1];
+                                                    else
+                                                        System.out.println("Unknown option "+args[i]);
                         }else{
                             System.out.println("Value missing for parameter "+args[i]);
                             return;
@@ -124,19 +116,24 @@ public class Main {
                     }
                 }
             }
-            EntityManager em = Persistence.createEntityManagerFactory("KuwaibaToolsPersistenceUnit").createEntityManager();
+            Map properties = new HashMap();
             if (dbPassword != null)
-                em.setProperty("javax.persistence.jdbc.password", dbPassword);
+                properties.put("javax.persistence.jdbc.password", dbPassword);
             if (dbUser != null)
-                em.setProperty("javax.persistence.jdbc.user", dbUser);
+                properties.put("javax.persistence.jdbc.user", dbUser);
 
-            em.setProperty("javax.persistence.jdbc.url", "jdbc:postgresql://"+(dbHost == null ? "localhost" : dbHost) +
+            properties.put("javax.persistence.jdbc.url", "jdbc:postgresql://"+(dbHost == null ? "localhost" : dbHost) +
                     ":" + (dbPort == null ? "5432" : dbPort) +"/"+(dbName == null ? "kuwaibadb" : dbName));
+
+            EntityManager em = Persistence.createEntityManagerFactory("KuwaibaToolsPersistenceUnit",properties).createEntityManager();
+            
+
+            
             if (em != null){
                 System.out.println("Starting export...");
                 ByteArrayOutputStream bas = new ByteArrayOutputStream();
                 ExportProvider bp = new ExportProviderImpl021();
-                bp.startTextBackup(em, bas, "legacy", ExportProvider.TYPE_ALL);
+                bp.startTextBackup(em, bas, serverVersion == null ? ExportProvider.SERVER_VERSION_03 : serverVersion, scope);
                 try{
                     FileOutputStream fos = new FileOutputStream(outputFileName == null ? "kuwaiba_export_"+Calendar.getInstance().getTimeInMillis()+".xml" : outputFileName);
                     fos.write(bas.toByteArray());
@@ -151,5 +148,23 @@ public class Main {
             else
                 System.out.println("The EntityManager couldn't be created. Please check you database connection setings");
         }
+    }
+
+    private static void showHelp(){
+        System.out.println("Kuwaiba command line administration tool v"+appVersion);
+        System.out.println("Allowed flags:\n"+
+              "export Performs an export operation based on the parameters specified below\n" +
+              "\t-u DB user (default: kuwaibadbuser)\n" +
+              "\t-h DB host (default: localhost)\n" +
+              "\t-d DB name (default: kuwaibadb)\n" +
+              "\t-r DB port (default: 5432)\n" +
+              "\t-p DB password (default: kuwaiba)\n" +
+              "\t-o Output file name\n" +
+              "\t-s Specifies the current server version [\"legacy\" for 0.2.x, \"0.3\" for 0.3.x (default)]" +
+              "\t--all Exports all elements in the database (default)\n" +
+              "\t--types Exports the list types (EquipmentProvider, LocationOwner, etc)\n" +
+              "\t--meta Exports the metadata information\n" +
+              "\t--application Exports \n" +
+              "\t--business Exports the business objects\n");
     }
 }
