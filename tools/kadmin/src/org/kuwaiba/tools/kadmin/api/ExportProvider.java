@@ -14,12 +14,10 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.tools.kadmin;
+package org.kuwaiba.tools.kadmin.api;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Set;
 import javax.persistence.EntityManager;
-import javax.persistence.metamodel.EntityType;
 
 /**
  * Implementors of this interface should perform a complete backup of the existing objects
@@ -41,16 +39,16 @@ public interface ExportProvider {
     public String getDocumentVersion();
     /**
      * Makes a XML-based backup according to the guidelines available at the <a href="https://sourceforge.net/apps/mediawiki/kuwaiba/index.php?title=XML_Documents#To_backup.2Fexport_the_current_database">wiki page</a>
-     * @param entities the list of available entities
+     * @param Current entity manager used to execute the necessary queries
      * @param outputStream the stream to write the backup
      * @param serverVersion the version of the server to be backed up
      */
     public void startTextBackup(EntityManager em, ByteArrayOutputStream outputStream, String serverVersion, int backupType);
     /**
      * Makes a binary backup according to the guidelines available at the wiki page (format not yet available)
-     * @param entities the list of available entities
+     * @param Current entity manager used to execute the necessary queries
      * @param outputStream the stream to write the backup
      * @param serverVersion the version of the server to be backed up
      */
-    public void startBinaryBackup(Set<EntityType> entities, ByteArrayOutputStream outputStream, String serverVersion, int backupType);
+    public void startBinaryBackup(EntityManager em, ByteArrayOutputStream outputStream, String serverVersion, int backupType);
 }

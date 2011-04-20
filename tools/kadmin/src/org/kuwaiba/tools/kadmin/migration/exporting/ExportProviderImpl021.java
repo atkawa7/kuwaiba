@@ -14,10 +14,11 @@
  * 
  */
 
-package org.kuwaiba.tools.kadmin.migration;
+package org.kuwaiba.tools.kadmin.migration.exporting;
 
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import entity.core.RootObject;
 import entity.core.metamodel.AttributeMetadata;
 import entity.core.metamodel.ClassMetadata;
@@ -25,10 +26,10 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
@@ -36,28 +37,26 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.metamodel.EntityType;
-import org.kuwaiba.tools.kadmin.ExportProvider;
+import org.kuwaiba.tools.kadmin.api.ExportProvider;
 import org.kuwaiba.tools.kadmin.utils.Util;
 
 /**
  * Default implementation, used to backup 0.2.x and 0.3.x series
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ExportProviderImpl03 implements ExportProvider{
+public class ExportProviderImpl021 implements ExportProvider{
 
-    private static final String version = "1.0";
     private static final String[] MAP_APPLICATION = new String[]{
-            "User", "UserGroup","DefaultView"
+            "User", "UserGroup","DefaultView","GenericObjectList"
         };
 
     @Override
     public String getDocumentVersion() {
-        return version;
+        return SERVER_VERSION_LEGACY;
     }
 
     @Override
-    public void startBinaryBackup(Set<EntityType> entities, ByteArrayOutputStream outputStream, String serverVersion, int backupType) {
+    public void startBinaryBackup(EntityManager em, ByteArrayOutputStream outputStream, String serverVersion, int backupType) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -95,7 +94,16 @@ public class ExportProviderImpl03 implements ExportProvider{
             classTag.attr("isCustom", classInfo.getIsCustom());
             classTag.attr("color", classInfo.getColor() == null ? "0" : classInfo.getColor());
             classTag.child("description", classInfo.getDescription() == null ? "" : classInfo.getDescription());
+            if (classInfo.getIcon() == null)
+                classTag.start("icon").end();
+            else
+                classTag.child("icon", Base64.encode((byte[])classInfo.getIcon()));
 
+            if (classInfo.getSmallIcon() == null)
+                classTag.start("smallIcon").end();
+            else
+                classTag.child("smallIcon", Base64.encode((byte[])classInfo.getSmallIcon()));
+            
             StartTagWAX possibleChildrenTag = classTag.start("possibleChildren");
             if (classInfo.getPossibleChildren() != null){
                 for (ClassMetadata possibleChild : classInfo.getPossibleChildren())
@@ -107,7 +115,7 @@ public class ExportProviderImpl03 implements ExportProvider{
             StartTagWAX attributesTag = classTag.start("attributes");
             if (classInfo.getAttributes() != null){
                 for (AttributeMetadata attributeInfo : classInfo.getAttributes()){
-                    StartTagWAX attributeTag = attributesTag.start("attributes");
+                    StartTagWAX attributeTag = attributesTag.start("attribute");
                     attributeTag.attr("id", attributeInfo.getId());
                     attributeTag.attr("name", attributeInfo.getName());
                     attributeTag.attr("displayName", attributeInfo.getDisplayName() == null ? "" : attributeInfo.getDisplayName());
@@ -150,32 +158,54 @@ public class ExportProviderImpl03 implements ExportProvider{
         for (Field f : allAttributes ){
             StartTagWAX attributeTag = objectTag.start("attribute");
             attributeTag.attr("name", f.getName());
-            attributeTag.attr("isMultiple", f.getAnnotation(OneToOne.class) != null ||
+            boolean isMultiple = f.getAnnotation(OneToOne.class) != null ||
                                             f.getAnnotation(OneToMany.class) != null ||
                                             f.getAnnotation(ManyToMany.class) != null ||
-                                            f.getAnnotation(ManyToOne.class) != null);
-            attributeTag.attr("isBinary", f.getType().equals(byte[].class));
+                                            f.getAnnotation(ManyToOne.class) != null;
+            attributeTag.attr("isMultiple", isMultiple);
+
+            boolean isBinary = f.getType().equals(byte[].class);
+            attributeTag.attr("isBinary", isBinary);
+
+            if (f.getGenericType() instanceof ParameterizedType){
+                attributeTag.attr("type",((Class)((ParameterizedType)f.getGenericType()).getActualTypeArguments()[0]).getSimpleName());
+            }
+            else
+                attributeTag.attr("type",f.getType().getSimpleName());
             try{
 
                 Method m;
-                if (f.getType().equals(Boolean.class))
-                    m = object.getClass().getMethod("is"+Util.capitalize(f.getName()),
-                                                        new Class[]{});
-                else
-                    m = object.getClass().getMethod("get"+Util.capitalize(f.getName()),
+                m = object.getClass().getMethod("get"+Util.capitalize(f.getName()),
                                                         new Class[]{});
                 Object value = m.invoke(object, new Object[]{});
+
                 if (value == null)  continue; //No need to add a "value" tag
+
                 else{
+
+                    if (isBinary){
+                        attributeTag.child("value", Base64.encode((byte[])value));
+                        continue;
+                    }
                     //If this attribute is a reference to any other business object, we use a lazy approach
                     //by setting as value the object id
                     if(value instanceof RootObject)
                         attributeTag.child("value",String.valueOf(((RootObject)value).getId()));
-                    else
-                        if (value instanceof Date)
-                            attributeTag.child("value",String.valueOf(((Date)value).getTime()));
-                        else
-                            attributeTag.child("value",value.toString());
+                    else{
+                        if (value instanceof List)
+                            for (Object element : (List)value){
+                                if(element instanceof RootObject)
+                                    attributeTag.child("value",String.valueOf(((RootObject)element).getId()));
+                                else
+                                    attributeTag.child("value",element.toString());
+                            }
+                        else{
+                            if (value instanceof Date)
+                                attributeTag.child("value",String.valueOf(((Date)value).getTime()));
+                            else
+                                attributeTag.child("value",value.toString());
+                        }
+                    }
                 }
             } catch (NoSuchMethodException nsme){
                 Logger.getLogger("ExportProvider").log(Level.WARNING, "NoSuchM: {0}", nsme.getMessage());

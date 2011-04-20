@@ -16,6 +16,7 @@
 
 package org.kuwaiba.tools.kadmin;
 
+import org.kuwaiba.tools.kadmin.api.ExportProvider;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
-import org.kuwaiba.tools.kadmin.migration.ExportProviderImpl021;
+import org.kuwaiba.tools.kadmin.migration.exporting.ExportProviderImpl021;
 
 /**
  * This program is intended to be used to perform the main administrative tasks
@@ -57,6 +58,7 @@ public class Main {
         String dbPassword = null;
         String outputFileName =null;
         String serverVersion = null;
+        boolean textBackup = true;
 
         if (args.length == 0){
             showHelp();
@@ -79,10 +81,13 @@ public class Main {
                             else
                                 if(args[i].equals("--business"))
                                     scope |= ExportProvider.TYPE_BUSINESS;
-                                else{
-                                    System.out.println("Unknown parameter "+args[i]);
-                                    return;
-                                }
+                                else
+                                    if(args[i].equals("--binary"))
+                                        textBackup = false;
+                                    else{
+                                        System.out.println("Unknown parameter "+args[i]);
+                                        return;
+                                    }
 
                 }else{
                     if (args[i].startsWith("-")){ //a parameter
@@ -108,7 +113,7 @@ public class Main {
                                                     if (args[i].equals("-s"))
                                                         serverVersion = args[i+1];
                                                     else
-                                                        System.out.println("Unknown option "+args[i]);
+                                                        System.out.println("Unknown parameter "+args[i]);
                         }else{
                             System.out.println("Value missing for parameter "+args[i]);
                             return;
@@ -133,7 +138,10 @@ public class Main {
                 System.out.println("Starting export...");
                 ByteArrayOutputStream bas = new ByteArrayOutputStream();
                 ExportProvider bp = new ExportProviderImpl021();
-                bp.startTextBackup(em, bas, serverVersion == null ? ExportProvider.SERVER_VERSION_03 : serverVersion, scope);
+                if (textBackup)
+                    bp.startTextBackup(em, bas, serverVersion == null ? ExportProvider.SERVER_VERSION_03 : serverVersion, scope);
+                else
+                    bp.startBinaryBackup(em, bas, serverVersion == null ? ExportProvider.SERVER_VERSION_03 : serverVersion, scope);
                 try{
                     FileOutputStream fos = new FileOutputStream(outputFileName == null ? "kuwaiba_export_"+Calendar.getInstance().getTimeInMillis()+".xml" : outputFileName);
                     fos.write(bas.toByteArray());
@@ -165,6 +173,7 @@ public class Main {
               "\t--types Exports the list types (EquipmentProvider, LocationOwner, etc)\n" +
               "\t--meta Exports the metadata information\n" +
               "\t--application Exports \n" +
-              "\t--business Exports the business objects\n");
+              "\t--business Exports the business objects\n"+
+              "\t--binary Generates a binary backup (a compressed, disk space-wise version of the default text based backup)\n");
     }
 }
