@@ -52,8 +52,14 @@ public class ExportProviderImpl021 implements ExportProvider{
 
     @Override
     public String getDocumentVersion() {
+        return DOCUMENT_VERSION_10;
+    }
+
+    public String getSourceVersion() {
         return SERVER_VERSION_LEGACY;
     }
+
+
 
     @Override
     public void startBinaryBackup(EntityManager em, ByteArrayOutputStream outputStream, String serverVersion, int backupType) {
@@ -67,7 +73,7 @@ public class ExportProviderImpl021 implements ExportProvider{
         WAX xmlWriter = new WAX(outputStream);
         StartTagWAX rootTag = xmlWriter.start("backup");
         rootTag.attr("documentVersion", getDocumentVersion());
-        rootTag.attr("serverVersion", serverVersion);
+        rootTag.attr("serverVersion", getSourceVersion());
         rootTag.attr("date", Calendar.getInstance().getTimeInMillis());
         StartTagWAX entityTag = rootTag.start("entities");
         StartTagWAX metadataTag = entityTag.start("metadata");

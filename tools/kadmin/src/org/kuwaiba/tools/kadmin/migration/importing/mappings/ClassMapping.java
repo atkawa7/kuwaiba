@@ -16,6 +16,7 @@
 
 package org.kuwaiba.tools.kadmin.migration.importing.mappings;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +29,16 @@ public class ClassMapping {
     private String renamedTo;
     private boolean removed;
     private boolean mapped;
+    private List<AttributeMapping> mappedAttributes;
+
+    public ClassMapping(String originalName, String renamedTo, boolean removed, boolean mapped) {
+        assert (originalName == null) : "Original class name can not be null";
+        this.originalName = originalName;
+        this.renamedTo = renamedTo;
+        this.removed = removed;
+        this.mapped = mapped;
+    }
+
 
     public boolean isMapped() {
         return mapped;
@@ -59,5 +70,11 @@ public class ClassMapping {
 
     public void setRenamedTo(String renamedTo) {
         this.renamedTo = renamedTo;
+    }
+
+    public List<AttributeMapping> getMappedAttributes() {
+        if (mappedAttributes == null)
+            mappedAttributes = new ArrayList<AttributeMapping>();
+        return mappedAttributes;
     }
 }

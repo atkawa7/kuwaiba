@@ -19,33 +19,42 @@ package org.kuwaiba.tools.kadmin.migration.importing;
 import com.ociweb.xml.StartTagWAX;
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
+import javax.persistence.EntityManager;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.kuwaiba.tools.kadmin.VersionNotValidException;
+import org.kuwaiba.tools.kadmin.XMLParseException;
 import org.kuwaiba.tools.kadmin.api.ImportProvider;
-import org.kuwaiba.tools.kadmin.migration.importing.mappings.AttributeMapping;
 import org.kuwaiba.tools.kadmin.migration.importing.mappings.ClassMapping;
 
 /**
  * Migrates from 0.2.x to 0.3.x
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ImportProvider03 implements ImportProvider{
-    public static final String SOURCE_VERSION = "legacy";
+public class ImportProviderImpl03 implements ImportProvider{
+    private EntityManager em;
+
+    public String getSourceVersion() {
+        return SOURCE_VERSION_LEGACY;
+    }
 
     public String getTargetVersion() {
         return TARGET_VERSION_03;
     }
 
-    public boolean importData(byte[] data, HashMap<ClassMapping,AttributeMapping> mappings) {
+    public void importTextData(byte[] data, HashMap<String, ClassMapping> mappings) throws VersionNotValidException, XMLParseException{
         try{
+            assert em != null : "Entity Manager can not be null";
             assert data != null : "The data to be imported can't be null";
+
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
-            QName qBacukp = new QName("backup"); //NOI18N
+            QName qBackup = new QName("backup"); //NOI18N
             QName qClass = new QName("class"); //NOI18N
-            QName qPackage = new QName("package"); //NOI18N
+            QName qObject = new QName("object"); //NOI18N
             QName qAttribute = new QName("attribute"); //NOI18N
 
             ByteArrayInputStream bais = new ByteArrayInputStream(data);
@@ -54,24 +63,36 @@ public class ImportProvider03 implements ImportProvider{
             while (reader.hasNext()){
                 int event = reader.next();
                 if (event == XMLStreamConstants.START_ELEMENT){
-                    if (reader.getName().equals(qBacukp)){
-
+                    if (reader.getName().equals(qBackup)){
+                        if (!reader.getAttributeValue(null, "serverVersion").equals(getSourceVersion()))
+                            throw new VersionNotValidException(VersionNotValidException.OPERATION_IMPORT,
+                                            getSourceVersion(),getTargetVersion());
+                        else{
+                            if (reader.getName().equals(qClass)){
+                                processClassNode(reader, mappings.get(reader.getName().toString()));
+                            }
+                        }
                     }
                 }
             }
-            return true;
-        }catch(Exception ex){
-            return false;
+        }catch(XMLStreamException ex){
+            throw new XMLParseException(ex.getClass().getSimpleName()+": "+ex.getMessage());
         }
     }
 
-    private void processMetadataNode(StartTagWAX applicationNode){
+    public void setEntityManager(EntityManager em) {
+        this.em = em;
     }
 
-    private void processApplicationNode(StartTagWAX applicationNode){
-    }
 
-    private void processBusinessNode(StartTagWAX applicationNode){
+    private void processClassNode(XMLStreamReader pointerToNode, ClassMapping classMapping){
+        String className;
+        //This class is mapped somehow in the new version or the enclosed
+                                  //attributes are
+        if (classMapping != null){
+            className = pointerToNode.getName().toString();
+        }
+
     }
 
     private void processObjectNode(StartTagWAX applicationNode){

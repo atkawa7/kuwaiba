@@ -17,7 +17,8 @@
 package org.kuwaiba.tools.kadmin.api;
 
 import java.util.HashMap;
-import org.kuwaiba.tools.kadmin.migration.importing.mappings.AttributeMapping;
+import org.kuwaiba.tools.kadmin.VersionNotValidException;
+import org.kuwaiba.tools.kadmin.XMLParseException;
 import org.kuwaiba.tools.kadmin.migration.importing.mappings.ClassMapping;
 
 /**
@@ -29,6 +30,23 @@ public interface ImportProvider {
     public static final String TARGET_VERSION_04 = "0.4";
     public static final String TARGET_VERSION_05 = "0.5";
 
+    public static final String SOURCE_VERSION_LEGACY = "legacy";
+    public static final String SOURCE_VERSION_03 = "0.3";
+
+    /**
+     * Gets the server version which is supported to import from
+     * @return
+     */
+    public String getSourceVersion();
+    /**
+     * Gets the server version which is supported to import to
+     * @return
+     */
     public String getTargetVersion();
-    public boolean importData(byte[] data, HashMap<ClassMapping,AttributeMapping> mappings);
+    /**
+     * Imports from an XML format
+     * @param data byte array with the file
+     * @param mappings the mappings used to know what changed
+     */
+    public void importTextData(byte[] data, HashMap<String, ClassMapping> mappings) throws VersionNotValidException, XMLParseException;
 }

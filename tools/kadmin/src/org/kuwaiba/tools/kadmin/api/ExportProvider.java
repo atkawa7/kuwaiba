@@ -32,11 +32,18 @@ public interface ExportProvider {
 
     public static final String SERVER_VERSION_LEGACY = "legacy";
     public static final String SERVER_VERSION_03 = "0.3";
+
+    public static final String DOCUMENT_VERSION_10 = "1.0";
     /**
      * Gets the document version used for the class implementing this interface
      * @return
      */
     public String getDocumentVersion();
+    /**
+     * Gets the server version where the backup/export was extracted from
+     * @return
+     */
+    public String getSourceVersion();
     /**
      * Makes a XML-based backup according to the guidelines available at the <a href="https://sourceforge.net/apps/mediawiki/kuwaiba/index.php?title=XML_Documents#To_backup.2Fexport_the_current_database">wiki page</a>
      * @param Current entity manager used to execute the necessary queries
