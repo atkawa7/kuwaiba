@@ -15,6 +15,7 @@
  */
 package org.inventory.navigation.applicationnodes.objectnodes.actions;
 
+import org.inventory.core.services.utils.MenuScroller;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -78,14 +79,18 @@ public final class CreateObject extends AbstractAction implements Popup{
             items = CommunicationsStub.getInstance().
                     getPossibleChildren(((ObjectNode)node).getObject().getClassName(),false);
 
-        if (items.isEmpty()) mnuPossibleChildren.setEnabled(false);
-            else
-                for(LocalClassMetadataLight item: items){
-                    JMenuItem smiChildren = new JMenuItem(item.getClassName());
-                    smiChildren.setName(item.getClassName());
-                    smiChildren.addActionListener(this);
-                    mnuPossibleChildren.add(smiChildren);
-                }
+        if (items.isEmpty())
+			mnuPossibleChildren.setEnabled(false);
+        else
+			for(LocalClassMetadataLight item: items){
+				JMenuItem smiChildren = new JMenuItem(item.getClassName());
+				smiChildren.setName(item.getClassName());
+				smiChildren.addActionListener(this);
+				mnuPossibleChildren.add(smiChildren);
+			}
+		
+		MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+		
         return mnuPossibleChildren;
     }
 }
