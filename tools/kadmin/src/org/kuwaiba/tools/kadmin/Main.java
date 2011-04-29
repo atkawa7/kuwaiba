@@ -138,10 +138,11 @@ public class Main {
                 System.out.println("Starting export...");
                 ByteArrayOutputStream bas = new ByteArrayOutputStream();
                 ExportProvider bp = new ExportProviderImpl021();
+                bp.setEntityManager(em);
                 if (textBackup)
-                    bp.startTextBackup(em, bas, serverVersion == null ? ExportProvider.SERVER_VERSION_03 : serverVersion, scope);
+                    bp.startTextBackup(bas, serverVersion == null ? ExportProvider.SERVER_VERSION_03 : serverVersion, scope);
                 else
-                    bp.startBinaryBackup(em, bas, serverVersion == null ? ExportProvider.SERVER_VERSION_03 : serverVersion, scope);
+                    bp.startBinaryBackup(bas, serverVersion == null ? ExportProvider.SERVER_VERSION_03 : serverVersion, scope);
                 try{
                     FileOutputStream fos = new FileOutputStream(outputFileName == null ? "kuwaiba_export_"+Calendar.getInstance().getTimeInMillis()+".xml" : outputFileName);
                     fos.write(bas.toByteArray());

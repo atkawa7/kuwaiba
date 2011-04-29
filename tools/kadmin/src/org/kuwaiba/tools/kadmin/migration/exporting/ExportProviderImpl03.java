@@ -48,6 +48,8 @@ public class ExportProviderImpl03 implements ExportProvider{
             "User", "UserGroup","DefaultView"
         };
 
+    private EntityManager em;
+
     @Override
     public String getDocumentVersion() {
         return DOCUMENT_VERSION_10;
@@ -58,12 +60,12 @@ public class ExportProviderImpl03 implements ExportProvider{
     }
 
     @Override
-    public void startBinaryBackup(EntityManager em, ByteArrayOutputStream outputStream, String serverVersion, int backupType) {
+    public void startBinaryBackup(ByteArrayOutputStream outputStream, String serverVersion, int backupType) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void startTextBackup(EntityManager em, ByteArrayOutputStream outputStream, String serverVersion, int backupType) {
+    public void startTextBackup(ByteArrayOutputStream outputStream, String serverVersion, int backupType) {
         assert (em != null) : "Null EntityManager found";
 
         WAX xmlWriter = new WAX(outputStream);
@@ -198,5 +200,9 @@ public class ExportProviderImpl03 implements ExportProvider{
             }
         }
         objectTag.end();
+    }
+
+    public void setEntityManager(EntityManager em) {
+        this.em = em;
     }
 }

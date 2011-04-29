@@ -17,9 +17,13 @@
 package org.kuwaiba.tools.kadmin.migration.importing;
 
 import com.ociweb.xml.StartTagWAX;
+import entity.core.metamodel.ClassMetadata;
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -90,9 +94,32 @@ public class ImportProviderImpl03 implements ImportProvider{
         //This class is mapped somehow in the new version or the enclosed
                                   //attributes are
         if (classMapping != null){
+            if (classMapping.getRenamedTo() == null)
+                className = classMapping.getOriginalName();
+            else{
+                if(classMapping.getRenamedTo().equals("")){
+                    Logger.getLogger("ImportProvider").log(Level.WARNING, "renamedTo can not be null for {0}. Class ignored", classMapping.getOriginalName());
+                    return;
+                }
+
+                className = classMapping.getRenamedTo();
+            }
+        }else
             className = pointerToNode.getName().toString();
+
+        ClassMetadata metadata;
+        try{
+            metadata = (ClassMetadata)em.createQuery("SELECT x FROM ClassMetadata WHERE x.name='"+className+"'").getSingleResult();
+        }catch (NoResultException nre){
+            Logger.getLogger("ImportProvider").log(Level.WARNING, "Class {0} not found", className);
+            return;
         }
 
+        metadata.setDisplayName(pointerToNode.getAttributeValue(null, "displayName") == null ? "" : pointerToNode.getAttributeValue(null, "displayName"));
+        metadata.setColor(pointerToNode.getAttributeValue(null, "displayName") == null ? null : Integer.valueOf(pointerToNode.getAttributeValue(null, "displayName")));
+//        sentence = String.format("UPDATE {0} x SET x.displayName='{1}', x.color={2}, x.description=''", className,
+//                pointerToNode.getAttributeValue(null, "displayName") == null ? "" : pointerToNode.getAttributeValue(null, "displayName"),
+//                pointerToNode.getAttributeValue(null, "color") == null ? 0 : pointerToNode.getAttributeValue(null, "color"));
     }
 
     private void processObjectNode(StartTagWAX applicationNode){

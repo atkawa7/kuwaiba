@@ -50,12 +50,17 @@ public interface ExportProvider {
      * @param outputStream the stream to write the backup
      * @param serverVersion the version of the server to be backed up
      */
-    public void startTextBackup(EntityManager em, ByteArrayOutputStream outputStream, String serverVersion, int backupType);
+    public void startTextBackup(ByteArrayOutputStream outputStream, String serverVersion, int backupType);
     /**
      * Makes a binary backup according to the guidelines available at the wiki page (format not yet available)
      * @param Current entity manager used to execute the necessary queries
      * @param outputStream the stream to write the backup
      * @param serverVersion the version of the server to be backed up
      */
-    public void startBinaryBackup(EntityManager em, ByteArrayOutputStream outputStream, String serverVersion, int backupType);
+    public void startBinaryBackup(ByteArrayOutputStream outputStream, String serverVersion, int backupType);
+    /**
+     * Sets the entity manager used to manage persistence
+     * @param em The new entity manager
+     */
+    public void setEntityManager(EntityManager em);
 }

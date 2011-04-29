@@ -50,6 +50,8 @@ public class ExportProviderImpl021 implements ExportProvider{
             "User", "UserGroup","DefaultView","GenericObjectList"
         };
 
+    private EntityManager em;
+
     @Override
     public String getDocumentVersion() {
         return DOCUMENT_VERSION_10;
@@ -59,16 +61,15 @@ public class ExportProviderImpl021 implements ExportProvider{
         return SERVER_VERSION_LEGACY;
     }
 
-
-
     @Override
-    public void startBinaryBackup(EntityManager em, ByteArrayOutputStream outputStream, String serverVersion, int backupType) {
+    public void startBinaryBackup(ByteArrayOutputStream outputStream, String serverVersion, int backupType) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void startTextBackup(EntityManager em, ByteArrayOutputStream outputStream, String serverVersion, int backupType) {
-        assert (em != null) : "Null EntityManager found";
+    public void startTextBackup(ByteArrayOutputStream outputStream, String serverVersion, int backupType) {
+        assert em != null : "Entity Manager can not be null";
+        assert outputStream != null : "The data to be imported can't be null";
 
         WAX xmlWriter = new WAX(outputStream);
         StartTagWAX rootTag = xmlWriter.start("backup");
@@ -96,18 +97,16 @@ public class ExportProviderImpl021 implements ExportProvider{
             StartTagWAX classTag = classesTag.start("class");
             classTag.attr("id", classInfo.getId());
             classTag.attr("name", classInfo.getName());
-            classTag.attr("displayName", classInfo.getDisplayName() == null ? "" : classInfo.getDisplayName());
+            if (classInfo.getDisplayName() != null)
+                classTag.attr("displayName", classInfo.getDisplayName());
             classTag.attr("isCustom", classInfo.getIsCustom());
-            classTag.attr("color", classInfo.getColor() == null ? "0" : classInfo.getColor());
+            if (classInfo.getColor() != null)
+                classTag.attr("color",  classInfo.getColor());
             classTag.child("description", classInfo.getDescription() == null ? "" : classInfo.getDescription());
-            if (classInfo.getIcon() == null)
-                classTag.start("icon").end();
-            else
+            if (classInfo.getIcon() != null)
                 classTag.child("icon", Base64.encode((byte[])classInfo.getIcon()));
 
-            if (classInfo.getSmallIcon() == null)
-                classTag.start("smallIcon").end();
-            else
+            if (classInfo.getSmallIcon() != null)
                 classTag.child("smallIcon", Base64.encode((byte[])classInfo.getSmallIcon()));
             
             StartTagWAX possibleChildrenTag = classTag.start("possibleChildren");
@@ -124,7 +123,8 @@ public class ExportProviderImpl021 implements ExportProvider{
                     StartTagWAX attributeTag = attributesTag.start("attribute");
                     attributeTag.attr("id", attributeInfo.getId());
                     attributeTag.attr("name", attributeInfo.getName());
-                    attributeTag.attr("displayName", attributeInfo.getDisplayName() == null ? "" : attributeInfo.getDisplayName());
+                    if (attributeInfo.getDisplayName() != null)
+                        attributeTag.attr("displayName",  attributeInfo.getDisplayName());
                     attributeTag.attr("isVisible", attributeInfo.IsVisible());
                     attributeTag.attr("isReadOnly", false);
                     attributeTag.text(attributeInfo.getDescription() == null ? "" : attributeInfo.getDescription());
@@ -233,5 +233,9 @@ public class ExportProviderImpl021 implements ExportProvider{
             }
         }
         objectTag.end();
+    }
+
+    public void setEntityManager(EntityManager em) {
+        this.em = em;
     }
 }
