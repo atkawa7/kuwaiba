@@ -136,7 +136,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         }
 
         LocalObject lo = null;
-        if (!(object instanceof LocalObject))
+        if (object instanceof LocalObject)
+            lo = (LocalObject)object;
+        else
             lo = com.getObjectInfo(object.getClassName(), object.getOid());
 
         if (lo == null){
