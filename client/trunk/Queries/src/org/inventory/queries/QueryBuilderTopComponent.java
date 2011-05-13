@@ -97,6 +97,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         btnOpen = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
+        btnClear = new javax.swing.JButton();
         btnConfigure = new javax.swing.JButton();
         btnOrganize = new javax.swing.JButton();
         btnSearch = new javax.swing.JButton();
@@ -159,6 +160,19 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
             }
         });
         barMain.add(btnDelete);
+
+        btnClear.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/clear.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnClear, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnClear.text")); // NOI18N
+        btnClear.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnClear.toolTipText")); // NOI18N
+        btnClear.setFocusable(false);
+        btnClear.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnClear.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearActionPerformed(evt);
+            }
+        });
+        barMain.add(btnClear);
 
         btnConfigure.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/configure-22.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnConfigure, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnConfigure.text")); // NOI18N
@@ -289,6 +303,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
                                             if (qlp.getSelectedQuery() != null){
                                                 queryScene.clear();
                                                 qbs.renderQuery(qlp.getSelectedQuery());
+                                                cmbClassList.setSelectedItem(null);
                                             }
                                             else
                                                 JOptionPane.showConfirmDialog(null, "Select a query, please","Error", JOptionPane.ERROR_MESSAGE);
@@ -324,24 +339,35 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     }//GEN-LAST:event_btnOrganizeActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        if(qbs.getCurrentLocalQuery() == null){ //It's a transient query
-            if (JOptionPane.showConfirmDialog(this, "Are you sure you want to clear the current query?", //NOI18N
-                    "Cleaning temporal query",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){  //NOI18N
-                queryScene.clear();
-                queryScene.setCurrentSearchedClass(null);
-                cmbClassList.setSelectedItem(null);
-                queryScene.validate();
-            }
-        }else{
-            if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current query?", //NOI18N
-                    "Delete saved query",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){  //NOI18N
-                qbs.deleteQuery();
-            }
+        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current query?", //NOI18N
+                "Delete saved query",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){  //NOI18N
+            qbs.deleteQuery();
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to clear the current query?", //NOI18N
+                    "Confirmation",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){  //NOI18N
+            if(qbs.getCurrentLocalQuery() == null){ //It's a temporal query, not a saved one
+                    queryScene.clear();
+                    queryScene.setCurrentSearchedClass(null);
+                    cmbClassList.setSelectedItem(null);
+            }else{ //It's a saved query, so we nee to clear all nodes except the roor one
+                LocalClassMetadata currentSearchedClass = queryScene.getCurrentSearchedClass();
+                queryScene.clear();
+                ClassNodeWidget myNewNode = ((ClassNodeWidget)queryScene.addNode(currentSearchedClass));
+                myNewNode.build(null);
+                myNewNode.setPreferredLocation(new Point(100, 50));
+                queryScene.setCurrentSearchedClass(currentSearchedClass);
+                isSaved = false;
+            }
+            queryScene.validate();
+        }
+    }//GEN-LAST:event_btnClearActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
+    private javax.swing.JButton btnClear;
     private javax.swing.JButton btnConfigure;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnOpen;

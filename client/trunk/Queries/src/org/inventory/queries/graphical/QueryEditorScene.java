@@ -320,7 +320,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         Widget[] attributePins = ((ClassNodeWidget)findWidget(mainClass)).getChildren().toArray(new Widget[0]);
         for (Widget myPin : attributePins){
             if (myPin instanceof AttributePinWidget){
-                if (((AttributePinWidget)myPin).getIsVisible().isSelected()){
+                if (!((AttributePinWidget)myPin).getIsVisible().isSelected()){
                     myQuery.getVisibleAttributeNames().add(((AttributePinWidget)myPin).getAttribute().getName());
                 }
                 if (!((AttributePinWidget)myPin).getInsideCheck().isSelected())
