@@ -45,3 +45,8 @@
 * Changes in the executeQuery method
 * TestServlet renamed to Tools and enhanced to provide a way to reset the admin password and diagnose potential data model problems
 * The context path (WSDL location) was changed to /kuwaiba/<KuwaibaService?wsdl>
+
+0.3 Stable (16052011)
+* A few security fixes
+* Fixes to close the bug #3177812
+* Packages renamed to match the convention org.kuwaiba.xxx
