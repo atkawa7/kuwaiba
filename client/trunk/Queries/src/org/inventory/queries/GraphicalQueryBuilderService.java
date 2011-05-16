@@ -114,7 +114,7 @@ public class GraphicalQueryBuilderService implements ActionListener{
             /*
              * Only for debugging purposes
              try{
-                FileOutputStream fos = new FileOutputStream("/home/zim/query.xml");
+                FileOutputStream fos = new FileOutputStream("query.xml");
                 fos.write(currentTransientQuery.toXML());
                 fos.flush();
                 fos.close();

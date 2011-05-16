@@ -56,7 +56,7 @@ public class SwitchClassNodeWidgetFilterAction extends AbstractAction{
                     findPinEdges(((QueryEditorNodeWidget)classNode).getDefaultPinId(), false, true).iterator().next();
             if (classNode instanceof ClassNodeWidget){ //Extended to simple
                 ClassNodeWidget node = (ClassNodeWidget)classNode;
-                ((QueryEditorScene)node.getScene()).removeNode(node.getWrappedClass());
+                ((QueryEditorScene)node.getScene()).removeAllRelatedNodes(node.getWrappedClass(), false);
 
                 ListTypeFilter newNode = (ListTypeFilter) ((QueryEditorScene)node.getScene()).
                         addNode(node.getWrappedClass().getLightMetadata());

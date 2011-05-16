@@ -320,7 +320,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         Widget[] attributePins = ((ClassNodeWidget)findWidget(mainClass)).getChildren().toArray(new Widget[0]);
         for (Widget myPin : attributePins){
             if (myPin instanceof AttributePinWidget){
-                if (!((AttributePinWidget)myPin).getIsVisible().isSelected()){
+                if (((AttributePinWidget)myPin).getIsVisible().isSelected()){
                     myQuery.getVisibleAttributeNames().add(((AttributePinWidget)myPin).getAttribute().getName());
                 }
                 if (!((AttributePinWidget)myPin).getInsideCheck().isSelected())
@@ -366,9 +366,10 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      * The default removeNode implementation removes the provided node plus the related
      * pins, however, as this editor chains many nodes in a tree fashion is necessary to
      * remove the whole branch, not only the one provided
-     * @param node
+     * @param node the root node to start deleting
+     * @param goBackwards should the method delete the edges coming from backwards the root node?
      */
-    public void removeAllRelatedNodes(Object node){
+    public void removeAllRelatedNodes(Object node, boolean goBackwards){
         QueryEditorNodeWidget currentNode = ((QueryEditorNodeWidget)findWidget(node));
         List<Widget> widgetsInside = currentNode.getChildren();
         for (Widget widget : widgetsInside){
@@ -379,12 +380,19 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
                     VMDNodeWidget nextHop = (VMDNodeWidget) myEdge.getTargetAnchor().getRelatedWidget().getParentWidget();
                     removeAllRelatedNodes(findObject(nextHop));
                 }
-                String[] backwardEdges = findPinEdges(findObject(widget), false, true).toArray(new String[0]);
-                for (String edge : backwardEdges)
-                    removeEdge(edge);
+
+                if (goBackwards){
+                    String[] backwardEdges = findPinEdges(findObject(widget), false, true).toArray(new String[0]);
+                    for (String edge : backwardEdges)
+                        removeEdge(edge);
+                }
             }
         }
         removeNode(node);
+    }
+
+    public void removeAllRelatedNodes(Object node){
+        removeAllRelatedNodes(node, true);
     }
 
     public void organizeNodes(LocalClassMetadata rootObject, int x, int y){

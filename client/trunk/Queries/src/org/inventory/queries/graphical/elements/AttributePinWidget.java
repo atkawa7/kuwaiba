@@ -45,9 +45,9 @@ public class AttributePinWidget extends VMDPinWidget{
     private JLabel insideLabel;
     private LocalAttributeMetadata myAttribute;
     private static Icon isVisibleIcon =
-            new ImageIcon(AttributePinWidget.class.getResource("/org/inventory/queries/res/no-eye.png"));
-    private static Icon isVisibleIconDeselected =
             new ImageIcon(AttributePinWidget.class.getResource("/org/inventory/queries/res/eye.png"));
+    private static Icon isVisibleIconDeselected =
+            new ImageIcon(AttributePinWidget.class.getResource("/org/inventory/queries/res/no-eye.png"));
 
     public AttributePinWidget(QueryEditorScene scene, LocalAttributeMetadata lam,
             String attributeClassName,VMDColorScheme scheme) {
@@ -66,16 +66,15 @@ public class AttributePinWidget extends VMDPinWidget{
             insideCheck.putClientProperty("className", attributeClassName); //NOI18N
         addChild(new ComponentWidget(getScene(), insideCheck));
 
-        isVisible = new JToggleButton(isVisibleIconDeselected);
+        isVisible = new JToggleButton(isVisibleIcon);
         isVisible.setPreferredSize(new Dimension(17, 17));
-        isVisible.setSelectedIcon(isVisibleIcon);
+        isVisible.setSelectedIcon(isVisibleIconDeselected);
         isVisible.setRolloverEnabled(false);
         isVisible.setToolTipText("Show/hide this attribute in the query results");
         addChild(new ComponentWidget(scene, isVisible));
 
         if (lam.isMultiple()){ //If this is a list type attribute, force to select the columns
                                   //to be shown manually
-			isVisible.setSelected(true);
             isVisible.setEnabled(false);
             isVisible.setToolTipText("Select the columns for this list type attribute manually (select the checkbox)");
         }

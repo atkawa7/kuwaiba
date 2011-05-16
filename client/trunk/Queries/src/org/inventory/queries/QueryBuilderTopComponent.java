@@ -151,6 +151,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/delete.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnDelete, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnDelete.text")); // NOI18N
         btnDelete.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnDelete.toolTipText")); // NOI18N
+        btnDelete.setEnabled(false);
         btnDelete.setFocusable(false);
         btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -273,12 +274,23 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
                                     if (e.getSource() == DialogDescriptor.OK_OPTION){
                                         qbs.setQueryProperties(cqp.getValues());
                                         qbs.saveQuery();
+                                        /**
+                                         * TODO: Since what createQuery returns is a LocalQueryLight, not a 
+                                         * LocalQuery, when the save event creates a new query doesn't set the
+                                         * "localquery" variable, thus there's no reference to the newly created object
+                                         * and can't be deleted. This should be corrected somehow, so the newly created 
+                                         * queries can be deleted just like the old ones
+                                         */
+                                        if (qbs.getCurrentLocalQuery() != null)
+                                            btnDelete.setEnabled(true);
                                     }
                                 }
                             });
             DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
-        }else
+        }else{
             qbs.saveQuery();
+            isSaved = true;
+        }
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
@@ -301,9 +313,9 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
                                     if (e.getSource() == DialogDescriptor.OK_OPTION){
                                         if (checkForUnsavedQuery(true)){
                                             if (qlp.getSelectedQuery() != null){
-                                                queryScene.clear();
-                                                qbs.renderQuery(qlp.getSelectedQuery());
                                                 cmbClassList.setSelectedItem(null);
+                                                qbs.renderQuery(qlp.getSelectedQuery());
+                                                btnDelete.setEnabled(true);
                                             }
                                             else
                                                 JOptionPane.showConfirmDialog(null, "Select a query, please","Error", JOptionPane.ERROR_MESSAGE);
@@ -342,6 +354,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current query?", //NOI18N
                 "Delete saved query",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){  //NOI18N
             qbs.deleteQuery();
+            btnDelete.setEnabled(false);
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
@@ -352,7 +365,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
                     queryScene.clear();
                     queryScene.setCurrentSearchedClass(null);
                     cmbClassList.setSelectedItem(null);
-            }else{ //It's a saved query, so we nee to clear all nodes except the roor one
+            }else{ //It's a saved query, so we nee to clear all nodes except the root one
                 LocalClassMetadata currentSearchedClass = queryScene.getCurrentSearchedClass();
                 queryScene.clear();
                 ClassNodeWidget myNewNode = ((ClassNodeWidget)queryScene.addNode(currentSearchedClass));
@@ -492,6 +505,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         LocalClassMetadataLight selectedItem = (LocalClassMetadataLight) ((JComboBox)e.getSource()).getSelectedItem();
         queryScene.clear();
         if(selectedItem != null){
+            btnDelete.setEnabled(false);
             LocalClassMetadata myClass = qbs.getClassDetails(selectedItem.getClassName());
             if (myClass != null){
                 ClassNodeWidget myNewNode = ((ClassNodeWidget)queryScene.addNode(myClass));
