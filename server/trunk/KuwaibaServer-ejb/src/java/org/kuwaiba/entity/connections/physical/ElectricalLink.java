@@ -18,7 +18,7 @@ package org.kuwaiba.entity.connections.physical;
 
 import org.kuwaiba.entity.multiple.types.links.ElectricalLinkType;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 
 /**
@@ -27,7 +27,7 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class ElectricalLink extends GenericPhysicalConnection{
-    @OneToOne
+    @ManyToOne
     protected ElectricalLinkType type;
 
     public ElectricalLinkType getType() {

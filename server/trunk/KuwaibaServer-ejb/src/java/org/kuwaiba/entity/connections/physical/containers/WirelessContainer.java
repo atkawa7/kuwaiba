@@ -18,7 +18,7 @@ package org.kuwaiba.entity.connections.physical.containers;
 import org.kuwaiba.entity.multiple.types.links.WirelessContainerType;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 /**
  * This class represents an element to contain wireless connections, such as waveguides.
@@ -27,7 +27,7 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class WirelessContainer extends GenericPhysicalContainer implements Serializable {
-    @OneToOne
+    @ManyToOne
     protected WirelessContainerType type;
 
     public WirelessContainerType getType() {

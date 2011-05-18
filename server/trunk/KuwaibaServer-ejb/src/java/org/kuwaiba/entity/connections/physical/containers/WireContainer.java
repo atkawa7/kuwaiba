@@ -18,7 +18,7 @@ package org.kuwaiba.entity.connections.physical.containers;
 import org.kuwaiba.entity.multiple.types.links.WireContainerType;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 /**
  * This class represents an element to contain cables. There can be many types of conduits:
@@ -27,7 +27,7 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class WireContainer extends GenericPhysicalContainer implements Serializable {
-    @OneToOne
+    @ManyToOne
     protected WireContainerType type;
 
     public WireContainerType getType() {

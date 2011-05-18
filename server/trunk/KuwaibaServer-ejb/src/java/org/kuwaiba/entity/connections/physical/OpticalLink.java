@@ -18,7 +18,7 @@ package org.kuwaiba.entity.connections.physical;
 
 import org.kuwaiba.entity.multiple.types.links.OpticalLinkType;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 /**
  * Represents a link using a fiber optics as a transmission medium
@@ -26,7 +26,7 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class OpticalLink extends GenericPhysicalConnection{
-    @OneToOne
+    @ManyToOne
     protected OpticalLinkType type;
 
     public OpticalLinkType getType() {

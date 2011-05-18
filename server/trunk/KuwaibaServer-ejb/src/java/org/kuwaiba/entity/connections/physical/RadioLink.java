@@ -18,7 +18,7 @@ package org.kuwaiba.entity.connections.physical;
 
 import org.kuwaiba.entity.multiple.types.links.WirelessLinkType;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 /**
  * Represents a wireless link
@@ -26,7 +26,7 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class RadioLink extends GenericPhysicalConnection{
-    @OneToOne
+    @ManyToOne
     protected WirelessLinkType type;
 
     public WirelessLinkType getType() {
