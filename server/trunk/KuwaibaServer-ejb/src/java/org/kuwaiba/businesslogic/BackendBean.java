@@ -418,15 +418,53 @@ public class BackendBean implements BackendBeanRemote {
             throw new EntityManagerNotAvailableException();
     }
 
+
+        /**
+     * Retrieves the simplified list of classes. This list won't include either those classes
+     * marked as dummy
+     * @param includeListTypes boolean to indicate if the list should include the subclasses of
+     * GenericObjectList
+     * @return the list of classes
+     * @throws Exception EntityManagerNotAvailableException or something unexpected
+     */
+    @Override
+    public List<ClassInfoLight> getLightMetadata(Boolean includeListTypes) throws Exception{
+        System.out.println(java.util.ResourceBundle.getBundle("org/kuwaiba/internationalization/Bundle").getString("LBL_CALL_GETLIGHTMETADATA"));
+        if (em != null){
+            String sentence;
+            if (includeListTypes)
+                sentence = "SELECT x.id, x.name, x.displayName, x.isAbstract,x.isPhysicalNode, x.isPhysicalConnection, x.isPhysicalEndpoint, x.smallIcon FROM ClassMetadata x WHERE x.isDummy = false ORDER BY x.name";
+            else
+                sentence = "SELECT x.id, x.name, x.displayName, x.isAbstract,x.isPhysicalNode, x.isPhysicalConnection, x.isPhysicalEndpoint, x.smallIcon FROM ClassMetadata x WHERE x.isDummy = false AND x.isListType=false ORDER BY x.name";
+            Query q = em.createQuery(sentence);
+            List<Object[]> cr = q.getResultList();
+            List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
+
+            for (Object[] myRecord : cr)
+                cml.add(new ClassInfoLight((Long)myRecord[0], (String)myRecord[1], (String)myRecord[2],
+                                            (Boolean)myRecord[3], (Boolean)myRecord[4], (Boolean)myRecord[5],
+                                            (Boolean)myRecord[6], (byte[])myRecord[7]));
+            return cml;
+        }
+        else
+            throw new EntityManagerNotAvailableException();
+    }
+
     /**
-     * Retrieves all the class metadata except for classes marked as dummy and list type
+     * Retrieves all the class metadata except for classes marked as dummy
+     * @param includeListTypes boolean to indicate if the list should include the subclasses of
+     * GenericObjectList
      * @return An array of classes
      */
     @Override
-    public List<ClassInfo> getMetadata() throws Exception{
+    public List<ClassInfo> getMetadata(Boolean includeListTypes) throws Exception{
         System.out.println(java.util.ResourceBundle.getBundle("org/kuwaiba/internationalization/Bundle").getString("LBL_CALL_GETMETADATA"));
         if (em != null){
-            String sentence = "SELECT x FROM ClassMetadata x WHERE x.isDummy=false AND x.isListType=false ORDER BY x.name ";
+            String sentence;
+            if (includeListTypes)
+                sentence = "SELECT x FROM ClassMetadata x WHERE x.isDummy=false ORDER BY x.name ";
+            else
+                sentence = "SELECT x FROM ClassMetadata x WHERE x.isDummy=false AND x.isListType=false ORDER BY x.name ";
             Query q = em.createQuery(sentence);
             List<ClassMetadata> cr = q.getResultList();
             List<ClassInfo> cm = new ArrayList<ClassInfo>();
@@ -671,30 +709,6 @@ public class BackendBean implements BackendBeanRemote {
             throw new EntityManagerNotAvailableException();
         
         return true;
-    }
-
-    /**
-     * Retrieves the simplified list of classes
-     * @return the list of classes
-     * @throws Exception EntityManagerNotAvailableException or something unexpected
-     */
-    @Override
-    public List<ClassInfoLight> getLightMetadata() throws Exception{
-        System.out.println(java.util.ResourceBundle.getBundle("org/kuwaiba/internationalization/Bundle").getString("LBL_CALL_GETLIGHTMETADATA"));
-        if (em != null){
-            String sentence = "SELECT x.id, x.name, x.displayName, x.isAbstract,x.isPhysicalNode, x.isPhysicalConnection, x.isPhysicalEndpoint, x.smallIcon FROM ClassMetadata x WHERE x.isDummy = false AND x.isListType=false ORDER BY x.name";
-            Query q = em.createQuery(sentence);
-            List<Object[]> cr = q.getResultList();
-            List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
-
-            for (Object[] myRecord : cr)
-                cml.add(new ClassInfoLight((Long)myRecord[0], (String)myRecord[1], (String)myRecord[2],
-                                            (Boolean)myRecord[3], (Boolean)myRecord[4], (Boolean)myRecord[5],
-                                            (Boolean)myRecord[6], (byte[])myRecord[7]));
-            return cml;
-        }
-        else
-            throw new EntityManagerNotAvailableException();
     }
 
     /**

@@ -51,6 +51,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import org.kuwaiba.core.exceptions.InvalidArgumentException;
+import org.kuwaiba.entity.multiple.GenericObjectList;
 import org.kuwaiba.entity.session.User;
 import org.kuwaiba.entity.session.UserGroup;
 import org.kuwaiba.util.Constants;
@@ -444,18 +445,20 @@ public class Kuwaiba {
     /**
      * METADATA
      */
-
-    /**
-     * Retrieves all the class metadata
+         /**
+     * Provides metadata for all classes, but the light version
      * @param sessionId
-     * @return An array with the complete metadata for each class
+     * @param includeListTypes boolean to indicate if the list should include the subclasses of
+     * GenericObjectList
+     * @return An array with the basic class metadata
      * @throws Exception
      */
-    @WebMethod(operationName = "getMetadata")
-    public List<ClassInfo> getMetadata(@WebParam(name = "sessionId")String sessionId) throws Exception{
+    @WebMethod(operationName = "getLightMetadata")
+    public List<ClassInfoLight> getLightMetadata(@WebParam(name = "sessionId")String sessionId,
+            @WebParam(name = "includeListTypes")Boolean includeListTypes) throws Exception{
         try{
-            sbr.validateCall("getMetadata", getIPAddress(), sessionId);
-            return sbr.getMetadata();
+            sbr.validateCall("getLightMetadata", getIPAddress(), sessionId);
+            return sbr.getLightMetadata(includeListTypes);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
@@ -465,6 +468,31 @@ public class Kuwaiba {
             throw e;
         }
     }
+    
+    /**
+     * Retrieves all the class metadata
+     * @param sessionId
+     * @param includeListTypes boolean to indicate if the list should include the subclasses of
+     * GenericObjectList
+     * @return An array with the complete metadata for each class
+     * @throws Exception
+     */
+    @WebMethod(operationName = "getMetadata")
+    public List<ClassInfo> getMetadata(@WebParam(name = "sessionId")String sessionId,
+            @WebParam(name = "includeListTypes")Boolean includeListTypes) throws Exception{
+        try{
+            sbr.validateCall("getMetadata", getIPAddress(), sessionId);
+            return sbr.getMetadata(includeListTypes);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
 
     /**
      * Gets the metadata of a single class
@@ -555,27 +583,6 @@ public class Kuwaiba {
             Class myClass = sbr.getClassFor(className);
             Boolean res = sbr.removeObject(myClass, oid);
             return res;
-        }catch(Exception e){
-            Level level = Level.SEVERE;
-            if (e instanceof InventoryException)
-                level = ((InventoryException)e).getLevel();
-            Logger.getLogger(Kuwaiba.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-            throw e;
-        }
-    }
-
-    /**
-     * Provides metadata for all classes, but the light version
-     * @param sessionId
-     * @return An array with the basic class metadata
-     * @throws Exception
-     */
-    @WebMethod(operationName = "getLightMetadata")
-    public List<ClassInfoLight> getLightMetadata(@WebParam(name = "sessionId")String sessionId) throws Exception{
-        try{
-            sbr.validateCall("getLightMetadata", getIPAddress(), sessionId);
-            return sbr.getLightMetadata();
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof InventoryException)
@@ -714,8 +721,9 @@ public class Kuwaiba {
             sbr.validateCall("executeQuery", getIPAddress(), sessionId);
             Class queryClass = sbr.getClassFor(query.getClassName());
 
-            if (!HierarchyUtils.isSubclass(queryClass, InventoryObject.class))
-                throw new MiscException("Only subclasses of InventoryObject can be searched using this method:"+queryClass.getSimpleName());
+            if (!(HierarchyUtils.isSubclass(queryClass, InventoryObject.class) || HierarchyUtils.isSubclass(queryClass, GenericObjectList.class)))
+                throw new MiscException("Only subclasses of InventoryObject or GenericObjectList can be searched using this method:"+queryClass.getSimpleName());
+
             if (query.getAttributeNames() != null && query.getAttributeValues() != null &&
                     query.getConditions() != null && query.getJoins() != null){
                 if (query.getAttributeNames().size() != query.getAttributeValues().size() ||

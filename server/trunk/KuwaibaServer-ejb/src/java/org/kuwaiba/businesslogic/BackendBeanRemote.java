@@ -46,8 +46,8 @@ public interface BackendBeanRemote {
     public boolean setObjectLock(Long oid, String objectClass, Boolean value) throws Exception;
     public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId)  throws Exception;
     public RemoteObjectLight createObject(Class objectClass, Long parentOid, String template) throws Exception;
-    public List<ClassInfo> getMetadata() throws Exception;
-    public List<ClassInfoLight> getLightMetadata() throws Exception;
+    public List<ClassInfo> getMetadata(Boolean includeListTypes) throws Exception;
+    public List<ClassInfoLight> getLightMetadata(Boolean includeListTypes) throws Exception;
     public ClassInfo getMetadataForClass(Class className) throws Exception;
     public byte[] getClassHierarchy(Boolean showAll) throws Exception;
     public ObjectList getMultipleChoice(Class className) throws Exception;
