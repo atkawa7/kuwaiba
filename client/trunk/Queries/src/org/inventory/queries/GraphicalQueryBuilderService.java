@@ -66,7 +66,7 @@ public class GraphicalQueryBuilderService implements ActionListener{
     }
 
     public LocalClassMetadataLight[] getClassList(){
-        LocalClassMetadataLight[] items = com.getAllLightMeta();
+        LocalClassMetadataLight[] items = com.getAllLightMeta(true);
         if (items == null){
             qbtc.getNotifier().showSimplePopup("Query Builder", NotificationUtil.ERROR, com.getError());
             return new LocalClassMetadataLight[0];

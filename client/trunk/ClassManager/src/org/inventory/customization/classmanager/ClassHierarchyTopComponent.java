@@ -17,7 +17,6 @@
 package org.inventory.customization.classmanager;
 
 import java.awt.BorderLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;

@@ -647,6 +647,7 @@
 <xs:complexType name="getMetadata">
 <xs:sequence>
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
+<xs:element name="includeListTypes" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
 </xs:complexType>
 
@@ -872,6 +873,19 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getLightMetadata">
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0" />
+<xs:element name="includeListTypes" type="xs:boolean" minOccurs="0" />
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getLightMetadataResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded" />
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="createGroup">
 <xs:sequence>
 <xs:element name="sessionId" type="xs:string" minOccurs="0" />
@@ -894,18 +908,6 @@
 </xs:sequence>
 </xs:extension>
 </xs:complexContent>
-</xs:complexType>
-
-<xs:complexType name="getLightMetadata">
-<xs:sequence>
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getLightMetadataResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded" />
-</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="setUserProperties">

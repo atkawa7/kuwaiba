@@ -366,17 +366,46 @@ public class CommunicationsStub {
     }
 
     /**
+     * The result is cached to be used when needed somewhere else, but the whole
+     * metadata information is always retrieved directly from the ws
+     * @param includeListTypes boolean to indicate if the list should include the list types,
+     * such as CustomerType
+     * @return an array with all class metadata (the light version)
+     */
+    public LocalClassMetadataLight[] getAllLightMeta(boolean includeListTypes) {
+        try{
+            List<ClassInfoLight> metas;
+            metas= port.getLightMetadata(this.session.getSessionId(), includeListTypes);
+
+            LocalClassMetadataLight[] lm = new LocalClassMetadataLight[metas.size()];
+            int i=0;
+            for (ClassInfoLight cm : metas){
+                lm[i] = (LocalClassMetadataLight)new LocalClassMetadataLightImpl(cm);
+                i++;
+            }
+
+            cache.addLightMeta(lm);
+            return lm;
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
+    }
+
+    /**
      * Retrieves complete information about classes. It always take them from the
      * server rather than from the cache, because this methods is suggested to be used
      * for administrative tasks when it's necessary to have the metadata up to date.
      * Anyway, the retrieved information is cached in order to be used when mapping the object's attributes
      * in the property sheets
+     * @param includeListTypes boolean to indicate if the list should include the list types,
+     * such as CustomerType
      * @return an array with all the class metadata information
      */
-    public LocalClassMetadata[] getAllMeta() {
+    public LocalClassMetadata[] getAllMeta(boolean includeListTypes) {
         try{
             List<ClassInfo> metas;
-            metas= port.getMetadata(this.session.getSessionId());
+            metas= port.getMetadata(this.session.getSessionId(), includeListTypes);
             LocalClassMetadata[] lm = new LocalClassMetadata[metas.size()];
             int i=0;
             for (ClassInfo cm : metas){
@@ -533,31 +562,6 @@ public class CommunicationsStub {
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return false;
-        }
-    }
-
-    /**
-     * The result is cached to be used when needed somewhere else, but the whole
-     * metadata information is always retrieved directly from the ws
-     * @return an array with all class metadata (the light version)
-     */
-    public LocalClassMetadataLight[] getAllLightMeta() {
-        try{
-            List<ClassInfoLight> metas;
-            metas= port.getLightMetadata(this.session.getSessionId());
-
-            LocalClassMetadataLight[] lm = new LocalClassMetadataLight[metas.size()];
-            int i=0;
-            for (ClassInfoLight cm : metas){
-                lm[i] = (LocalClassMetadataLight)new LocalClassMetadataLightImpl(cm);
-                i++;
-            }
-
-            cache.addLightMeta(lm);
-            return lm;
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return null;
         }
     }
 
@@ -802,9 +806,9 @@ public class CommunicationsStub {
                 }
 
             if (refreshLightMeta){
-                List<ClassInfoLight> myLocalLight  = port.getLightMetadata(this.session.getSessionId());
+                List<ClassInfoLight> myLocalLight  = port.getLightMetadata(this.session.getSessionId(), true);
                 if (myLocalLight != null)
-                    getAllLightMeta();
+                    getAllLightMeta(true);
             }
 
             if (refreshList){

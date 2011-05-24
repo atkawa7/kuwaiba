@@ -36,7 +36,7 @@ public class AttributeCustomizerService {
     }
 
     public LocalClassMetadataLight[] getInstanceableMeta() {
-        LocalClassMetadataLight[] allMeta = com.getAllLightMeta();
+        LocalClassMetadataLight[] allMeta = com.getAllLightMeta(true);
         if (allMeta == null){
             actc.getNotifier().showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/attributecustomizer/Bundle").getString("LBL_TITLE_CREATION"),
                     NotificationUtil.ERROR, com.getError());

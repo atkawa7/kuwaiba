@@ -22,6 +22,7 @@ import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.List;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
@@ -92,6 +93,7 @@ public class ClassManagerFrame extends javax.swing.JFrame {
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/classmanager/res/save.png"))); // NOI18N
         btnSave.setText(org.openide.util.NbBundle.getMessage(ClassManagerFrame.class, "ClassManagerFrame.btnSave.text")); // NOI18N
         btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(ClassManagerFrame.class, "ClassManagerFrame.btnSave.toolTipText")); // NOI18N
+        btnSave.setEnabled(false);
         btnSave.setFocusable(false);
         btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -105,6 +107,7 @@ public class ClassManagerFrame extends javax.swing.JFrame {
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/customization/classmanager/res/refresh.png"))); // NOI18N
         btnRefresh.setText(org.openide.util.NbBundle.getMessage(ClassManagerFrame.class, "ClassManagerFrame.btnRefresh.text")); // NOI18N
         btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(ClassManagerFrame.class, "ClassManagerFrame.btnRefresh.toolTipText")); // NOI18N
+        btnRefresh.setEnabled(false);
         btnRefresh.setFocusable(false);
         btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -178,9 +181,9 @@ public class ClassManagerFrame extends javax.swing.JFrame {
                         .addComponent(txtSmallIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 499, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSmallIconChooser))
-                    .addComponent(txtDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
-                    .addComponent(txtDisplayName, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
-                    .addComponent(cmbClass, 0, 521, Short.MAX_VALUE))
+                    .addComponent(txtDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE)
+                    .addComponent(txtDisplayName, javax.swing.GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE)
+                    .addComponent(cmbClass, 0, 526, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pnlMainLayout.setVerticalGroup(
@@ -339,6 +342,14 @@ public class ClassManagerFrame extends javax.swing.JFrame {
 
     public JTextField getTxtSmallIcon() {
         return txtSmallIcon;
+    }
+
+    public JButton getBtnSave(){
+        return btnSave;
+    }
+
+    public JButton getBtnRefresh(){
+        return btnRefresh;
     }
 
     public void setRoot(){

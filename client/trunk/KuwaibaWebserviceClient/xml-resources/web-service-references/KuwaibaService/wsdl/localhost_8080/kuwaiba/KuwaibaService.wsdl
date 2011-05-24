@@ -37,17 +37,17 @@
 <message name="getGroupsResponse">
 <part name="parameters" element="tns:getGroupsResponse" />
 </message>
-<message name="createObject">
-<part name="parameters" element="tns:createObject" />
-</message>
-<message name="createObjectResponse">
-<part name="parameters" element="tns:createObjectResponse" />
-</message>
 <message name="copyObjects">
 <part name="parameters" element="tns:copyObjects" />
 </message>
 <message name="copyObjectsResponse">
 <part name="parameters" element="tns:copyObjectsResponse" />
+</message>
+<message name="createObject">
+<part name="parameters" element="tns:createObject" />
+</message>
+<message name="createObjectResponse">
+<part name="parameters" element="tns:createObjectResponse" />
 </message>
 <message name="executeQuery">
 <part name="parameters" element="tns:executeQuery" />
@@ -133,6 +133,12 @@
 <message name="getRootPossibleChildrenResponse">
 <part name="parameters" element="tns:getRootPossibleChildrenResponse" />
 </message>
+<message name="getLightMetadata">
+<part name="parameters" element="tns:getLightMetadata" />
+</message>
+<message name="getLightMetadataResponse">
+<part name="parameters" element="tns:getLightMetadataResponse" />
+</message>
 <message name="getMetadataForClass">
 <part name="parameters" element="tns:getMetadataForClass" />
 </message>
@@ -156,12 +162,6 @@
 </message>
 <message name="removeObjectResponse">
 <part name="parameters" element="tns:removeObjectResponse" />
-</message>
-<message name="getLightMetadata">
-<part name="parameters" element="tns:getLightMetadata" />
-</message>
-<message name="getLightMetadataResponse">
-<part name="parameters" element="tns:getLightMetadataResponse" />
 </message>
 <message name="moveObjects">
 <part name="parameters" element="tns:moveObjects" />
@@ -351,15 +351,15 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGroupsResponse" message="tns:getGroupsResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGroups/Fault/Exception" />
 </operation>
-<operation name="createObject">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectRequest" message="tns:createObject" />
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectResponse" message="tns:createObjectResponse" />
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObject/Fault/Exception" />
-</operation>
 <operation name="copyObjects">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsRequest" message="tns:copyObjects" />
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsResponse" message="tns:copyObjectsResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjects/Fault/Exception" />
+</operation>
+<operation name="createObject">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectRequest" message="tns:createObject" />
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectResponse" message="tns:createObjectResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObject/Fault/Exception" />
 </operation>
 <operation name="executeQuery">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryRequest" message="tns:executeQuery" />
@@ -430,6 +430,11 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getRootPossibleChildrenResponse" message="tns:getRootPossibleChildrenResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getRootPossibleChildren/Fault/Exception" />
 </operation>
+<operation name="getLightMetadata">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightMetadataRequest" message="tns:getLightMetadata" />
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightMetadataResponse" message="tns:getLightMetadataResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightMetadata/Fault/Exception" />
+</operation>
 <operation name="getMetadataForClass">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadataForClassRequest" message="tns:getMetadataForClass" />
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadataForClassResponse" message="tns:getMetadataForClassResponse" />
@@ -449,11 +454,6 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removeObjectRequest" message="tns:removeObject" />
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removeObjectResponse" message="tns:removeObjectResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removeObject/Fault/Exception" />
-</operation>
-<operation name="getLightMetadata">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightMetadataRequest" message="tns:getLightMetadata" />
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightMetadataResponse" message="tns:getLightMetadataResponse" />
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightMetadata/Fault/Exception" />
 </operation>
 <operation name="moveObjects">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/moveObjectsRequest" message="tns:moveObjects" />
@@ -653,7 +653,7 @@
 <soap:fault name="Exception" use="literal" />
 </fault>
 </operation>
-<operation name="createObject">
+<operation name="copyObjects">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
@@ -665,7 +665,7 @@
 <soap:fault name="Exception" use="literal" />
 </fault>
 </operation>
-<operation name="copyObjects">
+<operation name="createObject">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
@@ -842,6 +842,18 @@
 <soap:fault name="Exception" use="literal" />
 </fault>
 </operation>
+<operation name="getLightMetadata">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
 <operation name="getMetadataForClass">
 <soap:operation soapAction="" />
 <input>
@@ -879,18 +891,6 @@
 </fault>
 </operation>
 <operation name="removeObject">
-<soap:operation soapAction="" />
-<input>
-<soap:body use="literal" />
-</input>
-<output>
-<soap:body use="literal" />
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal" />
-</fault>
-</operation>
-<operation name="getLightMetadata">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />

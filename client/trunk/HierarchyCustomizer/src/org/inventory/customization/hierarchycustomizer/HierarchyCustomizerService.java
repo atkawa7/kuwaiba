@@ -45,7 +45,7 @@ public class HierarchyCustomizerService implements LookupListener{
     public HierarchyCustomizerService(HierarchyCustomizerTopComponent _hctc){
         notifier = Lookup.getDefault().lookup(NotificationUtil.class);
         LocalClassMetadataLight[] allMeta;
-        allMeta = com.getAllLightMeta();
+        allMeta = com.getAllLightMeta(false);
         this.hctc = _hctc;
 
         listModel = new ArrayList<LocalClassMetadataLight>();

@@ -60,7 +60,7 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
     }
 
     public void initComponents(){
-        LocalClassMetadataLight[] lcml = com.getAllLightMeta();
+        LocalClassMetadataLight[] lcml = com.getAllLightMeta(true);
 
         nu = Lookup.getDefault().lookup(NotificationUtil.class);
         if (lcml == null)

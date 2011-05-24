@@ -96,7 +96,7 @@ public class ClassManagerService extends FileFilter implements ActionListener{
 
     public List<LocalClassMetadata> getAllMeta() {
         List<LocalClassMetadata> res = new ArrayList<LocalClassMetadata>();
-        LocalClassMetadata[] allMeta = CommunicationsStub.getInstance().getAllMeta();
+        LocalClassMetadata[] allMeta = CommunicationsStub.getInstance().getAllMeta(true);
         if (allMeta == null){
             cmf.getNotifier().showSimplePopup("Class List", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
             return res;
@@ -110,8 +110,13 @@ public class ClassManagerService extends FileFilter implements ActionListener{
 
     public void actionPerformed(ActionEvent e) {
         LocalClassMetadata myClass = (LocalClassMetadata)((JComboBox)e.getSource()).getSelectedItem();
-        if (myClass == null)
+        if (myClass == null){
+            cmf.getBtnSave().setEnabled(false);
+            cmf.getBtnRefresh().setEnabled(false);
             return;
+        }
+        cmf.getBtnSave().setEnabled(true);
+        cmf.getBtnRefresh().setEnabled(true);
         cmf.getTxtDisplayName().setText(myClass.getDisplayName()==null?"":myClass.getDisplayName());
         cmf.getTxtDescription().setText(myClass.getDescription()==null?"":myClass.getDescription());
         cmf.getTxtSmallIcon().setText("");
