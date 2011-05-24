@@ -2,5 +2,7 @@ This client makes use of the following third-party components:
 Netbeans Platform (CDDL) http://www.netbeans.org/
 Oxygen Icons (LGPL) http://www.oxygen-icons.org/
 WAX, a simple API for XML (BSD) http://code.google.com/p/waxy/
+Nimrod LaF (LGPL) http://personales.ya.com/nimrod/index-en.html
+Substance LaF (BSD) http://shemnon.com/speling/2011/04/insubstantial-62-release.html and https://substance.dev.java.net/
 
 I want to thank all people that made possible this software to be available.
