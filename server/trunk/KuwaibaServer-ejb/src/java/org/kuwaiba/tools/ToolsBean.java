@@ -20,7 +20,6 @@ package org.kuwaiba.tools;
 import org.kuwaiba.core.exceptions.EntityManagerNotAvailableException;
 import org.kuwaiba.entity.core.ApplicationObject;
 import org.kuwaiba.entity.core.MetadataObject;
-import org.kuwaiba.entity.core.RootObject;
 import org.kuwaiba.entity.multiple.GenericObjectList;
 import org.kuwaiba.entity.session.User;
 import java.lang.reflect.Field;
@@ -83,19 +82,24 @@ public class ToolsBean implements ToolsBeanRemote{
         if (em != null){
 
             //Delete existing class metadata
-            Query query = em.createNamedQuery("flushClassMetadata");
-            query.executeUpdate();
+            //Query query = em.createNamedQuery("flushClassMetadata");
+            //query.executeUpdate();
 
             //Delete existing attribute metadata
-            query = em.createNamedQuery("flushAttributeMetadata");
-            query.executeUpdate();
+            //query = em.createNamedQuery("flushAttributeMetadata");
+            //query.executeUpdate();
 
             //Delete existing package metadata
-            query = em.createNamedQuery("flushPackageMetadata");
-            query.executeUpdate();
+            //query = em.createNamedQuery("flushPackageMetadata");
+            //query.executeUpdate();
+
+            String sql = "SELECT x.name FROM ClassMetadata x";
+
+            List<String> alreadyPersisted = em.createQuery(sql).getResultList();
 
             Set<EntityType<?>> ent = em.getMetamodel().getEntities();
-            HashMap<String, EntityType> alreadyPersisted = new HashMap<String, EntityType>();
+            //HashMap<String, EntityType> alreadyPersisted = new HashMap<String, EntityType>();
+
 
             for (EntityType entity : ent){
                 if(HierarchyUtils.isSubclass(entity.getJavaType(), MetadataObject.class))
@@ -104,7 +108,7 @@ public class ToolsBean implements ToolsBeanRemote{
                     if (!HierarchyUtils.isSubclass(entity.getJavaType(), GenericObjectList.class))
                         continue;
                 }
-                if (alreadyPersisted.get(entity.getJavaType().getSimpleName())!=null)
+                if (alreadyPersisted.contains(entity.getJavaType().getSimpleName()))
                     continue;
                 HierarchyUtils.persistClass(entity,em);
             }

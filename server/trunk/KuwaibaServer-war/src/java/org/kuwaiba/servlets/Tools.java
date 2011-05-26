@@ -58,6 +58,7 @@ public class Tools extends HttpServlet {
         PrintWriter out = response.getWriter();
         out.println("<html>");
         out.println("<head>");
+        out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"css/main.css\" />");
         out.println("<title>Kuwaiba Web Management Tools</title>");
         out.println("</head>");
         out.println("<body>");
@@ -70,7 +71,7 @@ public class Tools extends HttpServlet {
                         out.println(myClass);
                 }
                 else{
-                    if (request.getParameter("tool").equals("metadata")){
+                    if (request.getParameter("tool").equals("rebuild_metadata")){
                         tbr.buildMetaModel();
                         out.println("<h1>Metadata created successfully</h1>");
                     }else{
@@ -85,7 +86,9 @@ public class Tools extends HttpServlet {
             }else{
                 out.println("<h1>Kuwaiba Management Tools Portal</h1>");
                 out.println("<ul>");
-                out.println("<li><a href=\"?tool=metadata\">Reset/Build Class Metadata and Containment information</a></li>");
+                out.println("<li><a href=\"?tool=backup_metadata\">Backup class metadata and containment information</a></li>");
+                out.println("<li><a href=\"?tool=rebuild_metadata\">Reset/Build class metadata and containment information</a></li>");
+                out.println("<li><a href=\"?tool=restore_metadata\">Restore class metadata from file</a></li>");
                 out.println("<li><a href=\"?tool=diagnostic\">Detect missing accessors</a></li>");
                 out.println("<li><a href=\"?tool=resetadmin\">Create/Reset admin account </a></li>");
                 out.println("</ul>");
