@@ -15,6 +15,9 @@
  */
 package org.kuwaiba.core;
 
+import com.nilo.plaf.nimrod.NimRODLookAndFeel;
+import com.nilo.plaf.nimrod.NimRODTheme;
+import java.awt.Color;
 import javax.swing.UIManager;
 import org.openide.modules.ModuleInstall;
 
@@ -29,7 +32,24 @@ public class Installer extends ModuleInstall {
         try{
            //UIManager.setLookAndFeel("org.pushingpixels.substance.api.skin.SubstanceNebulaBrickWallLookAndFeel");
            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-           UIManager.setLookAndFeel("com.nilo.plaf.nimrod.NimRODLookAndFeel");
+
+           //UIManager.setLookAndFeel("com.nilo.plaf.nimrod.NimRODLookAndFeel");
+            if (System.getProperty("no-laf") == null){
+                NimRODTheme nt = new NimRODTheme();
+                nt.setPrimary1( new Color(170,136,0));
+                nt.setPrimary2( new Color(211,177,45));
+                nt.setPrimary3( new Color(236,207,92));
+                nt.setSecondary1( new Color(220,220,220));
+                nt.setSecondary2( new Color(230,230,230));
+                nt.setSecondary3( new Color(240,240,240));
+                nt.setWhite(new Color(250, 250, 250));
+                nt.setBlack(Color.BLACK);
+                nt.setMenuOpacity(195);
+                nt.setFrameOpacity(180);
+                NimRODLookAndFeel NimRODLF = new NimRODLookAndFeel();
+                NimRODLookAndFeel.setCurrentTheme( nt);
+                UIManager.setLookAndFeel( NimRODLF);
+            }
         }catch(Exception ex){
             ex.printStackTrace();
         }

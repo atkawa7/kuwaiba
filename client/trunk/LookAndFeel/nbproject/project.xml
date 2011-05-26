@@ -62,14 +62,6 @@
                 <runtime-relative-path>ext/nimrodlf-1.2.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/nimrodlf-1.2.jar</binary-origin>
             </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/substance-6.2.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/substance-6.2.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/trident-6.2.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/trident-6.2.jar</binary-origin>
-            </class-path-extension>
         </data>
     </configuration>
 </project>
