@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,27 +14,23 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.session;
+package org.kuwaiba.entity.multiple.software;
 
-import org.kuwaiba.entity.core.ApplicationObject;
-import org.kuwaiba.entity.multiple.software.OperatingSystem;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 
 /**
- * Represents the details of the terminal an user is using to operate the system
+ * A simple operating system like Linux, Windows, etc
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class ClientDetail extends ApplicationObject{
-    @ManyToOne
-    protected OperatingSystem platform;
+public class OperatingSystem extends GenericSoftwareItem {
+    protected String version;
 
-    public OperatingSystem getPlatform() {
-        return platform;
+    public String getVersion() {
+        return version;
     }
 
-    public void setPlatform(OperatingSystem platform) {
-        this.platform = platform;
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

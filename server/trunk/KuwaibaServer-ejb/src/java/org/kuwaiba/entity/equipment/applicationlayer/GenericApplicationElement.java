@@ -17,7 +17,7 @@
 package org.kuwaiba.entity.equipment.applicationlayer;
 
 import org.kuwaiba.entity.core.ConfigurationItem;
-import org.kuwaiba.entity.multiple.systems.OperatingSystem;
+import org.kuwaiba.entity.multiple.software.OperatingSystem;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;

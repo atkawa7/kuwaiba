@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
- *
+ * 
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *
+ * 
  *       http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,27 +14,15 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.session;
+package org.kuwaiba.entity.multiple.types.software;
 
-import org.kuwaiba.entity.core.ApplicationObject;
-import org.kuwaiba.entity.multiple.software.OperatingSystem;
+import org.kuwaiba.entity.multiple.GenericType;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 
 /**
- * Represents the details of the terminal an user is using to operate the system
+ * Represents a database type (plain text, RDBMS, NoSQL, etc)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class ClientDetail extends ApplicationObject{
-    @ManyToOne
-    protected OperatingSystem platform;
-
-    public OperatingSystem getPlatform() {
-        return platform;
-    }
-
-    public void setPlatform(OperatingSystem platform) {
-        this.platform = platform;
-    }
+public class DatabaseType extends GenericType{
 }

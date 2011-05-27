@@ -14,32 +14,40 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.equipment.networklayer;
+package org.kuwaiba.entity.equipment.containers;
 
-import org.kuwaiba.core.annotations.NoSerialize;
-import org.kuwaiba.entity.multiple.software.NetworkService;
-import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
+
 
 /**
- * A simple firewall
+ * A simple indoors cabinet (an enclosure system).
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class Firewall extends GenericAppliance {
+public class IndoorsCabinet extends GenericContainer{
     /**
-     * Firewalls usually run many services like DHCP, routing, DNS, etc
+     * The actual available width (there's some space between the total width and the insides)
      */
-    @ManyToMany
-    @NoSerialize //Just for now because we don't have editor for this kind of relationships
-    protected List<NetworkService> services;
+    protected Float mountingWidth;
 
-    public List<NetworkService> getServices() {
-        return services;
+    /**
+     * Is the current object mounted on a wall?
+     */
+    protected Boolean mountedInWall = false;
+
+    public Float getMountingWidth() {
+        return mountingWidth;
     }
 
-    public void setServices(List<NetworkService> services) {
-        this.services = services;
+    public void setMountingWidth(Float mountingWidth) {
+        this.mountingWidth = mountingWidth;
+    }
+
+    public Boolean isMountedInWall() {
+        return mountedInWall;
+    }
+
+    public void setMountedInWall(Boolean isMountedInWall) {
+        this.mountedInWall = isMountedInWall;
     }
 }

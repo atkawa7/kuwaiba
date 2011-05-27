@@ -14,32 +14,39 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.equipment.networklayer;
+package org.kuwaiba.entity.location;
 
-import org.kuwaiba.core.annotations.NoSerialize;
-import org.kuwaiba.entity.multiple.software.NetworkService;
-import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
 
 /**
- * A simple firewall
+ * Cabinet used outdoors. While the IndoorsCabinet is a GenericContainer, this is a
+ * GenericPhysicalNode
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class Firewall extends GenericAppliance {
+public class OutdoorsCabinet extends GenericPhysicalNode {
     /**
-     * Firewalls usually run many services like DHCP, routing, DNS, etc
+     * Cabinet's width
      */
-    @ManyToMany
-    @NoSerialize //Just for now because we don't have editor for this kind of relationships
-    protected List<NetworkService> services;
+    protected Float width;
+    /**
+     * Cabinet's height
+     */
+    protected Float height;
 
-    public List<NetworkService> getServices() {
-        return services;
+    public Float getHeight() {
+        return height;
     }
 
-    public void setServices(List<NetworkService> services) {
-        this.services = services;
+    public void setHeight(Float height) {
+        this.height = height;
+    }
+
+    public Float getWidth() {
+        return width;
+    }
+
+    public void setWidth(Float width) {
+        this.width = width;
     }
 }
