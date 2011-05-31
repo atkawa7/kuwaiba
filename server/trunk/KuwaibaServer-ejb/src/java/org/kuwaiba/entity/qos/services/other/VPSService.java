@@ -34,7 +34,7 @@ public class VPSService extends GenericService {
     /**
      * RAM
      */
-    protected Integer RAM;
+    protected Integer ram;
     /**
      * Operating System
      */
@@ -53,12 +53,12 @@ public class VPSService extends GenericService {
         this.diskSpace = diskSpace;
     }
 
-    public Integer getRAM() {
-        return RAM;
+    public Integer getRam() {
+        return ram;
     }
 
-    public void setRAM(Integer RAM) {
-        this.RAM = RAM;
+    public void setRAM(Integer ram) {
+        this.ram = ram;
     }
 
     public OperatingSystem getOperatingSystem() {

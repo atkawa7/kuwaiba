@@ -85,3 +85,11 @@
 * Package "org.kuwaiba.entity.multiple.systems" renamed to "org.kuwaiba.entity.multiple.software"
 * Added "GenericSoftwareItem" as root of all software
 * Added class OpticalAmplifier
+* Moved class "GenericConnection" to InventoryObject
+* Added class "Wavelength"
+* Added class "TelecommunicationsOperator"
+* Added class "ONTBoard"
+* Added class "OpticalNetworkTerminal"
+* Added class "OpticalLineTerminal"
+* Added attribute "responsible" to class "GenericPhysicalElement"
+* Moved class "SpliceBox" to "GenericContainer"

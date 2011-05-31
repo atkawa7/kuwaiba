@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,19 +14,15 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.connections;
+package org.kuwaiba.entity.multiple.companies;
 
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import org.kuwaiba.entity.core.InventoryObject;
+import org.kuwaiba.entity.multiple.people.CorporateCustomer;
 
 /**
- * This class represents a connection, physical or logical
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * A simple telecommunicationsOperator
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-@Inheritance(strategy=InheritanceType.JOINED)
-public abstract class GenericConnection extends InventoryObject {
-
+public class TelecommunicationsOperator extends CorporateCustomer {
 }

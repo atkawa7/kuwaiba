@@ -18,7 +18,6 @@ package org.kuwaiba.entity.equipment.physicallayer.parts;
 
 import org.kuwaiba.entity.multiple.people.CorporateCustomer;
 import org.kuwaiba.entity.multiple.types.parts.AntennaType;
-import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
@@ -27,7 +26,7 @@ import javax.persistence.ManyToOne;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Antenna extends GenericPart implements Serializable {
+public class Antenna extends GenericPart {
     @ManyToOne
     protected AntennaType type;
     protected Float gain;

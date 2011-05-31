@@ -20,6 +20,8 @@ import org.kuwaiba.entity.core.ConfigurationItem;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
+import org.kuwaiba.entity.multiple.people.Employee;
 
 /**
  * This class is the root for all physical layer elements
@@ -28,5 +30,14 @@ import javax.persistence.InheritanceType;
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericPhysicalElement extends ConfigurationItem{
+    @OneToMany
+    protected Employee responsible;
 
+    public Employee getResponsible() {
+        return responsible;
+    }
+
+    public void setResponsible(Employee responsible) {
+        this.responsible = responsible;
+    }
 }

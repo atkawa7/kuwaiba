@@ -19,7 +19,7 @@ package org.kuwaiba.entity.multiple.companies;
 import javax.persistence.Entity;
 
 /**
- * Represents a service provider i.e., telecommunications, logistics
+ * Represents a service provider i.e., logistics, transportation
  * Note that support services for equipment only should be included into the class
  * EquipmentProvider
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
