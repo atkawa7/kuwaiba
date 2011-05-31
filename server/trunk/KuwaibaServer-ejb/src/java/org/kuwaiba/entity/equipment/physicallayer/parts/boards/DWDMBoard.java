@@ -14,13 +14,12 @@
  *  limitations under the License.
  *  under the License.
  */
-package org.kuwaiba.entity.equipment.datalinklayer.parts.boards;
+package org.kuwaiba.entity.equipment.physicallayer.parts.boards;
 
-import org.kuwaiba.entity.equipment.physicallayer.parts.boards.GenericBoard;
 import javax.persistence.Entity;
 
 /**
- *
+ * A board used in a a DWDMMux
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity

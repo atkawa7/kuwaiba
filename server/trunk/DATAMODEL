@@ -69,7 +69,7 @@
 * All custom interfaces (PhysicalNode, PhysicalConnection, PhysicalContainers) were deleted since they can't be used with JPA (it's technically possible, but it doesn't make sense anymore)
 * Added "state" (attribute) to GenericPort
 
-0.3.1 - 0.4
+0.3.1 - 0.4 alpha
 * Added class "PointOfPresence"
 * Renamed class "Cabinet" to "IndoorsCabinet"
 * Added class "OutdoorsCabinet"
@@ -84,3 +84,4 @@
 * Added "HousingService"
 * Package "org.kuwaiba.entity.multiple.systems" renamed to "org.kuwaiba.entity.multiple.software"
 * Added "GenericSoftwareItem" as root of all software
+* Added class OpticalAmplifier
