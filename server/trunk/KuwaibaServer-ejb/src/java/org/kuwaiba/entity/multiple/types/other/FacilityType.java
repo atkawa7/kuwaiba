@@ -14,16 +14,15 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.multiple.types.equipment.containers;
+package org.kuwaiba.entity.multiple.types.other;
 
 import org.kuwaiba.entity.multiple.GenericType;
 import javax.persistence.Entity;
 
 /**
- * A simple fiber cassette type
+ * A simple facility type (central Office, node, point of presence, etc)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class FiberCassetteType extends GenericType {
-
+public class FacilityType extends GenericType {
 }

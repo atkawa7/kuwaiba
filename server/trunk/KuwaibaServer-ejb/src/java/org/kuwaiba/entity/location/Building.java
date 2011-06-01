@@ -19,6 +19,8 @@ import org.kuwaiba.entity.multiple.companies.LocationOwner;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import org.kuwaiba.entity.multiple.types.other.FacilityType;
 
 /**
  * Represents a simple building
@@ -30,6 +32,8 @@ public class Building extends GenericLocation implements Serializable {
     @ManyToOne
     protected LocationOwner owner;
     protected String phoneNumber;
+    @OneToMany
+    protected FacilityType type;
 
     public String getAddress() {
         return address;
@@ -53,5 +57,13 @@ public class Building extends GenericLocation implements Serializable {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public FacilityType getType() {
+        return type;
+    }
+
+    public void setType(FacilityType type) {
+        this.type = type;
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
+ *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,16 +14,14 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.multiple.types.equipment.containers;
+package org.kuwaiba.entity.qos.services.data;
 
-import org.kuwaiba.entity.multiple.GenericType;
 import javax.persistence.Entity;
 
 /**
- * A simple fiber cassette type
+ * A service billed by the bandwidth used
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class FiberCassetteType extends GenericType {
-
+public class BurstableService extends GenericDataService {
 }

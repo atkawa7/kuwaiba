@@ -106,3 +106,6 @@
 * Added class "IPv6Address"
 * Added class "IPv4Subnet"
 * Added class "IPv6Subnet"
+* Added class "BurstableService"
+* Added class "FacilityType"
+* Added attribute "type" to class "Building"
