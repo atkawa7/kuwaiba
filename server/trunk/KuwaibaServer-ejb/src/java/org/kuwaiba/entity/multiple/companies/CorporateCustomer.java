@@ -17,11 +17,26 @@
 package org.kuwaiba.entity.multiple.companies;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import org.kuwaiba.entity.multiple.people.Employee;
+import org.kuwaiba.entity.multiple.people.GenericCustomer;
 
 /**
- * A simple telecommunicationsOperator
+ * A corporate customer. Note that this class <b>does not</b> extends from GenericCompany,
+ * so if a customer is also a contractor or a resource owner you should create them again as
+ * instances of classes extending from GenericCompany
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class TelecommunicationsOperator extends CorporateCustomer {
+public class CorporateCustomer extends GenericCustomer {
+    @ManyToOne
+    protected Employee accountManager;
+
+    public Employee getAccountManager() {
+        return accountManager;
+    }
+
+    public void setAccountManager(Employee accountManager) {
+        this.accountManager = accountManager;
+    }
 }

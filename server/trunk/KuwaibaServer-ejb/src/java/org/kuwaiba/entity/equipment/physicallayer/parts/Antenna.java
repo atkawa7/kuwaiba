@@ -16,7 +16,7 @@
 
 package org.kuwaiba.entity.equipment.physicallayer.parts;
 
-import org.kuwaiba.entity.multiple.people.CorporateCustomer;
+import org.kuwaiba.entity.multiple.companies.CorporateCustomer;
 import org.kuwaiba.entity.multiple.types.parts.AntennaType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;

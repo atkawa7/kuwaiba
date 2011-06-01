@@ -12,16 +12,17 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *  under the License.
  */
-
-package org.kuwaiba.entity.multiple.companies;
+package org.kuwaiba.entity.equipment.physicallayer.parts.boards;
 
 import javax.persistence.Entity;
 
 /**
- * A simple telecommunicationsOperator
+ * A board used in an ONT
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class TelecommunicationsOperator extends CorporateCustomer {
+public class DSLAMBoard extends GenericBoard{
+    
 }

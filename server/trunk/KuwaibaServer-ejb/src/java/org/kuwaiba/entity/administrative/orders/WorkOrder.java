@@ -14,14 +14,38 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.multiple.companies;
+package org.kuwaiba.entity.administrative.orders;
 
+import java.util.Date;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import org.kuwaiba.entity.multiple.people.Employee;
 
 /**
- * A simple telecommunicationsOperator
+ * A work order to be executed
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class TelecommunicationsOperator extends CorporateCustomer {
+public class WorkOrder extends GenericOrder {
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    protected Date dueDate;
+    @OneToMany
+    protected Employee responsible;
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public Employee getResponsible() {
+        return responsible;
+    }
+
+    public void setResponsible(Employee responsible) {
+        this.responsible = responsible;
+    }
 }

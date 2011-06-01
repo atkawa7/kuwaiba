@@ -14,14 +14,15 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.multiple.companies;
+package org.kuwaiba.entity.administrative.orders;
 
 import javax.persistence.Entity;
 
 /**
- * A simple telecommunicationsOperator
+ * An order issued when a customer requires a service
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class TelecommunicationsOperator extends CorporateCustomer {
+public class CustomerOrder extends GenericOrder {
+
 }

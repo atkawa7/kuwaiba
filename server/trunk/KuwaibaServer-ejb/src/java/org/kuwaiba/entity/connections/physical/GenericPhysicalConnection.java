@@ -22,7 +22,9 @@ import org.kuwaiba.entity.equipment.ports.GenericPort;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import org.kuwaiba.entity.multiple.companies.GenericCompany;
 
 /**
  * This class represents a generic physical connection
@@ -39,6 +41,16 @@ public abstract class GenericPhysicalConnection extends GenericConnection {
     @OneToOne
     @NoSerialize
     protected GenericPort endpointB;
+    /**
+     * This one is the resource owner
+     */
+    @OneToMany
+    protected GenericCompany owner;
+    /*
+     * The resource operator
+     */
+    @OneToMany
+    protected GenericCompany operator;
 
     public GenericPort getEndpointA() {
         return endpointA;
@@ -54,5 +66,21 @@ public abstract class GenericPhysicalConnection extends GenericConnection {
 
     public void setEndpointB(GenericPort endpointB) {
         this.endpointB = endpointB;
+    }
+
+    public GenericCompany getOwner() {
+        return owner;
+    }
+
+    public void setOwner(GenericCompany owner) {
+        this.owner = owner;
+    }
+
+    public GenericCompany getOperator() {
+        return operator;
+    }
+
+    public void setOperator(GenericCompany operator) {
+        this.operator = operator;
     }
 }

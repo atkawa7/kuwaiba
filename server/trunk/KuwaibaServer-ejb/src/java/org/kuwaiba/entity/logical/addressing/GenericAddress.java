@@ -14,14 +14,17 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.multiple.companies;
+package org.kuwaiba.entity.logical.addressing;
 
 import javax.persistence.Entity;
+import org.kuwaiba.entity.core.InventoryObject;
+
 
 /**
- * A simple telecommunicationsOperator
+ * Root class for all address in all protocols
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class TelecommunicationsOperator extends CorporateCustomer {
+public abstract class GenericAddress extends InventoryObject {
+
 }

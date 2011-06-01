@@ -14,14 +14,27 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.multiple.companies;
+package org.kuwaiba.entity.administrative.orders;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import org.kuwaiba.entity.core.AdministrativeItem;
 
 /**
- * A simple telecommunicationsOperator
+ * Root class for all orders
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class TelecommunicationsOperator extends CorporateCustomer {
+public abstract class GenericOrder extends AdministrativeItem {
+
+    @Column(length=1024)
+    protected String description;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

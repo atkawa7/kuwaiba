@@ -14,14 +14,28 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.multiple.companies;
+package org.kuwaiba.entity.equipment.containers;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import org.kuwaiba.entity.multiple.types.equipment.containers.FiberCassetteType;
+
 
 /**
- * A simple telecommunicationsOperator
+ * A simple fiber cassette used as adapter panels installed with
+ * factory terminated MTP multifiber fanouts
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class TelecommunicationsOperator extends CorporateCustomer {
+public class FiberCassette extends GenericContainer{
+    @OneToMany
+    protected FiberCassetteType type;
+
+    public FiberCassetteType getType() {
+        return type;
+    }
+
+    public void setType(FiberCassetteType type) {
+        this.type = type;
+    }
 }

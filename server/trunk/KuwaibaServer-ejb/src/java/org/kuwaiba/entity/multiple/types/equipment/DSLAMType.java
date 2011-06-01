@@ -14,16 +14,16 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.location;
+package org.kuwaiba.entity.multiple.types.equipment;
 
+import org.kuwaiba.entity.multiple.GenericType;
 import javax.persistence.Entity;
 
 /**
- * Cabinet used outdoors. While the IndoorsCabinet is a GenericContainer, this is a
- * GenericPhysicalNode
+ * A simple DSLAM type
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class PointOfPresence extends GenericPhysicalNode {
-
+public class DSLAMType extends GenericType {
+   
 }

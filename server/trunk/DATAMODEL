@@ -70,7 +70,6 @@
 * Added "state" (attribute) to GenericPort
 
 0.3.1 - 0.4 alpha
-* Added class "PointOfPresence"
 * Renamed class "Cabinet" to "IndoorsCabinet"
 * Added class "OutdoorsCabinet"
 * Added GenericMediaService
@@ -93,3 +92,17 @@
 * Added class "OpticalLineTerminal"
 * Added attribute "responsible" to class "GenericPhysicalElement"
 * Moved class "SpliceBox" to "GenericContainer"
+* Added class "FiberCassette"
+* Added class "FiberCassetteType"
+* Added class "DSLAM"
+* Added class "DSLAMBoard"
+* Added class "DSLAMType"
+* Added attributes "owner" and "operator" to GenericPhysicalConnection
+* Added class "GenericOrder"
+* Added class "WorkOrder"
+* Added class "CustomerOrder"
+* Added class "GenericAddress"
+* Added class "IPv4Address"
+* Added class "IPv6Address"
+* Added class "IPv4Subnet"
+* Added class "IPv6Subnet"

@@ -14,14 +14,16 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.multiple.companies;
+package org.kuwaiba.entity.logical.addressing;
 
 import javax.persistence.Entity;
 
+
 /**
- * A simple telecommunicationsOperator
+ * An IPv4 subnet, It's convenience class yet usable within the inventory
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class TelecommunicationsOperator extends CorporateCustomer {
+public class IPv4Subnet extends GenericAddress {
+
 }

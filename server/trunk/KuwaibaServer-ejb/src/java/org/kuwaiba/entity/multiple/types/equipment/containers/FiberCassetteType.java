@@ -14,14 +14,16 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.multiple.companies;
+package org.kuwaiba.entity.multiple.types.equipment.containers;
 
+import org.kuwaiba.entity.multiple.GenericType;
 import javax.persistence.Entity;
 
 /**
- * A simple telecommunicationsOperator
+ * A simple distribution frame type (applicable to ODF or DDF)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class TelecommunicationsOperator extends CorporateCustomer {
+public class FiberCassetteType extends GenericType {
+
 }

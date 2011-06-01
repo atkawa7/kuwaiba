@@ -14,25 +14,16 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.multiple.people;
+package org.kuwaiba.entity.logical.addressing;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+
 
 /**
- * A corporate customer
+ * An IPv6 address, It's an inventory object since it actually represents an asset
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class CorporateCustomer extends GenericCustomer {
-    @ManyToOne
-    protected Employee accountManager;
+public class IPv6Address extends GenericAddress {
 
-    public Employee getAccountManager() {
-        return accountManager;
-    }
-
-    public void setAccountManager(Employee accountManager) {
-        this.accountManager = accountManager;
-    }
 }
