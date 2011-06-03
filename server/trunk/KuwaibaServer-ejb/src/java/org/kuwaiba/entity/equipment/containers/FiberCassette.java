@@ -17,7 +17,7 @@
 package org.kuwaiba.entity.equipment.containers;
 
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import org.kuwaiba.entity.multiple.types.equipment.containers.FiberCassetteType;
 
 
@@ -28,7 +28,7 @@ import org.kuwaiba.entity.multiple.types.equipment.containers.FiberCassetteType;
  */
 @Entity
 public class FiberCassette extends GenericContainer{
-    @OneToMany
+    @ManyToOne
     protected FiberCassetteType type;
 
     public FiberCassetteType getType() {

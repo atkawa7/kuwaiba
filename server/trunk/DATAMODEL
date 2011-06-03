@@ -109,3 +109,4 @@
 * Added class "BurstableService"
 * Added class "FacilityType"
 * Added attribute "type" to class "Building"
+* Added class "OLTBoard"

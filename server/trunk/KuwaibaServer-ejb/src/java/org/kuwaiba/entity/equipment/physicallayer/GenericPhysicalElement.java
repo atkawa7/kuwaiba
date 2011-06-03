@@ -20,7 +20,7 @@ import org.kuwaiba.entity.core.ConfigurationItem;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import org.kuwaiba.entity.multiple.people.Employee;
 
 /**
@@ -30,7 +30,7 @@ import org.kuwaiba.entity.multiple.people.Employee;
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericPhysicalElement extends ConfigurationItem{
-    @OneToMany
+    @ManyToOne
     protected Employee responsible;
 
     public Employee getResponsible() {

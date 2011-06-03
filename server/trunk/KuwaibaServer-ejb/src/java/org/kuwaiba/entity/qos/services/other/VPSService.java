@@ -17,7 +17,7 @@
 package org.kuwaiba.entity.qos.services.other;
 
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import org.kuwaiba.entity.multiple.software.OperatingSystem;
 import org.kuwaiba.entity.qos.services.GenericService;
 
@@ -38,7 +38,7 @@ public class VPSService extends GenericService {
     /**
      * Operating System
      */
-    @OneToMany
+    @ManyToOne
     protected OperatingSystem operatingSystem;
     /**
      * Does this service has backup?

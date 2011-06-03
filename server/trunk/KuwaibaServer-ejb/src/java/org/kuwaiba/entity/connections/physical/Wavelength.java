@@ -16,13 +16,10 @@
 
 package org.kuwaiba.entity.connections.physical;
 
-import org.kuwaiba.core.annotations.NoSerialize;
 import org.kuwaiba.entity.connections.GenericConnection;
-import org.kuwaiba.entity.equipment.ports.GenericPort;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.OneToOne;
 
 /**
  * This class represents a generic physical connection
@@ -32,27 +29,6 @@ import javax.persistence.OneToOne;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class Wavelength extends GenericConnection {
-    @OneToOne
-    @NoSerialize
-    protected GenericPort endpointA;
-    @OneToOne
-    @NoSerialize
-    protected GenericPort endpointB;
-
-    public GenericPort getEndpointA() {
-        return endpointA;
-    }
-
-    public void setEndpointA(GenericPort endpointA) {
-        this.endpointA = endpointA;
-    }
-
-    public GenericPort getEndpointB() {
-        return endpointB;
-    }
-
-    public void setEndpointB(GenericPort endpointB) {
-        this.endpointB = endpointB;
-    }
+public class Wavelength extends GenericConnection {
+    
 }

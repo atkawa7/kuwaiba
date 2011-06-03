@@ -27,12 +27,13 @@ import org.kuwaiba.entity.multiple.types.other.FacilityType;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Building extends GenericLocation implements Serializable {
+public class Building extends GenericLocation {
     protected String address;
     @ManyToOne
     protected LocationOwner owner;
     protected String phoneNumber;
-    @OneToMany
+
+    @ManyToOne
     protected FacilityType type;
 
     public String getAddress() {

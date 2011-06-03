@@ -18,7 +18,7 @@ package org.kuwaiba.entity.equipment.datalinklayer;
 
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import org.kuwaiba.entity.multiple.types.equipment.DSLAMType;
 
 
@@ -28,7 +28,7 @@ import org.kuwaiba.entity.multiple.types.equipment.DSLAMType;
  */
 @Entity
 public class DSLAM extends GenericDataLinkElement implements Serializable {
-    @OneToMany
+    @ManyToOne
     protected DSLAMType type;
 
     public DSLAMType getType() {

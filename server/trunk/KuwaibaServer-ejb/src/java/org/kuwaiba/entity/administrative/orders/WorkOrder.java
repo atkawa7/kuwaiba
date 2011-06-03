@@ -18,7 +18,7 @@ package org.kuwaiba.entity.administrative.orders;
 
 import java.util.Date;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import org.kuwaiba.entity.multiple.people.Employee;
 
@@ -30,7 +30,7 @@ import org.kuwaiba.entity.multiple.people.Employee;
 public class WorkOrder extends GenericOrder {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     protected Date dueDate;
-    @OneToMany
+    @ManyToOne
     protected Employee responsible;
 
     public Date getDueDate() {

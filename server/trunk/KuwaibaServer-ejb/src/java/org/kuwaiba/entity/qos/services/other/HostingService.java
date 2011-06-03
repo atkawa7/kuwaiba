@@ -17,7 +17,7 @@
 package org.kuwaiba.entity.qos.services.other;
 
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import org.kuwaiba.entity.multiple.software.Database;
 import org.kuwaiba.entity.qos.services.GenericService;
 
@@ -34,7 +34,7 @@ public class HostingService extends GenericService {
     /**
      * Database
      */
-    @OneToMany
+    @ManyToOne
     protected Database database;
 
     /**
