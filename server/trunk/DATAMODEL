@@ -118,3 +118,4 @@
 * Added "IPTVService"
 * Added "FiberSplitter"
 * Added "FiberSplitterType"
+* Added attribute "directResources" to "GenericService"
