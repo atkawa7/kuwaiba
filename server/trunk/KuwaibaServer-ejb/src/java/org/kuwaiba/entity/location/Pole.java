@@ -18,29 +18,18 @@ package org.kuwaiba.entity.location;
 import org.kuwaiba.entity.multiple.companies.LocationOwner;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import org.kuwaiba.entity.multiple.types.other.FacilityType;
 
 /**
- * Represents a simple building
+ * Represents a simple pole (like those used in the electric grid infrastructure)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class Building extends GenericLocation {
-    protected String address;
+public class Pole extends GenericLocation {
+
+    protected Float height;
+
     @ManyToOne
     protected LocationOwner owner;
-    protected String phoneNumber;
-
-    @ManyToOne
-    protected FacilityType type;
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
 
     public LocationOwner getOwner() {
         return owner;
@@ -50,19 +39,11 @@ public class Building extends GenericLocation {
         this.owner = owner;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public Float getHeight() {
+        return height;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public FacilityType getType() {
-        return type;
-    }
-
-    public void setType(FacilityType type) {
-        this.type = type;
+    public void setHeight(Float height) {
+        this.height = height;
     }
 }
