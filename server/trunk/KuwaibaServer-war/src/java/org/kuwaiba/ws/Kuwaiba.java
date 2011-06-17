@@ -1470,6 +1470,34 @@ public class Kuwaiba {
     }
 
     /**
+     * Relates a resource to a service
+     * @param resourceClassName
+     * @param resourceId
+     * @param serviceClassName
+     * @param serviceId
+     * @return Success or failure
+     * @throws Exception
+     */
+    @WebMethod(operationName = "relateResourceToService")
+    public Boolean relateResourceToService(@WebParam(name="resourceClassName")String resourceClassName,
+            @WebParam(name="resourceId")Long resourceId,
+            @WebParam(name = "serviceClassName")String serviceClassName,
+            @WebParam(name="serviceId")Long serviceId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            sbr.validateCall("relateResourceToService", getIPAddress(), sessionId);
+            return sbr.relateResourceToService(resourceClassName, resourceId, serviceClassName, serviceId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof InventoryException)
+                level = ((InventoryException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    /**
      * Helpers
      */
     /**

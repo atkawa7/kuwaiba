@@ -22,6 +22,7 @@ import org.kuwaiba.ws.toserialize.ClassInfo;
 import org.kuwaiba.ws.toserialize.ObjectList;
 import org.kuwaiba.ws.toserialize.RemoteObject;
 import org.kuwaiba.ws.toserialize.RemoteObjectLight;
+import org.kuwaiba.core.annotations.Relatable;
 import org.kuwaiba.core.exceptions.EntityManagerNotAvailableException;
 import org.kuwaiba.core.exceptions.InvalidArgumentException;
 import org.kuwaiba.core.exceptions.MiscException;
@@ -53,6 +54,7 @@ import org.kuwaiba.entity.core.metamodel.ClassMetadata;
 import org.kuwaiba.entity.equipment.ports.GenericPort;
 import org.kuwaiba.entity.location.GenericPhysicalNode;
 import org.kuwaiba.entity.multiple.GenericObjectList;
+import org.kuwaiba.entity.qos.services.GenericService;
 import org.kuwaiba.entity.session.UserSession;
 import org.kuwaiba.entity.views.GenericView;
 import org.kuwaiba.entity.views.DefaultView;
@@ -145,6 +147,8 @@ public class BackendBean implements BackendBeanRemote {
                 validatedResult[i] = new RemoteObjectLight(child);
                 if (child instanceof GenericPort)
                     validatedResult[i].addValidator(new Validator("isConnected",((GenericPort)child).getConnectedConnection() != null)); //NOI18n
+                if (child.getClass().isAnnotationPresent(Relatable.class))
+                    validatedResult[i].addValidator(new Validator("isRelatable",true));
                 i++;
             }
             return validatedResult;
@@ -1759,6 +1763,46 @@ public class BackendBean implements BackendBeanRemote {
             return true;
         }else throw new EntityManagerNotAvailableException();
     }
+
+    /**
+     * Associates a resource to a service
+     * @param resourceClassName
+     * @param resourceId
+     * @param serviceClassName
+     * @param serviceId
+     * @return success or failure
+     */
+    @Override
+    public boolean relateResourceToService(String resourceClassName, Long resourceId, String serviceClassName, Long serviceId) throws Exception{
+        if (em != null){
+            Class myResourceClass = getClassFor(resourceClassName);
+            if (myResourceClass == null)
+                throw new ClassNotFoundException(resourceClassName);
+            InventoryObject resource = (InventoryObject)em.find(myResourceClass, resourceId);
+            if (resource == null)
+                throw new ObjectNotFoundException(myResourceClass,resourceId);
+
+            Class myServiceClass = getClassFor(serviceClassName);
+            if (myServiceClass == null)
+                throw new ClassNotFoundException(serviceClassName);
+            GenericService service = (GenericService)em.find(myServiceClass, serviceId);
+            if (service == null)
+                throw new ObjectNotFoundException(myServiceClass,serviceId);
+
+            List<InventoryObject> myResourcesList = service.getDirectResources();
+            if (myResourcesList.contains(resource))
+                myResourcesList.remove(resource);
+            else
+                myResourcesList.add(resource);
+
+            service.setDirectResources(myResourcesList);
+            em.persist(service);
+
+            return true;
+        }
+        else throw new EntityManagerNotAvailableException();
+    }
+
 
     /**
      * HELPERS

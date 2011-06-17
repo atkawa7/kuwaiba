@@ -94,4 +94,5 @@ public interface BackendBeanRemote {
     public Class getClassFor(String objectClass) throws Exception;
     public boolean validateCall(String method, String ipAddress, String token) throws Exception;
     public UserSession getSession(String sessionId) throws Exception;
+    public boolean relateResourceToService(String resourceClassName, Long resourceId, String serviceClassName, Long serviceId) throws Exception;
 }
