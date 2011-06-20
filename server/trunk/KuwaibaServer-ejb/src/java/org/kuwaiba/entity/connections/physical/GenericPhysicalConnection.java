@@ -17,7 +17,7 @@
 package org.kuwaiba.entity.connections.physical;
 
 import org.kuwaiba.core.annotations.NoSerialize;
-import org.kuwaiba.core.annotations.Relatable;
+import org.kuwaiba.core.annotations.RelatableToService;
 import org.kuwaiba.entity.connections.GenericConnection;
 import org.kuwaiba.entity.equipment.ports.GenericPort;
 import javax.persistence.Entity;
@@ -34,7 +34,7 @@ import org.kuwaiba.entity.multiple.companies.GenericCompany;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Relatable
+@RelatableToService
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericPhysicalConnection extends GenericConnection {
     @OneToOne

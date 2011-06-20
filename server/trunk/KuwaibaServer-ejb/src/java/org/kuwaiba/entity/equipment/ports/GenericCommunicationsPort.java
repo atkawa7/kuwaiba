@@ -16,7 +16,7 @@
 package org.kuwaiba.entity.equipment.ports;
 
 import org.kuwaiba.entity.multiple.types.parts.CommunicationsPortType;
-import org.kuwaiba.core.annotations.Relatable;
+import org.kuwaiba.core.annotations.RelatableToService;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -27,7 +27,7 @@ import javax.persistence.ManyToOne;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-@Relatable
+@RelatableToService
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericCommunicationsPort extends GenericPort {
 

@@ -22,7 +22,7 @@ import org.kuwaiba.ws.toserialize.ClassInfo;
 import org.kuwaiba.ws.toserialize.ObjectList;
 import org.kuwaiba.ws.toserialize.RemoteObject;
 import org.kuwaiba.ws.toserialize.RemoteObjectLight;
-import org.kuwaiba.core.annotations.Relatable;
+import org.kuwaiba.core.annotations.RelatableToService;
 import org.kuwaiba.core.exceptions.EntityManagerNotAvailableException;
 import org.kuwaiba.core.exceptions.InvalidArgumentException;
 import org.kuwaiba.core.exceptions.MiscException;
@@ -147,8 +147,8 @@ public class BackendBean implements BackendBeanRemote {
                 validatedResult[i] = new RemoteObjectLight(child);
                 if (child instanceof GenericPort)
                     validatedResult[i].addValidator(new Validator("isConnected",((GenericPort)child).getConnectedConnection() != null)); //NOI18n
-                if (child.getClass().isAnnotationPresent(Relatable.class))
-                    validatedResult[i].addValidator(new Validator("isRelatable",true));
+                if (child.getClass().isAnnotationPresent(RelatableToService.class))
+                    validatedResult[i].addValidator(new Validator("isRelatableToService",true));
                 i++;
             }
             return validatedResult;
@@ -1766,37 +1766,62 @@ public class BackendBean implements BackendBeanRemote {
 
     /**
      * Associates a resource to a service
-     * @param resourceClassName
-     * @param resourceId
-     * @param serviceClassName
-     * @param serviceId
+     * @param resourceClassName  Resource's class name
+     * @param resourceId Resource's id
+     * @param serviceClassName Service class name
+     * @param serviceId Service id
      * @return success or failure
      */
     @Override
-    public boolean relateResourceToService(String resourceClassName, Long resourceId, String serviceClassName, Long serviceId) throws Exception{
+    public boolean relateResourceToService(Class resourceClass, Long resourceId, Class serviceClass, Long serviceId) throws Exception{
         if (em != null){
-            Class myResourceClass = getClassFor(resourceClassName);
-            if (myResourceClass == null)
-                throw new ClassNotFoundException(resourceClassName);
-            InventoryObject resource = (InventoryObject)em.find(myResourceClass, resourceId);
+                       
+            InventoryObject resource = (InventoryObject)em.find(resourceClass, resourceId);
             if (resource == null)
-                throw new ObjectNotFoundException(myResourceClass,resourceId);
-
-            Class myServiceClass = getClassFor(serviceClassName);
-            if (myServiceClass == null)
-                throw new ClassNotFoundException(serviceClassName);
-            GenericService service = (GenericService)em.find(myServiceClass, serviceId);
+                throw new ObjectNotFoundException(resourceClass,resourceId);
+            
+            GenericService service = (GenericService)em.find(serviceClass, serviceId);
             if (service == null)
-                throw new ObjectNotFoundException(myServiceClass,serviceId);
+                throw new ObjectNotFoundException(serviceClass,serviceId);
 
             List<InventoryObject> myResourcesList = service.getDirectResources();
-            if (myResourcesList.contains(resource))
-                myResourcesList.remove(resource);
-            else
+            if (!myResourcesList.contains(resource)){
                 myResourcesList.add(resource);
+                service.setDirectResources(myResourcesList);
+                em.persist(service);
+            }
 
-            service.setDirectResources(myResourcesList);
-            em.persist(service);
+            return true;
+        }
+        else throw new EntityManagerNotAvailableException();
+    }
+
+    /**
+     * Associates a resource to a service
+     * @param resourceClassName  Resource's class name
+     * @param resourceId Resource's id
+     * @param serviceClassName Service class name
+     * @param serviceId Service id
+     * @return success or failure
+     */
+    @Override
+    public boolean unrelateResourceFromService(Class resourceClass, Long resourceId, Class serviceClass, Long serviceId) throws Exception{
+        if (em != null){
+
+            InventoryObject resource = (InventoryObject)em.find(resourceClass, resourceId);
+            if (resource == null)
+                throw new ObjectNotFoundException(resourceClass,resourceId);
+
+            GenericService service = (GenericService)em.find(serviceClass, serviceId);
+            if (service == null)
+                throw new ObjectNotFoundException(serviceClass,serviceId);
+
+            List<InventoryObject> myResourcesList = service.getDirectResources();
+            if (myResourcesList.contains(resource)){
+                myResourcesList.remove(resource);
+                service.setDirectResources(myResourcesList);
+                em.persist(service);
+            }
 
             return true;
         }

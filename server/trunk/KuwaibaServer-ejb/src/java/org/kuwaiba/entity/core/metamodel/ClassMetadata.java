@@ -92,7 +92,7 @@ public class ClassMetadata extends MetadataObject {
      * Classes marked with the annotation Relatable have this attribute set as true
      */
     @Column(nullable=false)
-    private Boolean isRelatable=false;
+    private Boolean isRelatableToService=false;
     /**
      * Instances of this class can have views associated (this going to be "true" for all subclasses of ViewableObject)
      */
@@ -130,7 +130,7 @@ public class ClassMetadata extends MetadataObject {
     public ClassMetadata(String _name, PackageMetadata _myPackage, String _description,
             Boolean _isCustom, Boolean _isAbstract, Boolean _isDummy, Boolean _isPhysicalNode,
             Boolean _isPhysicalConnection, Boolean _isPhysicalEndpoint, Boolean _isListType,
-            Boolean _isCountable, Boolean _isRelatable, Boolean _isViewable, List<ClassMetadata> _children, List <AttributeMetadata> _attributes){
+            Boolean _isCountable, Boolean _isRelatableToService, Boolean _isViewable, List<ClassMetadata> _children, List <AttributeMetadata> _attributes){
         this.name = _name;
         this.packageInfo = _myPackage;
         this.description = _description;
@@ -142,7 +142,7 @@ public class ClassMetadata extends MetadataObject {
         this.isPhysicalEndpoint = _isPhysicalEndpoint;
         this.isListType = _isListType;
         this.isCountable = _isCountable;
-        this.isRelatable = _isRelatable;
+        this.isRelatableToService = _isRelatableToService;
         this.isViewable = _isViewable;
         this.possibleChildren = _children;
         this.attributes = _attributes;
@@ -261,12 +261,12 @@ public class ClassMetadata extends MetadataObject {
         this.isDummy = isDummy;
     }
 
-    public Boolean isRelatable() {
-        return isRelatable;
+    public Boolean isRelatableToService() {
+        return isRelatableToService;
     }
 
-    public void setRelatable(Boolean isRelatable) {
-        this.isRelatable = isRelatable;
+    public void setRelatableToService(Boolean isRelatable) {
+        this.isRelatableToService = isRelatable;
     }
 
     public Boolean isViewable() {

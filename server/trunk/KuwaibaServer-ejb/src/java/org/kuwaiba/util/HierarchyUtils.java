@@ -17,7 +17,7 @@ package org.kuwaiba.util;
 
 import org.kuwaiba.core.annotations.Dummy;
 import org.kuwaiba.core.annotations.NoCount;
-import org.kuwaiba.core.annotations.Relatable;
+import org.kuwaiba.core.annotations.RelatableToService;
 import org.kuwaiba.core.annotations.NoSerialize;
 import org.kuwaiba.entity.connections.GenericConnection;
 import org.kuwaiba.entity.core.ApplicationObject;
@@ -168,7 +168,7 @@ public class HierarchyUtils {
                                              isSubclass(entity.getJavaType(),GenericPort.class),
                                              isSubclass(entity.getJavaType(), GenericObjectList.class),
                                              entity.getJavaType().getAnnotation(NoCount.class) !=null ,
-                                             entity.getJavaType().getAnnotation(Relatable.class) !=null ,
+                                             entity.getJavaType().getAnnotation(RelatableToService.class) !=null ,
                                              isSubclass(entity.getJavaType(), ViewableObject.class), null, atts);
 
         em.persist(cm);
