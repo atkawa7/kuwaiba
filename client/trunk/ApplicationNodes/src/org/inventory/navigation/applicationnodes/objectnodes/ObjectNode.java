@@ -34,10 +34,12 @@ import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateObject;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteObject;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObject;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObject;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateObjectAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteObjectAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.RelateToServiceAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowRelatedServicesAction;
 import org.inventory.navigation.applicationnodes.objectnodes.properties.ObjectNodeProperty;
 import org.openide.actions.CopyAction;
 import org.openide.actions.CutAction;
@@ -68,10 +70,12 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
     protected CommunicationsStub com;
 
-    protected CreateObject createAction;
-    protected DeleteObject deleteAction;
-    protected RefreshObject refreshAction;
-    protected EditObject editAction;
+    protected CreateObjectAction createAction;
+    protected DeleteObjectAction deleteAction;
+    protected RefreshObjectAction refreshAction;
+    protected EditObjectAction editAction;
+    private RelateToServiceAction relateToServiceAction;
+    private ShowRelatedServicesAction showRelatedServicesAction;
 
     protected Sheet sheet;
     protected Image icon;
@@ -87,9 +91,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         icon = (com.getMetaForClass(_lol.getClassName(),false)).getSmallIcon();
 
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
-        editAction = new EditObject(this);
-        deleteAction = new DeleteObject(this);
-        refreshAction = new RefreshObject(this);
+        editAction = new EditObjectAction(this);
+        deleteAction = new DeleteObjectAction(this);
+        refreshAction = new RefreshObjectAction(this);
     }
     
     public ObjectNode(LocalObjectLight _lol){
@@ -102,10 +106,14 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         icon = (com.getMetaForClass(_lol.getClassName(),false)).getSmallIcon();
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
 
-        createAction = new CreateObject(this);
-        deleteAction = new DeleteObject(this);
-        editAction = new EditObject(this);
-        refreshAction = new RefreshObject(this);
+        createAction = new CreateObjectAction(this);
+        deleteAction = new DeleteObjectAction(this);
+        editAction = new EditObjectAction(this);
+        refreshAction = new RefreshObjectAction(this);
+        if (object.getValidator("isRelatableToService")){
+            relateToServiceAction = new RelateToServiceAction(object);
+            showRelatedServicesAction = new ShowRelatedServicesAction(object);
+        }
     }
 
     /*
@@ -264,6 +272,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                             SystemAction.get(CopyAction.class),
                             SystemAction.get(CutAction.class),
                             SystemAction.get(PasteAction.class),
+                            null, //Separator
+                            relateToServiceAction,
+                            showRelatedServicesAction,
                             null, //Separator
                             explorerAction};
 

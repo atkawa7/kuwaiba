@@ -33,18 +33,18 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @ServiceProvider(service=ObjectAction.class)
-public final class EditObject extends AbstractAction implements ObjectAction{
+public final class EditObjectAction extends AbstractAction implements ObjectAction{
     private Node node;
 
     //Default constructor used by the default lookup
-    public EditObject() {
+    public EditObjectAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EDIT"));
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E,InputEvent.CTRL_MASK));
         putValue(MNEMONIC_KEY,KeyEvent.VK_E);
     }
 
 
-    public EditObject(Node _node) {
+    public EditObjectAction(Node _node) {
         this();
         this.node = _node;
     }

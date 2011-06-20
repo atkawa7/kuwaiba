@@ -1129,4 +1129,22 @@ public class CommunicationsStub {
             return false;
         }
     }
+
+    /**
+     * Relates a resource to a service
+     * @param resourceClassName
+     * @param resourceId
+     * @param serviceClassName
+     * @param serviceId
+     * @return
+     */
+    public boolean relateResourceToService(String resourceClassName, Long resourceId, String serviceClassName, Long serviceId){
+        try{
+            return port.relateResourceToService(resourceClassName, resourceId,
+                    serviceClassName,serviceId,this.session.getSessionId());
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return false;
+        }
+    }
 }

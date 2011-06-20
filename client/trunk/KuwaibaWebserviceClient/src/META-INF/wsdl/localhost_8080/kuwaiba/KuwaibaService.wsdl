@@ -325,6 +325,18 @@
 <message name="removeGroupsFromUserResponse">
 <part name="parameters" element="tns:removeGroupsFromUserResponse" />
 </message>
+<message name="relateResourceToService">
+<part name="parameters" element="tns:relateResourceToService" />
+</message>
+<message name="relateResourceToServiceResponse">
+<part name="parameters" element="tns:relateResourceToServiceResponse" />
+</message>
+<message name="unrelateResourceFromService">
+<part name="parameters" element="tns:unrelateResourceFromService" />
+</message>
+<message name="unrelateResourceFromServiceResponse">
+<part name="parameters" element="tns:unrelateResourceFromServiceResponse" />
+</message>
 <portType name="Kuwaiba">
 <operation name="getQuery">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getQueryRequest" message="tns:getQuery" />
@@ -589,6 +601,16 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removeGroupsFromUserRequest" message="tns:removeGroupsFromUser" />
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removeGroupsFromUserResponse" message="tns:removeGroupsFromUserResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removeGroupsFromUser/Fault/Exception" />
+</operation>
+<operation name="relateResourceToService">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/relateResourceToServiceRequest" message="tns:relateResourceToService" />
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/relateResourceToServiceResponse" message="tns:relateResourceToServiceResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/relateResourceToService/Fault/Exception" />
+</operation>
+<operation name="unrelateResourceFromService">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/unrelateResourceFromServiceRequest" message="tns:unrelateResourceFromService" />
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/unrelateResourceFromServiceResponse" message="tns:unrelateResourceFromServiceResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/unrelateResourceFromService/Fault/Exception" />
 </operation>
 </portType>
 <binding name="KuwaibaPortBinding" type="tns:Kuwaiba">
@@ -1215,6 +1237,30 @@
 </fault>
 </operation>
 <operation name="removeGroupsFromUser">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
+<operation name="relateResourceToService">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
+<operation name="unrelateResourceFromService">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />

@@ -33,7 +33,6 @@ public class Installer extends ModuleInstall {
            //UIManager.setLookAndFeel("org.pushingpixels.substance.api.skin.SubstanceNebulaBrickWallLookAndFeel");
            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 
-           //UIManager.setLookAndFeel("com.nilo.plaf.nimrod.NimRODLookAndFeel");
             if (System.getProperty("no-laf") == null){
                 NimRODTheme nt = new NimRODTheme();
                 nt.setPrimary1( new Color(170,136,0));

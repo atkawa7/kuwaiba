@@ -27,10 +27,10 @@ import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
  * Refreshes the node
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public final class RefreshObject extends AbstractAction {
+public final class RefreshObjectAction extends AbstractAction {
     private ObjectNode node;
 
-    public RefreshObject(ObjectNode _node) {
+    public RefreshObjectAction(ObjectNode _node) {
         this.node = _node;
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_REFRESH"));
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_R,InputEvent.CTRL_MASK));
