@@ -1,0 +1,16 @@
+Roadmap
+
+* Soporte para nuevas vistas
+* Ayuda
+* Sacar las cadenas harcoded
+	* Arreglar el sistema de logueo de errores
+	* Arreglar shortcuts para las acciones comunes
+	* Arreglar soporte para dates en búsquedas y ediciones
+	* Reescribir el ObjectView
+	* Esconder opciones que no se usan en los menús y reorganizarlos
+	* Colocar "opciones"
+	* Desplegar sólo un número limitado de entradas
+* Constraints a los campos
+* Extender el sistema de privilegios
+* Proveer una forma simple de colocarle acciones personalizadas
+* Proveer soporte para probes, parsers, etc
