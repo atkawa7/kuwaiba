@@ -34,9 +34,15 @@ import org.kuwaiba.util.HierarchyUtils;
 @Entity
 @NamedQuery(name="flushAttributeMetadata", query="DELETE FROM AttributeMetadata x")
 public class AttributeMetadata extends MetadataObject {
-    
+
+    /**
+     * Primitive or complex type (it doesn't include the package name)
+     */
     @Column(nullable=false)
     private String type=""; //NOI18N
+    /**
+     * Default display name
+     */
     private String displayName=""; //NOI18N
     /**
      * Mark this attribute as administrative (stuff like id or parent)

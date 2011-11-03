@@ -55,4 +55,19 @@ public class PackageMetadata extends MetadataObject{
         return getName();
     }
 
+    /**
+     * Retrieves the current default display name
+     * @return the current display name
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    /**
+     * Sets the current default display name
+     * @param displayName new display name to be set
+     */
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 }
