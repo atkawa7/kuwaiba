@@ -33,7 +33,7 @@
     </target>
     <target name="wsimport-client-clean-KuwaibaService" depends="-init-project">
         <delete dir="${build.generated.dir}/jax-wsCache/KuwaibaService"/>
-        <delete dir="${build.generated.sources.dir}/jax-ws/org/kuwaiba/wsclient"/>
+        <delete dir="${build.generated.sources.dir}/jax-ws/org/kuwaiba/ws"/>
     </target>
     <target name="wsimport-client-generate" depends="wsimport-client-KuwaibaService"/>
 </project>

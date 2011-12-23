@@ -5,7 +5,7 @@
     <client name="KuwaibaService">
       <wsdl-url>http://localhost:8080/kuwaiba/KuwaibaService?wsdl</wsdl-url>
       <local-wsdl-file>localhost_8080/kuwaiba/KuwaibaService.wsdl</local-wsdl-file>
-      <package-name forceReplace="true">org.kuwaiba.wsclient</package-name>
+      <package-name forceReplace="true">org.kuwaiba.ws</package-name>
       <catalog-file>catalog.xml</catalog-file>
       <wsimport-options>
         <wsimport-option>
