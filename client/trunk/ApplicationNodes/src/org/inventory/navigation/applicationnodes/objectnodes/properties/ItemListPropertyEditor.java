@@ -59,13 +59,17 @@ public class ItemListPropertyEditor extends PropertyEditorSupport{
         return res;
     }
 
-    @Override
+/**
+ * Implement this (returning true in supportsCustomEditor) when there's need of an advance, custom editor
+ *
+ * @Override
     public Component getCustomEditor(){
         return new JLabel("sfdfdgfdfgdsf");
     }
+ */
 
     @Override
     public boolean supportsCustomEditor(){
-        return true;
+        return false;
     }
 }
