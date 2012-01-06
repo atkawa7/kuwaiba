@@ -346,21 +346,24 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     private void btnOrganizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrganizeActionPerformed
         if (!validateQuery())
             return;
-        this.queryScene.organizeNodes((LocalClassMetadata)queryScene.getNodes().iterator().next(), QueryEditorScene.X_OFFSET, QueryEditorScene.Y_OFFSET);
-        this.queryScene.validate();
+        if (queryScene.getCurrentSearchedClass() != null){
+            this.queryScene.organizeNodes(queryScene.getCurrentSearchedClass(),
+                QueryEditorScene.X_OFFSET, QueryEditorScene.Y_OFFSET);
+            this.queryScene.validate();
+        }
     }//GEN-LAST:event_btnOrganizeActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current query?", //NOI18N
-                "Delete saved query",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){  //NOI18N
+        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current query?",
+                "Delete saved query",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
             qbs.deleteQuery();
             btnDelete.setEnabled(false);
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
-        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to clear the current query?", //NOI18N
-                    "Confirmation",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){  //NOI18N
+        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to clear the current query?", 
+                    "Confirmation",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){  
             if(qbs.getCurrentLocalQuery() == null){ //It's a temporal query, not a saved one
                     queryScene.clear();
                     queryScene.setCurrentSearchedClass(null);
@@ -454,7 +457,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     void writeProperties(java.util.Properties p) {
         // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
-        p.setProperty("version", "1.0");
+        p.setProperty("version", "1.0"); //NOI18N
         // TODO store your settings
     }
 
@@ -467,7 +470,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     }
 
     private void readPropertiesImpl(java.util.Properties p) {
-        String version = p.getProperty("version");
+        String version = p.getProperty("version"); //NOI18N
         // TODO read your settings according to their version
     }
 
@@ -545,7 +548,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
             switch (JOptionPane.showConfirmDialog(null, "This query has not been saved, do you want to save it?",
                     "Confirmation",showCancel?JOptionPane.YES_NO_CANCEL_OPTION:JOptionPane.YES_NO_OPTION)){
                 case JOptionPane.YES_OPTION:
-                    btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
+                    btnSaveActionPerformed(new ActionEvent(this, 0, "close")); //NOI18N
                     break;
                 case JOptionPane.CANCEL_OPTION:
                     return false;
