@@ -42,6 +42,9 @@ public class ClassMetadataTransferManager extends TransferHandler implements Dra
     }
 
     public void dragGestureRecognized(DragGestureEvent dge) {
+        //To avoid bogus drag and drop events trigger this behavior
+        if (dge == null)
+            return;
         ClassMetadataTransferManager tf = (ClassMetadataTransferManager)list.getTransferHandler();
         Transferable t = tf.createTransferable(list);
         dge.startDrag(null, t);
