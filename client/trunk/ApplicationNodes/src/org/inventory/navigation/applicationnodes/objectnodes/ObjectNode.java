@@ -179,7 +179,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                                            this);
                 }
                 else{
-                    //Those attributes that are not multiple, but references another object
+                    //Those attributes that are not multiple, but reference another object
                     //like nodeA or endpointB in physicalConnections should be ignored, at least by now
                     if (!lam.getType().equals(LocalObjectLight.class))
                         property = new ObjectNodeProperty(
