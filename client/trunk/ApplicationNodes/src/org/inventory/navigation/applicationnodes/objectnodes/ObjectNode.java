@@ -226,7 +226,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         icon = (com.getMetaForClass(object.getClassName(),false)).getSmallIcon();
         fireIconChange();
 
-        //Don't try to refresh the children anything if the node is a leaf (used only in views)
+        //Don't try to refresh the anything if the node is a leaf (used only in views)
         if (!(getChildren() instanceof ObjectChildren))
             return true;
 
@@ -246,8 +246,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                         toBeAdded.remove(myChild);
                     }
                 }
-                children = toBeAdded;
             }
+            children = toBeAdded;
 
             for (Node deadNode : toBeDeleted)
                 ((ObjectChildren)getChildren()).remove(new Node[]{deadNode});
