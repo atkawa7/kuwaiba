@@ -25,6 +25,7 @@ import org.inventory.core.services.factories.ObjectFactory;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.listmanagernodes.ListElementNode;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.PropertySupport.ReadWrite;
 import org.openide.util.Lookup;
@@ -78,7 +79,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         try{
             LocalObject update = Lookup.getDefault().lookup(LocalObject.class);
-
+            
             if (t instanceof LocalObjectListItem)
                 update.setLocalObject(node.getObject().getClassName(),
                     new String[]{this.getName()}, new Object[]{((LocalObjectListItem)t).getOid()});
@@ -90,6 +91,10 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
                 throw new Exception("[saveObject]: Error "+ CommunicationsStub.getInstance().getError());
             else
                 value = t;
+            
+            if (node instanceof ListElementNode)
+                CommunicationsStub.getInstance().getList(node.getObject().getClassName(), true);
+            
         }catch(Exception e){
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             nu.showSimplePopup("Object update", NotificationUtil.ERROR, "An error occurred while updating this object: "+e.getMessage());
