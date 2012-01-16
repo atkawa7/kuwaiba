@@ -26,6 +26,7 @@ import org.inventory.core.services.actions.ObjectAction;
 import org.inventory.core.services.exceptions.ObjectActionException;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.listmanagernodes.ListElementNode;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.Node;
@@ -62,6 +63,9 @@ public final class DeleteObjectAction extends AbstractAction implements ObjectAc
                                                   //e.g. In a search result list
                     ((ObjectChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
                 nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
+                
+                if (node instanceof ListElementNode)
+                    CommunicationsStub.getInstance().getList(node.getObject().getClassName(), true);
             }
             else
                 nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_ERROR"),
