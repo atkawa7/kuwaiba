@@ -34,6 +34,7 @@ import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.listmanagernodes.ListElementNode;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
@@ -169,7 +170,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                             val = loli;
                             break;
                         }
-                   property = new ObjectNodeProperty(
+                    property = new ObjectNodeProperty(
                                            lam.getName(),
                                            LocalObjectListItem.class,
                                            val,
@@ -406,6 +407,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
             if (com.saveObject(update) != null){
                 object.setDisplayName(newName);
                 fireDisplayNameChange(object.getDisplayname(), newName);
+                
+                if (this instanceof ListElementNode)
+                    CommunicationsStub.getInstance().getList(object.getClassName(), true);
             }
 
             //So the PropertySheet reflects the changes too
