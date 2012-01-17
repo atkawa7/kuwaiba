@@ -458,6 +458,8 @@ public class Kuwaiba {
             @WebParam(name = "includeListTypes")Boolean includeListTypes) throws Exception{
         try{
             sbr.validateCall("getLightMetadata", getIPAddress(), sessionId);
+            if (includeListTypes == null) 
+                includeListTypes = false;
             return sbr.getLightMetadata(includeListTypes);
         }catch(Exception e){
             Level level = Level.SEVERE;
