@@ -15,9 +15,7 @@
  */
 package org.inventory.navigation.applicationnodes.objectnodes.properties;
 
-import java.awt.Component;
 import java.beans.PropertyEditorSupport;
-import javax.swing.JLabel;
 import org.inventory.core.services.api.LocalObjectListItem;
 
 
@@ -54,8 +52,7 @@ public class ItemListPropertyEditor extends PropertyEditorSupport{
         String [] res = new String[list.length];
     
         for (int i = 0; i <list.length; i++)
-            res[i] = list[i].getDisplayname().equals("")?
-            list[i].getName():list[i].getDisplayname();
+            res[i] = list[i].getDisplayname().trim().equals("")?list[i].getName():list[i].getDisplayname();
         return res;
     }
 
