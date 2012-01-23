@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.inventory.connections.physicalconnections
+OpenIDE-Module-Localizing-Bundle: org/inventory/connections/physicalconnections/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
