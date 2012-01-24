@@ -17,11 +17,12 @@
 package org.kuwaiba.entity.qos.services.data;
 
 import javax.persistence.Entity;
+import org.kuwaiba.entity.qos.services.GenericHomeService;
 
 /**
  * A simple data service using a satellital network
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class SatellitalDataService extends GenericDataService {
+public class SatellitalDataService extends GenericHomeService {
 }

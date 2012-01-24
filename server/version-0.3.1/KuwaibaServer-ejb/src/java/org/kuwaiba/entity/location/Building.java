@@ -31,23 +31,12 @@ public class Building extends GenericLocation {
     protected LocationOwner owner;
     protected String phoneNumber;
 
-    @ManyToOne
-    protected FacilityType type;
-
     public String getAddress() {
         return address;
     }
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public LocationOwner getOwner() {
-        return owner;
-    }
-
-    public void setOwner(LocationOwner owner) {
-        this.owner = owner;
     }
 
     public String getPhoneNumber() {
@@ -58,11 +47,11 @@ public class Building extends GenericLocation {
         this.phoneNumber = phoneNumber;
     }
 
-    public FacilityType getType() {
-        return type;
+    public LocationOwner getOwner() {
+        return owner;
     }
 
-    public void setType(FacilityType type) {
-        this.type = type;
+    public void setOwner(LocationOwner owner) {
+        this.owner = owner;
     }
 }

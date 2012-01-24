@@ -18,8 +18,6 @@
 package org.kuwaiba.entity.qos.services.data;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import org.kuwaiba.entity.multiple.types.other.RateType;
 import org.kuwaiba.entity.qos.services.GenericService;
 
 /**
@@ -28,23 +26,5 @@ import org.kuwaiba.entity.qos.services.GenericService;
  */
 @Entity
 public abstract class GenericDataService extends GenericService {
-    protected float bandwidth;
-    @ManyToOne
-    protected RateType rate;
 
-    public float getBandwidth() {
-        return bandwidth;
-    }
-
-    public void setBandwidth(float bandwidth) {
-        this.bandwidth = bandwidth;
-    }
-
-    public RateType getRate() {
-        return rate;
-    }
-
-    public void setRate(RateType rate) {
-        this.rate = rate;
-    }
 }

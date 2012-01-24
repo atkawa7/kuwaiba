@@ -17,23 +17,20 @@
 
 package org.kuwaiba.entity.qos.services;
 
-import java.util.List;
 import org.kuwaiba.entity.core.AdministrativeItem;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import org.kuwaiba.core.annotations.NoSerialize;
-import org.kuwaiba.entity.core.InventoryObject;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  * Represents a simple service
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
+@Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericService extends AdministrativeItem {
     protected String serviceId;
-    @NoSerialize
-    @OneToMany
-    protected List<InventoryObject> directResources;
+
 
     public String getServiceId() {
         return serviceId;
@@ -42,13 +39,4 @@ public abstract class GenericService extends AdministrativeItem {
     public void setServiceId(String serviceId) {
         this.serviceId = serviceId;
     }
-
-    public List<InventoryObject> getDirectResources() {
-        return directResources;
-    }
-
-    public void setDirectResources(List<InventoryObject> directResources) {
-        this.directResources = directResources;
-    }
-
 }

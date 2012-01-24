@@ -88,12 +88,6 @@ public class ClassMetadata extends MetadataObject {
     @Column(nullable=false)
     private Boolean isListType = false;
     /**
-     * Indicates if the instances of this class can be related to a service
-     * Classes marked with the annotation Relatable have this attribute set as true
-     */
-    @Column(nullable=false)
-    private Boolean isRelatableToService=false;
-    /**
      * Instances of this class can have views associated (this going to be "true" for all subclasses of ViewableObject)
      */
     @Column(nullable=false)
@@ -142,7 +136,6 @@ public class ClassMetadata extends MetadataObject {
         this.isPhysicalEndpoint = _isPhysicalEndpoint;
         this.isListType = _isListType;
         this.isCountable = _isCountable;
-        this.isRelatableToService = _isRelatableToService;
         this.isViewable = _isViewable;
         this.possibleChildren = _children;
         this.attributes = _attributes;
@@ -259,14 +252,6 @@ public class ClassMetadata extends MetadataObject {
 
     public void setDummy(Boolean isDummy) {
         this.isDummy = isDummy;
-    }
-
-    public Boolean isRelatableToService() {
-        return isRelatableToService;
-    }
-
-    public void setRelatableToService(Boolean isRelatable) {
-        this.isRelatableToService = isRelatable;
     }
 
     public Boolean isViewable() {

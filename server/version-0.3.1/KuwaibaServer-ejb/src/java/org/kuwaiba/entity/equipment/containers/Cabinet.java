@@ -24,7 +24,7 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class IndoorsCabinet extends GenericContainer{
+public class Cabinet extends GenericContainer{
     /**
      * The actual available width (there's some space between the total width and the insides)
      */

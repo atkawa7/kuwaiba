@@ -17,12 +17,13 @@
 package org.kuwaiba.entity.qos.services.data;
 
 import javax.persistence.Entity;
+import org.kuwaiba.entity.qos.services.GenericCorporateService;
 
 /**
  * A simple PDH (E1, T1, E3, etc) service
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class PDHService extends GenericDataService {
+public class PDHService extends GenericCorporateService {
 
 }

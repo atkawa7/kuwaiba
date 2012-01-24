@@ -17,11 +17,12 @@
 package org.kuwaiba.entity.qos.services.data;
 
 import javax.persistence.Entity;
+import org.kuwaiba.entity.qos.services.GenericCorporateService;
 
 /**
  * A simple SONET service (STSx, OCx)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class SONETService extends GenericDataService {
+public class SONETService extends GenericCorporateService {
 }

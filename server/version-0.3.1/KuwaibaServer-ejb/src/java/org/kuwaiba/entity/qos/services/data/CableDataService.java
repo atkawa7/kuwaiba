@@ -17,12 +17,13 @@
 package org.kuwaiba.entity.qos.services.data;
 
 import javax.persistence.Entity;
+import org.kuwaiba.entity.qos.services.GenericHomeService;
 
 /**
  * A simple data over cable service
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class CableDataService extends GenericDataService {
+public class CableDataService extends GenericHomeService {
 
 }

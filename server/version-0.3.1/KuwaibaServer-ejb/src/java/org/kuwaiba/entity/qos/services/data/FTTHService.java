@@ -17,11 +17,12 @@
 package org.kuwaiba.entity.qos.services.data;
 
 import javax.persistence.Entity;
+import org.kuwaiba.entity.qos.services.GenericHomeService;
 
 /**
  * A simple Fiber to the Home service
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class FTTHService extends GenericDataService {
+public class FTTHService extends GenericHomeService {
 }

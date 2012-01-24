@@ -17,11 +17,12 @@
 package org.kuwaiba.entity.qos.services.data;
 
 import javax.persistence.Entity;
+import org.kuwaiba.entity.qos.services.GenericCorporateService;
 
 /**
  * A simple gigabit Ethernet Service
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class GigaEthernetService extends GenericDataService {
+public class GigaEthernetService extends GenericCorporateService {
 }

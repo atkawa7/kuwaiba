@@ -17,11 +17,12 @@
 package org.kuwaiba.entity.qos.services.data;
 
 import javax.persistence.Entity;
+import org.kuwaiba.entity.qos.services.GenericCorporateService;
 
 /**
  * A service billed by the bandwidth used
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class BurstableService extends GenericDataService {
+public class BurstableService extends GenericCorporateService {
 }

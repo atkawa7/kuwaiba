@@ -1,12 +1,12 @@
-/*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
- * 
+/**
+ *  Copyright 2012 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
+ *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,15 +14,19 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.qos.services.data;
+package org.kuwaiba.entity.qos.services;
 
+import java.io.Serializable;
 import javax.persistence.Entity;
-import org.kuwaiba.entity.qos.services.GenericCorporateService;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import org.kuwaiba.entity.qos.services.GenericService;
 
 /**
- * Represents a service over the SDH network
+ * Represents a service provided to home customers
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class SDHService extends GenericCorporateService{
+public abstract class GenericHomeService extends GenericService{
 }

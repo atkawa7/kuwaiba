@@ -17,11 +17,12 @@
 package org.kuwaiba.entity.qos.services.data;
 
 import javax.persistence.Entity;
+import org.kuwaiba.entity.qos.services.GenericHomeService;
 
 /**
  * A simple mobile data (EDGE/GPRS/3G/4G) service
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class MobileDataService extends GenericDataService {
+public class MobileDataService extends GenericHomeService {
 }
