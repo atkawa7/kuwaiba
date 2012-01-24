@@ -158,10 +158,6 @@
 
 <xs:element name="moveObjectsResponse" type="tns:moveObjectsResponse" />
 
-<xs:element name="relateResourceToService" type="tns:relateResourceToService" />
-
-<xs:element name="relateResourceToServiceResponse" type="tns:relateResourceToServiceResponse" />
-
 <xs:element name="removeGroupsFromUser" type="tns:removeGroupsFromUser" />
 
 <xs:element name="removeGroupsFromUserResponse" type="tns:removeGroupsFromUserResponse" />
@@ -214,10 +210,6 @@
 
 <xs:element name="setUserPropertiesResponse" type="tns:setUserPropertiesResponse" />
 
-<xs:element name="unrelateResourceFromService" type="tns:unrelateResourceFromService" />
-
-<xs:element name="unrelateResourceFromServiceResponse" type="tns:unrelateResourceFromServiceResponse" />
-
 <xs:element name="updateObject" type="tns:updateObject" />
 
 <xs:element name="updateObjectResponse" type="tns:updateObjectResponse" />
@@ -263,22 +255,6 @@
 </xs:complexType>
 
 <xs:complexType name="addUsersToGroupResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="relateResourceToService">
-<xs:sequence>
-<xs:element name="resourceClassName" type="xs:string" minOccurs="0" />
-<xs:element name="resourceId" type="xs:long" minOccurs="0" />
-<xs:element name="serviceClassName" type="xs:string" minOccurs="0" />
-<xs:element name="serviceId" type="xs:long" minOccurs="0" />
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="relateResourceToServiceResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
 </xs:sequence>
@@ -1011,22 +987,6 @@
 </xs:complexType>
 
 <xs:complexType name="removeGroupsFromUserResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:boolean" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="unrelateResourceFromService">
-<xs:sequence>
-<xs:element name="resourceClassName" type="xs:string" minOccurs="0" />
-<xs:element name="resourceId" type="xs:long" minOccurs="0" />
-<xs:element name="serviceClassName" type="xs:string" minOccurs="0" />
-<xs:element name="serviceId" type="xs:long" minOccurs="0" />
-<xs:element name="sessionId" type="xs:string" minOccurs="0" />
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="unrelateResourceFromServiceResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:boolean" minOccurs="0" />
 </xs:sequence>

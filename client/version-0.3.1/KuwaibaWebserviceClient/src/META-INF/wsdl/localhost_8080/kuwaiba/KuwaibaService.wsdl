@@ -25,6 +25,12 @@
 <message name="getMetadataResponse">
 <part name="parameters" element="tns:getMetadataResponse" />
 </message>
+<message name="executeQuery">
+<part name="parameters" element="tns:executeQuery" />
+</message>
+<message name="executeQueryResponse">
+<part name="parameters" element="tns:executeQueryResponse" />
+</message>
 <message name="createSession">
 <part name="parameters" element="tns:createSession" />
 </message>
@@ -48,12 +54,6 @@
 </message>
 <message name="createObjectResponse">
 <part name="parameters" element="tns:createObjectResponse" />
-</message>
-<message name="executeQuery">
-<part name="parameters" element="tns:executeQuery" />
-</message>
-<message name="executeQueryResponse">
-<part name="parameters" element="tns:executeQueryResponse" />
 </message>
 <message name="getServerStatus">
 <part name="parameters" element="tns:getServerStatus" />
@@ -325,18 +325,6 @@
 <message name="removeGroupsFromUserResponse">
 <part name="parameters" element="tns:removeGroupsFromUserResponse" />
 </message>
-<message name="relateResourceToService">
-<part name="parameters" element="tns:relateResourceToService" />
-</message>
-<message name="relateResourceToServiceResponse">
-<part name="parameters" element="tns:relateResourceToServiceResponse" />
-</message>
-<message name="unrelateResourceFromService">
-<part name="parameters" element="tns:unrelateResourceFromService" />
-</message>
-<message name="unrelateResourceFromServiceResponse">
-<part name="parameters" element="tns:unrelateResourceFromServiceResponse" />
-</message>
 <portType name="Kuwaiba">
 <operation name="getQuery">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getQueryRequest" message="tns:getQuery" />
@@ -352,6 +340,11 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadataRequest" message="tns:getMetadata" />
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadataResponse" message="tns:getMetadataResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadata/Fault/Exception" />
+</operation>
+<operation name="executeQuery">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryRequest" message="tns:executeQuery" />
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryResponse" message="tns:executeQueryResponse" />
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQuery/Fault/Exception" />
 </operation>
 <operation name="createSession">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSessionRequest" message="tns:createSession" />
@@ -372,11 +365,6 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectRequest" message="tns:createObject" />
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectResponse" message="tns:createObjectResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObject/Fault/Exception" />
-</operation>
-<operation name="executeQuery">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryRequest" message="tns:executeQuery" />
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryResponse" message="tns:executeQueryResponse" />
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQuery/Fault/Exception" />
 </operation>
 <operation name="getServerStatus">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getServerStatusRequest" message="tns:getServerStatus" />
@@ -602,16 +590,6 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removeGroupsFromUserResponse" message="tns:removeGroupsFromUserResponse" />
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removeGroupsFromUser/Fault/Exception" />
 </operation>
-<operation name="relateResourceToService">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/relateResourceToServiceRequest" message="tns:relateResourceToService" />
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/relateResourceToServiceResponse" message="tns:relateResourceToServiceResponse" />
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/relateResourceToService/Fault/Exception" />
-</operation>
-<operation name="unrelateResourceFromService">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/unrelateResourceFromServiceRequest" message="tns:unrelateResourceFromService" />
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/unrelateResourceFromServiceResponse" message="tns:unrelateResourceFromServiceResponse" />
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/unrelateResourceFromService/Fault/Exception" />
-</operation>
 </portType>
 <binding name="KuwaibaPortBinding" type="tns:Kuwaiba">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
@@ -640,6 +618,18 @@
 </fault>
 </operation>
 <operation name="getMetadata">
+<soap:operation soapAction="" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal" />
+</fault>
+</operation>
+<operation name="executeQuery">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
@@ -688,18 +678,6 @@
 </fault>
 </operation>
 <operation name="createObject">
-<soap:operation soapAction="" />
-<input>
-<soap:body use="literal" />
-</input>
-<output>
-<soap:body use="literal" />
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal" />
-</fault>
-</operation>
-<operation name="executeQuery">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
@@ -1237,30 +1215,6 @@
 </fault>
 </operation>
 <operation name="removeGroupsFromUser">
-<soap:operation soapAction="" />
-<input>
-<soap:body use="literal" />
-</input>
-<output>
-<soap:body use="literal" />
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal" />
-</fault>
-</operation>
-<operation name="relateResourceToService">
-<soap:operation soapAction="" />
-<input>
-<soap:body use="literal" />
-</input>
-<output>
-<soap:body use="literal" />
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal" />
-</fault>
-</operation>
-<operation name="unrelateResourceFromService">
 <soap:operation soapAction="" />
 <input>
 <soap:body use="literal" />
