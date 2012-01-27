@@ -1,16 +1,18 @@
-Roadmap
+Client
+--------
+* Support for new views (rack view, GIS view, etc)
+* Java Help integration
+* Remove hard-coded strings
+* Fix shortcuts
+* Support for dates in searches and editors
+* Rewrite the ObjectView module
+* Reorganize menus
+* Limit the number of children shown under a given node
+* Constraints for certain fields according to business rules
+* Extend the privileges subsystem
+* Provide an API to integrate custom actions
 
-* Soporte para nuevas vistas
-* Ayuda
-* Sacar las cadenas harcoded
-	* Arreglar el sistema de logueo de errores
-	* Arreglar shortcuts para las acciones comunes
-	* Arreglar soporte para dates en búsquedas y ediciones
-	* Reescribir el ObjectView
-	* Esconder opciones que no se usan en los menús y reorganizarlos
-	* Colocar "opciones"
-	* Desplegar sólo un número limitado de entradas
-* Constraints a los campos
-* Extender el sistema de privilegios
-* Proveer una forma simple de colocarle acciones personalizadas
-* Proveer soporte para probes, parsers, etc
+Server
+-------
+* Support for probes, parsers, etc
+* Enhance the logging mechanisms
