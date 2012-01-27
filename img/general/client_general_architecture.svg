@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1052.3622"
+   height="744.09448"
+   id="svg4954"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="client_general_architecture.svg">
+  <defs
+     id="defs4956">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective4962" />
+    <inkscape:perspective
+       id="perspective4972"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5109"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5134"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5162"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5190"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5212"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5242"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5272"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.70710678"
+     inkscape:cx="446.47031"
+     inkscape:cy="402.96093"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1280"
+     inkscape:window-height="753"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4959">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-308.2677)">
+    <rect
+       style="fill:#e5d5ff;fill-opacity:1;stroke:#000000;stroke-width:3.61104631;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4651"
+       width="770.66718"
+       height="61.746098"
+       x="57.663906"
+       y="879.30109"
+       ry="4.5899777"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
+       x="273.26862"
+       y="917.01093"
+       id="text4653"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan4655"
+         x="273.26862"
+         y="917.01093"
+         style="font-size:24px">Communications Module</tspan></text>
+    <rect
+       style="fill:#ffb380;fill-opacity:1;stroke:#000000;stroke-width:2.69844246;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4651-2"
+       width="424.08728"
+       height="62.658699"
+       x="-853.56281"
+       y="245.56366"
+       ry="4.6578169"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="matrix(0,-1,1,0,0,0)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
+       x="-755.604"
+       y="283.60568"
+       id="text4653-8"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan4655-3"
+         x="-755.604"
+         y="283.60568"
+         style="font-size:24px">Navigation Module</tspan></text>
+    <rect
+       style="fill:#ddafe9;fill-opacity:1;stroke:#000000;stroke-width:1.9070189;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4651-3"
+       width="209.16441"
+       height="63.450123"
+       x="474.45377"
+       y="547.81586"
+       ry="4.7166486"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
+       x="577.32172"
+       y="583.8266"
+       id="text4653-4"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         x="577.32172"
+         y="583.8266"
+         style="font-size:16px;text-align:center;text-anchor:middle"
+         id="tspan5085">Local Cache</tspan></text>
+    <rect
+       style="fill:#ffb380;fill-opacity:1;stroke:#000000;stroke-width:2.69844246;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4651-6-4"
+       width="424.08728"
+       height="62.658699"
+       x="-855.45557"
+       y="152.85442"
+       ry="4.6578169"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="matrix(0,-1,1,0,0,0)" />
+    <rect
+       style="fill:#ddafe9;fill-opacity:1;stroke:#000000;stroke-width:1.88128924;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4651-3-8"
+       width="203.47586"
+       height="63.475853"
+       x="478.14572"
+       y="632.37012"
+       ry="4.7185612"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
+       x="581.02649"
+       y="668.96515"
+       id="text4653-4-4"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         x="581.02649"
+         y="668.96515"
+         style="font-size:16px;text-align:center;text-anchor:middle"
+         id="tspan5081">Notifications Module</tspan></text>
+    <rect
+       style="fill:#ffb380;fill-opacity:1;stroke:#000000;stroke-width:2.69844246;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4651-6-2"
+       width="424.08728"
+       height="62.658699"
+       x="-855.75427"
+       y="65.389572"
+       ry="4.6578169"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="matrix(0,-1,1,0,0,0)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
+       x="-766.72406"
+       y="104.20795"
+       id="text4653-1-3"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan4655-8-0"
+         x="-766.72406"
+         y="104.20795"
+         style="font-size:24px">Object Editor Module</tspan></text>
+    <rect
+       style="fill:#ddafe9;fill-opacity:1;stroke:#000000;stroke-width:1.88128924;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4651-3-8-7"
+       width="203.47586"
+       height="63.475853"
+       x="477.57431"
+       y="714.60364"
+       ry="4.7185612"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
+       x="579.15674"
+       y="752.4317"
+       id="text4653-1-2-7"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         x="579.15674"
+         y="752.4317"
+         style="font-size:16px;text-align:center;text-anchor:middle"
+         id="tspan5099">Wizard Factory</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
+       x="-716.45776"
+       y="190.19469"
+       id="text4653-1-3-0"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan4655-8-0-4"
+         x="-716.45776"
+         y="190.19469"
+         style="font-size:24px">View Module</tspan></text>
+    <rect
+       style="fill:#ffb380;fill-opacity:1;stroke:#000000;stroke-width:2.69844246;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4651-6-4-3"
+       width="424.08728"
+       height="62.658699"
+       x="-859.39551"
+       y="343.43723"
+       ry="4.6578169"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="matrix(0,-1,1,0,0,0)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
+       x="-766.2522"
+       y="384.46805"
+       id="text4653-1-3-0-2"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan4655-8-0-4-8"
+         x="-766.2522"
+         y="384.46805"
+         style="font-size:24px">Connections Module</tspan></text>
+    <rect
+       style="fill:#ffaaaa;fill-opacity:1;stroke:#000000;stroke-width:3.04754663;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4651-6-4-3-9"
+       width="543.94635"
+       height="62.309597"
+       x="320.76959"
+       y="-824.62958"
+       ry="4.631866"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="matrix(0,1,-1,0,0,0)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
+       x="444.0477"
+       y="-805.56647"
+       id="text4653-1-3-0-2-7"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="matrix(0,1,-1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan4655-8-0-4-8-9"
+         x="444.0477"
+         y="-805.56647"
+         style="font-size:20px">Administration Module</tspan></text>
+    <rect
+       style="fill:#e2dbe3;fill-opacity:1;stroke:#000000;stroke-width:1.40793014;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4651-3-8-7-1"
+       width="244.35532"
+       height="29.604025"
+       x="328.41788"
+       y="-798.60425"
+       ry="2.2006543"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="matrix(0,1,-1,0,0,0)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
+       x="452.16583"
+       y="-778.45465"
+       id="text4653-1-2-7-7"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="matrix(0,1,-1,0,0,0)"><tspan
+         sodipodi:role="line"
+         x="452.16583"
+         y="-778.45465"
+         style="font-size:12px;text-align:center;text-anchor:middle"
+         id="tspan5099-1">Application Management Module</tspan></text>
+    <rect
+       style="fill:#e2dbe3;fill-opacity:1;stroke:#000000;stroke-width:1.50365126;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4651-3-8-7-1-8"
+       width="279.61493"
+       height="29.508303"
+       x="577.18408"
+       y="-799.15802"
+       ry="2.1935387"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="matrix(0,1,-1,0,0,0)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
+       x="718.26886"
+       y="-779.85419"
+       id="text4653-1-2-7-7-0"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="matrix(0,1,-1,0,0,0)"><tspan
+         sodipodi:role="line"
+         x="718.26886"
+         y="-779.85419"
+         style="font-size:12;text-align:center;text-anchor:middle"
+         id="tspan5099-1-3">Interface and preferences Management</tspan></text>
+    <rect
+       style="fill:#e5d5ff;fill-opacity:1;stroke:#000000;stroke-width:2.45471835;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect4651-9"
+       width="349.57974"
+       height="62.902428"
+       x="58.555363"
+       y="341.96661"
+       ry="4.6759348"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
+       x="131.34883"
+       y="380.25461"
+       id="text4653-1"
+       inkscape:export-filename="/home/zim/client_general_architecture.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan4655-2"
+         x="131.34883"
+         y="380.25461"
+         style="font-size:24px">Service Provider</tspan></text>
+  </g>
+</svg>
