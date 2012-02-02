@@ -28,6 +28,7 @@ import org.inventory.core.visual.actions.providers.MultipleWidgetMoveActionProvi
 import org.inventory.core.visual.decorators.ColorSchemeFactory;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.AnchorFactory;
+import org.netbeans.api.visual.anchor.AnchorShape;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.vmd.VMDColorScheme;
@@ -158,6 +159,7 @@ public class ClassHierarchyScene extends GraphScene<LocalClassWrapper, String>{
                 String edgeName = aClassWrapper.getName()+aChild.getNodeName();
                 ConnectionWidget newEdge = (ConnectionWidget) addEdge(edgeName);
                 newEdge.setEndPointShape(PointShape.SQUARE_FILLED_SMALL);
+                newEdge.setSourceAnchorShape(AnchorShape.TRIANGLE_HOLLOW);
                 newEdge.setControlPointShape(PointShape.SQUARE_FILLED_SMALL);
                 newEdge.getActions().addAction(ActionFactory.createFreeMoveControlPointAction());
                 newEdge.setSourceAnchor(AnchorFactory.createFreeRectangularAnchor(newClassNode, true));
