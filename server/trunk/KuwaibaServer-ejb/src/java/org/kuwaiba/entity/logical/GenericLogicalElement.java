@@ -1,5 +1,5 @@
-/*
- *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
+/**
+ *  Copyright 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,28 +14,19 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.logical.addressing;
+package org.kuwaiba.entity.logical;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import org.kuwaiba.entity.logical.GenericLogicalElement;
-import org.kuwaiba.entity.multiple.companies.CorporateCustomer;
-
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import org.kuwaiba.entity.core.InventoryObject;
 
 /**
- * Root class for all address in all protocols
+ * Root class for all logical links (Logical entities such as virtual circuits, VLANs, etc )
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public abstract class GenericAddress extends GenericLogicalElement {
-    @ManyToOne
-    protected CorporateCustomer customer;
+public class GenericLogicalElement extends InventoryObject {
 
-    public CorporateCustomer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(CorporateCustomer customer) {
-        this.customer = customer;
-    }
 }

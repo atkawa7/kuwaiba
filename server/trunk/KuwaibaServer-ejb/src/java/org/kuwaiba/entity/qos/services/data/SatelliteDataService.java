@@ -23,5 +23,5 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class SatellitalDataService extends GenericDataService {
+public class SatelliteDataService extends GenericDataService {
 }

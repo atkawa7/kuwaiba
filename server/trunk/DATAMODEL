@@ -119,3 +119,18 @@
 * Added "FiberSplitter"
 * Added "FiberSplitterType"
 * Added attribute "directResources" to "GenericService"
+* Moved class Switch from org.kuwaiba.entity.equipment.datalinklayer to org.kuwaiba.entity.equipment.networklayer. It inherits from GenericNetworkElement now
+* Renamed class "SatellitalDataService" to "SateliteDataService"
+* Renamed class "SatellitalMediaService" to "SateliteMediaService"
+* Added attribute "sla" to GenericService
+* Created package org.kuwaiba.entity.connections.logical
+* Added class "Redirector" under "GenericAppliance"
+* Added class "GenericLogicalElement"
+* Added class "IPLink"
+* Added class "PointToPointLogicalLink"
+* Added class "SDHLink"
+* Added class "AccessPoint"
+* Moved class "Switch" to the network layer
+* Added class GenericLogicalElement
+* Added class "VLAN"
+* Added class "VPN"

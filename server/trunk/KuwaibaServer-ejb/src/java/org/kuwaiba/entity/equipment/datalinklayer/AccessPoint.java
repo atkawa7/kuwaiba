@@ -1,5 +1,5 @@
-/*
- *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
+/**
+ *  Copyright 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.qos.services.media;
+package org.kuwaiba.entity.equipment.datalinklayer;
 
 import javax.persistence.Entity;
 
 /**
- * A simple TV/interactive service using a satellite antenna
+ * A simple wireless access point
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class SatellitalMediaService extends GenericMediaService {
+public class AccessPoint extends GenericDataLinkElement {
+    
 
 }

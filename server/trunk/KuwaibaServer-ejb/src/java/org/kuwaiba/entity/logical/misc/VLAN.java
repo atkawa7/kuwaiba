@@ -1,5 +1,5 @@
-/*
- *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
+/**
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,20 +14,19 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.logical.addressing;
+package org.kuwaiba.entity.logical.misc;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import org.kuwaiba.entity.logical.GenericLogicalElement;
 import org.kuwaiba.entity.multiple.companies.CorporateCustomer;
 
-
 /**
- * Root class for all address in all protocols
+ * A simple VLAN
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public abstract class GenericAddress extends GenericLogicalElement {
+public class VLAN extends GenericLogicalElement {
     @ManyToOne
     protected CorporateCustomer customer;
 

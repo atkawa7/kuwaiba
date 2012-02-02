@@ -50,3 +50,9 @@
 * A few security fixes
 * Fixes to close the bug #3177812
 * Packages renamed to match the convention org.kuwaiba.xxx
+
+0.3.1 (24012012)
+* Minor bug fixes
+* Datamodel change (see DATAMODEL file for a full list of changes)
+* Added security check to getMetaData and getMetadataLight methods
+* Fixed a bug that made getMultipleChoice to return also the abstract list types

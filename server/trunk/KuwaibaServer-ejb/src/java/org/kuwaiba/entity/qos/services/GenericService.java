@@ -20,9 +20,11 @@ package org.kuwaiba.entity.qos.services;
 import java.util.List;
 import org.kuwaiba.entity.core.AdministrativeItem;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import org.kuwaiba.core.annotations.NoSerialize;
 import org.kuwaiba.entity.core.InventoryObject;
+import org.kuwaiba.entity.qos.SLA;
 
 /**
  * Represents a simple service
@@ -34,6 +36,9 @@ public abstract class GenericService extends AdministrativeItem {
     @NoSerialize
     @OneToMany
     protected List<InventoryObject> directResources;
+    @NoSerialize
+    @ManyToOne
+    protected SLA sla;
 
     public String getServiceId() {
         return serviceId;
@@ -51,4 +56,11 @@ public abstract class GenericService extends AdministrativeItem {
         this.directResources = directResources;
     }
 
+    public SLA getSla() {
+        return sla;
+    }
+
+    public void setSla(SLA sla) {
+        this.sla = sla;
+    }
 }
