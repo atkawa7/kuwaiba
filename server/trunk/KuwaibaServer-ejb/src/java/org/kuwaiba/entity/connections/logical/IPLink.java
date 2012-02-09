@@ -24,5 +24,5 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class IPLink extends PointToPointLogicalLink {
+public class IPLink extends GenericLogicalConnection {
 }

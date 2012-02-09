@@ -23,7 +23,7 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class SDHLink extends PointToPointLogicalLink {
+public class SDHLink extends GenericLogicalConnection {
 
 
 }

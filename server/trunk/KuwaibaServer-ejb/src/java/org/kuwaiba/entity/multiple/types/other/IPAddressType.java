@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,26 +14,15 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.equipment.ports;
+package org.kuwaiba.entity.multiple.types.other;
 
-import org.kuwaiba.core.annotations.NoSerialize;
-import java.util.List;
+import org.kuwaiba.entity.multiple.GenericType;
 import javax.persistence.Entity;
 
 /**
- * A port used un LAN/WAN environment (Ethernet, Coaxial, etc)
+ * An IPaddress type such as v6 or v4. Note that it also could be a IPv4 subnet or a IPv6 subnet
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class NetworkPort extends GenericCommunicationsPort {
-    @NoSerialize //For now, since we don't have a proper editor for this
-    protected List<String> ipAddresses;
-
-    public List<String> getIpAddresses() {
-        return ipAddresses;
-    }
-
-    public void setIpAddresses(List<String> ipAddresses) {
-        this.ipAddresses = ipAddresses;
-    }
+public class IPAddressType extends GenericType {
 }

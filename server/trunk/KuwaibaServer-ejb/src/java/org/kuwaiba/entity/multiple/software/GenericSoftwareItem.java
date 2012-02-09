@@ -17,12 +17,27 @@
 package org.kuwaiba.entity.multiple.software;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import org.kuwaiba.entity.multiple.GenericObjectList;
+import org.kuwaiba.entity.multiple.companies.Vendor;
 
 /**
  * Root for all software related classes
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class GenericSoftwareItem extends GenericObjectList{
+public abstract class GenericSoftwareItem extends GenericObjectList{
+    /**
+     * Vendor of this software artifact
+     */
+    @ManyToOne
+    protected Vendor vendor;
+
+    public Vendor getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(Vendor vendor) {
+        this.vendor = vendor;
+    }
 }

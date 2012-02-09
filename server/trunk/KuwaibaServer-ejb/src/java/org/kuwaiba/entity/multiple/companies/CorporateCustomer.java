@@ -29,8 +29,15 @@ import org.kuwaiba.entity.multiple.people.GenericCustomer;
  */
 @Entity
 public class CorporateCustomer extends GenericCustomer {
+    /**
+     * Account Manager assigned to this customer
+     */
     @ManyToOne
     protected Employee accountManager;
+    /**
+     * Autonomous System Number
+     */
+    protected Integer asn;
 
     public Employee getAccountManager() {
         return accountManager;
@@ -38,5 +45,13 @@ public class CorporateCustomer extends GenericCustomer {
 
     public void setAccountManager(Employee accountManager) {
         this.accountManager = accountManager;
+    }
+
+    public Integer getAsn() {
+        return asn;
+    }
+
+    public void setAsn(Integer asn) {
+        this.asn = asn;
     }
 }

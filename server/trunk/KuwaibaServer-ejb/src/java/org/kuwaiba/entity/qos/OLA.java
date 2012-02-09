@@ -19,7 +19,7 @@ package org.kuwaiba.entity.qos;
 import javax.persistence.Entity;
 
 /**
- * Reoresents an Operation Level Agreement
+ * Represents an Operation Level Agreement
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity

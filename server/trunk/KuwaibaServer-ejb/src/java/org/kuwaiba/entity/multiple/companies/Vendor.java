@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.entity.multiple.companies;
 
-import java.io.Serializable;
 import javax.persistence.Entity;
 
 

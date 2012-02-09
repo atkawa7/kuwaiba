@@ -17,9 +17,6 @@
 package org.kuwaiba.entity.logical;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import org.kuwaiba.entity.core.InventoryObject;
 
 /**
@@ -27,6 +24,6 @@ import org.kuwaiba.entity.core.InventoryObject;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class GenericLogicalElement extends InventoryObject {
+public abstract class GenericLogicalElement extends InventoryObject {
 
 }

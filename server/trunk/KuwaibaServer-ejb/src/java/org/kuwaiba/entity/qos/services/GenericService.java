@@ -36,9 +36,6 @@ public abstract class GenericService extends AdministrativeItem {
     @NoSerialize
     @OneToMany
     protected List<InventoryObject> directResources;
-    @NoSerialize
-    @ManyToOne
-    protected SLA sla;
 
     public String getServiceId() {
         return serviceId;
@@ -54,13 +51,5 @@ public abstract class GenericService extends AdministrativeItem {
 
     public void setDirectResources(List<InventoryObject> directResources) {
         this.directResources = directResources;
-    }
-
-    public SLA getSla() {
-        return sla;
-    }
-
-    public void setSla(SLA sla) {
-        this.sla = sla;
     }
 }

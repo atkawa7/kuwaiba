@@ -16,7 +16,6 @@
 
 package org.kuwaiba.entity.connections.physical;
 
-import org.kuwaiba.core.annotations.NoSerialize;
 import org.kuwaiba.core.annotations.RelatableToService;
 import org.kuwaiba.entity.connections.GenericConnection;
 import org.kuwaiba.entity.equipment.ports.GenericPort;
@@ -24,7 +23,6 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import org.kuwaiba.entity.multiple.companies.GenericCompany;
 
 /**
@@ -37,35 +35,34 @@ import org.kuwaiba.entity.multiple.companies.GenericCompany;
 @RelatableToService
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericPhysicalConnection extends GenericConnection {
-    @OneToOne
-    @NoSerialize
-    protected GenericPort endpointA;
-    @OneToOne
-    @NoSerialize
-    protected GenericPort endpointB;
+
     /**
      * This one is the resource owner
      */
     @ManyToOne
     protected GenericCompany owner;
-    /*
+    /**
      * The resource operator
      */
     @ManyToOne
     protected GenericCompany operator;
 
+    @Override
     public GenericPort getEndpointA() {
         return endpointA;
     }
 
+    @Override
     public void setEndpointA(GenericPort endpointA) {
         this.endpointA = endpointA;
     }
 
+    @Override
     public GenericPort getEndpointB() {
         return endpointB;
     }
 
+    @Override
     public void setEndpointB(GenericPort endpointB) {
         this.endpointB = endpointB;
     }

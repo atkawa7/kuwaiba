@@ -48,6 +48,7 @@ public abstract class GenericPort extends InventoryObject{
     
     @ManyToOne
     protected OperationalState state;
+    protected String label;
 
     public GenericPhysicalConnection getConnectedConnection() {
         return connectedConnection;
@@ -63,5 +64,13 @@ public abstract class GenericPort extends InventoryObject{
 
     public void setState(OperationalState state) {
         this.state = state;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 }

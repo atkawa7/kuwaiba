@@ -1,5 +1,5 @@
-/*
- *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
+/**
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,16 +14,15 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.entity.logical.addressing;
+package org.kuwaiba.entity.multiple.software;
 
 import javax.persistence.Entity;
 
-
 /**
- * An IPv4 subnet, It's convenience class yet usable within the inventory
+ * A vittual machine type (Virtualbox, Xen, etc). You can put here the virtualization technique too 
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class IPv6Subnet extends GenericAddress {
-
+public class VirtualMachineType extends GenericSoftwareItem {
+    
 }

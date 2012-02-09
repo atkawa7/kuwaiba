@@ -16,24 +16,34 @@
 
 package org.kuwaiba.entity.qos;
 
+import javax.persistence.ManyToOne;
 import org.kuwaiba.entity.core.AdministrativeItem;
-import java.io.Serializable;
 import javax.persistence.Entity;
+import org.kuwaiba.entity.qos.services.GenericService;
 
 /**
  * Represents a Service Level Agreement
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class SLA extends AdministrativeItem implements Serializable {
-    protected Float indisponibility;
+public class SLA extends AdministrativeItem {
+    protected Float availability;
+    @ManyToOne
+    protected GenericService service;
 
-    public Float getIndisponibility() {
-        return indisponibility;
+    public Float getAvailability() {
+        return availability;
     }
 
-    public void setIndisponibility(Float indisponibility) {
-        this.indisponibility = indisponibility;
+    public void setAvailability(Float availability) {
+        this.availability = availability;
     }
-    
+
+    public GenericService getService() {
+        return service;
+    }
+
+    public void setService(GenericService service) {
+        this.service = service;
+    }
 }

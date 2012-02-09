@@ -17,6 +17,8 @@
 package org.kuwaiba.entity.logical.addressing;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import org.kuwaiba.entity.multiple.types.other.IPAddressType;
 
 
 /**
@@ -24,6 +26,15 @@ import javax.persistence.Entity;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Entity
-public class IPv4Address extends GenericAddress {
+public class IPAddress extends GenericAddress {
+    @ManyToOne
+    protected IPAddressType type;
 
+    public IPAddressType getType() {
+        return type;
+    }
+
+    public void setType(IPAddressType type) {
+        this.type = type;
+    }
 }

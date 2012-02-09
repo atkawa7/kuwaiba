@@ -1,7 +1,6 @@
 package org.kuwaiba.entity.equipment.ports;
 
 import org.kuwaiba.entity.multiple.types.parts.PowerPortType;
-import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
@@ -10,7 +9,7 @@ import javax.persistence.ManyToOne;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
-public class PowerPort extends GenericPort implements Serializable {
+public class PowerPort extends GenericPort {
     @ManyToOne
     protected PowerPortType connector; //RJ-45, RJ-11, FC/PC, etc
 

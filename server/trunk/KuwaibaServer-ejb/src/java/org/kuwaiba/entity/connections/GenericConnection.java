@@ -19,7 +19,10 @@ package org.kuwaiba.entity.connections;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
+import org.kuwaiba.core.annotations.NoSerialize;
 import org.kuwaiba.entity.core.InventoryObject;
+import org.kuwaiba.entity.equipment.ports.GenericPort;
 
 /**
  * This class represents a connection, physical or logical
@@ -28,5 +31,26 @@ import org.kuwaiba.entity.core.InventoryObject;
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class GenericConnection extends InventoryObject {
+    @ManyToOne
+    @NoSerialize
+    protected GenericPort endpointA;
+    @ManyToOne
+    @NoSerialize
+    protected GenericPort endpointB;
 
+    public GenericPort getEndpointA() {
+        return endpointA;
+    }
+
+    public void setEndpointA(GenericPort endpointA) {
+        this.endpointA = endpointA;
+    }
+
+    public GenericPort getEndpointB() {
+        return endpointB;
+    }
+
+    public void setEndpointB(GenericPort endpointB) {
+        this.endpointB = endpointB;
+    }
 }

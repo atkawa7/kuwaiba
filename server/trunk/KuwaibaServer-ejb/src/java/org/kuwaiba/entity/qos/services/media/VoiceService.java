@@ -26,14 +26,14 @@ import javax.persistence.Entity;
  */
 @Entity
 public class VoiceService extends GenericMediaService {
-    protected String suscriberLineNumber;
+    protected String subscriberLineNumber;
 
-    public String getSuscriberLineNumber() {
-        return suscriberLineNumber;
+    public String getSubscriberLineNumber() {
+        return subscriberLineNumber;
     }
 
-    public void setSuscriberLineNumber(String suscriberLineNumber) {
-        this.suscriberLineNumber = suscriberLineNumber;
+    public void setSubscriberLineNumber(String subscriberLineNumber) {
+        this.subscriberLineNumber = subscriberLineNumber;
     }
     
 }
