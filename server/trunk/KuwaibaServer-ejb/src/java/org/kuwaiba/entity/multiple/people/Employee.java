@@ -18,14 +18,26 @@
 package org.kuwaiba.entity.multiple.people;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import org.kuwaiba.core.annotations.NoSerialize;
+import org.kuwaiba.entity.qos.services.GenericService;
 
 /**
- * Represents a company employee
+ * Represents a employee
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @Entity
 public class Employee extends GenericPerson {
+    /**
+     * Corporate identification
+     */
     protected String companyId;
+    /**
+     * Services this employee is related too
+     */
+    @OneToMany
+    @NoSerialize
+    protected GenericService services;
 
     public String getCompanyId() {
         return companyId;

@@ -18,6 +18,8 @@ package org.kuwaiba.entity.logical;
 
 import javax.persistence.Entity;
 import org.kuwaiba.entity.core.InventoryObject;
+import org.kuwaiba.entity.multiple.companies.CorporateCustomer;
+import javax.persistence.ManyToOne;
 
 /**
  * Root class for all logical links (Logical entities such as virtual circuits, VLANs, etc )
@@ -25,5 +27,17 @@ import org.kuwaiba.entity.core.InventoryObject;
  */
 @Entity
 public abstract class GenericLogicalElement extends InventoryObject {
+     /**
+     * Customer this element is related to
+     */
+    @ManyToOne
+    protected CorporateCustomer customer;
 
+    public CorporateCustomer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CorporateCustomer customer) {
+        this.customer = customer;
+    }
 }

@@ -17,9 +17,7 @@
 package org.kuwaiba.entity.logical.addressing;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import org.kuwaiba.entity.logical.GenericLogicalElement;
-import org.kuwaiba.entity.multiple.companies.CorporateCustomer;
 
 
 /**
@@ -28,14 +26,4 @@ import org.kuwaiba.entity.multiple.companies.CorporateCustomer;
  */
 @Entity
 public abstract class GenericAddress extends GenericLogicalElement {
-    @ManyToOne
-    protected CorporateCustomer customer;
-
-    public CorporateCustomer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(CorporateCustomer customer) {
-        this.customer = customer;
-    }
 }

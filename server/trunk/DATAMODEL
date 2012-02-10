@@ -154,3 +154,5 @@
 * Added attribute "vendor" of type "Vendor" to the class "GenericSoftwareItem"
 * Added class "HardDisk"
 * Added class "HardDiskType"
+* Added attribute "services" to "Employee"
+* Added attribute "ports" to VLAN

@@ -16,10 +16,12 @@
 
 package org.kuwaiba.entity.logical.misc;
 
+import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import org.kuwaiba.core.annotations.NoSerialize;
+import org.kuwaiba.entity.equipment.ports.GenericPort;
 import org.kuwaiba.entity.logical.GenericLogicalElement;
-import org.kuwaiba.entity.multiple.companies.CorporateCustomer;
 
 /**
  * A simple VLAN
@@ -27,14 +29,19 @@ import org.kuwaiba.entity.multiple.companies.CorporateCustomer;
  */
 @Entity
 public class VLAN extends GenericLogicalElement {
-    @ManyToOne
-    protected CorporateCustomer customer;
 
-    public CorporateCustomer getCustomer() {
-        return customer;
+    /**
+     * Ports used by this VLAN
+     */
+    @OneToMany
+    @NoSerialize
+    protected List<GenericPort> ports;
+
+    public List<GenericPort> getPorts() {
+        return ports;
     }
 
-    public void setCustomer(CorporateCustomer customer) {
-        this.customer = customer;
+    public void setPorts(List<GenericPort> ports) {
+        this.ports = ports;
     }
 }

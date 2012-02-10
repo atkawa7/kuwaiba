@@ -17,9 +17,7 @@
 package org.kuwaiba.entity.logical.misc;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import org.kuwaiba.entity.logical.GenericLogicalElement;
-import org.kuwaiba.entity.multiple.companies.CorporateCustomer;
 
 /**
  * A simple VPN (Virtual private Network)
@@ -27,14 +25,5 @@ import org.kuwaiba.entity.multiple.companies.CorporateCustomer;
  */
 @Entity
 public class VPN extends GenericLogicalElement {
-    @ManyToOne
-    protected CorporateCustomer customer;
 
-    public CorporateCustomer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(CorporateCustomer customer) {
-        this.customer = customer;
-    }
 }
