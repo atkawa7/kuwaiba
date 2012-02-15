@@ -17,6 +17,7 @@
 
 package org.kuwaiba.entity.multiple.people;
 
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import org.kuwaiba.core.annotations.NoSerialize;
@@ -37,7 +38,7 @@ public class Employee extends GenericPerson {
      */
     @OneToMany
     @NoSerialize
-    protected GenericService services;
+    protected List<GenericService> services;
 
     public String getCompanyId() {
         return companyId;
