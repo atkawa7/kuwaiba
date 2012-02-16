@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
-import org.kuwaiba.psremoteinterfaces.wrappers.ClassMetadataLightRemote;
 
 /**
  *
@@ -40,7 +39,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public String getMyMetadata() {
-        if (getMyMetadata() == null)
+        if (getMemInstance() == null)
             return "";
         try{
             return getMemInstance().getMyMetadata().getClassName();

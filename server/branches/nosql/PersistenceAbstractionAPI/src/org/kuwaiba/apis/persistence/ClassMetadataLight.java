@@ -16,11 +16,13 @@
 
 package org.kuwaiba.apis.persistence;
 
+import java.io.Serializable;
+
 /**
  * Contains the basic metadata information about a class
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ClassMetadataLight {
+public class ClassMetadataLight implements Serializable{
     protected Long id;
     protected Boolean abstractClass;
     protected Boolean physicalNode;
@@ -33,7 +35,7 @@ public class ClassMetadataLight {
 
     public ClassMetadataLight() {
         this.id = new Long (5);
-        this.className = "Hola";
+        this.className = "HolaXXXXXXXXXXXXXXXX";
     }
 
 

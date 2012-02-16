@@ -6,6 +6,7 @@
             <name>EnterpriseApplication-ejb</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <included-library dirs="200">reference.PersistenceServiceRemoteInterfaces.jar</included-library>
+            <included-library dirs="200">file.reference.PersistenceAbstractionAPI.jar</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>

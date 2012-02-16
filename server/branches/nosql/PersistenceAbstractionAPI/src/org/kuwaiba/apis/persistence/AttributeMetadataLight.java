@@ -16,10 +16,12 @@
 
 package org.kuwaiba.apis.persistence;
 
+import java.io.Serializable;
+
 /**
  * Contains the basic metadata information about a class attribute
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class AttributeMetadataLight{
+public class AttributeMetadataLight implements Serializable{
 
 }

@@ -23,5 +23,4 @@ import org.kuwaiba.apis.persistence.ClassMetadataLight;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ClassMetadataLightRemote extends ClassMetadataLight{
-    public void aaa() {}
 }

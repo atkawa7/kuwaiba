@@ -16,10 +16,12 @@
 
 package org.kuwaiba.apis.persistence;
 
+import java.io.Serializable;
+
 /**
  * Contains a business object basic information
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RemoteObjectLight {
+public class RemoteObjectLight implements Serializable{
 
 }

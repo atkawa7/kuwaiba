@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
 import org.kuwaiba.apis.persistence.ClassMetadataLight;
 
 /**
- * RMI wrapper for the MetatdataEntityManager interface
+ * RMI wrapper for the MetadataEntityManager interface
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public interface MetadataEntityManagerRemote extends Remote{
