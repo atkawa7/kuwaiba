@@ -18,6 +18,8 @@ package org.kuwaiba.psremoteinterfaces;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import org.kuwaiba.apis.persistence.AttributeMetadata;
+import org.kuwaiba.apis.persistence.ClassMetadata;
 import org.kuwaiba.apis.persistence.ClassMetadataLight;
 
 /**
@@ -25,5 +27,14 @@ import org.kuwaiba.apis.persistence.ClassMetadataLight;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public interface MetadataEntityManagerRemote extends Remote{
-    public ClassMetadataLight getMyMetadata() throws RemoteException;
+
+    public void createDb() throws RemoteException;
+    public Long createRoot() throws RemoteException;
+    public Long createClass(ClassMetadata classDefinition) throws RemoteException;
+    public ClassMetadata getClass(String className) throws RemoteException;
+    public ClassMetadata getClass(Long classId) throws RemoteException;
+    public boolean addAttribute(String className, AttributeMetadata attributeDefinition) throws RemoteException;
+    public boolean  deleteAttribute(String className, String attributeName) throws RemoteException;
+    public boolean deleteClass(String className) throws RemoteException;
+    public boolean deleteClass(Long classId) throws RemoteException;
 }
