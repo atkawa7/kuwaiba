@@ -185,3 +185,8 @@
     neostore.nodestore.db.id: 9,00 B
 2012-02-16 15:39:10.257-0500: --- STARTUP diagnostics END ---
 2012-02-16 15:39:10.266-0500: Extension org.neo4j.kernel.KernelExtension[shell] loaded ok
+2012-02-16 15:43:20.816-0500: Closed log /home/adrian/Aqui/PersistenceService/target/our-db/nioneo_logical.log
+2012-02-16 15:43:21.149-0500: NeoStore closed
+2012-02-16 15:43:21.612-0500: Closed log /home/adrian/Aqui/PersistenceService/target/our-db/index/lucene.log
+2012-02-16 15:43:21.612-0500: NeoStore closed
+2012-02-16 15:43:21.623-0500: TM shutting down
