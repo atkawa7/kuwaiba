@@ -42,7 +42,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
         if (getMemInstance() == null)
             return "";
         try{
-            return getMemInstance().getMyMetadata().getClassName();
+            getMemInstance().createDb();
+            return String.valueOf(getMemInstance().createRoot());
         }catch(RemoteException ex){
             ex.printStackTrace();
             return "";
