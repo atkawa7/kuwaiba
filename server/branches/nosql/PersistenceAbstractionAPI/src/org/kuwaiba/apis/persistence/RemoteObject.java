@@ -16,10 +16,25 @@
 
 package org.kuwaiba.apis.persistence;
 
+import java.util.HashMap;
+
 /**
  * Contains a business object detailed information
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class RemoteObject extends RemoteObjectLight{
+
+    /**
+     * Map of attributes and values
+     */
+    private HashMap <String, String> attributes;
+
+    public HashMap<String, String> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(HashMap<String, String> attributes) {
+        this.attributes = attributes;
+    }
 
 }

@@ -16,10 +16,96 @@
 
 package org.kuwaiba.apis.persistence;
 
+import java.io.Serializable;
+
 /**
  * Contains the detailed metadata information about a class attribute
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class AttributeMetadata extends AttributeMetadataLight{
+public class AttributeMetadata implements Serializable{
+
+    public static final String PROPERTY_NAME ="name"; //NOI18N
+    public static final String PROPERTY_DISPLAY_NAME ="displayName"; //NOI18N
+    public static final String PROPERTY_TYPE ="type"; //NOI18N
+    public static final String PROPERTY_ADMINISTRATIVE ="administrative"; //NOI18N
+    public static final String PROPERTY_MUTIPLE ="multiple"; //NOI18N
+    public static final String PROPERTY_VISIBLE ="visible"; //NOI18N
+    public static final String PROPERTY_DESCRIPTION ="description"; //NOI18N
+    public static final String PROPERTY_READONLY = "readOnly"; //NOI18N
+
+    private String name;
+    private String displayName;
+    private String type;
+    private boolean administrative;
+    private boolean multiple;
+    private boolean visible;
+    private String description;
+    private boolean readOnly;
+
+    // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
+    public boolean isAdministrative() {
+        return administrative;
+    }
+
+    public void setAdministrative(boolean administrative) {
+        this.administrative = administrative;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isMultiple() {
+        return multiple;
+    }
+
+    public void setMultiple(boolean multiple) {
+        this.multiple = multiple;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }// </editor-fold>
+    
 
 }

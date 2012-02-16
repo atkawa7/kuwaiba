@@ -16,75 +16,123 @@
 
 package org.kuwaiba.apis.persistence;
 
+import java.util.List;
+
 /**
  * Contains the detailed metadata information about a class
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ClassMetadata extends ClassMetadataLight{
-    private Long [] attributeIds;
-    private String [] attributeNames;
-    private String [] attributeTypes;
-    private String [] attributeDisplayNames;
-    private Boolean [] attributesIsVisible;
-    private Boolean [] attributesIsMultiple; //if the attribute is a list
-    private String [] attributesDescription;
-    protected byte[] icon;
-    protected String description;
 
-    public String[] getAttributeDisplayNames() {
-        return attributeDisplayNames;
+    public static final String PROPERTY_CUSTOM = "custom"; //NOI18N
+    public static final String PROPERTY_COUNTABLE = "countable"; //NOI18N
+    public static final String PROPERTY_DUMMY = "dummy"; //NOI18N
+    public static final String PROPERTY_PARENT_ID = "parentId"; //NOI18N
+    public static final String PROPERTY_INTERFACES = "interfaces"; //NOI18N
+    public static final String PROPERTY_COLOR = "color"; //NOI18N
+    public static final String PROPERTY_ICON = "color"; //NOI18N
+    public static final String PROPERTY_SMALL_ICON = "smallIcon"; //NOI18N
+    public static final String PROPERTY_LIST_TYPE = "listType"; //NOI18N
+    public static final String PROPERTY_ATRIBUTES = "atributes"; //NOI18N
+    public static final String PROPERTY_DYSPLAY_NAME = "displayName"; //NOI18N
+    public static final String PROPERTY_DESCRIPTION = "description"; //NOI18N
+    public static final String PROPERTY_REMOVABLE = "removable"; //NOI18N
+
+    private boolean custom;
+    private boolean countable;
+    private boolean dummy;
+    private Long parentId;
+    private List<InterfaceMetadata> interfaces;
+    private Integer color;
+
+    private Byte smallIcon;
+    private boolean listType;
+    private List<AttributeMetadata> attributes;
+
+    private String displayName;
+    CategoryMetadata category;
+    private String description;
+    private boolean removable;
+
+   // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
+    public Integer getColor() {
+        return color;
     }
 
-    public void setAttributeDisplayNames(String[] attributeDisplayNames) {
-        this.attributeDisplayNames = attributeDisplayNames;
+    public void setColor(Integer color) {
+        this.color = color;
     }
 
-    public Long[] getAttributeIds() {
-        return attributeIds;
+    public boolean isCountable() {
+        return countable;
     }
 
-    public void setAttributeIds(Long[] attributeIds) {
-        this.attributeIds = attributeIds;
+    public void setCountable(boolean countable) {
+        this.countable = countable;
     }
 
-    public String[] getAttributeNames() {
-        return attributeNames;
+    public boolean isCustom() {
+        return custom;
     }
 
-    public void setAttributeNames(String[] attributeNames) {
-        this.attributeNames = attributeNames;
+    public void setCustom(boolean custom) {
+        this.custom = custom;
     }
 
-    public String[] getAttributeTypes() {
-        return attributeTypes;
+    public boolean isDummy() {
+        return dummy;
     }
 
-    public void setAttributeTypes(String[] attributeTypes) {
-        this.attributeTypes = attributeTypes;
+    public void setDummy(boolean dummy) {
+        this.dummy = dummy;
     }
 
-    public String[] getAttributesDescription() {
-        return attributesDescription;
+    public List<InterfaceMetadata> getInterfaces() {
+        return interfaces;
     }
 
-    public void setAttributesDescription(String[] attributesDescription) {
-        this.attributesDescription = attributesDescription;
+    public void setInterfaces(List<InterfaceMetadata> interfaces) {
+        this.interfaces = interfaces;
     }
 
-    public Boolean[] getAttributesIsMultiple() {
-        return attributesIsMultiple;
+    public boolean isListType() {
+        return listType;
     }
 
-    public void setAttributesIsMultiple(Boolean[] attributesIsMultiple) {
-        this.attributesIsMultiple = attributesIsMultiple;
+    public void setListType(boolean listType) {
+        this.listType = listType;
     }
 
-    public Boolean[] getAttributesIsVisible() {
-        return attributesIsVisible;
+    public Long getParentId() {
+        return parentId;
     }
 
-    public void setAttributesIsVisible(Boolean[] attributesIsVisible) {
-        this.attributesIsVisible = attributesIsVisible;
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    public Byte getSmallIcon() {
+        return smallIcon;
+    }
+
+    public void setSmallIcon(Byte smallIcon) {
+        this.smallIcon = smallIcon;
+    }
+
+    public List<AttributeMetadata> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<AttributeMetadata> attributes) {
+        this.attributes = attributes;
+    }
+
+    public CategoryMetadata getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryMetadata category) {
+        this.category = category;
     }
 
     public String getDescription() {
@@ -95,11 +143,35 @@ public class ClassMetadata extends ClassMetadataLight{
         this.description = description;
     }
 
-    public byte[] getIcon() {
-        return icon;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setIcon(byte[] icon) {
-        this.icon = icon;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public boolean isRemovable() {
+        return removable;
+    }
+
+    public void setRemovable(boolean removable) {
+        this.removable = removable;
+    }// </editor-fold>
+
+    public boolean isSubClass(String allegedParentName){
+        return false;
+    }
+
+    public boolean implements_(String interfaceName){
+        return false;
+    }
+
+    public boolean isSubclass(Integer allegedParentId){
+        return false;
+    }
+
+    public boolean implements_(Integer anInterfaceId){
+        return false;
     }
 }

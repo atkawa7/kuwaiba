@@ -23,47 +23,21 @@ import java.io.Serializable;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ClassMetadataLight implements Serializable{
-    protected Long id;
+
+
+    public static final String PROPERTY_ID = "id"; //NOI18N
+    public static final String PROPERTY_NAME = "name"; //NOI18N
+    public static final String PROPERTY_LOCKED = "locked"; //NOI18N
+    public static final String PROPERTY_ABSTRACT = "abstract"; //NOI18N
+
+    private Long id;
+    private String name;
+    private boolean locked;
     protected Boolean abstractClass;
-    protected Boolean physicalNode;
-    protected Boolean physicalConnection;
-    protected Boolean physicalEndpoint;
-    protected Boolean viewable;
-    protected String className;
-    protected String displayName;
-    protected byte[] smallIcon;
-
-    public ClassMetadataLight() {
-        this.id = new Long (5);
-        this.className = "HolaXXXXXXXXXXXXXXXX";
-    }
+    private Byte icon;
 
 
-
-    public Boolean getAbstractClass() {
-        return abstractClass;
-    }
-
-    public void setAbstractClass(Boolean abstractClass) {
-        this.abstractClass = abstractClass;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public Long getId() {
         return id;
     }
@@ -72,43 +46,35 @@ public class ClassMetadataLight implements Serializable{
         this.id = id;
     }
 
-    public Boolean getPhysicalConnection() {
-        return physicalConnection;
+    public boolean isLocked() {
+        return locked;
     }
 
-    public void setPhysicalConnection(Boolean physicalConnection) {
-        this.physicalConnection = physicalConnection;
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
-    public Boolean getPhysicalEndpoint() {
-        return physicalEndpoint;
+    public String getName() {
+        return name;
     }
 
-    public void setPhysicalEndpoint(Boolean physicalEndpoint) {
-        this.physicalEndpoint = physicalEndpoint;
+    public void setName(String name) {
+        this.name = name;
+    }
+    public Boolean getAbstractClass() {
+        return abstractClass;
     }
 
-    public Boolean getPhysicalNode() {
-        return physicalNode;
+    public void setAbstractClass(Boolean abstractClass) {
+        this.abstractClass = abstractClass;
     }
 
-    public void setPhysicalNode(Boolean physicalNode) {
-        this.physicalNode = physicalNode;
+    public Byte getIcon() {
+        return icon;
     }
 
-    public byte[] getSmallIcon() {
-        return smallIcon;
-    }
+    public void setIcon(Byte icon) {
+        this.icon = icon;
+    }// </editor-fold>
 
-    public void setSmallIcon(byte[] smallIcon) {
-        this.smallIcon = smallIcon;
-    }
-
-    public Boolean getViewable() {
-        return viewable;
-    }
-
-    public void setViewable(Boolean viewable) {
-        this.viewable = viewable;
-    }
 }
