@@ -30,7 +30,7 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
  * ConnectionManager implementation
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseService, Transaction>{
+public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseService>{
 
     /**
      * Neo4J Database instance
@@ -62,7 +62,7 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
     }
 
     @Override
-    public void commitTransaction(Transaction tx) {
+    public void commitTransaction() {
         tx.success();
     }
 
@@ -108,9 +108,8 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
     }
 
     @Override
-    public Transaction startTransaction() {
+    public void startTransaction() {
         tx = graphDb.beginTx();
-        return tx;
     }
     
     @Override
