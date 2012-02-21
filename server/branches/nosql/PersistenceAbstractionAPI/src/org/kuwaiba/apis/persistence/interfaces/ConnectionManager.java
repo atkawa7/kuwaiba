@@ -16,10 +16,23 @@
 
 package org.kuwaiba.apis.persistence.interfaces;
 
+import java.util.HashMap;
+import java.util.List;
+
 /**
  *
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public interface ConnectionManager {
+public interface ConnectionManager<T,S> {
+
+    public void openConnection();
+    public void closeConnection();
+    public S startTransaction();
+    public void commitTransaction(S tx);
+    public void rollbackTransaction();
+    public ConnectionManager spawnConnection();
+    public boolean isSpawned();
+    public List<ConnectionManager> getConnectionPool();
+    public T getConnectionHandler();
 
 }
