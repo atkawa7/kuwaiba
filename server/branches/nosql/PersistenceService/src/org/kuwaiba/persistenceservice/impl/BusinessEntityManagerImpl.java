@@ -1,0 +1,89 @@
+/**
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+package org.kuwaiba.persistenceservice.impl;
+
+import java.rmi.server.RemoteObject;
+import java.util.List;
+import org.kuwaiba.apis.persistence.RemoteObjectLight;
+import org.kuwaiba.apis.persistence.ResultRecord;
+import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
+import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
+import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ObjectWithRelationsException;
+import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
+import org.kuwaiba.apis.persistence.interfaces.BusinessEntityManager;
+import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
+import org.neo4j.graphdb.GraphDatabaseService;
+
+/**
+ * Business entity manager reference implementation (using Neo4J as backend)
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ */
+public class BusinessEntityManagerImpl implements BusinessEntityManager, BusinessEntityManagerRemote{
+
+    private GraphDatabaseService graphDb;
+
+    public RemoteObjectLight createObject(String className, Long parentOid, List<String> attributeNames, List<String> attributeValues, String template) throws ClassNotFoundException, ObjectNotFoundException, ArraySizeMismatchException, NotAuthorizedException, OperationNotPermittedException {
+        return null;
+    }
+
+    public RemoteObject getObjectInfo(String className, Long oid) throws ClassNotFoundException, ObjectNotFoundException, NotAuthorizedException, OperationNotPermittedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public RemoteObjectLight getObjectInfoLight(String className, Long oid) throws ClassNotFoundException, ObjectNotFoundException, NotAuthorizedException, OperationNotPermittedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean deleteObject(Long oid) throws ObjectWithRelationsException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean updateObject(String className, Long oid, List<String> attributeNames, List<String> attributeValues) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException, WrongMappingException, NotAuthorizedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean setBinaryAttributes(String className, Long oid, List<String> attributeNames, List<byte[]> attributeValues) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException, NotAuthorizedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean setManyToManyAttribute(String className, Long oid, String attributeTypeClassName, String attributeName, List<Long> attributeValues) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean moveObjects(List<String> classNames, List<Long> oids, String targetClassName, Long targetOid) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException, ArraySizeMismatchException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public RemoteObjectLight[] copyObjects(List<String> objectClassNames, List<Long> templateOids, String targetClassName, Long targetOid) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException, ArraySizeMismatchException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean setObjectLockSate(String className, Long oid, Boolean value) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public RemoteObjectLight[] getObjectChildren(String className, Long oid) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public List<ResultRecord> executeQuery() throws ClassNotFoundException, NotAuthorizedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+}
