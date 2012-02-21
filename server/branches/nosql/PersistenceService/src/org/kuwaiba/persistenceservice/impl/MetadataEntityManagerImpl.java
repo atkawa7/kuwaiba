@@ -19,17 +19,16 @@ package org.kuwaiba.persistenceservice.impl;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.kuwaiba.apis.persistence.interfaces.MetadataEntityManager;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.apis.persistence.AttributeMetadata;
 import org.kuwaiba.apis.persistence.CategoryMetadata;
 import org.kuwaiba.apis.persistence.ClassMetadata;
+import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
-import org.neo4j.kernel.impl.util.FileUtils;
+
 
 /**
  * MetadataEntityManager implementation
@@ -60,18 +59,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public static final String PROPERTY_ATRIBUTES = "atributes"; //NOI18N
     public static final String PROPERTY_REMOVABLE = "removable"; //NOI18N
 
-    private static final String DB_PATH = "target/our-db";
     private static final String CLASS_NAME = "classname";
     private static final String CLASS_ID = "classid";
     private static final String CATEGORY_ID = "categoryid";
     private static final String CATEGORY_NAME = "categoryname";
-    private static final String INTERFACE_ID = "interfaceid";
-    private static final String INTERFACE_NAME = "interfacename";
 
     /**
      * Reference to the db's handle
      */
-    private GraphDatabaseService graphDb;
+    private EmbeddedGraphDatabase graphDb;
     /**
      * Class index
      */
@@ -80,74 +76,58 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * Category index
      */
     private static Index<Node> categoryIndex;
+     /**
+     * Conntion manager
+     */
+    private ConnectionManager cmn = new ConnectionManagerImpl();
 
+    /**
+     * Constructor
+     * Get the a database contection and indexes from the connection manager.
+     */
 
-    public void createDb()
+    public MetadataEntityManagerImpl() {
+        graphDb = (EmbeddedGraphDatabase) cmn.getConnectionHandler();
+        classIndex = (Index<Node>) cmn.getIndexHandler();
+    }
+
+    /**
+     * Creates a classmetadata with their attributes as a nodes
+     * @param newclass
+     * @return
+     */
+    @Override
+    public Long createClass(ClassMetadata newclass)
     {
-        clearDb();
-        graphDb = new EmbeddedGraphDatabase( DB_PATH );
-        classIndex = graphDb.index().forNodes( "ClassMetadata" );
-        categoryIndex = graphDb.index().forNodes("Categories");
-        registerShutdownHook( graphDb );
-        // END SNIPPET: startDb
-    }
-
-    public Long createRoot(){
         Transaction tx = graphDb.beginTx();
         Long id;
-        try{
-            Node rootNode = graphDb.createNode();
-            rootNode.setProperty(PROPERTY_NAME, "root");
-            rootNode.setProperty(PROPERTY_LOCKED, "true");
-
-            classIndex.add(rootNode, CLASS_NAME, "root");
-            classIndex.add(rootNode, CLASS_ID,  String.valueOf(rootNode.getId()));
-
-            Node referenceNode = graphDb.getReferenceNode();
-            referenceNode.createRelationshipTo(
-                    rootNode, RelTypes.ROOT);
-
-            id = rootNode.getId();
-
-            tx.success();
-        }
-        finally{
-            tx.finish();
-        }
-        return id;
-    }
-
-
-    public Long createClass(ClassMetadata c){
-        Transaction tx = graphDb.beginTx();
-        Long id;
-        List<AttributeMetadata> ats = c.getAttributes();
+        List<AttributeMetadata> ats = newclass.getAttributes();
         try{
             Node node = graphDb.createNode();
 
-            node.setProperty(PROPERTY_NAME, c.getName());
-            node.setProperty(PROPERTY_DISPLAY_NAME, c.getDisplayName());
-            node.setProperty(PROPERTY_PARENT_ID,c.getParentId());
+            node.setProperty(PROPERTY_NAME, newclass.getName());
+            node.setProperty(PROPERTY_DISPLAY_NAME, newclass.getDisplayName());
+            node.setProperty(PROPERTY_PARENT_ID, newclass.getParentId());
 
             id = node.getId();
-            classIndex.add(node, CLASS_NAME,  c.getName());
+            classIndex.add(node, CLASS_NAME,  newclass.getName());
             classIndex.add(node, CLASS_ID,  String.valueOf(node.getId()));
 
             //Category
             //if the category already exists
-            Node ctgrNode = categoryIndex.get(CATEGORY_NAME, c.getCategory().getName()).getSingle();
+            Node ctgrNode = categoryIndex.get(CATEGORY_NAME, newclass.getCategory().getName()).getSingle();
             if(ctgrNode == null){
-                Long ctgrId = createCategory(c.getCategory());
+                Long ctgrId = createCategory(newclass.getCategory());
                 ctgrNode = categoryIndex.get(CATEGORY_ID, ctgrId).getSingle();
             }
             node.createRelationshipTo(ctgrNode, RelTypes.BELONGS_TO);
 
             //Attributes
-            for (AttributeMetadata at : c.getAttributes()) {
+            for (AttributeMetadata at : newclass.getAttributes()) {
                 addAttribute(id, at);
             }
 
-            Node parentNode = classIndex.get(CLASS_ID, String.valueOf(c.getParentId())).getSingle();
+            Node parentNode = classIndex.get(CLASS_ID, String.valueOf(newclass.getParentId())).getSingle();
 
             node.createRelationshipTo(parentNode, RelTypes.EXTENDS);
 
@@ -170,7 +150,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
     }
 
-    public boolean changeClassDefinition(ClassMetadata newClassDefinition){
+    /**
+     * Changes the definiton of a classmetadata
+     * @param newClassDefinition
+     * @return
+     */
+    @Override
+    public boolean changeClassDefinition(ClassMetadata newClassDefinition)
+    {
         Transaction tx = graphDb.beginTx();
         try{
             Node newcm = classIndex.get(CLASS_NAME, newClassDefinition.getName()).getSingle();
@@ -205,7 +192,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
         return false;
     }
-    public boolean deleteClass(Long classId){
+
+    /**
+     * Deletes a classmetadata and their attirbutes
+     * @param classId
+     * @return
+     */
+    @Override
+    public boolean deleteClass(Long classId)
+    {
         Transaction tx = graphDb.beginTx();
         try{
             Node node = classIndex.get(CLASS_ID, String.valueOf(classId)).getSingle();
@@ -236,7 +231,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
         return false;
     }
-    public boolean deleteClass(String className){
+
+    /**
+     * Deletes a classmetadata and their attirbutes
+     * @param className
+     * @return
+     */
+    @Override
+    public boolean deleteClass(String className)
+    {
         Transaction tx = graphDb.beginTx();
         try{
             Node node = classIndex.get(CLASS_NAME, className).getSingle();
@@ -265,7 +268,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
         return false;
     }
-    public ClassMetadata getClass(Long classId){
+
+    /**
+     * Gets a classmetadata and their attirbutes
+     * @param classId
+     * @return
+     */
+    @Override
+    public ClassMetadata getClass(Long classId)
+    {
         ClassMetadata cm = new ClassMetadata();
         List<AttributeMetadata> listAttributes = new ArrayList();
         CategoryMetadata ctgr = new CategoryMetadata();
@@ -311,7 +322,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
         return cm;
     }
-    public ClassMetadata getClass(String className){
+
+    /**
+     * Gets a classmetadata and their attirbutes
+     * @param className
+     * @return
+     */
+    @Override
+    public ClassMetadata getClass(String className)
+    {
         ClassMetadata cm = new ClassMetadata();
         List<AttributeMetadata> listAttributes = new ArrayList();
         CategoryMetadata ctgr = new CategoryMetadata();
@@ -355,7 +374,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
         return cm;
     }
-    public boolean moveClass(String classToMoveName, String targetParentClassName){
+
+    /**
+     * Moves a class from one parentClass to an other parentClass
+     * @param classToMoveName
+     * @param targetParentClassName
+     * @return
+     */
+    @Override
+    public boolean moveClass(String classToMoveName, String targetParentClassName)
+    {
         Transaction tx = graphDb.beginTx();
         try{
                 Node ctm = classIndex.get(CLASS_NAME, classToMoveName).getSingle();
@@ -390,7 +418,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
         return true;
     }
-    public boolean moveClass(Long classToMoveId, Long targetParentClassId){
+
+    /**
+     * Moves a class from one parentClass to an other parentClass
+     * @param classToMoveId
+     * @param targetParentClassId
+     * @return
+     */
+    @Override
+    public boolean moveClass(Long classToMoveId, Long targetParentClassId)
+    {
 
         Transaction tx = graphDb.beginTx();
         try{
@@ -429,7 +466,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         return false;
     }
 
-    public boolean addAttribute(String className, AttributeMetadata attributeDefinition ){
+    /**
+     * Adds an attibute to the class
+     * @param className
+     * @param attributeDefinition
+     * @return
+     */
+    @Override
+    public boolean addAttribute(String className, AttributeMetadata attributeDefinition)
+    {
         Transaction tx = graphDb.beginTx();
         try{
             Node node = classIndex.get(CLASS_NAME,className).getSingle();
@@ -454,8 +499,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
         return false;
     }
-    //TODO agregarlo al modelo!
-    public boolean addAttribute(Long classId, AttributeMetadata attributeDefinition ){
+
+    /**
+     * Adds an attibute to the class
+     * @param classId
+     * @param attributeDefinition
+     * @return
+     */
+    @Override //TODO agregarlo al modelo!
+    public boolean addAttribute(Long classId, AttributeMetadata attributeDefinition )
+    {
         Transaction tx = graphDb.beginTx();
         try{
             Node node = classIndex.get(CLASS_ID, String.valueOf(classId)).getSingle();
@@ -481,7 +534,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         return false;
     }
 
-    public AttributeMetadata getAttribute(String className, String attributeName){
+    /**
+     * Gets an attibute from a class
+     * @param className
+     * @param attributeName
+     * @return
+     */
+    @Override
+    public AttributeMetadata getAttribute(String className, String attributeName)
+    {
         AttributeMetadata attribute = new AttributeMetadata();
         Transaction tx = graphDb.beginTx();
         try{
@@ -519,8 +580,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
         return attribute;
     }
-    //TODO probar con mas relaciones
-    public AttributeMetadata getAttribute(Long classId, String attributeName){
+
+    /**
+     * Gets an attibute from a class
+     * @param classId
+     * @param attributeName
+     * @return
+     */
+    @Override//TODO probar con mas relaciones
+    public AttributeMetadata getAttribute(Long classId, String attributeName)
+    {
         AttributeMetadata attribute = new AttributeMetadata();
         Transaction tx = graphDb.beginTx();
         try{
@@ -557,11 +626,29 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
         return attribute;
     }
-    //TODO poner en el modelo
-    public boolean changeAttributeDefinition(Long ClassId, AttributeMetadata newAttributeDefinition){
+
+    /**
+     * Changes an attibute definition in the classMetadata
+     * @param ClassId
+     * @param newAttributeDefinition
+     * @return
+     */
+    @Override //TODO poner en el modelo
+    public boolean changeAttributeDefinition(Long ClassId, AttributeMetadata newAttributeDefinition)
+    {
         return true;
     }
-    public boolean deleteAttribute(String className, String attributeName){
+
+    /**
+     * Deletes an attibute from a classMetadata
+     * @param className
+     * @param attributeName
+     * @return
+     */
+
+    @Override
+    public boolean deleteAttribute(String className, String attributeName)
+    {
         Transaction tx = graphDb.beginTx();
         boolean couldDelAtt = false;
         try{
@@ -597,8 +684,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         return false;
     }
 
-    //TODO ponerlo en el modelo
-    public boolean deleteAttribute(Long classId,String attributeName){
+    /**
+     * Deletes an attibute from a classMetadata
+     * @param classId
+     * @param attributeName
+     * @return
+     */
+
+    @Override //TODO ponerlo en el modelo
+    public boolean deleteAttribute(Long classId,String attributeName)
+    {
         Transaction tx = graphDb.beginTx();
         boolean couldDelAtt = false;
         try{
@@ -634,7 +729,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
         return false;
     }
-    public Long createCategory(CategoryMetadata categoryDefinition){
+
+    /**
+     * Creates an category
+     * @param categoryDefinition
+     * @return
+     */
+
+    @Override
+    public Long createCategory(CategoryMetadata categoryDefinition)
+    {
         Transaction tx = graphDb.beginTx();
         Long id = null;
         try{
@@ -657,7 +761,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
         return id;
     }
-    public CategoryMetadata getCategory(String categoryName){
+
+    /**
+     * Gets a category
+     * @param categoryName
+     * @return
+     */
+
+    @Override
+    public CategoryMetadata getCategory(String categoryName)
+    {
         CategoryMetadata cm = new CategoryMetadata();
         Transaction tx = graphDb.beginTx();
         try{
@@ -679,6 +792,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
         return cm;
     }
+
+    /**
+     * Gets a category
+     * @param categoryId
+     * @return
+     */
+
     public CategoryMetadata getCategory(Integer categoryId)
     {
         CategoryMetadata cm = new CategoryMetadata();
@@ -703,6 +823,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
         return cm;
     }
+
+    /**
+     * Changes a category definition
+     * @param categoryDefinition
+     * @return
+     */
+
+    @Override
     public boolean changeCategoryDefinition(CategoryMetadata categoryDefinition)
     {
         Transaction tx = graphDb.beginTx();
@@ -726,71 +854,57 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
         return true;
     }
-    public boolean deleteCategory(String categoryName){
-        return true;
-    }
-    public boolean deleteCategory(Integer categoryId){
+
+    @Override
+    public boolean deleteCategory(String categoryName)
+    {
         return true;
     }
 
-    public boolean addImplementor(String classWhichImplementsName,String interfaceToImplementName){
-        return true;
-    }
-    public boolean removeImplementor(String classWhichImplementsName ,String interfaceToBeRemovedName){
-        return true;
-    }
-    public boolean addImplementor(Integer classWhichImplementsId, Integer interfaceToImplementId){
-        return true;
-    }
-    public boolean removeImplementor(Integer classWhichImplementsId ,Integer interfaceToBeRemovedId){
+    @Override
+    public boolean deleteCategory(Integer categoryId)
+    {
         return true;
     }
 
-    public boolean getInterface(String interfaceName){
+    @Override
+    public boolean addImplementor(String classWhichImplementsName,String interfaceToImplementName)
+    {
         return true;
     }
-    public boolean getInterface(Integer interfaceid){
+
+    @Override
+    public boolean removeImplementor(String classWhichImplementsName ,String interfaceToBeRemovedName)
+    {
         return true;
     }
+
+    @Override
+    public boolean addImplementor(Integer classWhichImplementsId, Integer interfaceToImplementId)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean removeImplementor(Integer classWhichImplementsId ,Integer interfaceToBeRemovedId)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean getInterface(String interfaceName)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean getInterface(Integer interfaceid)
+    {
+        return true;
+    }
+
 //    public List<ClassMetadata> getMetadata(Integer options){
 //        return true;
 //    }
-
-    private void clearDb()
-    {
-        try
-        {
-            FileUtils.deleteRecursively( new File( DB_PATH ) );
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( e );
-        }
-    }
-
-    void shutDown()
-    {
-        System.out.println();
-        System.out.println( "Shutting down database ..." );
-        // START SNIPPET: shutdownServer
-        graphDb.shutdown();
-        // END SNIPPET: shutdownServer
-    }
-
-    private static void registerShutdownHook( final GraphDatabaseService graphDb )
-    {
-        Runtime.getRuntime().addShutdownHook( new Thread()
-        {
-            @Override
-            public void run()
-            {
-                graphDb.shutdown();
-            }
-        } );
-    }
-
-
-    public static Index<Node> getClassIndex(){
-        return classIndex;
-    }
+   
 }
