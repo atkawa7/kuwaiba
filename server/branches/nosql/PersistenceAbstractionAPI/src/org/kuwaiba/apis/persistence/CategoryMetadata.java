@@ -1,22 +1,29 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.kuwaiba.apis.persistence;
 
 /**
- *
- * @author adrian
+ * Represents a category. It's used mostly to group the classes into categories so it's easier
+ * to document
+ * @author Adrian Fernando Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class CategoryMetadata {
-    
-    public static String PROPERTY_NAME ="name"; //NOI18N
-    public static String PROPERTY_DISPLAY_NAME ="displayName"; //NOI18N
-    public static String PROPERTY_DESCRIPTION ="description"; //NOI18N
-    
-    String name;
-    String displayName;
-    String description;
+public class CategoryMetadata {   
+    private String name;
+    private String displayName;
+    private String description;
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public String getDescription() {

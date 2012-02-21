@@ -25,10 +25,7 @@ import java.io.Serializable;
 public class ClassMetadataLight implements Serializable{
 
 
-    public static final String PROPERTY_ID = "id"; //NOI18N
-    public static final String PROPERTY_NAME = "name"; //NOI18N
-    public static final String PROPERTY_LOCKED = "locked"; //NOI18N
-    public static final String PROPERTY_ABSTRACT = "abstract"; //NOI18N
+    
 
     private Long id;
     private String name;

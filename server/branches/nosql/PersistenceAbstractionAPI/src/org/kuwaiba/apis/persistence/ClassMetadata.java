@@ -24,20 +24,6 @@ import java.util.List;
  */
 public class ClassMetadata extends ClassMetadataLight{
 
-    public static final String PROPERTY_CUSTOM = "custom"; //NOI18N
-    public static final String PROPERTY_COUNTABLE = "countable"; //NOI18N
-    public static final String PROPERTY_DUMMY = "dummy"; //NOI18N
-    public static final String PROPERTY_PARENT_ID = "parentId"; //NOI18N
-    public static final String PROPERTY_INTERFACES = "interfaces"; //NOI18N
-    public static final String PROPERTY_COLOR = "color"; //NOI18N
-    public static final String PROPERTY_ICON = "color"; //NOI18N
-    public static final String PROPERTY_SMALL_ICON = "smallIcon"; //NOI18N
-    public static final String PROPERTY_LIST_TYPE = "listType"; //NOI18N
-    public static final String PROPERTY_ATRIBUTES = "atributes"; //NOI18N
-    public static final String PROPERTY_DYSPLAY_NAME = "displayName"; //NOI18N
-    public static final String PROPERTY_DESCRIPTION = "description"; //NOI18N
-    public static final String PROPERTY_REMOVABLE = "removable"; //NOI18N
-
     private boolean custom;
     private boolean countable;
     private boolean dummy;
@@ -50,7 +36,7 @@ public class ClassMetadata extends ClassMetadataLight{
     private List<AttributeMetadata> attributes;
 
     private String displayName;
-    CategoryMetadata category;
+    private CategoryMetadata category;
     private String description;
     private boolean removable;
 

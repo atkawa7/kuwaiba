@@ -24,22 +24,61 @@ import java.io.Serializable;
  */
 public class AttributeMetadata implements Serializable{
 
-    public static final String PROPERTY_NAME ="name"; //NOI18N
-    public static final String PROPERTY_DISPLAY_NAME ="displayName"; //NOI18N
-    public static final String PROPERTY_TYPE ="type"; //NOI18N
-    public static final String PROPERTY_ADMINISTRATIVE ="administrative"; //NOI18N
-    public static final String PROPERTY_MUTIPLE ="multiple"; //NOI18N
-    public static final String PROPERTY_VISIBLE ="visible"; //NOI18N
-    public static final String PROPERTY_DESCRIPTION ="description"; //NOI18N
-    public static final String PROPERTY_READONLY = "readOnly"; //NOI18N
-
+    /**
+     * String, Integer, Float, Long, Text
+     */
+    public static final int MAPPING_PRIMITIVE = 1;
+    /**
+     * Dates
+     */
+    public static final int MAPPING_DATE = 2;
+    /**
+     * Timestamp
+     */
+    public static final int MAPPING_TIMESTAMP = 3;
+    /**
+     * Binary
+     */
+    public static final int MAPPING_BINARY = 4;
+    /**
+     * Many to one relationship (such as types)
+     */
+    public static final int MAPPING_MANYTOONE = 5;
+    /**
+     * Many to Many relationship (such as accountable persons for a given equipment)
+     */
+    public static final int MAPPING_MANYTOMANY = 6;
+    /**
+     * Attribute's name
+     */
     private String name;
+    /**
+     * Attribute's display name
+     */
     private String displayName;
+    /**
+     * Attribute's type
+     */
     private String type;
+    /**
+     * Flag to mark an attribute to be used for administrative purposes (beyond the operational inventory)
+     */
     private boolean administrative;
-    private boolean multiple;
+    /**
+     * Attribute's visibility
+     */
     private boolean visible;
+    /**
+     * Attribute's short description
+     */
     private String description;
+    /**
+     * Indicates how this attribute should be mapped (into a primitive type, a relationship, etc)
+     */
+    private int mapping;
+    /**
+     * Marks the attribute as read only
+     */
     private boolean readOnly;
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
@@ -67,14 +106,6 @@ public class AttributeMetadata implements Serializable{
         this.description = description;
     }
 
-    public boolean isMultiple() {
-        return multiple;
-    }
-
-    public void setMultiple(boolean multiple) {
-        this.multiple = multiple;
-    }
-
     public String getName() {
         return name;
     }
@@ -89,6 +120,14 @@ public class AttributeMetadata implements Serializable{
 
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
+    }
+
+    public int getMapping() {
+        return mapping;
+    }
+
+    public void setMapping(int mapping) {
+        this.mapping = mapping;
     }
 
     public String getType() {

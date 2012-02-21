@@ -14,13 +14,24 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.apis.persistence.interfaces;
+package org.kuwaiba.apis.persistence;
 
-import org.kuwaiba.apis.persistence.ClassMetadataLight;
+import java.util.List;
 
 /**
- * Manages the metadata entities
+ * Represents a single record resulting from a query. It basically contains the very basic
+ * information about an object, as well extra columns based on the "visibleAttributes" argument
+ * provided when the query was executed
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface MetadataEntityManager {
+public class ResultRecord extends RemoteObjectLight{
+    private List<String> extraColumns;
+
+    public List<String> getExtraColumns() {
+        return extraColumns;
+    }
+
+    public void setExtraColumns(List<String> extraColumns) {
+        this.extraColumns = extraColumns;
+    }
 }
