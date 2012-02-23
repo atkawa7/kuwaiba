@@ -25,7 +25,10 @@ import org.kuwaiba.apis.persistence.AttributeMetadata;
 import org.kuwaiba.apis.persistence.CategoryMetadata;
 import org.kuwaiba.apis.persistence.ClassMetadata;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
-import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
@@ -59,13 +62,17 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public static final String PROPERTY_ATRIBUTES = "atributes"; //NOI18N
     public static final String PROPERTY_REMOVABLE = "removable"; //NOI18N
 
-    private static final String CLASS_NAME = "classname";
-    private static final String CLASS_ID = "classid";
-    private static final String CATEGORY_ID = "categoryid";
-    private static final String CATEGORY_NAME = "categoryname";
+     /**
+     * Label used for the class index
+     */
+    public static final String INDEX_CLASS = "classes";
+    /**
+     * Label used for the category index
+     */
+    public static final String INDEX_CATEGORY = "categories";
 
     /**
-     * Reference to the db's handle
+     * Reference to the db handle
      */
     private EmbeddedGraphDatabase graphDb;
     /**
@@ -77,22 +84,23 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      */
     private static Index<Node> categoryIndex;
      /**
-     * Conntion manager
+     * Connection Manager
      */
-    private ConnectionManager cmn = new ConnectionManagerImpl();
+    private ConnectionManager cmn;
 
     /**
      * Constructor
-     * Get the a database contection and indexes from the connection manager.
+     * Gets the a database connection and indexes from the connection manager.
      */
 
-    public MetadataEntityManagerImpl() {
+    public MetadataEntityManagerImpl(ConnectionManager cmn) {
         graphDb = (EmbeddedGraphDatabase) cmn.getConnectionHandler();
-        classIndex = (Index<Node>) cmn.getIndexHandler();
+        classIndex = graphDb.index().forNodes(INDEX_CLASS);
+        categoryIndex = graphDb.index().forNodes(INDEX_CATEGORY);
     }
 
     /**
-     * Creates a classmetadata with their attributes as a nodes
+     * Creates a class metadata node with its attributes as adjacent nodes
      * @param newclass
      * @return
      */
@@ -110,15 +118,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             node.setProperty(PROPERTY_PARENT_ID, newclass.getParentId());
 
             id = node.getId();
-            classIndex.add(node, CLASS_NAME,  newclass.getName());
-            classIndex.add(node, CLASS_ID,  String.valueOf(node.getId()));
+            classIndex.add(node, PROPERTY_NAME,  newclass.getName());
+            classIndex.add(node, PROPERTY_ID,  String.valueOf(node.getId()));
 
             //Category
             //if the category already exists
-            Node ctgrNode = categoryIndex.get(CATEGORY_NAME, newclass.getCategory().getName()).getSingle();
+            Node ctgrNode = categoryIndex.get(PROPERTY_NAME, newclass.getCategory().getName()).getSingle();
             if(ctgrNode == null){
                 Long ctgrId = createCategory(newclass.getCategory());
-                ctgrNode = categoryIndex.get(CATEGORY_ID, ctgrId).getSingle();
+                ctgrNode = categoryIndex.get(PROPERTY_ID, ctgrId).getSingle();
             }
             node.createRelationshipTo(ctgrNode, RelTypes.BELONGS_TO);
 
@@ -127,7 +135,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 addAttribute(id, at);
             }
 
-            Node parentNode = classIndex.get(CLASS_ID, String.valueOf(newclass.getParentId())).getSingle();
+            Node parentNode = classIndex.get(PROPERTY_ID, String.valueOf(newclass.getParentId())).getSingle();
 
             node.createRelationshipTo(parentNode, RelTypes.EXTENDS);
 
@@ -160,7 +168,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     {
         Transaction tx = graphDb.beginTx();
         try{
-            Node newcm = classIndex.get(CLASS_NAME, newClassDefinition.getName()).getSingle();
+            Node newcm = classIndex.get(PROPERTY_NAME, newClassDefinition.getName()).getSingle();
             if(newcm == null)
                 throw new NullPointerException();
 
@@ -203,7 +211,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     {
         Transaction tx = graphDb.beginTx();
         try{
-            Node node = classIndex.get(CLASS_ID, String.valueOf(classId)).getSingle();
+            Node node = classIndex.get(PROPERTY_ID, String.valueOf(classId)).getSingle();
             //Deleting attributes
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
             for (Relationship relationship : relationships) {
@@ -242,7 +250,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     {
         Transaction tx = graphDb.beginTx();
         try{
-            Node node = classIndex.get(CLASS_NAME, className).getSingle();
+            Node node = classIndex.get(PROPERTY_NAME, className).getSingle();
             //Deleting attributes
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
             for (Relationship relationship : relationships) {
@@ -270,7 +278,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Gets a classmetadata and their attirbutes
+     * Gets a class metadata and their attributes
      * @param classId
      * @return
      */
@@ -282,7 +290,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         CategoryMetadata ctgr = new CategoryMetadata();
         Transaction tx = graphDb.beginTx();
         try{
-            Node node = classIndex.get(CLASS_ID, String.valueOf(classId)).getSingle();
+            Node node = classIndex.get(PROPERTY_ID, String.valueOf(classId)).getSingle();
 
             //TODO poner los demas atributos de clase
             cm.setName((String)node.getProperty(PROPERTY_NAME));
@@ -324,7 +332,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Gets a classmetadata and their attirbutes
+     * Gets a class metadata and their attributes
      * @param className
      * @return
      */
@@ -336,7 +344,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         CategoryMetadata ctgr = new CategoryMetadata();
         Transaction tx = graphDb.beginTx();
         try{
-            Node node = classIndex.get(CLASS_NAME,className).getSingle();
+            Node node = classIndex.get(PROPERTY_NAME,className).getSingle();
             //TODO poner los demas atributos de clase
             cm.setName((String)node.getProperty(PROPERTY_NAME));
             cm.setDisplayName((String)node.getProperty(PROPERTY_DISPLAY_NAME));
@@ -386,8 +394,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     {
         Transaction tx = graphDb.beginTx();
         try{
-                Node ctm = classIndex.get(CLASS_NAME, classToMoveName).getSingle();
-                Node tcn = classIndex.get(CLASS_NAME, targetParentClassName).getSingle();
+                Node ctm = classIndex.get(PROPERTY_NAME, classToMoveName).getSingle();
+                Node tcn = classIndex.get(PROPERTY_NAME, targetParentClassName).getSingle();
 
            if(ctm == null)
                throw new NullPointerException("The Class name " +classToMoveName+
@@ -431,8 +439,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
         Transaction tx = graphDb.beginTx();
         try{
-            Node ctm = classIndex.get(CLASS_ID, String.valueOf(classToMoveId)).getSingle();
-            Node tcn = classIndex.get(CLASS_ID, String.valueOf(targetParentClassId)).getSingle();
+            Node ctm = classIndex.get(PROPERTY_ID, String.valueOf(classToMoveId)).getSingle();
+            Node tcn = classIndex.get(PROPERTY_ID, String.valueOf(targetParentClassId)).getSingle();
 
             if(ctm == null)
                throw new NullPointerException("The Class Id " +classToMoveId+
@@ -477,7 +485,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     {
         Transaction tx = graphDb.beginTx();
         try{
-            Node node = classIndex.get(CLASS_NAME,className).getSingle();
+            Node node = classIndex.get(PROPERTY_NAME,className).getSingle();
             //TODO poner excepción nodo no encontrado
             Node atr = graphDb.createNode();
             //TODO poner los de mas class attributes
@@ -501,7 +509,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Adds an attibute to the class
+     * Adds an attribute to a class
      * @param classId
      * @param attributeDefinition
      * @return
@@ -511,7 +519,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     {
         Transaction tx = graphDb.beginTx();
         try{
-            Node node = classIndex.get(CLASS_ID, String.valueOf(classId)).getSingle();
+            Node node = classIndex.get(PROPERTY_ID, String.valueOf(classId)).getSingle();
             //TODO poner excepción nodo no encontrado
             Node atr = graphDb.createNode();
             //TODO ponerlos demas atributos
@@ -535,7 +543,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Gets an attibute from a class
+     * Gets an attribute from a class
      * @param className
      * @param attributeName
      * @return
@@ -546,7 +554,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         AttributeMetadata attribute = new AttributeMetadata();
         Transaction tx = graphDb.beginTx();
         try{
-            Node node = classIndex.get(CLASS_NAME,className).getSingle();
+            Node node = classIndex.get(PROPERTY_NAME,className).getSingle();
 
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
             for (Relationship relationship : relationships) {
@@ -582,7 +590,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Gets an attibute from a class
+     * Gets an attribute belonging to a class
      * @param classId
      * @param attributeName
      * @return
@@ -594,7 +602,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         Transaction tx = graphDb.beginTx();
         try{
             //TODO poner exception no hay classId
-            Node node = classIndex.get(CLASS_ID, String.valueOf(classId)).getSingle();
+            Node node = classIndex.get(PROPERTY_ID, String.valueOf(classId)).getSingle();
 
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
             for (Relationship relationship : relationships) {
@@ -640,7 +648,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Deletes an attibute from a classMetadata
+     * Deletes an attribute from a classMetadata
      * @param className
      * @param attributeName
      * @return
@@ -653,7 +661,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         boolean couldDelAtt = false;
         try{
             //TODO poner exception no hay classId
-            Node node = classIndex.get(CLASS_NAME, className).getSingle();
+            Node node = classIndex.get(PROPERTY_NAME, className).getSingle();
 
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
             for (Relationship relationship : relationships) {
@@ -685,7 +693,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Deletes an attibute from a classMetadata
+     * Deletes an attribute from a classMetadata
      * @param classId
      * @param attributeName
      * @return
@@ -698,7 +706,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         boolean couldDelAtt = false;
         try{
             //TODO poner exception no hay classId
-            Node node = classIndex.get(CLASS_ID, String.valueOf(classId)).getSingle();
+            Node node = classIndex.get(PROPERTY_ID, String.valueOf(classId)).getSingle();
 
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
             for (Relationship relationship : relationships) {
@@ -749,8 +757,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
             id = category.getId();
 
-            categoryIndex.add(category, CATEGORY_ID,String.valueOf(id));
-            categoryIndex.add(category, CATEGORY_NAME,categoryDefinition.getName());
+            categoryIndex.add(category, PROPERTY_ID,String.valueOf(id));
+            categoryIndex.add(category, PROPERTY_NAME,categoryDefinition.getName());
 
             tx.success();
 
@@ -804,7 +812,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         CategoryMetadata cm = new CategoryMetadata();
         Transaction tx = graphDb.beginTx();
         try{
-            Node ctgNode = categoryIndex.get(CATEGORY_ID, String.valueOf(categoryId)).getSingle();
+            Node ctgNode = categoryIndex.get(PROPERTY_ID, String.valueOf(categoryId)).getSingle();
 
             if(ctgNode == null)
                 throw new NullPointerException();
@@ -835,7 +843,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     {
         Transaction tx = graphDb.beginTx();
         try{
-            Node ctgr = categoryIndex.get(CATEGORY_NAME, categoryDefinition.getName()).getSingle();
+            Node ctgr = categoryIndex.get(PROPERTY_NAME, categoryDefinition.getName()).getSingle();
 
             if(ctgr == null)
                 throw new NullPointerException();
@@ -902,9 +910,4 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     {
         return true;
     }
-
-//    public List<ClassMetadata> getMetadata(Integer options){
-//        return true;
-//    }
-   
 }

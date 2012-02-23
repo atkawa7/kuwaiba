@@ -25,29 +25,41 @@ import java.io.Serializable;
 public class AttributeMetadata implements Serializable{
 
     /**
-     * String, Integer, Float, Long, Text
+     * String or Text
      */
-    public static final int MAPPING_PRIMITIVE = 1;
+    public static final int MAPPING_STRING = 1;
+    /**
+     * Integer
+     */
+    public static final int MAPPING_INTEGER = 2;
+    /**
+     * Float
+     */
+    public static final int MAPPING_FLOAT = 3;
+    /**
+     * Long
+     */
+    public static final int MAPPING_LONG = 4;
     /**
      * Dates
      */
-    public static final int MAPPING_DATE = 2;
+    public static final int MAPPING_DATE = 5;
     /**
      * Timestamp
      */
-    public static final int MAPPING_TIMESTAMP = 3;
+    public static final int MAPPING_TIMESTAMP = 6;
     /**
      * Binary
      */
-    public static final int MAPPING_BINARY = 4;
+    public static final int MAPPING_BINARY = 7;
     /**
      * Many to one relationship (such as types)
      */
-    public static final int MAPPING_MANYTOONE = 5;
+    public static final int MAPPING_MANYTOONE = 8;
     /**
      * Many to Many relationship (such as accountable persons for a given equipment)
      */
-    public static final int MAPPING_MANYTOMANY = 6;
+    public static final int MAPPING_MANYTOMANY = 9;
     /**
      * Attribute's name
      */

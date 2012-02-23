@@ -23,11 +23,10 @@ import java.util.Properties;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 
 import org.neo4j.graphdb.*;
-import org.neo4j.graphdb.index.Index;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 /**
- * ConnectionManager implementation
+ * ConnectionManager reference implementation
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseService>{
@@ -36,14 +35,6 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
      * Neo4J Database instance
      */
     private GraphDatabaseService graphDb;
-    /**
-     * ClassMetada index
-     */
-    private static Index<Node> classIndex;
-    /**
-     * Category index
-     */
-    private static Index<Node> categoryIndex;
     /**
      * Neo4J Transaction instance
      */
@@ -91,8 +82,6 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
                                             +  props.getProperty("conection_DB_PATH") +
                                             props.getProperty("connection_database"));
 
-        classIndex = graphDb.index().forNodes("ClassMetadata");
-        categoryIndex = graphDb.index().forNodes("Categories");
         graphDb.toString();
         registerShutdownHook( graphDb );
     }

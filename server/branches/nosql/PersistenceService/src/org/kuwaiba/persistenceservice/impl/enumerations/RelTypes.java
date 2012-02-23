@@ -28,5 +28,6 @@ public enum RelTypes implements RelationshipType{
     HAS, //A class has attributes
     IMPLEMENTS, //A class implements an interface
     BELONGS_TO, //A class belongs to a category
-    INSTANCE_OF //An object is instance of a given class
+    INSTANCE_OF, //An object is instance of a given class
+    CHILD_OF, //An object is child of a given object
 }

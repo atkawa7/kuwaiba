@@ -29,6 +29,10 @@ public class RemoteObject extends RemoteObjectLight{
      */
     private HashMap <String, String> attributes;
 
+    public RemoteObject(Long id, String name) {
+        super(id,name);
+    }
+
     public HashMap<String, String> getAttributes() {
         return attributes;
     }

@@ -24,22 +24,12 @@ import java.io.Serializable;
  */
 public class RemoteObjectLight implements Serializable{
 
-    public static final String PROPERTY_ID = "id"; //NOI18N
-    public static final String PROPERTY_NAME = "name"; //NOI18N
-    public static final String PROPERTY_DYSPLAY_NAME = "displayName"; //NOI18N
-
-
     private Long id;
     private String name;
-    private String displayName;
 
-    
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public RemoteObjectLight(Long id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public Long getId() {

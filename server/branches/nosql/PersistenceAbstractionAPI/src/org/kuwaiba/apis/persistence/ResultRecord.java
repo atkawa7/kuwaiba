@@ -27,6 +27,10 @@ import java.util.List;
 public class ResultRecord extends RemoteObjectLight{
     private List<String> extraColumns;
 
+    public ResultRecord(Long id, String name) {
+        super(id,name);
+    }
+
     public List<String> getExtraColumns() {
         return extraColumns;
     }

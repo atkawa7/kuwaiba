@@ -21,14 +21,21 @@ import java.util.List;
 import org.kuwaiba.apis.persistence.RemoteObjectLight;
 import org.kuwaiba.apis.persistence.ResultRecord;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectWithRelationsException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 import org.kuwaiba.apis.persistence.interfaces.BusinessEntityManager;
+import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
+import org.kuwaiba.persistenceservice.util.Util;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.index.Index;
 
 /**
  * Business entity manager reference implementation (using Neo4J as backend)
@@ -36,10 +43,82 @@ import org.neo4j.graphdb.GraphDatabaseService;
  */
 public class BusinessEntityManagerImpl implements BusinessEntityManager, BusinessEntityManagerRemote{
 
+    /**
+     * To label the objects index
+     */
+    public static final String INDEX_OBJECTS="objects"; //NOI18N
+    /**
+     * Reference to the db handler
+     */
     private GraphDatabaseService graphDb;
+    /**
+     * Class index
+     */
+    private Index<Node> classIndex;
+    /**
+     * Object index
+     */
+    private Index<Node> objectIndex;
+    /**
+     * Helper to perform common tasks
+     */
+    private BEMHelper bemh;
 
-    public RemoteObjectLight createObject(String className, Long parentOid, List<String> attributeNames, List<String> attributeValues, String template) throws ClassNotFoundException, ObjectNotFoundException, ArraySizeMismatchException, NotAuthorizedException, OperationNotPermittedException {
-        return null;
+    private BusinessEntityManagerImpl() {
+    }
+
+    public BusinessEntityManagerImpl(GraphDatabaseService graphDb) {
+        this.graphDb = graphDb;
+        this.classIndex = graphDb.index().forNodes(MetadataEntityManagerImpl.INDEX_CLASS);
+        this.objectIndex = graphDb.index().forNodes(INDEX_OBJECTS);
+    }
+
+
+
+    public RemoteObjectLight createObject(String className, Long parentOid, List<String> attributeNames, List<String> attributeValues, String template)
+            throws ClassNotFoundException, ObjectNotFoundException, ArraySizeMismatchException, NotAuthorizedException, OperationNotPermittedException {
+
+        if (attributeNames.size() != attributeValues.size())
+            throw new ArraySizeMismatchException("Attribute Names","Attribute Values"); //NOI18N
+        
+        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
+        if (classNode == null)
+            throw new ClassNotFoundException("Class "+className+" can not be found");
+        
+        Node parentNode = null;
+        if (parentOid != null){
+             parentNode = objectIndex.get(MetadataEntityManagerImpl.PROPERTY_ID,parentOid).getSingle();
+            if (parentNode == null)
+                throw new ObjectNotFoundException(null, parentOid);
+        }
+
+        Transaction tx = graphDb.beginTx();
+        try{
+
+            Node newObject = graphDb.createNode();
+            newObject.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
+
+            if (parentOid !=null)
+                newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
+            String name = null;
+            for (int i = 0; i<attributeValues.size();i++){
+                try{
+                   Object value = Util.getRealValue(attributeValues.get(i), i);
+                   newObject.setProperty(attributeNames.get(i), value);
+                   if (attributeNames.get(i).equals("name")) //NOI18N
+                       name = attributeValues.get(i);
+                }catch(InvalidArgumentException ex){
+                    ex.printStackTrace();
+                }
+            }
+            
+            tx.success();
+            return new RemoteObjectLight(new Long(newObject.getId()), name);
+        }catch(Exception ex){
+            ex.printStackTrace();
+            tx.failure();
+            return null;
+        }
     }
 
     public RemoteObject getObjectInfo(String className, Long oid) throws ClassNotFoundException, ObjectNotFoundException, NotAuthorizedException, OperationNotPermittedException {
@@ -86,4 +165,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * Inner class to perform common tasks
+     */
+    private class BEMHelper{
+
+    }
 }

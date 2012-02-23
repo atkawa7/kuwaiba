@@ -19,7 +19,7 @@ package org.kuwaiba.apis.persistence.interfaces;
 import java.util.List;
 
 /**
- * Interface providing the general methods to manage
+ * Interface providing the general methods to manage the db/backend connection
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public interface ConnectionManager<T> {
