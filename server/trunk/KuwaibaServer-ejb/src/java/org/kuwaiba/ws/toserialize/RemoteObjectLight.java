@@ -31,7 +31,7 @@ public class RemoteObjectLight {
      */
     protected Long oid;
     protected String className;
-    private String displayName;
+    protected String displayName;
     
     /**
      * Misc flags used to give more information about the object

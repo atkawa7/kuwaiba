@@ -30,7 +30,7 @@ import javax.persistence.OneToMany;
  * This class holds information about the existing classes
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-@Entity        
+@Entity
 @NamedQuery(name="flushClassMetadata", query="DELETE FROM ClassMetadata x")
 public class ClassMetadata extends MetadataObject {
     public static final Long ROOT_CLASS_ID = new Long(0);
@@ -44,60 +44,60 @@ public class ClassMetadata extends MetadataObject {
      * This is the package where the class belongs to. It's useful to reassemble the full-qualified
      * name in order to call Class.forName
      */
-    private PackageMetadata packageInfo; 
+    private PackageMetadata packageInfo;
     private String description;
     /**
      * Shows if this is a core class (the ones provided in the official release) or a custom one
      */
     @Column(nullable=false)
-    private Boolean isCustom=false;
+    private Boolean custom=false;
     /**
      * Indicates if a class can have instances by itself (All GenericXXX classes and others in package entity.core are used to take advantage of OOP)
      */
     @Column(nullable=false)
-    private Boolean isAbstract=false;
+    private Boolean abstractClass=false;
     /**
      * Indicates if the instances of this class are physical assets (in other words, if it's meaningful to have a count on them)
      * Classes marked with the annotation NoCount (Slot, Port and the like) have this attribute set as false
      */
     @Column(nullable=false)
-    private Boolean isCountable=true;
+    private Boolean countable=true;
     /**
      * Is this a dummy class as described in the Dummy annotation?
      */
     @Column(nullable=false)
-    private Boolean isDummy=false;
+    private Boolean dummy=false;
     /**
      * Indicates if the current class implements the interface PhysicalNode
      */
     @Column(nullable=false)
-    private Boolean isPhysicalNode = false;
+    private Boolean physicalNode = false;
     /**
      * Indicates if the current class implements the interface PhysicalConnection
      */
     @Column(nullable=false)
-    private Boolean isPhysicalConnection = false;
+    private Boolean physicalConnection = false;
     /**
      * Indicates if the current class implements the interface PhysicalEndpoint
      */
     @Column(nullable=false)
-    private Boolean isPhysicalEndpoint = false;
+    private Boolean physicalEndpoint = false;
     /**
      * Is this class a list type (Vendor, LocationOwner, OpticalLinkType, etc)
      */
     @Column(nullable=false)
-    private Boolean isListType = false;
+    private Boolean listType = false;
     /**
      * Indicates if the instances of this class can be related to a service
      * Classes marked with the annotation Relatable have this attribute set as true
      */
     @Column(nullable=false)
-    private Boolean isRelatableToService=false;
+    private Boolean relatableToService=false;
     /**
      * Instances of this class can have views associated (this going to be "true" for all subclasses of ViewableObject)
      */
     @Column(nullable=false)
-    private Boolean isViewable = true;
+    private Boolean viewable = true;
     /**
      * Icon to show in trees and lists
      */
@@ -119,9 +119,9 @@ public class ClassMetadata extends MetadataObject {
     @JoinTable(name="ContainerHierarchy") //This is the name assigned to the table which implement the relationship
     private List<ClassMetadata> possibleChildren;
 
-    @OneToMany(cascade=CascadeType.PERSIST) //If one deletes a class, the related attributes should be deleted too. 
+    @OneToMany(cascade=CascadeType.PERSIST) //If one deletes a class, the related attributes should be deleted too.
     @JoinTable(name="AttributesMap")
-    private List<AttributeMetadata> attributes; //Represents the relationship with the attributes metadata information                                  
+    private List<AttributeMetadata> attributes; //Represents the relationship with the attributes metadata information
 
 
     public ClassMetadata() {
@@ -134,16 +134,16 @@ public class ClassMetadata extends MetadataObject {
         this.name = _name;
         this.packageInfo = _myPackage;
         this.description = _description;
-        this.isCustom = _isCustom;
-        this.isAbstract = _isAbstract;
-        this.isDummy = _isDummy;
-        this.isPhysicalNode = _isPhysicalNode;
-        this.isPhysicalConnection = _isPhysicalConnection;
-        this.isPhysicalEndpoint = _isPhysicalEndpoint;
-        this.isListType = _isListType;
-        this.isCountable = _isCountable;
-        this.isRelatableToService = _isRelatableToService;
-        this.isViewable = _isViewable;
+        this.custom = _isCustom;
+        this.abstractClass = _isAbstract;
+        this.dummy = _isDummy;
+        this.physicalNode = _isPhysicalNode;
+        this.physicalConnection = _isPhysicalConnection;
+        this.physicalEndpoint = _isPhysicalEndpoint;
+        this.listType = _isListType;
+        this.countable = _isCountable;
+        this.relatableToService = _isRelatableToService;
+        this.viewable = _isViewable;
         this.possibleChildren = _children;
         this.attributes = _attributes;
     }
@@ -157,11 +157,11 @@ public class ClassMetadata extends MetadataObject {
     }
 
     public Boolean isCustom() {
-        return isCustom;
+        return custom;
     }
 
-    public void setAsCustom(Boolean isCustom) {
-        this.isCustom = isCustom;
+    public void setCustom(Boolean isCustom) {
+        this.custom = isCustom;
     }
 
     public String getDescription() {
@@ -238,43 +238,43 @@ public class ClassMetadata extends MetadataObject {
     }
 
     public Boolean isAbstract() {
-        return isAbstract;
+        return abstractClass;
     }
 
     public void setAbstract(Boolean isAbstract) {
-        this.isAbstract = isAbstract;
+        this.abstractClass = isAbstract;
     }
 
-    public Boolean isAccountable() {
-        return isCountable;
+    public Boolean isCountable() {
+        return countable;
     }
 
-    public void setAccountable(Boolean isCountable) {
-        this.isCountable = isCountable;
+    public void setCountable(Boolean isCountable) {
+        this.countable = isCountable;
     }
 
     public Boolean isDummy() {
-        return isDummy;
+        return dummy;
     }
 
     public void setDummy(Boolean isDummy) {
-        this.isDummy = isDummy;
+        this.dummy = isDummy;
     }
 
     public Boolean isRelatableToService() {
-        return isRelatableToService;
+        return relatableToService;
     }
 
     public void setRelatableToService(Boolean isRelatable) {
-        this.isRelatableToService = isRelatable;
+        this.relatableToService = isRelatable;
     }
 
     public Boolean isViewable() {
-        return isViewable;
+        return viewable;
     }
 
     public void setViewable(Boolean isViewable) {
-        this.isViewable = isViewable;
+        this.viewable = isViewable;
     }
 
     public Integer getColor() {
@@ -286,34 +286,34 @@ public class ClassMetadata extends MetadataObject {
     }
 
     public Boolean isPhysicalConnection() {
-        return isPhysicalConnection;
+        return physicalConnection;
     }
 
-    public void setAsPhysicalConnection(Boolean isPhysicalConnection) {
-        this.isPhysicalConnection = isPhysicalConnection;
+    public void setPhysicalConnection(Boolean isPhysicalConnection) {
+        this.physicalConnection = isPhysicalConnection;
     }
 
     public Boolean isPhysicalEndpoint() {
-        return isPhysicalEndpoint;
+        return physicalEndpoint;
     }
 
-    public void setAsPhysicalEndpoint(Boolean isPhysicalEndpoint) {
-        this.isPhysicalEndpoint = isPhysicalEndpoint;
+    public void setPhysicalEndpoint(Boolean isPhysicalEndpoint) {
+        this.physicalEndpoint = isPhysicalEndpoint;
     }
 
     public Boolean isPhysicalNode() {
-        return isPhysicalNode;
+        return physicalNode;
     }
 
-    public void setAsPhysicalNode(Boolean isPhysicalNode) {
-        this.isPhysicalNode = isPhysicalNode;
+    public void setPhysicalNode(Boolean isPhysicalNode) {
+        this.physicalNode = isPhysicalNode;
     }
 
     public Boolean isListType() {
-        return isListType;
+        return listType;
     }
 
-    public void setAsListType(Boolean isListType) {
-        this.isListType = isListType;
+    public void setListType(Boolean isListType) {
+        this.listType = isListType;
     }
 }
