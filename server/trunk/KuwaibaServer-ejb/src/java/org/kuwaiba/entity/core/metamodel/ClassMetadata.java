@@ -237,11 +237,11 @@ public class ClassMetadata extends MetadataObject {
         return getName();
     }
 
-    public Boolean isAbstract() {
+    public Boolean isAbstractClass() {
         return abstractClass;
     }
 
-    public void setAbstract(Boolean isAbstract) {
+    public void setAbstractClass(Boolean isAbstract) {
         this.abstractClass = isAbstract;
     }
 
