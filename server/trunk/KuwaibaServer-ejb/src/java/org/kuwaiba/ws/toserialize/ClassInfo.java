@@ -42,7 +42,7 @@ public class ClassInfo extends ClassInfoLight{
     public ClassInfo(){}
     public ClassInfo(ClassMetadata myClass){
         super (myClass);
-        this.abstractClass = myClass.isAbstract();
+        this.abstractClass = myClass.isAbstractClass();
         this.icon = myClass.getIcon();
         List<AttributeMetadata> ar = myClass.getAttributes();
         this.attributeIds = new Long[ar.size()];

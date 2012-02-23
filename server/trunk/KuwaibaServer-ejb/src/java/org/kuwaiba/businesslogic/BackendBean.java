@@ -326,7 +326,7 @@ public class BackendBean implements BackendBeanRemote {
             Root entity = cQuery.from(ClassMetadata.class);
             Predicate predicate = null;
             for (ClassMetadata cm : allPossibleChildren){
-                if (cm.isAbstract()){
+                if (cm.isAbstractClass()){
                     List<Class> morePossibleChildren = HierarchyUtils.getInstanceableSubclasses(classIndex.get(cm.getName()), classIndex.values());
 
                     for (Class moreCm : morePossibleChildren){

@@ -40,7 +40,7 @@ public class ClassInfoLight {
 
     public ClassInfoLight(ClassMetadata cm) {
         this.id = cm.getId();
-        this.abstractClass = cm.isAbstract();
+        this.abstractClass = cm.isAbstractClass();
         this.physicalNode = cm.isPhysicalNode();
         this.physicalConnection = cm.isPhysicalConnection();
         this.physicalEndpoint = cm.isPhysicalEndpoint();
