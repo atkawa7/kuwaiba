@@ -47,7 +47,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public static final String PROPERTY_VISIBLE ="visible"; //NOI18N
     public static final String PROPERTY_DESCRIPTION ="description"; //NOI18N
     public static final String PROPERTY_READONLY = "readOnly"; //NOI18N
-
+    public static final String PROPERTY_LOCKED = "locked"; //NOI18N
     public static final String PROPERTY_ID = "id"; //NOI18N
     public static final String PROPERTY_ABSTRACT = "abstract"; //NOI18N
     public static final String PROPERTY_CUSTOM = "custom"; //NOI18N
@@ -56,8 +56,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public static final String PROPERTY_COLOR = "color"; //NOI18N
     public static final String PROPERTY_ICON = "icon"; //NOI18N
     public static final String PROPERTY_SMALL_ICON = "smallIcon"; //NOI18N
-    public static final String PROPERTY_ATRIBUTES = "atributes"; //NOI18N
-    public static final String PROPERTY_REMOVABLE = "removable"; //NOI18N
 
      /**
      * Label used for the class index
@@ -90,8 +88,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Creates a class metadata with their attributes and the category (if the
-     * category does not exist it will be create).
+     * Creates a classmetadata with their:
+     * attributes(some new attributes and others extedended from the parent).
+     * category (if the category does not exist it will be create).
      * @param classDefinition
      * @return the Id of the newClassMetadata
      * @throws ClassNotFoundException if there's no Parent Class whit the ParentId
@@ -125,17 +124,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
             classNode.setProperty(PROPERTY_NAME, classDefinition.getName());
             classNode.setProperty(PROPERTY_DISPLAY_NAME, classDefinition.getDisplayName());
-            classNode.setProperty(PROPERTY_PARENT_ID, classDefinition.getParentId());
             classNode.setProperty(PROPERTY_CUSTOM, classDefinition.isCustom());
             classNode.setProperty(PROPERTY_COUNTABLE, classDefinition.isCountable());
             classNode.setProperty(PROPERTY_COLOR, classDefinition.getColor());
-            classNode.setProperty(PROPERTY_LIST_TYPE, classDefinition.isListType());
             classNode.setProperty(PROPERTY_LOCKED, classDefinition.isLocked());
             classNode.setProperty(PROPERTY_DESCRIPTION, classDefinition.getDescription());
-            classNode.setProperty(PROPERTY_REMOVABLE, classDefinition.isRemovable());
             classNode.setProperty(PROPERTY_ABSTRACT, classDefinition.isAbstractClass());
             classNode.setProperty(PROPERTY_DUMMY, classDefinition.isDummy());
-            classNode.setProperty(PROPERTY_INTERFACES, classDefinition.getInterfaces());
             classNode.setProperty(PROPERTY_ICON, classDefinition.getIcon());
             classNode.setProperty(PROPERTY_SMALL_ICON, classDefinition.getSmallIcon());
 
@@ -152,19 +147,30 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             }
             classNode.createRelationshipTo(ctgrNode, RelTypes.BELONGS_TO);
 
-            //Attributes
-            for (AttributeMetadata at : classDefinition.getAttributes()) {
-                addAttribute(id, at);
-            }
-
-            Node parentNode = classIndex.get(PROPERTY_ID, String.valueOf(classDefinition.getParentId())).getSingle();
+            Node parentNode = classIndex.get(PROPERTY_NAME, String.valueOf(classDefinition.getParentName())).getSingle();
 
             if(parentNode == null)
                     throw new ClassNotFoundException("The Parent Node with id" +
-                            classDefinition.getParentId()
+                            classDefinition.getParentName()
                             + "does not exist");
             
-            classNode.createRelationshipTo(parentNode, RelTypes.EXTENDS);
+            //Set extendended attributes from parent
+            else
+            {
+                classNode.createRelationshipTo(parentNode, RelTypes.EXTENDS);
+                Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.HAS);
+                for (Relationship rel : relationships) {
+                    Node parentAttrNode = rel.getEndNode();
+                    classNode.createRelationshipTo(parentAttrNode, RelTypes.HAS);
+                }
+            }
+
+            //Attributes
+            for (AttributeMetadata at : classDefinition.getAttributes()) {
+                AttributeMetadata newAttr = getAttribute(id, at.getName());
+                if (newAttr == null)
+                    addAttribute(id, at);
+            }
 
             tx.success();
 
@@ -194,17 +200,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
             newcm.setProperty(PROPERTY_NAME, newClassDefinition.getName());
             newcm.setProperty(PROPERTY_DISPLAY_NAME, newClassDefinition.getDisplayName());
-            newcm.setProperty(PROPERTY_PARENT_ID, newClassDefinition.getParentId());
             newcm.setProperty(PROPERTY_CUSTOM, newClassDefinition.isCustom());
             newcm.setProperty(PROPERTY_COUNTABLE, newClassDefinition.isCountable());
             newcm.setProperty(PROPERTY_COLOR, newClassDefinition.getColor());
-            newcm.setProperty(PROPERTY_LIST_TYPE, newClassDefinition.isListType());
             newcm.setProperty(PROPERTY_LOCKED, newClassDefinition.isLocked());
             newcm.setProperty(PROPERTY_DESCRIPTION, newClassDefinition.getDescription());
-            newcm.setProperty(PROPERTY_REMOVABLE, newClassDefinition.isRemovable());
             newcm.setProperty(PROPERTY_ABSTRACT, newClassDefinition.isAbstractClass());
             newcm.setProperty(PROPERTY_DUMMY, newClassDefinition.isDummy());
-            newcm.setProperty(PROPERTY_INTERFACES, newClassDefinition.getInterfaces());
             newcm.setProperty(PROPERTY_ICON, newClassDefinition.getIcon());
             newcm.setProperty(PROPERTY_SMALL_ICON, newClassDefinition.getSmallIcon());
 
@@ -212,6 +214,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
             int count=0;
             List atrList = newClassDefinition.getAttributes();
+
             for (Relationship relationship : relationships) {
                 Node newAttr = relationship.getEndNode();
                 AttributeMetadata atr = (AttributeMetadata)atrList.get(count);
@@ -328,13 +331,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             
             cm.setName((String)node.getProperty(PROPERTY_NAME));
             cm.setDisplayName((String)node.getProperty(PROPERTY_DISPLAY_NAME));
-            cm.setParentId((Long)node.getProperty(PROPERTY_PARENT_ID));
             cm.setCountable((Boolean)node.getProperty(PROPERTY_COUNTABLE));
             cm.setColor((Integer)node.getProperty(PROPERTY_COLOR));
-            cm.setListType((Boolean)node.getProperty(PROPERTY_LIST_TYPE));
             cm.setLocked((Boolean)node.getProperty(PROPERTY_LOCKED));
             cm.setDescription(PROPERTY_DESCRIPTION);
-            cm.setRemovable((Boolean)node.getProperty(PROPERTY_REMOVABLE));
             cm.setAbstractClass((Boolean)node.getProperty(PROPERTY_ABSTRACT));
             cm.setDummy((Boolean)node.getProperty(PROPERTY_DUMMY));
             cm.setInterfaces(null);
@@ -353,7 +353,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 attr.setName((String)attrNode.getProperty(PROPERTY_NAME));
                 attr.setDescription((String)attrNode.getProperty(PROPERTY_DESCRIPTION));
                 attr.setDisplayName((String)attrNode.getProperty(PROPERTY_DISPLAY_NAME));
-                //attr.setMultiple((Boolean)atr.getProperty(AttributeMetadata.PROPERTY_MUTIPLE));
                 attr.setReadOnly((Boolean)attrNode.getProperty(PROPERTY_READONLY));
                 attr.setType((String)attrNode.getProperty(PROPERTY_TYPE));
                 attr.setVisible((Boolean)attrNode.getProperty(PROPERTY_VISIBLE));
@@ -371,6 +370,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             ctgr.setDescription((String)ctgrNode.getProperty(PROPERTY_DESCRIPTION));
 
             cm.setCategory(ctgr);
+
+            //parent
+            Relationship parentRel = node.getSingleRelationship(RelTypes.EXTENDS, Direction.BOTH);
+            cm.setParentName((String)parentRel.getProperty(PROPERTY_NAME));
 
             tx.success();
         }
@@ -400,21 +403,20 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 throw new ClassNotFoundException("The Class Name: "+ className +
                                                  ", you are looking for does not exist");
 
+            //node Properties
             cm.setName((String)node.getProperty(PROPERTY_NAME));
             cm.setDisplayName((String)node.getProperty(PROPERTY_DISPLAY_NAME));
-            cm.setParentId((Long)node.getProperty(PROPERTY_PARENT_ID));
             cm.setCountable((Boolean)node.getProperty(PROPERTY_COUNTABLE));
             cm.setColor((Integer)node.getProperty(PROPERTY_COLOR));
-            cm.setListType((Boolean)node.getProperty(PROPERTY_LIST_TYPE));
             cm.setLocked((Boolean)node.getProperty(PROPERTY_LOCKED));
             cm.setDescription(PROPERTY_DESCRIPTION);
-            cm.setRemovable((Boolean)node.getProperty(PROPERTY_REMOVABLE));
             cm.setAbstractClass((Boolean)node.getProperty(PROPERTY_ABSTRACT));
             cm.setDummy((Boolean)node.getProperty(PROPERTY_DUMMY));
             cm.setInterfaces(null);
             cm.setIcon((Byte)node.getProperty(PROPERTY_ICON));
             cm.setSmallIcon((Byte)node.getProperty(PROPERTY_SMALL_ICON));
 
+            //Attributes
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
 
             for (Relationship relationship : relationships) {
@@ -442,6 +444,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             ctgr.setDescription((String)ctgrNode.getProperty(PROPERTY_DESCRIPTION));
 
             cm.setCategory(ctgr);
+
+            //Parent
+            Relationship parentRel = node.getSingleRelationship(RelTypes.EXTENDS, Direction.BOTH);
+            cm.setParentName((String)parentRel.getEndNode().getProperty(PROPERTY_NAME));
 
             tx.success();
 
@@ -475,17 +481,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                throw new ClassNotFoundException("The Class name " +targetParentClassName+
                        " you are trying to set as parent does not exist");
            else{
-                Iterable<Relationship> relationships = ctm.getRelationships(RelTypes.EXTENDS);
-
-                for (Relationship rel : relationships) {
-                    Node node = rel.getEndNode();
-
-                    if(node.getId() == (Long)ctm.getProperty(PROPERTY_PARENT_ID))
-                        rel.delete();
-               }
-               //TODO if the parent node has no relationships it must be deleted?
-               ctm.createRelationshipTo(tcn, RelTypes.EXTENDS);
-               ctm.setProperty(PROPERTY_PARENT_ID, tcn.getId());
+                    Relationship rel = ctm.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING);
+                    rel.delete();
+                    ctm.createRelationshipTo(tcn, RelTypes.EXTENDS);
            }
             tx.success();
             return true;
@@ -518,17 +516,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                throw new ClassNotFoundException("The Class Id " +targetParentClassId+
                        " you are trying to set as parent does not exist");
             else{
-                Iterable<Relationship> relationships = ctm.getRelationships(RelTypes.EXTENDS);
-
-                for (Relationship rel : relationships) {
-                    Node node = rel.getEndNode();
-
-                    if(node.getId() == (Long)ctm.getProperty(PROPERTY_PARENT_ID))
-                        rel.delete();
-                }
-                //TODO if the parent node has no relationships it must be deleted?
-                ctm.createRelationshipTo(tcn, RelTypes.EXTENDS);
-                ctm.setProperty(PROPERTY_PARENT_ID, tcn.getId());
+                    Relationship rel = ctm.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING);
+                    rel.delete();
+                    ctm.createRelationshipTo(tcn, RelTypes.EXTENDS);
             }
             tx.success();
             return true;
@@ -620,14 +610,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * Gets an attribute belonging to a class
      * @param className
      * @param attributeName
-     * @return AttributeMetada
+     * @return AttributeMetada, null if there is no attribute with such name
      * @throws ClassNotFoundException if there is no a class with such className
      * @throws MiscException if the attributeName does not exist
      */
     @Override
     public AttributeMetadata getAttribute(String className, String attributeName)throws Exception
     {
-        AttributeMetadata attribute = new AttributeMetadata();
+        AttributeMetadata attribute = null;
         Transaction tx = graphDb.beginTx();
         try{
             Node node = classIndex.get(PROPERTY_NAME,className).getSingle();
@@ -641,6 +631,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 Node atr = relationship.getEndNode();
                 if (String.valueOf(atr.getProperty(PROPERTY_NAME)).equals(attributeName))
                 {
+                    attribute = new AttributeMetadata();
                     attribute.setName((String)atr.getProperty(PROPERTY_NAME));
                     attribute.setDescription((String)atr.getProperty(PROPERTY_DESCRIPTION));
                     attribute.setDisplayName((String)atr.getProperty(PROPERTY_DISPLAY_NAME));
@@ -651,9 +642,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     attribute.setAdministrative((Boolean)atr.getProperty(PROPERTY_ADMINISTRATIVE));
                 }
             }
-            if (attribute.getName() == null)
-                throw new MiscException("The Attribute: " +attributeName+
-                               ", you are looking for does not exist");
+           
             tx.success();
         }
         finally{
@@ -666,14 +655,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * Gets an attribute belonging to a class
      * @param classId
      * @param attributeName
-     * @return AttributeMetada
+     * @return AttributeMetada, null if there is no attribute with such name
      * @throws ClassNotFoundException if there is no a class with such classId
      * @throws MiscException if the attributeName does not exist
      */
     @Override
     public AttributeMetadata getAttribute(Long classId, String attributeName)throws Exception
     {
-        AttributeMetadata attribute = new AttributeMetadata();
+        AttributeMetadata attribute = null;
         Transaction tx = graphDb.beginTx();
         try{
             //TODO poner exception no hay classId
@@ -687,6 +676,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 Node atr = relationship.getEndNode();
                 if (String.valueOf(atr.getProperty(PROPERTY_NAME)).equals(attributeName))
                 {
+                    attribute = new AttributeMetadata();
                     attribute.setName((String)atr.getProperty(PROPERTY_NAME));
                     attribute.setDescription((String)atr.getProperty(PROPERTY_DESCRIPTION));
                     attribute.setDisplayName((String)atr.getProperty(PROPERTY_DISPLAY_NAME));
@@ -697,9 +687,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     attribute.setAdministrative((Boolean)atr.getProperty(PROPERTY_ADMINISTRATIVE));
                 }
             }
-            if (attribute.getName() == null)
-                throw new MiscException("The Attribute: " +attributeName+
-                               ", you are looking for does not exist");
+            
             tx.success();
            
         }finally{
