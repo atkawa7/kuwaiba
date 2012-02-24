@@ -33,7 +33,6 @@ import org.kuwaiba.persistenceservice.util.Util;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 
@@ -59,10 +58,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
      * Object index
      */
     private Index<Node> objectIndex;
-    /**
-     * Helper to perform common tasks
-     */
-    private BEMHelper bemh;
+
 
     private BusinessEntityManagerImpl() {
     }
@@ -103,9 +99,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             String name = null;
             for (int i = 0; i<attributeValues.size();i++){
                 try{
-                   Object value = Util.getRealValue(attributeValues.get(i), i);
+                   int type = Util.getTypeOfAttribute(classNode, attributeNames.get(i));
+                   if (type == 0)
+                       throw new WrongMappingException(className, className, template, template);
+                   
+                   Object value = Util.getRealValue(attributeValues.get(i), type);
                    newObject.setProperty(attributeNames.get(i), value);
-                   if (attributeNames.get(i).equals("name")) //NOI18N
+
+                   if (attributeNames.get(i).equals(MetadataEntityManagerImpl.PROPERTY_NAME)) //NOI18N
                        name = attributeValues.get(i);
                 }catch(InvalidArgumentException ex){
                     ex.printStackTrace();
@@ -163,12 +164,5 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
     public List<ResultRecord> executeQuery() throws ClassNotFoundException, NotAuthorizedException {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * Inner class to perform common tasks
-     */
-    private class BEMHelper{
-
     }
 }

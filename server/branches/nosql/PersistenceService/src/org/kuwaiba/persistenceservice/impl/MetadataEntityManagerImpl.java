@@ -49,17 +49,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public static final String PROPERTY_READONLY = "readOnly"; //NOI18N
 
     public static final String PROPERTY_ID = "id"; //NOI18N
-    public static final String PROPERTY_LOCKED = "locked"; //NOI18N
     public static final String PROPERTY_ABSTRACT = "abstract"; //NOI18N
     public static final String PROPERTY_CUSTOM = "custom"; //NOI18N
     public static final String PROPERTY_COUNTABLE = "countable"; //NOI18N
     public static final String PROPERTY_DUMMY = "dummy"; //NOI18N
-    public static final String PROPERTY_PARENT_ID = "parentId"; //NOI18N
-    public static final String PROPERTY_INTERFACES = "interfaces"; //NOI18N
     public static final String PROPERTY_COLOR = "color"; //NOI18N
-    public static final String PROPERTY_ICON = "color"; //NOI18N
+    public static final String PROPERTY_ICON = "icon"; //NOI18N
     public static final String PROPERTY_SMALL_ICON = "smallIcon"; //NOI18N
-    public static final String PROPERTY_LIST_TYPE = "listType"; //NOI18N
     public static final String PROPERTY_ATRIBUTES = "atributes"; //NOI18N
     public static final String PROPERTY_REMOVABLE = "removable"; //NOI18N
 
@@ -87,18 +83,18 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     
     /**
      * Constructor
-     * Get the a database conection and indexes from the connection manager.
+     * Get the a database connection and indexes from the connection manager.
      */
     public MetadataEntityManagerImpl(ConnectionManager cmn) {
         graphDb = (EmbeddedGraphDatabase)cmn.getConnectionHandler();
     }
 
     /**
-     * Creates a classmetadata with their attributes and the category (if the
+     * Creates a class metadata with their attributes and the category (if the
      * category does not exist it will be create).
      * @param classDefinition
      * @return the Id of the newClassMetadata
-     * @throws ClassNotFoundException if theres no Parent Class whit the ParentId
+     * @throws ClassNotFoundException if there's no Parent Class whit the ParentId
      */
      
     @Override

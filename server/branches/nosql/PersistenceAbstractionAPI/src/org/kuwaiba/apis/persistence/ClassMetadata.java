@@ -27,7 +27,7 @@ public class ClassMetadata extends ClassMetadataLight{
     private boolean custom;
     private boolean countable;
     private boolean dummy;
-    private Long parentId;
+    private String parentClassName;
     private List<InterfaceMetadata> interfaces;
     private Integer color;
 
@@ -38,6 +38,7 @@ public class ClassMetadata extends ClassMetadataLight{
     private String displayName;
     private CategoryMetadata category;
     private String description;
+    //Why this?
     private boolean removable;
 
    // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
@@ -89,12 +90,12 @@ public class ClassMetadata extends ClassMetadataLight{
         this.listType = listType;
     }
 
-    public Long getParentId() {
-        return parentId;
+    public String getParentClassName() {
+        return parentClassName;
     }
 
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
+    public void setParentClassName(String parentClassName) {
+        this.parentClassName = parentClassName;
     }
 
     public Byte getSmallIcon() {
@@ -145,19 +146,16 @@ public class ClassMetadata extends ClassMetadataLight{
         this.removable = removable;
     }// </editor-fold>
 
-    public boolean isSubClass(String allegedParentName){
+
+    public boolean implementsInterface(String interfaceName){
+        if (interfaces == null)
+            return false;
+        for (InterfaceMetadata im : interfaces){
+            if(im.getName().equals(interfaceName))
+                return true;
+        }
         return false;
     }
 
-    public boolean implements_(String interfaceName){
-        return false;
-    }
-
-    public boolean isSubclass(Integer allegedParentId){
-        return false;
-    }
-
-    public boolean implements_(Integer anInterfaceId){
-        return false;
-    }
+    
 }

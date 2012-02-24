@@ -38,7 +38,7 @@ public class Util {
      * @param attributeName
      * @return attribute's type. 0 if it can't find the attribute
      */
-    public int getTypeOfAttribute (Node classNode, String attributeName){
+    public static int getTypeOfAttribute (Node classNode, String attributeName){
         Iterable<Relationship> attributes = classNode.getRelationships(RelTypes.HAS);
         while (attributes.iterator().hasNext()){
             Relationship rel = attributes.iterator().next();
