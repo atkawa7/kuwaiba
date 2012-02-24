@@ -20,17 +20,14 @@ import java.io.Serializable;
 
 /**
  * Contains the basic metadata information about a class
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class ClassMetadataLight implements Serializable{
-
-
-    
 
     private Long id;
     private String name;
     private boolean locked;
-    protected Boolean abstractClass;
+    protected boolean abstractClass;
     private Byte icon;
 
 
@@ -58,20 +55,23 @@ public class ClassMetadataLight implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
-    public Boolean getAbstractClass() {
+
+    public boolean isAbstractClass() {
         return abstractClass;
     }
 
-    public void setAbstractClass(Boolean abstractClass) {
+    public void setAbstractClass(boolean abstractClass) {
         this.abstractClass = abstractClass;
     }
-
+    
     public Byte getIcon() {
         return icon;
     }
 
     public void setIcon(Byte icon) {
         this.icon = icon;
-    }// </editor-fold>
+    }
+
+    // </editor-fold>
 
 }
