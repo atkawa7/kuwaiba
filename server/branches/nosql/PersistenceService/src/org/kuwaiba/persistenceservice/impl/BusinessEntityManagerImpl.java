@@ -16,8 +16,12 @@
 
 package org.kuwaiba.persistenceservice.impl;
 
-import java.rmi.server.RemoteObject;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import org.kuwaiba.apis.persistence.ClassMetadata;
+import org.kuwaiba.apis.persistence.RemoteObject;
 import org.kuwaiba.apis.persistence.RemoteObjectLight;
 import org.kuwaiba.apis.persistence.ResultRecord;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
@@ -28,11 +32,14 @@ import org.kuwaiba.apis.persistence.exceptions.ObjectWithRelationsException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 import org.kuwaiba.apis.persistence.interfaces.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.interfaces.MetadataEntityManager;
+import org.kuwaiba.persistenceservice.CacheManager;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.kuwaiba.persistenceservice.util.Util;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 
@@ -58,18 +65,21 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
      * Object index
      */
     private Index<Node> objectIndex;
-
+    /**
+     * Reference to the CacheManager
+     */
+   private CacheManager cm;
 
     private BusinessEntityManagerImpl() {
+        cm= CacheManager.getInstance();
     }
 
     public BusinessEntityManagerImpl(GraphDatabaseService graphDb) {
+        this();
         this.graphDb = graphDb;
         this.classIndex = graphDb.index().forNodes(MetadataEntityManagerImpl.INDEX_CLASS);
         this.objectIndex = graphDb.index().forNodes(INDEX_OBJECTS);
     }
-
-
 
     public RemoteObjectLight createObject(String className, Long parentOid, List<String> attributeNames, List<String> attributeValues, String template)
             throws ClassNotFoundException, ObjectNotFoundException, ArraySizeMismatchException, NotAuthorizedException, OperationNotPermittedException {
@@ -80,7 +90,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
             throw new ClassNotFoundException("Class "+className+" can not be found");
-        
+
         Node parentNode = null;
         if (parentOid != null){
              parentNode = objectIndex.get(MetadataEntityManagerImpl.PROPERTY_ID,parentOid).getSingle();
@@ -101,7 +111,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 try{
                    int type = Util.getTypeOfAttribute(classNode, attributeNames.get(i));
                    if (type == 0)
-                       throw new WrongMappingException(className, className, template, template);
+                       throw new WrongMappingException((String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),
+                               attributeNames.get(i), "0", attributeValues.get(i));
                    
                    Object value = Util.getRealValue(attributeValues.get(i), type);
                    newObject.setProperty(attributeNames.get(i), value);
@@ -123,19 +134,96 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
 
     public RemoteObject getObjectInfo(String className, Long oid) throws ClassNotFoundException, ObjectNotFoundException, NotAuthorizedException, OperationNotPermittedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //Perform benchmarks to see if accessing to the objects index is less expensive
+        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
+        if (classNode == null)
+            throw new ClassNotFoundException(className);
+        Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
+        while (instances.iterator().hasNext()){
+            Node instance = instances.iterator().next().getEndNode();
+
+            if (instance.getId() == oid.longValue()){
+                HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
+
+                //Iterates through attributes
+                Iterable<String> attributeNames = instance.getPropertyKeys();
+                while (attributeNames.iterator().hasNext()){
+                    String attributeName = attributeNames.iterator().next();
+                    List<String> attributeValue = null;
+                    if (instance.getProperty(attributeName) != null ){
+                        attributeValue = new ArrayList<String>();
+                        attributeValue.add(instance.getProperty(attributeName).toString());
+                    }
+                    attributes.put(attributeName,attributeValue);
+                }
+
+                //Iterates through relationships and transform the into "plain" attributes
+                Iterable<Relationship> relationships = instance.getRelationships(RelTypes.RELATED_TO);
+                while(relationships.iterator().hasNext()){
+                    Relationship relationship = relationships.iterator().next();
+                    String attributeName = relationship.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).toString();
+                    if (attributes.get(attributeName)==null)
+                        attributes.put(attributeName, new ArrayList<String>());
+
+                    attributes.get(attributeName).add(String.valueOf(relationship.getEndNode().getId()));
+
+                }
+                return new RemoteObject(oid, className,attributes);
+            }
+        }
+        throw new ObjectNotFoundException(className, oid);
     }
 
     public RemoteObjectLight getObjectInfoLight(String className, Long oid) throws ClassNotFoundException, ObjectNotFoundException, NotAuthorizedException, OperationNotPermittedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //Perform benchmarks to see if accessing to the objects index is less expensive
+        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
+        if (classNode == null)
+            throw new ClassNotFoundException(className);
+        Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
+        while (instances.iterator().hasNext()){
+            Node instance = instances.iterator().next().getEndNode();
+
+            if (instance.getId() == oid.longValue())
+                return new RemoteObjectLight(oid,
+                        instance.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME) == null ? null : instance.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).toString());
+
+        }
+        throw new ObjectNotFoundException(className, oid);
     }
 
     public boolean deleteObject(Long oid) throws ObjectWithRelationsException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean updateObject(String className, Long oid, List<String> attributeNames, List<String> attributeValues) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException, WrongMappingException, NotAuthorizedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean updateObject(String className, Long oid, List<String> attributeNames, List<String> attributeValues) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException, WrongMappingException, NotAuthorizedException, InvalidArgumentException {
+        if (attributeNames.size() != attributeValues.size())
+            throw new ArraySizeMismatchException("Attribute Names","Attribute Values"); //NOI18N
+
+        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
+
+        if (classNode == null)
+            throw new ClassNotFoundException(className);
+
+        //Update the cache if necessary
+        ClassMetadata myClass= CacheManager.getInstance().getClass(className);
+        if (myClass == null){
+            CacheManager.getInstance().putClass(Util.createMetadataFromNode(classNode));
+        }
+
+        Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
+        while (instances.iterator().hasNext()){
+            Node instance = instances.iterator().next().getEndNode();
+
+            if (instance.getId() == oid.longValue()){
+                for (String attributeName : attributeNames)
+                    if(instance.hasProperty(attributeName))
+                        instance.getProperty(attributeName);
+                    else
+                        throw new InvalidArgumentException(className, Level.WARNING);
+            }
+
+        }
+        throw new ObjectNotFoundException(className, oid);
     }
 
     public boolean setBinaryAttributes(String className, Long oid, List<String> attributeNames, List<byte[]> attributeValues) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException, NotAuthorizedException {

@@ -56,6 +56,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public static final String PROPERTY_COLOR = "color"; //NOI18N
     public static final String PROPERTY_ICON = "icon"; //NOI18N
     public static final String PROPERTY_SMALL_ICON = "smallIcon"; //NOI18N
+    /**
+     * How an attribute should be mapped (as a Float, Integer, relationship, etc)
+     */
+    public static final String PROPERTY_MAPPING = "mapping"; //NOI18N
 
      /**
      * Label used for the class index

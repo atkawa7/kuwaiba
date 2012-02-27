@@ -20,6 +20,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.AttributeMetadata;
+import org.kuwaiba.apis.persistence.ClassMetadata;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
@@ -82,5 +83,50 @@ public class Util {
             throw new InvalidArgumentException("Can not retrieve the correct value for ("+
                             value+" "+type+"). Please check your mappings", Level.WARNING);
         }
+    }
+
+    /**
+     * Converts a class metadata node into a ClassMetadata object
+     * @param classNode
+     * @return
+     */
+    public static ClassMetadata createMetadataFromNode(Node classNode) {
+        ClassMetadata myClass = new ClassMetadata();
+        myClass.setName((String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
+        myClass.setAbstractClass((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT));
+        myClass.setColor((Integer)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_COLOR));
+        myClass.setCountable((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_COUNTABLE));
+        myClass.setCustom((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_CUSTOM));
+        myClass.setDescription((String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION));
+        myClass.setDisplayName((String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME));
+        myClass.setDummy((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DUMMY));
+        myClass.setIcon((byte[])classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ICON));
+        myClass.setSmallIcon((byte[])classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_SMALL_ICON));
+        myClass.setId(classNode.getId());
+        //Put list type flag
+        myClass.setLocked((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_LOCKED));
+        if (classNode.getRelationships(RelTypes.EXTENDS).iterator().hasNext())
+            myClass.setParentClassName(
+                    classNode.getRelationships(RelTypes.EXTENDS).
+                    iterator().next().getEndNode().getProperty(
+                        MetadataEntityManagerImpl.PROPERTY_NAME).toString());
+        else
+            myClass.setParentClassName(null);
+
+        Iterable<Relationship> attributes = classNode.getRelationships(RelTypes.HAS);
+        while (attributes.iterator().hasNext()){
+            Node attributeNode = attributes.iterator().next().getEndNode();
+            AttributeMetadata attribute = new AttributeMetadata();
+            attribute.setName(attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).toString());
+            attribute.setAdministrative((Boolean)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ADMINISTRATIVE));
+            attribute.setDescription((String)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION));
+            attribute.setDisplayName((String)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME));
+            attribute.setMapping((Integer)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_MAPPING));
+            attribute.setReadOnly((Boolean)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_READONLY));
+            attribute.setType((String)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
+            attribute.setVisible((Boolean)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_VISIBLE));
+        }
+
+        return myClass;
     }
 }

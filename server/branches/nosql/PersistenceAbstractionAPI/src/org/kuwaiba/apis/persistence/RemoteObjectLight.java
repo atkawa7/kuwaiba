@@ -24,7 +24,13 @@ import java.io.Serializable;
  */
 public class RemoteObjectLight implements Serializable{
 
+    /**
+     * Object's id
+     */
     private Long id;
+    /**
+     * Object's name
+     */
     private String name;
 
     public RemoteObjectLight(Long id, String name) {

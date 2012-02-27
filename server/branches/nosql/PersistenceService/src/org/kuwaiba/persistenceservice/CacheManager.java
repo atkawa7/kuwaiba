@@ -39,6 +39,18 @@ public class CacheManager {
         return cm;
     }
 
-    public void refresh(){
+    public ClassMetadata getClass(String className){
+        return classIndex.get(className);
+    }
+
+    public void putClass(ClassMetadata newClass){
+        classIndex.put(newClass.getName(), newClass);
+    }
+
+    /**
+     * Cleans the cache completely
+     */
+    public void wipe(){
+        classIndex.clear();
     }
 }

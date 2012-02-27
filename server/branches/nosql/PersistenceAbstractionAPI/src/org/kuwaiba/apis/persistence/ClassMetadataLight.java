@@ -19,7 +19,7 @@ package org.kuwaiba.apis.persistence;
 import java.io.Serializable;
 
 /**
- * Contains the basic metadata information about a class
+ * Contains the basic meta data information about a class
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class ClassMetadataLight implements Serializable{
@@ -28,7 +28,6 @@ public class ClassMetadataLight implements Serializable{
     private String name;
     private boolean locked;
     protected boolean abstractClass;
-    private Byte icon;
 
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
@@ -62,14 +61,6 @@ public class ClassMetadataLight implements Serializable{
 
     public void setAbstractClass(boolean abstractClass) {
         this.abstractClass = abstractClass;
-    }
-    
-    public Byte getIcon() {
-        return icon;
-    }
-
-    public void setIcon(Byte icon) {
-        this.icon = icon;
     }
 
     // </editor-fold>

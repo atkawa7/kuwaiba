@@ -30,4 +30,5 @@ public enum RelTypes implements RelationshipType{
     BELONGS_TO, //A class belongs to a category
     INSTANCE_OF, //An object is instance of a given class
     CHILD_OF, //An object is child of a given object
+    RELATED_TO //Represents the many-to-one, many-to-may relationships (like type, responsible, etc)
 }

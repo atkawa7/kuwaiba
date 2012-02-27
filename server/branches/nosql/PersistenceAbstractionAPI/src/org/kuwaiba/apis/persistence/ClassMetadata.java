@@ -31,15 +31,15 @@ public class ClassMetadata extends ClassMetadataLight{
     private List<InterfaceMetadata> interfaces;
     private Integer color;
 
-    private Byte smallIcon;
+    private byte[] icon;
+    private byte[] smallIcon;
     private boolean listType;
     private List<AttributeMetadata> attributes;
 
     private String displayName;
     private CategoryMetadata category;
     private String description;
-    //Why this?
-    private boolean removable;
+
 
    // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public Integer getColor() {
@@ -98,12 +98,20 @@ public class ClassMetadata extends ClassMetadataLight{
         this.parentClassName = parentClassName;
     }
 
-    public Byte getSmallIcon() {
+    public byte[] getSmallIcon() {
         return smallIcon;
     }
 
-    public void setSmallIcon(Byte smallIcon) {
+    public void setSmallIcon(byte[] smallIcon) {
         this.smallIcon = smallIcon;
+    }
+
+    public byte[] getIcon() {
+        return icon;
+    }
+
+    public void setIcon(byte[] icon) {
+        this.icon = icon;
     }
 
     public List<AttributeMetadata> getAttributes() {
@@ -136,14 +144,6 @@ public class ClassMetadata extends ClassMetadataLight{
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }
-
-    public boolean isRemovable() {
-        return removable;
-    }
-
-    public void setRemovable(boolean removable) {
-        this.removable = removable;
     }// </editor-fold>
 
 
@@ -157,5 +157,11 @@ public class ClassMetadata extends ClassMetadataLight{
         return false;
     }
 
-    
+    public boolean hasAttribute(String attribute){
+        for (AttributeMetadata eachAttribute : attributes){
+            if (eachAttribute.getName().equals(attribute))
+                return true;
+        }
+        return false;
+    }
 }

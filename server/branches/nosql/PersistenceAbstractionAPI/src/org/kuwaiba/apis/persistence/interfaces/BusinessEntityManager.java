@@ -16,11 +16,12 @@
 
 package org.kuwaiba.apis.persistence.interfaces;
 
-import java.rmi.server.RemoteObject;
 import java.util.List;
+import org.kuwaiba.apis.persistence.RemoteObject;
 import org.kuwaiba.apis.persistence.RemoteObjectLight;
 import org.kuwaiba.apis.persistence.ResultRecord;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectWithRelationsException;
@@ -109,10 +110,11 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      * @throws ArraySizeMismatchException If the arrays attributeNames and attributeValues have different lengths
+     * @throws InvalidArhumentException If any of the names provided does not exist or can't be set using this method
      */
     public boolean updateObject(String className, Long oid, List<String> attributeNames,List<String> attributeValues)
             throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
-                ArraySizeMismatchException,WrongMappingException, NotAuthorizedException;
+                ArraySizeMismatchException,WrongMappingException, InvalidArgumentException,NotAuthorizedException;
 
     /**
      * Updates an object binary attributes.
