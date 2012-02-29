@@ -17,7 +17,7 @@
 package org.kuwaiba.persistenceservice;
 
 import java.util.HashMap;
-import org.kuwaiba.apis.persistence.ClassMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 
 /**
  * Manages the caching strategy

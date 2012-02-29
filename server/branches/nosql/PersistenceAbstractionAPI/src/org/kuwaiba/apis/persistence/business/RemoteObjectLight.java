@@ -14,11 +14,45 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.apis.persistence.interfaces;
+package org.kuwaiba.apis.persistence.business;
+
+import java.io.Serializable;
 
 /**
- * Manages the metadata entities
+ * Contains a business object basic information
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface MetadataEntityManager {
+public class RemoteObjectLight implements Serializable{
+
+    /**
+     * Object's id
+     */
+    private Long id;
+    /**
+     * Object's name
+     */
+    private String name;
+
+    public RemoteObjectLight(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
 }

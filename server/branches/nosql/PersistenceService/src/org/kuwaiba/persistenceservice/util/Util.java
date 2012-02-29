@@ -19,11 +19,12 @@ package org.kuwaiba.persistenceservice.util;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.logging.Level;
-import org.kuwaiba.apis.persistence.AttributeMetadata;
-import org.kuwaiba.apis.persistence.ClassMetadata;
+import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
@@ -103,7 +104,7 @@ public class Util {
         myClass.setIcon((byte[])classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ICON));
         myClass.setSmallIcon((byte[])classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_SMALL_ICON));
         myClass.setId(classNode.getId());
-        //Put list type flag
+        myClass.setListType(isSubClass("GenericListType", classNode));
         myClass.setLocked((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_LOCKED));
         if (classNode.getRelationships(RelTypes.EXTENDS).iterator().hasNext())
             myClass.setParentClassName(
@@ -128,5 +129,25 @@ public class Util {
         }
 
         return myClass;
+    }
+
+    /**
+     * Traverses the graph up into the class hierarchy trying to find out if a given class
+     * is the subclass of another
+     * @param allegedParentClass The alleged parent class name
+     * @param startNode Class metadata node corresponding to the child class
+     * @return
+     */
+    public static boolean isSubClass(String allegedParentClass, Node startNode){
+        Iterable<Relationship> parent = startNode.getRelationships(RelTypes.EXTENDS, Direction.OUTGOING);
+        if (!parent.iterator().hasNext())
+            return false;
+
+        Node currentNode = parent.iterator().next().getEndNode();
+
+        if (currentNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals(allegedParentClass))
+            return true;
+
+        return isSubClass(allegedParentClass, currentNode);
     }
 }

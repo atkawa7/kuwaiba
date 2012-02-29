@@ -14,11 +14,25 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.apis.persistence.interfaces;
+package org.kuwaiba.apis.persistence.application;
+
+import java.io.Serializable;
 
 /**
- * Manages the metadata entities
+ * Codes assigned to the different available privileges
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface MetadataEntityManager {
+public abstract class Privileges implements Serializable{
+    /**
+     * User/ group can login into the application. It's a dummy permission
+     */
+    public static final int PRIVILEGE_LOGIN = 0;
+    /**
+     * User/group can create objects
+     */
+    public static final int PRIVILEGE_CREATE_OBJECT = 1;
+    /**
+     * User/group can create classes
+     */
+    public static final int PRIVILEGE_CREATE_CLASS = 2;
 }

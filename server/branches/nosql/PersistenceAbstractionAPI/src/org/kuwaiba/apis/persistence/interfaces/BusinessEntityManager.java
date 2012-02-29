@@ -17,9 +17,9 @@
 package org.kuwaiba.apis.persistence.interfaces;
 
 import java.util.List;
-import org.kuwaiba.apis.persistence.RemoteObject;
-import org.kuwaiba.apis.persistence.RemoteObjectLight;
-import org.kuwaiba.apis.persistence.ResultRecord;
+import org.kuwaiba.apis.persistence.business.RemoteObject;
+import org.kuwaiba.apis.persistence.business.RemoteObjectLight;
+import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
@@ -42,14 +42,14 @@ public interface BusinessEntityManager {
      * please note that one-to-many and binary type attributes can't be set here
      * @param template Template name to be use to create the current object. Template values can be
      * overridden if "attributeValues" is not empty
-     * @return A simple representation of the newly created object
+     * @return The object's id
      * @throws ClassNotFoundException Thrown if the object's class can't be found
      * @throws ObjectNotFoundException Thrown if the parent id is not found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      * @throws ArraySizeMismatchException Thrown when the attributeNames and AttributeValues arrays have different sizes
      */
-    public RemoteObjectLight createObject(String className, Long parentOid,
+    public Long createObject(String className, Long parentOid,
             List<String> attributeNames, List<String> attributeValues,String template)
             throws ClassNotFoundException, ObjectNotFoundException, ArraySizeMismatchException,
                 NotAuthorizedException, OperationNotPermittedException;

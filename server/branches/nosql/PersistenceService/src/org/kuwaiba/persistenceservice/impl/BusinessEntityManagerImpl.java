@@ -20,10 +20,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
-import org.kuwaiba.apis.persistence.ClassMetadata;
-import org.kuwaiba.apis.persistence.RemoteObject;
-import org.kuwaiba.apis.persistence.RemoteObjectLight;
-import org.kuwaiba.apis.persistence.ResultRecord;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
+import org.kuwaiba.apis.persistence.business.RemoteObject;
+import org.kuwaiba.apis.persistence.business.RemoteObjectLight;
+import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
@@ -32,7 +32,6 @@ import org.kuwaiba.apis.persistence.exceptions.ObjectWithRelationsException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 import org.kuwaiba.apis.persistence.interfaces.BusinessEntityManager;
-import org.kuwaiba.apis.persistence.interfaces.MetadataEntityManager;
 import org.kuwaiba.persistenceservice.CacheManager;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.kuwaiba.persistenceservice.util.Util;
@@ -81,7 +80,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         this.objectIndex = graphDb.index().forNodes(INDEX_OBJECTS);
     }
 
-    public RemoteObjectLight createObject(String className, Long parentOid, List<String> attributeNames, List<String> attributeValues, String template)
+    public Long createObject(String className, Long parentOid, List<String> attributeNames, List<String> attributeValues, String template)
             throws ClassNotFoundException, ObjectNotFoundException, ArraySizeMismatchException, NotAuthorizedException, OperationNotPermittedException {
 
         if (attributeNames.size() != attributeValues.size())
@@ -125,7 +124,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             }
             
             tx.success();
-            return new RemoteObjectLight(new Long(newObject.getId()), name);
+            return new Long(newObject.getId());
         }catch(Exception ex){
             ex.printStackTrace();
             tx.failure();

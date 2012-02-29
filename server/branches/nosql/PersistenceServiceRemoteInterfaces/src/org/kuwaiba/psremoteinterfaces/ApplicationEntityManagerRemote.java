@@ -14,11 +14,12 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.apis.persistence.interfaces;
+package org.kuwaiba.psremoteinterfaces;
 
 /**
- * Manages the metadata entities
+ *
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface MetadataEntityManager {
+public class ApplicationEntityManagerRemote {
+
 }

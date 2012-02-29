@@ -18,9 +18,9 @@ package org.kuwaiba.psremoteinterfaces;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import org.kuwaiba.apis.persistence.AttributeMetadata;
-import org.kuwaiba.apis.persistence.CategoryMetadata;
-import org.kuwaiba.apis.persistence.ClassMetadata;
+import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
+import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 
 /**
  * RMI wrapper for the MetadataEntityManager interface
