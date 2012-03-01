@@ -25,6 +25,7 @@ import java.util.List;
  */
 public class UserProfile implements Serializable{
 
+    public static final String PROPERTY_ID = "id"; //NOI18N
     public static final String PROPERTY_USERNAME = "username"; //NOI18N
     public static final String PROPERTY_DESCRIPTION = "description"; //NOI18N
     public static final String PROPERTY_PASSWORD = "password"; //NOI18N

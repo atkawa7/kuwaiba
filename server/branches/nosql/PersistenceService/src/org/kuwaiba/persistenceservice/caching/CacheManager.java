@@ -14,9 +14,11 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.persistenceservice;
+package org.kuwaiba.persistenceservice.caching;
 
 import java.util.HashMap;
+import org.kuwaiba.apis.persistence.application.GroupProfile;
+import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 
 /**
@@ -28,7 +30,16 @@ public class CacheManager {
      * Singleton
      */
     private static CacheManager cm;
+    /**
+     * Class cache
+     */
     private HashMap<String, ClassMetadata> classIndex;
+    /**
+     * Users index. It is used to ease the username uniqueness validation
+     */
+    private HashMap<String, UserProfile> userIndex;
+
+
     private CacheManager(){
         classIndex = new HashMap<String, ClassMetadata>();
     }
@@ -39,18 +50,37 @@ public class CacheManager {
         return cm;
     }
 
+    /**
+     * Tries to retrieve a cached class
+     * @param className the class to be retrieved from the cache
+     * @return the cached version of the class. Null if it's  not cached
+     */
     public ClassMetadata getClass(String className){
         return classIndex.get(className);
     }
 
+    /**
+     * Put/replaces an entry into the class cache
+     * @param newClass
+     */
     public void putClass(ClassMetadata newClass){
         classIndex.put(newClass.getName(), newClass);
     }
 
     /**
-     * Cleans the cache completely
+     * Tries to retrieve a cached user
+     * @param userName the class to be retrieved from the cache
+     * @return the cached version of the class. Null if it's  not cached
      */
-    public void wipe(){
-        classIndex.clear();
+    public UserProfile getUser(String userName){
+        return userIndex.get(userName);
+    }
+
+    /**
+     * Put/replaces an entry into the users cache
+     * @param newUser user to be added
+     */
+    public void putUser(UserProfile newUser){
+        userIndex.put(newUser.getUserName(), newUser);
     }
 }

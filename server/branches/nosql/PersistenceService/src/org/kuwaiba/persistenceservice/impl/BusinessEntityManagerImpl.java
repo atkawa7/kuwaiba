@@ -32,7 +32,7 @@ import org.kuwaiba.apis.persistence.exceptions.ObjectWithRelationsException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 import org.kuwaiba.apis.persistence.interfaces.BusinessEntityManager;
-import org.kuwaiba.persistenceservice.CacheManager;
+import org.kuwaiba.persistenceservice.caching.CacheManager;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.kuwaiba.persistenceservice.util.Util;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
@@ -122,7 +122,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     ex.printStackTrace();
                 }
             }
-            
+            objectIndex.putIfAbsent(newObject, MetadataEntityManagerImpl.PROPERTY_ID, newObject.getId());
             tx.success();
             return new Long(newObject.getId());
         }catch(Exception ex){

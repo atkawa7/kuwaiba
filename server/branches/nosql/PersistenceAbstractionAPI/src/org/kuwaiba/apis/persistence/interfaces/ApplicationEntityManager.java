@@ -31,32 +31,36 @@ public interface ApplicationEntityManager {
      * Verifies if a pair username/password matches
      * @param username User name
      * @param password password (in plain text)
-     * @return The user's profile
+     * @return The user's profile. Null if the username/password don't match or any of them is null
      */
     public UserProfile login(String username, String password);
     /**
-     *
+     * Creates a user
      * @param userName New user's name. Mandatory.
      * @param password New user's password
      * @param firstName New user's first name
      * @param lastName New user's last name
-     * @param privileges New user's privileges. See Privileges class documentation for a list of available permissions
-     * @param groups A list with the ids of the groups this user will belong to
+     * @param privileges New user's privileges. See Privileges class documentation for a list of available permissions. Use null for none
+     * @param groups A list with the ids of the groups this user will belong to. Use null for none
      * @return The id of the newly created user
-     * @throws InvalidArgumentException Thrown if the username is null or empty
+     * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
      * @throws ObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
      */
     public Long createUser(String userName, String password, String firstName, 
             String lastName, List<Integer> privileges, List<Long> groups)
             throws InvalidArgumentException, ObjectNotFoundException;
     /**
-     * Modifies user properties
-     * @param oid User's oid
-     * @param properties List of properties to be changed (a set of pairs name-value). Note that
-     * the user's groups can also be set here. For the sake of simpleness, you have to provide the
-     * group ids separated by a comma (","). E.g "1,4,7" will try to relate the user to the groups with
-     * ids 1, 4 and 7. The values must be long-convertible or an InvalidArgumentException will be raised
-     * @throws InvalidArgumentException If any of the property names provided does not exist
+     * Creates a user
+     * @param userName New user's name. Mandatory.
+     * @param password New user's password. Use null to leave it unchanged
+     * @param firstName New user's first name. Use null to leave it unchanged
+     * @param lastName New user's last name. Use null to leave it unchanged
+     * @param privileges New user's privileges. See Privileges class documentation for a list of available permissions. Use null to leave it unchanged
+     * @param groups A list with the ids of the groups this user will belong to. Use null to leave it unchanged
+     * @return The id of the newly created user
+     * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
+     * @throws ObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
      */
-    public void setUserProperties(Long oid, HashMap<String,String> properties) throws InvalidArgumentException;
+    public void setUserProperties(String userName, String password, String firstName, 
+            String lastName, List<Integer> privileges, List<Long> groups) throws InvalidArgumentException, ObjectNotFoundException;
 }

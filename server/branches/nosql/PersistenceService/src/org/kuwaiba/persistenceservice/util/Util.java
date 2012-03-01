@@ -16,8 +16,12 @@
 
 package org.kuwaiba.persistenceservice.util;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Formatter;
 import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -33,6 +37,11 @@ import org.neo4j.graphdb.Relationship;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class Util {
+
+    /**
+     * General purpose Formatter
+     */
+    private static Formatter formatter;
     
      /**
      * Gets an attribute type by traversing through the "HAS" relationship of a given class metadata node
@@ -149,5 +158,35 @@ public class Util {
             return true;
 
         return isSubClass(allegedParentClass, currentNode);
+    }
+
+    /**
+     * Given a plain string, it calculate the MD5 hash. This method is used when authenticating users
+     * Thanks to cholland for the code snippet at http://snippets.dzone.com/posts/show/3686
+     * @param pass
+     * @return the MD5 hash for the given string
+     */
+    public static String getMD5Hash(String pass) {
+        try{
+		MessageDigest m = MessageDigest.getInstance("MD5");
+		byte[] data = pass.getBytes();
+		m.update(data,0,data.length);
+		BigInteger i = new BigInteger(1,m.digest());
+		return String.format("%1$032X", i);
+        }catch(NoSuchAlgorithmException nsa){
+            return null;
+        }
+    }
+
+    /**
+     * Formats 
+     * @param stringToFormat
+     * @param args a variable set of arguments to be used with the formatter
+     * @return The resulting string of merging @stringToFormat with @args
+     */
+    public static String formatString(String stringToFormat,Object ... args){
+        if (formatter == null)
+            formatter = new Formatter();
+        return formatter.format(stringToFormat, args).toString();
     }
 }

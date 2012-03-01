@@ -140,7 +140,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
             id = classNode.getId();
             classIndex.add(classNode, PROPERTY_NAME,  classDefinition.getName());
-            classIndex.add(classNode, PROPERTY_ID,  String.valueOf(classNode.getId()));
+            classIndex.add(classNode, PROPERTY_ID,  classNode.getId());
 
             //Category
             //if the category already exists

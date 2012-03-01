@@ -92,6 +92,10 @@ public class AttributeMetadata implements Serializable{
      * Marks the attribute as read only
      */
     private boolean readOnly;
+    /**
+     * Marks de attribute as unique
+     */
+    private boolean unique;
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public boolean isAdministrative() {
@@ -156,7 +160,16 @@ public class AttributeMetadata implements Serializable{
 
     public void setVisible(boolean visible) {
         this.visible = visible;
-    }// </editor-fold>
+    }
+
+    public boolean isUnique() {
+        return unique;
+    }
+
+    public void setUnique(boolean unique) {
+        this.unique = unique;
+    }
+    // </editor-fold>
     
 
 }
