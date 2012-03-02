@@ -37,16 +37,16 @@ public class Main {
         try{
 
 
-            MetadataEntityManagerRemote meri = new MetadataEntityManagerImpl();
+//            MetadataEntityManagerRemote meri = new MetadataEntityManagerImpl();
 
-            MetadataEntityManagerRemote class1Stub = (MetadataEntityManagerRemote)UnicastRemoteObject.exportObject(meri,0);
+//            MetadataEntityManagerRemote class1Stub = (MetadataEntityManagerRemote)UnicastRemoteObject.exportObject(meri,0);
 
             System.out.println("Iniciando...");
 
             Registry registry = LocateRegistry.getRegistry();
             System.out.println("Registro obtenido...");
 
-            registry.rebind("mem", class1Stub);
+  //          registry.rebind("mem", class1Stub);
 
             System.out.println("Remote Interface bound");
 

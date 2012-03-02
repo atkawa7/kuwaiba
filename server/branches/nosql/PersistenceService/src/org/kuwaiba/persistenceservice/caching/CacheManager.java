@@ -17,7 +17,6 @@
 package org.kuwaiba.persistenceservice.caching;
 
 import java.util.HashMap;
-import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 

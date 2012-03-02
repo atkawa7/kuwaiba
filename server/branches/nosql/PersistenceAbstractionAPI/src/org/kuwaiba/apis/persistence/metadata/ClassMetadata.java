@@ -17,6 +17,8 @@
 package org.kuwaiba.apis.persistence.metadata;
 
 import java.util.List;
+import java.util.logging.Level;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
  * Contains the detailed metadata information about a class
@@ -157,11 +159,24 @@ public class ClassMetadata extends ClassMetadataLight{
         return false;
     }
 
+    /**
+     * Checks if the current class has a given attribute
+     * @param attribute attribute's name
+     * @return if the class has or not such attribute
+     */
     public boolean hasAttribute(String attribute){
         for (AttributeMetadata eachAttribute : attributes){
             if (eachAttribute.getName().equals(attribute))
                 return true;
         }
         return false;
+    }
+
+    public int getAttributeType(String attributeName) throws InvalidArgumentException{
+        for (AttributeMetadata eachAttribute : attributes){
+            if (eachAttribute.getName().equals(attributeName))
+                return eachAttribute.getMapping();
+        }
+        throw new InvalidArgumentException("Attribute cannot be found in this class", Level.WARNING);
     }
 }

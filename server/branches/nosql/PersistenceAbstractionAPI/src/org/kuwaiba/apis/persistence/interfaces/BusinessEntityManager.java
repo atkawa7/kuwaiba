@@ -16,6 +16,7 @@
 
 package org.kuwaiba.apis.persistence.interfaces;
 
+import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.business.RemoteObject;
 import org.kuwaiba.apis.persistence.business.RemoteObjectLight;
@@ -37,9 +38,8 @@ public interface BusinessEntityManager {
      *
      * @param className Name of the class which this object will be instantiated from
      * @param parentOid Parent's oid
-     * @param attributeNames Array with attributes to be set
-     * @param attributeValues Attribute values corresponding to the "attributeNames" parameter as strings
-     * please note that one-to-many and binary type attributes can't be set here
+     * @param attributes Attributes to be set by default in the new object. It's a HashMap where the keys are the attribute names and the values, the values for such attributes.
+     * Note that one-to-many and binary type attributes can't be set here
      * @param template Template name to be use to create the current object. Template values can be
      * overridden if "attributeValues" is not empty
      * @return The object's id
@@ -47,11 +47,10 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException Thrown if the parent id is not found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws NotAuthorizedException If the update can't be performed due to permissions
-     * @throws ArraySizeMismatchException Thrown when the attributeNames and AttributeValues arrays have different sizes
      */
     public Long createObject(String className, Long parentOid,
-            List<String> attributeNames, List<String> attributeValues,String template)
-            throws ClassNotFoundException, ObjectNotFoundException, ArraySizeMismatchException,
+            HashMap<String,String> attributes,String template)
+            throws ClassNotFoundException, ObjectNotFoundException,
                 NotAuthorizedException, OperationNotPermittedException;
     /**
      * Gets the detailed information about an object
@@ -102,19 +101,16 @@ public interface BusinessEntityManager {
      * method. Use setBinaryAttributes and setManyToManyAttribute instead.
      * @param className Object class name
      * @param oid Object's oid
-     * @param attributeNames The attributes to be updated
-     * @param attributeValues The attribute values
-     * @return Success or failure
+     * @param attributes The attributes to be updated (the key is the attribute name, the value is the value)
      * @throws ClassNotFoundException If the object class can't be found
      * @throws ObjectNotFoundException If the object can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws NotAuthorizedException If the update can't be performed due to permissions
-     * @throws ArraySizeMismatchException If the arrays attributeNames and attributeValues have different lengths
      * @throws InvalidArhumentException If any of the names provided does not exist or can't be set using this method
      */
-    public boolean updateObject(String className, Long oid, List<String> attributeNames,List<String> attributeValues)
+    public void updateObject(String className, Long oid, HashMap<String,String> attributes)
             throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
-                ArraySizeMismatchException,WrongMappingException, InvalidArgumentException,NotAuthorizedException;
+                WrongMappingException, InvalidArgumentException,NotAuthorizedException;
 
     /**
      * Updates an object binary attributes.
@@ -152,11 +148,9 @@ public interface BusinessEntityManager {
     /**
      * Move a list of objects to a new parent: this methods ignores those who can't be moved and raises
      * an OperationNotPermittedException, however, it will move those which can be moved
-     * @param classNames List if Objects' class names
-     * @param oids List of objects' oids
+     * @param objects Map using the object class name as keys and the respective objects oids as values
      * @param targetClassName Parent's class name
      * @param targetOid Parent's oid
-     * @return Success or failure
      * @throws ClassNotFoundException If the object's or new parent's class can't be found
      * @throws ObjectNotFoundException If the object or its new parent can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
@@ -164,9 +158,9 @@ public interface BusinessEntityManager {
      * @throws ArraySizeMismatchException If the oids and classNames array sizes do not match
      */
 
-    public boolean moveObjects(List<String> classNames, List<Long> oids, String targetClassName, Long targetOid)
+    public void moveObjects(HashMap<String,List<Long>> objects, String targetClassName, Long targetOid)
             throws ClassNotFoundException, ObjectNotFoundException, 
-                 OperationNotPermittedException, NotAuthorizedException, ArraySizeMismatchException;
+                 OperationNotPermittedException, NotAuthorizedException;
 
     /**
      *

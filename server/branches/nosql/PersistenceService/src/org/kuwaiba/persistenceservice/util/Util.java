@@ -67,19 +67,24 @@ public class Util {
      * @return the converted value
      * @throws InvalidArgumentException If the type can't be converted
      */
-    public static Object getRealValue(String value, int type) throws InvalidArgumentException{
+    public static Object getRealValue(String value, int mapping, String type) throws InvalidArgumentException{
         if (value == null)
             return null;
         try{
-            switch(type){
-                case AttributeMetadata.MAPPING_STRING:
+            switch(mapping){
+                case AttributeMetadata.MAPPING_PRIMITIVE:
+                    if(type.equals("Float"))
+                        return Float.valueOf(value);
+                    else
+                        if(type.equals("Long"))
+                            return Long.valueOf(value);
+                        else
+                            if(type.equals("Integer"))
+                                return Integer.valueOf(value);
+                            else
+                                if(type.equals("Boolean"))
+                                    return Boolean.valueOf(value);
                     return value;
-                case AttributeMetadata.MAPPING_INTEGER:
-                    return Integer.valueOf(value);
-                case AttributeMetadata.MAPPING_FLOAT:
-                    return Float.valueOf(value);
-                case AttributeMetadata.MAPPING_LONG:
-                    return Long.valueOf(value);
                 case AttributeMetadata.MAPPING_DATE:
                     return new Date(Long.valueOf(value));
                 case AttributeMetadata.MAPPING_TIMESTAMP:
