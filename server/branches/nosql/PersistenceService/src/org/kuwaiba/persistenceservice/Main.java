@@ -19,10 +19,13 @@ package org.kuwaiba.persistenceservice;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import org.kuwaiba.apis.persistence.interfaces.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.persistence.factory.PersistenceLayerFactory;
+import org.kuwaiba.persistenceservice.impl.BusinessEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.ConnectionManagerImpl;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
+import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
 
 /**
@@ -40,19 +43,33 @@ public class Main {
         try{
 
             PersistenceLayerFactory plf = new PersistenceLayerFactory();
-            ConnectionManager cm = plf.createConnectionManager();
+            final ConnectionManager cm = plf.createConnectionManager();
             cm.openConnection();
             MetadataEntityManagerRemote meri = new MetadataEntityManagerImpl(cm);
-            //cm.closeConnection();
-            MetadataEntityManagerRemote class1Stub = (MetadataEntityManagerRemote)UnicastRemoteObject.exportObject(meri,0);
+            
+            MetadataEntityManagerRemote memStub = (MetadataEntityManagerRemote)UnicastRemoteObject.exportObject(meri,0);
 
-            System.out.println("Iniciando...");
+            BusinessEntityManagerRemote bemri = new BusinessEntityManagerImpl(cm);
+            BusinessEntityManagerRemote bemStub = (BusinessEntityManagerRemote)UnicastRemoteObject.exportObject(bemri,0);
+
+            System.out.println("Starting...");
 
             Registry registry = LocateRegistry.getRegistry();
-            System.out.println("Registro obtenido...");
+            System.out.println("Registry obtained...");
 
-            registry.rebind("mem", class1Stub);
+            registry.rebind(MetadataEntityManagerRemote.REFERENCE_MEM, memStub);
+            registry.rebind(BusinessEntityManagerRemote.REFERENCE_BEM, bemStub);
             System.out.println("Remote Interface bound");
+
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+
+            @Override
+            public void run() {
+               System.out.println("Closing connection... ");
+               cm.closeConnection();
+               System.out.println("Connection closed");
+            }
+            });
 
         }catch(Exception e){
             e.printStackTrace();
