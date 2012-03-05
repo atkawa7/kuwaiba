@@ -32,137 +32,137 @@ public interface MetadataEntityManagerRemote extends Remote{
      * See Persistence Abstraction API documentation
      * @param classDefinition
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public Long createClass(ClassMetadata classDefinition) throws RemoteException;
+    public Long createClass(ClassMetadata classDefinition) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param newClassDefinition
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean changeClassDefinition(ClassMetadata newClassDefinition) throws RemoteException;
+    public boolean changeClassDefinition(ClassMetadata newClassDefinition) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param className
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean deleteClass(String className) throws RemoteException;
+    public boolean deleteClass(String className) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param classId
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean deleteClass(Long classId) throws RemoteException;
+    public boolean deleteClass(Long classId) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param className
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public ClassMetadata getClass(String className) throws RemoteException;
+    public ClassMetadata getClass(String className) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param classId
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public ClassMetadata getClass(Long classId) throws RemoteException;
+    public ClassMetadata getClass(Long classId) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param classToMoveName
      * @param targetParentName
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean moveClass(String classToMoveName, String targetParentName) throws RemoteException;
+    public boolean moveClass(String classToMoveName, String targetParentName) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param classToMoveId
      * @param targetParentId
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean moveClass(Long classToMoveId, Long targetParentId) throws RemoteException;
+    public boolean moveClass(Long classToMoveId, Long targetParentId) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param className
      * @param attributeDefinition
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean addAttribute(String className, AttributeMetadata attributeDefinition) throws RemoteException;
+    public boolean addAttribute(String className, AttributeMetadata attributeDefinition) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param classId
      * @param attributeDefinition
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean addAttribute(Long classId, AttributeMetadata attributeDefinition) throws RemoteException;
+    public boolean addAttribute(Long classId, AttributeMetadata attributeDefinition) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param className
      * @param attributeName
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public AttributeMetadata getAttribute(String className, String attributeName) throws RemoteException;
+    public AttributeMetadata getAttribute(String className, String attributeName) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param classId
      * @param attributeName
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public AttributeMetadata getAttribute(Long classId, String attributeName) throws RemoteException;
+    public AttributeMetadata getAttribute(Long classId, String attributeName) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param ClassId
      * @param newAttributeDefinition
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean changeAttributeDefinition(Long ClassId, AttributeMetadata newAttributeDefinition) throws RemoteException;
+    public boolean changeAttributeDefinition(Long ClassId, AttributeMetadata newAttributeDefinition) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param className
      * @param attributeName
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean  deleteAttribute(String className, String attributeName) throws RemoteException;
+    public boolean  deleteAttribute(String className, String attributeName) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param classId
      * @param attributeName
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean deleteAttribute(Long classId,String attributeName) throws RemoteException;
+    public boolean deleteAttribute(Long classId,String attributeName) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param categoryDefinition
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public Long createCategory(CategoryMetadata categoryDefinition) throws RemoteException;
+    public Long createCategory(CategoryMetadata categoryDefinition) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param categoryName
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public CategoryMetadata getCategory(String categoryName) throws RemoteException;
+    public CategoryMetadata getCategory(String categoryName) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param categoryId
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public CategoryMetadata getCategory(Integer categoryId) throws RemoteException;
+    public CategoryMetadata getCategory(Integer categoryId) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param categoryDefinition
@@ -173,60 +173,60 @@ public interface MetadataEntityManagerRemote extends Remote{
      * See Persistence Abstraction API documentation
      * @param categoryName
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean deleteCategory(String categoryName) throws RemoteException;
+    public boolean deleteCategory(String categoryName) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param categoryId
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean deleteCategory(Integer categoryId) throws RemoteException;
+    public boolean deleteCategory(Integer categoryId) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param classWhichImplementsName
      * @param interfaceToImplementName
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean addImplementor(String classWhichImplementsName,String interfaceToImplementName) throws RemoteException;
+    public boolean addImplementor(String classWhichImplementsName,String interfaceToImplementName) throws RemoteException, Exception;
     /**
      *
      * @param classWhichImplementsName
      * @param interfaceToBeRemovedName
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean removeImplementor(String classWhichImplementsName ,String interfaceToBeRemovedName) throws RemoteException;
+    public boolean removeImplementor(String classWhichImplementsName ,String interfaceToBeRemovedName) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param classWhichImplementsId
      * @param interfaceToImplementId
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean addImplementor(Integer classWhichImplementsId, Integer interfaceToImplementId) throws RemoteException;
+    public boolean addImplementor(Integer classWhichImplementsId, Integer interfaceToImplementId) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param classWhichImplementsId
      * @param interfaceToBeRemovedId
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean removeImplementor(Integer classWhichImplementsId ,Integer interfaceToBeRemovedId) throws RemoteException;
+    public boolean removeImplementor(Integer classWhichImplementsId ,Integer interfaceToBeRemovedId) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param interfaceName
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean getInterface(String interfaceName) throws RemoteException;
+    public boolean getInterface(String interfaceName) throws RemoteException, Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param interfaceid
      * @return
-     * @throws RemoteException
+     * @throws RemoteException, Exception
      */
-    public boolean getInterface(Integer interfaceid) throws RemoteException;
+    public boolean getInterface(Integer interfaceid) throws RemoteException, Exception;
 }
