@@ -17,6 +17,7 @@ package org.kuwaiba.persistenceservice.impl.enumerations;
 
 import org.neo4j.graphdb.RelationshipType;
 
+
 /**
  * Possible attribute types
  * @author Adrian Fernando Martinez Molina <adrian.martinez@kuwaiba.org>
