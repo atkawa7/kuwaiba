@@ -19,6 +19,9 @@ package org.kuwaiba.persistenceservice;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
+import org.kuwaiba.persistence.factory.PersistenceLayerFactory;
+import org.kuwaiba.persistenceservice.impl.ConnectionManagerImpl;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
 
@@ -36,18 +39,19 @@ public class Main {
             System.setSecurityManager(new SecurityManager());
         try{
 
-
-//            MetadataEntityManagerRemote meri = new MetadataEntityManagerImpl();
-
-//            MetadataEntityManagerRemote class1Stub = (MetadataEntityManagerRemote)UnicastRemoteObject.exportObject(meri,0);
+            PersistenceLayerFactory plf = new PersistenceLayerFactory();
+            ConnectionManager cm = plf.createConnectionManager();
+            cm.openConnection();
+            MetadataEntityManagerRemote meri = new MetadataEntityManagerImpl(cm);
+            //cm.closeConnection();
+            MetadataEntityManagerRemote class1Stub = (MetadataEntityManagerRemote)UnicastRemoteObject.exportObject(meri,0);
 
             System.out.println("Iniciando...");
 
             Registry registry = LocateRegistry.getRegistry();
             System.out.println("Registro obtenido...");
 
-  //          registry.rebind("mem", class1Stub);
-
+            registry.rebind("mem", class1Stub);
             System.out.println("Remote Interface bound");
 
         }catch(Exception e){
