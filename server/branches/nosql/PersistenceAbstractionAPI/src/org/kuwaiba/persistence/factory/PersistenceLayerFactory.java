@@ -46,7 +46,7 @@ public class PersistenceLayerFactory{
         {
              ConnectionManager cmn = (ConnectionManager)Class.forName(
                      "org.kuwaiba.persistenceservice.impl.ConnectionManagerImpl").newInstance();
-
+             
             return cmn;
         }
         catch (ClassNotFoundException cnfe) // driver not found
@@ -75,6 +75,7 @@ public class PersistenceLayerFactory{
         {
             Class myClass = (Class) Class.forName(
                     "org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl");
+            
             Constructor cmMem = myClass.getConstructor(ConnectionManager.class);
 
             MetadataEntityManager mem = (MetadataEntityManager)cmMem.newInstance(connectionManager);
