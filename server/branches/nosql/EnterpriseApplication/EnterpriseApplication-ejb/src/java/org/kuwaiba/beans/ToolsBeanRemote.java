@@ -19,11 +19,10 @@ package org.kuwaiba.beans;
 import javax.ejb.Remote;
 
 /**
- * Main session bean backing the webservice
+ *
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Remote
-public interface WebServiceBeanRemote {
-
+public interface ToolsBeanRemote {
     
 }

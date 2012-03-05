@@ -35,8 +35,7 @@ public class Kuwaiba {
      */
     @WebMethod(operationName = "getMyMetadata")
     public String getMyMetadata() {
-        //TODO write your implementation code here:
-        return wsBean.getMyMetadata();
+        return null;
     }
 
 

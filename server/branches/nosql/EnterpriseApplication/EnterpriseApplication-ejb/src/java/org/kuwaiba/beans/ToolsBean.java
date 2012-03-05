@@ -16,14 +16,16 @@
 
 package org.kuwaiba.beans;
 
-import javax.ejb.Remote;
+import javax.ejb.Stateless;
 
 /**
- * Main session bean backing the webservice
+ * Session bean implementing
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@Remote
-public interface WebServiceBeanRemote {
-
+@Stateless
+public class ToolsBean implements ToolsBeanRemote {
     
+    // Add business logic below. (Right-click in editor and choose
+    // "Insert Code > Add Business Method")
+ 
 }
