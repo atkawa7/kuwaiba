@@ -19,6 +19,7 @@ package org.kuwaiba.apis.persistence.interfaces;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 
 /**
@@ -32,13 +33,14 @@ public interface ApplicationEntityManager {
      * @param password password (in plain text)
      * @return The user's profile. Null if the username/password don't match or any of them is null
      */
-    public UserProfile login(String username, String password);
+    public UserProfile login(String username, String password) throws NotAuthorizedException;
     /**
      * Creates a user
      * @param userName New user's name. Mandatory.
      * @param password New user's password
      * @param firstName New user's first name
      * @param lastName New user's last name
+     * @param enabled Shall the new user be enabled by default
      * @param privileges New user's privileges. See Privileges class documentation for a list of available permissions. Use null for none
      * @param groups A list with the ids of the groups this user will belong to. Use null for none
      * @return The id of the newly created user
@@ -46,7 +48,7 @@ public interface ApplicationEntityManager {
      * @throws ObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
      */
     public Long createUser(String userName, String password, String firstName, 
-            String lastName, List<Integer> privileges, List<Long> groups)
+            String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
             throws InvalidArgumentException, ObjectNotFoundException;
     /**
      * Creates a user

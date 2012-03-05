@@ -73,18 +73,23 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager{
         if (user == null)
             return null;
 
+        if (!(Boolean)user.getProperty(UserProfile.PROPERTY_ENABLED))
+            return null;
+
         if (Util.getMD5Hash(password).equals(user.getProperty(UserProfile.PROPERTY_PASSWORD)))
             return new UserProfile(new Long(user.getId()),
                     (String)user.getProperty(UserProfile.PROPERTY_USERNAME),
                     (String)user.getProperty(UserProfile.PROPERTY_FIRST_NAME),
                     (String)user.getProperty(UserProfile.PROPERTY_LAST_NAME),
+                    (Boolean)user.getProperty(UserProfile.PROPERTY_ENABLED),
                     (List<Integer>)user.getProperty(UserProfile.PROPERTY_PRIVILEGES)
                     );
         else
             return null;
     }
 
-    public Long createUser(String userName, String password, String firstName, String lastName, List<Integer> privileges, List<Long> groups) throws InvalidArgumentException, ObjectNotFoundException {
+    public Long createUser(String userName, String password, String firstName, 
+            String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups) throws InvalidArgumentException, ObjectNotFoundException {
         if (userName == null)
             throw new InvalidArgumentException("User name can't be null", Level.INFO);
 
@@ -109,6 +114,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager{
         newUser.setProperty(UserProfile.PROPERTY_PASSWORD, Util.getMD5Hash(password));
         newUser.setProperty(UserProfile.PROPERTY_FIRST_NAME, firstName);
         newUser.setProperty(UserProfile.PROPERTY_LAST_NAME, lastName);
+        newUser.setProperty(UserProfile.PROPERTY_ENABLED, enabled);
 
         if (privileges != null)
             newUser.setProperty(UserProfile.PROPERTY_PRIVILEGES, privileges);
@@ -126,7 +132,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager{
         }
         userIndex.putIfAbsent(newUser, UserProfile.PROPERTY_ID, newUser.getId());
         userIndex.putIfAbsent(newUser, UserProfile.PROPERTY_USERNAME, userName);
-        CacheManager.getInstance().putUser(new UserProfile(newUser.getId(), userName, firstName, lastName, privileges));
+        CacheManager.getInstance().putUser(new UserProfile(newUser.getId(), userName, 
+                firstName, lastName, true, privileges));
         tx.success();
         return new Long(newUser.getId());
     }

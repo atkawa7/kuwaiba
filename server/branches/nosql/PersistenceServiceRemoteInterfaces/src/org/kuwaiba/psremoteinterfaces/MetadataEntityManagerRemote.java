@@ -18,6 +18,7 @@ package org.kuwaiba.psremoteinterfaces;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -168,7 +169,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @param categoryDefinition
      * @return
      */
-    public boolean changeCategoryDefinition(CategoryMetadata categoryDefinition);
+    public boolean changeCategoryDefinition(CategoryMetadata categoryDefinition) throws MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param categoryName

@@ -21,11 +21,13 @@ import org.kuwaiba.apis.persistence.interfaces.MetadataEntityManager;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
 import java.util.ArrayList;
 import java.util.List;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.exceptions.MiscException;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
+import org.kuwaiba.persistenceservice.util.Util;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -932,15 +934,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws MiscException if there is no Category with such cetegoryId
      */
     @Override
-    public boolean changeCategoryDefinition(CategoryMetadata categoryDefinition) throws Exception {
+    public boolean changeCategoryDefinition(CategoryMetadata categoryDefinition) throws MetadataObjectNotFoundException{
         Transaction tx = graphDb.beginTx();
         try{
             Node ctgr = categoryIndex.get(PROPERTY_NAME, categoryDefinition.getName()).getSingle();
 
              if(ctgr == null)
-                throw new MiscException("Can not find the category with the name "
-                        + categoryDefinition.getName() +
-                        " the category definition could not be changed");
+                throw new MetadataObjectNotFoundException(Util.formatString("Can not find the category with the name %1s", categoryDefinition.getName()));
 
             ctgr.setProperty(PROPERTY_NAME, categoryDefinition.getName());
             ctgr.setProperty(PROPERTY_DISPLAY_NAME, categoryDefinition.getDisplayName());
