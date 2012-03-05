@@ -69,20 +69,22 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
 
     @Override
     public void openConnection() {
-        
+        System.out.println("Staring bd ....");
         Properties props = new Properties();
-        try {
-             props.load(new FileInputStream("connection.properties"));
+//        try {
+//
+//            props.load(new FileInputStream("../connection.properties"));
+//
+//        }catch(IOException e){
+//            System.out.println(e.getMessage());
+//        }
+//
+//        graphDb = new EmbeddedGraphDatabase(props.getProperty("conection_DB_PATH") +
+//                                            props.getProperty("connection_database"));
 
-        }catch(IOException e){
-            System.out.println(e.getMessage());
-        }
-        
-        graphDb = new EmbeddedGraphDatabase(props.getProperty("connection_host") 
-                                            +  props.getProperty("conection_DB_PATH") +
-                                            props.getProperty("connection_database"));
+        graphDb = new EmbeddedGraphDatabase("target/kuwaiba_db");
+        //graphDb.toString();
 
-        graphDb.toString();
         registerShutdownHook( graphDb );
     }
 
@@ -105,7 +107,15 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
     public EmbeddedGraphDatabase getConnectionHandler(){
         return (EmbeddedGraphDatabase)graphDb;
     }
-    
+
+    void shutDown()
+    {
+        System.out.println();
+        System.out.println( "Shutting down database ..." );
+
+        graphDb.shutdown();
+        
+    }
    
     private static void registerShutdownHook( final GraphDatabaseService graphDb)
     {
