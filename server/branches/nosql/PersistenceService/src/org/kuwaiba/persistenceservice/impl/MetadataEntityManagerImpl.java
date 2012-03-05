@@ -91,6 +91,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      */
     public MetadataEntityManagerImpl(ConnectionManager cmn) {
         graphDb = (EmbeddedGraphDatabase)cmn.getConnectionHandler();
+        classIndex = graphDb.index().forNodes( "Classes" );
+        categoryIndex = graphDb.index().forNodes( "Categories" );
     }
 
     /**
@@ -114,62 +116,91 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Relationship rootRel = referenceNode.getSingleRelationship(
                     RelTypes.ROOT, Direction.BOTH);
 
-            if (rootRel == null){
+            if (rootRel == null && classDefinition.getName().equals("RootObject")){
                 Node rootNode = graphDb.createNode();
-                rootNode.setProperty(PROPERTY_NAME, "root");
-                rootNode.setProperty(PROPERTY_LOCKED, "true");
+                rootNode.setProperty(PROPERTY_NAME, classDefinition.getName());
 
-                classIndex.add(rootNode, PROPERTY_NAME, "root");
-                classIndex.add(rootNode, PROPERTY_ID,  String.valueOf(rootNode.getId()));
+                classIndex.putIfAbsent(rootNode, PROPERTY_NAME, classDefinition.getName());
+                classIndex.putIfAbsent(rootNode, PROPERTY_ID, rootNode.getId());
 
                 referenceNode.createRelationshipTo(rootNode, RelTypes.ROOT);
+
+                id = rootNode.getId();
             }
 
-            //The ClassNode
-            Node classNode = graphDb.createNode();
-
-            classNode.setProperty(PROPERTY_NAME, classDefinition.getName());
-            classNode.setProperty(PROPERTY_DISPLAY_NAME, classDefinition.getDisplayName());
-            classNode.setProperty(PROPERTY_CUSTOM, classDefinition.isCustom());
-            classNode.setProperty(PROPERTY_COUNTABLE, classDefinition.isCountable());
-            classNode.setProperty(PROPERTY_COLOR, classDefinition.getColor());
-            classNode.setProperty(PROPERTY_LOCKED, classDefinition.isLocked());
-            classNode.setProperty(PROPERTY_DESCRIPTION, classDefinition.getDescription());
-            classNode.setProperty(PROPERTY_ABSTRACT, classDefinition.isAbstractClass());
-            classNode.setProperty(PROPERTY_DUMMY, classDefinition.isDummy());
-            classNode.setProperty(PROPERTY_ICON, classDefinition.getIcon());
-            classNode.setProperty(PROPERTY_SMALL_ICON, classDefinition.getSmallIcon());
-
-            id = classNode.getId();
-            classIndex.add(classNode, PROPERTY_NAME,  classDefinition.getName());
-            classIndex.add(classNode, PROPERTY_ID,  classNode.getId());
-
-            //Category
-            //if the category already exists
-            Node ctgrNode = categoryIndex.get(PROPERTY_NAME, classDefinition.getCategory().getName()).getSingle();
-            if(ctgrNode == null){
-                Long ctgrId = createCategory(classDefinition.getCategory());
-                ctgrNode = categoryIndex.get(PROPERTY_ID, ctgrId).getSingle();
-            }
-            classNode.createRelationshipTo(ctgrNode, RelTypes.BELONGS_TO);
-
-            Node parentNode = classIndex.get(PROPERTY_NAME, String.valueOf(classDefinition.getParentName())).getSingle();
-
-            if(parentNode == null)
-                    throw new ClassNotFoundException("The Parent Node with id" +
-                            classDefinition.getParentName()
-                            + "does not exist");
-
-            //Set extendended attributes from parent
             else
             {
-                classNode.createRelationshipTo(parentNode, RelTypes.EXTENDS);
-                Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.HAS);
-                for (Relationship rel : relationships) {
-                    Node parentAttrNode = rel.getEndNode();
-                    classNode.createRelationshipTo(parentAttrNode, RelTypes.HAS);
+                //The ClassNode
+                Node classNode = graphDb.createNode();
+
+                classNode.setProperty(PROPERTY_NAME, classDefinition.getName());
+                classNode.setProperty(PROPERTY_DISPLAY_NAME, classDefinition.getDisplayName());
+                classNode.setProperty(PROPERTY_CUSTOM, classDefinition.isCustom());
+                classNode.setProperty(PROPERTY_COUNTABLE, classDefinition.isCountable());
+                classNode.setProperty(PROPERTY_COLOR, classDefinition.getColor());
+                classNode.setProperty(PROPERTY_LOCKED, classDefinition.isLocked());
+                classNode.setProperty(PROPERTY_DESCRIPTION, classDefinition.getDescription());
+                classNode.setProperty(PROPERTY_ABSTRACT, classDefinition.isAbstractClass());
+                classNode.setProperty(PROPERTY_DUMMY, classDefinition.isDummy());
+                classNode.setProperty(PROPERTY_ICON, classDefinition.getIcon());
+                classNode.setProperty(PROPERTY_SMALL_ICON, classDefinition.getSmallIcon());
+
+                id = classNode.getId();
+                
+                classIndex.putIfAbsent(classNode, PROPERTY_NAME,  classDefinition.getName());
+                classIndex.putIfAbsent(classNode, PROPERTY_ID,  classNode.getId());
+
+                //Category
+                //if the category already exists
+                if(classDefinition.getCategory() != null)
+                {
+                    Node ctgrNode = categoryIndex.get(PROPERTY_NAME, classDefinition.getCategory().getName()).getSingle();
+                    if(ctgrNode == null)
+                    {
+                        Long ctgrId = createCategory(classDefinition.getCategory());
+                        ctgrNode = categoryIndex.get(PROPERTY_ID, ctgrId).getSingle();
+                    }
+                    classNode.createRelationshipTo(ctgrNode, RelTypes.BELONGS_TO_GROUP);
+
+                }//end if is category null
+
+                Node parentNode = classIndex.get(PROPERTY_NAME, classDefinition.getParentClassName()).getSingle();
+
+                if(parentNode != null)
+                {
+                    classNode.createRelationshipTo(parentNode, RelTypes.EXTENDS);
+                    Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.HAS);
+                    //
+                    for (Relationship rel : relationships)
+                    {
+                        Node parentAttrNode = rel.getEndNode();
+                        Node newAttrNode = graphDb.createNode();
+                        //newAttrNode = parentAttrNode;
+                        
+//                        Iterable<Relationship> auxRel = newAttrNode.getRelationships();
+//
+//                        for (Relationship relationship : auxRel) {
+//                            relationship.delete();
+//                        }
+                        newAttrNode.setProperty(PROPERTY_NAME, parentAttrNode.getProperty(PROPERTY_NAME));
+                        newAttrNode.setProperty(PROPERTY_DESCRIPTION, parentAttrNode.getProperty(PROPERTY_DESCRIPTION));
+                        newAttrNode.setProperty(PROPERTY_DISPLAY_NAME, parentAttrNode.getProperty(PROPERTY_DISPLAY_NAME));
+                        newAttrNode.setProperty(PROPERTY_TYPE,parentAttrNode.getProperty(PROPERTY_TYPE));
+
+                        newAttrNode.setProperty(PROPERTY_READONLY, parentAttrNode.getProperty(PROPERTY_READONLY));
+                        newAttrNode.setProperty(PROPERTY_VISIBLE, parentAttrNode.getProperty(PROPERTY_VISIBLE));
+                        newAttrNode.setProperty(PROPERTY_ADMINISTRATIVE, parentAttrNode.getProperty(PROPERTY_ADMINISTRATIVE));
+
+                        classNode.createRelationshipTo(newAttrNode, RelTypes.HAS);
+                    }
                 }
-            }
+
+                //Set extendended attributes from parent
+                else
+                    throw new ClassNotFoundException("The Parent Node with id " +
+                                classDefinition.getParentClassName()
+                                + " does not exist");
+            }//end else not rootNode
 
             //Attributes
             for (AttributeMetadata at : classDefinition.getAttributes()) {
@@ -185,10 +216,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }finally{
             tx.finish();
         }
+
     }
 
     /**
-     * Changes the definiton of a classmetadata
+     * Changes a classmetadata definiton 
      * @param newClassDefinition
      * @return true if success
      * @throws ClassNotFoundException if there is no class with such classId
@@ -329,7 +361,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         CategoryMetadata ctgr = new CategoryMetadata();
         Transaction tx = graphDb.beginTx();
         try{
-            Node node = classIndex.get(PROPERTY_ID, String.valueOf(classId)).getSingle();
+            Node node = classIndex.get(PROPERTY_ID, classId).getSingle();
 
             if(node == null)
                 throw new ClassNotFoundException("The Class Id: " + classId +
@@ -344,8 +376,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             cm.setAbstractClass((Boolean)node.getProperty(PROPERTY_ABSTRACT));
             cm.setDummy((Boolean)node.getProperty(PROPERTY_DUMMY));
             cm.setInterfaces(null);
-            cm.setIcon((Byte)node.getProperty(PROPERTY_ICON));
-            cm.setSmallIcon((Byte)node.getProperty(PROPERTY_SMALL_ICON));
+            cm.setIcon((byte[])node.getProperty(PROPERTY_ICON));
+            cm.setSmallIcon((byte[])node.getProperty(PROPERTY_SMALL_ICON));
 
             //Attributes
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
@@ -369,7 +401,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             cm.setAttributes(listAttributes);
 
             //Category
-            Relationship relationship = node.getSingleRelationship(RelTypes.BELONGS_TO, Direction.BOTH);
+            Relationship relationship = node.getSingleRelationship(RelTypes.BELONGS_TO_GROUP, Direction.BOTH);
             Node ctgrNode = relationship.getEndNode();
             ctgr.setName((String)ctgrNode.getProperty(PROPERTY_NAME));
             ctgr.setDisplayName((String)ctgrNode.getProperty(PROPERTY_DISPLAY_NAME));
@@ -379,7 +411,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
             //parent
             Relationship parentRel = node.getSingleRelationship(RelTypes.EXTENDS, Direction.BOTH);
-            cm.setParentName((String)parentRel.getProperty(PROPERTY_NAME));
+            cm.setParentClassName((String)parentRel.getProperty(PROPERTY_NAME));
 
             tx.success();
         }
@@ -419,8 +451,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             cm.setAbstractClass((Boolean)node.getProperty(PROPERTY_ABSTRACT));
             cm.setDummy((Boolean)node.getProperty(PROPERTY_DUMMY));
             cm.setInterfaces(null);
-            cm.setIcon((Byte)node.getProperty(PROPERTY_ICON));
-            cm.setSmallIcon((Byte)node.getProperty(PROPERTY_SMALL_ICON));
+            cm.setIcon((byte[])node.getProperty(PROPERTY_ICON));
+            cm.setSmallIcon((byte[])node.getProperty(PROPERTY_SMALL_ICON));
 
             //Attributes
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
@@ -443,7 +475,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             cm.setAttributes(listAttributes);
 
             //Category
-            Relationship ctgrRel = node.getSingleRelationship(RelTypes.BELONGS_TO, Direction.BOTH);
+            Relationship ctgrRel = node.getSingleRelationship(RelTypes.BELONGS_TO_GROUP, Direction.BOTH);
             Node ctgrNode = ctgrRel.getEndNode();
             ctgr.setName((String)ctgrNode.getProperty(PROPERTY_NAME));
             ctgr.setDisplayName((String)ctgrNode.getProperty(PROPERTY_DISPLAY_NAME));
@@ -453,7 +485,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
             //Parent
             Relationship parentRel = node.getSingleRelationship(RelTypes.EXTENDS, Direction.BOTH);
-            cm.setParentName((String)parentRel.getEndNode().getProperty(PROPERTY_NAME));
+            cm.setParentClassName((String)parentRel.getEndNode().getProperty(PROPERTY_NAME));
 
             tx.success();
 
@@ -512,8 +544,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     {
         Transaction tx = graphDb.beginTx();
         try{
-            Node ctm = classIndex.get(PROPERTY_ID, String.valueOf(classToMoveId)).getSingle();
-            Node tcn = classIndex.get(PROPERTY_ID, String.valueOf(targetParentClassId)).getSingle();
+            Node ctm = classIndex.get(PROPERTY_ID, classToMoveId).getSingle();
+            Node tcn = classIndex.get(PROPERTY_ID, targetParentClassId).getSingle();
 
             if(ctm == null)
                throw new ClassNotFoundException("The Class Id " +classToMoveId+
@@ -585,7 +617,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     {
         Transaction tx = graphDb.beginTx();
         try{
-            Node node = classIndex.get(PROPERTY_ID, String.valueOf(classId)).getSingle();
+            Node node = classIndex.get(PROPERTY_ID, classId).getSingle();
 
             if (node == null)
                 throw new ClassNotFoundException("The Class Id " + classId + "does not exist");
@@ -672,7 +704,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         Transaction tx = graphDb.beginTx();
         try{
             //TODO poner exception no hay classId
-            Node node = classIndex.get(PROPERTY_ID, String.valueOf(classId)).getSingle();
+            Node node = classIndex.get(PROPERTY_ID, classId).getSingle();
 
             if(node == null)
                 throw new ClassNotFoundException(("The classId: " + classId + ", does not exist"));
@@ -765,7 +797,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws ClassNotFoundException if there is no a class with such classId
      * @throws MiscException if the attributeName does not exist
      */
-
     @Override //TODO ponerlo en el modelo
     public boolean deleteAttribute(Long classId,String attributeName) throws Exception
     {
@@ -773,7 +804,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         boolean couldDelAtt = false;
         try{
             //TODO poner exception no hay classId
-            Node node = classIndex.get(PROPERTY_ID, String.valueOf(classId)).getSingle();
+            Node node = classIndex.get(PROPERTY_ID, classId).getSingle();
 
             if(node == null)
                 throw new ClassNotFoundException ("The classId: " + classId +
@@ -808,7 +839,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @param categoryDefinition
      * @return CategoryId
      */
-
     @Override
     public Long createCategory(CategoryMetadata categoryDefinition)
     {
@@ -822,7 +852,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
             id = category.getId();
 
-            categoryIndex.add(category, PROPERTY_ID,String.valueOf(id));
+            categoryIndex.add(category, PROPERTY_ID,id);
             categoryIndex.add(category, PROPERTY_NAME,categoryDefinition.getName());
 
             tx.success();
@@ -841,7 +871,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @return CategoryMetadata
      * @throws MiscException if the Category does not exist
      */
-
     @Override
     public CategoryMetadata getCategory(String categoryName) throws Exception
     {
@@ -877,7 +906,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         CategoryMetadata cm = new CategoryMetadata();
         Transaction tx = graphDb.beginTx();
         try{
-            Node ctgNode = categoryIndex.get(PROPERTY_ID, String.valueOf(categoryId)).getSingle();
+            Node ctgNode = categoryIndex.get(PROPERTY_ID, categoryId).getSingle();
 
              if(ctgNode == null)
                 throw new MiscException("Can not find the category with the id "
@@ -902,6 +931,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @return true if success
      * @throws MiscException if there is no Category with such cetegoryId
      */
+    @Override
     public boolean changeCategoryDefinition(CategoryMetadata categoryDefinition) throws Exception {
         Transaction tx = graphDb.beginTx();
         try{
