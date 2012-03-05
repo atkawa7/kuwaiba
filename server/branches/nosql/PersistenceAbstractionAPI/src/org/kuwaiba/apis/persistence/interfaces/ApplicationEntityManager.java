@@ -16,7 +16,6 @@
 
 package org.kuwaiba.apis.persistence.interfaces;
 
-import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;

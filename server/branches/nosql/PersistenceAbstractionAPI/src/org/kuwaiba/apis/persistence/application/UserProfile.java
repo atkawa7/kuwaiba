@@ -32,6 +32,8 @@ public class UserProfile implements Serializable{
     public static final String PROPERTY_FIRST_NAME = "firstName"; //NOI18N
     public static final String PROPERTY_LAST_NAME = "lastName"; //NOI18N
     public static final String PROPERTY_PRIVILEGES = "privileges"; //NOI18N
+    public static final String PROPERTY_CREATION_DATE = "creationDate"; //NOI18N
+    public static final String PROPERTY_ENABLED = "enabled"; //NOI18N
     /**
      * User's id (oid)
      */
@@ -49,18 +51,27 @@ public class UserProfile implements Serializable{
      */
     private String lastName;
     /**
+     * User's creation date (a time stamp)
+     */
+    private Long creationDate;
+    /**
+     * Is this user enabled?
+     */
+    private Boolean enabled;
+    /**
      * User's privileges. See class Privileges for the complete list of supported privileges
      */
     private List<Integer> privileges;
 
-    public UserProfile(Long id, String userName, String firstName, String lastName, List<Integer> privileges) {
+    public UserProfile(Long id, String userName, String firstName, String lastName, Boolean enabled,
+            List<Integer> privileges) {
         this.id = id;
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.privileges = privileges;
+        this.enabled = enabled;
     }
-
 
     public String getUserName() {
         return userName;
@@ -100,5 +111,21 @@ public class UserProfile implements Serializable{
 
     public void setUserId(Long id) {
         this.id = id;
+    }
+
+    public Long getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Long creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 }

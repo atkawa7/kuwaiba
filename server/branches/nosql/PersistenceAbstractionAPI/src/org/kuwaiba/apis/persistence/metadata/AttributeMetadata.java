@@ -49,6 +49,10 @@ public class AttributeMetadata implements Serializable{
      */
     public static final int MAPPING_MANYTOMANY = 6;
     /**
+     * Attribute's id
+     */
+    private Long id;
+    /**
      * Attribute's name
      */
     private String name;
@@ -156,6 +160,14 @@ public class AttributeMetadata implements Serializable{
 
     public void setUnique(boolean unique) {
         this.unique = unique;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
     // </editor-fold>
     

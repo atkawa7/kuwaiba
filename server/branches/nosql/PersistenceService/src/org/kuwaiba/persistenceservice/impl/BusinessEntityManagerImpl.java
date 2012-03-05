@@ -17,9 +17,11 @@
 package org.kuwaiba.persistenceservice.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.business.RemoteObject;
 import org.kuwaiba.apis.persistence.business.RemoteObjectLight;
@@ -79,6 +81,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         this.graphDb = graphDb;
         this.classIndex = graphDb.index().forNodes(MetadataEntityManagerImpl.INDEX_CLASS);
         this.objectIndex = graphDb.index().forNodes(INDEX_OBJECTS);
+        this.cm = CacheManager.getInstance();
     }
 
     public Long createObject(String className, Long parentOid, HashMap<String,String> attributes, String template)
@@ -90,9 +93,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throw new ClassNotFoundException("Class "+className+" can not be found");
 
         //Update the cache if necessary
-        ClassMetadata myClass= CacheManager.getInstance().getClass(className);
+        ClassMetadata myClass= cm.getClass(className);
         if (myClass == null){
-            CacheManager.getInstance().putClass(Util.createMetadataFromNode(classNode));
+            myClass = Util.createMetadataFromNode(classNode);
+            cm.putClass(myClass);
         }
 
         Node parentNode = null;
@@ -112,16 +116,20 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
 
             for (AttributeMetadata att : myClass.getAttributes()){
-                String value = attributes.get(att.getName());
+                if (att.getName().equals(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE))
+                    newObject.setProperty(att.getName(), Calendar.getInstance().getTimeInMillis());
+                else{
+                    String value = attributes.get(att.getName());
 
-                if (value == null){
-                    if (att.getMapping() == AttributeMetadata.MAPPING_BINARY)
-                        newObject.setProperty(att.getName(), null);
-                    else{
-                        if (att.getMapping() != AttributeMetadata.MAPPING_MANYTOMANY &&
-                                att.getMapping() != AttributeMetadata.MAPPING_MANYTOONE){
-                            Object actualValue = Util.getRealValue(value, att.getMapping(),att.getType());
-                            newObject.setProperty(att.getName(), actualValue);
+                    if (value == null){
+                        if (att.getMapping() == AttributeMetadata.MAPPING_BINARY)
+                            newObject.setProperty(att.getName(), null);
+                        else{
+                            if (att.getMapping() != AttributeMetadata.MAPPING_MANYTOMANY &&
+                                    att.getMapping() != AttributeMetadata.MAPPING_MANYTOONE){
+                                Object actualValue = Util.getRealValue(value, att.getMapping(),att.getType());
+                                newObject.setProperty(att.getName(), actualValue);
+                            }
                         }
                     }
                 }
@@ -130,7 +138,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             tx.success();
             return new Long(newObject.getId());
         }catch(Exception ex){
-            ex.printStackTrace();
+            Logger.getLogger("createObject: "+ex.getMessage()); //NOI18N
             tx.failure();
             return null;
         }
@@ -141,6 +149,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
             throw new ClassNotFoundException(className);
+
+        //Update the cache if necessary
+        ClassMetadata myClass= cm.getClass(className);
+        if (myClass == null){
+            myClass = Util.createMetadataFromNode(classNode);
+            cm.putClass(myClass);
+        }
 
         Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
         while (instances.iterator().hasNext()){
@@ -155,8 +170,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     String attributeName = attributeNames.iterator().next();
                     List<String> attributeValue = null;
                     if (instance.getProperty(attributeName) != null ){
-                        attributeValue = new ArrayList<String>();
-                        attributeValue.add(instance.getProperty(attributeName).toString());
+                        try {
+                            if (myClass.getAttributeMapping(attributeName) != AttributeMetadata.MAPPING_BINARY) {
+                                attributeValue = new ArrayList<String>();
+                                attributeValue.add(instance.getProperty(attributeName).toString());
+                            }
+                        } catch (InvalidArgumentException ex) { //This should never happen
+                            Logger.getLogger(BusinessEntityManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                     attributes.put(attributeName,attributeValue);
                 }
@@ -200,7 +221,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
 
     public void updateObject(String className, Long oid, HashMap<String,String> attributes) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, WrongMappingException, NotAuthorizedException, InvalidArgumentException {
-        
 
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
 
@@ -208,9 +228,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throw new ClassNotFoundException(className);
 
         //Update the cache if necessary
-        ClassMetadata myClass= CacheManager.getInstance().getClass(className);
+        ClassMetadata myClass= cm.getClass(className);
         if (myClass == null){
-            CacheManager.getInstance().putClass(Util.createMetadataFromNode(classNode));
+            myClass = Util.createMetadataFromNode(classNode);
+            cm.putClass(myClass);
         }
 
         Transaction tx = graphDb.beginTx();
@@ -221,7 +242,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             if (instance.getId() == oid.longValue()){
                 for (String attributeName : attributes.keySet()){
                     if(instance.hasProperty(attributeName)){
-                        //instance.setProperty(attributeName,Util.getRealValue(attributeName, Util.));
+                        if (myClass.getAttributeMapping(attributeName) != AttributeMetadata.MAPPING_BINARY
+                                &&myClass.getAttributeMapping(attributeName) != AttributeMetadata.MAPPING_MANYTOMANY
+                                &&myClass.getAttributeMapping(attributeName) != AttributeMetadata.MAPPING_MANYTOONE)
+                            instance.setProperty(attributeName,Util.getRealValue(attributeName, myClass.getAttributeMapping(attributeName),myClass.getType(attributeName)));
+                        else{
+                            tx.failure();
+                            throw new InvalidArgumentException(
+                                Util.formatString("The attribute %1s is binary or a relationship, so it can't be set using this method. Use setBinaryAttributes or setManyToManyAttributes instead", attributeName), Level.WARNING);
+                        }
                     }
                     else{
                         tx.failure();

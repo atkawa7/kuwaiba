@@ -16,6 +16,7 @@
 
 package org.kuwaiba.persistenceservice.impl;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.application.UserProfile;
@@ -103,6 +104,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager{
         }
         Transaction tx = graphDb.beginTx();
         Node newUser = graphDb.createNode();
+        newUser.setProperty(UserProfile.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
         newUser.setProperty(UserProfile.PROPERTY_USERNAME, userName);
         newUser.setProperty(UserProfile.PROPERTY_PASSWORD, Util.getMD5Hash(password));
         newUser.setProperty(UserProfile.PROPERTY_FIRST_NAME, firstName);

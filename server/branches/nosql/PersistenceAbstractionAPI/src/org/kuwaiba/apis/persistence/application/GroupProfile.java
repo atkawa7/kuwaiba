@@ -26,15 +26,19 @@ public class GroupProfile {
     /**
      * Group's id (oid)
      */
-    private Long groupId;
+    private Long id;
     /**
      * Group's name
      */
-    private String groupName;
+    private String name;
     /**
      * Group's description
      */
-    private String groupDescription;
+    private String description;
+    /**
+     * Group's creation date (in milliseconds, it's a timestamp)
+     */
+    private Long creationDate;
     /**
      * Group's users
      */
@@ -44,29 +48,29 @@ public class GroupProfile {
      */
     private List<Integer> privileges;
 
-    public Long getGroupId() {
-        return groupId;
+    public Long getId() {
+        return id;
     }
 
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
+    public void setId(Long groupId) {
+        this.id = groupId;
     }
 
     
-    public String getGroupDescription() {
-        return groupDescription;
+    public String getDescription() {
+        return description;
     }
 
-    public void setGroupDescription(String groupDescription) {
-        this.groupDescription = groupDescription;
+    public void setDescription(String groupDescription) {
+        this.description = groupDescription;
     }
 
-    public String getGroupName() {
-        return groupName;
+    public String getpName() {
+        return name;
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
+    public void setName(String groupName) {
+        this.name = groupName;
     }
 
     public List<Integer> getPrivileges() {
@@ -83,5 +87,13 @@ public class GroupProfile {
 
     public void setUsers(List<UserProfile> users) {
         this.users = users;
+    }
+
+    public Long getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Long creationDate) {
+        this.creationDate = creationDate;
     }
 }

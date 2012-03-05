@@ -40,7 +40,9 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
  */
 public class MetadataEntityManagerImpl implements MetadataEntityManager, MetadataEntityManagerRemote{
 
+    public static final String PROPERTY_PRIVILEGES = "privileges"; //NOI18N
     public static final String PROPERTY_NAME ="name"; //NOI18N
+    public static final String PROPERTY_CREATION_DATE = "creationDate"; //NOI18N
     public static final String PROPERTY_DISPLAY_NAME ="displayName"; //NOI18N
     public static final String PROPERTY_TYPE ="type"; //NOI18N
     public static final String PROPERTY_ADMINISTRATIVE ="administrative"; //NOI18N

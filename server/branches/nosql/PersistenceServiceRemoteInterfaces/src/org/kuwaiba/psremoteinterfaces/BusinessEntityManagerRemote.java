@@ -23,5 +23,5 @@ import java.rmi.Remote;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public interface BusinessEntityManagerRemote extends Remote{
-
+    public static final String REFERENCE_BEM = "bem";
 }

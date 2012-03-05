@@ -17,9 +17,9 @@
 package org.kuwaiba.psremoteinterfaces;
 
 /**
- *
+ * RMI wrapper for the ApplicationEntityManager interface
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ApplicationEntityManagerRemote {
-
+    public static final String REFERENCE_AEM = "aem";
 }
