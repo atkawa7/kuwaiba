@@ -19,10 +19,11 @@ package org.kuwaiba.apis.persistence.application;
 import java.util.List;
 
 /**
- * Represents a complex query to be executed
+ * Represents a complex query to be executed. This is the code friendly version of the query.
+ * The store-friendly can is @CompactQuery.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class Query {
+public class ExtendedQuery {
     /**
      * OR logical connector
      */
@@ -77,7 +78,7 @@ public class Query {
     private List<String> attributeNames;
     /**
      * Attributes to be shown in the final result (read this as "SELECT visibleAttributesNames" FROM...).
-     * If this is the master query(see @isJoin) and the it's empty or null, all attributes will be shown; if
+     * If this is the master query(see @join) and the it's empty or null, all attributes will be shown; if
      * this is a join, none will be shown
      */
     private List<String> visibleAttributeNames;
@@ -90,7 +91,7 @@ public class Query {
     /**
      * As stated before, joins will be treated like simple subqueries
      */
-    private List<Query> joins;
+    private List<ExtendedQuery> joins;
     /**
      * Indicates if the current LocalQuery object is a join or the master query. It will
      * be used later to determine if
@@ -122,7 +123,7 @@ public class Query {
         return join;
     }
 
-    public List<Query> getJoins() {
+    public List<ExtendedQuery> getJoins() {
         return joins;
     }
 

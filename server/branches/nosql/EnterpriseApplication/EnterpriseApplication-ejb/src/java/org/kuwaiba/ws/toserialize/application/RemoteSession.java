@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.ws.toserialize;
+package org.kuwaiba.ws.toserialize.application;
 
 import org.kuwaiba.entity.session.UserSession;
 import javax.xml.bind.annotation.XmlAccessType;

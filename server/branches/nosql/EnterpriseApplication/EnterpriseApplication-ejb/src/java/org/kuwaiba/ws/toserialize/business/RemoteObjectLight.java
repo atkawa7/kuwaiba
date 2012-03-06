@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -12,13 +12,14 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- */package org.kuwaiba.ws.toserialize;
+ */
+package org.kuwaiba.ws.toserialize.business;
 
-import org.kuwaiba.entity.core.RootObject;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.kuwaiba.ws.toserialize.application.Validator;
 
 /**
  * This class is a simple representation of an object. It's used for trees and view. This is jus an entity wrapper
@@ -27,14 +28,20 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteObjectLight {
     /**
-     * The object's display name. It's private because a RmoteObject could provide his own display name with more information
+     * Object's oid
      */
     protected Long oid;
+    /**
+     * Object's class name
+     */
     protected String className;
-    protected String displayName;
+    /**
+     * Is this object locked (read-only)?
+     */
+    protected Boolean locked;
     
     /**
-     * Misc flags used to give more information about the object
+     * Misc flags used to give more information about the object (i.e. is it already connected?)
      */
     protected List<Validator> validators;
 
@@ -43,30 +50,24 @@ public class RemoteObjectLight {
      */
     protected RemoteObjectLight(){}
 
-    public RemoteObjectLight(Long oid, String className, String displayName) {
-        this.displayName = displayName;
+    public RemoteObjectLight(Long oid, String className, boolean isLocked) {
         this.oid = oid;
         this.className = className;
+        this.locked = isLocked;
     }
 
 
-    public RemoteObjectLight(Object obj){
-        this.className = obj.getClass().getSimpleName();
-        //TODO: It should be possible to the user to change the display name using a customization tool
-        this.displayName = ((RootObject)obj).getName();
-        this.oid = ((RootObject)obj).getId();
+    public RemoteObjectLight(org.kuwaiba.apis.persistence.business.RemoteObject obj){
+        this.className = obj.getClassName();
+        this.oid = obj.getId();
+        this.locked = obj.isLocked();
     }
 
     public String getClassName() {
         return className;
     }
 
-    /**
-     * Shouldn't be inherit because displayName is private
-     */
-    public final String getDisplayName() {
-        return displayName;
-    }
+
 
     public Long getOid() {
         return oid;
@@ -95,22 +96,5 @@ public class RemoteObjectLight {
         if (this.validators == null)
             this.validators = new ArrayList<Validator>();
         this.validators.add(newValidator);
-    }
-
-
-    /**
-     * This method is useful to transform the returned value from queries (Entities)
-     * into serialize RemoteObjectLight
-     * @param objs objects to be transformed
-     * @return an array with ROL
-     */
-    public static RemoteObjectLight[] toArray(List objs){
-        RemoteObjectLight[] res = new RemoteObjectLight[objs.size()];
-        int i=0;
-        for (Object obj : objs){
-            res[i] = new RemoteObjectLight(obj);
-            i++;
-        }
-        return res;
     }
 }

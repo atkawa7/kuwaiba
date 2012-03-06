@@ -1,5 +1,5 @@
-/*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+/**
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,9 +14,8 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.ws.toserialize;
+package org.kuwaiba.ws.toserialize.application;
 
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.application.UserProfile;
@@ -53,7 +52,7 @@ public class UserInfo {
     protected Boolean enabled;
 
     private UserGroupInfoLight[] groups;
-    //private PrivilegeInfo[] privileges;
+    private int[] privileges;
 
     public UserInfo(){}
     public UserInfo(UserProfile user){
@@ -62,22 +61,29 @@ public class UserInfo {
         this.userName = user.getUserName();
         this.enabled = user.isEnabled();
         this.firstName = user.getFirstName();
-        this.lastName = _user.getLastName();
-        if (_user.getCreationDate() == null)
+        this.lastName = user.getLastName();
+        if (user.getCreationDate() == null)
             this.creationDate = null;
         else
-            this.creationDate = _user.getCreationDate().getTime();
-        List<UserGroup> entityGroups = _user.getGroups();
-        if (entityGroups == null)
-            this.groups = null;
+            this.creationDate = user.getCreationDate();
+        if (user.getPrivileges() == null)
+            this.privileges = new int[0];
         else{
-            this.groups = new UserGroupInfoLight[entityGroups.size()];
-            int i = 0;
-            for (UserGroup group : entityGroups){
-                this.groups[i] = new UserGroupInfoLight(group);
-                i++;
-            }
+            this.privileges = new int[user.getPrivileges().size()];
+            for (int i = 0; i <user.getPrivileges().size(); i++)
+                this.privileges[i] = user.getPrivileges().get(i);
         }
+//        List<GroupProfile> entityGroups = user.getGroups();
+//        if (entityGroups == null)
+//            this.groups = null;
+//        else{
+//            this.groups = new UserGroupInfoLight[entityGroups.size()];
+//            int i = 0;
+//            for (GroupProfile group : entityGroups){
+//                this.groups[i] = new UserGroupInfoLight(group);
+//                i++;
+//            }
+//        }
     }
 
     public String getFirstName() {
@@ -135,6 +141,4 @@ public class UserInfo {
     public void setCreationDate(Long creationDate) {
         this.creationDate = creationDate;
     }
-
-
 }

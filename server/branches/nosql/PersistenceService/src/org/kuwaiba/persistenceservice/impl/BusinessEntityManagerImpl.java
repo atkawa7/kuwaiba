@@ -56,6 +56,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
      */
     public static final String INDEX_OBJECTS="objects"; //NOI18N
     /**
+     * Sets an object read only
+     */
+    public static final String PROPERTY_IS_LOCKED="isLocked"; //NOI18N
+    /**
      * Reference to the db handler
      */
     private GraphDatabaseService graphDb;
@@ -193,7 +197,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     attributes.get(attributeName).add(String.valueOf(relationship.getEndNode().getId()));
 
                 }
-                return new RemoteObject(oid, className,attributes);
+                return new RemoteObject(oid, className,(Boolean)instance.getProperty(PROPERTY_IS_LOCKED));
             }
         }
         throw new ObjectNotFoundException(className, oid);
@@ -210,7 +214,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
             if (instance.getId() == oid.longValue())
                 return new RemoteObjectLight(oid,
-                        instance.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME) == null ? null : instance.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).toString());
+                        instance.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME) == null ? null : instance.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).toString(),
+                                            (Boolean)instance.getProperty(PROPERTY_IS_LOCKED));
 
         }
         throw new ObjectNotFoundException(className, oid);

@@ -32,5 +32,7 @@ public enum RelTypes implements RelationshipType{
     INSTANCE_OF, //An object is instance of a given class
     CHILD_OF, //An object is child of a given object
     RELATED_TO, //Represents the many-to-one, many-to-may relationships (like type, responsible, etc)
-    BELONGS_TO_GROUP
+    BELONGS_TO_GROUP, //Used to associate an entity to a group (group of user)
+    BELONGS_TO_USER //Used to associate an entity to a user
+
 }

@@ -98,7 +98,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Creates a classmetadata with their:
+     * Creates a classmetadata with its:
      * attributes(some new attributes and others extedended from the parent).
      * category (if the category does not exist it will be create).
      * @param classDefinition

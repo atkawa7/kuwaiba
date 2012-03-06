@@ -169,7 +169,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @param categoryDefinition
      * @return
      */
-    public boolean changeCategoryDefinition(CategoryMetadata categoryDefinition) throws MetadataObjectNotFoundException;
+    public boolean changeCategoryDefinition(CategoryMetadata categoryDefinition) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param categoryName

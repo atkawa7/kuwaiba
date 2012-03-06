@@ -14,39 +14,40 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.apis.persistence.business;
+package org.kuwaiba.apis.persistence.application;
 
 import java.io.Serializable;
 
 /**
- * Contains a business object basic information
+ * The store-friendly version of an ExtendedQuery. Its structure is not meant to be executed, but
+ * to be transported and stored. This is the light version (with no body)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RemoteObjectLight implements Serializable{
+public class CompactQueryLight implements Serializable{
+    /**
+     * Query id
+     */
+    protected Long id;
+    /**
+     * Query description
+     */
+    protected String name;
+    /**
+     * Query description
+     */
+    protected String description;
+    /**
+     * Query owner
+     */
+    protected UserProfile owner;
 
-    /**
-     * Object's id
-     */
-    private Long id;
-    /**
-     * Object's name
-     */
-    private String name;
-    /**
-     * Class this object is instance of
-     */
-    private String className;
-    /**
-     * Is this object locked?
-     */
-    private Boolean locked;
 
-    public RemoteObjectLight(Long id, String name, Boolean isLocked) {
-        this.id = id;
-        this.name = name;
-        if (isLocked == null)
-            isLocked = false;
-        this.locked = isLocked;
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Long getId() {
@@ -65,20 +66,11 @@ public class RemoteObjectLight implements Serializable{
         this.name = name;
     }
 
-    public Boolean isLocked() {
-        return locked;
+    public UserProfile getOwner() {
+        return owner;
     }
 
-    public void setLocked(Boolean locked) {
-        this.locked = locked;
+    public void setOwner(UserProfile owner) {
+        this.owner = owner;
     }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
-    
 }

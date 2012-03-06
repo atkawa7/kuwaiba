@@ -3,8 +3,9 @@
  * and open the template in the editor.
  */
 
-package org.kuwaiba.ws.toserialize;
+package org.kuwaiba.ws.toserialize.application;
 
+import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -15,17 +16,18 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.FIELD) //Esta anotación le dice al serializador que incluya TODOS
                                       //los atributos sin importar su acceso (public, private, etc)
                                       //Por defecto, él coge sólo los public
-public class RemoteTreeNodeLight {
-    private RemoteObjectLight root;
-    private RemoteObjectLight[] children;
+public class RemoteTreeNode {
+    private RemoteObject root;
+    private RemoteObject[] children;
 
-    public RemoteTreeNodeLight(Object object, Object[] children){
+    public RemoteTreeNode(Object object, Object[] children){
         if (object != null) //Es nulo cuando el padre es nulo, es decir, cuando no tiene padre
-            this.root = new RemoteObjectLight(object);
-        this.children = new RemoteObjectLight[children.length];
+            this.root = new RemoteObject(object);
+        this.children = new RemoteObject[children.length];
         int i = 0;
+
         for(Object obj : children){
-            this.children[i] = new RemoteObjectLight(obj);
+            this.children[i] = new RemoteObject(obj);
             i++;
         }
     }
@@ -34,7 +36,7 @@ public class RemoteTreeNodeLight {
      * Por alguna razón en tiempo de ejecución, el servlet que provee el ws requiere que esta clase
      * tenga un constructor sin argumentos. Recuérdese que esta clase es lo que se devuelve en la función getTreeNode
      */
-    public RemoteTreeNodeLight(){
+    public RemoteTreeNode(){
 
     }
 }

@@ -13,8 +13,9 @@
  *   limitations under the License.
  *
  */
-package org.kuwaiba.ws.toserialize;
+package org.kuwaiba.ws.toserialize.application;
 
+import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.entity.queries.Query;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

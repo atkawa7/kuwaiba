@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.kuwaiba.ws.toserialize;
+package org.kuwaiba.ws.toserialize.application;
 
 /**
  * Validators are flags indicating things about objects. Of course, every instance may have

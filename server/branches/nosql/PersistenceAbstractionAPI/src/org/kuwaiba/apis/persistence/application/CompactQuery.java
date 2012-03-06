@@ -16,27 +16,22 @@
 
 package org.kuwaiba.apis.persistence.application;
 
-import org.kuwaiba.apis.persistence.business.RemoteObjectLight;
-import java.util.List;
-
 /**
- * Represents a single record resulting from a query. It basically contains the very basic
- * information about an object, as well extra columns based on the "visibleAttributes" argument
- * provided when the query was executed
+ * The store-friendly version of an ExtendedQuery. Its structure is not meant to be executed, but
+ * to be transported and stored
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ResultRecord extends RemoteObjectLight{
-    private List<String> extraColumns;
+public class CompactQuery extends CompactQueryLight{
+    /**
+     * Query body
+     */
+    protected byte[] content;
 
-    public ResultRecord(Long id, String name) {
-        super(id,name, false);
+    public byte[] getContent() {
+        return content;
     }
 
-    public List<String> getExtraColumns() {
-        return extraColumns;
-    }
-
-    public void setExtraColumns(List<String> extraColumns) {
-        this.extraColumns = extraColumns;
+    public void setContent(byte[] body) {
+        this.content = body;
     }
 }
