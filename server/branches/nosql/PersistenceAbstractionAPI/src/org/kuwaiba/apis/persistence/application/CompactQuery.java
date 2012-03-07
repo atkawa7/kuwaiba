@@ -21,7 +21,23 @@ package org.kuwaiba.apis.persistence.application;
  * to be transported and stored
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class CompactQuery extends CompactQueryLight{
+public class CompactQuery {
+    /**
+     * Query id
+     */
+    protected Long id;
+    /**
+     * Query description
+     */
+    protected String name;
+    /**
+     * Query description
+     */
+    protected String description;
+    /**
+     * Query owner
+     */
+    protected UserProfile owner;
     /**
      * Query body
      */
@@ -33,5 +49,37 @@ public class CompactQuery extends CompactQueryLight{
 
     public void setContent(byte[] body) {
         this.content = body;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public UserProfile getOwner() {
+        return owner;
+    }
+
+    public void setOwner(UserProfile owner) {
+        this.owner = owner;
     }
 }

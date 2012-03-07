@@ -65,7 +65,7 @@ public class GroupProfile {
         this.description = groupDescription;
     }
 
-    public String getpName() {
+    public String getName() {
         return name;
     }
 

@@ -22,7 +22,7 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
 
 /**
  * Wrapper for entity class User
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserInfo {

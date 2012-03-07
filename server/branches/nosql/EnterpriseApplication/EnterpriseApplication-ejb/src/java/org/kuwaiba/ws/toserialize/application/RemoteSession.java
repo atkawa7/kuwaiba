@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,34 +16,33 @@
 
 package org.kuwaiba.ws.toserialize.application;
 
-import org.kuwaiba.entity.session.UserSession;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.kuwaiba.apis.persistence.application.UserProfile;
 
 /**
- * Represents the information to be exchanged when a call to createSeesion is successful. By now
- * it has only basic stuff, but should have initial configuration settings
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * Represents the information to be exchanged when a call to createSeesion is successful. This is more or less
+ * a wrapper of UserProfile plus a session id
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteSession {
     private String sessionId;
     private String username;
     private Long userId;
+    private String firstName;
+    private String lastName;
+
 
     public RemoteSession() {
     }
 
-    public RemoteSession(String sessionID, String username, Long userId) {
+    public RemoteSession(String sessionID, UserProfile user) {
         this.sessionId = sessionID;
-        this.username = username;
-        this.userId = userId;
-    }
-
-    public RemoteSession(UserSession session) {
-        this.sessionId = session.getToken();
-        this.username = session.getUser().getUsername();
-        this.userId = session.getUser().getId();
+        this.username = user.getUserName();
+        this.userId = user.getId();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
     }
 
     public String getSessionId() {
@@ -68,5 +67,21 @@ public class RemoteSession {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

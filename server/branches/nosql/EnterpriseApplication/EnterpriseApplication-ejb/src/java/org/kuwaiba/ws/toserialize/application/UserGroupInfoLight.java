@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package org.kuwaiba.ws.toserialize.application;
 
-import org.kuwaiba.entity.session.UserGroup;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.kuwaiba.apis.persistence.application.GroupProfile;
 
 /**
  * Wrapper for entity class UserGroup. This light version has the basic info necessary
- * to display in a table or list. Members of each group can be retrieve at UserGroupInfo
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * to display in a table or list. Members of each group can be retrieved querying for a UserGroupInfo object
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserGroupInfoLight {
@@ -38,7 +38,7 @@ public class UserGroupInfoLight {
 
     public UserGroupInfoLight(){}
 
-    public UserGroupInfoLight(UserGroup group){
+    public UserGroupInfoLight(GroupProfile group){
         this.oid = group.getId();
         this.name = group.getName();
     }

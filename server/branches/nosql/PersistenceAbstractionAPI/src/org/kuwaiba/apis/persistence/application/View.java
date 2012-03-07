@@ -19,28 +19,35 @@ package org.kuwaiba.apis.persistence.application;
 import java.io.Serializable;
 
 /**
- * The store-friendly version of an ExtendedQuery. Its structure is not meant to be executed, but
- * to be transported and stored. This is the light version (with no body)
+ * Represents a view. A view is a graphical representation of a context. Examples are: a view describing
+ * how buildings are connected in a city or the equipment inside a rack
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class CompactQueryLight implements Serializable{
+public class View implements Serializable{
     /**
-     * Query id
+     * Background image
      */
-    protected Long id;
+    protected byte[] background;
     /**
-     * Query description
+     * Structure as an XML file
      */
-    protected String name;
+    protected byte[] structure;
     /**
-     * Query description
+     * View description
      */
     protected String description;
     /**
-     * Query owner
+     * What class this view is instance of. call it a "type" (i.e. RackView, DefaultView, etc)
      */
-    protected UserProfile owner;
+    private String viewClass;
 
+    public byte[] getBackground() {
+        return background;
+    }
+
+    public void setBackground(byte[] background) {
+        this.background = background;
+    }
 
     public String getDescription() {
         return description;
@@ -50,27 +57,19 @@ public class CompactQueryLight implements Serializable{
         this.description = description;
     }
 
-    public Long getId() {
-        return id;
+    public byte[] getStructure() {
+        return structure;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setStructure(byte[] structure) {
+        this.structure = structure;
     }
 
-    public String getName() {
-        return name;
+    public String getViewClass() {
+        return viewClass;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public UserProfile getOwner() {
-        return owner;
-    }
-
-    public void setOwner(UserProfile owner) {
-        this.owner = owner;
+    public void setViewClass(String viewClass) {
+        this.viewClass = viewClass;
     }
 }
