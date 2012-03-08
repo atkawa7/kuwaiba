@@ -27,7 +27,7 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 public interface MetadataEntityManager {
 
     /**
-     * Creates a classmetadata with their:
+     * Creates a classmetadata with its:
      * attributes(some new attributes and others extedended from the parent).
      * category (if the category does not exist it will be create).
      * @param classDefinition
@@ -45,7 +45,7 @@ public interface MetadataEntityManager {
     public boolean changeClassDefinition(ClassMetadata newClassDefinition) throws Exception;
 
     /**
-     * Deletes a classmetadata, their attributes and category relationships
+     * Deletes a classmetadata, its attributes and category relationships
      * @param classId
      * @return true if success
      * @throws ClassNotFoundException if there is not a class with de ClassId
@@ -53,7 +53,7 @@ public interface MetadataEntityManager {
     public boolean deleteClass(String className) throws Exception;
 
     /**
-     * Deletes a classmetadata, their attributes and category relationships
+     * Deletes a classmetadata, its attributes and category relationships
      * @param classId
      * @return true if success
      * @throws ClassNotFoundException if there is not a class with de ClassName
@@ -61,7 +61,7 @@ public interface MetadataEntityManager {
     public boolean deleteClass(Long classId) throws Exception;
 
     /**
-     * Gets a classmetadata, their attributes and Category
+     * Gets a classmetadata, its attributes and Category
      * @param className
      * @return A ClassMetadata with the className
      * @throws ClassNotFoundException there is no class with such className
@@ -69,7 +69,7 @@ public interface MetadataEntityManager {
     public ClassMetadata getClass(String className) throws Exception;
 
     /**
-     * Gets a classmetadata, their attributes and Category
+     * Gets a classmetadata, its attributes and Category
      * @param classId
      * @return A ClassMetadata with the classId
      * @throws ClassNotFoundException there is no class with such classId
