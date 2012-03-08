@@ -27,6 +27,7 @@ import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.exceptions.MiscException;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
+import org.kuwaiba.persistenceservice.caching.CacheManager;
 import org.kuwaiba.persistenceservice.util.Util;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
@@ -86,12 +87,22 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * Category index
      */
     private static Index<Node> categoryIndex;
+    /**
+     * Reference to the CacheManager
+     */
+    private CacheManager cm;
+
+    private MetadataEntityManagerImpl() {
+        cm= CacheManager.getInstance();
+    }
 
     /**
      * Constructor
      * Get the a database connection and indexes from the connection manager.
      */
-    public MetadataEntityManagerImpl(ConnectionManager cmn) {
+    public MetadataEntityManagerImpl(ConnectionManager cmn) 
+    {
+        this();
         graphDb = (EmbeddedGraphDatabase)cmn.getConnectionHandler();
         classIndex = graphDb.index().forNodes( "Classes" );
         categoryIndex = graphDb.index().forNodes( "Categories" );
@@ -107,7 +118,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      */
 
     @Override
-    public Long createClass(ClassMetadata classDefinition) throws Exception
+    public Long createClass(ClassMetadata classDefinition) throws MetadataObjectNotFoundException
     {
         Transaction tx = graphDb.beginTx();
         Long id;
@@ -177,13 +188,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     {
                         Node parentAttrNode = rel.getEndNode();
                         Node newAttrNode = graphDb.createNode();
-                        //newAttrNode = parentAttrNode;
-                        
-//                        Iterable<Relationship> auxRel = newAttrNode.getRelationships();
-//
-//                        for (Relationship relationship : auxRel) {
-//                            relationship.delete();
-//                        }
+                       
                         newAttrNode.setProperty(PROPERTY_NAME, parentAttrNode.getProperty(PROPERTY_NAME));
                         newAttrNode.setProperty(PROPERTY_DESCRIPTION, parentAttrNode.getProperty(PROPERTY_DESCRIPTION));
                         newAttrNode.setProperty(PROPERTY_DISPLAY_NAME, parentAttrNode.getProperty(PROPERTY_DISPLAY_NAME));
@@ -199,9 +204,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
                 //Set extendended attributes from parent
                 else
-                    throw new ClassNotFoundException("The Parent Node with id " +
-                                classDefinition.getParentClassName()
-                                + " does not exist");
+                    throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the parent Class with the name %1s", classDefinition.getParentClassName()));
+
             }//end else not rootNode
 
             //Attributes
@@ -228,15 +233,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws ClassNotFoundException if there is no class with such classId
      */
     @Override
-    public boolean changeClassDefinition(ClassMetadata newClassDefinition)throws Exception
+    public boolean changeClassDefinition(ClassMetadata newClassDefinition)throws MetadataObjectNotFoundException
     {
         Transaction tx = graphDb.beginTx();
         try{
             Node newcm = classIndex.get(PROPERTY_NAME, newClassDefinition.getName()).getSingle();
             if(newcm == null)
-                throw new ClassNotFoundException("Can not find the class with the name "
-                                                + newClassDefinition.getName() +
-                                                " the class definition could not be changed");
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the id %1s", newClassDefinition.getName()));
 
             newcm.setProperty(PROPERTY_NAME, newClassDefinition.getName());
             newcm.setProperty(PROPERTY_DISPLAY_NAME, newClassDefinition.getDisplayName());
@@ -272,22 +276,22 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Deletes a classmetadata, their attributes and category relationships
+     * Deletes a classmetadata, its attributes and category relationships
      * @param classId
      * @return true if success
      * @throws ClassNotFoundException if there is not a class with de ClassId
      */
 
     @Override
-    public boolean deleteClass(Long classId)throws Exception
+    public boolean deleteClass(Long classId)throws MetadataObjectNotFoundException
     {
         Transaction tx = graphDb.beginTx();
         try{
             Node node = classIndex.get(PROPERTY_ID, String.valueOf(classId)).getSingle();
 
             if(node == null)
-                throw new ClassNotFoundException("The ClassId: " + classId +
-                                    ", you are trying to remove does not exist");
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the id %1s", classId));
 
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
             for (Relationship relationship : relationships) {
@@ -312,21 +316,21 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Deletes a classmetadata, their attributes and category relationships
+     * Deletes a classmetadata, its attributes and category relationships
      * @param classId
      * @return true if success
      * @throws ClassNotFoundException if there is not a class with de ClassName
      */
     @Override
-    public boolean deleteClass(String className)throws Exception
+    public boolean deleteClass(String className)throws MetadataObjectNotFoundException
     {
         Transaction tx = graphDb.beginTx();
         try{
             Node node = classIndex.get(PROPERTY_NAME, className).getSingle();
 
             if(node == null)
-                throw new ClassNotFoundException("The ClassName: " + className +
-                                    ", you are tryin to remove does not exist");
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the name %1s", className));
 
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
             for (Relationship relationship : relationships) {
@@ -350,13 +354,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Gets a classmetadata, their attributes and Category
+     * Gets a classmetadata, its attributes and Category
      * @param classId
      * @return A ClassMetadata with the classId
      * @throws ClassNotFoundException there is no class with such classId
      */
     @Override
-    public ClassMetadata getClass(Long classId)throws Exception
+    public ClassMetadata getClass(Long classId)throws MetadataObjectNotFoundException
     {
         ClassMetadata cm = new ClassMetadata();
         List<AttributeMetadata> listAttributes = new ArrayList();
@@ -366,8 +370,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Node node = classIndex.get(PROPERTY_ID, classId).getSingle();
 
             if(node == null)
-                throw new ClassNotFoundException("The Class Id: " + classId +
-                                        ", you are looking for does not exist");
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the id %1s", classId));
 
             cm.setName((String)node.getProperty(PROPERTY_NAME));
             cm.setDisplayName((String)node.getProperty(PROPERTY_DISPLAY_NAME));
@@ -424,13 +428,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Gets a classmetadata, their attributes and Category
+     * Gets a classmetadata, its attributes and Category
      * @param className
      * @return A ClassMetadata with the className
      * @throws ClassNotFoundException there is no class with such className
      */
     @Override
-    public ClassMetadata getClass(String className)throws Exception
+    public ClassMetadata getClass(String className)throws MetadataObjectNotFoundException
     {
         ClassMetadata cm = new ClassMetadata();
         List<AttributeMetadata> listAttributes = new ArrayList();
@@ -440,8 +444,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Node node = classIndex.get(PROPERTY_NAME,className).getSingle();
 
             if(node == null)
-                throw new ClassNotFoundException("The Class Name: "+ className +
-                                                 ", you are looking for does not exist");
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the name %1s", className));
 
             //node Properties
             cm.setName((String)node.getProperty(PROPERTY_NAME));
@@ -507,7 +511,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * or if there is no a targetParentClass with such name
      */
     @Override
-    public boolean moveClass(String classToMoveName, String targetParentClassName)throws Exception
+    public boolean moveClass(String classToMoveName, String targetParentClassName)throws MetadataObjectNotFoundException
     {
         Transaction tx = graphDb.beginTx();
         try{
@@ -515,11 +519,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 Node tcn = classIndex.get(PROPERTY_NAME, targetParentClassName).getSingle();
 
            if(ctm == null)
-               throw new ClassNotFoundException("The Class name " +classToMoveName+
-                       " you are trying to move does not exist");
+               throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class to move with the name %1s", classToMoveName));
            else if(tcn == null)
-               throw new ClassNotFoundException("The Class name " +targetParentClassName+
-                       " you are trying to set as parent does not exist");
+               throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find The target parent Class with the name %1s", targetParentClassName));
            else{
                     Relationship rel = ctm.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING);
                     rel.delete();
@@ -542,7 +546,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * or if there is no a targetParentClass with such classId
      */
     @Override
-    public boolean moveClass(Long classToMoveId, Long targetParentClassId)throws Exception
+    public boolean moveClass(Long classToMoveId, Long targetParentClassId)throws MetadataObjectNotFoundException
     {
         Transaction tx = graphDb.beginTx();
         try{
@@ -550,11 +554,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Node tcn = classIndex.get(PROPERTY_ID, targetParentClassId).getSingle();
 
             if(ctm == null)
-               throw new ClassNotFoundException("The Class Id " +classToMoveId+
-                       " you are trying to move does not exist");
+               throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class to move with the id %1s", classToMoveId));
+               
             else if(tcn == null)
-               throw new ClassNotFoundException("The Class Id " +targetParentClassId+
-                       " you are trying to set as parent does not exist");
+               throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find The targetn parent Class with the id %1s", targetParentClassId));
             else{
                     Relationship rel = ctm.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING);
                     rel.delete();
@@ -576,14 +581,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws ClassNotFoundException if there is no a class with such className
      */
     @Override
-    public boolean addAttribute(String className, AttributeMetadata attributeDefinition)throws Exception
+    public boolean addAttribute(String className, AttributeMetadata attributeDefinition)throws MetadataObjectNotFoundException
     {
         Transaction tx = graphDb.beginTx();
         try{
             Node node = classIndex.get(PROPERTY_NAME,className).getSingle();
 
             if(node == null)
-                throw new ClassNotFoundException("The Class name " + className + "does not exist");
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the name %1s", className));
 
             Node atr = graphDb.createNode();
 
@@ -615,14 +621,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws ClassNotFoundException if there is no a class with such classId
      */
     @Override //TODO agregarlo al modelo!
-    public boolean addAttribute(Long classId, AttributeMetadata attributeDefinition )throws Exception
+    public boolean addAttribute(Long classId, AttributeMetadata attributeDefinition )throws MetadataObjectNotFoundException
     {
         Transaction tx = graphDb.beginTx();
         try{
             Node node = classIndex.get(PROPERTY_ID, classId).getSingle();
 
             if (node == null)
-                throw new ClassNotFoundException("The Class Id " + classId + "does not exist");
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the id %1s", classId));
 
             Node atr = graphDb.createNode();
 
@@ -655,7 +662,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws MiscException if the attributeName does not exist
      */
     @Override
-    public AttributeMetadata getAttribute(String className, String attributeName)throws Exception
+    public AttributeMetadata getAttribute(String className, String attributeName)throws MetadataObjectNotFoundException
     {
         AttributeMetadata attribute = null;
         Transaction tx = graphDb.beginTx();
@@ -663,8 +670,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Node node = classIndex.get(PROPERTY_NAME,className).getSingle();
 
             if(node == null)
-
-                throw new ClassNotFoundException("The class Name: " + className + ", does not exist");
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the name %1s", className));
 
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
             for (Relationship relationship : relationships) {
@@ -700,7 +707,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws MiscException if the attributeName does not exist
      */
     @Override
-    public AttributeMetadata getAttribute(Long classId, String attributeName)throws Exception
+    public AttributeMetadata getAttribute(Long classId, String attributeName)throws MetadataObjectNotFoundException
     {
         AttributeMetadata attribute = null;
         Transaction tx = graphDb.beginTx();
@@ -709,7 +716,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Node node = classIndex.get(PROPERTY_ID, classId).getSingle();
 
             if(node == null)
-                throw new ClassNotFoundException(("The classId: " + classId + ", does not exist"));
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the id %1s", classId));
 
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
             for (Relationship relationship : relationships) {
@@ -758,7 +766,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      */
 
     @Override
-    public boolean deleteAttribute(String className, String attributeName)throws Exception
+    public boolean deleteAttribute(String className, String attributeName)throws MetadataObjectNotFoundException
     {
         Transaction tx = graphDb.beginTx();
         boolean couldDelAtt = false;
@@ -767,7 +775,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Node node = classIndex.get(PROPERTY_NAME, className).getSingle();
 
             if (node == null)
-                throw new ClassNotFoundException ("The class name: " + className + ", does not exist");
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the name %1s", attributeName));
 
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
             for (Relationship relationship : relationships) {
@@ -780,8 +789,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             }//end for
             //if the attribute does exist
             if (!couldDelAtt)
-                throw new MiscException ("The Attribute: " +attributeName+
-                               ", you are looking for does not exist");
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Attribute with the name %1s", attributeName));
 
             tx.success();
             return true;
@@ -800,7 +809,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws MiscException if the attributeName does not exist
      */
     @Override //TODO ponerlo en el modelo
-    public boolean deleteAttribute(Long classId,String attributeName) throws Exception
+    public boolean deleteAttribute(Long classId,String attributeName) throws MetadataObjectNotFoundException
     {
         Transaction tx = graphDb.beginTx();
         boolean couldDelAtt = false;
@@ -809,8 +818,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Node node = classIndex.get(PROPERTY_ID, classId).getSingle();
 
             if(node == null)
-                throw new ClassNotFoundException ("The classId: " + classId +
-                                                  ", does not exist");
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the id %1s", classId));
 
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
             for (Relationship relationship : relationships) {
@@ -824,12 +833,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             }//end for
             //if the attribute does exist
             if (!couldDelAtt)
-                throw new MiscException("The Attribute: " + attributeName +
-                                                 ", you are looking for does not exist");
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Attibute with the name %1s", attributeName));
 
             tx.success();
             return true;
-
         }
         finally{
             tx.finish();
@@ -874,7 +882,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws MiscException if the Category does not exist
      */
     @Override
-    public CategoryMetadata getCategory(String categoryName) throws Exception
+    public CategoryMetadata getCategory(String categoryName) throws MetadataObjectNotFoundException
     {
         CategoryMetadata cm = new CategoryMetadata();
         Transaction tx = graphDb.beginTx();
@@ -882,9 +890,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Node ctgNode = categoryIndex.get(PROPERTY_NAME, categoryName).getSingle();
 
             if(ctgNode == null)
-                throw new MiscException("Can not find the category with the name "
-                        + categoryName +
-                        " the category definition could not be changed");
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the category with the name %1s", categoryName));
 
             cm.setName((String)ctgNode.getProperty(PROPERTY_NAME));
             cm.setDescription((String)ctgNode.getProperty(PROPERTY_DESCRIPTION));
@@ -904,17 +911,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws MiscException if there is no Category with such cetegoryId
      */
 
-    public CategoryMetadata getCategory(Integer categoryId) throws Exception {
+    public CategoryMetadata getCategory(Integer categoryId) throws MetadataObjectNotFoundException {
         CategoryMetadata cm = new CategoryMetadata();
         Transaction tx = graphDb.beginTx();
         try{
             Node ctgNode = categoryIndex.get(PROPERTY_ID, categoryId).getSingle();
 
              if(ctgNode == null)
-                throw new MiscException("Can not find the category with the id "
-                        + categoryId +
-                        " the category definition could not be changed");
-
+                 throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the category with the id %1s", categoryId));
+                
             cm.setName((String)ctgNode.getProperty(PROPERTY_NAME));
             cm.setDescription((String)ctgNode.getProperty(PROPERTY_DESCRIPTION));
             cm.setDisplayName((String)ctgNode.getProperty(PROPERTY_DISPLAY_NAME));
@@ -940,7 +946,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Node ctgr = categoryIndex.get(PROPERTY_NAME, categoryDefinition.getName()).getSingle();
 
              if(ctgr == null)
-                throw new MetadataObjectNotFoundException(Util.formatString("Can not find the category with the name %1s", categoryDefinition.getName()));
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                        "Can not find the category with the name %1s", categoryDefinition.getName()));
 
             ctgr.setProperty(PROPERTY_NAME, categoryDefinition.getName());
             ctgr.setProperty(PROPERTY_DISPLAY_NAME, categoryDefinition.getDisplayName());
