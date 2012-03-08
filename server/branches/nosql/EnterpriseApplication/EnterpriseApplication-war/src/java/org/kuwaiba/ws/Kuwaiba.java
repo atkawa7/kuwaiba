@@ -18,8 +18,10 @@ package org.kuwaiba.ws;
 
 import javax.ejb.EJB;
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 import org.kuwaiba.beans.WebServiceBeanRemote;
+import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 
 /**
  * Main webservice
@@ -35,6 +37,36 @@ public class Kuwaiba {
      */
     @WebMethod(operationName = "getMyMetadata")
     public String getMyMetadata() {
+        return null;
+    }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "getClass")
+    public String getClass(@WebParam(name = "className")
+    String className) throws Exception {
+        ClassInfo aClass = wsBean.getClass(className);
+        return aClass.getClassName();
+    }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "createClass")
+    public Long createClass(@WebParam(name = "ClassMetadata")
+    String ClassMetadata) {
+        //TODO write your implementation code here:
+        return null;
+    }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "deleteClass")
+    public Long deleteClass(@WebParam(name = "className")
+    String className) {
+        //TODO write your implementation code here:
         return null;
     }
 
