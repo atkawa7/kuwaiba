@@ -34,6 +34,7 @@ import org.kuwaiba.apis.persistence.exceptions.ObjectWithRelationsException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 import org.kuwaiba.apis.persistence.interfaces.BusinessEntityManager;
+import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.persistenceservice.caching.CacheManager;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
@@ -44,6 +45,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 /**
  * Business entity manager reference implementation (using Neo4J as backend)
@@ -74,18 +76,17 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     /**
      * Reference to the CacheManager
      */
-   private CacheManager cm;
+    private CacheManager cm;
 
     private BusinessEntityManagerImpl() {
         cm= CacheManager.getInstance();
     }
 
-    public BusinessEntityManagerImpl(GraphDatabaseService graphDb) {
+    public BusinessEntityManagerImpl(ConnectionManager cmn) {
         this();
-        this.graphDb = graphDb;
+        this.graphDb = (EmbeddedGraphDatabase)cmn.getConnectionHandler();
         this.classIndex = graphDb.index().forNodes(MetadataEntityManagerImpl.INDEX_CLASS);
         this.objectIndex = graphDb.index().forNodes(INDEX_OBJECTS);
-        this.cm = CacheManager.getInstance();
     }
 
     public Long createObject(String className, Long parentOid, HashMap<String,String> attributes, String template)
