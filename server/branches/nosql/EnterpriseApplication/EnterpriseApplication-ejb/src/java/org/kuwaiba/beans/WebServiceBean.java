@@ -21,7 +21,11 @@ import java.rmi.registry.Registry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
+//import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
+//import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
+import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 
 /**
  * Session bean to implement the logic for webservice calls
@@ -46,4 +50,142 @@ public class WebServiceBean implements WebServiceBeanRemote {
         }
         return mem;
     }
+
+    @Override
+    public Long createClass(ClassMetadata classDefinition) throws Exception {
+        return getMemInstance().createClass(classDefinition);
+    }
+
+//    @Override
+//    public boolean changeClassDefinition(ClassMetadata newClassDefinition) throws Exception {
+//        return getMemInstance().changeClassDefinition(newClassDefinition);
+//    }
+//
+    @Override
+    public boolean deleteClass(String className) throws Exception {
+        return getMemInstance().deleteClass(className);
+    }
+//
+//    @Override
+//    public boolean deleteClass(Long classId) throws Exception {
+//        return getMemInstance().deleteClass(classId);
+//    }
+//
+    @Override
+    public ClassInfo getClass(String className) throws Exception {
+        ClassInfo ci= new ClassInfo(getMemInstance().getClass(className), false, false, false, false);
+        return ci;
+    }
+//
+//    @Override
+//    public ClassInfo getClass(Long classId) throws Exception {
+//        ClassInfo ci = new ClassInfo(getMemInstance().getClass(classId), false, false, false, false);
+//        return ci;
+//    }
+//
+//    @Override
+//    public boolean moveClass(String classToMoveName, String targetParentName) throws Exception {
+//        return getMemInstance().moveClass(classToMoveName, targetParentName);
+//    }
+//
+//    @Override
+//    public boolean moveClass(Long classToMoveId, Long targetParentId) throws Exception {
+//        return getMemInstance().moveClass(classToMoveId, targetParentId);
+//    }
+//
+//    @Override
+//    public boolean addAttribute(String className, AttributeMetadata attributeDefinition) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public boolean addAttribute(Long classId, AttributeMetadata attributeDefinition) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public AttributeMetadata getAttribute(String className, String attributeName) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public AttributeMetadata getAttribute(Long classId, String attributeName) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public boolean changeAttributeDefinition(Long ClassId, AttributeMetadata newAttributeDefinition) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public boolean deleteAttribute(String className, String attributeName) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public boolean deleteAttribute(Long classId, String attributeName) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public Long createCategory(CategoryMetadata categoryDefinition) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public CategoryMetadata getCategory(String categoryName) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public CategoryMetadata getCategory(Integer categoryId) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public boolean changeCategoryDefinition(CategoryMetadata categoryDefinition) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public boolean deleteCategory(String categoryName) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public boolean deleteCategory(Integer categoryId) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public boolean addImplementor(String classWhichImplementsName, String interfaceToImplementName) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public boolean removeImplementor(String classWhichImplementsName, String interfaceToBeRemovedName) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public boolean addImplementor(Integer classWhichImplementsId, Integer interfaceToImplementId) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public boolean removeImplementor(Integer classWhichImplementsId, Integer interfaceToBeRemovedId) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public boolean getInterface(String interfaceName) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+//
+//    @Override
+//    public boolean getInterface(Integer interfaceid) throws Exception {
+//        throw new UnsupportedOperationException("Not supported yet.");
+//    }
+
 }
