@@ -16,8 +16,14 @@
 
 package org.kuwaiba.beans;
 
+import java.util.HashMap;
 import javax.ejb.Remote;
+import org.kuwaiba.exceptions.InvalidSessionException;
+import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
+import org.kuwaiba.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.ws.toserialize.business.RemoteObject;
+import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 
 /**
@@ -27,10 +33,26 @@ import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 @Remote
 public interface WebServiceBeanRemote {
 
+    /**
+     *
+     * @param user
+     * @param password
+     * @param IPAddress
+     * @return
+     * @throws NotAuthorizedException
+     */
+    public RemoteSession createSession(String user, String password, String IPAddress) throws NotAuthorizedException;
+    /**
+     * 
+     * @param sessionId
+     * @param remoteAddress
+     * @return
+     */
+    public boolean closeSession(String sessionId, String remoteAddress) throws InvalidSessionException;
     public Long createClass(ClassMetadata classDefinition) throws Exception;
 
     /**
-     * Changes a classmetadata definiton
+     * Changes a classmetadata definition
      * @param newClassDefinition
      * @return true if success
      * @throws ClassNotFoundException if there is no class with such classId
@@ -60,6 +82,17 @@ public interface WebServiceBeanRemote {
 //     * @throws ClassNotFoundException there is no class with such className
 //     */
     public ClassInfo getClass(String className) throws Exception;
+
+    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId);
+
+    public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass,String myClass);
+
+    public RemoteObject getObjectInfo(String objectClass, Long oid);
+
+    public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid);
+
+    public RemoteObject updateObject(String className, Long oid, HashMap<String, String> attributes);
+
 //
 //    /**
 //     * Gets a classmetadata, its attributes and Category

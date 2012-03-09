@@ -18,13 +18,19 @@ package org.kuwaiba.beans;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 //import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 //import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
+import org.kuwaiba.exceptions.InvalidSessionException;
+import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
+import org.kuwaiba.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.ws.toserialize.business.RemoteObject;
+import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 
 /**
@@ -75,6 +81,41 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public ClassInfo getClass(String className) throws Exception {
         ClassInfo ci= new ClassInfo(getMemInstance().getClass(className), false, false, false, false);
         return ci;
+    }
+
+    @Override
+    public RemoteSession createSession(String user, String password, String IPAddress) throws NotAuthorizedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean closeSession(String sessionId, String remoteAddress) throws InvalidSessionException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass, String myClass) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public RemoteObject getObjectInfo(String objectClass, Long oid) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public RemoteObject updateObject(String className, Long oid, HashMap<String, String> attributes) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 //
 //    @Override

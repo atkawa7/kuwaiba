@@ -19,7 +19,6 @@ package org.kuwaiba.apis.persistence.interfaces;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
-import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 
 /**
@@ -33,7 +32,7 @@ public interface ApplicationEntityManager {
      * @param password password (in plain text)
      * @return The user's profile. Null if the username/password don't match or any of them is null
      */
-    public UserProfile login(String username, String password) throws NotAuthorizedException;
+    public UserProfile login(String username, String password);
     /**
      * Creates a user
      * @param userName New user's name. Mandatory.

@@ -15,7 +15,7 @@
  *  under the License.
  */
 
-package org.kuwaiba.apis.persistence.exceptions;
+package org.kuwaiba.exceptions;
 
 import java.util.logging.Level;
 
@@ -23,10 +23,10 @@ import java.util.logging.Level;
  * Should be thrown when an operation is not permitted due to privilege/authentication issues
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class NotAuthorizedException extends InventoryException{
+public class NotAuthorizedException extends ServerSideException{
 
     public NotAuthorizedException(String msg) {
-        super("Not enough privileges to perform this operation "+msg, Level.WARNING);
+        super(Level.WARNING, "Not enough privileges to perform this operation: "+msg);
     }
 
 }

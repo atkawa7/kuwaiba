@@ -23,7 +23,7 @@ import org.kuwaiba.apis.persistence.business.RemoteObjectLight;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
-import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectWithRelationsException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
@@ -43,27 +43,27 @@ public interface BusinessEntityManager {
      * @param template Template name to be use to create the current object. Template values can be
      * overridden if "attributeValues" is not empty
      * @return The object's id
-     * @throws ClassNotFoundException Thrown if the object's class can't be found
+     * @throws MetadataObjectNotFoundException Thrown if the object's class can't be found
      * @throws ObjectNotFoundException Thrown if the parent id is not found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
     public Long createObject(String className, Long parentOid,
             HashMap<String,String> attributes,String template)
-            throws ClassNotFoundException, ObjectNotFoundException,
-                NotAuthorizedException, OperationNotPermittedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException,
+                OperationNotPermittedException;
     /**
      * Gets the detailed information about an object
      * @param className Object class name
      * @param oid Object's oid
      * @return A detailed representation of the requested object
-     * @throws ClassNotFoundException If the className class can't be found
+     * @throws MetadataObjectNotFoundException If the className class can't be found
      * @throws ObjectNotFoundException If the requested object can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
     public RemoteObject getObjectInfo(String className, Long oid)
-            throws ClassNotFoundException, ObjectNotFoundException, NotAuthorizedException,
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, 
                     OperationNotPermittedException;
 
     /**
@@ -71,13 +71,13 @@ public interface BusinessEntityManager {
      * @param className Object class name
      * @param oid Object's oid
      * @return A detailed representation of the requested object
-     * @throws ClassNotFoundException If the className class can't be found
+     * @throws MetadataObjectNotFoundException If the className class can't be found
      * @throws ObjectNotFoundException If the requested object can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
     public RemoteObjectLight getObjectInfoLight(String className, Long oid)
-            throws ClassNotFoundException, ObjectNotFoundException, NotAuthorizedException,
+            throws MetadataObjectNotFoundException, ObjectNotFoundException,
                     OperationNotPermittedException;
 
     /**
@@ -88,12 +88,11 @@ public interface BusinessEntityManager {
      * relationships that should be released manually before to delete them
      * @throws ObjectNotFoundException If the requested object can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
-     * @throws NotAuthorizedException If the update can't be performed due to permissions
      * or it is blocked
      */
     public boolean deleteObject(Long oid)
             throws ObjectWithRelationsException, ObjectNotFoundException, 
-                OperationNotPermittedException, NotAuthorizedException;
+                OperationNotPermittedException;
 
 
     /**
@@ -102,15 +101,14 @@ public interface BusinessEntityManager {
      * @param className Object class name
      * @param oid Object's oid
      * @param attributes The attributes to be updated (the key is the attribute name, the value is the value)
-     * @throws ClassNotFoundException If the object class can't be found
+     * @throws MetadataObjectNotFoundException If the object class can't be found
      * @throws ObjectNotFoundException If the object can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
-     * @throws NotAuthorizedException If the update can't be performed due to permissions
      * @throws InvalidArhumentException If any of the names provided does not exist or can't be set using this method
      */
     public void updateObject(String className, Long oid, HashMap<String,String> attributes)
-            throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
-                WrongMappingException, InvalidArgumentException,NotAuthorizedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
+                WrongMappingException, InvalidArgumentException;
 
     /**
      * Updates an object binary attributes.
@@ -119,15 +117,14 @@ public interface BusinessEntityManager {
      * @param attributeNames The attributes to be updated
      * @param attributeValues The attribute values
      * @return Success or failure
-     * @throws ClassNotFoundException If the object class can't be found
+     * @throws MetadataObjectNotFoundException If the object class can't be found
      * @throws ObjectNotFoundException If the object can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
-     * @throws NotAuthorizedException If the update can't be performed due to permissions
      * @throws ArraySizeMismatchException If the arrays attributeNames and attributeValues have different lengths
      */
     public boolean setBinaryAttributes(String className, Long oid, List<String> attributeNames, List<byte[]> attributeValues)
-            throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
-                ArraySizeMismatchException, NotAuthorizedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
+                ArraySizeMismatchException;
 
     /**
      * Updates an object many-to-one, one-to-many and many-to-may type of attribute.
@@ -137,13 +134,12 @@ public interface BusinessEntityManager {
      * @param attributeName The attribute to be updated
      * @param attributeValues The attribute value(s) (given as oids)
      * @return Success or failure
-     * @throws ClassNotFoundException If the object class or the list type class can't be found
+     * @throws MetadataObjectNotFoundException If the object class or the list type class can't be found
      * @throws ObjectNotFoundException If the object can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
-     * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
     public boolean setManyToManyAttribute(String className, Long oid, String attributeTypeClassName, String attributeName, List<Long> attributeValues)
-            throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
 
     /**
      * Move a list of objects to a new parent: this methods ignores those who can't be moved and raises
@@ -151,33 +147,29 @@ public interface BusinessEntityManager {
      * @param objects Map using the object class name as keys and the respective objects oids as values
      * @param targetClassName Parent's class name
      * @param targetOid Parent's oid
-     * @throws ClassNotFoundException If the object's or new parent's class can't be found
+     * @throws MetadataObjectNotFoundException If the object's or new parent's class can't be found
      * @throws ObjectNotFoundException If the object or its new parent can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
-     * @throws NotAuthorizedException If the update can't be performed due to permissions
      * @throws ArraySizeMismatchException If the oids and classNames array sizes do not match
      */
 
     public void moveObjects(HashMap<String,List<Long>> objects, String targetClassName, Long targetOid)
-            throws ClassNotFoundException, ObjectNotFoundException, 
-                 OperationNotPermittedException, NotAuthorizedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException,
+                 OperationNotPermittedException;
 
     /**
-     *
-     * @param objectClassNames Class names for objects to be copied
-     * @param templateOids Oids for objects to be copied
+     * Copy a set of objects
+     * @param objects Hashmap with the objects class names as keys and their oids as values
      * @param targetClassName Target parent's class name
      * @param targetOid Target parent's oid
      * @return A list containing the newly created objects
-     * @throws ClassNotFoundException If any of the provided classes couldn't be found
+     * @throws MetadataObjectNotFoundException If any of the provided classes couldn't be found
      * @throws ObjectNotFoundException
      * @throws OperationNotPermittedException
-     * @throws NotAuthorizedException
-     * @throws ArraySizeMismatchException
      */
-    public RemoteObjectLight[] copyObjects(List<String> objectClassNames, List<Long> templateOids, String targetClassName, Long targetOid)
-            throws ClassNotFoundException, ObjectNotFoundException,
-                 OperationNotPermittedException, NotAuthorizedException, ArraySizeMismatchException;
+    public RemoteObjectLight[] copyObjects(HashMap<String, Long> objects, String targetClassName, Long targetOid)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException,
+                 OperationNotPermittedException;
 
     /**
      * Locks and object read-only or release the block
@@ -185,34 +177,31 @@ public interface BusinessEntityManager {
      * @param oid object's oid
      * @param value true to set the block, false to release it
      * @return Success or failure
-     * @throws ClassNotFoundException If the object's can't be found
+     * @throws MetadataObjectNotFoundException If the object's can't be found
      * @throws ObjectNotFoundException If the object or its new parent can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
-     * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
     public boolean setObjectLockSate(String className, Long oid, Boolean value)
-            throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
 
     /**
      * Gets the children of a given object
      * @param className Object's class name
      * @param oid Object's oid
      * @return The list of children
-     * @throws ClassNotFoundException If the object's can't be found
+     * @throws MetadataObjectNotFoundException If the object's can't be found
      * @throws ObjectNotFoundException If the object or its new parent can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
-     * @throws NotAuthorizedException If the query can't be performed due to permissions
      */
     public RemoteObjectLight[] getObjectChildren(String className, Long oid)
-            throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
     
     /**
      * Executes a query
      * @return The list of results
-     * @throws ClassNotFoundException If any of the classes used as based for the search do not exist
-     * @throws NotAuthorizedException If the query can't be performed due to permissions
+     * @throws MetadataObjectNotFoundException If any of the classes used as based for the search do not exist
      */
     public List<ResultRecord> executeQuery()
-            throws ClassNotFoundException, NotAuthorizedException;
+            throws MetadataObjectNotFoundException;
 
 }

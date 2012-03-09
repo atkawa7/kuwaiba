@@ -1,5 +1,5 @@
-/*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+/**
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -12,22 +12,29 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 
-package org.kuwaiba.apis.persistence.exceptions;
+package org.kuwaiba.exceptions;
 
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 /**
- * Should be thrown when an operation is tried to be performed but there's no a valid session established
+ * The root of all server side exceptions. This is, all the exceptions thrown inside the enterprise application
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class InvalidSessionException extends InventoryException{
+public class ServerSideException extends Exception{
+    private Level level;
 
-    public InvalidSessionException(String msg) {
-        super(ResourceBundle.getBundle("org/kuwaiba/internationalization/Bundle").getString("LBL_NOACTIVESESSION")+": "+msg, Level.WARNING);
+    public Level getLevel() {
+        return level;
     }
 
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
+    public ServerSideException(Level level, String msg) {
+        super(msg);
+        this.level = level;
+    }
 }

@@ -454,12 +454,12 @@ exists or setup the property manually. For example like this:
         <!-- You can override this target in the ../build.xml file. -->
     </target>
     <target depends="compile" name="library-inclusion-in-archive">
-        <copyfiles files="${reference.PersistenceServiceRemoteInterfaces.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${reference.PersistenceAbstractionAPI.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${reference.PersistenceServiceRemoteInterfaces.jar}" todir="${build.classes.dir}"/>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
-        <copyfiles files="${reference.PersistenceServiceRemoteInterfaces.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.PersistenceAbstractionAPI.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.PersistenceServiceRemoteInterfaces.jar}" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">

@@ -19,11 +19,9 @@ package org.kuwaiba.persistenceservice;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import org.kuwaiba.apis.persistence.interfaces.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.persistence.factory.PersistenceLayerFactory;
 import org.kuwaiba.persistenceservice.impl.BusinessEntityManagerImpl;
-import org.kuwaiba.persistenceservice.impl.ConnectionManagerImpl;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
@@ -63,12 +61,12 @@ public class Main {
 
             Runtime.getRuntime().addShutdownHook(new Thread() {
 
-            @Override
-            public void run() {
-               System.out.println("Closing connection... ");
-               cm.closeConnection();
-               System.out.println("Connection closed");
-            }
+                    @Override
+                    public void run() {
+                       System.out.println("Closing connection... ");
+                       cm.closeConnection();
+                       System.out.println("Connection closed");
+                    }
             });
 
         }catch(Exception e){

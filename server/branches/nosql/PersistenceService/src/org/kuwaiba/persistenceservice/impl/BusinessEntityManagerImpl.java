@@ -28,7 +28,7 @@ import org.kuwaiba.apis.persistence.business.RemoteObjectLight;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
-import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
+import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectWithRelationsException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
