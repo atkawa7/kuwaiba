@@ -24,6 +24,7 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 
 /**
@@ -33,6 +34,7 @@ import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 @Remote
 public interface WebServiceBeanRemote {
 
+    // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
     /**
      *
      * @param user
@@ -49,7 +51,10 @@ public interface WebServiceBeanRemote {
      * @return
      */
     public boolean closeSession(String sessionId, String remoteAddress) throws InvalidSessionException;
-    public Long createClass(ClassMetadata classDefinition) throws Exception;
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
+    public Long createClass(ClassInfo classDefinition) throws Exception;
 
     /**
      * Changes a classmetadata definition
@@ -65,6 +70,7 @@ public interface WebServiceBeanRemote {
 //     * @return true if success
 //     * @throws ClassNotFoundException if there is not a class with de ClassId
 //     */
+    
     public boolean deleteClass(String className) throws Exception;
 
     /**
@@ -83,17 +89,35 @@ public interface WebServiceBeanRemote {
      */
     public ClassInfo getClass(String className) throws Exception;
 
-    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId);
+    public ClassInfo getClass(Long classId) throws Exception;
 
-    public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass,String myClass);
-
-    public RemoteObject getObjectInfo(String objectClass, Long oid);
-
-    public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid);
-
-    public RemoteObject updateObject(String className, Long oid, HashMap<String, String> attributes);
-
-//
+    public boolean moveClass(String classToMoveName, String targetParentName) throws Exception;
+    /**
+     * Moves a class from one parentClass to an other parentClass
+     * @param classToMoveId
+     * @param targetParentClassId
+     * @return true if success
+     * @throws ClassNotFoundException if there is no a classToMove with such classId
+     * or if there is no a targetParentClass with such classId
+     */
+    public boolean moveClass(Long classToMoveId, Long targetParentId) throws Exception;
+    /**
+     * Adds an attribute to the class
+     * @param className
+     * @param attributeDefinition
+     * @return true if success
+     * @throws ClassNotFoundException if there is no a class with such className
+     */
+    public boolean addAttribute(String className, AttributeInfo attributeDefinition) throws Exception;
+    /**
+     * Adds an attribute to a class
+     * @param classId
+     * @param attributeDefinition
+     * @return true if success
+     * @throws ClassNotFoundException if there is no a class with such classId
+     */
+    public boolean addAttribute(Long classId, AttributeInfo attributeDefinition) throws Exception;
+    //
 //    /**
 //     * Gets an attribute belonging to a class
 //     * @param className
@@ -187,4 +211,19 @@ public interface WebServiceBeanRemote {
 //    public boolean removeImplementor(Integer classWhichImplementsId ,Integer interfaceToBeRemovedId) throws Exception;
 //    public boolean getInterface(String interfaceName) throws Exception;
 //    public boolean getInterface(Integer interfaceid) throws Exception;
+
+// </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
+    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId);
+
+    public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass,String myClass);
+
+    public RemoteObject getObjectInfo(String objectClass, Long oid);
+
+    public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid);
+
+    public RemoteObject updateObject(String className, Long oid, HashMap<String, String> attributes);
+    // </editor-fold>
+
 }
