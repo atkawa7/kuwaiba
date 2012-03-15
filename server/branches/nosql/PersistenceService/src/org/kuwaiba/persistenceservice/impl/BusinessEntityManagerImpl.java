@@ -28,7 +28,7 @@ import org.kuwaiba.apis.persistence.business.RemoteObjectLight;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
-import org.kuwaiba.exceptions.NotAuthorizedException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectWithRelationsException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
@@ -90,12 +90,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
 
     public Long createObject(String className, Long parentOid, HashMap<String,String> attributes, String template)
-            throws ClassNotFoundException, ObjectNotFoundException, NotAuthorizedException, OperationNotPermittedException {
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
 
         
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
-            throw new ClassNotFoundException("Class "+className+" can not be found");
+            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
 
         //Update the cache if necessary
         ClassMetadata myClass= cm.getClass(className);
@@ -149,11 +149,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
 
-    public RemoteObject getObjectInfo(String className, Long oid) throws ClassNotFoundException, ObjectNotFoundException, NotAuthorizedException, OperationNotPermittedException {
+    public RemoteObject getObjectInfo(String className, Long oid) throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
         //Perform benchmarks to see if accessing to the objects index is less expensive
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
-            throw new ClassNotFoundException(className);
+            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
 
         //Update the cache if necessary
         ClassMetadata myClass= cm.getClass(className);
@@ -204,11 +204,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         throw new ObjectNotFoundException(className, oid);
     }
 
-    public RemoteObjectLight getObjectInfoLight(String className, Long oid) throws ClassNotFoundException, ObjectNotFoundException, NotAuthorizedException, OperationNotPermittedException {
+    public RemoteObjectLight getObjectInfoLight(String className, Long oid) 
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
         //Perform benchmarks to see if accessing to the objects index is less expensive
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
-            throw new ClassNotFoundException(className);
+            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
         Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
         while (instances.iterator().hasNext()){
             Node instance = instances.iterator().next().getEndNode();
@@ -222,16 +223,18 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         throw new ObjectNotFoundException(className, oid);
     }
 
-    public boolean deleteObject(Long oid) throws ObjectWithRelationsException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
+    public boolean deleteObject(Long oid)
+            throws ObjectWithRelationsException, ObjectNotFoundException, OperationNotPermittedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void updateObject(String className, Long oid, HashMap<String,String> attributes) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, WrongMappingException, NotAuthorizedException, InvalidArgumentException {
+    public void updateObject(String className, Long oid, HashMap<String,String> attributes) 
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, WrongMappingException, InvalidArgumentException {
 
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
 
         if (classNode == null)
-            throw new ClassNotFoundException(className);
+            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
 
         //Update the cache if necessary
         ClassMetadata myClass= cm.getClass(className);
@@ -273,19 +276,22 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         throw new ObjectNotFoundException(className, oid);
     }
 
-    public boolean setBinaryAttributes(String className, Long oid, List<String> attributeNames, List<byte[]> attributeValues) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException, NotAuthorizedException {
+    public boolean setBinaryAttributes(String className, Long oid, List<String> attributeNames, List<byte[]> attributeValues)
+            throws ObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean setManyToManyAttribute(String className, Long oid, String attributeTypeClassName, String attributeName, List<Long> attributeValues) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
+    public boolean setManyToManyAttribute(String className, Long oid, String attributeTypeClassName, String attributeName, List<Long> attributeValues)
+            throws ObjectNotFoundException, OperationNotPermittedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void moveObjects(HashMap<String, List<Long>> objects, String targetClassName, Long targetOid) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
+    public void moveObjects(HashMap<String, List<Long>> objects, String targetClassName, Long targetOid)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
         Node parentClass = classIndex.get(MetadataEntityManagerImpl.INDEX_CLASS, targetClassName).getSingle();
 
         if (parentClass == null)
-            throw new ClassNotFoundException(targetClassName);
+            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", targetClassName));
 
         Node parentNode = null;
         Iterable<Relationship> children = parentClass.getRelationships(RelTypes.INSTANCE_OF);
@@ -298,19 +304,22 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
     }
 
-    public RemoteObjectLight[] copyObjects(List<String> objectClassNames, List<Long> templateOids, String targetClassName, Long targetOid) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException, ArraySizeMismatchException {
+    public RemoteObjectLight[] copyObjects(HashMap<String, Long> objects, String targetClassName, Long targetOid)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException{
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean setObjectLockSate(String className, Long oid, Boolean value) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
+    public boolean setObjectLockState(String className, Long oid, Boolean value)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public RemoteObjectLight[] getObjectChildren(String className, Long oid) throws ClassNotFoundException, ObjectNotFoundException, OperationNotPermittedException, NotAuthorizedException {
+    public RemoteObjectLight[] getObjectChildren(String className, Long oid)
+            throws ObjectNotFoundException, OperationNotPermittedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public List<ResultRecord> executeQuery() throws ClassNotFoundException, NotAuthorizedException {
+    public List<ResultRecord> executeQuery() throws MetadataObjectNotFoundException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

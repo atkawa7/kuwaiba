@@ -46,12 +46,10 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException Thrown if the object's class can't be found
      * @throws ObjectNotFoundException Thrown if the parent id is not found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
-     * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
     public Long createObject(String className, Long parentOid,
             HashMap<String,String> attributes,String template)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException,
-                OperationNotPermittedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
     /**
      * Gets the detailed information about an object
      * @param className Object class name
@@ -168,8 +166,7 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException
      */
     public RemoteObjectLight[] copyObjects(HashMap<String, Long> objects, String targetClassName, Long targetOid)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException,
-                 OperationNotPermittedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
 
     /**
      * Locks and object read-only or release the block
@@ -181,7 +178,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the object or its new parent can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
      */
-    public boolean setObjectLockSate(String className, Long oid, Boolean value)
+    public boolean setObjectLockState(String className, Long oid, Boolean value)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
 
     /**

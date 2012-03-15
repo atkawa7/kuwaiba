@@ -272,7 +272,7 @@ public class Kuwaiba {
     }
     
     /**
-     * getClassByName get a classmetadate by its name
+     * getClassByName Gets a classmetadata by its name
      */
     @WebMethod(operationName = "getClassByName")
     public ClassInfo getClassByName(@WebParam(name = "className")
@@ -282,7 +282,7 @@ public class Kuwaiba {
     }
 
     /**
-     * getClassById get a classmetadate by its id
+     * getClassById Gets a classmetadata by its id
      */
     @WebMethod(operationName = "getClassById")
     public ClassInfo getClassById(@WebParam(name = "classId")
