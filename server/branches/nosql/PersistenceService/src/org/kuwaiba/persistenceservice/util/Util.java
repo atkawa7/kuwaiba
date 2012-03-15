@@ -26,6 +26,8 @@ import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.MiscException;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.neo4j.graphdb.Direction;
@@ -98,6 +100,71 @@ public class Util {
             throw new InvalidArgumentException("Can not retrieve the correct value for ("+
                             value+" "+type+"). Please check your mappings", Level.WARNING);
         }
+    }
+
+    /**
+     * Creates a ClassMetadata with default values
+     * @param classMetadata
+     * @return
+     */
+    public static ClassMetadata createDefaultClassMetadata(ClassMetadata classDefinition) throws MetadataObjectNotFoundException{
+
+        Integer color = null;
+
+        if(classDefinition.getName() == null)
+            throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not create a ClassMetada without a name"));
+
+        if(classDefinition.getDisplayName() == null)
+            classDefinition.setDisplayName("");
+
+        if(classDefinition.getDescription() == null)
+            classDefinition.setDisplayName("");
+
+        if(classDefinition.getIcon() == null)
+            classDefinition.setIcon(new byte[0]);
+
+        if(classDefinition.getSmallIcon() == null)
+            classDefinition.setSmallIcon(new byte[0]);
+
+        try {
+            color = Integer.valueOf(classDefinition.getColor());
+        } catch (NumberFormatException e) {
+            classDefinition.setColor(0);
+        }
+
+        return classDefinition;
+    }
+
+    /**
+     * Creates default values for a AttirbuteMetadata
+     * @param AttributeMetadata
+     * @return
+     */
+    public static AttributeMetadata createDefaultAttributeMetadata(AttributeMetadata AttributeDefinition) throws MetadataObjectNotFoundException{
+
+        Integer mapping = null;
+
+        if(AttributeDefinition.getName() == null)
+            throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not create a AttributeMetada without a name"));
+
+        if(AttributeDefinition.getDisplayName() == null)
+            AttributeDefinition.setDisplayName("");
+
+        if(AttributeDefinition.getDescription() == null)
+            AttributeDefinition.setDisplayName("");
+
+        try {
+            mapping = Integer.valueOf(AttributeDefinition.getMapping());
+        } catch (NumberFormatException e) {
+            AttributeDefinition.setMapping(0);
+        }
+
+        if(AttributeDefinition.getType() == null)
+            AttributeDefinition.setType("");
+
+        return AttributeDefinition;
     }
 
     /**
