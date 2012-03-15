@@ -27,12 +27,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 public class ClassInfoLight {
     protected Long id;
     protected Boolean abstractClass;
-    protected Boolean physicalNode;
-    protected Boolean physicalConnection;
-    protected Boolean physicalEndpoint;
+//    protected Boolean physicalNode;
+//    protected Boolean physicalConnection;
+//    protected Boolean physicalEndpoint;
+    protected int flags;
     protected Boolean viewable;
     protected String className;
     protected String displayName;
+    protected String parentClassName;
     /**
      * 16x16 icon
      */
@@ -40,14 +42,14 @@ public class ClassInfoLight {
 
     public ClassInfoLight(){}
 
-    public ClassInfoLight(Long id, String name, String displayName,boolean isPhysicalNode,
-            boolean isPhysicalConnection,boolean isPhysicalEndpoint, boolean isViewable,
+    public ClassInfoLight(Long id, String name, String displayName,int flags, boolean isViewable,
             boolean isAbstract, byte[] smallIcon) {
         this.id = id;
         this.abstractClass = isAbstract;
-        this.physicalNode = isPhysicalNode;
-        this.physicalConnection = isPhysicalConnection;
-        this.physicalEndpoint = isPhysicalEndpoint;
+//        this.physicalNode = isPhysicalNode;
+//        this.physicalConnection = isPhysicalConnection;
+//        this.physicalEndpoint = isPhysicalEndpoint;
+        this.flags = flags;
         this.viewable = isViewable;
         this.className = name;
         this.displayName = displayName;
@@ -94,30 +96,30 @@ public class ClassInfoLight {
         this.smallIcon = smallIcon;
     }
 
-    public Boolean isPhysicalConnection() {
-        return physicalConnection;
+    public Boolean getAbstractClass() {
+        return abstractClass;
     }
 
-    public void setPhysicalConnection(Boolean isPhysicalConnection) {
-        this.physicalConnection = isPhysicalConnection;
+    public void setAbstractClass(Boolean abstractClass) {
+        this.abstractClass = abstractClass;
     }
 
-    public Boolean isPhysicalEndpoint() {
-        return physicalEndpoint;
+    public int getFlags() {
+        return flags;
     }
 
-    public void setPhysicalEndpoint(Boolean isPhysicalEndpoint) {
-        this.physicalEndpoint = isPhysicalEndpoint;
+    public void setFlags(int flags) {
+        this.flags = flags;
     }
 
-    public Boolean isPhysicalNode() {
-        return physicalNode;
+    public String getParentClassName() {
+        return parentClassName;
     }
 
-    public void setPhysicalNode(Boolean isPhysicalNode) {
-        this.physicalNode = isPhysicalNode;
+    public void setParentClassName(String parentClassName) {
+        this.parentClassName = parentClassName;
     }
-
+    
     public Boolean isViewable() {
         return viewable;
     }
