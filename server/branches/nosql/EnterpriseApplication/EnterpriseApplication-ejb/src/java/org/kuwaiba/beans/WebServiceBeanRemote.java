@@ -66,21 +66,21 @@ public interface WebServiceBeanRemote {
 //     * @throws ClassNotFoundException if there is not a class with de ClassId
 //     */
     public boolean deleteClass(String className) throws Exception;
-//
-//    /**
-//     * Deletes a classmetadata, its attributes and category relationships
-//     * @param classId
-//     * @return true if success
-//     * @throws ClassNotFoundException if there is not a class with de ClassName
-//     */
-//    public boolean deleteClass(Long classId) throws Exception;
-//
-//    /**
-//     * Gets a classmetadata, its attributes and Category
-//     * @param className
-//     * @return A ClassMetadata with the className
-//     * @throws ClassNotFoundException there is no class with such className
-//     */
+
+    /**
+     * Deletes a classmetadata, its attributes and category relationships
+     * @param classId
+     * @return true if success
+     * @throws ClassNotFoundException if there is not a class with de ClassName
+     */
+    public boolean deleteClass(Long classId) throws Exception;
+
+    /**
+     * Gets a classmetadata, its attributes and Category
+     * @param className
+     * @return A ClassMetadata with the className
+     * @throws ClassNotFoundException there is no class with such className
+     */
     public ClassInfo getClass(String className) throws Exception;
 
     public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId);
@@ -93,52 +93,6 @@ public interface WebServiceBeanRemote {
 
     public RemoteObject updateObject(String className, Long oid, HashMap<String, String> attributes);
 
-//
-//    /**
-//     * Gets a classmetadata, its attributes and Category
-//     * @param classId
-//     * @return A ClassMetadata with the classId
-//     * @throws ClassNotFoundException there is no class with such classId
-//     */
-//    public ClassInfo getClass(Long classId) throws Exception;
-//
-//    /**
-//     * Moves a class from one parentClass to an other parentClass
-//     * @param classToMoveName
-//     * @param targetParentClassName
-//     * @return true if success
-//     * @throws ClassNotFoundException if there is no a classToMove with such name
-//     * or if there is no a targetParentClass with such name
-//     */
-//    public boolean moveClass(String classToMoveName, String targetParentName) throws Exception;
-//
-//    /**
-//     * Moves a class from one parentClass to an other parentClass
-//     * @param classToMoveId
-//     * @param targetParentClassId
-//     * @return true if success
-//     * @throws ClassNotFoundException if there is no a classToMove with such classId
-//     * or if there is no a targetParentClass with such classId
-//     */
-//    public boolean moveClass(Long classToMoveId, Long targetParentId) throws Exception;
-//
-//    /**
-//     * Adds an attribute to the class
-//     * @param className
-//     * @param attributeDefinition
-//     * @return true if success
-//     * @throws ClassNotFoundException if there is no a class with such className
-//     */
-//    public boolean addAttribute(String className, AttributeMetadata attributeDefinition) throws Exception;
-//
-//    /**
-//     * Adds an attribute to a class
-//     * @param classId
-//     * @param attributeDefinition
-//     * @return true if success
-//     * @throws ClassNotFoundException if there is no a class with such classId
-//     */
-//    public boolean addAttribute(Long classId, AttributeMetadata attributeDefinition) throws Exception;
 //
 //    /**
 //     * Gets an attribute belonging to a class
