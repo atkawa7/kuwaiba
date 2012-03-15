@@ -31,6 +31,7 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 
 /**
