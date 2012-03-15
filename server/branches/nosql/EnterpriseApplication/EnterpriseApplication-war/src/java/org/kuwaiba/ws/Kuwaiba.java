@@ -35,7 +35,7 @@ import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 
 /**
  * Main webservice
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Adrian Maritnez Molina <Adrian.Martinez@kuwaiba.org>
  */
 @WebService()
 public class Kuwaiba {
@@ -229,31 +229,74 @@ public class Kuwaiba {
     /**
      * Web service operation
      */
-    @WebMethod(operationName = "getClass")
-    public String getClass(@WebParam(name = "className")
+    @WebMethod(operationName = "addAttribute")
+    public Boolean addAttributeByClassId(@WebParam(name = "ClassName")
+    String ClassName, @WebParam(name = "name")
+    String name, @WebParam(name = "displayName")
+    String displayName, @WebParam(name = "type")
+    String type, @WebParam(name = "description")
+    Integer description, @WebParam(name = "administrative")
+    Boolean administrative, @WebParam(name = "visible")
+    Boolean visible, @WebParam(name = "mapping")
+    Boolean mapping, @WebParam(name = "readOnly")
+    Boolean readOnly, @WebParam(name = "unique")
+    Boolean unique) throws Exception {
+
+       AttributeInfo ai = new AttributeInfo(name, displayName, type,
+                            administrative, visible, displayName, description);
+
+        return wsBean.addAttribute(ClassName, ai);
+    }
+
+        /**
+     * addAttribute
+     */
+    @WebMethod(operationName = "addAttribute")
+    public Boolean addAttributeByClassName(@WebParam(name = "ClassId")
+    Long ClassId, @WebParam(name = "name")
+    String name, @WebParam(name = "displayName")
+    String displayName, @WebParam(name = "type")
+    String type, @WebParam(name = "description")
+    Integer description, @WebParam(name = "administrative")
+    Boolean administrative, @WebParam(name = "visible")
+    Boolean visible, @WebParam(name = "mapping")
+    Boolean mapping, @WebParam(name = "readOnly")
+    Boolean readOnly, @WebParam(name = "unique")
+    Boolean unique) throws Exception {
+
+       AttributeInfo ai = new AttributeInfo(name, displayName, type,
+                            administrative, visible, displayName, description);
+
+        return wsBean.addAttribute(ClassId, ai);
+    }
+    
+    /**
+     * getClassByName get a classmetadate by its name
+     */
+    @WebMethod(operationName = "getClassByName")
+    public ClassInfo getClassByName(@WebParam(name = "className")
     String className) throws Exception {
-        ClassInfo aClass = wsBean.getClass(className);
-        return aClass.getClassName();
+        ClassInfo ci = wsBean.getClass(className);
+        return ci;
     }
 
     /**
-     * Web service operation
+     * getClassById get a classmetadate by its id
      */
-    @WebMethod(operationName = "createClass")
-    public Long createClass(@WebParam(name = "ClassMetadata")
-    String ClassMetadata) {
-        //TODO write your implementation code here:
-        return null;
+    @WebMethod(operationName = "getClassById")
+    public ClassInfo getClassById(@WebParam(name = "classId")
+    Long classId) throws Exception {
+        ClassInfo ci = wsBean.getClass(classId);
+        return ci;
     }
 
     /**
-     * Web service operation
+     * deleteClass
      */
-    @WebMethod(operationName = "deleteClass")
-    public Long deleteClass(@WebParam(name = "className")
-    String className) {
-        //TODO write your implementation code here:
-        return null;
+    @WebMethod(operationName = "deleteClassById")
+    public boolean deleteClassByName(@WebParam(name = "className")
+    String className) throws Exception {
+        return wsBean.deleteClass(className);
     }
 
    /**
