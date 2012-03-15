@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 //import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 //import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
+import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.exceptions.InvalidSessionException;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -32,6 +33,7 @@ import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
+import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 
 /**
  * Session bean to implement the logic for webservice calls
@@ -57,6 +59,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
         return mem;
     }
 
+
+    // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
     @Override
     public Long createClass(ClassInfo classDefinition) throws Exception
     {
@@ -83,11 +87,6 @@ public class WebServiceBean implements WebServiceBeanRemote {
         return getMemInstance().createClass(cm);
     }
 
-//    @Override
-//    public boolean changeClassDefinition(ClassMetadata newClassDefinition) throws Exception {
-//        return getMemInstance().changeClassDefinition(newClassDefinition);
-//    }
-//
     @Override
     public boolean deleteClass(String className) throws Exception
     {
@@ -102,11 +101,63 @@ public class WebServiceBean implements WebServiceBeanRemote {
     @Override
     public ClassInfo getClass(String className) throws Exception
     {
-        
         ClassInfo ci= new ClassInfo(getMemInstance().getClass(className), 0, false);
         return ci;
     }
 
+    @Override
+    public ClassInfo getClass(Long classId) throws Exception
+    {
+        ClassInfo ci= new ClassInfo(getMemInstance().getClass(classId), 0, false);
+        return ci;
+    }
+
+    @Override
+    public boolean moveClass(String classToMoveName, String targetParentName) throws Exception{
+        return getMemInstance().moveClass(classToMoveName, targetParentName);
+    }
+
+    @Override
+    public boolean moveClass(Long classToMoveId, Long targetParentId) throws Exception{
+        return getMemInstance().moveClass(classToMoveId, targetParentId);
+    }
+
+    @Override
+    public boolean addAttribute(String className, AttributeInfo attributeDefinition) throws Exception{
+
+        AttributeMetadata atm = new AttributeMetadata();
+
+        atm.setName(attributeDefinition.getName());
+        atm.setDisplayName(attributeDefinition.getDisplayName());
+        atm.setDescription(attributeDefinition.getDescription());
+        atm.setMapping(attributeDefinition.getMapping());
+        atm.setReadOnly(attributeDefinition.isReadOnly());
+        atm.setType(attributeDefinition.getType());
+        atm.setUnique(attributeDefinition.isUnique());
+        atm.setVisible(attributeDefinition.isVisible());
+        
+        return getMemInstance().addAttribute(className, atm);
+    }
+
+    @Override
+    public boolean addAttribute(Long classId, AttributeInfo attributeDefinition) throws Exception{
+        AttributeMetadata atm = new AttributeMetadata();
+
+        atm.setName(attributeDefinition.getName());
+        atm.setDisplayName(attributeDefinition.getDisplayName());
+        atm.setDescription(attributeDefinition.getDescription());
+        atm.setMapping(attributeDefinition.getMapping());
+        atm.setReadOnly(attributeDefinition.isReadOnly());
+        atm.setType(attributeDefinition.getType());
+        atm.setUnique(attributeDefinition.isUnique());
+        atm.setVisible(attributeDefinition.isVisible());
+
+        return getMemInstance().addAttribute(classId, atm);
+    }
+    // </editor-fold>
+
+
+    // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
     @Override
     public RemoteSession createSession(String user, String password, String IPAddress) throws NotAuthorizedException {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -120,8 +171,10 @@ public class WebServiceBean implements WebServiceBeanRemote {
     @Override
     public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
+    }// </editor-fold>
 
+
+    // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
     @Override
     public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass, String myClass) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -140,91 +193,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
     @Override
     public RemoteObject updateObject(String className, Long oid, HashMap<String, String> attributes) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-//
-//    @Override
-//    public AttributeMetadata getAttribute(String className, String attributeName) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public AttributeMetadata getAttribute(Long classId, String attributeName) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public boolean changeAttributeDefinition(Long ClassId, AttributeMetadata newAttributeDefinition) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public boolean deleteAttribute(String className, String attributeName) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public boolean deleteAttribute(Long classId, String attributeName) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public Long createCategory(CategoryMetadata categoryDefinition) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public CategoryMetadata getCategory(String categoryName) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public CategoryMetadata getCategory(Integer categoryId) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public boolean changeCategoryDefinition(CategoryMetadata categoryDefinition) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public boolean deleteCategory(String categoryName) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public boolean deleteCategory(Integer categoryId) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public boolean addImplementor(String classWhichImplementsName, String interfaceToImplementName) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public boolean removeImplementor(String classWhichImplementsName, String interfaceToBeRemovedName) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public boolean addImplementor(Integer classWhichImplementsId, Integer interfaceToImplementId) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public boolean removeImplementor(Integer classWhichImplementsId, Integer interfaceToBeRemovedId) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public boolean getInterface(String interfaceName) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public boolean getInterface(Integer interfaceid) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
+    }// </editor-fold>
+
 
 }
