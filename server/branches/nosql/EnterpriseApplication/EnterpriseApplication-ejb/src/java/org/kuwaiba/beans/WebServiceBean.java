@@ -58,8 +58,29 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public Long createClass(ClassMetadata classDefinition) throws Exception {
-        return getMemInstance().createClass(classDefinition);
+    public Long createClass(ClassInfo classDefinition) throws Exception
+    {
+        System.out.println("Creating class");
+        
+        ClassMetadata cm = new ClassMetadata();
+
+        cm.setName(classDefinition.getClassName());
+        cm.setDisplayName(classDefinition.getDisplayName());
+        cm.setDescription(classDefinition.getDescription());
+        cm.setParentClassName(classDefinition.getParentClassName());
+        cm.setAbstractClass(classDefinition.getAbstractClass());
+        //TODO decode flags, set catogry
+        //cm.setCategory(classDefinition.getCategory());
+        cm.setColor(0);
+        cm.setCountable(false);
+        //cm.setCreationDate(null);
+        cm.setIcon(classDefinition.getIcon());
+        cm.setSmallIcon(classDefinition.getSmallIcon());
+        cm.setCustom(false);
+        cm.setDummy(false);
+        cm.setLocked(true);
+
+        return getMemInstance().createClass(cm);
     }
 
 //    @Override
@@ -68,18 +89,21 @@ public class WebServiceBean implements WebServiceBeanRemote {
 //    }
 //
     @Override
-    public boolean deleteClass(String className) throws Exception {
+    public boolean deleteClass(String className) throws Exception
+    {
         return getMemInstance().deleteClass(className);
     }
-//
-//    @Override
-//    public boolean deleteClass(Long classId) throws Exception {
-//        return getMemInstance().deleteClass(classId);
-//    }
-//
+
     @Override
-    public ClassInfo getClass(String className) throws Exception {
-        ClassInfo ci= new ClassInfo(getMemInstance().getClass(className), false, false, false, false);
+    public boolean deleteClass(Long classId) throws Exception {
+        return getMemInstance().deleteClass(classId);
+    }
+
+    @Override
+    public ClassInfo getClass(String className) throws Exception
+    {
+        
+        ClassInfo ci= new ClassInfo(getMemInstance().getClass(className), 0, false);
         return ci;
     }
 
@@ -117,32 +141,6 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public RemoteObject updateObject(String className, Long oid, HashMap<String, String> attributes) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-//
-//    @Override
-//    public ClassInfo getClass(Long classId) throws Exception {
-//        ClassInfo ci = new ClassInfo(getMemInstance().getClass(classId), false, false, false, false);
-//        return ci;
-//    }
-//
-//    @Override
-//    public boolean moveClass(String classToMoveName, String targetParentName) throws Exception {
-//        return getMemInstance().moveClass(classToMoveName, targetParentName);
-//    }
-//
-//    @Override
-//    public boolean moveClass(Long classToMoveId, Long targetParentId) throws Exception {
-//        return getMemInstance().moveClass(classToMoveId, targetParentId);
-//    }
-//
-//    @Override
-//    public boolean addAttribute(String className, AttributeMetadata attributeDefinition) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
-//    @Override
-//    public boolean addAttribute(Long classId, AttributeMetadata attributeDefinition) throws Exception {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
 //
 //    @Override
 //    public AttributeMetadata getAttribute(String className, String attributeName) throws Exception {
