@@ -67,11 +67,9 @@ public class ClassInfo extends ClassInfoLight{
     protected String description;
 
     public ClassInfo(){}
-    public ClassInfo(ClassMetadata myClass, boolean isPhysicalNode,
-            boolean isPhysicalConnection, boolean isPhysicalEndpoint, boolean isViewable){
+    public ClassInfo(ClassMetadata myClass, int flags, boolean isViewable){
         super (myClass.getId(), myClass.getName(), myClass.getDisplayName(),
-                isPhysicalNode, isPhysicalConnection, isPhysicalEndpoint,
-                isViewable, myClass.isAbstractClass(),myClass.getSmallIcon());
+                flags, isViewable, myClass.isAbstractClass(), myClass.getSmallIcon());
         this.abstractClass = myClass.isAbstractClass();
         this.icon = myClass.getIcon();
         List<AttributeMetadata> ar = myClass.getAttributes();
