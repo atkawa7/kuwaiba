@@ -24,11 +24,24 @@ import java.io.Serializable;
  */
 public class ClassMetadataLight implements Serializable{
 
+    /**
+     * ClassMetada's Id
+     */
     private Long id;
+    /**
+     * ClassMetada's Name
+     */
     private String name;
+    /**
+     * Set if the classMetada is locked
+     */
     private boolean locked;
+    /**
+     * Indicates if a class can have instances by itself (All GenericXXX classes
+     * and others in package entity.core are used to take advantage of OOP)
+     * 
+     */
     protected boolean abstractClass;
-
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public Long getId() {
