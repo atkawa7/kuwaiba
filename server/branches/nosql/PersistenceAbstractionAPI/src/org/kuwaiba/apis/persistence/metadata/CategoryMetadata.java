@@ -15,15 +15,31 @@
  */
 package org.kuwaiba.apis.persistence.metadata;
 
+import java.util.Date;
+
 /**
- * Represents a category. It's used mostly to group the classes into categories so it's easier
- * to document
+ * Represents a category. It's used mostly to group the classes
+ * into categories so it's easier to document
  * @author Adrian Fernando Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class CategoryMetadata {   
+public class CategoryMetadata {
+
+    /**
+     * Category name
+     */
     private String name;
+    /**
+     * Category Displayname
+     */
     private String displayName;
+    /**
+     * category description
+     */
     private String description;
+    /**
+     * category creation date
+     */
+    private Date creationDate;
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public String getDescription() {
@@ -48,6 +64,14 @@ public class CategoryMetadata {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }// </editor-fold>
     
 }
