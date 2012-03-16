@@ -17,6 +17,11 @@
 package org.kuwaiba.psremoteinterfaces;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.util.List;
+import org.kuwaiba.apis.persistence.business.RemoteObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 
 /**
  * RMI wrapper for the BusinessEntityManager interface
@@ -24,4 +29,10 @@ import java.rmi.Remote;
  */
 public interface BusinessEntityManagerRemote extends Remote{
     public static final String REFERENCE_BEM = "bem";
+
+    public List<RemoteObjectLight> getObjectChildren(String className, Long oid)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
+
+    public List<RemoteObjectLight> getObjectChildren(Long oid, Long classId)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
 }

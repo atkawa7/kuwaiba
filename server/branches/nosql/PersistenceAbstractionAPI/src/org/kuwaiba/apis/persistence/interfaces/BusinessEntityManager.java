@@ -190,7 +190,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the object or its new parent can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
      */
-    public RemoteObjectLight[] getObjectChildren(String className, Long oid)
+    public List<RemoteObjectLight> getObjectChildren(String className, Long oid)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
     
     /**

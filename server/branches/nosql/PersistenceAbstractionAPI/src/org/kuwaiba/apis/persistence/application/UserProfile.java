@@ -110,7 +110,7 @@ public class UserProfile implements Serializable{
         return id;
     }
 
-    public void setUserId(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

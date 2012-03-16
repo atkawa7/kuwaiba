@@ -20,7 +20,7 @@ import java.util.HashMap;
 import javax.ejb.Remote;
 import org.kuwaiba.exceptions.InvalidSessionException;
 import org.kuwaiba.exceptions.NotAuthorizedException;
-import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
+import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
@@ -50,7 +50,7 @@ public interface WebServiceBeanRemote {
      * @param remoteAddress
      * @return
      */
-    public boolean closeSession(String sessionId, String remoteAddress) throws InvalidSessionException;
+    public void closeSession(String sessionId, String remoteAddress) throws InvalidSessionException;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
@@ -215,7 +215,8 @@ public interface WebServiceBeanRemote {
 // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
-    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId);
+    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId) throws ServerSideException;
+    public RemoteObjectLight[] getObjectChildren(String objectClassName, Long oid) throws ServerSideException;
 
     public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass,String myClass);
 
@@ -223,7 +224,11 @@ public interface WebServiceBeanRemote {
 
     public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid);
 
-    public RemoteObject updateObject(String className, Long oid, HashMap<String, String> attributes);
+    public void updateObject(String className, Long oid, HashMap<String, String> attributes);
+
+    public RemoteObjectLight createObject(String className, Long parentOid, HashMap<String, String> attributes, String template);
+
+    
     // </editor-fold>
 
 }

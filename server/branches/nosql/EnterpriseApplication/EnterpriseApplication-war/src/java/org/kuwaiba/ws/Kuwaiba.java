@@ -16,6 +16,7 @@
 
 package org.kuwaiba.ws;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,10 +80,10 @@ public class Kuwaiba {
      * @return true if it could close the session, false otherwise.
      */
     @WebMethod(operationName = "closeSession")
-    public boolean closeSession(@WebParam(name = "sessionId")String sessionId) throws Exception{
+    public void closeSession(@WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             String remoteAddress = getIPAddress();
-            return wsBean.closeSession(sessionId, remoteAddress);
+            wsBean.closeSession(sessionId, remoteAddress);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -94,10 +95,10 @@ public class Kuwaiba {
     }
 
     /**
-     * Gets the children of a given object
-     * @param oid
-     * @param objectClassId
-     * @param sessionId
+     * Gets the children of a given object given his class id and object id
+     * @param oid object's id
+     * @param objectClassId object's class id
+     * @param sessionId Session token
      * @return An array of all the direct children of the provided object according with the current container hierarchy
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
@@ -108,6 +109,32 @@ public class Kuwaiba {
         try{
             //wsBean.validateCall("getObjectChildren", getIPAddress(), sessionId);
             RemoteObjectLight[] res = wsBean.getObjectChildren(oid,objectClassId);
+            return res;
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+        /**
+     * Gets the children of a given object given his class name and object id
+     * @param oid Object's oid
+     * @param objectClassName object's class name
+     * @param sessionId Session token
+     * @return An array of all the direct children of the provided object according with the current container hierarchy
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getObjectChildrenByClassName")
+    public RemoteObjectLight[] getObjectChildrenByClassName(@WebParam(name = "oid") Long oid,
+            @WebParam(name = "objectClassName") Long objectClassName,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            //wsBean.validateCall("getObjectChildren", getIPAddress(), sessionId);
+            RemoteObjectLight[] res = wsBean.getObjectChildren(objectClassName, oid);
             return res;
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -210,13 +237,30 @@ public class Kuwaiba {
      * @throws Exception
      */
     @WebMethod(operationName = "updateObject")
-    public RemoteObject updateObject(@WebParam(name = "className")String className,
+    public void updateObject(@WebParam(name = "className")String className,
             @WebParam(name = "oid")Long oid,
             @WebParam(name = "attributes")HashMap<String,String> attributes,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //sbr.validateCall("updatObject", getIPAddress(), sessionId);
-            return wsBean.updateObject(className,oid,attributes);
+            //sbr.validateCall("updateObject", getIPAddress(), sessionId);
+            wsBean.updateObject(className,oid,attributes);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "createObject")
+    public RemoteObjectLight createObject(@WebParam(name = "className")String className, Long parentOid,
+            HashMap<String,String> attributes,String template,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            //sbr.validateCall("createObject", getIPAddress(), sessionId);
+            return wsBean.createObject(className,parentOid,attributes, template);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -231,17 +275,17 @@ public class Kuwaiba {
      * Web service operation
      */
     @WebMethod(operationName = "addAttribute")
-    public Boolean addAttributeByClassId(@WebParam(name = "ClassName")
-    String ClassName, @WebParam(name = "name")
-    String name, @WebParam(name = "displayName")
-    String displayName, @WebParam(name = "type")
-    String type, @WebParam(name = "description")
-    Integer description, @WebParam(name = "administrative")
-    Boolean administrative, @WebParam(name = "visible")
-    Boolean visible, @WebParam(name = "mapping")
-    Boolean mapping, @WebParam(name = "readOnly")
-    Boolean readOnly, @WebParam(name = "unique")
-    Boolean unique) throws Exception {
+    public Boolean addAttributeByClassId(@WebParam(name = "className")
+        String ClassName, @WebParam(name = "name")
+        String name, @WebParam(name = "displayName")
+        String displayName, @WebParam(name = "type")
+        String type, @WebParam(name = "description")
+        Integer description, @WebParam(name = "administrative")
+        Boolean administrative, @WebParam(name = "visible")
+        Boolean visible, @WebParam(name = "mapping")
+        Boolean mapping, @WebParam(name = "readOnly")
+        Boolean readOnly, @WebParam(name = "unique")
+        Boolean unique) throws Exception {
 
        AttributeInfo ai = new AttributeInfo(name, displayName, type,
                             administrative, visible, displayName, description);
@@ -254,16 +298,16 @@ public class Kuwaiba {
      */
     @WebMethod(operationName = "addAttribute")
     public Boolean addAttributeByClassName(@WebParam(name = "ClassId")
-    Long ClassId, @WebParam(name = "name")
-    String name, @WebParam(name = "displayName")
-    String displayName, @WebParam(name = "type")
-    String type, @WebParam(name = "description")
-    Integer description, @WebParam(name = "administrative")
-    Boolean administrative, @WebParam(name = "visible")
-    Boolean visible, @WebParam(name = "mapping")
-    Boolean mapping, @WebParam(name = "readOnly")
-    Boolean readOnly, @WebParam(name = "unique")
-    Boolean unique) throws Exception {
+        Long ClassId, @WebParam(name = "name")
+        String name, @WebParam(name = "displayName")
+        String displayName, @WebParam(name = "type")
+        String type, @WebParam(name = "description")
+        Integer description, @WebParam(name = "administrative")
+        Boolean administrative, @WebParam(name = "visible")
+        Boolean visible, @WebParam(name = "mapping")
+        Boolean mapping, @WebParam(name = "readOnly")
+        Boolean readOnly, @WebParam(name = "unique")
+        Boolean unique) throws Exception {
 
        AttributeInfo ai = new AttributeInfo(name, displayName, type,
                             administrative, visible, displayName, description);

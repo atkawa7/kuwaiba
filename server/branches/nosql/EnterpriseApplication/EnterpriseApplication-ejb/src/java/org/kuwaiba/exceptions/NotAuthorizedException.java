@@ -26,7 +26,7 @@ import java.util.logging.Level;
 public class NotAuthorizedException extends ServerSideException{
 
     public NotAuthorizedException(String msg) {
-        super(Level.WARNING, "Not enough privileges to perform this operation: "+msg);
+        super(Level.INFO, msg);
     }
 
 }

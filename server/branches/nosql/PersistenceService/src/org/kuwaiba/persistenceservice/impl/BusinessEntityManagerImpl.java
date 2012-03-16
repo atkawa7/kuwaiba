@@ -40,6 +40,7 @@ import org.kuwaiba.persistenceservice.caching.CacheManager;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.kuwaiba.persistenceservice.util.Util;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -314,12 +315,94 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public RemoteObjectLight[] getObjectChildren(String className, Long oid)
-            throws ObjectNotFoundException, OperationNotPermittedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List<RemoteObjectLight> getObjectChildren(String className, Long oid)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+
+        Node parentNode = getInstanceOfClass(className, oid);
+        Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF);
+        List<RemoteObjectLight> res = new ArrayList<RemoteObjectLight>();
+        while(children.iterator().hasNext()){
+            Node child = children.iterator().next().getStartNode();
+            res.add(new RemoteObjectLight(child.getId(),
+                    getClassName(child), (Boolean)child.getProperty(PROPERTY_IS_LOCKED)));
+        }
+        return res;
+    }
+
+    public List<RemoteObjectLight> getObjectChildren(Long oid, Long classId)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+
+        Node parentNode = getInstanceOfClass(oid, classId);
+        Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF);
+        List<RemoteObjectLight> res = new ArrayList<RemoteObjectLight>();
+        while(children.iterator().hasNext()){
+            Node child = children.iterator().next().getStartNode();
+            res.add(new RemoteObjectLight(child.getId(),
+                    getClassName(child), (Boolean)child.getProperty(PROPERTY_IS_LOCKED)));
+        }
+        return res;
     }
 
     public List<ResultRecord> executeQuery() throws MetadataObjectNotFoundException {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Helpers
+     */
+    /**
+     * Boiler-plate code. Gets a particular instance given the class name and the oid
+     * @param className object class name
+     * @param oid object id
+     * @return a Node representing the entity
+     * @throws MetadataObjectNotFoundException id the class cannot be found
+     */
+    private Node getInstanceOfClass(String className, Long oid) throws MetadataObjectNotFoundException, ObjectNotFoundException{
+        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
+
+        if (classNode == null)
+            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
+
+        Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
+        while (instances.iterator().hasNext()){
+            Node otherSide = instances.iterator().next().getStartNode();
+            if (otherSide.getId() == oid.longValue())
+                return otherSide;
+        }
+        throw new ObjectNotFoundException(className, oid);
+    }
+
+    /**
+     * Boiler-plate code. Gets a particular instance given the class name and the oid
+     * @param className object class name
+     * @param oid object id
+     * @return a Node representing the entity
+     * @throws MetadataObjectNotFoundException id the class cannot be found
+     */
+    private Node getInstanceOfClass(Long oid, Long classId) throws MetadataObjectNotFoundException, ObjectNotFoundException{
+        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_ID,classId).getSingle();
+
+        if (classNode == null)
+            throw new MetadataObjectNotFoundException(Util.formatString("Class with id %1s can not be found", classId));
+
+        Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
+        while (instances.iterator().hasNext()){
+            Node otherSide = instances.iterator().next().getStartNode();
+            if (otherSide.getId() == oid.longValue())
+                return otherSide;
+        }
+        throw new ObjectNotFoundException((String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), oid);
+    }
+
+    /**
+     * Gets the class name of a given object given its respective node
+     * @param instance the node to be tested
+     * @return The object class name. Null if none
+     */
+    private String getClassName(Node instance){
+        Iterable<Relationship> aClass = instance.getRelationships(RelTypes.INSTANCE_OF, Direction.OUTGOING);
+        if (!aClass.iterator().hasNext())
+            return null;
+        return (String)aClass.iterator().next().getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME);
     }
 }

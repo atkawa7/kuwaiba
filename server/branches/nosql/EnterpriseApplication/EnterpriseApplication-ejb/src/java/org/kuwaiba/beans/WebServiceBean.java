@@ -16,18 +16,22 @@
 
 package org.kuwaiba.beans;
 
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
-//import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
-//import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
+import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.exceptions.InvalidSessionException;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
+import org.kuwaiba.beans.sessions.Session;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
+import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
@@ -42,22 +46,40 @@ import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 @Stateless
 public class WebServiceBean implements WebServiceBeanRemote {
 
+    /**
+     * Reference to the Metadata Entity Manager
+     */
     private MetadataEntityManagerRemote mem;
-    
-    private MetadataEntityManagerRemote getMemInstance(){
+    /**
+     * Reference to the Business Entity Manager
+     */
+    private BusinessEntityManagerRemote bem;
+    /**
+     * Reference to the Application Entity Manager
+     */
+    private ApplicationEntityManagerRemote aem;
+    /**
+     * Hashmap with the current sessions. The key is the username, the value is the respective session object
+     */
+    private HashMap<String, Session> sessions;
+
+    public WebServiceBean() {
+        super();
+        sessions = new HashMap<String, Session>();
         try{
-            if (mem == null) {
-                Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-                mem = (MetadataEntityManagerRemote) registry.lookup(MetadataEntityManagerRemote.REFERENCE_MEM);
-            }
-        }
-        catch(Exception ex){
+            Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+            mem = (MetadataEntityManagerRemote) registry.lookup(MetadataEntityManagerRemote.REFERENCE_MEM);
+            bem = (BusinessEntityManagerRemote) registry.lookup(BusinessEntityManagerRemote.REFERENCE_BEM);
+            aem = (ApplicationEntityManagerRemote) registry.lookup(ApplicationEntityManagerRemote.REFERENCE_AEM);
+        }catch(Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE,
                     ex.getClass().getSimpleName()+": {0}",ex.getMessage()); //NOI18N
             mem = null;
+            bem = null;
+            aem = null;
         }
-        return mem;
     }
+
 
 
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
@@ -73,7 +95,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         cm.setDescription(classDefinition.getDescription());
         cm.setParentClassName(classDefinition.getParentClassName());
         cm.setAbstractClass(classDefinition.getAbstractClass());
-        //TODO decode flags, set catogry
+        //TODO decode flags, set category
         //cm.setCategory(classDefinition.getCategory());
         cm.setColor(0);
         cm.setCountable(false);
@@ -84,42 +106,42 @@ public class WebServiceBean implements WebServiceBeanRemote {
         cm.setDummy(false);
         cm.setLocked(true);
 
-        return getMemInstance().createClass(cm);
+        return mem.createClass(cm);
     }
 
     @Override
     public boolean deleteClass(String className) throws Exception
     {
-        return getMemInstance().deleteClass(className);
+        return mem.deleteClass(className);
     }
 
     @Override
     public boolean deleteClass(Long classId) throws Exception {
-        return getMemInstance().deleteClass(classId);
+        return mem.deleteClass(classId);
     }
 
     @Override
     public ClassInfo getClass(String className) throws Exception
     {
-        ClassInfo ci= new ClassInfo(getMemInstance().getClass(className), 0, false);
+        ClassInfo ci= new ClassInfo(mem.getClass(className), 0, false);
         return ci;
     }
 
     @Override
     public ClassInfo getClass(Long classId) throws Exception
     {
-        ClassInfo ci= new ClassInfo(getMemInstance().getClass(classId), 0, false);
+        ClassInfo ci= new ClassInfo(mem.getClass(classId), 0, false);
         return ci;
     }
 
     @Override
     public boolean moveClass(String classToMoveName, String targetParentName) throws Exception{
-        return getMemInstance().moveClass(classToMoveName, targetParentName);
+        return mem.moveClass(classToMoveName, targetParentName);
     }
 
     @Override
     public boolean moveClass(Long classToMoveId, Long targetParentId) throws Exception{
-        return getMemInstance().moveClass(classToMoveId, targetParentId);
+        return mem.moveClass(classToMoveId, targetParentId);
     }
 
     @Override
@@ -136,7 +158,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         atm.setUnique(attributeDefinition.isUnique());
         atm.setVisible(attributeDefinition.isVisible());
         
-        return getMemInstance().addAttribute(className, atm);
+        return mem.addAttribute(className, atm);
     }
 
     @Override
@@ -152,29 +174,72 @@ public class WebServiceBean implements WebServiceBeanRemote {
         atm.setUnique(attributeDefinition.isUnique());
         atm.setVisible(attributeDefinition.isVisible());
 
-        return getMemInstance().addAttribute(classId, atm);
+        return mem.addAttribute(classId, atm);
     }
     // </editor-fold>
 
 
     // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
     @Override
-    public RemoteSession createSession(String user, String password, String IPAddress) throws NotAuthorizedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public RemoteSession createSession(String user, String password, String IPAddress)
+            throws NotAuthorizedException {
+        assert aem == null : "Can't reach the Application Entity Manager";
+        try {
+
+            for (Session aSession : sessions.values()){
+                if (aSession.getUser().getUserName().equals(user))
+                    throw new NotAuthorizedException("There's already an active session associated to that user");
+            }
+
+            UserProfile currentUser = aem.login(user, password);
+            if (currentUser == null)
+                throw new NotAuthorizedException("User or password incorrect");
+            Session newSession = new Session(currentUser, IPAddress);
+            sessions.put(user, newSession);
+            return new RemoteSession(newSession.getToken(), currentUser);
+
+        } catch (RemoteException ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
     @Override
-    public boolean closeSession(String sessionId, String remoteAddress) throws InvalidSessionException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void closeSession(String sessionId, String remoteAddress) throws InvalidSessionException {
+        Session aSession = sessions.get(sessionId);
+        if (aSession == null)
+            throw new InvalidSessionException("The provided session ID is not valid");
+        if (!aSession.getIpAddress().equals(remoteAddress))
+            throw new InvalidSessionException("This IP is not allowed to close the current session");
+        sessions.remove(sessionId);
     }
-
-    @Override
-    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }// </editor-fold>
+// </editor-fold>
 
 
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
+    @Override
+    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId) throws ServerSideException {
+        assert bem == null : "Can't reach the Business Entity Manager";
+        try {
+            return bem.getObjectChildren(oid, objectClassId).toArray(new RemoteObjectLight[0]);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public RemoteObjectLight[] getObjectChildren(String className, Long oid) 
+            throws ServerSideException {
+        assert bem == null : "Can't reach the Business Entity Manager";
+        try {
+            return bem.getObjectChildren(className, oid).toArray(new RemoteObjectLight[0]);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
     @Override
     public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass, String myClass) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -191,9 +256,35 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public RemoteObject updateObject(String className, Long oid, HashMap<String, String> attributes) {
+    public RemoteObjectLight createObject(String className, Long parentOid, HashMap<String, String> attributes, String template) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void updateObject(String className, Long oid, HashMap<String, String> attributes) {
         throw new UnsupportedOperationException("Not supported yet.");
     }// </editor-fold>
 
+// <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Returns the singleton for the Metadata Entity Manager
+     * @return the MEM unique instance
+     */
+    private MetadataEntityManagerRemote getMEMInstance(){
+        try{
+            if (mem == null) {
+                Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+                mem = (MetadataEntityManagerRemote) registry.lookup(MetadataEntityManagerRemote.REFERENCE_MEM);
+            }
+        }
+        catch(Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE,
+                    ex.getClass().getSimpleName()+": {0}",ex.getMessage()); //NOI18N
+            mem = null;
+        }
+        return mem;
+    }
 
+
+    // </editor-fold>
 }

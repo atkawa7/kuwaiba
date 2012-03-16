@@ -27,7 +27,6 @@ import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.MiscException;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.neo4j.graphdb.Direction;
@@ -251,8 +250,8 @@ public class Util {
     }
 
     /**
-     * Formats 
-     * @param stringToFormat
+     * Formats a String. It's basically a wrapper for Formatter.format() method
+     * @param stringToFormat String to be formatted
      * @param args a variable set of arguments to be used with the formatter
      * @return The resulting string of merging @stringToFormat with @args
      */
