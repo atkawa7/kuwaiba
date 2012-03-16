@@ -17,6 +17,7 @@
 package org.kuwaiba.apis.persistence.metadata;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Contains the detailed metadata information about a class attribute
@@ -69,7 +70,7 @@ public class AttributeMetadata implements Serializable{
      */
     private boolean administrative;
     /**
-     * Attribute's visibility
+     * Should this be shown or hidden
      */
     private boolean visible;
     /**
@@ -85,9 +86,13 @@ public class AttributeMetadata implements Serializable{
      */
     private boolean readOnly;
     /**
-     * Marks de attribute as unique
+     * Marks the attribute as unique
      */
     private boolean unique;
+    /**
+     * Attribute's creation Date
+     */
+    private Date creationDate;
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public boolean isAdministrative() {
@@ -171,5 +176,4 @@ public class AttributeMetadata implements Serializable{
     }
     // </editor-fold>
     
-
 }
