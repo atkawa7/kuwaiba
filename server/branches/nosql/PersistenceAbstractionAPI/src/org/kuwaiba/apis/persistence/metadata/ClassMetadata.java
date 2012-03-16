@@ -16,6 +16,7 @@
 
 package org.kuwaiba.apis.persistence.metadata;
 
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -26,22 +27,65 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
  */
 public class ClassMetadata extends ClassMetadataLight{
 
+    /**
+     *  Shows if this is a core class (the ones provided in the official release) or a custom one
+     */
     private boolean custom;
+    /**
+     *  Indicates if the instances of this class are physical assets
+     *  (in other words, if it's meaningful to have a count on them)
+     *  Classes marked with the annotation NoCount (Slot, Port and the like)
+     *  have this attribute set as false
+     */
     private boolean countable;
+    /**
+     *  Is this a dummy class as described in the Dummy annotation?
+     */
     private boolean dummy;
+    /**
+     *  The parent ClassMetada name
+     */
     private String parentClassName;
+    /**
+     *
+     */
     private List<InterfaceMetadata> interfaces;
+    /**
+     *  Color assigned to the instances when displayed
+     */
     private Integer color;
-
+    /**
+     *  Icon to show in views
+     */
     private byte[] icon;
+    /**
+     *  Icon to show in trees and lists
+     */
     private byte[] smallIcon;
+    /**
+     *  Is this class a list type (Vendor, LocationOwner, OpticalLinkType, etc)
+     */
     private boolean listType;
+    /**
+     *  Classmetada's attributes
+     */
     private List<AttributeMetadata> attributes;
-
+    /**
+     *  Classmetada's displayName
+     */
     private String displayName;
+    /**
+     *  Classmetada's category
+     */
     private CategoryMetadata category;
+    /**
+     *  ClassMetada's description
+     */
     private String description;
-
+    /**
+     *  ClassMetada's creationDate
+     */
+    private Date creationDate;
 
    // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public Integer getColor() {
@@ -146,8 +190,15 @@ public class ClassMetadata extends ClassMetadataLight{
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }// </editor-fold>
+    }
 
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }// </editor-fold>
 
     public boolean implementsInterface(String interfaceName){
         if (interfaces == null)
