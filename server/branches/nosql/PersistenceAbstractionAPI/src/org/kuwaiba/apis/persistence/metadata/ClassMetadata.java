@@ -16,7 +16,6 @@
 
 package org.kuwaiba.apis.persistence.metadata;
 
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -85,7 +84,7 @@ public class ClassMetadata extends ClassMetadataLight{
     /**
      *  ClassMetada's creationDate
      */
-    private Date creationDate;
+    private Long creationDate;
 
    // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public Integer getColor() {
@@ -192,11 +191,11 @@ public class ClassMetadata extends ClassMetadataLight{
         this.displayName = displayName;
     }
 
-    public Date getCreationDate() {
+    public Long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(Long creationDate) {
         this.creationDate = creationDate;
     }// </editor-fold>
 
