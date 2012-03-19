@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.apis.persistence.metadata;
 
-import java.util.Date;
 
 /**
  * Represents a category. It's used mostly to group the classes
@@ -39,7 +38,7 @@ public class CategoryMetadata {
     /**
      * category creation date
      */
-    private Date creationDate;
+    private Long creationDate;
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public String getDescription() {
@@ -66,11 +65,11 @@ public class CategoryMetadata {
         this.name = name;
     }
 
-    public Date getCreationDate() {
+    public Long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(Long creationDate) {
         this.creationDate = creationDate;
     }// </editor-fold>
     
