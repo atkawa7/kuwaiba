@@ -20,12 +20,12 @@ import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.kuwaiba.apis.persistence.interfaces.MetadataEntityManager;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
-import org.kuwaiba.apis.persistence.exceptions.MiscException;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.persistenceservice.caching.CacheManager;
 import org.kuwaiba.persistenceservice.util.Util;
@@ -61,6 +61,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public static final String PROPERTY_COLOR = "color"; //NOI18N
     public static final String PROPERTY_ICON = "icon"; //NOI18N
     public static final String PROPERTY_SMALL_ICON = "smallIcon"; //NOI18N
+
     /**
      * How an attribute should be mapped (as a Float, Integer, relationship, etc)
      */
@@ -136,6 +137,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             if (rootRel == null && classDefinition.getName().equals("RootObject")){
                 Node rootNode = graphDb.createNode();
                 rootNode.setProperty(PROPERTY_NAME, classDefinition.getName());
+                rootNode.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
 
                 classIndex.putIfAbsent(rootNode, PROPERTY_NAME, classDefinition.getName());
                 classIndex.putIfAbsent(rootNode, PROPERTY_ID, rootNode.getId());
@@ -143,8 +145,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 referenceNode.createRelationshipTo(rootNode, RelTypes.ROOT);
 
                 id = rootNode.getId();
-            }
 
+            }//end if is rootNode
             else
             {
                 //The ClassNode
@@ -161,6 +163,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 classNode.setProperty(PROPERTY_DUMMY, classDefinition.isDummy());
                 classNode.setProperty(PROPERTY_ICON, classDefinition.getIcon());
                 classNode.setProperty(PROPERTY_SMALL_ICON, classDefinition.getSmallIcon());
+                classNode.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
 
                 id = classNode.getId();
                 
@@ -187,7 +190,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 {
                     classNode.createRelationshipTo(parentNode, RelTypes.EXTENDS);
                     Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.HAS);
-                    //
+                    ////Set extendended attributes from parent
                     for (Relationship rel : relationships)
                     {
                         Node parentAttrNode = rel.getEndNode();
@@ -197,16 +200,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         newAttrNode.setProperty(PROPERTY_DESCRIPTION, parentAttrNode.getProperty(PROPERTY_DESCRIPTION));
                         newAttrNode.setProperty(PROPERTY_DISPLAY_NAME, parentAttrNode.getProperty(PROPERTY_DISPLAY_NAME));
                         newAttrNode.setProperty(PROPERTY_TYPE,parentAttrNode.getProperty(PROPERTY_TYPE));
-
                         newAttrNode.setProperty(PROPERTY_READONLY, parentAttrNode.getProperty(PROPERTY_READONLY));
                         newAttrNode.setProperty(PROPERTY_VISIBLE, parentAttrNode.getProperty(PROPERTY_VISIBLE));
                         newAttrNode.setProperty(PROPERTY_ADMINISTRATIVE, parentAttrNode.getProperty(PROPERTY_ADMINISTRATIVE));
 
                         classNode.createRelationshipTo(newAttrNode, RelTypes.HAS);
                     }
-                }
-
-                //Set extendended attributes from parent
+                }//end if there is a Parent
                 else
                     throw new MetadataObjectNotFoundException(Util.formatString(
                          "Can not find the parent Class with the name %1s", classDefinition.getParentClassName()));
@@ -662,6 +662,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             atr.setProperty(PROPERTY_READONLY, attributeDefinition.isVisible());
             atr.setProperty(PROPERTY_VISIBLE, attributeDefinition.isVisible());
             atr.setProperty(PROPERTY_ADMINISTRATIVE, attributeDefinition.isAdministrative());
+            atr.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
 
             node.createRelationshipTo(atr, RelTypes.HAS);
 
@@ -880,6 +881,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             category.setProperty(PROPERTY_NAME, categoryDefinition.getName());
             category.setProperty(PROPERTY_DISPLAY_NAME, categoryDefinition.getDisplayName());
             category.setProperty(PROPERTY_DESCRIPTION, categoryDefinition.getDescription());
+            category.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
 
             id = category.getId();
 
@@ -905,7 +907,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     @Override
     public CategoryMetadata getCategory(String categoryName) throws MetadataObjectNotFoundException
     {
-        CategoryMetadata cm = new CategoryMetadata();
+        CategoryMetadata ctgrMtdt = new CategoryMetadata();
         Transaction tx = graphDb.beginTx();
         try{
             Node ctgNode = categoryIndex.get(PROPERTY_NAME, categoryName).getSingle();
@@ -914,15 +916,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 throw new MetadataObjectNotFoundException(Util.formatString(
                          "Can not find the category with the name %1s", categoryName));
 
-            cm.setName((String)ctgNode.getProperty(PROPERTY_NAME));
-            cm.setDescription((String)ctgNode.getProperty(PROPERTY_DESCRIPTION));
-            cm.setDisplayName((String)ctgNode.getProperty(PROPERTY_DISPLAY_NAME));
+            ctgrMtdt.setName((String)ctgNode.getProperty(PROPERTY_NAME));
+            ctgrMtdt.setDescription((String)ctgNode.getProperty(PROPERTY_DESCRIPTION));
+            ctgrMtdt.setDisplayName((String)ctgNode.getProperty(PROPERTY_DISPLAY_NAME));
             tx.success();
 
         }finally{
             tx.finish();
         }
-        return cm;
+        return ctgrMtdt;
     }
 
     /**
@@ -933,7 +935,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      */
 
     public CategoryMetadata getCategory(Integer categoryId) throws MetadataObjectNotFoundException {
-        CategoryMetadata cm = new CategoryMetadata();
+        
+        CategoryMetadata ctgrMtdt = new CategoryMetadata();
         Transaction tx = graphDb.beginTx();
         try{
             Node ctgNode = categoryIndex.get(PROPERTY_ID, categoryId).getSingle();
@@ -942,16 +945,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                  throw new MetadataObjectNotFoundException(Util.formatString(
                          "Can not find the category with the id %1s", categoryId));
                 
-            cm.setName((String)ctgNode.getProperty(PROPERTY_NAME));
-            cm.setDescription((String)ctgNode.getProperty(PROPERTY_DESCRIPTION));
-            cm.setDisplayName((String)ctgNode.getProperty(PROPERTY_DISPLAY_NAME));
+            ctgrMtdt.setName((String)ctgNode.getProperty(PROPERTY_NAME));
+            ctgrMtdt.setDescription((String)ctgNode.getProperty(PROPERTY_DESCRIPTION));
+            ctgrMtdt.setDisplayName((String)ctgNode.getProperty(PROPERTY_DISPLAY_NAME));
 
             tx.success();
 
         }finally{
             tx.finish();
         }
-        return cm;
+        return ctgrMtdt;
     }
 
     /**
