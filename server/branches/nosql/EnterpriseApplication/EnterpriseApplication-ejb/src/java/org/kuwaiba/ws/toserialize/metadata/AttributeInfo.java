@@ -65,7 +65,9 @@ public class AttributeInfo {
      */
     private int mapping;
 
-    public AttributeInfo(String name, String displayName, String type, boolean administrative, boolean visible, String description, int mapping) {
+    public AttributeInfo(String name, String displayName, String type, 
+                         boolean administrative, boolean visible,
+                         String description, int mapping) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
