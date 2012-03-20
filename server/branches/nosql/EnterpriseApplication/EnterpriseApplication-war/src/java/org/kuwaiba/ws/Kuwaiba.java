@@ -52,6 +52,7 @@ public class Kuwaiba {
     @Resource
     private WebServiceContext context;
 
+    // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
     /**
      * Authenticates the user
      * @param username user login
@@ -92,8 +93,10 @@ public class Kuwaiba {
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
-    }
+    }//</editor-fold>
 
+
+    // <editor-fold defaultstate="collapsed" desc="Business Methods. Click on the + sign on the left to edit the code.">
     /**
      * Gets the children of a given object given his class id and object id
      * @param oid object's id
@@ -269,85 +272,207 @@ public class Kuwaiba {
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
+    }// </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Metadata Methods. Click on the + sign on the left to edit the code.">
+
+    /**
+     * Create's a Class Metadata
+     * @param name
+     * @param displayName
+     * @param description
+     * @param flags
+     * @param abstractClass
+     * @param parentClassName
+     * @param icon
+     * @param smallIcon
+     * @return
+     * @throws Exception
+     */
+    @WebMethod(operationName = "createClassMetadata")
+    public Long createClassMetadata(@WebParam(name = "name")
+        String name, @WebParam(name = "displayName")
+        String displayName, @WebParam(name = "description")
+        String description, @WebParam(name = "flags")
+        Integer flags, @WebParam(name = "abstractClass")
+        Boolean abstractClass, @WebParam(name = "parentClassName")
+        String parentClassName, @WebParam(name = "icon")
+        byte[] icon, @WebParam(name = "smallIcon")
+        byte[] smallIcon) throws Exception {
+
+        ClassInfo ci = new ClassInfo();
+        ci.setClassName(name);
+        ci.setDisplayName(displayName);
+        ci.setDescription(description);
+        ci.setFlags(flags);
+        ci.setIcon(icon);
+        ci.setSmallIcon(smallIcon);
+        ci.setParentClassName(parentClassName);
+        ci.setIsAbstract(abstractClass);
+
+        return wsBean.createClass(ci);
+    }
+
+        /**
+     * Change's a Class Metadata definition
+     * @param name
+     * @param displayName
+     * @param description
+     * @param flags
+     * @param abstractClass
+     * @param parentClassName
+     * @param icon
+     * @param smallIcon
+     * @return
+     * @throws Exception
+     */
+    @WebMethod(operationName = "changeClassMetadataDefinition")
+    public Boolean changeClassMetadataDefinition(@WebParam(name = "name")
+        String name, @WebParam(name = "displayName")
+        String displayName, @WebParam(name = "description")
+        String description, @WebParam(name = "flags")
+        Integer flags, @WebParam(name = "abstractClass")
+        Boolean abstractClass, @WebParam(name = "parentClassName")
+        String parentClassName, @WebParam(name = "icon")
+        byte[] icon, @WebParam(name = "smallIcon")
+        byte[] smallIcon) throws Exception {
+
+        ClassInfo ci = new ClassInfo();
+        ci.setClassName(name);
+        ci.setDisplayName(displayName);
+        ci.setDescription(description);
+        ci.setFlags(flags);
+        ci.setIcon(icon);
+        ci.setSmallIcon(smallIcon);
+        ci.setParentClassName(parentClassName);
+        ci.setIsAbstract(abstractClass);
+
+        return wsBean.changeClassDefinition(ci);
     }
 
     /**
-     * Web service operation
+     * add's an attribute to a classMeatdatada by its ClassId
+     * @param ClassName
+     * @param name
+     * @param displayName
+     * @param type
+     * @param description
+     * @param administrative
+     * @param visible
+     * @param mapping
+     * @param readOnly
+     * @param unique
+     * @return
+     * @throws Exception
      */
-    @WebMethod(operationName = "addAttribute")
+    @WebMethod(operationName = "addAttributeByClassId")
     public Boolean addAttributeByClassId(@WebParam(name = "className")
         String ClassName, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "type")
         String type, @WebParam(name = "description")
-        Integer description, @WebParam(name = "administrative")
+        String description, @WebParam(name = "administrative")
         Boolean administrative, @WebParam(name = "visible")
         Boolean visible, @WebParam(name = "mapping")
-        Boolean mapping, @WebParam(name = "readOnly")
+        int mapping, @WebParam(name = "readOnly")
         Boolean readOnly, @WebParam(name = "unique")
         Boolean unique) throws Exception {
 
-       AttributeInfo ai = new AttributeInfo(name, displayName, type,
-                            administrative, visible, displayName, description);
+       AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
+                                            visible, description, mapping);
 
         return wsBean.addAttribute(ClassName, ai);
     }
 
-        /**
-     * addAttribute
+    /*
+     * add's an attribute to a classMeatdatada by its ClassName
+     * @param ClassName
+     * @param name
+     * @param displayName
+     * @param type
+     * @param description
+     * @param administrative
+     * @param visible
+     * @param mapping
+     * @param readOnly
+     * @param unique
+     * @return
+     * @throws Exception
      */
-    @WebMethod(operationName = "addAttribute")
+    @WebMethod(operationName = "addAttributeByClassName")
     public Boolean addAttributeByClassName(@WebParam(name = "ClassId")
         Long ClassId, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "type")
         String type, @WebParam(name = "description")
-        Integer description, @WebParam(name = "administrative")
+        String description, @WebParam(name = "administrative")
         Boolean administrative, @WebParam(name = "visible")
         Boolean visible, @WebParam(name = "mapping")
-        Boolean mapping, @WebParam(name = "readOnly")
+        int mapping, @WebParam(name = "readOnly")
         Boolean readOnly, @WebParam(name = "unique")
         Boolean unique) throws Exception {
 
-       AttributeInfo ai = new AttributeInfo(name, displayName, type,
-                            administrative, visible, displayName, description);
+       AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
+                                            visible, description, mapping);
 
         return wsBean.addAttribute(ClassId, ai);
     }
-    
+
     /**
-     * getClassByName Gets a classmetadata by its name
+     * get's Metadata For Class by its name
+     * @param className
+     * @return
+     * @throws Exception
      */
-    @WebMethod(operationName = "getClassByName")
-    public ClassInfo getClassByName(@WebParam(name = "className")
+    @WebMethod(operationName = "getMetadataForClass")
+    public ClassInfo getMetadataForClass(@WebParam(name = "className")
     String className) throws Exception {
-        ClassInfo ci = wsBean.getClass(className);
+        ClassInfo ci = wsBean.getMetadataForClass(className);
         return ci;
     }
 
     /**
-     * getClassById Gets a classmetadata by its id
+     * get's Metadata For Class by its id
+     * @param classId
+     * @return
+     * @throws Exception
      */
-    @WebMethod(operationName = "getClassById")
-    public ClassInfo getClassById(@WebParam(name = "classId")
+    @WebMethod(operationName = "getMetadataForClassById")
+    public ClassInfo getMetadataForClassById(@WebParam(name = "classId")
     Long classId) throws Exception {
-        ClassInfo ci = wsBean.getClass(classId);
+        ClassInfo ci = wsBean.getMetadataForClass(classId);
         return ci;
     }
 
     /**
-     * deleteClass
+     * delete's a  Class by its name
+     * @param className
+     * @return
+     * @throws Exception
      */
-    @WebMethod(operationName = "deleteClassById")
+    @WebMethod(operationName = "deleteClassByName")
     public boolean deleteClassByName(@WebParam(name = "className")
     String className) throws Exception {
         return wsBean.deleteClass(className);
     }
 
-   /**
-     * Helpers
-    */
+    /**
+     * delete's a class by it id
+     * @param className
+     * @return
+     * @throws Exception
+     */
 
+    @WebMethod(operationName = "deleteClassById")
+    public boolean deleteClassById(@WebParam(name = "classId")
+    Long classId) throws Exception {
+        return wsBean.deleteClass(classId);
+    }// </editor-fold>
+
+
+    /**
+     * Helpers
+     */
     /**
      * Gets the IP address from the client issuing the request
      * @return the IP address as string
