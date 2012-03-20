@@ -18,6 +18,7 @@ package org.kuwaiba.beans;
 
 import java.util.HashMap;
 import javax.ejb.Remote;
+
 import org.kuwaiba.exceptions.InvalidSessionException;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -25,6 +26,7 @@ import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
+import org.kuwaiba.ws.toserialize.metadata.CategoryInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 
 /**
@@ -62,14 +64,15 @@ public interface WebServiceBeanRemote {
      * @return true if success
      * @throws ClassNotFoundException if there is no class with such classId
      */
-//    public boolean changeClassDefinition(ClassMetadata newClassDefinition) throws Exception;
-//
-//    /**
-//     * Deletes a classmetadata, its attributes and category relationships
-//     * @param classId
-//     * @return true if success
-//     * @throws ClassNotFoundException if there is not a class with de ClassId
-//     */
+
+    public boolean changeClassDefinition(ClassInfo newClassDefinition) throws Exception;
+
+    /**
+     * Deletes a classmetadata, its attributes and category relationships
+     * @param classId
+     * @return true if success
+     * @throws ClassNotFoundException if there is not a class with de ClassId
+     */
     
     public boolean deleteClass(String className) throws Exception;
 
@@ -82,15 +85,28 @@ public interface WebServiceBeanRemote {
     public boolean deleteClass(Long classId) throws Exception;
 
     /**
-     * Gets a classmetadata, its attributes and Category
+     * Gets Metadata For Class id its attributes and Category
      * @param className
      * @return A ClassMetadata with the className
      * @throws ClassNotFoundException there is no class with such className
      */
-    public ClassInfo getClass(String className) throws Exception;
+    public ClassInfo getMetadataForClass(String className) throws Exception;
 
-    public ClassInfo getClass(Long classId) throws Exception;
+    /**
+     * Gets Metadata For Class id its attributes and Category
+     * @param classId
+     * @return
+     * @throws Exception
+     */
+    public ClassInfo getMetadataForClass(Long classId) throws Exception;
 
+    /**
+     * Moves a class from one parentClass to an other parentClass
+     * @param classToMoveName
+     * @param targetParentName
+     * @return
+     * @throws Exception
+     */
     public boolean moveClass(String classToMoveName, String targetParentName) throws Exception;
     /**
      * Moves a class from one parentClass to an other parentClass
@@ -117,100 +133,85 @@ public interface WebServiceBeanRemote {
      * @throws ClassNotFoundException if there is no a class with such classId
      */
     public boolean addAttribute(Long classId, AttributeInfo attributeDefinition) throws Exception;
-    //
-//    /**
-//     * Gets an attribute belonging to a class
-//     * @param className
-//     * @param attributeName
-//     * @return AttributeMetada, null if there is no attribute with such name
-//     * @throws ClassNotFoundException if there is no a class with such className
-//     * @throws MiscException if the attributeName does not exist
-//     */
-//    public AttributeMetadata getAttribute(String className, String attributeName) throws Exception;
-//
-//    /**
-//     * Gets an attribute belonging to a class
-//     * @param classId
-//     * @param attributeName
-//     * @return AttributeMetada, null if there is no attribute with such name
-//     * @throws ClassNotFoundException if there is no a class with such classId
-//     * @throws MiscException if the attributeName does not exist
-//     */
-//    public AttributeMetadata getAttribute(Long classId, String attributeName) throws Exception;
-//
-//    /**
-//     * Changes an attribute definition belonging to a classMetadata
-//     * @param ClassId
-//     * @param newAttributeDefinition
-//     * @return
-//     */
-//    public boolean changeAttributeDefinition(Long ClassId, AttributeMetadata newAttributeDefinition) throws Exception;
-//
-//    /**
-//     * Deletes an attribute belonging to a classMetadata
-//     * @param className
-//     * @param attributeName
-//     * @return true if success
-//     * @throws ClassNotFoundException if there is no a class with such className
-//     * @throws MiscException if the attributeName does not exist
-//     */
-//    public boolean  deleteAttribute(String className, String attributeName) throws Exception;
-//
-//    /**
-//     * Deletes an attribute belonging to a classMetadata
-//     * @param classId
-//     * @param attributeName
-//     * @return true if success
-//     * @throws ClassNotFoundException if there is no a class with such classId
-//     * @throws MiscException if the attributeName does not exist
-//     */
-//    public boolean deleteAttribute(Long classId,String attributeName) throws Exception;
-//
-//    /**
-//     * Creates a new category
-//     * @param categoryDefinition
-//     * @return CategoryId
-//     */
-//    public Long createCategory(CategoryMetadata categoryDefinition) throws Exception;
-//
-//    /**
-//     * Gets a Category with it's name
-//     * @param categoryName
-//     * @return CategoryMetadata
-//     * @throws MiscException if the Category does not exist
-//     */
-//    public CategoryMetadata getCategory(String categoryName) throws Exception;
-//
-//    /**
-//     * Gets a Category with it's Id
-//     * @param categoryId
-//     * @return CategoryMetadata
-//     * @throws MiscException if there is no Category with such cetegoryId
-//     */
-//    public CategoryMetadata getCategory(Integer categoryId) throws Exception;
-//
-//    /**
-//     * Changes a category definition
-//     * @param categoryDefinition
-//     * @return true if success
-//     * @throws MiscException if there is no Category with such cetegoryId
-//     */
-//    public boolean changeCategoryDefinition(CategoryMetadata categoryDefinition) throws Exception;
-//
-//    /**
-//     * Deletes a category definition Still don't know what to do with the clasess
-//     * @param categoryDefinition
-//     * @return true if success
-//     * @throws MiscException if there is no Category with such cetegoryId
-//     */
-//    public boolean deleteCategory(String categoryName) throws Exception;
-//    public boolean deleteCategory(Integer categoryId) throws Exception;
-//    public boolean addImplementor(String classWhichImplementsName,String interfaceToImplementName) throws Exception;
-//    public boolean removeImplementor(String classWhichImplementsName ,String interfaceToBeRemovedName) throws Exception;
-//    public boolean addImplementor(Integer classWhichImplementsId, Integer interfaceToImplementId) throws Exception;
-//    public boolean removeImplementor(Integer classWhichImplementsId ,Integer interfaceToBeRemovedId) throws Exception;
-//    public boolean getInterface(String interfaceName) throws Exception;
-//    public boolean getInterface(Integer interfaceid) throws Exception;
+    
+    /**
+     * Gets an attribute belonging to a class
+     * @param className
+     * @param attributeName
+     * @return AttributeMetada, null if there is no attribute with such name
+     * @throws ClassNotFoundException if there is no a class with such className
+     * @throws MiscException if the attributeName does not exist
+     */
+    public AttributeInfo getAttribute(String className, String attributeName) throws Exception;
+
+    /**
+     * Gets an attribute belonging to a class
+     * @param classId
+     * @param attributeName
+     * @return AttributeMetada, null if there is no attribute with such name
+     * @throws ClassNotFoundException if there is no a class with such classId
+     * @throws MiscException if the attributeName does not exist
+     */
+    public AttributeInfo getAttribute(Long classId, String attributeName) throws Exception;
+
+    /**
+     * Changes an attribute definition belonging to a classMetadata
+     * @param ClassId
+     * @param newAttributeDefinition
+     * @return
+     */
+    public boolean changeAttributeDefinition(Long ClassId, AttributeInfo newAttributeDefinition) throws Exception;
+
+    /**
+     * Deletes an attribute belonging to a classMetadata
+     * @param className
+     * @param attributeName
+     * @return true if success
+     * @throws ClassNotFoundException if there is no a class with such className
+     * @throws MiscException if the attributeName does not exist
+     */
+    public boolean  deleteAttribute(String className, String attributeName) throws Exception;
+
+    /**
+     * Deletes an attribute belonging to a classMetadata
+     * @param classId
+     * @param attributeName
+     * @return true if success
+     * @throws ClassNotFoundException if there is no a class with such classId
+     * @throws MiscException if the attributeName does not exist
+     */
+    public boolean deleteAttribute(Long classId,String attributeName) throws Exception;
+
+    /**
+     * Creates a new category
+     * @param categoryDefinition
+     * @return CategoryId
+     */
+    public Long createCategory(CategoryInfo categoryDefinition) throws Exception;
+
+    /**
+     * Gets a Category with it's name
+     * @param categoryName
+     * @return CategoryMetadata
+     * @throws MiscException if the Category does not exist
+     */
+    public CategoryInfo getCategory(String categoryName) throws Exception;
+
+    /**
+     * Gets a Category with it's Id
+     * @param categoryId
+     * @return CategoryMetadata
+     * @throws MiscException if there is no Category with such cetegoryId
+     */
+    public CategoryInfo getCategory(Integer categoryId) throws Exception;
+
+    /**
+     * Changes a category definition
+     * @param categoryDefinition
+     * @return true if success
+     * @throws MiscException if there is no Category with such cetegoryId
+     */
+    public boolean changeCategoryDefinition(CategoryInfo categoryDefinition) throws Exception;
 
 // </editor-fold>
 
