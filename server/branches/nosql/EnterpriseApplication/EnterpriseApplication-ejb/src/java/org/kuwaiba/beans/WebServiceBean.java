@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
+import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.exceptions.InvalidSessionException;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -36,6 +37,7 @@ import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.ws.toserialize.metadata.CategoryInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 
@@ -81,7 +83,6 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
 
-
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
     @Override
     public Long createClass(ClassInfo classDefinition) throws Exception
@@ -121,14 +122,14 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public ClassInfo getClass(String className) throws Exception
+    public ClassInfo getMetadataForClass(String className) throws Exception
     {
         ClassInfo ci= new ClassInfo(mem.getClass(className), 0, false);
         return ci;
     }
 
     @Override
-    public ClassInfo getClass(Long classId) throws Exception
+    public ClassInfo getMetadataForClass(Long classId) throws Exception
     {
         ClassInfo ci= new ClassInfo(mem.getClass(classId), 0, false);
         return ci;
@@ -176,8 +177,141 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
         return mem.addAttribute(classId, atm);
     }
-    // </editor-fold>
 
+    @Override
+    public boolean changeClassDefinition(ClassInfo newClassDefinition) throws Exception {
+
+        ClassMetadata cm = new ClassMetadata();
+
+        cm.setName(newClassDefinition.getClassName());
+        cm.setDisplayName(newClassDefinition.getDisplayName());
+        cm.setDescription(newClassDefinition.getDescription());
+        cm.setParentClassName(newClassDefinition.getParentClassName());
+        cm.setAbstractClass(newClassDefinition.getAbstractClass());
+        //TODO decode flags, set category
+        //cm.setCategory(classDefinition.getCategory());
+        cm.setColor(0);
+        cm.setCountable(false);
+        //cm.setCreationDate(null);
+        cm.setIcon(newClassDefinition.getIcon());
+        cm.setSmallIcon(newClassDefinition.getSmallIcon());
+        cm.setCustom(false);
+        cm.setDummy(false);
+        cm.setLocked(true);
+
+        return mem.changeClassDefinition(cm);
+    }
+
+    @Override
+    public AttributeInfo getAttribute(String className, String attributeName) throws Exception {
+        AttributeMetadata atrbMtdt = mem.getAttribute(className, attributeName);
+
+        AttributeInfo atrbInfo = new AttributeInfo(atrbMtdt.getName(),
+                                                   atrbMtdt.getDisplayName(),
+                                                   atrbMtdt.getType(),
+                                                   atrbMtdt.isAdministrative(),
+                                                   atrbMtdt.isVisible(),
+                                                   atrbMtdt.getDescription(),
+                                                   atrbMtdt.getMapping());
+        return atrbInfo;
+    }
+
+    @Override
+    public AttributeInfo getAttribute(Long classId, String attributeName) throws Exception {
+        AttributeMetadata atrbMtdt = mem.getAttribute(classId, attributeName);
+
+        AttributeInfo atrbInfo = new AttributeInfo(atrbMtdt.getName(),
+                                                   atrbMtdt.getDisplayName(),
+                                                   atrbMtdt.getType(),
+                                                   atrbMtdt.isAdministrative(),
+                                                   atrbMtdt.isVisible(),
+                                                   atrbMtdt.getDescription(),
+                                                   atrbMtdt.getMapping());
+        return atrbInfo;
+    }
+
+    @Override
+    public boolean changeAttributeDefinition(Long ClassId, AttributeInfo newAttributeDefinition) throws Exception {
+        AttributeMetadata attrMtdt = new AttributeMetadata();
+
+        attrMtdt.setName(newAttributeDefinition.getName());
+        attrMtdt.setDisplayName(newAttributeDefinition.getDisplayName());
+        attrMtdt.setDescription(newAttributeDefinition.getDescription());
+        attrMtdt.setType(newAttributeDefinition.getType());
+        attrMtdt.setMapping(newAttributeDefinition.getMapping());
+        attrMtdt.setAdministrative(newAttributeDefinition.isAdministrative());
+        attrMtdt.setUnique(newAttributeDefinition.isUnique());
+        attrMtdt.setVisible(newAttributeDefinition.isVisible());
+        attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
+
+        return mem.changeAttributeDefinition(ClassId, attrMtdt);
+    }
+
+    @Override
+    public boolean deleteAttribute(String className, String attributeName) throws Exception {
+        return mem.deleteAttribute(className, attributeName);
+    }
+
+    @Override
+    public boolean deleteAttribute(Long classId, String attributeName) throws Exception {
+        return mem.deleteAttribute(classId, attributeName);
+    }
+
+    @Override
+    public Long createCategory(CategoryInfo categoryDefinition) throws Exception {
+
+        CategoryMetadata ctgrMtdt = new CategoryMetadata();
+
+        ctgrMtdt.setName(categoryDefinition.getName());
+        ctgrMtdt.setDisplayName(categoryDefinition.getDisplayName());
+        ctgrMtdt.setDescription(categoryDefinition.getDescription());
+        ctgrMtdt.setCreationDate(categoryDefinition.getCreationDate());
+
+        return mem.createCategory(ctgrMtdt);
+    }
+
+    @Override
+    public CategoryInfo getCategory(String categoryName) throws Exception {
+
+        CategoryMetadata ctgrMtdt = new CategoryMetadata();
+        ctgrMtdt = mem.getCategory(categoryName);
+
+        CategoryInfo ctgrInfo = new CategoryInfo();
+
+        ctgrInfo.setName(ctgrMtdt.getName());
+        ctgrInfo.setDisplayName(ctgrMtdt.getDisplayName());
+        ctgrInfo.setDescription(ctgrMtdt.getDescription());
+        ctgrInfo.setCreationDate(ctgrMtdt.getCreationDate());
+
+        return ctgrInfo;
+    }
+
+    @Override
+    public CategoryInfo getCategory(Integer categoryId) throws Exception {
+        CategoryMetadata ctgrMtdt = new CategoryMetadata();
+        ctgrMtdt = mem.getCategory(categoryId);
+
+        CategoryInfo ctgrInfo = new CategoryInfo();
+
+        ctgrInfo.setName(ctgrMtdt.getName());
+        ctgrInfo.setDisplayName(ctgrMtdt.getDisplayName());
+        ctgrInfo.setDescription(ctgrMtdt.getDescription());
+        ctgrInfo.setCreationDate(ctgrMtdt.getCreationDate());
+
+        return ctgrInfo;
+    }
+
+    @Override
+    public boolean changeCategoryDefinition(CategoryInfo categoryDefinition) throws Exception {
+        CategoryMetadata ctgrMtdt = new CategoryMetadata();
+
+        ctgrMtdt.setName(categoryDefinition.getName());
+        ctgrMtdt.setDisplayName(categoryDefinition.getDisplayName());
+        ctgrMtdt.setDescription(categoryDefinition.getDescription());
+        ctgrMtdt.setCreationDate(categoryDefinition.getCreationDate());
+
+        return mem.changeCategoryDefinition(ctgrMtdt);
+    }// </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
     @Override
@@ -214,7 +348,6 @@ public class WebServiceBean implements WebServiceBeanRemote {
         sessions.remove(sessionId);
     }
 // </editor-fold>
-
 
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
     @Override
@@ -265,7 +398,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         throw new UnsupportedOperationException("Not supported yet.");
     }// </editor-fold>
 
-// <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
     /**
      * Returns the singleton for the Metadata Entity Manager
      * @return the MEM unique instance
