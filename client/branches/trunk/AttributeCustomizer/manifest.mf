@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.inventory.customization.attributecustomizer
+OpenIDE-Module-Layer: org/inventory/customization/attributecustomizer/layer.xml
+OpenIDE-Module-Localizing-Bundle: org/inventory/customization/attributecustomizer/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
