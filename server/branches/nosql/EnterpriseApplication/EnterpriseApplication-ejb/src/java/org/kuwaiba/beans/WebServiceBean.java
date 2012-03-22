@@ -374,18 +374,49 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass, String myClass) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass, String classToFilter)
+            throws ServerSideException {
+        assert bem == null : "Can't reach the Business Entity Manager";
+        try {
+            return bem.getChildrenOfClass(parentOid, parentClass,classToFilter).toArray(new RemoteObject[0]);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public RemoteObject getObjectInfo(String objectClass, Long oid) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public RemoteObjectLight[] getChildrenOfClassLight(Long parentOid, String parentClass, String classToFilter)
+            throws ServerSideException {
+        assert bem == null : "Can't reach the Business Entity Manager";
+        try {
+            return bem.getChildrenOfClassLight(parentOid, parentClass,classToFilter).toArray(new RemoteObjectLight[0]);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public RemoteObject getObjectInfo(String objectClass, Long oid) throws ServerSideException{
+        assert bem == null : "Can't reach the Business Entity Manager";
+        try {
+            return new RemoteObject(bem.getObjectInfo(objectClass, oid));
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid) throws ServerSideException{
+        assert bem == null : "Can't reach the Business Entity Manager";
+        try {
+            return new RemoteObjectLight(bem.getObjectInfoLight(objectClass, oid));
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override

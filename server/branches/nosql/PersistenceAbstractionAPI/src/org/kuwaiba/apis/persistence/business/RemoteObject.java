@@ -16,7 +16,6 @@
 
 package org.kuwaiba.apis.persistence.business;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,23 +29,23 @@ public class RemoteObject extends RemoteObjectLight{
      * Map of attributes and values. Note that there's a little of overhead here, since
      * the attribute value could be a list of values (many-to-many, one-to-many relationships)
      */
-    private HashMap <String, ArrayList<String>> attributes;
+    private HashMap <String, List<String>> attributes;
 
     public RemoteObject(Long id, String name, boolean isLocked) {
         super(id,name, isLocked);
     }
 
-    public RemoteObject(Long id, String name, boolean isLocked,HashMap<String, ArrayList<String>> attributes) {
+    public RemoteObject(Long id, String name, boolean isLocked,HashMap<String, List<String>> attributes) {
         this(id,name, isLocked);
         this.attributes = attributes;
     }
 
 
-    public HashMap<String, ArrayList<String>> getAttributes() {
+    public HashMap<String, List<String>> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(HashMap<String, ArrayList<String>> attributes) {
+    public void setAttributes(HashMap<String, List<String>> attributes) {
         this.attributes = attributes;
     }
 }

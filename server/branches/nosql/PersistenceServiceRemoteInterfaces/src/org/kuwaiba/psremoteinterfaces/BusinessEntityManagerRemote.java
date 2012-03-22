@@ -19,7 +19,9 @@ package org.kuwaiba.psremoteinterfaces;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import org.kuwaiba.apis.persistence.business.RemoteObject;
 import org.kuwaiba.apis.persistence.business.RemoteObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 
@@ -35,4 +37,16 @@ public interface BusinessEntityManagerRemote extends Remote{
 
     public List<RemoteObjectLight> getObjectChildren(Long oid, Long classId)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
+
+    public List<RemoteObject> getChildrenOfClass(Long parentOid, String parentClass, String myClass)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    public List<RemoteObjectLight> getChildrenOfClassLight(Long parentOid, String parentClass, String myClass)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
+
+    public RemoteObject getObjectInfo(String objectClass, Long oid)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
 }

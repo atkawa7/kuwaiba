@@ -57,7 +57,7 @@ public class RemoteObjectLight {
     }
 
 
-    public RemoteObjectLight(org.kuwaiba.apis.persistence.business.RemoteObject obj){
+    public RemoteObjectLight(org.kuwaiba.apis.persistence.business.RemoteObjectLight obj){
         this.className = obj.getClassName();
         this.oid = obj.getId();
         this.locked = obj.isLocked();

@@ -21,8 +21,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Formatter;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.kuwaiba.apis.persistence.business.RemoteObject;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -211,6 +216,49 @@ public class Util {
         return myClass;
     }
 
+    
+    /**
+     * Builds a RemoteObject instance from a node representing a business object
+     * @param instance
+     * @param myClass
+     * @return
+     * @throws InvalidArgumentException
+     */
+    public static RemoteObject createRemoteObjectFromNode(Node instance, ClassMetadata myClass) throws InvalidArgumentException{
+        HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
+
+                //Iterates through attributes
+                Iterable<String> attributeNames = instance.getPropertyKeys();
+                while (attributeNames.iterator().hasNext()){
+                    String attributeName = attributeNames.iterator().next();
+                    List<String> attributeValue = null;
+                    if (instance.getProperty(attributeName) != null ){
+                        try {
+                            if (myClass.getAttributeMapping(attributeName) != AttributeMetadata.MAPPING_BINARY) {
+                                attributeValue = new ArrayList<String>();
+                                attributeValue.add(instance.getProperty(attributeName).toString());
+                            }
+                        } catch (InvalidArgumentException ex) { //This should never happen
+                            Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    attributes.put(attributeName,attributeValue);
+                }
+
+                //Iterates through relationships and transform the into "plain" attributes
+                Iterable<Relationship> relationships = instance.getRelationships(RelTypes.RELATED_TO);
+                while(relationships.iterator().hasNext()){
+                    Relationship relationship = relationships.iterator().next();
+                    String attributeName = relationship.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).toString();
+                    if (attributes.get(attributeName)==null)
+                        attributes.put(attributeName, new ArrayList<String>());
+
+                    attributes.get(attributeName).add(String.valueOf(relationship.getEndNode().getId()));
+
+                }
+                return new RemoteObject(instance.getId(), myClass.getName(),(Boolean)instance.getProperty(MetadataEntityManagerImpl.PROPERTY_LOCKED));
+    }
+
     /**
      * Traverses the graph up into the class hierarchy trying to find out if a given class
      * is the subclass of another
@@ -218,17 +266,17 @@ public class Util {
      * @param startNode Class metadata node corresponding to the child class
      * @return
      */
-    public static boolean isSubClass(String allegedParentClass, Node startNode){
-        Iterable<Relationship> parent = startNode.getRelationships(RelTypes.EXTENDS, Direction.OUTGOING);
+    public static boolean isSubClass(String allegedParentClass, Node currentNode){
+        Iterable<Relationship> parent = currentNode.getRelationships(RelTypes.EXTENDS, Direction.OUTGOING);
         if (!parent.iterator().hasNext())
             return false;
 
-        Node currentNode = parent.iterator().next().getEndNode();
+        Node parentNode = parent.iterator().next().getEndNode();
 
-        if (currentNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals(allegedParentClass))
+        if (parentNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals(allegedParentClass))
             return true;
 
-        return isSubClass(allegedParentClass, currentNode);
+        return isSubClass(allegedParentClass, parentNode);
     }
 
     /**

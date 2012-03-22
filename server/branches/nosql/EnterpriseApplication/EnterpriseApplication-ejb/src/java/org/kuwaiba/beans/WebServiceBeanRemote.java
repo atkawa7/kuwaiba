@@ -219,15 +219,16 @@ public interface WebServiceBeanRemote {
     public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId) throws ServerSideException;
     public RemoteObjectLight[] getObjectChildren(String objectClassName, Long oid) throws ServerSideException;
 
-    public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass,String myClass);
+    public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass,String classToFilter) throws ServerSideException;
+    public RemoteObjectLight[] getChildrenOfClassLight(Long parentOid, String parentClass,String classToFilter) throws ServerSideException;
 
-    public RemoteObject getObjectInfo(String objectClass, Long oid);
+    public RemoteObject getObjectInfo(String objectClass, Long oid) throws ServerSideException;
 
-    public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid);
+    public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid) throws ServerSideException;
 
-    public void updateObject(String className, Long oid, HashMap<String, String> attributes);
+    public void updateObject(String className, Long oid, HashMap<String, String> attributes) throws ServerSideException;
 
-    public RemoteObjectLight createObject(String className, Long parentOid, HashMap<String, String> attributes, String template);
+    public RemoteObjectLight createObject(String className, Long parentOid, HashMap<String, String> attributes, String template) throws ServerSideException;
 
     
     // </editor-fold>

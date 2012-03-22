@@ -61,8 +61,7 @@ public interface BusinessEntityManager {
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
     public RemoteObject getObjectInfo(String className, Long oid)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, 
-                    OperationNotPermittedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Gets the simplified information about an object
@@ -71,12 +70,10 @@ public interface BusinessEntityManager {
      * @return A detailed representation of the requested object
      * @throws MetadataObjectNotFoundException If the className class can't be found
      * @throws ObjectNotFoundException If the requested object can't be found
-     * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
     public RemoteObjectLight getObjectInfoLight(String className, Long oid)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException,
-                    OperationNotPermittedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException;
 
     /**
      * Deletes an object
@@ -191,7 +188,7 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
      */
     public List<RemoteObjectLight> getObjectChildren(String className, Long oid)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException;
     
     /**
      * Executes a query

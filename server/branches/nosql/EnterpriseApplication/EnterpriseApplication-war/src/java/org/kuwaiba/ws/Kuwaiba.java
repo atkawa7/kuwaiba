@@ -16,7 +16,6 @@
 
 package org.kuwaiba.ws;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;

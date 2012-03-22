@@ -16,6 +16,7 @@
 package org.kuwaiba.ws.toserialize.business;
 
 import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -31,11 +32,11 @@ public class RemoteObject extends RemoteObjectLight {
      * Attribute names in this object. This information is already in the meta, but we don't know
      * if it's sorted correctly there, so we take it here too
      */
-    private ArrayList<String> attributes;
+    private List<String> attributes;
     /**
      * Values for the aforementioned attributes
      */
-    private ArrayList<ArrayList<String>> values;
+    private List<List<String>> values;
 
     /**
      * Default constructor. Never used
@@ -49,14 +50,14 @@ public class RemoteObject extends RemoteObjectLight {
     public RemoteObject(org.kuwaiba.apis.persistence.business.RemoteObject object){
         super(object.getId(), object.getClassName(), object.isLocked());
         attributes = new ArrayList<String>(object.getAttributes().size());
-        values = new ArrayList<ArrayList<String>>(object.getAttributes().size());
+        values = new ArrayList<List<String>>(object.getAttributes().size());
         for (String key : object.getAttributes().keySet()){
             attributes.add(key);
             values.add(object.getAttributes().get(key));
         }
     }
 
-    public ArrayList<String> getAttributes() {
+    public List<String> getAttributes() {
         return attributes;
     }
 
@@ -64,11 +65,11 @@ public class RemoteObject extends RemoteObjectLight {
         this.attributes = attributes;
     }
 
-    public ArrayList<ArrayList<String>> getValues() {
+    public List<List<String>> getValues() {
         return values;
     }
 
-    public void setValues(ArrayList<ArrayList<String>> values) {
+    public void setValues(List<List<String>> values) {
         this.values = values;
     }
 }
