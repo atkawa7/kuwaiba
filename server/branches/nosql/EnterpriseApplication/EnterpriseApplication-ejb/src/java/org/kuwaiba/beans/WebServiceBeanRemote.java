@@ -17,6 +17,7 @@
 package org.kuwaiba.beans;
 
 import java.util.HashMap;
+import java.util.List;
 import javax.ejb.Remote;
 
 import org.kuwaiba.exceptions.InvalidSessionException;
@@ -28,6 +29,7 @@ import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.ws.toserialize.metadata.CategoryInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
+import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
 
 /**
  * Main session bean backing the webservice
@@ -67,6 +69,15 @@ public interface WebServiceBeanRemote {
 
     public boolean changeClassDefinition(ClassInfo newClassDefinition) throws Exception;
 
+   /**
+     * Set a class icon (big or small)
+     * @param classId
+     * @param attributeName
+     * @param iconImage
+     * @return
+     */
+    public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws Exception;
+
     /**
      * Deletes a classmetadata, its attributes and category relationships
      * @param classId
@@ -83,6 +94,24 @@ public interface WebServiceBeanRemote {
      * @throws ClassNotFoundException if there is not a class with de ClassName
      */
     public boolean deleteClass(Long classId) throws Exception;
+
+    /**
+     * Retrieves the simplified list of classes. This list won't include either
+     * those classes marked as dummy
+     * @param includeListTypes boolean to indicate if the list should include
+     * the subclasses of GenericObjectList
+     * @return the list of classes
+     * @throws Exception EntityManagerNotAvailableException or something unexpected
+     */
+    public List<ClassInfoLight> getLightMetadata(Boolean includeListTypes) throws Exception;
+
+    /**
+     * Retrieves all the class metadata except for classes marked as dummy
+     * @param includeListTypes boolean to indicate if the list should include
+     * the subclasses of GenericObjectList
+     * @return An array of classes
+     */
+    public List<ClassInfo> getMetadata(Boolean includeListTypes) throws Exception;
 
     /**
      * Gets Metadata For Class id its attributes and Category
@@ -108,6 +137,7 @@ public interface WebServiceBeanRemote {
      * @throws Exception
      */
     public boolean moveClass(String classToMoveName, String targetParentName) throws Exception;
+    
     /**
      * Moves a class from one parentClass to an other parentClass
      * @param classToMoveId
@@ -117,6 +147,7 @@ public interface WebServiceBeanRemote {
      * or if there is no a targetParentClass with such classId
      */
     public boolean moveClass(Long classToMoveId, Long targetParentId) throws Exception;
+
     /**
      * Adds an attribute to the class
      * @param className
@@ -125,6 +156,7 @@ public interface WebServiceBeanRemote {
      * @throws ClassNotFoundException if there is no a class with such className
      */
     public boolean addAttribute(String className, AttributeInfo attributeDefinition) throws Exception;
+
     /**
      * Adds an attribute to a class
      * @param classId
@@ -232,5 +264,6 @@ public interface WebServiceBeanRemote {
 
     
     // </editor-fold>
+
 
 }
