@@ -19,6 +19,7 @@ package org.kuwaiba.psremoteinterfaces;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
@@ -283,7 +284,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @param _possibleChildren ids of the candidates to be contained
      * @return success or failure
      */
-    public Boolean addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws RemoteException, MetadataObjectNotFoundException;
+    public Boolean addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws RemoteException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * The opposite of addPossibleChildren. It removes the given possible children
