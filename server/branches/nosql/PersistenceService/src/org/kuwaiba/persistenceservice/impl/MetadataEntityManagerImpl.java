@@ -16,13 +16,14 @@
 
 package org.kuwaiba.persistenceservice.impl;
 
-import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.kuwaiba.apis.persistence.interfaces.MetadataEntityManager;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
@@ -35,6 +36,7 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
@@ -70,20 +72,23 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      */
     public static final String PROPERTY_MAPPING = "mapping"; //NOI18N
 
+    public static final String INVENTORY_OBJECT = "InventoryObject"; //NOI18N
+    public static final String DUMMY_ROOT = "DummyRoot"; //NOI18N
+
      /**
      * Label used for the class index
      */
-    public static final String INDEX_CLASS = "classes";
+    public static final String INDEX_CLASS = "classes"; //NOI18N
     /**
      * Label used for the category index
      */
-    public static final String INDEX_CATEGORY = "categories";
+    public static final String INDEX_CATEGORY = "categories"; //NOI18N
     /**
      * Label used for help index
      */
-    public static final String INDEX_HELPER = "helperNodes";
+    public static final String INDEX_HELPER = "helperNodes"; //NOI18N
 
-    public static final String LIST_TYPE = "GenericObjectList";
+    public static final String LIST_TYPE = "GenericObjectList"; //NOI18N
     /**
      * Reference to the db handle
      */
@@ -401,7 +406,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @return the list of classes
      * @throws Exception EntityManagerNotAvailableException or something unexpected
      */
-    public List<ClassMetadataLight> getLightMetadata(Boolean includeListTypes) throws Exception
+    public List<ClassMetadataLight> getLightMetadata(Boolean includeListTypes) throws MetadataObjectNotFoundException
     {
         List<ClassMetadataLight> cml = new ArrayList<ClassMetadataLight>();
         Transaction tx = graphDb.beginTx();
@@ -437,7 +442,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * the subclasses of GenericObjectList
      * @return An array of classes
      */
-    public List<ClassMetadata> getMetadata(Boolean includeListTypes) throws Exception
+    public List<ClassMetadata> getMetadata(Boolean includeListTypes) throws MetadataObjectNotFoundException
     {
         List<ClassMetadata> cml = new ArrayList<ClassMetadata>();
         Transaction tx = graphDb.beginTx();
@@ -606,11 +611,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @return
      */
     @Override
-    public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws Exception
+    public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws MetadataObjectNotFoundException
     {
         Transaction tx = graphDb.beginTx();
         try{
             Node ctm = classIndex.get(PROPERTY_ID, classId).getSingle();
+            if(ctm == null)
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class to move with the id %1s", classId));
+
             if(attributeName.equalsIgnoreCase("icon"))
                         ctm.setProperty(PROPERTY_ICON, iconImage);
 
@@ -1010,31 +1019,31 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     @Override
     public boolean deleteCategory(String categoryName)
     {   //TODO what about the classes?
-        return true;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public boolean deleteCategory(Integer categoryId)
     {
-        return true;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public boolean addImplementor(String classWhichImplementsName,String interfaceToImplementName)
     {
-        return true;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public boolean removeImplementor(String classWhichImplementsName ,String interfaceToBeRemovedName)
     {
-        return true;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public boolean addImplementor(Integer classWhichImplementsId, Integer interfaceToImplementId)
     {
-        return true;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -1046,13 +1055,169 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     @Override
     public boolean getInterface(String interfaceName)
     {
-        return true;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public boolean getInterface(Integer interfaceid)
     {
-        return true;
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<ClassMetadataLight> getPossibleChildren(String parentClassName) throws MetadataObjectNotFoundException
+    {
+        List<ClassMetadataLight> cml =  new ArrayList<ClassMetadataLight>();
+        Transaction tx = graphDb.beginTx();
+        try{
+            Node myClassNode =  classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
+
+            if(myClassNode == null)
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the name %1s", parentClassName));
+
+            Traverser classChildsTraverser = Util.possibleChildren(myClassNode);
+            for (Node childClassNode : classChildsTraverser) {
+
+                cml.add(Util.createMetadataLightFromNode(childClassNode));
+            }
+
+         tx.success();
+
+        }finally{
+            tx.finish();
+        }
+
+        return cml;
+    }
+
+    @Override
+    public List<ClassMetadataLight> getPossibleChildrenNoRecursive(String parentClassName) throws MetadataObjectNotFoundException
+    {
+        List<ClassMetadataLight> cml =  new ArrayList<ClassMetadataLight>();
+        Transaction tx = graphDb.beginTx();
+        try{
+            Node myClassNode =  classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
+
+            if(myClassNode == null)
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the name %1s", parentClassName));
+            
+            Iterable<Relationship> rels = myClassNode.getRelationships(RelTypes.EXTENDS, Direction.INCOMING);
+
+            for (Relationship rel : rels)
+            {
+                Node childClassNode = rel.getStartNode();
+                ClassMetadataLight clmdl = Util.createMetadataLightFromNode(childClassNode);
+                cml.add(clmdl);
+            }//end for
+
+            tx.success();
+
+        }finally{
+            tx.finish();
+        }
+
+        return cml;
+    }
+
+    @Override
+    public Boolean addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException
+    {
+        Transaction tx = graphDb.beginTx();
+        try
+        {
+            Node parentNode = classIndex.get(PROPERTY_ID, parentClassId).getSingle();
+            
+            Node inventoryObjectNode = classIndex.get(PROPERTY_NAME, INVENTORY_OBJECT).getSingle();
+            Node dummyRootNode = classIndex.get(PROPERTY_NAME, DUMMY_ROOT).getSingle();
+
+            if(parentNode == null)
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the id %1s", parentClassId));
+             
+            boolean alreadyAdded = false;
+
+            if (!Util.isSubClass((String)parentNode.getProperty(PROPERTY_NAME), inventoryObjectNode)
+                    &&
+                !((String)parentNode.getProperty(PROPERTY_NAME)).equals((String)dummyRootNode.getProperty(PROPERTY_NAME)))
+
+                throw new InvalidArgumentException("Can't perform this operation for classes other than subclasses of InventoryObject", Level.WARNING);
+
+
+            List<ClassMetadataLight> currenPossibleChildren = getPossibleChildren((String)parentNode.getProperty(PROPERTY_NAME));
+
+            for (Long id : _possibleChildren) 
+            {
+                Node childNode = classIndex.get(PROPERTY_ID, id).getSingle();
+
+                if(childNode == null)
+                    throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the id %1s", parentClassId));
+
+                ClassMetadataLight possibleChild =  Util.createMetadataLightFromNode(childNode);
+
+                for(ClassMetadataLight existingPossibleChild : currenPossibleChildren)
+                {
+                    if(Util.isSubClass(possibleChild.getName(), classIndex.get(PROPERTY_ID, existingPossibleChild.getId()).getSingle()))
+                        getPossibleChildren((String)parentNode.getProperty(PROPERTY_NAME)).remove(existingPossibleChild);
+                    else
+                        if(Util.isSubClass(existingPossibleChild.getName(), classIndex.get(PROPERTY_ID, possibleChild.getId()).getSingle()))
+                            alreadyAdded = true;
+                }
+
+                if (!currenPossibleChildren.contains(possibleChild) && !alreadyAdded) // If the class is already a possible child, it won't add it
+                    getPossibleChildren((String)parentNode.getProperty(PROPERTY_NAME)).add(possibleChild);
+
+                else
+                    throw new InvalidArgumentException(
+                            "This class has already been added to the containment hierarchy: " +
+                            possibleChild.getName(), Level.INFO);
+
+            }
+         tx.success();
+
+        }finally{
+            tx.finish();
+        }
+        
+        return false;
+
+    }
+
+    @Override
+    public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws MetadataObjectNotFoundException
+    {
+        Transaction tx = graphDb.beginTx();
+        try
+        {
+            Node parentNode = classIndex.get(PROPERTY_ID, parentClassId).getSingle();
+
+            if(parentNode == null)
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the id %1s", parentClassId));
+
+            for (Long id : childrenToBeRemoved)
+            {
+                for (ClassMetadataLight classMetadataLight : getPossibleChildren(
+                                    (String)parentNode.getProperty(PROPERTY_NAME)))
+                {
+                    if(id == classMetadataLight.getId())
+                    {
+                        getPossibleChildren((String)parentNode.getProperty(PROPERTY_NAME)).remove(classMetadataLight);
+                        break;
+                    }
+
+                }
+            }
+
+         tx.success();
+
+        }finally{
+            tx.finish();
+        }
+
+        return false;
     }
 
 }
