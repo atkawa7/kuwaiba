@@ -17,6 +17,7 @@
 package org.kuwaiba.ws;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
@@ -26,6 +27,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.servlet.http.HttpServletRequest;
+import org.kuwaiba.beans.WebServiceBean;
 import org.kuwaiba.beans.WebServiceBeanRemote;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
@@ -33,6 +35,7 @@ import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
+import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
 
 /**
  * Main webservice
@@ -93,7 +96,6 @@ public class Kuwaiba {
             throw e;
         }
     }//</editor-fold>
-
 
     // <editor-fold defaultstate="collapsed" desc="Business Methods. Click on the + sign on the left to edit the code.">
     /**
@@ -328,7 +330,12 @@ public class Kuwaiba {
         Boolean abstractClass, @WebParam(name = "parentClassName")
         String parentClassName, @WebParam(name = "icon")
         byte[] icon, @WebParam(name = "smallIcon")
-        byte[] smallIcon) throws Exception {
+        byte[] smallIcon, @WebParam(name = "oid")
+        Long oid, @WebParam(name = "sessionId")
+        String sessionId) throws Exception {
+
+        if (oid == null)
+            throw new ServerSideException(Level.WARNING, "Object id can't be null");
 
         ClassInfo ci = new ClassInfo();
         ci.setClassName(name);
@@ -365,7 +372,12 @@ public class Kuwaiba {
         Boolean abstractClass, @WebParam(name = "parentClassName")
         String parentClassName, @WebParam(name = "icon")
         byte[] icon, @WebParam(name = "smallIcon")
-        byte[] smallIcon) throws Exception {
+        byte[] smallIcon, @WebParam(name = "oid")
+        Long oid, @WebParam(name = "sessionId")
+        String sessionId) throws Exception {
+
+        if (oid == null)
+            throw new ServerSideException(Level.WARNING, "Object id can't be null");
 
         ClassInfo ci = new ClassInfo();
         ci.setClassName(name);
@@ -379,6 +391,29 @@ public class Kuwaiba {
 
         return wsBean.changeClassDefinition(ci);
     }
+
+    /**
+      * Sets the image (icons) attributes in a class meta data (smallIcon and Icon)
+      * @param classId Class to be modified
+      * @param iconAttribute icon attribute to be modified
+      * @param iconImage image as a byte array
+      * @param sessionId
+      * @return success or failure
+      * @throws Exception
+      */
+    @WebMethod(operationName = "setClassIcon")
+    public Boolean setClassIcon(@WebParam(name = "classId")Long classId,
+            @WebParam(name = "iconAttribute")String iconAttribute,
+            @WebParam(name = "iconImage")byte[] iconImage,
+            @WebParam(name = "oid") Long oid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+
+            if (oid == null)
+                throw new ServerSideException(Level.WARNING, "Object id can't be null");
+
+            return wsBean.setClassIcon(classId, iconAttribute, iconImage);
+
+     }
 
     /**
      * add's an attribute to a classMeatdatada by its ClassId
@@ -406,9 +441,14 @@ public class Kuwaiba {
         Boolean visible, @WebParam(name = "mapping")
         int mapping, @WebParam(name = "readOnly")
         Boolean readOnly, @WebParam(name = "unique")
-        Boolean unique) throws Exception {
+        Boolean unique, @WebParam(name = "oid")
+        Long oid, @WebParam(name = "sessionId")
+        String sessionId) throws Exception {
 
-       AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
+        if (oid == null)
+            throw new ServerSideException(Level.WARNING, "Object id can't be null");
+
+        AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
                                             visible, description, mapping);
 
         return wsBean.addAttribute(ClassName, ai);
@@ -440,7 +480,12 @@ public class Kuwaiba {
         Boolean visible, @WebParam(name = "mapping")
         int mapping, @WebParam(name = "readOnly")
         Boolean readOnly, @WebParam(name = "unique")
-        Boolean unique) throws Exception {
+        Boolean unique, @WebParam(name = "oid") 
+        Long oid, @WebParam(name = "sessionId")
+        String sessionId) throws Exception {
+        
+        if (oid == null)
+            throw new ServerSideException(Level.WARNING, "Object id can't be null");
 
        AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
                                             visible, description, mapping);
@@ -456,7 +501,14 @@ public class Kuwaiba {
      */
     @WebMethod(operationName = "getMetadataForClass")
     public ClassInfo getMetadataForClass(@WebParam(name = "className")
-    String className) throws Exception {
+    String className, @WebParam(name = "oid")
+    Long oid, @WebParam(name = "sessionId")
+    String sessionId) throws Exception {
+
+        if (oid == null)
+            throw new ServerSideException(Level.WARNING, "Object id can't be null");
+
+        wsBean = new WebServiceBean();
         ClassInfo ci = wsBean.getMetadataForClass(className);
         return ci;
     }
@@ -469,10 +521,65 @@ public class Kuwaiba {
      */
     @WebMethod(operationName = "getMetadataForClassById")
     public ClassInfo getMetadataForClassById(@WebParam(name = "classId")
-    Long classId) throws Exception {
+    Long classId, @WebParam(name = "oid")
+    Long oid, @WebParam(name = "sessionId")
+    String sessionId) throws Exception {
+
+        if (oid == null)
+            throw new ServerSideException(Level.WARNING, "Object id can't be null");
+
         ClassInfo ci = wsBean.getMetadataForClass(classId);
         return ci;
     }
+
+     /**
+     * Provides metadata for all classes, but the light version
+     * @param sessionId
+     * @param includeListTypes boolean to indicate if the list should include the subclasses of
+     * GenericObjectList
+     * @return An array with the basic class metadata
+     * @throws Exception
+     */
+    @WebMethod(operationName = "getLightMetadata")
+    public List<ClassInfoLight> getLightMetadata(
+            @WebParam(name = "oid") Long oid,
+            @WebParam(name = "sessionId") String sessionId,
+            @WebParam(name = "includeListTypes")Boolean includeListTypes) throws Exception{
+
+            if (oid == null)
+                throw new ServerSideException(Level.WARNING, "Object id can't be null");
+
+            if (includeListTypes == null)
+                includeListTypes = false;
+
+            return wsBean.getLightMetadata(includeListTypes);
+
+    }
+
+     /**
+     * Retrieves all the class metadata
+     * @param sessionId
+     * @param includeListTypes boolean to indicate if the list should include the subclasses of
+     * GenericObjectList
+     * @return An array with the complete metadata for each class
+     * @throws Exception
+     */
+    @WebMethod(operationName = "getMetadata")
+    public List<ClassInfo> getMetadata(
+            @WebParam(name = "oid") Long oid,
+            @WebParam(name = "sessionId") String sessionId,
+            @WebParam(name = "includeListTypes")Boolean includeListTypes) throws Exception{
+
+            if (oid == null)
+                throw new ServerSideException(Level.WARNING, "Object id can't be null");
+
+            if (includeListTypes == null)
+                includeListTypes = false;
+
+            return wsBean.getMetadata(includeListTypes);
+
+    }
+
 
     /**
      * delete's a  Class by its name
@@ -482,7 +589,13 @@ public class Kuwaiba {
      */
     @WebMethod(operationName = "deleteClassByName")
     public boolean deleteClassByName(@WebParam(name = "className")
-    String className) throws Exception {
+    String className, @WebParam(name = "oid")
+    Long oid, @WebParam(name = "sessionId")
+    String sessionId) throws Exception {
+
+        if (oid == null)
+            throw new ServerSideException(Level.WARNING, "Object id can't be null");
+
         return wsBean.deleteClass(className);
     }
 
@@ -495,14 +608,20 @@ public class Kuwaiba {
 
     @WebMethod(operationName = "deleteClassById")
     public boolean deleteClassById(@WebParam(name = "classId")
-    Long classId) throws Exception {
+    Long classId, @WebParam(name = "oid")
+    Long oid, @WebParam(name = "sessionId")
+    String sessionId) throws Exception {
+
+        if (oid == null)
+            throw new ServerSideException(Level.WARNING, "Object id can't be null");
+
         return wsBean.deleteClass(classId);
     }// </editor-fold>
-
 
     /**
      * Helpers
      */
+
     /**
      * Gets the IP address from the client issuing the request
      * @return the IP address as string
