@@ -251,7 +251,42 @@ public interface WebServiceBeanRemote {
      */
     public boolean changeCategoryDefinition(CategoryInfo categoryDefinition) throws ServerSideException;
 
-// </editor-fold>
+        /**
+     * Gets all classes whose instances can be contained into the given parent class. This method
+     * is recursive, so the result include the possible children in children classes
+     * @param parentClass
+     * @return an array with the list of classes
+     */
+    public List<ClassInfoLight> getPossibleChildren(String parentClassName) throws ServerSideException;
+
+    /**
+     * Same as getPossibleChildren but this one only gets the possible children for the given class,
+     * this is, subclasses are not included
+     * @param parentClass
+     * @return The list of possible children
+     */
+    public List<ClassInfoLight> getPossibleChildrenNoRecursive(String parentClassName) throws ServerSideException;
+    /**
+     * Adds to a given class a list of possible children classes whose instances can be contained
+     *
+     * @param parentClassId Id of the class whose instances can contain the instances of the next param
+     * @param _possibleChildren ids of the candidates to be contained
+     * @return success or failure
+     */
+    public Boolean addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws ServerSideException;
+
+    /**
+     * The opposite of addPossibleChildren. It removes the given possible children
+     * TODO: Make this method safe. This is, check if there's already intances of the given
+     * "children to be deleted" with parentClass as their parent
+     * @param parentClassId Id of the class whos instances can contain the instances of the next param
+     * @param childrenTBeRemoved ids of the candidates to be deleted
+     * @return success or failure
+     */
+    public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws ServerSideException;
+
+
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
     public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId) throws ServerSideException;
