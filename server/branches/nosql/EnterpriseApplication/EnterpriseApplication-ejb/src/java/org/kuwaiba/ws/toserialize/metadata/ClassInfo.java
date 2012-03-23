@@ -67,9 +67,8 @@ public class ClassInfo extends ClassInfoLight{
     protected String description;
 
     public ClassInfo(){}
-    public ClassInfo(ClassMetadata myClass, int flags, boolean isViewable){
-        super (myClass.getId(), myClass.getName(), myClass.getDisplayName(),
-                flags, isViewable, myClass.isAbstractClass(), myClass.getSmallIcon());
+    public ClassInfo(ClassMetadata myClass, int flags){
+        super (myClass, flags);
         this.abstractClass = myClass.isAbstractClass();
         this.icon = myClass.getIcon();
         List<AttributeMetadata> ar = myClass.getAttributes();
@@ -95,10 +94,6 @@ public class ClassInfo extends ClassInfoLight{
                 "":myAtt.getDescription();
             i++;
         }
-    }
-
-    public ClassInfo(ClassMetadata aClass, int i) {
-        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     public String[] getAttributeDisplayNames() {
