@@ -43,6 +43,17 @@ public class ClassInfoLight {
 
     public ClassInfoLight(){}
 
+    public ClassInfoLight(ClassMetadataLight myClassLight, int flags) {
+        this.id = myClassLight.getId();
+        this.className = myClassLight.getName();
+        this.parentClassName = myClassLight.getParentClassName();
+        this.smallIcon = myClassLight.getSmallIcon();
+        this.abstractClass = myClassLight.isAbstractClass();
+        this.displayName = myClassLight.getDisplayName();
+        this.flags = flags;
+        this.viewable = myClassLight.isViewable();
+    }
+
     public ClassInfoLight(Long id, String name, String displayName,int flags, boolean isViewable,
             boolean isAbstract, byte[] smallIcon) {
         this.id = id;
@@ -55,10 +66,6 @@ public class ClassInfoLight {
         this.className = name;
         this.displayName = displayName;
         this.smallIcon = smallIcon;
-    }
-
-    public ClassInfoLight(ClassMetadataLight classMetadataLight, int i) {
-        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     public String getClassName() {
