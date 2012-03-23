@@ -17,6 +17,7 @@
 package org.kuwaiba.apis.persistence.interfaces;
 
 import java.util.List;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
@@ -261,7 +262,7 @@ public interface MetadataEntityManager {
      * @param _possibleChildren ids of the candidates to be contained
      * @return success or failure
      */
-    public Boolean addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws MetadataObjectNotFoundException;
+    public Boolean addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * The opposite of addPossibleChildren. It removes the given possible children
