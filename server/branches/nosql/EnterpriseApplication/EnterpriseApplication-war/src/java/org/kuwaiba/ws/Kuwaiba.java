@@ -330,24 +330,31 @@ public class Kuwaiba {
         Boolean abstractClass, @WebParam(name = "parentClassName")
         String parentClassName, @WebParam(name = "icon")
         byte[] icon, @WebParam(name = "smallIcon")
-        byte[] smallIcon, @WebParam(name = "oid")
-        Long oid, @WebParam(name = "sessionId")
+        byte[] smallIcon, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
 
-        if (oid == null)
-            throw new ServerSideException(Level.WARNING, "Object id can't be null");
+        try
+        {
+            ClassInfo ci = new ClassInfo();
+            ci.setClassName(name);
+            ci.setDisplayName(displayName);
+            ci.setDescription(description);
+            ci.setFlags(flags);
+            ci.setIcon(icon);
+            ci.setSmallIcon(smallIcon);
+            ci.setParentClassName(parentClassName);
+            ci.setIsAbstract(abstractClass);
 
-        ClassInfo ci = new ClassInfo();
-        ci.setClassName(name);
-        ci.setDisplayName(displayName);
-        ci.setDescription(description);
-        ci.setFlags(flags);
-        ci.setIcon(icon);
-        ci.setSmallIcon(smallIcon);
-        ci.setParentClassName(parentClassName);
-        ci.setIsAbstract(abstractClass);
+            return wsBean.createClass(ci);
 
-        return wsBean.createClass(ci);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
     }
 
         /**
@@ -372,24 +379,31 @@ public class Kuwaiba {
         Boolean abstractClass, @WebParam(name = "parentClassName")
         String parentClassName, @WebParam(name = "icon")
         byte[] icon, @WebParam(name = "smallIcon")
-        byte[] smallIcon, @WebParam(name = "oid")
-        Long oid, @WebParam(name = "sessionId")
+        byte[] smallIcon, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
 
-        if (oid == null)
-            throw new ServerSideException(Level.WARNING, "Object id can't be null");
+        try
+        {
+            ClassInfo ci = new ClassInfo();
+            ci.setClassName(name);
+            ci.setDisplayName(displayName);
+            ci.setDescription(description);
+            ci.setFlags(flags);
+            ci.setIcon(icon);
+            ci.setSmallIcon(smallIcon);
+            ci.setParentClassName(parentClassName);
+            ci.setIsAbstract(abstractClass);
 
-        ClassInfo ci = new ClassInfo();
-        ci.setClassName(name);
-        ci.setDisplayName(displayName);
-        ci.setDescription(description);
-        ci.setFlags(flags);
-        ci.setIcon(icon);
-        ci.setSmallIcon(smallIcon);
-        ci.setParentClassName(parentClassName);
-        ci.setIsAbstract(abstractClass);
+            return wsBean.changeClassDefinition(ci);
 
-        return wsBean.changeClassDefinition(ci);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
     }
 
     /**
@@ -405,13 +419,20 @@ public class Kuwaiba {
     public Boolean setClassIcon(@WebParam(name = "classId")Long classId,
             @WebParam(name = "iconAttribute")String iconAttribute,
             @WebParam(name = "iconImage")byte[] iconImage,
-            @WebParam(name = "oid") Long oid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
 
-            if (oid == null)
-                throw new ServerSideException(Level.WARNING, "Object id can't be null");
-
+        try
+        {
             return wsBean.setClassIcon(classId, iconAttribute, iconImage);
+        
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
 
      }
 
@@ -441,17 +462,24 @@ public class Kuwaiba {
         Boolean visible, @WebParam(name = "mapping")
         int mapping, @WebParam(name = "readOnly")
         Boolean readOnly, @WebParam(name = "unique")
-        Boolean unique, @WebParam(name = "oid")
-        Long oid, @WebParam(name = "sessionId")
+        Boolean unique, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
 
-        if (oid == null)
-            throw new ServerSideException(Level.WARNING, "Object id can't be null");
-
-        AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
+        try
+        {
+            AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
                                             visible, description, mapping);
 
-        return wsBean.addAttribute(ClassName, ai);
+            return wsBean.addAttribute(ClassName, ai);
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
     }
 
     /*
@@ -480,17 +508,24 @@ public class Kuwaiba {
         Boolean visible, @WebParam(name = "mapping")
         int mapping, @WebParam(name = "readOnly")
         Boolean readOnly, @WebParam(name = "unique")
-        Boolean unique, @WebParam(name = "oid") 
-        Long oid, @WebParam(name = "sessionId")
+        Boolean unique, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
-        
-        if (oid == null)
-            throw new ServerSideException(Level.WARNING, "Object id can't be null");
 
-       AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
-                                            visible, description, mapping);
+        try
+        {
+            AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
+                                                visible, description, mapping);
 
-        return wsBean.addAttribute(ClassId, ai);
+            return wsBean.addAttribute(ClassId, ai);
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
     }
 
     /**
@@ -501,16 +536,21 @@ public class Kuwaiba {
      */
     @WebMethod(operationName = "getMetadataForClass")
     public ClassInfo getMetadataForClass(@WebParam(name = "className")
-    String className, @WebParam(name = "oid")
-    Long oid, @WebParam(name = "sessionId")
+    String className, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
-        if (oid == null)
-            throw new ServerSideException(Level.WARNING, "Object id can't be null");
-
-        wsBean = new WebServiceBean();
-        ClassInfo ci = wsBean.getMetadataForClass(className);
-        return ci;
+        try
+        {
+            wsBean = new WebServiceBean();
+            return wsBean.getMetadataForClass(className);
+        } catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
     }
 
     /**
@@ -521,15 +561,21 @@ public class Kuwaiba {
      */
     @WebMethod(operationName = "getMetadataForClassById")
     public ClassInfo getMetadataForClassById(@WebParam(name = "classId")
-    Long classId, @WebParam(name = "oid")
-    Long oid, @WebParam(name = "sessionId")
+    Long classId, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
-        if (oid == null)
-            throw new ServerSideException(Level.WARNING, "Object id can't be null");
+        try
+        {
+            return wsBean.getMetadataForClass(classId);
 
-        ClassInfo ci = wsBean.getMetadataForClass(classId);
-        return ci;
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
     }
 
      /**
@@ -542,17 +588,24 @@ public class Kuwaiba {
      */
     @WebMethod(operationName = "getLightMetadata")
     public List<ClassInfoLight> getLightMetadata(
-            @WebParam(name = "oid") Long oid,
             @WebParam(name = "sessionId") String sessionId,
             @WebParam(name = "includeListTypes")Boolean includeListTypes) throws Exception{
 
-            if (oid == null)
-                throw new ServerSideException(Level.WARNING, "Object id can't be null");
-
+        try
+        {
             if (includeListTypes == null)
                 includeListTypes = false;
 
             return wsBean.getLightMetadata(includeListTypes);
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
 
     }
 
@@ -566,20 +619,24 @@ public class Kuwaiba {
      */
     @WebMethod(operationName = "getMetadata")
     public List<ClassInfo> getMetadata(
-            @WebParam(name = "oid") Long oid,
             @WebParam(name = "sessionId") String sessionId,
             @WebParam(name = "includeListTypes")Boolean includeListTypes) throws Exception{
 
-            if (oid == null)
-                throw new ServerSideException(Level.WARNING, "Object id can't be null");
-
+        try
+        {
             if (includeListTypes == null)
                 includeListTypes = false;
 
             return wsBean.getMetadata(includeListTypes);
-
+        } catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
     }
-
 
     /**
      * delete's a  Class by its name
@@ -589,14 +646,21 @@ public class Kuwaiba {
      */
     @WebMethod(operationName = "deleteClassByName")
     public boolean deleteClassByName(@WebParam(name = "className")
-    String className, @WebParam(name = "oid")
-    Long oid, @WebParam(name = "sessionId")
+    String className, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
-        if (oid == null)
-            throw new ServerSideException(Level.WARNING, "Object id can't be null");
+        try
+        {
+            return wsBean.deleteClass(className);
 
-        return wsBean.deleteClass(className);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
     }
 
     /**
@@ -608,14 +672,21 @@ public class Kuwaiba {
 
     @WebMethod(operationName = "deleteClassById")
     public boolean deleteClassById(@WebParam(name = "classId")
-    Long classId, @WebParam(name = "oid")
-    Long oid, @WebParam(name = "sessionId")
+    Long classId, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
-        if (oid == null)
-            throw new ServerSideException(Level.WARNING, "Object id can't be null");
-
-        return wsBean.deleteClass(classId);
+        try
+        {
+     
+            return wsBean.deleteClass(classId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
     }// </editor-fold>
 
     /**
