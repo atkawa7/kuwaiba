@@ -40,6 +40,10 @@ import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.ReturnableEvaluator;
+import org.neo4j.graphdb.StopEvaluator;
+import org.neo4j.graphdb.Traverser;
+import org.neo4j.graphdb.Traverser.Order;
 
 /**
  * Utility class containing misc methods to perform common tasks
@@ -386,5 +390,19 @@ public class Util {
         if (formatter == null)
             formatter = new Formatter();
         return formatter.format(stringToFormat, args).toString();
+    }
+
+    /**
+     * Retrieves the posible children of a classMetadata
+     * @param ClassMetadata
+     * @return
+     */
+
+    public static Traverser possibleChildren(final Node ClassMetadata)
+    {
+        return ClassMetadata.traverse(Order.BREADTH_FIRST,
+                StopEvaluator.END_OF_GRAPH,
+                ReturnableEvaluator.ALL_BUT_START_NODE, RelTypes.EXTENDS,
+                Direction.INCOMING);
     }
 }
