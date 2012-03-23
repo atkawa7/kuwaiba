@@ -537,7 +537,76 @@ public class WebServiceBean implements WebServiceBeanRemote {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
         }
-    }// </editor-fold>
+    }
+
+    @Override
+    public List<ClassInfoLight> getPossibleChildren(String parentClassName) throws ServerSideException {
+
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
+            List<ClassMetadataLight> classMetadataList = mem.getPossibleChildren(parentClassName);
+
+            for (ClassMetadataLight clMtLg : classMetadataList) {
+                ClassInfoLight ci =  new ClassInfoLight(clMtLg, 0);
+                cml.add(ci);
+            }
+            return cml;
+
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+
+    }
+
+    @Override
+    public List<ClassInfoLight> getPossibleChildrenNoRecursive(String parentClassName) throws ServerSideException {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
+            List<ClassMetadataLight> classMetadataList = mem.getPossibleChildrenNoRecursive(parentClassName);
+
+            for (ClassMetadataLight clMtLg : classMetadataList) {
+                ClassInfoLight ci =  new ClassInfoLight(clMtLg, 0);
+                cml.add(ci);
+            }
+            return cml;
+
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public Boolean addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws ServerSideException {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            return mem.addPossibleChildren(parentClassId, _possibleChildren);
+
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws ServerSideException {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            return mem.removePossibleChildren(parentClassId, childrenToBeRemoved);
+
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
     @Override
@@ -699,8 +768,5 @@ public class WebServiceBean implements WebServiceBeanRemote {
             mem = null;
         }
         return mem;
-    }
-
-
-    // </editor-fold>
+    }// </editor-fold>
 }
