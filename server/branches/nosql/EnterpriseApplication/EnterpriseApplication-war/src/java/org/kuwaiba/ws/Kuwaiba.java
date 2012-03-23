@@ -149,11 +149,11 @@ public class Kuwaiba {
     }
 
     /**
-     * Get all children in an object of an specific class
-     * @param parentOid
+     * Gets all children of an object of a given class
+     * @param parentOid Object oid whose cho
      * @param childrenClass
      * @return An array with children
-     * @throws An exception (ClassNotFoundException or any other) in case of error
+     * @throws An general exception in case of error. Consumer of this method must check the message for details
      */
     @WebMethod(operationName="getChildrenOfClass")
     public RemoteObject[] getChildrenOfClass(@WebParam(name="parentOid")Long parentOid,
@@ -164,6 +164,31 @@ public class Kuwaiba {
             //sbr.validateCall("getChildrenOfClass", getIPAddress(), sessionId);
             RemoteObject[] res = wsBean.getChildrenOfClass(parentOid,parentClass,childrenClass);
             return res;
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+        /**
+     * Gets all children of an object of a given class
+     * @param parentOid Object oid whose cho
+     * @param childrenClass
+     * @return An array with children
+     * @throws An general exception in case of error. Consumer of this method must check the message for details
+     */
+    @WebMethod(operationName="getChildrenOfClassLight")
+    public RemoteObjectLight[] getChildrenOfClassLight(@WebParam(name="parentOid")Long parentOid,
+            @WebParam(name="parentClass")String parentClass,
+            @WebParam(name="childrenClass")String childrenClass,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            //sbr.validateCall("getChildrenOfClass", getIPAddress(), sessionId);
+            return wsBean.getChildrenOfClassLight(parentOid,parentClass,childrenClass);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -233,19 +258,22 @@ public class Kuwaiba {
 
     /**
      * Updates attributes of a given object
-     * @param update ObjectUpdate object representing only the changes to be committed
+     * @param className object's class name
+     * @param oid Object's oid
+     * @param  attributeNames attribute names to be changed
+     * @param  attributeValues attribute values for the attributes above
      * @param sessionId
-     * @return the updated object
      * @throws Exception
      */
     @WebMethod(operationName = "updateObject")
     public void updateObject(@WebParam(name = "className")String className,
             @WebParam(name = "oid")Long oid,
-            @WebParam(name = "attributes")HashMap<String,String> attributes,
+            @WebParam(name = "attributeNames")String[] attributeNames,
+            @WebParam(name = "attributeValues")String[] attributeValues,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             //sbr.validateCall("updateObject", getIPAddress(), sessionId);
-            wsBean.updateObject(className,oid,attributes);
+            wsBean.updateObject(className,oid,attributeNames, attributeValues);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -257,12 +285,15 @@ public class Kuwaiba {
     }
 
     @WebMethod(operationName = "createObject")
-    public RemoteObjectLight createObject(@WebParam(name = "className")String className, Long parentOid,
-            HashMap<String,String> attributes,String template,
+    public Long createObject(@WebParam(name = "className")String className,
+            @WebParam(name = "parentOid")Long parentOid,
+            @WebParam(name = "attributeNames")String[] attributeNames,
+            @WebParam(name = "attributeValues")String[] attributeValues,
+            @WebParam(name = "template")String template,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             //sbr.validateCall("createObject", getIPAddress(), sessionId);
-            return wsBean.createObject(className,parentOid,attributes, template);
+            return wsBean.createObject(className,parentOid,attributeNames,attributeValues, template);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)

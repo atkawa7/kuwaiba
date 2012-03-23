@@ -15,8 +15,6 @@
  */
 package org.kuwaiba.ws.toserialize.business;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -32,11 +30,11 @@ public class RemoteObject extends RemoteObjectLight {
      * Attribute names in this object. This information is already in the meta, but we don't know
      * if it's sorted correctly there, so we take it here too
      */
-    private List<String> attributes;
+    private String[] attributes;
     /**
      * Values for the aforementioned attributes
      */
-    private List<List<String>> values;
+    private String[][] values;
 
     /**
      * Default constructor. Never used
@@ -49,27 +47,29 @@ public class RemoteObject extends RemoteObjectLight {
      */
     public RemoteObject(org.kuwaiba.apis.persistence.business.RemoteObject object){
         super(object.getId(), object.getClassName(), object.isLocked());
-        attributes = new ArrayList<String>(object.getAttributes().size());
-        values = new ArrayList<List<String>>(object.getAttributes().size());
+        attributes = new String[object.getAttributes().size()];
+        values = new String[object.getAttributes().size()][];
+        int i = 0;
         for (String key : object.getAttributes().keySet()){
-            attributes.add(key);
-            values.add(object.getAttributes().get(key));
+            attributes[i] = key;
+            values[i] = object.getAttributes().get(key).toArray(new String[0]);
+            i++;
         }
     }
 
-    public List<String> getAttributes() {
+    public String[] getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(ArrayList<String> attributes) {
+    public void setAttributes(String[] attributes) {
         this.attributes = attributes;
     }
 
-    public List<List<String>> getValues() {
+    public String[][] getValues() {
         return values;
     }
 
-    public void setValues(List<List<String>> values) {
+    public void setValues(String[][] values) {
         this.values = values;
     }
 }

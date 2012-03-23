@@ -16,7 +16,6 @@
 
 package org.kuwaiba.beans;
 
-import java.util.HashMap;
 import java.util.List;
 import javax.ejb.Remote;
 
@@ -258,9 +257,9 @@ public interface WebServiceBeanRemote {
 
     public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid) throws ServerSideException;
 
-    public void updateObject(String className, Long oid, HashMap<String, String> attributes) throws ServerSideException;
+    public void updateObject(String className, Long oid, String[] attributeNames, String[] attributeValues) throws ServerSideException;
 
-    public RemoteObjectLight createObject(String className, Long parentOid, HashMap<String, String> attributes, String template) throws ServerSideException;
+    public Long createObject(String className, Long parentOid, String[] attributeNames, String[] attributeValues, String template) throws ServerSideException;
 
     
     // </editor-fold>

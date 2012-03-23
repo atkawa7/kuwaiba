@@ -452,13 +452,40 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public RemoteObjectLight createObject(String className, Long parentOid, HashMap<String, String> attributes, String template) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Long createObject(String className, Long parentOid, String[] attributeNames,
+            String[] attributeValues, String template) throws ServerSideException{
+        assert bem == null : "Can't reach the Business Entity Manager";
+        if (attributeNames.length != attributeValues.length)
+            throw new ServerSideException(Level.SEVERE, "Attribute names and attribute values arrays sizes doesn't match");
+
+        try {
+            HashMap<String,String> attributes = new HashMap<String, String>();
+            for (int i = 0; i < attributeNames.length; i++)
+                attributes.put(attributeNames[i], attributeValues[i]);
+
+            return bem.createObject(className, parentOid,attributes, template);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public void updateObject(String className, Long oid, HashMap<String, String> attributes) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void updateObject(String className, Long oid, String[] attributeNames, String[] attributeValues) throws ServerSideException{
+        assert bem == null : "Can't reach the Business Entity Manager";
+        if (attributeNames.length != attributeValues.length)
+            throw new ServerSideException(Level.SEVERE, "Attribute names and attribute values arrays sizes doesn't match");
+
+        try {
+            HashMap<String,String> attributes = new HashMap<String, String>();
+            for (int i = 0; i < attributeNames.length; i++)
+                attributes.put(attributeNames[i], attributeValues[i]);
+            
+            bem.updateObject(className, oid,attributes);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }// </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">

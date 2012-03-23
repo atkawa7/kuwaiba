@@ -18,12 +18,15 @@ package org.kuwaiba.psremoteinterfaces;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.business.RemoteObject;
 import org.kuwaiba.apis.persistence.business.RemoteObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 
 /**
  * RMI wrapper for the BusinessEntityManager interface
@@ -49,4 +52,11 @@ public interface BusinessEntityManagerRemote extends Remote{
 
     public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
+
+    public void updateObject(String className, Long oid, HashMap<String,String> attributes)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
+                WrongMappingException, InvalidArgumentException, RemoteException;
+    public Long createObject(String className, Long parentOid,
+            HashMap<String,String> attributes,String template)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, RemoteException;
 }
