@@ -20,8 +20,8 @@
     </target>
     <target name="wsimport-client-KuwaibaService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/KuwaibaService"/>
-        <property name="wsdl-KuwaibaService" location="xml-resources/web-service-references/KuwaibaService/wsdl/localhost_8080/kuwaiba/KuwaibaService.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/KuwaibaService" destdir="${build.generated.dir}/jax-wsCache/KuwaibaService" wsdl="${wsdl-KuwaibaService}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="http://localhost:8080/kuwaiba/KuwaibaService?wsdl" xendorsed="true" package="org.kuwaiba.wsclient">
+        <property name="wsdl-KuwaibaService" location="xml-resources/web-service-references/KuwaibaService/wsdl/localhost_8080/EnterpriseApplication-war/KuwaibaService.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/KuwaibaService" destdir="${build.generated.dir}/jax-wsCache/KuwaibaService" wsdl="${wsdl-KuwaibaService}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="localhost:8080/EnterpriseApplication-war/KuwaibaService?wsdl" xendorsed="true" package="org.kuwaiba.wsclient">
             <depends file="${wsdl-KuwaibaService}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/KuwaibaService"/>
         </wsimport>
