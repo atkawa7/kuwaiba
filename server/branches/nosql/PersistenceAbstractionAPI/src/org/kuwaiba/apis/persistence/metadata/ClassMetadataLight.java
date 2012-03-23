@@ -33,15 +33,31 @@ public class ClassMetadataLight implements Serializable{
      */
     private String name;
     /**
+     *  Classmetada's displayName
+     */
+    private String displayName;
+    /**
+     * Instances of this class can have views associated (this going to be "true" for all subclasses of ViewableObject)
+     */
+    private Boolean viewable;
+
+    /**
      * Set if the classMetada is locked
      */
-    private boolean locked;
+    private Boolean locked;
     /**
      * Indicates if a class can have instances by itself (All GenericXXX classes
      * and others in package entity.core are used to take advantage of OOP)
-     * 
      */
-    protected boolean abstractClass;
+    protected Boolean abstractClass;
+    /**
+     *  The parent ClassMetada name
+     */
+    private String parentClassName;
+    /**
+     *  Icon to show in trees and lists
+     */
+    private byte[] smallIcon;
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public Long getId() {
@@ -52,11 +68,40 @@ public class ClassMetadataLight implements Serializable{
         this.id = id;
     }
 
-    public boolean isLocked() {
+    public Boolean getAbstractClass() {
+        return abstractClass;
+    }
+
+    public void setAbstractClass(Boolean abstractClass) {
+        this.abstractClass = abstractClass;
+    }
+
+    public Boolean isAbstractClass() {
+        return abstractClass;
+    }
+
+    public Boolean getViewable() {
+        return viewable;
+    }
+
+    public void setViewable(Boolean viewable) {
+        this.viewable = viewable;
+    }
+
+    public Boolean isViewable() {
+        return viewable;
+    }
+
+
+    public Boolean getLocked() {
         return locked;
     }
 
-    public void setLocked(boolean locked) {
+    public Boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(Boolean locked) {
         this.locked = locked;
     }
 
@@ -68,14 +113,32 @@ public class ClassMetadataLight implements Serializable{
         this.name = name;
     }
 
-    public boolean isAbstractClass() {
-        return abstractClass;
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public void setAbstractClass(boolean abstractClass) {
         this.abstractClass = abstractClass;
     }
+    
+    public String getParentClassName() {
+        return parentClassName;
+    }
 
+    public void setParentClassName(String parentClassName) {
+        this.parentClassName = parentClassName;
+    }
+
+    public byte[] getSmallIcon() {
+        return smallIcon;
+    }
+
+    public void setSmallIcon(byte[] smallIcon) {
+        this.smallIcon = smallIcon;
+    }
     // </editor-fold>
-
 }
