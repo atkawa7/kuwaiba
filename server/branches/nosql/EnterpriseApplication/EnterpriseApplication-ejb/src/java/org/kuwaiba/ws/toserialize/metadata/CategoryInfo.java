@@ -41,6 +41,14 @@ public class CategoryInfo {
      */
     private Long creationDate;
 
+    public CategoryInfo(String name, String displayName, String description, Long creationDate) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public CategoryInfo() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
     public Long getCreationDate() {
         return creationDate;
     }

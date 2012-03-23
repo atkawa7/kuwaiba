@@ -16,6 +16,7 @@
 
 package org.kuwaiba.persistenceservice.impl;
 
+import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.kuwaiba.apis.persistence.interfaces.MetadataEntityManager;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
@@ -1031,5 +1032,17 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public boolean getInterface(Integer interfaceid)
     {
         return true;
+    }
+
+    public List<ClassMetadataLight> getLightMetadata(Boolean includeListTypes) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public List<ClassMetadata> getMetadata(Boolean includeListTypes)  {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

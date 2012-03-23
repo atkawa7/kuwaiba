@@ -18,10 +18,12 @@ package org.kuwaiba.psremoteinterfaces;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 
 /**
  * RMI wrapper for the MetadataEntityManager interface
@@ -230,4 +232,8 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @throws RemoteException, Exception
      */
     public boolean getInterface(Integer interfaceid) throws RemoteException, MetadataObjectNotFoundException;
+
+    public List<ClassMetadataLight> getLightMetadata(Boolean includeListTypes) throws RemoteException;
+
+    public List<ClassMetadata> getMetadata(Boolean includeListTypes) throws RemoteException;
 }

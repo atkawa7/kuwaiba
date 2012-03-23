@@ -117,7 +117,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     @Override
     public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws Exception
     {
-        return mem.setClassIcon(classId, attributeName, iconImage);
+        //return mem.setClassIcon(classId, attributeName, iconImage);
+        return true;
     }
 
     @Override

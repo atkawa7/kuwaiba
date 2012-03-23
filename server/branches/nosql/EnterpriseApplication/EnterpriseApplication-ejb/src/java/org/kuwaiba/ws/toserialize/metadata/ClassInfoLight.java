@@ -17,6 +17,7 @@ package org.kuwaiba.ws.toserialize.metadata;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 
 /**
  * Same as ClassInfo, but lighter, since it's intended to provide the information to
@@ -54,6 +55,10 @@ public class ClassInfoLight {
         this.className = name;
         this.displayName = displayName;
         this.smallIcon = smallIcon;
+    }
+
+    public ClassInfoLight(ClassMetadataLight classMetadataLight, int i) {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     public String getClassName() {

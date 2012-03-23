@@ -97,6 +97,10 @@ public class ClassInfo extends ClassInfoLight{
         }
     }
 
+    public ClassInfo(ClassMetadata aClass, int i) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
     public String[] getAttributeDisplayNames() {
         return attributeDisplayNames;
     }

@@ -1,13 +1,13 @@
-2012-03-08 16:11:19.359-0500: Creating new db @ /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/neostore
-2012-03-08 16:11:21.116-0500: Opened [/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log.1] clean empty log, version=0, lastTxId=1
-2012-03-08 16:11:21.300-0500: Opened [/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/index/lucene.log.1] clean empty log, version=0, lastTxId=1
-2012-03-08 16:11:21.351-0500: TM new log: tm_tx_log.1
-2012-03-08 16:11:21.476-0500: --- STARTUP diagnostics START ---
-2012-03-08 16:11:21.476-0500: Graph Database: org.neo4j.kernel.EmbeddedGraphDatabase StoreId[time:1331241079520, id:-7300445723846975478, store version: 13561656364791302]
-2012-03-08 16:11:21.483-0500: Kernel version: Neo4j - Graph Database Kernel 1.6.1
-2012-03-08 16:11:21.484-0500: Neo4j component versions:
-2012-03-08 16:11:21.486-0500:   Neo4j - Graph Database Kernel 1.6.1
-2012-03-08 16:11:21.496-0500: Diagnostics providers:
+2012-03-22 10:43:23.056-0500: Creating new db @ /home/adrian/Aqui/PersistenceService/target/kuwaiba_db/neostore
+2012-03-22 10:43:25.984-0500: Opened [/home/adrian/Aqui/PersistenceService/target/kuwaiba_db/nioneo_logical.log.1] clean empty log, version=0, lastTxId=1
+2012-03-22 10:43:26.203-0500: Opened [/home/adrian/Aqui/PersistenceService/target/kuwaiba_db/index/lucene.log.1] clean empty log, version=0, lastTxId=1
+2012-03-22 10:43:26.245-0500: TM new log: tm_tx_log.1
+2012-03-22 10:43:26.368-0500: --- STARTUP diagnostics START ---
+2012-03-22 10:43:26.369-0500: Graph Database: org.neo4j.kernel.EmbeddedGraphDatabase StoreId[time:1332431003117, id:2441284876231174442, store version: 13561656364791302]
+2012-03-22 10:43:26.376-0500: Kernel version: Neo4j - Graph Database Kernel 1.6
+2012-03-22 10:43:26.377-0500: Neo4j component versions:
+2012-03-22 10:43:26.378-0500:   Neo4j - Graph Database Kernel 1.6
+2012-03-22 10:43:26.386-0500: Diagnostics providers:
     KernelDiagnostics:Versions
     org.neo4j.kernel.info.DiagnosticsManager
     SYSTEM_MEMORY
@@ -22,120 +22,109 @@
     NEO_STORE_VERSIONS
     NEO_STORE_ID_USAGE
     KernelDiagnostics:StoreFiles
-2012-03-08 16:11:21.509-0500: System memory information:
-    Total Physical memory: 3.67 GB
-    Free Physical memory: 290.69 MB
-    Committed virtual memory: 1.20 GB
-    Total swap space: 9.70 GB
-    Free swap space: 9.56 GB
-2012-03-08 16:11:21.542-0500: JVM memory information:
-    Free  memory: 51.26 MB
-    Total memory: 56.38 MB
-    Max   memory: 837.38 MB
+2012-03-22 10:43:26.394-0500: System memory information:
+    Total Physical memory: 1,92 GB
+    Free Physical memory: 84,13 MB
+    Committed virtual memory: 635,64 MB
+    Total swap space: 947,99 MB
+    Free swap space: 947,99 MB
+2012-03-22 10:43:26.427-0500: JVM memory information:
+    Free  memory: 23,01 MB
+    Total memory: 29,44 MB
+    Max   memory: 437,38 MB
     Garbage Collector: PS Scavenge: [PS Eden Space, PS Survivor Space]
     Garbage Collector: PS MarkSweep: [PS Eden Space, PS Survivor Space, PS Old Gen, PS Perm Gen]
-    Memory Pool: Code Cache (Non-heap memory): committed=2.44 MB, used=511.06 kB, max=48.00 MB, threshold=0.00 B
-    Memory Pool: PS Eden Space (Heap memory): committed=14.69 MB, used=4.52 MB, max=309.13 MB, threshold=?
-    Memory Pool: PS Survivor Space (Heap memory): committed=2.44 MB, used=608.00 kB, max=2.44 MB, threshold=?
-    Memory Pool: PS Old Gen (Heap memory): committed=39.25 MB, used=0.00 B, max=628.00 MB, threshold=0.00 B
-    Memory Pool: PS Perm Gen (Non-heap memory): committed=20.75 MB, used=7.44 MB, max=82.00 MB, threshold=0.00 B
-2012-03-08 16:11:21.568-0500: Operating system information:
-    Operating System: Linux; version: 3.1-6.towo.2-siduction-amd64; arch: amd64; cpus: 4
-    Max number of file descriptors: 4096
-    Number of open file descriptors: 46
-    Process id: 25241@nightearth
+    Memory Pool: Code Cache (Non-heap memory): committed=2,25 MB, used=344,94 kB, max=48,00 MB, threshold=0,00 B
+    Memory Pool: PS Eden Space (Heap memory): committed=7,69 MB, used=6,12 MB, max=161,50 MB, threshold=?
+    Memory Pool: PS Survivor Space (Heap memory): committed=1,25 MB, used=312,09 kB, max=1,25 MB, threshold=?
+    Memory Pool: PS Old Gen (Heap memory): committed=20,50 MB, used=0,00 B, max=328,00 MB, threshold=0,00 B
+    Memory Pool: PS Perm Gen (Non-heap memory): committed=16,00 MB, used=4,80 MB, max=64,00 MB, threshold=0,00 B
+2012-03-22 10:43:26.448-0500: Operating system information:
+    Operating System: Linux; version: 2.6.32-5-686; arch: i386; cpus: 2
+    Max number of file descriptors: 1024
+    Number of open file descriptors: 40
+    Process id: 3641@ElChompiras
     Byte order: LITTLE_ENDIAN
-2012-03-08 16:11:21.574-0500: JVM information:
-    VM Name: Java HotSpot(TM) 64-Bit Server VM
+2012-03-22 10:43:26.480-0500: JVM information:
+    VM Name: Java HotSpot(TM) Server VM
     VM Vendor: Sun Microsystems Inc.
-    VM Version: 20.6-b01
-    JIT compiler: HotSpot 64-Bit Tiered Compilers
-    VM Arguments: [-Dfile.encoding=UTF-8, -Djava.rmi.server.codebase=file:////home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/dist/PersistenceServiceRemoteInterfaces.jar, file:///home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/dist/PersistenceAbstractionAPI.jar]
-2012-03-08 16:11:21.575-0500: Java classpath:
-     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceService/build/classes/
-     [bootstrap] /programs/jdk1.6.0_31/jre/lib/sunrsasign.jar
-     [bootstrap] /programs/jdk1.6.0_31/jre/classes
-     [classpath + loader.0] file:/programs/neo4j/lib/geronimo-jta_1.1_spec-1.1.1.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-lucene-index-1.6.1.jar
-     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/src/
-     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/localedata.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/org.apache.servicemix.bundles.jline-0.9.94_1.jar
-     [bootstrap] /programs/jdk1.6.0_31/jre/lib/jce.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-kernel-1.6.1-tests.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-community-1.6.1.jar
-     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/sunjce_provider.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-udc-1.6.1.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-jmx-1.6.1.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-graph-matching-1.6.1.jar
-     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceService/src/
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-shell-1.6.1.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-kernel-1.6.1.jar
-     [bootstrap] /programs/jdk1.6.0_31/jre/lib/resources.jar
-     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/dnsns.jar
-     [bootstrap] /programs/jdk1.6.0_31/jre/lib/modules/jdk.boot.jar
-     [bootstrap] /programs/jdk1.6.0_31/jre/lib/rt.jar
-     [bootstrap] /programs/jdk1.6.0_31/jre/lib/jsse.jar
-     [bootstrap] /programs/jdk1.6.0_31/jre/lib/charsets.jar
-     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/build/classes/
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-graph-algo-1.6.1.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/scala-library-2.9.0-1.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-cypher-1.6.1.jar
-     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/src/
-     [classpath + loader.0] file:/programs/neo4j/lib/server-api-1.6.1.jar
-     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/sunpkcs11.jar
-     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/build/classes/
-     [classpath + loader.0] file:/programs/neo4j/lib/lucene-core-3.5.0.jar
-2012-03-08 16:11:21.580-0500: Library path:
-    /programs/jdk1.6.0_31/jre/lib/amd64/server
-    /programs/jdk1.6.0_31/jre/lib/amd64
-    /programs/jdk1.6.0_31/lib/amd64
-    /usr/java/packages/lib/amd64
-    /usr/lib64
-    /lib64
+    VM Version: 20.1-b02
+    JIT compiler: HotSpot Tiered Compilers
+    VM Arguments: [-Dfile.encoding=UTF-8, -Djava.rmi.server.codebase=file:///home/adrian/Aqui/PersistenceServiceRemoteInterfaces/dist/PersistenceServiceRemoteInterfaces.jar, file:///home/adrian/Aqui/PersistenceAbstractionAPI/dist/PersistenceAbstractionAPI.jar]
+2012-03-22 10:43:26.481-0500: Java classpath:
+     [classpath + loader.0] file:/home/adrian/Aqui/PersistenceServiceRemoteInterfaces/build/classes/
+     [classpath + loader.0] file:/home/adrian/Programas/neo4j-community-1.6/lib/neo4j-kernel-1.6.jar
+     [classpath + loader.0] file:/home/adrian/Programas/neo4j-community-1.6/lib/neo4j-lucene-index-1.6.jar
+     [loader.1] file:/usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/ext/localedata.jar
+     [bootstrap] /usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/modules/jdk.boot.jar
+     [classpath + loader.0] file:/home/adrian/Programas/neo4j-community-1.6/lib/neo4j-graph-algo-1.6.jar
+     [bootstrap] /usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/rt.jar
+     [loader.1] file:/usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/ext/dnsns.jar
+     [classpath + loader.0] file:/home/adrian/Programas/neo4j-community-1.6/lib/lucene-core-3.5.0.jar
+     [bootstrap] /usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/charsets.jar
+     [loader.1] file:/usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/ext/sunjce_provider.jar
+     [classpath + loader.0] file:/home/adrian/Aqui/PersistenceAbstractionAPI/src/
+     [classpath + loader.0] file:/home/adrian/Aqui/PersistenceService/build/classes/
+     [bootstrap] /usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/jsse.jar
+     [bootstrap] /usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/jce.jar
+     [classpath + loader.0] file:/home/adrian/Aqui/PersistenceService/build/test/classes/
+     [classpath + loader.0] file:/home/adrian/Aqui/PersistenceServiceRemoteInterfaces/src/
+     [classpath + loader.0] file:/home/adrian/netbeans-6.9.1/java/modules/ext/junit-3.8.2.jar
+     [bootstrap] /usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/resources.jar
+     [classpath + loader.0] file:/home/adrian/Programas/neo4j-community-1.6/lib/neo4j-shell-1.6.jar
+     [classpath + loader.0] file:/home/adrian/Aqui/PersistenceAbstractionAPI/build/classes/
+     [bootstrap] /usr/lib/jvm/java-6-sun-1.6.0.26/jre/classes
+     [classpath + loader.0] file:/home/adrian/netbeans-6.9.1/platform/modules/ext/junit-4.5.jar
+     [classpath + loader.0] file:/home/adrian/Aqui/PersistenceService/src/
+     [classpath + loader.0] file:/home/adrian/Aqui/PersistenceService/test/
+     [bootstrap] /usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/sunrsasign.jar
+     [loader.1] file:/usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/ext/sunpkcs11.jar
+2012-03-22 10:43:26.493-0500: Library path:
+    /usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/i386/server
+    /usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/i386
+    /usr/lib/jvm/java-6-sun-1.6.0.26/lib/i386
+    /usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/i386/client
+    /usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/i386
+    /usr/lib/jvm/java-6-sun-1.6.0.26/lib/i386
+    /usr/java/packages/lib/i386
     /lib
     /usr/lib
-2012-03-08 16:11:21.580-0500: System.properties:
-    sun.boot.library.path = /programs/jdk1.6.0_31/jre/lib/amd64
+2012-03-22 10:43:26.494-0500: System.properties:
+    sun.boot.library.path = /usr/lib/jvm/java-6-sun-1.6.0.26/jre/lib/i386
     path.separator = :
     file.encoding.pkg = sun.io
     sun.java.launcher = SUN_STANDARD
-    user.country = US
+    user.country = CO
     sun.os.patch.level = unknown
-    user.dir = /home/zim/workspace/java/KuwaibaServer04/PersistenceService
+    user.dir = /home/adrian/Aqui/PersistenceService
     sun.jnu.encoding = UTF-8
-    sun.management.compiler = HotSpot 64-Bit Tiered Compilers
-    user.home = /home/zim
+    sun.management.compiler = HotSpot Tiered Compilers
+    user.home = /home/adrian
     user.timezone = America/Bogota
     file.encoding = UTF-8
-    user.name = zim
-    sun.java.command = org.kuwaiba.persistenceservice.Main
-    sun.arch.data.model = 64
-    user.language = en
+    user.name = adrian
+    sun.java.command = org.kuwaiba.tools.ImporteFromXml
+    sun.arch.data.model = 32
+    user.language = es
     file.separator = /
     sun.io.unicode.encoding = UnicodeLittle
     sun.cpu.endian = little
+    sun.desktop = gnome
     sun.cpu.isalist = 
-2012-03-08 16:11:21.582-0500: Linux scheduler information:
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-2012-03-08 16:11:21.592-0500: Neo4j Kernel properties:
-    store_dir=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db
-    logical_log=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log
+2012-03-22 10:43:26.496-0500: Linux scheduler information:
+    noop anticipatory deadline [cfq] 
+    noop anticipatory deadline [cfq] 
+    none
+    none
+    none
+    none
+    none
+    none
+    none
+    none
+2012-03-22 10:43:26.500-0500: Neo4j Kernel properties:
+    store_dir=/home/adrian/Aqui/PersistenceService/target/kuwaiba_db
+    logical_log=/home/adrian/Aqui/PersistenceService/target/kuwaiba_db/nioneo_logical.log
     node_auto_indexing=false
     neostore.relationshipstore.db.mapped_memory=100M
     neostore.nodestore.db.mapped_memory=20M
@@ -144,12 +133,12 @@
     neostore.propertystore.db.index.keys.mapped_memory=1M
     neostore.propertystore.db.arrays.mapped_memory=130M
     neostore.propertystore.db.strings.mapped_memory=130M
-    neo_store=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/neostore
+    neo_store=/home/adrian/Aqui/PersistenceService/target/kuwaiba_db/neostore
     neostore.propertystore.db.index.mapped_memory=1M
     create=true
     neostore.propertystore.db.mapped_memory=90M
     relationship_auto_indexing=false
-2012-03-08 16:11:21.594-0500: Store versions:
+2012-03-22 10:43:26.502-0500: Store versions:
     NeoStore v0.A.0
     NodeStore v0.A.0
     RelationshipStore v0.A.0
@@ -158,7 +147,7 @@
     PropertyIndexStore v0.A.0
     StringPropertyStore v0.A.0
     ArrayPropertyStore v0.A.0
-2012-03-08 16:11:21.594-0500: Id usage:
+2012-03-22 10:43:26.502-0500: Id usage:
     NodeStore: used=1 high=0
     RelationshipStore: used=0 high=-1
     RelationshipTypeStore: used=0 high=-1
@@ -166,58 +155,54 @@
     PropertyIndexStore: used=0 high=-1
     StringPropertyStore: used=1 high=0
     ArrayPropertyStore: used=1 high=0
-2012-03-08 16:11:21.595-0500: Storage files:
-    neostore.relationshiptypestore.db: 0.00 B
-    neostore.propertystore.db.index.keys: 38.00 B
-    neostore.propertystore.db: 0.00 B
-    neostore.relationshipstore.db.id: 9.00 B
-    neostore.nodestore.db: 9.00 B
-    neostore.id: 9.00 B
-    neostore.relationshipstore.db: 0.00 B
-    neostore.propertystore.db.index.id: 9.00 B
-    neostore.propertystore.db.strings: 128.00 B
-    lock: 0.00 B
-    neostore: 54.00 B
-    active_tx_log: 11.00 B
-    tm_tx_log.1: 0.00 B
+2012-03-22 10:43:26.503-0500: Storage files:
+    lock: 0,00 B
+    neostore.relationshiptypestore.db: 0,00 B
+    neostore.relationshiptypestore.db.id: 9,00 B
+    neostore.relationshipstore.db.id: 9,00 B
+    tm_tx_log.1: 0,00 B
+    neostore.propertystore.db.arrays: 128,00 B
+    neostore.relationshiptypestore.db.names: 38,00 B
+    nioneo_logical.log.1: 16,00 B
+    neostore.relationshipstore.db: 0,00 B
+    neostore: 54,00 B
+    neostore.propertystore.db.id: 9,00 B
+    neostore.propertystore.db.index.keys: 38,00 B
+    neostore.propertystore.db.strings: 128,00 B
+    neostore.id: 9,00 B
+    neostore.propertystore.db.index: 0,00 B
+    neostore.nodestore.db: 9,00 B
+    nioneo_logical.log.active: 4,00 B
+    neostore.propertystore.db.arrays.id: 9,00 B
+    neostore.propertystore.db: 0,00 B
+    messages.log: 8,00 kB
+    neostore.propertystore.db.index.keys.id: 9,00 B
+    active_tx_log: 11,00 B
+    neostore.relationshiptypestore.db.names.id: 9,00 B
     index:
-      lucene.log.1: 16.00 B
-      lucene-store.db: 40.00 B
-      lucene.log.active: 4.00 B
-    - Total: 60.00 B
-    neostore.propertystore.db.index: 0.00 B
-    messages.log: 8.64 kB
-    neostore.propertystore.db.arrays: 128.00 B
-    neostore.propertystore.db.arrays.id: 9.00 B
-    neostore.relationshiptypestore.db.id: 9.00 B
-    neostore.relationshiptypestore.db.names.id: 9.00 B
-    neostore.propertystore.db.index.keys.id: 9.00 B
-    neostore.propertystore.db.strings.id: 9.00 B
-    nioneo_logical.log.1: 16.00 B
-    neostore.propertystore.db.id: 9.00 B
-    nioneo_logical.log.active: 4.00 B
-    neostore.nodestore.db.id: 9.00 B
-    neostore.relationshiptypestore.db.names: 38.00 B
-2012-03-08 16:11:21.604-0500: --- STARTUP diagnostics END ---
-2012-03-08 16:11:21.826-0500: Extension org.neo4j.kernel.KernelExtension[kernel jmx] loaded ok
-2012-03-08 16:11:21.827-0500: Extension org.neo4j.kernel.KernelExtension[dummy] loaded ok
-2012-03-08 16:11:21.827-0500: Extension org.neo4j.kernel.KernelExtension[other dummy] loaded ok
-2012-03-08 16:11:21.829-0500: Extension org.neo4j.kernel.KernelExtension[shell] loaded ok
-2012-03-08 16:11:21.834-0500: Extension org.neo4j.kernel.KernelExtension[kernel udc] loaded ok
-2012-03-08 16:11:31.913-0500: Closed log /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log
-2012-03-08 16:11:32.271-0500: NeoStore closed
-2012-03-08 16:11:32.288-0500: Closed log /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/index/lucene.log
-2012-03-08 16:11:32.289-0500: NeoStore closed
-2012-03-08 16:11:32.318-0500: TM shutting down
-2012-03-08 16:31:29.880-0500: Opened [/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log.1] clean empty log, version=0, lastTxId=1
-2012-03-08 16:31:30.084-0500: Opened [/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/index/lucene.log.1] clean empty log, version=0, lastTxId=3
-2012-03-08 16:31:30.119-0500: TM opening log: /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/tm_tx_log.1
-2012-03-08 16:31:30.189-0500: --- STARTUP diagnostics START ---
-2012-03-08 16:31:30.190-0500: Graph Database: org.neo4j.kernel.EmbeddedGraphDatabase StoreId[time:1331241079520, id:-7300445723846975478, store version: 13561656364791302]
-2012-03-08 16:31:30.196-0500: Kernel version: Neo4j - Graph Database Kernel 1.6.1
-2012-03-08 16:31:30.197-0500: Neo4j component versions:
-2012-03-08 16:31:30.198-0500:   Neo4j - Graph Database Kernel 1.6.1
-2012-03-08 16:31:30.207-0500: Diagnostics providers:
+      lucene.log.active: 4,00 B
+      lucene-store.db: 40,00 B
+      lucene.log.1: 16,00 B
+    - Total: 60,00 B
+    neostore.propertystore.db.index.id: 9,00 B
+    neostore.propertystore.db.strings.id: 9,00 B
+    neostore.nodestore.db.id: 9,00 B
+2012-03-22 10:43:26.511-0500: --- STARTUP diagnostics END ---
+2012-03-22 10:43:26.528-0500: Extension org.neo4j.kernel.KernelExtension[shell] loaded ok
+2012-03-22 10:43:48.368-0500: Closed log /home/adrian/Aqui/PersistenceService/target/kuwaiba_db/nioneo_logical.log
+2012-03-22 10:43:48.723-0500: NeoStore closed
+2012-03-22 10:43:49.212-0500: Closed log /home/adrian/Aqui/PersistenceService/target/kuwaiba_db/index/lucene.log
+2012-03-22 10:43:49.213-0500: NeoStore closed
+2012-03-22 10:43:49.224-0500: TM shutting down
+2012-03-22 11:03:37.787-0500: Opened [/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log.1] clean empty log, version=0, lastTxId=213
+2012-03-22 11:03:38.052-0500: Opened [/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/index/lucene.log.1] clean empty log, version=0, lastTxId=212
+2012-03-22 11:03:38.067-0500: TM opening log: /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/tm_tx_log.2
+2012-03-22 11:03:38.159-0500: --- STARTUP diagnostics START ---
+2012-03-22 11:03:38.160-0500: Graph Database: org.neo4j.kernel.EmbeddedGraphDatabase StoreId[time:1332431003117, id:2441284876231174442, store version: 13561656364791302]
+2012-03-22 11:03:38.167-0500: Kernel version: Neo4j - Graph Database Kernel 1.6.1
+2012-03-22 11:03:38.168-0500: Neo4j component versions:
+2012-03-22 11:03:38.170-0500:   Neo4j - Graph Database Kernel 1.6.1
+2012-03-22 11:03:38.180-0500: Diagnostics providers:
     KernelDiagnostics:Versions
     org.neo4j.kernel.info.DiagnosticsManager
     SYSTEM_MEMORY
@@ -232,247 +217,36 @@
     NEO_STORE_VERSIONS
     NEO_STORE_ID_USAGE
     KernelDiagnostics:StoreFiles
-2012-03-08 16:31:30.218-0500: System memory information:
+2012-03-22 11:03:38.193-0500: System memory information:
     Total Physical memory: 3.67 GB
-    Free Physical memory: 248.31 MB
-    Committed virtual memory: 1.20 GB
-    Total swap space: 9.70 GB
-    Free swap space: 9.56 GB
-2012-03-08 16:31:30.230-0500: JVM memory information:
-    Free  memory: 52.80 MB
-    Total memory: 56.38 MB
-    Max   memory: 837.38 MB
-    Garbage Collector: PS Scavenge: [PS Eden Space, PS Survivor Space]
-    Garbage Collector: PS MarkSweep: [PS Eden Space, PS Survivor Space, PS Old Gen, PS Perm Gen]
-    Memory Pool: Code Cache (Non-heap memory): committed=2.44 MB, used=481.00 kB, max=48.00 MB, threshold=0.00 B
-    Memory Pool: PS Eden Space (Heap memory): committed=14.69 MB, used=2.94 MB, max=309.13 MB, threshold=?
-    Memory Pool: PS Survivor Space (Heap memory): committed=2.44 MB, used=656.05 kB, max=2.44 MB, threshold=?
-    Memory Pool: PS Old Gen (Heap memory): committed=39.25 MB, used=0.00 B, max=628.00 MB, threshold=0.00 B
-    Memory Pool: PS Perm Gen (Non-heap memory): committed=20.75 MB, used=7.45 MB, max=82.00 MB, threshold=0.00 B
-2012-03-08 16:31:30.238-0500: Operating system information:
-    Operating System: Linux; version: 3.1-6.towo.2-siduction-amd64; arch: amd64; cpus: 4
-    Max number of file descriptors: 4096
-    Number of open file descriptors: 46
-    Process id: 25413@nightearth
-    Byte order: LITTLE_ENDIAN
-2012-03-08 16:31:30.244-0500: JVM information:
-    VM Name: Java HotSpot(TM) 64-Bit Server VM
-    VM Vendor: Sun Microsystems Inc.
-    VM Version: 20.6-b01
-    JIT compiler: HotSpot 64-Bit Tiered Compilers
-    VM Arguments: [-Dfile.encoding=UTF-8, -Djava.rmi.server.codebase=file:////home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/dist/PersistenceServiceRemoteInterfaces.jar, file:///home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/dist/PersistenceAbstractionAPI.jar]
-2012-03-08 16:31:30.245-0500: Java classpath:
-     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceService/build/classes/
-     [bootstrap] /programs/jdk1.6.0_31/jre/lib/sunrsasign.jar
-     [bootstrap] /programs/jdk1.6.0_31/jre/classes
-     [classpath + loader.0] file:/programs/neo4j/lib/geronimo-jta_1.1_spec-1.1.1.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-lucene-index-1.6.1.jar
-     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/src/
-     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/localedata.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/org.apache.servicemix.bundles.jline-0.9.94_1.jar
-     [bootstrap] /programs/jdk1.6.0_31/jre/lib/jce.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-kernel-1.6.1-tests.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-community-1.6.1.jar
-     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/sunjce_provider.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-udc-1.6.1.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-jmx-1.6.1.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-graph-matching-1.6.1.jar
-     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceService/src/
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-shell-1.6.1.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-kernel-1.6.1.jar
-     [bootstrap] /programs/jdk1.6.0_31/jre/lib/resources.jar
-     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/dnsns.jar
-     [bootstrap] /programs/jdk1.6.0_31/jre/lib/modules/jdk.boot.jar
-     [bootstrap] /programs/jdk1.6.0_31/jre/lib/rt.jar
-     [bootstrap] /programs/jdk1.6.0_31/jre/lib/jsse.jar
-     [bootstrap] /programs/jdk1.6.0_31/jre/lib/charsets.jar
-     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/build/classes/
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-graph-algo-1.6.1.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/scala-library-2.9.0-1.jar
-     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-cypher-1.6.1.jar
-     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/src/
-     [classpath + loader.0] file:/programs/neo4j/lib/server-api-1.6.1.jar
-     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/sunpkcs11.jar
-     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/build/classes/
-     [classpath + loader.0] file:/programs/neo4j/lib/lucene-core-3.5.0.jar
-2012-03-08 16:31:30.251-0500: Library path:
-    /programs/jdk1.6.0_31/jre/lib/amd64/server
-    /programs/jdk1.6.0_31/jre/lib/amd64
-    /programs/jdk1.6.0_31/lib/amd64
-    /usr/java/packages/lib/amd64
-    /usr/lib64
-    /lib64
-    /lib
-    /usr/lib
-2012-03-08 16:31:30.253-0500: System.properties:
-    sun.boot.library.path = /programs/jdk1.6.0_31/jre/lib/amd64
-    path.separator = :
-    file.encoding.pkg = sun.io
-    sun.java.launcher = SUN_STANDARD
-    user.country = US
-    sun.os.patch.level = unknown
-    user.dir = /home/zim/workspace/java/KuwaibaServer04/PersistenceService
-    sun.jnu.encoding = UTF-8
-    sun.management.compiler = HotSpot 64-Bit Tiered Compilers
-    user.home = /home/zim
-    user.timezone = America/Bogota
-    file.encoding = UTF-8
-    user.name = zim
-    sun.java.command = org.kuwaiba.persistenceservice.Main
-    sun.arch.data.model = 64
-    user.language = en
-    file.separator = /
-    sun.io.unicode.encoding = UnicodeLittle
-    sun.cpu.endian = little
-    sun.cpu.isalist = 
-2012-03-08 16:31:30.255-0500: Linux scheduler information:
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-    noop deadline [cfq] 
-2012-03-08 16:31:30.269-0500: Neo4j Kernel properties:
-    store_dir=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db
-    logical_log=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log
-    node_auto_indexing=false
-    neostore.relationshipstore.db.mapped_memory=100M
-    neostore.nodestore.db.mapped_memory=20M
-    use_memory_mapped_buffers=true
-    rebuild_idgenerators_fast=true
-    neostore.propertystore.db.index.keys.mapped_memory=1M
-    neostore.propertystore.db.arrays.mapped_memory=130M
-    neostore.propertystore.db.strings.mapped_memory=130M
-    neo_store=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/neostore
-    neostore.propertystore.db.index.mapped_memory=1M
-    create=true
-    neostore.propertystore.db.mapped_memory=90M
-    relationship_auto_indexing=false
-2012-03-08 16:31:30.273-0500: Store versions:
-    NeoStore v0.A.0
-    NodeStore v0.A.0
-    RelationshipStore v0.A.0
-    RelationshipTypeStore v0.A.0
-    PropertyStore v0.A.0
-    PropertyIndexStore v0.A.0
-    StringPropertyStore v0.A.0
-    ArrayPropertyStore v0.A.0
-2012-03-08 16:31:30.274-0500: Id usage:
-    NodeStore: used=1 high=0
-    RelationshipStore: used=0 high=-1
-    RelationshipTypeStore: used=0 high=-1
-    PropertyStore: used=0 high=-1
-    PropertyIndexStore: used=0 high=-1
-    StringPropertyStore: used=1 high=0
-    ArrayPropertyStore: used=1 high=0
-2012-03-08 16:31:30.276-0500: Storage files:
-    neostore.relationshiptypestore.db: 0.00 B
-    neostore.propertystore.db.index.keys: 38.00 B
-    neostore.propertystore.db: 0.00 B
-    neostore.relationshipstore.db.id: 9.00 B
-    neostore.nodestore.db: 9.00 B
-    neostore.id: 9.00 B
-    neostore.relationshipstore.db: 0.00 B
-    neostore.propertystore.db.index.id: 9.00 B
-    neostore.propertystore.db.strings: 128.00 B
-    lock: 0.00 B
-    neostore: 54.00 B
-    active_tx_log: 11.00 B
-    tm_tx_log.1: 0.00 B
-    index:
-      lucene.log.1: 16.00 B
-      lucene-store.db: 40.00 B
-      lucene.log.active: 4.00 B
-    - Total: 60.00 B
-    neostore.propertystore.db.index: 0.00 B
-    messages.log: 19.33 kB
-    neostore.propertystore.db.arrays: 128.00 B
-    neostore.propertystore.db.arrays.id: 9.00 B
-    neostore.relationshiptypestore.db.id: 9.00 B
-    neostore.relationshiptypestore.db.names.id: 9.00 B
-    neostore.propertystore.db.index.keys.id: 9.00 B
-    neostore.propertystore.db.strings.id: 9.00 B
-    nioneo_logical.log.1: 16.00 B
-    neostore.propertystore.db.id: 9.00 B
-    nioneo_logical.log.active: 4.00 B
-    index.db: 197.00 B
-    neostore.nodestore.db.id: 9.00 B
-    neostore.relationshiptypestore.db.names: 38.00 B
-2012-03-08 16:31:30.286-0500: --- STARTUP diagnostics END ---
-2012-03-08 16:31:30.493-0500: Extension org.neo4j.kernel.KernelExtension[kernel jmx] loaded ok
-2012-03-08 16:31:30.494-0500: Extension org.neo4j.kernel.KernelExtension[dummy] loaded ok
-2012-03-08 16:31:30.494-0500: Extension org.neo4j.kernel.KernelExtension[other dummy] loaded ok
-2012-03-08 16:31:30.496-0500: Extension org.neo4j.kernel.KernelExtension[shell] loaded ok
-2012-03-08 16:31:30.501-0500: Extension org.neo4j.kernel.KernelExtension[kernel udc] loaded ok
-2012-03-09 10:21:10.542-0500: Closed log /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log
-2012-03-09 10:21:11.864-0500: NeoStore closed
-2012-03-09 10:21:12.089-0500: Closed log /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/index/lucene.log
-2012-03-09 10:21:12.090-0500: NeoStore closed
-2012-03-09 10:21:12.126-0500: TM shutting down
-2012-03-20 09:59:58.836-0500: Opened [/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log.1] clean empty log, version=0, lastTxId=1
-2012-03-20 09:59:59.144-0500: Opened [/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/index/lucene.log.1] clean empty log, version=0, lastTxId=5
-2012-03-20 09:59:59.206-0500: TM opening log: /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/tm_tx_log.1
-2012-03-20 09:59:59.277-0500: --- STARTUP diagnostics START ---
-2012-03-20 09:59:59.277-0500: Graph Database: org.neo4j.kernel.EmbeddedGraphDatabase StoreId[time:1331241079520, id:-7300445723846975478, store version: 13561656364791302]
-2012-03-20 09:59:59.282-0500: Kernel version: Neo4j - Graph Database Kernel 1.6.1
-2012-03-20 09:59:59.283-0500: Neo4j component versions:
-2012-03-20 09:59:59.284-0500:   Neo4j - Graph Database Kernel 1.6.1
-2012-03-20 09:59:59.292-0500: Diagnostics providers:
-    KernelDiagnostics:Versions
-    org.neo4j.kernel.info.DiagnosticsManager
-    SYSTEM_MEMORY
-    JAVA_MEMORY
-    OPERATING_SYSTEM
-    JAVA_VIRTUAL_MACHINE
-    CLASSPATH
-    LIBRARY_PATH
-    SYSTEM_PROPERTIES
-    LINUX_SCHEDULERS
-    org.neo4j.kernel.Config
-    NEO_STORE_VERSIONS
-    NEO_STORE_ID_USAGE
-    KernelDiagnostics:StoreFiles
-2012-03-20 09:59:59.301-0500: System memory information:
-    Total Physical memory: 3.67 GB
-    Free Physical memory: 1.43 GB
+    Free Physical memory: 1.27 GB
     Committed virtual memory: 1.20 GB
     Total swap space: 9.70 GB
     Free swap space: 9.70 GB
-2012-03-20 09:59:59.332-0500: JVM memory information:
-    Free  memory: 52.54 MB
+2012-03-22 11:03:38.223-0500: JVM memory information:
+    Free  memory: 52.56 MB
     Total memory: 56.38 MB
     Max   memory: 837.38 MB
     Garbage Collector: PS Scavenge: [PS Eden Space, PS Survivor Space]
     Garbage Collector: PS MarkSweep: [PS Eden Space, PS Survivor Space, PS Old Gen, PS Perm Gen]
-    Memory Pool: Code Cache (Non-heap memory): committed=2.44 MB, used=487.63 kB, max=48.00 MB, threshold=0.00 B
-    Memory Pool: PS Eden Space (Heap memory): committed=14.69 MB, used=3.26 MB, max=309.13 MB, threshold=?
+    Memory Pool: Code Cache (Non-heap memory): committed=2.44 MB, used=481.31 kB, max=48.00 MB, threshold=0.00 B
+    Memory Pool: PS Eden Space (Heap memory): committed=14.69 MB, used=3.23 MB, max=309.13 MB, threshold=?
     Memory Pool: PS Survivor Space (Heap memory): committed=2.44 MB, used=592.05 kB, max=2.44 MB, threshold=?
     Memory Pool: PS Old Gen (Heap memory): committed=39.25 MB, used=0.00 B, max=628.00 MB, threshold=0.00 B
-    Memory Pool: PS Perm Gen (Non-heap memory): committed=20.75 MB, used=7.45 MB, max=82.00 MB, threshold=0.00 B
-2012-03-20 09:59:59.339-0500: Operating system information:
+    Memory Pool: PS Perm Gen (Non-heap memory): committed=20.75 MB, used=7.48 MB, max=82.00 MB, threshold=0.00 B
+2012-03-22 11:03:38.235-0500: Operating system information:
     Operating System: Linux; version: 3.1-6.towo.2-siduction-amd64; arch: amd64; cpus: 4
     Max number of file descriptors: 4096
     Number of open file descriptors: 46
-    Process id: 2682@nightearth
+    Process id: 3116@nightearth
     Byte order: LITTLE_ENDIAN
-2012-03-20 09:59:59.344-0500: JVM information:
+2012-03-22 11:03:38.243-0500: JVM information:
     VM Name: Java HotSpot(TM) 64-Bit Server VM
     VM Vendor: Sun Microsystems Inc.
     VM Version: 20.6-b01
     JIT compiler: HotSpot 64-Bit Tiered Compilers
     VM Arguments: [-Dfile.encoding=UTF-8, -Djava.rmi.server.codebase=file:////home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/dist/PersistenceServiceRemoteInterfaces.jar, file:///home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/dist/PersistenceAbstractionAPI.jar]
-2012-03-20 09:59:59.345-0500: Java classpath:
+2012-03-22 11:03:38.244-0500: Java classpath:
      [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceService/build/classes/
      [bootstrap] /programs/jdk1.6.0_31/jre/lib/sunrsasign.jar
      [bootstrap] /programs/jdk1.6.0_31/jre/classes
@@ -506,7 +280,7 @@
      [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/sunpkcs11.jar
      [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/build/classes/
      [classpath + loader.0] file:/programs/neo4j/lib/lucene-core-3.5.0.jar
-2012-03-20 09:59:59.350-0500: Library path:
+2012-03-22 11:03:38.250-0500: Library path:
     /programs/jdk1.6.0_31/jre/lib/amd64/server
     /programs/jdk1.6.0_31/jre/lib/amd64
     /programs/jdk1.6.0_31/lib/amd64
@@ -515,7 +289,7 @@
     /lib64
     /lib
     /usr/lib
-2012-03-20 09:59:59.351-0500: System.properties:
+2012-03-22 11:03:38.251-0500: System.properties:
     sun.boot.library.path = /programs/jdk1.6.0_31/jre/lib/amd64
     path.separator = :
     file.encoding.pkg = sun.io
@@ -536,7 +310,7 @@
     sun.io.unicode.encoding = UnicodeLittle
     sun.cpu.endian = little
     sun.cpu.isalist = 
-2012-03-20 09:59:59.353-0500: Linux scheduler information:
+2012-03-22 11:03:38.253-0500: Linux scheduler information:
     noop deadline [cfq] 
     noop deadline [cfq] 
     noop deadline [cfq] 
@@ -554,7 +328,7 @@
     noop deadline [cfq] 
     noop deadline [cfq] 
     noop deadline [cfq] 
-2012-03-20 09:59:59.363-0500: Neo4j Kernel properties:
+2012-03-22 11:03:38.263-0500: Neo4j Kernel properties:
     store_dir=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db
     logical_log=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log
     node_auto_indexing=false
@@ -570,7 +344,7 @@
     create=true
     neostore.propertystore.db.mapped_memory=90M
     relationship_auto_indexing=false
-2012-03-20 09:59:59.365-0500: Store versions:
+2012-03-22 11:03:38.265-0500: Store versions:
     NeoStore v0.A.0
     NodeStore v0.A.0
     RelationshipStore v0.A.0
@@ -579,28 +353,29 @@
     PropertyIndexStore v0.A.0
     StringPropertyStore v0.A.0
     ArrayPropertyStore v0.A.0
-2012-03-20 09:59:59.365-0500: Id usage:
-    NodeStore: used=1 high=0
-    RelationshipStore: used=0 high=-1
-    RelationshipTypeStore: used=0 high=-1
-    PropertyStore: used=0 high=-1
-    PropertyIndexStore: used=0 high=-1
+2012-03-22 11:03:38.265-0500: Id usage:
+    NodeStore: used=4095 high=4094
+    RelationshipStore: used=4094 high=4093
+    RelationshipTypeStore: used=3 high=2
+    PropertyStore: used=11641 high=11640
+    PropertyIndexStore: used=16 high=15
     StringPropertyStore: used=1 high=0
     ArrayPropertyStore: used=1 high=0
-2012-03-20 09:59:59.366-0500: Storage files:
-    neostore.relationshiptypestore.db: 0.00 B
-    neostore.propertystore.db.index.keys: 38.00 B
-    neostore.propertystore.db: 0.00 B
+2012-03-22 11:03:38.266-0500: Storage files:
+    neostore.relationshiptypestore.db: 15.00 B
+    neostore.propertystore.db.index.keys: 1.00 kB
+    neostore.propertystore.db: 466.09 kB
     neostore.relationshipstore.db.id: 9.00 B
-    neostore.nodestore.db: 9.00 B
+    neostore.nodestore.db: 35.99 kB
     neostore.id: 9.00 B
-    neostore.relationshipstore.db: 0.00 B
+    neostore.relationshipstore.db: 131.94 kB
     neostore.propertystore.db.index.id: 9.00 B
     neostore.propertystore.db.strings: 128.00 B
     lock: 0.00 B
     neostore: 54.00 B
+    tm_tx_log.2: 0.00 B
     active_tx_log: 11.00 B
-    tm_tx_log.1: 0.00 B
+    tm_tx_log.1: 29.12 kB
     .svn:
       props:
       - Total: 0.00 B
@@ -640,20 +415,20 @@
         neostore.propertystore.db.strings.id.svn-base: 9.00 B
         neostore.propertystore.db.arrays.id.svn-base: 9.00 B
         neostore.propertystore.db.index.keys.svn-base: 64.00 B
-        index.db.svn-base: 365.00 B
+        index.db.svn-base: 455.00 B
         neostore.nodestore.db.id.svn-base: 9.00 B
-        tm_tx_log.1.svn-base: 176.00 B
+        tm_tx_log.1.svn-base: 88.00 B
         neostore.relationshiptypestore.db.id.svn-base: 9.00 B
-        messages.log.svn-base: 21.45 kB
+        messages.log.svn-base: 37.11 kB
         neostore.svn-base: 69.00 B
         active_tx_log.svn-base: 11.00 B
         nioneo_logical.log.active.svn-base: 4.00 B
         neostore.relationshipstore.db.id.svn-base: 9.00 B
         neostore.propertystore.db.arrays.svn-base: 153.00 B
         neostore.id.svn-base: 9.00 B
-      - Total: 22.69 kB
+      - Total: 38.36 kB
       all-wcprops: 4.66 kB
-      entries: 4.44 kB
+      entries: 4.45 kB
       tmp:
         props:
         - Total: 0.00 B
@@ -662,7 +437,7 @@
         text-base:
         - Total: 0.00 B
       - Total: 0.00 B
-    - Total: 32.78 kB
+    - Total: 48.45 kB
     index:
       lucene:
         .svn:
@@ -710,6 +485,19 @@
               - Total: 0.00 B
             - Total: 1.25 kB
           - Total: 1.31 kB
+          classes:
+            _6e.fdt: 6.05 kB
+            _6e.prx: 624.00 B
+            _6e.frq: 1.03 kB
+            _6e.fdx: 1.63 kB
+            segments.gen: 20.00 B
+            segments_1: 498.00 B
+            _6e.tii: 98.00 B
+            _6e.fnm: 22.00 B
+            _6e.tis: 6.19 kB
+            _6f.cfs: 302.00 B
+            _6e.nrm: 628.00 B
+          - Total: 17.05 kB
           .svn:
             props:
             - Total: 0.00 B
@@ -728,8 +516,8 @@
               - Total: 0.00 B
             - Total: 0.00 B
           - Total: 451.00 B
-        - Total: 1.75 kB
-      - Total: 2.17 kB
+        - Total: 18.79 kB
+      - Total: 19.22 kB
       lucene.log.1: 16.00 B
       lucene-store.db: 40.00 B
       .svn:
@@ -744,7 +532,7 @@
           lucene.log.active.svn-base: 4.00 B
         - Total: 44.00 B
         all-wcprops: 475.00 B
-        entries: 613.00 B
+        entries: 616.00 B
         tmp:
           props:
           - Total: 0.00 B
@@ -755,9 +543,9 @@
         - Total: 0.00 B
       - Total: 1.21 kB
       lucene.log.active: 4.00 B
-    - Total: 3.44 kB
-    neostore.propertystore.db.index: 0.00 B
-    messages.log: 30.04 kB
+    - Total: 20.49 kB
+    neostore.propertystore.db.index: 1.02 kB
+    messages.log: 18.29 kB
     neostore.propertystore.db.arrays: 128.00 B
     neostore.propertystore.db.arrays.id: 9.00 B
     neostore.relationshiptypestore.db.id: 9.00 B
@@ -767,17 +555,1142 @@
     nioneo_logical.log.1: 16.00 B
     neostore.propertystore.db.id: 9.00 B
     nioneo_logical.log.active: 4.00 B
-    index.db: 365.00 B
+    index.db: 197.00 B
     neostore.nodestore.db.id: 9.00 B
-    neostore.relationshiptypestore.db.names: 38.00 B
-2012-03-20 09:59:59.447-0500: --- STARTUP diagnostics END ---
-2012-03-20 09:59:59.615-0500: Extension org.neo4j.kernel.KernelExtension[kernel jmx] loaded ok
-2012-03-20 09:59:59.616-0500: Extension org.neo4j.kernel.KernelExtension[dummy] loaded ok
-2012-03-20 09:59:59.616-0500: Extension org.neo4j.kernel.KernelExtension[other dummy] loaded ok
-2012-03-20 09:59:59.632-0500: Extension org.neo4j.kernel.KernelExtension[shell] loaded ok
-2012-03-20 09:59:59.637-0500: Extension org.neo4j.kernel.KernelExtension[kernel udc] loaded ok
-2012-03-20 11:00:00.006-0500: Closed log /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log
-2012-03-20 11:00:00.364-0500: NeoStore closed
-2012-03-20 11:00:00.381-0500: Closed log /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/index/lucene.log
-2012-03-20 11:00:00.382-0500: NeoStore closed
-2012-03-20 11:00:00.415-0500: TM shutting down
+    neostore.relationshiptypestore.db.names: 152.00 B
+2012-03-22 11:03:38.349-0500: --- STARTUP diagnostics END ---
+2012-03-22 11:03:38.546-0500: Extension org.neo4j.kernel.KernelExtension[kernel jmx] loaded ok
+2012-03-22 11:03:38.548-0500: Extension org.neo4j.kernel.KernelExtension[dummy] loaded ok
+2012-03-22 11:03:38.548-0500: Extension org.neo4j.kernel.KernelExtension[other dummy] loaded ok
+2012-03-22 11:03:38.550-0500: Extension org.neo4j.kernel.KernelExtension[shell] loaded ok
+2012-03-22 11:03:38.558-0500: Extension org.neo4j.kernel.KernelExtension[kernel udc] loaded ok
+2012-03-22 14:37:50.178-0500: Closed log /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log
+2012-03-22 14:37:50.469-0500: NeoStore closed
+2012-03-22 14:37:50.493-0500: Closed log /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/index/lucene.log
+2012-03-22 14:37:50.494-0500: NeoStore closed
+2012-03-22 14:37:50.539-0500: TM shutting down
+2012-03-23 00:42:41.415-0500: Opened [/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log.1] clean empty log, version=0, lastTxId=213
+2012-03-23 00:42:41.592-0500: Opened [/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/index/lucene.log.1] clean empty log, version=0, lastTxId=213
+2012-03-23 00:42:41.617-0500: TM opening log: /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/tm_tx_log.2
+2012-03-23 00:42:41.692-0500: --- STARTUP diagnostics START ---
+2012-03-23 00:42:41.693-0500: Graph Database: org.neo4j.kernel.EmbeddedGraphDatabase StoreId[time:1332431003117, id:2441284876231174442, store version: 13561656364791302]
+2012-03-23 00:42:41.699-0500: Kernel version: Neo4j - Graph Database Kernel 1.6.1
+2012-03-23 00:42:41.699-0500: Neo4j component versions:
+2012-03-23 00:42:41.700-0500:   Neo4j - Graph Database Kernel 1.6.1
+2012-03-23 00:42:41.708-0500: Diagnostics providers:
+    KernelDiagnostics:Versions
+    org.neo4j.kernel.info.DiagnosticsManager
+    SYSTEM_MEMORY
+    JAVA_MEMORY
+    OPERATING_SYSTEM
+    JAVA_VIRTUAL_MACHINE
+    CLASSPATH
+    LIBRARY_PATH
+    SYSTEM_PROPERTIES
+    LINUX_SCHEDULERS
+    org.neo4j.kernel.Config
+    NEO_STORE_VERSIONS
+    NEO_STORE_ID_USAGE
+    KernelDiagnostics:StoreFiles
+2012-03-23 00:42:41.717-0500: System memory information:
+    Total Physical memory: 3.67 GB
+    Free Physical memory: 311.97 MB
+    Committed virtual memory: 1.20 GB
+    Total swap space: 9.70 GB
+    Free swap space: 9.70 GB
+2012-03-23 00:42:41.730-0500: JVM memory information:
+    Free  memory: 52.56 MB
+    Total memory: 56.38 MB
+    Max   memory: 837.38 MB
+    Garbage Collector: PS Scavenge: [PS Eden Space, PS Survivor Space]
+    Garbage Collector: PS MarkSweep: [PS Eden Space, PS Survivor Space, PS Old Gen, PS Perm Gen]
+    Memory Pool: Code Cache (Non-heap memory): committed=2.44 MB, used=495.88 kB, max=48.00 MB, threshold=0.00 B
+    Memory Pool: PS Eden Space (Heap memory): committed=14.69 MB, used=3.23 MB, max=309.13 MB, threshold=?
+    Memory Pool: PS Survivor Space (Heap memory): committed=2.44 MB, used=592.02 kB, max=2.44 MB, threshold=?
+    Memory Pool: PS Old Gen (Heap memory): committed=39.25 MB, used=0.00 B, max=628.00 MB, threshold=0.00 B
+    Memory Pool: PS Perm Gen (Non-heap memory): committed=20.75 MB, used=7.48 MB, max=82.00 MB, threshold=0.00 B
+2012-03-23 00:42:41.759-0500: Operating system information:
+    Operating System: Linux; version: 3.1-6.towo.2-siduction-amd64; arch: amd64; cpus: 4
+    Max number of file descriptors: 4096
+    Number of open file descriptors: 46
+    Process id: 7926@nightearth
+    Byte order: LITTLE_ENDIAN
+2012-03-23 00:42:41.765-0500: JVM information:
+    VM Name: Java HotSpot(TM) 64-Bit Server VM
+    VM Vendor: Sun Microsystems Inc.
+    VM Version: 20.6-b01
+    JIT compiler: HotSpot 64-Bit Tiered Compilers
+    VM Arguments: [-Dfile.encoding=UTF-8, -Djava.rmi.server.codebase=file:////home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/dist/PersistenceServiceRemoteInterfaces.jar, file:///home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/dist/PersistenceAbstractionAPI.jar]
+2012-03-23 00:42:41.766-0500: Java classpath:
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceService/build/classes/
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/sunrsasign.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/classes
+     [classpath + loader.0] file:/programs/neo4j/lib/geronimo-jta_1.1_spec-1.1.1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-lucene-index-1.6.1.jar
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/src/
+     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/localedata.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/org.apache.servicemix.bundles.jline-0.9.94_1.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/jce.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-kernel-1.6.1-tests.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-community-1.6.1.jar
+     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/sunjce_provider.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-udc-1.6.1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-jmx-1.6.1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-graph-matching-1.6.1.jar
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceService/src/
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-shell-1.6.1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-kernel-1.6.1.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/resources.jar
+     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/dnsns.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/modules/jdk.boot.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/rt.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/jsse.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/charsets.jar
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/build/classes/
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-graph-algo-1.6.1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/scala-library-2.9.0-1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-cypher-1.6.1.jar
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/src/
+     [classpath + loader.0] file:/programs/neo4j/lib/server-api-1.6.1.jar
+     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/sunpkcs11.jar
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/build/classes/
+     [classpath + loader.0] file:/programs/neo4j/lib/lucene-core-3.5.0.jar
+2012-03-23 00:42:41.770-0500: Library path:
+    /programs/jdk1.6.0_31/jre/lib/amd64/server
+    /programs/jdk1.6.0_31/jre/lib/amd64
+    /programs/jdk1.6.0_31/lib/amd64
+    /usr/java/packages/lib/amd64
+    /usr/lib64
+    /lib64
+    /lib
+    /usr/lib
+2012-03-23 00:42:41.771-0500: System.properties:
+    sun.boot.library.path = /programs/jdk1.6.0_31/jre/lib/amd64
+    path.separator = :
+    file.encoding.pkg = sun.io
+    sun.java.launcher = SUN_STANDARD
+    user.country = US
+    sun.os.patch.level = unknown
+    user.dir = /home/zim/workspace/java/KuwaibaServer04/PersistenceService
+    sun.jnu.encoding = UTF-8
+    sun.management.compiler = HotSpot 64-Bit Tiered Compilers
+    user.home = /home/zim
+    user.timezone = America/Bogota
+    file.encoding = UTF-8
+    user.name = zim
+    sun.java.command = org.kuwaiba.persistenceservice.Main
+    sun.arch.data.model = 64
+    user.language = en
+    file.separator = /
+    sun.io.unicode.encoding = UnicodeLittle
+    sun.cpu.endian = little
+    sun.cpu.isalist = 
+2012-03-23 00:42:41.773-0500: Linux scheduler information:
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+2012-03-23 00:42:41.784-0500: Neo4j Kernel properties:
+    store_dir=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db
+    logical_log=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log
+    node_auto_indexing=false
+    neostore.relationshipstore.db.mapped_memory=100M
+    neostore.nodestore.db.mapped_memory=20M
+    use_memory_mapped_buffers=true
+    rebuild_idgenerators_fast=true
+    neostore.propertystore.db.index.keys.mapped_memory=1M
+    neostore.propertystore.db.arrays.mapped_memory=130M
+    neostore.propertystore.db.strings.mapped_memory=130M
+    neo_store=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/neostore
+    neostore.propertystore.db.index.mapped_memory=1M
+    create=true
+    neostore.propertystore.db.mapped_memory=90M
+    relationship_auto_indexing=false
+2012-03-23 00:42:41.786-0500: Store versions:
+    NeoStore v0.A.0
+    NodeStore v0.A.0
+    RelationshipStore v0.A.0
+    RelationshipTypeStore v0.A.0
+    PropertyStore v0.A.0
+    PropertyIndexStore v0.A.0
+    StringPropertyStore v0.A.0
+    ArrayPropertyStore v0.A.0
+2012-03-23 00:42:41.786-0500: Id usage:
+    NodeStore: used=4095 high=4094
+    RelationshipStore: used=4094 high=4093
+    RelationshipTypeStore: used=3 high=2
+    PropertyStore: used=11641 high=11640
+    PropertyIndexStore: used=16 high=15
+    StringPropertyStore: used=1 high=0
+    ArrayPropertyStore: used=1 high=0
+2012-03-23 00:42:41.787-0500: Storage files:
+    neostore.relationshiptypestore.db: 15.00 B
+    neostore.propertystore.db.index.keys: 1.00 kB
+    neostore.propertystore.db: 466.09 kB
+    neostore.relationshipstore.db.id: 9.00 B
+    neostore.nodestore.db: 35.99 kB
+    neostore.id: 9.00 B
+    neostore.relationshipstore.db: 131.94 kB
+    neostore.propertystore.db.index.id: 9.00 B
+    neostore.propertystore.db.strings: 128.00 B
+    lock: 0.00 B
+    neostore: 54.00 B
+    tm_tx_log.2: 0.00 B
+    active_tx_log: 11.00 B
+    tm_tx_log.1: 29.12 kB
+    .svn:
+      props:
+      - Total: 0.00 B
+      prop-base:
+        neostore.nodestore.db.svn-base: 53.00 B
+        neostore.relationshiptypestore.db.names.id.svn-base: 53.00 B
+        neostore.propertystore.db.index.keys.id.svn-base: 53.00 B
+        neostore.propertystore.db.id.svn-base: 53.00 B
+        neostore.propertystore.db.index.id.svn-base: 53.00 B
+        neostore.propertystore.db.strings.svn-base: 53.00 B
+        neostore.relationshiptypestore.db.names.svn-base: 53.00 B
+        neostore.propertystore.db.strings.id.svn-base: 53.00 B
+        neostore.propertystore.db.arrays.id.svn-base: 53.00 B
+        neostore.propertystore.db.index.keys.svn-base: 53.00 B
+        index.db.svn-base: 53.00 B
+        neostore.nodestore.db.id.svn-base: 53.00 B
+        tm_tx_log.1.svn-base: 53.00 B
+        neostore.relationshiptypestore.db.id.svn-base: 53.00 B
+        neostore.svn-base: 53.00 B
+        nioneo_logical.log.active.svn-base: 53.00 B
+        neostore.relationshipstore.db.id.svn-base: 53.00 B
+        neostore.propertystore.db.arrays.svn-base: 53.00 B
+        neostore.id.svn-base: 53.00 B
+      - Total: 1007.00 B
+      text-base:
+        neostore.nodestore.db.svn-base: 25.00 B
+        neostore.propertystore.db.index.svn-base: 25.00 B
+        neostore.relationshiptypestore.db.names.id.svn-base: 9.00 B
+        neostore.relationshiptypestore.db.svn-base: 28.00 B
+        neostore.relationshipstore.db.svn-base: 24.00 B
+        neostore.propertystore.db.index.keys.id.svn-base: 9.00 B
+        neostore.propertystore.db.id.svn-base: 9.00 B
+        neostore.propertystore.db.index.id.svn-base: 9.00 B
+        neostore.propertystore.db.strings.svn-base: 154.00 B
+        neostore.propertystore.db.svn-base: 20.00 B
+        neostore.relationshiptypestore.db.names.svn-base: 64.00 B
+        neostore.propertystore.db.strings.id.svn-base: 9.00 B
+        neostore.propertystore.db.arrays.id.svn-base: 9.00 B
+        neostore.propertystore.db.index.keys.svn-base: 64.00 B
+        index.db.svn-base: 455.00 B
+        neostore.nodestore.db.id.svn-base: 9.00 B
+        tm_tx_log.1.svn-base: 88.00 B
+        neostore.relationshiptypestore.db.id.svn-base: 9.00 B
+        messages.log.svn-base: 37.11 kB
+        neostore.svn-base: 69.00 B
+        active_tx_log.svn-base: 11.00 B
+        nioneo_logical.log.active.svn-base: 4.00 B
+        neostore.relationshipstore.db.id.svn-base: 9.00 B
+        neostore.propertystore.db.arrays.svn-base: 153.00 B
+        neostore.id.svn-base: 9.00 B
+      - Total: 38.36 kB
+      all-wcprops: 4.66 kB
+      entries: 4.45 kB
+      tmp:
+        props:
+        - Total: 0.00 B
+        prop-base:
+        - Total: 0.00 B
+        text-base:
+        - Total: 0.00 B
+      - Total: 0.00 B
+    - Total: 48.45 kB
+    index:
+      lucene:
+        .svn:
+          props:
+          - Total: 0.00 B
+          prop-base:
+          - Total: 0.00 B
+          text-base:
+          - Total: 0.00 B
+          all-wcprops: 143.00 B
+          entries: 295.00 B
+          tmp:
+            props:
+            - Total: 0.00 B
+            prop-base:
+            - Total: 0.00 B
+            text-base:
+            - Total: 0.00 B
+          - Total: 0.00 B
+        - Total: 438.00 B
+        node:
+          Classes:
+            segments.gen: 20.00 B
+            segments_1: 32.00 B
+            .svn:
+              props:
+              - Total: 0.00 B
+              prop-base:
+                segments.gen.svn-base: 53.00 B
+                segments_1.svn-base: 53.00 B
+              - Total: 106.00 B
+              text-base:
+                segments.gen.svn-base: 20.00 B
+                segments_1.svn-base: 32.00 B
+              - Total: 52.00 B
+              all-wcprops: 516.00 B
+              entries: 611.00 B
+              tmp:
+                props:
+                - Total: 0.00 B
+                prop-base:
+                - Total: 0.00 B
+                text-base:
+                - Total: 0.00 B
+              - Total: 0.00 B
+            - Total: 1.25 kB
+          - Total: 1.31 kB
+          classes:
+            _6e.fdt: 6.05 kB
+            _6e.prx: 624.00 B
+            _6e.frq: 1.03 kB
+            _6e.fdx: 1.63 kB
+            segments.gen: 20.00 B
+            segments_1: 498.00 B
+            _6e.tii: 98.00 B
+            _6e.fnm: 22.00 B
+            _6e.tis: 6.19 kB
+            _6f.cfs: 302.00 B
+            _6e.nrm: 628.00 B
+          - Total: 17.05 kB
+          .svn:
+            props:
+            - Total: 0.00 B
+            prop-base:
+            - Total: 0.00 B
+            text-base:
+            - Total: 0.00 B
+            all-wcprops: 148.00 B
+            entries: 303.00 B
+            tmp:
+              props:
+              - Total: 0.00 B
+              prop-base:
+              - Total: 0.00 B
+              text-base:
+              - Total: 0.00 B
+            - Total: 0.00 B
+          - Total: 451.00 B
+        - Total: 18.79 kB
+      - Total: 19.22 kB
+      lucene.log.1: 16.00 B
+      lucene-store.db: 40.00 B
+      .svn:
+        props:
+        - Total: 0.00 B
+        prop-base:
+          lucene-store.db.svn-base: 53.00 B
+          lucene.log.active.svn-base: 53.00 B
+        - Total: 106.00 B
+        text-base:
+          lucene-store.db.svn-base: 40.00 B
+          lucene.log.active.svn-base: 4.00 B
+        - Total: 44.00 B
+        all-wcprops: 475.00 B
+        entries: 616.00 B
+        tmp:
+          props:
+          - Total: 0.00 B
+          prop-base:
+          - Total: 0.00 B
+          text-base:
+          - Total: 0.00 B
+        - Total: 0.00 B
+      - Total: 1.21 kB
+      lucene.log.active: 4.00 B
+    - Total: 20.49 kB
+    neostore.propertystore.db.index: 1.02 kB
+    messages.log: 34.38 kB
+    neostore.propertystore.db.arrays: 128.00 B
+    neostore.propertystore.db.arrays.id: 9.00 B
+    neostore.relationshiptypestore.db.id: 9.00 B
+    neostore.relationshiptypestore.db.names.id: 9.00 B
+    neostore.propertystore.db.index.keys.id: 9.00 B
+    neostore.propertystore.db.strings.id: 9.00 B
+    nioneo_logical.log.1: 16.00 B
+    neostore.propertystore.db.id: 9.00 B
+    nioneo_logical.log.active: 4.00 B
+    index.db: 281.00 B
+    neostore.nodestore.db.id: 9.00 B
+    neostore.relationshiptypestore.db.names: 152.00 B
+2012-03-23 00:42:41.869-0500: --- STARTUP diagnostics END ---
+2012-03-23 00:42:42.008-0500: Extension org.neo4j.kernel.KernelExtension[kernel jmx] loaded ok
+2012-03-23 00:42:42.010-0500: Extension org.neo4j.kernel.KernelExtension[dummy] loaded ok
+2012-03-23 00:42:42.010-0500: Extension org.neo4j.kernel.KernelExtension[other dummy] loaded ok
+2012-03-23 00:42:42.012-0500: Extension org.neo4j.kernel.KernelExtension[shell] loaded ok
+2012-03-23 00:42:42.017-0500: Extension org.neo4j.kernel.KernelExtension[kernel udc] loaded ok
+2012-03-23 00:42:42.262-0500: Closed log /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log
+2012-03-23 00:42:42.535-0500: NeoStore closed
+2012-03-23 00:42:42.577-0500: Closed log /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/index/lucene.log
+2012-03-23 00:42:42.578-0500: NeoStore closed
+2012-03-23 00:42:42.579-0500: TM shutting down
+2012-03-23 00:48:30.553-0500: Opened [/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log.1] clean empty log, version=0, lastTxId=213
+2012-03-23 00:48:30.722-0500: Opened [/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/index/lucene.log.1] clean empty log, version=0, lastTxId=213
+2012-03-23 00:48:30.736-0500: TM opening log: /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/tm_tx_log.2
+2012-03-23 00:48:30.812-0500: --- STARTUP diagnostics START ---
+2012-03-23 00:48:30.812-0500: Graph Database: org.neo4j.kernel.EmbeddedGraphDatabase StoreId[time:1332431003117, id:2441284876231174442, store version: 13561656364791302]
+2012-03-23 00:48:30.818-0500: Kernel version: Neo4j - Graph Database Kernel 1.6.1
+2012-03-23 00:48:30.818-0500: Neo4j component versions:
+2012-03-23 00:48:30.820-0500:   Neo4j - Graph Database Kernel 1.6.1
+2012-03-23 00:48:30.827-0500: Diagnostics providers:
+    KernelDiagnostics:Versions
+    org.neo4j.kernel.info.DiagnosticsManager
+    SYSTEM_MEMORY
+    JAVA_MEMORY
+    OPERATING_SYSTEM
+    JAVA_VIRTUAL_MACHINE
+    CLASSPATH
+    LIBRARY_PATH
+    SYSTEM_PROPERTIES
+    LINUX_SCHEDULERS
+    org.neo4j.kernel.Config
+    NEO_STORE_VERSIONS
+    NEO_STORE_ID_USAGE
+    KernelDiagnostics:StoreFiles
+2012-03-23 00:48:30.837-0500: System memory information:
+    Total Physical memory: 3.67 GB
+    Free Physical memory: 799.32 MB
+    Committed virtual memory: 1.20 GB
+    Total swap space: 9.70 GB
+    Free swap space: 9.70 GB
+2012-03-23 00:48:30.849-0500: JVM memory information:
+    Free  memory: 52.52 MB
+    Total memory: 56.38 MB
+    Max   memory: 837.38 MB
+    Garbage Collector: PS Scavenge: [PS Eden Space, PS Survivor Space]
+    Garbage Collector: PS MarkSweep: [PS Eden Space, PS Survivor Space, PS Old Gen, PS Perm Gen]
+    Memory Pool: Code Cache (Non-heap memory): committed=2.44 MB, used=481.38 kB, max=48.00 MB, threshold=0.00 B
+    Memory Pool: PS Eden Space (Heap memory): committed=14.69 MB, used=3.25 MB, max=309.13 MB, threshold=?
+    Memory Pool: PS Survivor Space (Heap memory): committed=2.44 MB, used=624.02 kB, max=2.44 MB, threshold=?
+    Memory Pool: PS Old Gen (Heap memory): committed=39.25 MB, used=0.00 B, max=628.00 MB, threshold=0.00 B
+    Memory Pool: PS Perm Gen (Non-heap memory): committed=20.75 MB, used=7.47 MB, max=82.00 MB, threshold=0.00 B
+2012-03-23 00:48:30.856-0500: Operating system information:
+    Operating System: Linux; version: 3.1-6.towo.2-siduction-amd64; arch: amd64; cpus: 4
+    Max number of file descriptors: 4096
+    Number of open file descriptors: 46
+    Process id: 7982@nightearth
+    Byte order: LITTLE_ENDIAN
+2012-03-23 00:48:30.863-0500: JVM information:
+    VM Name: Java HotSpot(TM) 64-Bit Server VM
+    VM Vendor: Sun Microsystems Inc.
+    VM Version: 20.6-b01
+    JIT compiler: HotSpot 64-Bit Tiered Compilers
+    VM Arguments: [-Dfile.encoding=UTF-8, -Djava.rmi.server.codebase=file:////home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/dist/PersistenceServiceRemoteInterfaces.jar, file:///home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/dist/PersistenceAbstractionAPI.jar]
+2012-03-23 00:48:30.864-0500: Java classpath:
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceService/build/classes/
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/sunrsasign.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/classes
+     [classpath + loader.0] file:/programs/neo4j/lib/geronimo-jta_1.1_spec-1.1.1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-lucene-index-1.6.1.jar
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/src/
+     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/localedata.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/org.apache.servicemix.bundles.jline-0.9.94_1.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/jce.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-kernel-1.6.1-tests.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-community-1.6.1.jar
+     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/sunjce_provider.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-udc-1.6.1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-jmx-1.6.1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-graph-matching-1.6.1.jar
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceService/src/
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-shell-1.6.1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-kernel-1.6.1.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/resources.jar
+     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/dnsns.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/modules/jdk.boot.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/rt.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/jsse.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/charsets.jar
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/build/classes/
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-graph-algo-1.6.1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/scala-library-2.9.0-1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-cypher-1.6.1.jar
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/src/
+     [classpath + loader.0] file:/programs/neo4j/lib/server-api-1.6.1.jar
+     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/sunpkcs11.jar
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/build/classes/
+     [classpath + loader.0] file:/programs/neo4j/lib/lucene-core-3.5.0.jar
+2012-03-23 00:48:30.869-0500: Library path:
+    /programs/jdk1.6.0_31/jre/lib/amd64/server
+    /programs/jdk1.6.0_31/jre/lib/amd64
+    /programs/jdk1.6.0_31/lib/amd64
+    /usr/java/packages/lib/amd64
+    /usr/lib64
+    /lib64
+    /lib
+    /usr/lib
+2012-03-23 00:48:30.870-0500: System.properties:
+    sun.boot.library.path = /programs/jdk1.6.0_31/jre/lib/amd64
+    path.separator = :
+    file.encoding.pkg = sun.io
+    sun.java.launcher = SUN_STANDARD
+    user.country = US
+    sun.os.patch.level = unknown
+    user.dir = /home/zim/workspace/java/KuwaibaServer04/PersistenceService
+    sun.jnu.encoding = UTF-8
+    sun.management.compiler = HotSpot 64-Bit Tiered Compilers
+    user.home = /home/zim
+    user.timezone = America/Bogota
+    file.encoding = UTF-8
+    user.name = zim
+    sun.java.command = org.kuwaiba.persistenceservice.Main
+    sun.arch.data.model = 64
+    user.language = en
+    file.separator = /
+    sun.io.unicode.encoding = UnicodeLittle
+    sun.cpu.endian = little
+    sun.cpu.isalist = 
+2012-03-23 00:48:30.872-0500: Linux scheduler information:
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+2012-03-23 00:48:30.884-0500: Neo4j Kernel properties:
+    store_dir=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db
+    logical_log=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log
+    node_auto_indexing=false
+    neostore.relationshipstore.db.mapped_memory=100M
+    neostore.nodestore.db.mapped_memory=20M
+    use_memory_mapped_buffers=true
+    rebuild_idgenerators_fast=true
+    neostore.propertystore.db.index.keys.mapped_memory=1M
+    neostore.propertystore.db.arrays.mapped_memory=130M
+    neostore.propertystore.db.strings.mapped_memory=130M
+    neo_store=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/neostore
+    neostore.propertystore.db.index.mapped_memory=1M
+    create=true
+    neostore.propertystore.db.mapped_memory=90M
+    relationship_auto_indexing=false
+2012-03-23 00:48:30.887-0500: Store versions:
+    NeoStore v0.A.0
+    NodeStore v0.A.0
+    RelationshipStore v0.A.0
+    RelationshipTypeStore v0.A.0
+    PropertyStore v0.A.0
+    PropertyIndexStore v0.A.0
+    StringPropertyStore v0.A.0
+    ArrayPropertyStore v0.A.0
+2012-03-23 00:48:30.887-0500: Id usage:
+    NodeStore: used=4095 high=4094
+    RelationshipStore: used=4094 high=4093
+    RelationshipTypeStore: used=3 high=2
+    PropertyStore: used=11641 high=11640
+    PropertyIndexStore: used=16 high=15
+    StringPropertyStore: used=1 high=0
+    ArrayPropertyStore: used=1 high=0
+2012-03-23 00:48:30.889-0500: Storage files:
+    neostore.relationshiptypestore.db: 15.00 B
+    neostore.propertystore.db.index.keys: 1.00 kB
+    neostore.propertystore.db: 466.09 kB
+    neostore.relationshipstore.db.id: 9.00 B
+    neostore.nodestore.db: 35.99 kB
+    neostore.id: 9.00 B
+    neostore.relationshipstore.db: 131.94 kB
+    neostore.propertystore.db.index.id: 9.00 B
+    neostore.propertystore.db.strings: 128.00 B
+    lock: 0.00 B
+    neostore: 54.00 B
+    tm_tx_log.2: 0.00 B
+    active_tx_log: 11.00 B
+    tm_tx_log.1: 29.12 kB
+    .svn:
+      props:
+      - Total: 0.00 B
+      prop-base:
+        neostore.nodestore.db.svn-base: 53.00 B
+        neostore.relationshiptypestore.db.names.id.svn-base: 53.00 B
+        neostore.propertystore.db.index.keys.id.svn-base: 53.00 B
+        neostore.propertystore.db.id.svn-base: 53.00 B
+        neostore.propertystore.db.index.id.svn-base: 53.00 B
+        neostore.propertystore.db.strings.svn-base: 53.00 B
+        neostore.relationshiptypestore.db.names.svn-base: 53.00 B
+        neostore.propertystore.db.strings.id.svn-base: 53.00 B
+        neostore.propertystore.db.arrays.id.svn-base: 53.00 B
+        neostore.propertystore.db.index.keys.svn-base: 53.00 B
+        index.db.svn-base: 53.00 B
+        neostore.nodestore.db.id.svn-base: 53.00 B
+        tm_tx_log.1.svn-base: 53.00 B
+        neostore.relationshiptypestore.db.id.svn-base: 53.00 B
+        neostore.svn-base: 53.00 B
+        nioneo_logical.log.active.svn-base: 53.00 B
+        neostore.relationshipstore.db.id.svn-base: 53.00 B
+        neostore.propertystore.db.arrays.svn-base: 53.00 B
+        neostore.id.svn-base: 53.00 B
+      - Total: 1007.00 B
+      text-base:
+        neostore.nodestore.db.svn-base: 25.00 B
+        neostore.propertystore.db.index.svn-base: 25.00 B
+        neostore.relationshiptypestore.db.names.id.svn-base: 9.00 B
+        neostore.relationshiptypestore.db.svn-base: 28.00 B
+        neostore.relationshipstore.db.svn-base: 24.00 B
+        neostore.propertystore.db.index.keys.id.svn-base: 9.00 B
+        neostore.propertystore.db.id.svn-base: 9.00 B
+        neostore.propertystore.db.index.id.svn-base: 9.00 B
+        neostore.propertystore.db.strings.svn-base: 154.00 B
+        neostore.propertystore.db.svn-base: 20.00 B
+        neostore.relationshiptypestore.db.names.svn-base: 64.00 B
+        neostore.propertystore.db.strings.id.svn-base: 9.00 B
+        neostore.propertystore.db.arrays.id.svn-base: 9.00 B
+        neostore.propertystore.db.index.keys.svn-base: 64.00 B
+        index.db.svn-base: 455.00 B
+        neostore.nodestore.db.id.svn-base: 9.00 B
+        tm_tx_log.1.svn-base: 88.00 B
+        neostore.relationshiptypestore.db.id.svn-base: 9.00 B
+        messages.log.svn-base: 37.11 kB
+        neostore.svn-base: 69.00 B
+        active_tx_log.svn-base: 11.00 B
+        nioneo_logical.log.active.svn-base: 4.00 B
+        neostore.relationshipstore.db.id.svn-base: 9.00 B
+        neostore.propertystore.db.arrays.svn-base: 153.00 B
+        neostore.id.svn-base: 9.00 B
+      - Total: 38.36 kB
+      all-wcprops: 4.66 kB
+      entries: 4.45 kB
+      tmp:
+        props:
+        - Total: 0.00 B
+        prop-base:
+        - Total: 0.00 B
+        text-base:
+        - Total: 0.00 B
+      - Total: 0.00 B
+    - Total: 48.45 kB
+    index:
+      lucene:
+        .svn:
+          props:
+          - Total: 0.00 B
+          prop-base:
+          - Total: 0.00 B
+          text-base:
+          - Total: 0.00 B
+          all-wcprops: 143.00 B
+          entries: 295.00 B
+          tmp:
+            props:
+            - Total: 0.00 B
+            prop-base:
+            - Total: 0.00 B
+            text-base:
+            - Total: 0.00 B
+          - Total: 0.00 B
+        - Total: 438.00 B
+        node:
+          Classes:
+            segments.gen: 20.00 B
+            segments_1: 32.00 B
+            .svn:
+              props:
+              - Total: 0.00 B
+              prop-base:
+                segments.gen.svn-base: 53.00 B
+                segments_1.svn-base: 53.00 B
+              - Total: 106.00 B
+              text-base:
+                segments.gen.svn-base: 20.00 B
+                segments_1.svn-base: 32.00 B
+              - Total: 52.00 B
+              all-wcprops: 516.00 B
+              entries: 611.00 B
+              tmp:
+                props:
+                - Total: 0.00 B
+                prop-base:
+                - Total: 0.00 B
+                text-base:
+                - Total: 0.00 B
+              - Total: 0.00 B
+            - Total: 1.25 kB
+          - Total: 1.31 kB
+          classes:
+            _6e.fdt: 6.05 kB
+            _6e.prx: 624.00 B
+            _6e.frq: 1.03 kB
+            _6e.fdx: 1.63 kB
+            segments.gen: 20.00 B
+            segments_1: 498.00 B
+            _6e.tii: 98.00 B
+            _6e.fnm: 22.00 B
+            _6e.tis: 6.19 kB
+            _6f.cfs: 302.00 B
+            _6e.nrm: 628.00 B
+          - Total: 17.05 kB
+          .svn:
+            props:
+            - Total: 0.00 B
+            prop-base:
+            - Total: 0.00 B
+            text-base:
+            - Total: 0.00 B
+            all-wcprops: 148.00 B
+            entries: 303.00 B
+            tmp:
+              props:
+              - Total: 0.00 B
+              prop-base:
+              - Total: 0.00 B
+              text-base:
+              - Total: 0.00 B
+            - Total: 0.00 B
+          - Total: 451.00 B
+        - Total: 18.79 kB
+      - Total: 19.22 kB
+      lucene.log.1: 16.00 B
+      lucene-store.db: 40.00 B
+      .svn:
+        props:
+        - Total: 0.00 B
+        prop-base:
+          lucene-store.db.svn-base: 53.00 B
+          lucene.log.active.svn-base: 53.00 B
+        - Total: 106.00 B
+        text-base:
+          lucene-store.db.svn-base: 40.00 B
+          lucene.log.active.svn-base: 4.00 B
+        - Total: 44.00 B
+        all-wcprops: 475.00 B
+        entries: 616.00 B
+        tmp:
+          props:
+          - Total: 0.00 B
+          prop-base:
+          - Total: 0.00 B
+          text-base:
+          - Total: 0.00 B
+        - Total: 0.00 B
+      - Total: 1.21 kB
+      lucene.log.active: 4.00 B
+    - Total: 20.49 kB
+    neostore.propertystore.db.index: 1.02 kB
+    messages.log: 50.48 kB
+    neostore.propertystore.db.arrays: 128.00 B
+    neostore.propertystore.db.arrays.id: 9.00 B
+    neostore.relationshiptypestore.db.id: 9.00 B
+    neostore.relationshiptypestore.db.names.id: 9.00 B
+    neostore.propertystore.db.index.keys.id: 9.00 B
+    neostore.propertystore.db.strings.id: 9.00 B
+    nioneo_logical.log.1: 16.00 B
+    neostore.propertystore.db.id: 9.00 B
+    nioneo_logical.log.active: 4.00 B
+    index.db: 281.00 B
+    neostore.nodestore.db.id: 9.00 B
+    neostore.relationshiptypestore.db.names: 152.00 B
+2012-03-23 00:48:30.939-0500: --- STARTUP diagnostics END ---
+2012-03-23 00:48:31.050-0500: Extension org.neo4j.kernel.KernelExtension[kernel jmx] loaded ok
+2012-03-23 00:48:31.051-0500: Extension org.neo4j.kernel.KernelExtension[dummy] loaded ok
+2012-03-23 00:48:31.051-0500: Extension org.neo4j.kernel.KernelExtension[other dummy] loaded ok
+2012-03-23 00:48:31.053-0500: Extension org.neo4j.kernel.KernelExtension[shell] loaded ok
+2012-03-23 00:48:31.058-0500: Extension org.neo4j.kernel.KernelExtension[kernel udc] loaded ok
+2012-03-23 00:48:31.274-0500: Closed log /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log
+2012-03-23 00:48:31.540-0500: NeoStore closed
+2012-03-23 00:48:31.573-0500: Closed log /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/index/lucene.log
+2012-03-23 00:48:31.574-0500: NeoStore closed
+2012-03-23 00:48:31.575-0500: TM shutting down
+2012-03-23 01:04:27.245-0500: Opened [/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log.1] clean empty log, version=0, lastTxId=213
+2012-03-23 01:04:27.396-0500: Opened [/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/index/lucene.log.1] clean empty log, version=0, lastTxId=213
+2012-03-23 01:04:27.408-0500: TM opening log: /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/tm_tx_log.2
+2012-03-23 01:04:27.479-0500: --- STARTUP diagnostics START ---
+2012-03-23 01:04:27.479-0500: Graph Database: org.neo4j.kernel.EmbeddedGraphDatabase StoreId[time:1332431003117, id:2441284876231174442, store version: 13561656364791302]
+2012-03-23 01:04:27.485-0500: Kernel version: Neo4j - Graph Database Kernel 1.6.1
+2012-03-23 01:04:27.485-0500: Neo4j component versions:
+2012-03-23 01:04:27.486-0500:   Neo4j - Graph Database Kernel 1.6.1
+2012-03-23 01:04:27.494-0500: Diagnostics providers:
+    KernelDiagnostics:Versions
+    org.neo4j.kernel.info.DiagnosticsManager
+    SYSTEM_MEMORY
+    JAVA_MEMORY
+    OPERATING_SYSTEM
+    JAVA_VIRTUAL_MACHINE
+    CLASSPATH
+    LIBRARY_PATH
+    SYSTEM_PROPERTIES
+    LINUX_SCHEDULERS
+    org.neo4j.kernel.Config
+    NEO_STORE_VERSIONS
+    NEO_STORE_ID_USAGE
+    KernelDiagnostics:StoreFiles
+2012-03-23 01:04:27.503-0500: System memory information:
+    Total Physical memory: 3.67 GB
+    Free Physical memory: 872.06 MB
+    Committed virtual memory: 1.20 GB
+    Total swap space: 9.70 GB
+    Free swap space: 9.70 GB
+2012-03-23 01:04:27.515-0500: JVM memory information:
+    Free  memory: 52.55 MB
+    Total memory: 56.38 MB
+    Max   memory: 837.38 MB
+    Garbage Collector: PS Scavenge: [PS Eden Space, PS Survivor Space]
+    Garbage Collector: PS MarkSweep: [PS Eden Space, PS Survivor Space, PS Old Gen, PS Perm Gen]
+    Memory Pool: Code Cache (Non-heap memory): committed=2.44 MB, used=481.06 kB, max=48.00 MB, threshold=0.00 B
+    Memory Pool: PS Eden Space (Heap memory): committed=14.69 MB, used=3.25 MB, max=309.13 MB, threshold=?
+    Memory Pool: PS Survivor Space (Heap memory): committed=2.44 MB, used=592.02 kB, max=2.44 MB, threshold=?
+    Memory Pool: PS Old Gen (Heap memory): committed=39.25 MB, used=0.00 B, max=628.00 MB, threshold=0.00 B
+    Memory Pool: PS Perm Gen (Non-heap memory): committed=20.75 MB, used=7.47 MB, max=82.00 MB, threshold=0.00 B
+2012-03-23 01:04:27.522-0500: Operating system information:
+    Operating System: Linux; version: 3.1-6.towo.2-siduction-amd64; arch: amd64; cpus: 4
+    Max number of file descriptors: 4096
+    Number of open file descriptors: 46
+    Process id: 8039@nightearth
+    Byte order: LITTLE_ENDIAN
+2012-03-23 01:04:27.530-0500: JVM information:
+    VM Name: Java HotSpot(TM) 64-Bit Server VM
+    VM Vendor: Sun Microsystems Inc.
+    VM Version: 20.6-b01
+    JIT compiler: HotSpot 64-Bit Tiered Compilers
+    VM Arguments: [-Dfile.encoding=UTF-8, -Djava.rmi.server.codebase=file:////home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/dist/PersistenceServiceRemoteInterfaces.jar, file:///home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/dist/PersistenceAbstractionAPI.jar]
+2012-03-23 01:04:27.532-0500: Java classpath:
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceService/build/classes/
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/sunrsasign.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/classes
+     [classpath + loader.0] file:/programs/neo4j/lib/geronimo-jta_1.1_spec-1.1.1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-lucene-index-1.6.1.jar
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/src/
+     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/localedata.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/org.apache.servicemix.bundles.jline-0.9.94_1.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/jce.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-kernel-1.6.1-tests.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-community-1.6.1.jar
+     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/sunjce_provider.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-udc-1.6.1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-jmx-1.6.1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-graph-matching-1.6.1.jar
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceService/src/
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-shell-1.6.1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-kernel-1.6.1.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/resources.jar
+     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/dnsns.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/modules/jdk.boot.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/rt.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/jsse.jar
+     [bootstrap] /programs/jdk1.6.0_31/jre/lib/charsets.jar
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/build/classes/
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-graph-algo-1.6.1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/scala-library-2.9.0-1.jar
+     [classpath + loader.0] file:/programs/neo4j/lib/neo4j-cypher-1.6.1.jar
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/src/
+     [classpath + loader.0] file:/programs/neo4j/lib/server-api-1.6.1.jar
+     [loader.1] file:/programs/jdk1.6.0_31/jre/lib/ext/sunpkcs11.jar
+     [classpath + loader.0] file:/home/zim/workspace/java/KuwaibaServer04/PersistenceServiceRemoteInterfaces/build/classes/
+     [classpath + loader.0] file:/programs/neo4j/lib/lucene-core-3.5.0.jar
+2012-03-23 01:04:27.538-0500: Library path:
+    /programs/jdk1.6.0_31/jre/lib/amd64/server
+    /programs/jdk1.6.0_31/jre/lib/amd64
+    /programs/jdk1.6.0_31/lib/amd64
+    /usr/java/packages/lib/amd64
+    /usr/lib64
+    /lib64
+    /lib
+    /usr/lib
+2012-03-23 01:04:27.539-0500: System.properties:
+    sun.boot.library.path = /programs/jdk1.6.0_31/jre/lib/amd64
+    path.separator = :
+    file.encoding.pkg = sun.io
+    sun.java.launcher = SUN_STANDARD
+    user.country = US
+    sun.os.patch.level = unknown
+    user.dir = /home/zim/workspace/java/KuwaibaServer04/PersistenceService
+    sun.jnu.encoding = UTF-8
+    sun.management.compiler = HotSpot 64-Bit Tiered Compilers
+    user.home = /home/zim
+    user.timezone = America/Bogota
+    file.encoding = UTF-8
+    user.name = zim
+    sun.java.command = org.kuwaiba.persistenceservice.Main
+    sun.arch.data.model = 64
+    user.language = en
+    file.separator = /
+    sun.io.unicode.encoding = UnicodeLittle
+    sun.cpu.endian = little
+    sun.cpu.isalist = 
+2012-03-23 01:04:27.541-0500: Linux scheduler information:
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+    noop deadline [cfq] 
+2012-03-23 01:04:27.552-0500: Neo4j Kernel properties:
+    store_dir=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db
+    logical_log=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log
+    node_auto_indexing=false
+    neostore.relationshipstore.db.mapped_memory=100M
+    neostore.nodestore.db.mapped_memory=20M
+    use_memory_mapped_buffers=true
+    rebuild_idgenerators_fast=true
+    neostore.propertystore.db.index.keys.mapped_memory=1M
+    neostore.propertystore.db.arrays.mapped_memory=130M
+    neostore.propertystore.db.strings.mapped_memory=130M
+    neo_store=/home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/neostore
+    neostore.propertystore.db.index.mapped_memory=1M
+    create=true
+    neostore.propertystore.db.mapped_memory=90M
+    relationship_auto_indexing=false
+2012-03-23 01:04:27.553-0500: Store versions:
+    NeoStore v0.A.0
+    NodeStore v0.A.0
+    RelationshipStore v0.A.0
+    RelationshipTypeStore v0.A.0
+    PropertyStore v0.A.0
+    PropertyIndexStore v0.A.0
+    StringPropertyStore v0.A.0
+    ArrayPropertyStore v0.A.0
+2012-03-23 01:04:27.553-0500: Id usage:
+    NodeStore: used=4095 high=4094
+    RelationshipStore: used=4094 high=4093
+    RelationshipTypeStore: used=3 high=2
+    PropertyStore: used=11641 high=11640
+    PropertyIndexStore: used=16 high=15
+    StringPropertyStore: used=1 high=0
+    ArrayPropertyStore: used=1 high=0
+2012-03-23 01:04:27.555-0500: Storage files:
+    neostore.relationshiptypestore.db: 15.00 B
+    neostore.propertystore.db.index.keys: 1.00 kB
+    neostore.propertystore.db: 466.09 kB
+    neostore.relationshipstore.db.id: 9.00 B
+    neostore.nodestore.db: 35.99 kB
+    neostore.id: 9.00 B
+    neostore.relationshipstore.db: 131.94 kB
+    neostore.propertystore.db.index.id: 9.00 B
+    neostore.propertystore.db.strings: 128.00 B
+    lock: 0.00 B
+    neostore: 54.00 B
+    tm_tx_log.2: 0.00 B
+    active_tx_log: 11.00 B
+    tm_tx_log.1: 29.12 kB
+    .svn:
+      props:
+      - Total: 0.00 B
+      prop-base:
+        neostore.nodestore.db.svn-base: 53.00 B
+        neostore.relationshiptypestore.db.names.id.svn-base: 53.00 B
+        neostore.propertystore.db.index.keys.id.svn-base: 53.00 B
+        neostore.propertystore.db.id.svn-base: 53.00 B
+        neostore.propertystore.db.index.id.svn-base: 53.00 B
+        neostore.propertystore.db.strings.svn-base: 53.00 B
+        neostore.relationshiptypestore.db.names.svn-base: 53.00 B
+        neostore.propertystore.db.strings.id.svn-base: 53.00 B
+        neostore.propertystore.db.arrays.id.svn-base: 53.00 B
+        neostore.propertystore.db.index.keys.svn-base: 53.00 B
+        index.db.svn-base: 53.00 B
+        neostore.nodestore.db.id.svn-base: 53.00 B
+        tm_tx_log.1.svn-base: 53.00 B
+        neostore.relationshiptypestore.db.id.svn-base: 53.00 B
+        neostore.svn-base: 53.00 B
+        nioneo_logical.log.active.svn-base: 53.00 B
+        neostore.relationshipstore.db.id.svn-base: 53.00 B
+        neostore.propertystore.db.arrays.svn-base: 53.00 B
+        neostore.id.svn-base: 53.00 B
+      - Total: 1007.00 B
+      text-base:
+        neostore.nodestore.db.svn-base: 25.00 B
+        neostore.propertystore.db.index.svn-base: 25.00 B
+        neostore.relationshiptypestore.db.names.id.svn-base: 9.00 B
+        neostore.relationshiptypestore.db.svn-base: 28.00 B
+        neostore.relationshipstore.db.svn-base: 24.00 B
+        neostore.propertystore.db.index.keys.id.svn-base: 9.00 B
+        neostore.propertystore.db.id.svn-base: 9.00 B
+        neostore.propertystore.db.index.id.svn-base: 9.00 B
+        neostore.propertystore.db.strings.svn-base: 154.00 B
+        neostore.propertystore.db.svn-base: 20.00 B
+        neostore.relationshiptypestore.db.names.svn-base: 64.00 B
+        neostore.propertystore.db.strings.id.svn-base: 9.00 B
+        neostore.propertystore.db.arrays.id.svn-base: 9.00 B
+        neostore.propertystore.db.index.keys.svn-base: 64.00 B
+        index.db.svn-base: 455.00 B
+        neostore.nodestore.db.id.svn-base: 9.00 B
+        tm_tx_log.1.svn-base: 88.00 B
+        neostore.relationshiptypestore.db.id.svn-base: 9.00 B
+        messages.log.svn-base: 37.11 kB
+        neostore.svn-base: 69.00 B
+        active_tx_log.svn-base: 11.00 B
+        nioneo_logical.log.active.svn-base: 4.00 B
+        neostore.relationshipstore.db.id.svn-base: 9.00 B
+        neostore.propertystore.db.arrays.svn-base: 153.00 B
+        neostore.id.svn-base: 9.00 B
+      - Total: 38.36 kB
+      all-wcprops: 4.66 kB
+      entries: 4.45 kB
+      tmp:
+        props:
+        - Total: 0.00 B
+        prop-base:
+        - Total: 0.00 B
+        text-base:
+        - Total: 0.00 B
+      - Total: 0.00 B
+    - Total: 48.45 kB
+    index:
+      lucene:
+        .svn:
+          props:
+          - Total: 0.00 B
+          prop-base:
+          - Total: 0.00 B
+          text-base:
+          - Total: 0.00 B
+          all-wcprops: 143.00 B
+          entries: 295.00 B
+          tmp:
+            props:
+            - Total: 0.00 B
+            prop-base:
+            - Total: 0.00 B
+            text-base:
+            - Total: 0.00 B
+          - Total: 0.00 B
+        - Total: 438.00 B
+        node:
+          Classes:
+            segments.gen: 20.00 B
+            segments_1: 32.00 B
+            .svn:
+              props:
+              - Total: 0.00 B
+              prop-base:
+                segments.gen.svn-base: 53.00 B
+                segments_1.svn-base: 53.00 B
+              - Total: 106.00 B
+              text-base:
+                segments.gen.svn-base: 20.00 B
+                segments_1.svn-base: 32.00 B
+              - Total: 52.00 B
+              all-wcprops: 516.00 B
+              entries: 611.00 B
+              tmp:
+                props:
+                - Total: 0.00 B
+                prop-base:
+                - Total: 0.00 B
+                text-base:
+                - Total: 0.00 B
+              - Total: 0.00 B
+            - Total: 1.25 kB
+          - Total: 1.31 kB
+          classes:
+            _6e.fdt: 6.05 kB
+            _6e.prx: 624.00 B
+            _6e.frq: 1.03 kB
+            _6e.fdx: 1.63 kB
+            segments.gen: 20.00 B
+            segments_1: 498.00 B
+            _6e.tii: 98.00 B
+            _6e.fnm: 22.00 B
+            _6e.tis: 6.19 kB
+            _6f.cfs: 302.00 B
+            _6e.nrm: 628.00 B
+          - Total: 17.05 kB
+          .svn:
+            props:
+            - Total: 0.00 B
+            prop-base:
+            - Total: 0.00 B
+            text-base:
+            - Total: 0.00 B
+            all-wcprops: 148.00 B
+            entries: 303.00 B
+            tmp:
+              props:
+              - Total: 0.00 B
+              prop-base:
+              - Total: 0.00 B
+              text-base:
+              - Total: 0.00 B
+            - Total: 0.00 B
+          - Total: 451.00 B
+        - Total: 18.79 kB
+      - Total: 19.22 kB
+      lucene.log.1: 16.00 B
+      lucene-store.db: 40.00 B
+      .svn:
+        props:
+        - Total: 0.00 B
+        prop-base:
+          lucene-store.db.svn-base: 53.00 B
+          lucene.log.active.svn-base: 53.00 B
+        - Total: 106.00 B
+        text-base:
+          lucene-store.db.svn-base: 40.00 B
+          lucene.log.active.svn-base: 4.00 B
+        - Total: 44.00 B
+        all-wcprops: 475.00 B
+        entries: 616.00 B
+        tmp:
+          props:
+          - Total: 0.00 B
+          prop-base:
+          - Total: 0.00 B
+          text-base:
+          - Total: 0.00 B
+        - Total: 0.00 B
+      - Total: 1.21 kB
+      lucene.log.active: 4.00 B
+    - Total: 20.49 kB
+    neostore.propertystore.db.index: 1.02 kB
+    messages.log: 66.58 kB
+    neostore.propertystore.db.arrays: 128.00 B
+    neostore.propertystore.db.arrays.id: 9.00 B
+    neostore.relationshiptypestore.db.id: 9.00 B
+    neostore.relationshiptypestore.db.names.id: 9.00 B
+    neostore.propertystore.db.index.keys.id: 9.00 B
+    neostore.propertystore.db.strings.id: 9.00 B
+    nioneo_logical.log.1: 16.00 B
+    neostore.propertystore.db.id: 9.00 B
+    nioneo_logical.log.active: 4.00 B
+    index.db: 281.00 B
+    neostore.nodestore.db.id: 9.00 B
+    neostore.relationshiptypestore.db.names: 152.00 B
+2012-03-23 01:04:27.603-0500: --- STARTUP diagnostics END ---
+2012-03-23 01:04:27.711-0500: Extension org.neo4j.kernel.KernelExtension[kernel jmx] loaded ok
+2012-03-23 01:04:27.713-0500: Extension org.neo4j.kernel.KernelExtension[dummy] loaded ok
+2012-03-23 01:04:27.713-0500: Extension org.neo4j.kernel.KernelExtension[other dummy] loaded ok
+2012-03-23 01:04:27.714-0500: Extension org.neo4j.kernel.KernelExtension[shell] loaded ok
+2012-03-23 01:04:27.720-0500: Extension org.neo4j.kernel.KernelExtension[kernel udc] loaded ok
+2012-03-23 01:24:07.609-0500: Closed log /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/nioneo_logical.log
+2012-03-23 01:24:07.900-0500: NeoStore closed
+2012-03-23 01:24:07.909-0500: Closed log /home/zim/workspace/java/KuwaibaServer04/PersistenceService/target/kuwaiba_db/index/lucene.log
+2012-03-23 01:24:07.909-0500: NeoStore closed
+2012-03-23 01:24:07.910-0500: TM shutting down
