@@ -89,261 +89,454 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
     @Override
-    public Long createClass(ClassInfo classDefinition) throws Exception
+    public Long createClass(ClassInfo classDefinition) 
+            throws ServerSideException
     {
-        System.out.println("Creating class");
-        
-        ClassMetadata cm = new ClassMetadata();
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try{
 
-        cm.setName(classDefinition.getClassName());
-        cm.setDisplayName(classDefinition.getDisplayName());
-        cm.setDescription(classDefinition.getDescription());
-        cm.setParentClassName(classDefinition.getParentClassName());
-        cm.setAbstractClass(classDefinition.getAbstractClass());
-        //TODO decode flags, set category
-        //cm.setCategory(classDefinition.getCategory());
-        cm.setColor(0);
-        cm.setCountable(false);
-        //cm.setCreationDate(null);
-        cm.setIcon(classDefinition.getIcon());
-        cm.setSmallIcon(classDefinition.getSmallIcon());
-        cm.setCustom(false);
-        cm.setDummy(false);
-        cm.setLocked(true);
+            ClassMetadata cm = new ClassMetadata();
 
-        return mem.createClass(cm);
-    }
+            cm.setName(classDefinition.getClassName());
+            cm.setDisplayName(classDefinition.getDisplayName());
+            cm.setDescription(classDefinition.getDescription());
+            cm.setParentClassName(classDefinition.getParentClassName());
+            cm.setAbstractClass(classDefinition.getAbstractClass());
+            //TODO decode flags, set category
+            //cm.setCategory(classDefinition.getCategory());
+            cm.setColor(0);
+            cm.setCountable(false);
+            //cm.setCreationDate(null);
+            cm.setIcon(classDefinition.getIcon());
+            cm.setSmallIcon(classDefinition.getSmallIcon());
+            cm.setCustom(false);
+            cm.setDummy(false);
+            cm.setLocked(true);
 
-    @Override
-    public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws Exception
-    {
-        //return mem.setClassIcon(classId, attributeName, iconImage);
-        return true;
-    }
+            return mem.createClass(cm);
 
-    @Override
-    public boolean deleteClass(String className) throws Exception
-    {
-        return mem.deleteClass(className);
-    }
-
-    @Override
-    public boolean deleteClass(Long classId) throws Exception {
-        return mem.deleteClass(classId);
-    }
-
-    @Override
-    public ClassInfo getMetadataForClass(String className) throws Exception
-    {
-        ClassInfo ci= new ClassInfo(mem.getClass(className), 0);
-        return ci;
-    }
-
-    @Override
-    public ClassInfo getMetadataForClass(Long classId) throws Exception
-    {
-        ClassInfo ci= new ClassInfo(mem.getClass(classId), 0);
-        return ci;
-    }
-
-    @Override
-    public List<ClassInfoLight> getLightMetadata(Boolean includeListTypes) throws Exception
-    {
-        List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
-        List<ClassMetadataLight> classLightMetadata = mem.getLightMetadata(includeListTypes);
-
-        for (ClassMetadataLight classMetadataLight : classLightMetadata) {
-            ClassInfoLight cil =  new ClassInfoLight(classMetadataLight, 0);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
         }
-        return cml;
     }
 
     @Override
-    public List<ClassInfo> getMetadata(Boolean includeListTypes) throws Exception
+    public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) 
+            throws ServerSideException
     {
-        List<ClassInfo> cml = new ArrayList<ClassInfo>();
-        List<ClassMetadata> classMetadataList = mem.getMetadata(includeListTypes);
-        
-        for (ClassMetadata classMetadata : classMetadataList) {
-            ClassInfo ci =  new ClassInfo(classMetadata, 0);
-            cml.add(ci);
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            return mem.setClassIcon(classId, attributeName, iconImage);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
         }
-        return cml;
     }
 
     @Override
-    public boolean moveClass(String classToMoveName, String targetParentName) throws Exception{
-        return mem.moveClass(classToMoveName, targetParentName);
+    public boolean deleteClass(String className) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            return mem.deleteClass(className);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public boolean moveClass(Long classToMoveId, Long targetParentId) throws Exception{
-        return mem.moveClass(classToMoveId, targetParentId);
+    public boolean deleteClass(Long classId) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            return mem.deleteClass(classId);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public boolean addAttribute(String className, AttributeInfo attributeDefinition) throws Exception{
-
-        AttributeMetadata atm = new AttributeMetadata();
-
-        atm.setName(attributeDefinition.getName());
-        atm.setDisplayName(attributeDefinition.getDisplayName());
-        atm.setDescription(attributeDefinition.getDescription());
-        atm.setMapping(attributeDefinition.getMapping());
-        atm.setReadOnly(attributeDefinition.isReadOnly());
-        atm.setType(attributeDefinition.getType());
-        atm.setUnique(attributeDefinition.isUnique());
-        atm.setVisible(attributeDefinition.isVisible());
-        
-        return mem.addAttribute(className, atm);
+    public ClassInfo getMetadataForClass(String className) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            return new ClassInfo(mem.getClass(className), 0);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public boolean addAttribute(Long classId, AttributeInfo attributeDefinition) throws Exception{
-        AttributeMetadata atm = new AttributeMetadata();
+    public ClassInfo getMetadataForClass(Long classId) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            return new ClassInfo(mem.getClass(classId), 0);
 
-        atm.setName(attributeDefinition.getName());
-        atm.setDisplayName(attributeDefinition.getDisplayName());
-        atm.setDescription(attributeDefinition.getDescription());
-        atm.setMapping(attributeDefinition.getMapping());
-        atm.setReadOnly(attributeDefinition.isReadOnly());
-        atm.setType(attributeDefinition.getType());
-        atm.setUnique(attributeDefinition.isUnique());
-        atm.setVisible(attributeDefinition.isVisible());
-
-        return mem.addAttribute(classId, atm);
+         } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public boolean changeClassDefinition(ClassInfo newClassDefinition) throws Exception {
+    public List<ClassInfoLight> getLightMetadata(Boolean includeListTypes) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
+            List<ClassMetadataLight> classLightMetadata = mem.getLightMetadata(includeListTypes);
 
-        ClassMetadata cm = new ClassMetadata();
-
-        cm.setName(newClassDefinition.getClassName());
-        cm.setDisplayName(newClassDefinition.getDisplayName());
-        cm.setDescription(newClassDefinition.getDescription());
-        cm.setParentClassName(newClassDefinition.getParentClassName());
-        cm.setAbstractClass(newClassDefinition.getAbstractClass());
-        //TODO decode flags, set category
-        //cm.setCategory(classDefinition.getCategory());
-        cm.setColor(0);
-        cm.setCountable(false);
-        //cm.setCreationDate(null);
-        cm.setIcon(newClassDefinition.getIcon());
-        cm.setSmallIcon(newClassDefinition.getSmallIcon());
-        cm.setCustom(false);
-        cm.setDummy(false);
-        cm.setLocked(true);
-
-        return mem.changeClassDefinition(cm);
+            for (ClassMetadataLight classMetadataLight : classLightMetadata) {
+                ClassInfoLight cil =  new ClassInfoLight(classMetadataLight, 0);
+            }
+            return cml;
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public AttributeInfo getAttribute(String className, String attributeName) throws Exception {
-        AttributeMetadata atrbMtdt = mem.getAttribute(className, attributeName);
+    public List<ClassInfo> getMetadata(Boolean includeListTypes) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            List<ClassInfo> cml = new ArrayList<ClassInfo>();
+            List<ClassMetadata> classMetadataList = mem.getMetadata(includeListTypes);
 
-        AttributeInfo atrbInfo = new AttributeInfo(atrbMtdt.getName(),
-                                                   atrbMtdt.getDisplayName(),
-                                                   atrbMtdt.getType(),
-                                                   atrbMtdt.isAdministrative(),
-                                                   atrbMtdt.isVisible(),
-                                                   atrbMtdt.getDescription(),
-                                                   atrbMtdt.getMapping());
-        return atrbInfo;
+            for (ClassMetadata classMetadata : classMetadataList) {
+                ClassInfo ci =  new ClassInfo(classMetadata, 0);
+                cml.add(ci);
+            }
+            return cml;
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public AttributeInfo getAttribute(Long classId, String attributeName) throws Exception {
-        AttributeMetadata atrbMtdt = mem.getAttribute(classId, attributeName);
-
-        AttributeInfo atrbInfo = new AttributeInfo(atrbMtdt.getName(),
-                                                   atrbMtdt.getDisplayName(),
-                                                   atrbMtdt.getType(),
-                                                   atrbMtdt.isAdministrative(),
-                                                   atrbMtdt.isVisible(),
-                                                   atrbMtdt.getDescription(),
-                                                   atrbMtdt.getMapping());
-        return atrbInfo;
+    public boolean moveClass(String classToMoveName, String targetParentName) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            return mem.moveClass(classToMoveName, targetParentName);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public boolean changeAttributeDefinition(Long ClassId, AttributeInfo newAttributeDefinition) throws Exception {
-        AttributeMetadata attrMtdt = new AttributeMetadata();
-
-        attrMtdt.setName(newAttributeDefinition.getName());
-        attrMtdt.setDisplayName(newAttributeDefinition.getDisplayName());
-        attrMtdt.setDescription(newAttributeDefinition.getDescription());
-        attrMtdt.setType(newAttributeDefinition.getType());
-        attrMtdt.setMapping(newAttributeDefinition.getMapping());
-        attrMtdt.setAdministrative(newAttributeDefinition.isAdministrative());
-        attrMtdt.setUnique(newAttributeDefinition.isUnique());
-        attrMtdt.setVisible(newAttributeDefinition.isVisible());
-        attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
-
-        return mem.changeAttributeDefinition(ClassId, attrMtdt);
+    public boolean moveClass(Long classToMoveId, Long targetParentId) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            return mem.moveClass(classToMoveId, targetParentId);
+            
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public boolean deleteAttribute(String className, String attributeName) throws Exception {
-        return mem.deleteAttribute(className, attributeName);
+    public boolean addAttribute(String className, AttributeInfo attributeDefinition) 
+            throws ServerSideException
+    {
+
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            AttributeMetadata atm = new AttributeMetadata();
+
+            atm.setName(attributeDefinition.getName());
+            atm.setDisplayName(attributeDefinition.getDisplayName());
+            atm.setDescription(attributeDefinition.getDescription());
+            atm.setMapping(attributeDefinition.getMapping());
+            atm.setReadOnly(attributeDefinition.isReadOnly());
+            atm.setType(attributeDefinition.getType());
+            atm.setUnique(attributeDefinition.isUnique());
+            atm.setVisible(attributeDefinition.isVisible());
+
+            return mem.addAttribute(className, atm);
+
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public boolean deleteAttribute(Long classId, String attributeName) throws Exception {
-        return mem.deleteAttribute(classId, attributeName);
+    public boolean addAttribute(Long classId, AttributeInfo attributeDefinition) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            AttributeMetadata atm = new AttributeMetadata();
+
+            atm.setName(attributeDefinition.getName());
+            atm.setDisplayName(attributeDefinition.getDisplayName());
+            atm.setDescription(attributeDefinition.getDescription());
+            atm.setMapping(attributeDefinition.getMapping());
+            atm.setReadOnly(attributeDefinition.isReadOnly());
+            atm.setType(attributeDefinition.getType());
+            atm.setUnique(attributeDefinition.isUnique());
+            atm.setVisible(attributeDefinition.isVisible());
+
+            return mem.addAttribute(classId, atm);
+
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public Long createCategory(CategoryInfo categoryDefinition) throws Exception {
+    public boolean changeClassDefinition(ClassInfo newClassDefinition) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            ClassMetadata cm = new ClassMetadata();
 
-        CategoryMetadata ctgrMtdt = new CategoryMetadata();
+            cm.setName(newClassDefinition.getClassName());
+            cm.setDisplayName(newClassDefinition.getDisplayName());
+            cm.setDescription(newClassDefinition.getDescription());
+            cm.setParentClassName(newClassDefinition.getParentClassName());
+            cm.setAbstractClass(newClassDefinition.getAbstractClass());
+            //TODO decode flags, set category
+            //cm.setCategory(classDefinition.getCategory());
+            cm.setColor(0);
+            cm.setCountable(false);
+            //cm.setCreationDate(null);
+            cm.setIcon(newClassDefinition.getIcon());
+            cm.setSmallIcon(newClassDefinition.getSmallIcon());
+            cm.setCustom(false);
+            cm.setDummy(false);
+            cm.setLocked(true);
 
-        ctgrMtdt.setName(categoryDefinition.getName());
-        ctgrMtdt.setDisplayName(categoryDefinition.getDisplayName());
-        ctgrMtdt.setDescription(categoryDefinition.getDescription());
-        ctgrMtdt.setCreationDate(categoryDefinition.getCreationDate());
+            return mem.changeClassDefinition(cm);
 
-        return mem.createCategory(ctgrMtdt);
+         } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public CategoryInfo getCategory(String categoryName) throws Exception {
+    public AttributeInfo getAttribute(String className, String attributeName) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            AttributeMetadata atrbMtdt = mem.getAttribute(className, attributeName);
 
-        CategoryMetadata ctgrMtdt = new CategoryMetadata();
-        ctgrMtdt = mem.getCategory(categoryName);
-
-        CategoryInfo ctgrInfo = new CategoryInfo(ctgrMtdt.getName(),
-                                                 ctgrMtdt.getDisplayName(),
-                                                 ctgrMtdt.getDescription(),
-                                                 ctgrMtdt.getCreationDate());
-        return ctgrInfo;
+            AttributeInfo atrbInfo = new AttributeInfo(atrbMtdt.getName(),
+                                                       atrbMtdt.getDisplayName(),
+                                                       atrbMtdt.getType(),
+                                                       atrbMtdt.isAdministrative(),
+                                                       atrbMtdt.isVisible(),
+                                                       atrbMtdt.getDescription(),
+                                                       atrbMtdt.getMapping());
+            return atrbInfo;
+         } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public CategoryInfo getCategory(Integer categoryId) throws Exception {
-        CategoryMetadata ctgrMtdt = new CategoryMetadata();
-        ctgrMtdt = mem.getCategory(categoryId);
+    public AttributeInfo getAttribute(Long classId, String attributeName) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            AttributeMetadata atrbMtdt = mem.getAttribute(classId, attributeName);
 
-        CategoryInfo ctgrInfo = new CategoryInfo();
+            AttributeInfo atrbInfo = new AttributeInfo(atrbMtdt.getName(),
+                                                       atrbMtdt.getDisplayName(),
+                                                       atrbMtdt.getType(),
+                                                       atrbMtdt.isAdministrative(),
+                                                       atrbMtdt.isVisible(),
+                                                       atrbMtdt.getDescription(),
+                                                       atrbMtdt.getMapping());
+            return atrbInfo;
 
-        ctgrInfo.setName(ctgrMtdt.getName());
-        ctgrInfo.setDisplayName(ctgrMtdt.getDisplayName());
-        ctgrInfo.setDescription(ctgrMtdt.getDescription());
-        ctgrInfo.setCreationDate(ctgrMtdt.getCreationDate());
-
-        return ctgrInfo;
+         } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }
 
     @Override
-    public boolean changeCategoryDefinition(CategoryInfo categoryDefinition) throws Exception {
-        CategoryMetadata ctgrMtdt = new CategoryMetadata();
+    public boolean changeAttributeDefinition(Long ClassId, AttributeInfo newAttributeDefinition) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            AttributeMetadata attrMtdt = new AttributeMetadata();
 
-        ctgrMtdt.setName(categoryDefinition.getName());
-        ctgrMtdt.setDisplayName(categoryDefinition.getDisplayName());
-        ctgrMtdt.setDescription(categoryDefinition.getDescription());
-        ctgrMtdt.setCreationDate(categoryDefinition.getCreationDate());
+            attrMtdt.setName(newAttributeDefinition.getName());
+            attrMtdt.setDisplayName(newAttributeDefinition.getDisplayName());
+            attrMtdt.setDescription(newAttributeDefinition.getDescription());
+            attrMtdt.setType(newAttributeDefinition.getType());
+            attrMtdt.setMapping(newAttributeDefinition.getMapping());
+            attrMtdt.setAdministrative(newAttributeDefinition.isAdministrative());
+            attrMtdt.setUnique(newAttributeDefinition.isUnique());
+            attrMtdt.setVisible(newAttributeDefinition.isVisible());
+            attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
 
-        return mem.changeCategoryDefinition(ctgrMtdt);
+            return mem.changeAttributeDefinition(ClassId, attrMtdt);
+            
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public boolean deleteAttribute(String className, String attributeName) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            return mem.deleteAttribute(className, attributeName);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public boolean deleteAttribute(Long classId, String attributeName) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            return mem.deleteAttribute(classId, attributeName);
+
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public Long createCategory(CategoryInfo categoryDefinition) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            CategoryMetadata ctgrMtdt = new CategoryMetadata();
+
+            ctgrMtdt.setName(categoryDefinition.getName());
+            ctgrMtdt.setDisplayName(categoryDefinition.getDisplayName());
+            ctgrMtdt.setDescription(categoryDefinition.getDescription());
+            ctgrMtdt.setCreationDate(categoryDefinition.getCreationDate());
+
+            return mem.createCategory(ctgrMtdt);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public CategoryInfo getCategory(String categoryName) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            CategoryMetadata ctgrMtdt = new CategoryMetadata();
+            ctgrMtdt = mem.getCategory(categoryName);
+
+            CategoryInfo ctgrInfo = new CategoryInfo(ctgrMtdt.getName(),
+                                                     ctgrMtdt.getDisplayName(),
+                                                     ctgrMtdt.getDescription(),
+                                                     ctgrMtdt.getCreationDate());
+            return ctgrInfo;
+         } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public CategoryInfo getCategory(Integer categoryId) 
+            throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            CategoryMetadata ctgrMtdt = new CategoryMetadata();
+            ctgrMtdt = mem.getCategory(categoryId);
+
+            CategoryInfo ctgrInfo = new CategoryInfo();
+
+            ctgrInfo.setName(ctgrMtdt.getName());
+            ctgrInfo.setDisplayName(ctgrMtdt.getDisplayName());
+            ctgrInfo.setDescription(ctgrMtdt.getDescription());
+            ctgrInfo.setCreationDate(ctgrMtdt.getCreationDate());
+
+            return ctgrInfo;
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public boolean changeCategoryDefinition(CategoryInfo categoryDefinition)
+            throws ServerSideException
+    {
+        try{
+            assert mem == null : "Can't reach the Metadata Entity Manager";
+
+            CategoryMetadata ctgrMtdt = new CategoryMetadata();
+
+            ctgrMtdt.setName(categoryDefinition.getName());
+            ctgrMtdt.setDisplayName(categoryDefinition.getDisplayName());
+            ctgrMtdt.setDescription(categoryDefinition.getDescription());
+            ctgrMtdt.setCreationDate(categoryDefinition.getCreationDate());
+
+            return mem.changeCategoryDefinition(ctgrMtdt);
+
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
     }// </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
@@ -379,8 +572,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         if (!aSession.getIpAddress().equals(remoteAddress))
             throw new InvalidSessionException("This IP is not allowed to close the current session");
         sessions.remove(sessionId);
-    }
-// </editor-fold>
+    }// </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
     @Override
