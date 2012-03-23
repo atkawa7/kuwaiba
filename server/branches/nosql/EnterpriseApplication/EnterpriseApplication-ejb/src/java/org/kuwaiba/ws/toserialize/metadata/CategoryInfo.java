@@ -41,12 +41,15 @@ public class CategoryInfo {
      */
     private Long creationDate;
 
-    public CategoryInfo(String name, String displayName, String description, Long creationDate) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public CategoryInfo() {
     }
 
-    public CategoryInfo() {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public CategoryInfo(String name, String displayName, String description,
+                        Long creationDate) {
+        this.name = name;
+        this.displayName = displayName;
+        this.description = description;
+        this.creationDate = creationDate;
     }
 
     public Long getCreationDate() {
