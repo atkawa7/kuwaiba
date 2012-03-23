@@ -59,6 +59,24 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @throws RemoteException, Exception
      */
     public boolean deleteClass(Long classId) throws RemoteException, MetadataObjectNotFoundException;
+
+    /**
+     * Retrieves the simplified list of classes. This list won't include either
+     * those classes marked as dummy
+     * @param includeListTypes boolean to indicate if the list should include
+     * the subclasses of GenericObjectList
+     * @return the list of classes
+     * @throws Exception EntityManagerNotAvailableException or something unexpected
+     */
+    public List<ClassMetadataLight> getLightMetadata(Boolean includeListTypes) throws Exception;
+
+    /**
+     * Retrieves all the class metadata except for classes marked as dummy
+     * @param includeListTypes boolean to indicate if the list should include
+     * the subclasses of GenericObjectList
+     * @return An array of classes
+     */
+    public List<ClassMetadata> getMetadata(Boolean includeListTypes) throws Exception;
     /**
      * See Persistence Abstraction API documentation
      * @param className
@@ -89,6 +107,16 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @throws RemoteException, Exception
      */
     public boolean moveClass(Long classToMoveId, Long targetParentId) throws RemoteException, MetadataObjectNotFoundException;
+    
+    /**
+     * Set a class icon (big or small)
+     * @param classId
+     * @param attributeName
+     * @param iconImage
+     * @return
+     */
+    public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws Exception;
+    
     /**
      * See Persistence Abstraction API documentation
      * @param className
