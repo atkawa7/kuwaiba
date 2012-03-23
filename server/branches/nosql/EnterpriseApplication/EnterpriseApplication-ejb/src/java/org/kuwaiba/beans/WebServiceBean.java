@@ -19,13 +19,16 @@ package org.kuwaiba.beans;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.exceptions.InvalidSessionException;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -40,6 +43,7 @@ import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.metadata.CategoryInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
+import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
 
 /**
  * Session bean to implement the logic for webservice calls
@@ -111,6 +115,12 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
+    public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws Exception
+    {
+        return mem.setClassIcon(classId, attributeName, iconImage);
+    }
+
+    @Override
     public boolean deleteClass(String className) throws Exception
     {
         return mem.deleteClass(className);
@@ -124,15 +134,40 @@ public class WebServiceBean implements WebServiceBeanRemote {
     @Override
     public ClassInfo getMetadataForClass(String className) throws Exception
     {
-        ClassInfo ci= new ClassInfo(mem.getClass(className), 0, false);
+        ClassInfo ci= new ClassInfo(mem.getClass(className), 0);
         return ci;
     }
 
     @Override
     public ClassInfo getMetadataForClass(Long classId) throws Exception
     {
-        ClassInfo ci= new ClassInfo(mem.getClass(classId), 0, false);
+        ClassInfo ci= new ClassInfo(mem.getClass(classId), 0);
         return ci;
+    }
+
+    @Override
+    public List<ClassInfoLight> getLightMetadata(Boolean includeListTypes) throws Exception
+    {
+        List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
+        List<ClassMetadataLight> classLightMetadata = mem.getLightMetadata(includeListTypes);
+
+        for (ClassMetadataLight classMetadataLight : classLightMetadata) {
+            ClassInfoLight cil =  new ClassInfoLight(classMetadataLight, 0);
+        }
+        return cml;
+    }
+
+    @Override
+    public List<ClassInfo> getMetadata(Boolean includeListTypes) throws Exception
+    {
+        List<ClassInfo> cml = new ArrayList<ClassInfo>();
+        List<ClassMetadata> classMetadataList = mem.getMetadata(includeListTypes);
+        
+        for (ClassMetadata classMetadata : classMetadataList) {
+            ClassInfo ci =  new ClassInfo(classMetadata, 0);
+            cml.add(ci);
+        }
+        return cml;
     }
 
     @Override
@@ -276,13 +311,10 @@ public class WebServiceBean implements WebServiceBeanRemote {
         CategoryMetadata ctgrMtdt = new CategoryMetadata();
         ctgrMtdt = mem.getCategory(categoryName);
 
-        CategoryInfo ctgrInfo = new CategoryInfo();
-
-        ctgrInfo.setName(ctgrMtdt.getName());
-        ctgrInfo.setDisplayName(ctgrMtdt.getDisplayName());
-        ctgrInfo.setDescription(ctgrMtdt.getDescription());
-        ctgrInfo.setCreationDate(ctgrMtdt.getCreationDate());
-
+        CategoryInfo ctgrInfo = new CategoryInfo(ctgrMtdt.getName(),
+                                                 ctgrMtdt.getDisplayName(),
+                                                 ctgrMtdt.getDescription(),
+                                                 ctgrMtdt.getCreationDate());
         return ctgrInfo;
     }
 
