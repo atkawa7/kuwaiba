@@ -16,9 +16,11 @@
 
 package org.kuwaiba.apis.persistence.interfaces;
 
+import java.util.List;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 
 /**
  * Manages the metadata entities
@@ -59,6 +61,24 @@ public interface MetadataEntityManager {
      * @throws ClassNotFoundException if there is not a class with de ClassName
      */
     public boolean deleteClass(Long classId) throws Exception;
+    
+    /**
+     * Retrieves the simplified list of classes. This list won't include either
+     * those classes marked as dummy
+     * @param includeListTypes boolean to indicate if the list should include
+     * the subclasses of GenericObjectList
+     * @return the list of classes
+     * @throws Exception EntityManagerNotAvailableException or something unexpected
+     */
+    public List<ClassMetadataLight> getLightMetadata(Boolean includeListTypes) throws Exception;
+
+    /**
+     * Retrieves all the class metadata except for classes marked as dummy
+     * @param includeListTypes boolean to indicate if the list should include
+     * the subclasses of GenericObjectList
+     * @return An array of classes
+     */
+    public List<ClassMetadata> getMetadata(Boolean includeListTypes) throws Exception;
 
     /**
      * Gets a classmetadata, its attributes and Category
@@ -95,6 +115,15 @@ public interface MetadataEntityManager {
      * or if there is no a targetParentClass with such classId
      */
     public boolean moveClass(Long classToMoveId, Long targetParentId) throws Exception;
+
+    /**
+     * Set a class icon (big or small)
+     * @param classId
+     * @param attributeName
+     * @param iconImage
+     * @return
+     */
+    public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws Exception;
 
     /**
      * Adds an attribute to the class
