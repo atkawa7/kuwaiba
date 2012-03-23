@@ -261,7 +261,4 @@ public interface MetadataEntityManagerRemote extends Remote{
      */
     public boolean getInterface(Integer interfaceid) throws RemoteException, MetadataObjectNotFoundException;
 
-    public List<ClassMetadataLight> getLightMetadata(Boolean includeListTypes) throws RemoteException;
-
-    public List<ClassMetadata> getMetadata(Boolean includeListTypes) throws RemoteException;
 }
