@@ -42,10 +42,6 @@ public class ClassMetadata extends ClassMetadataLight{
      */
     private boolean dummy;
     /**
-     *  The parent ClassMetada name
-     */
-    private String parentClassName;
-    /**
      *
      */
     private List<InterfaceMetadata> interfaces;
@@ -58,10 +54,6 @@ public class ClassMetadata extends ClassMetadataLight{
      */
     private byte[] icon;
     /**
-     *  Icon to show in trees and lists
-     */
-    private byte[] smallIcon;
-    /**
      *  Is this class a list type (Vendor, LocationOwner, OpticalLinkType, etc)
      */
     private boolean listType;
@@ -69,10 +61,6 @@ public class ClassMetadata extends ClassMetadataLight{
      *  Classmetada's attributes
      */
     private List<AttributeMetadata> attributes;
-    /**
-     *  Classmetada's displayName
-     */
-    private String displayName;
     /**
      *  Classmetada's category
      */
@@ -135,22 +123,6 @@ public class ClassMetadata extends ClassMetadataLight{
         this.listType = listType;
     }
 
-    public String getParentClassName() {
-        return parentClassName;
-    }
-
-    public void setParentClassName(String parentClassName) {
-        this.parentClassName = parentClassName;
-    }
-
-    public byte[] getSmallIcon() {
-        return smallIcon;
-    }
-
-    public void setSmallIcon(byte[] smallIcon) {
-        this.smallIcon = smallIcon;
-    }
-
     public byte[] getIcon() {
         return icon;
     }
@@ -182,15 +154,7 @@ public class ClassMetadata extends ClassMetadataLight{
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
+    
     public Long getCreationDate() {
         return creationDate;
     }
