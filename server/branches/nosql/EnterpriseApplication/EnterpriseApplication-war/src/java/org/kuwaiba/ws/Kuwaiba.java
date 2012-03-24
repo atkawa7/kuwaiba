@@ -687,7 +687,89 @@ public class Kuwaiba {
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
-    }// </editor-fold>
+    }
+
+    @WebMethod(operationName = "getPossibleChildren")
+    public List<ClassInfoLight> getPossibleChildren(@WebParam(name = "parentClassName")
+    String parentClassName, @WebParam(name = "sessionId")
+    String sessionId) throws Exception {
+
+        try
+        {
+            return wsBean.getPossibleChildren(parentClassName);
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "getPossibleChildrenNoRecursive")
+    public List<ClassInfoLight> getPossibleChildrenNoRecursive(@WebParam(name = "parentClassName")
+    String parentClassName, @WebParam(name = "sessionId")
+    String sessionId) throws Exception {
+
+        try
+        {
+            return wsBean.getPossibleChildrenNoRecursive(parentClassName);
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    @WebMethod(operationName = "addPossibleChildren")
+    public boolean addPossibleChildren(@WebParam(name = "parentClassId")
+    Long parentClassId, @WebParam(name = "childrenToBeRemoved")
+    Long[] childrenToBeRemoved, @WebParam(name = "sessionId")
+    String sessionId) throws Exception {
+
+        try
+        {
+            return wsBean.addPossibleChildren(parentClassId, childrenToBeRemoved);
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "removePossibleChildren")
+    public boolean removePossibleChildren(@WebParam(name = "parentClassId")
+    Long parentClassId, @WebParam(name = "childrenToBeRemoved")
+    Long[] childrenToBeRemoved, @WebParam(name = "sessionId")
+    String sessionId) throws Exception {
+
+        try
+        {
+            return wsBean.removePossibleChildren(parentClassId, childrenToBeRemoved);
+            
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+
+
+    // </editor-fold>
 
     /**
      * Helpers
