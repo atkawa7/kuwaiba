@@ -1070,16 +1070,21 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         List<ClassMetadataLight> cml =  new ArrayList<ClassMetadataLight>();
         Transaction tx = graphDb.beginTx();
         try{
-            Node myClassNode =  classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
+            if(parentClassName == null){
+                return getPossibleChildren(DUMMY_ROOT);
+            }
+            else{
+                Node myClassNode =  classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
 
-            if(myClassNode == null)
-                throw new MetadataObjectNotFoundException(Util.formatString(
-                         "Can not find the Class with the name %1s", parentClassName));
+                if(myClassNode == null)
+                    throw new MetadataObjectNotFoundException(Util.formatString(
+                             "Can not find the Class with the name %1s", parentClassName));
 
-            Traverser classChildsTraverser = Util.possibleChildren(myClassNode);
-            for (Node childClassNode : classChildsTraverser) {
+                Traverser classChildsTraverser = Util.possibleChildren(myClassNode);
+                for (Node childClassNode : classChildsTraverser) {
 
-                cml.add(Util.createMetadataLightFromNode(childClassNode));
+                    cml.add(Util.createMetadataLightFromNode(childClassNode));
+                }
             }
 
          tx.success();
@@ -1097,20 +1102,25 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         List<ClassMetadataLight> cml =  new ArrayList<ClassMetadataLight>();
         Transaction tx = graphDb.beginTx();
         try{
-            Node myClassNode =  classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
+            if(parentClassName == null){
+                return getPossibleChildrenNoRecursive(DUMMY_ROOT);
+            }
+            else{
+                Node myClassNode =  classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
 
-            if(myClassNode == null)
-                throw new MetadataObjectNotFoundException(Util.formatString(
-                         "Can not find the Class with the name %1s", parentClassName));
-            
-            Iterable<Relationship> rels = myClassNode.getRelationships(RelTypes.EXTENDS, Direction.INCOMING);
+                if(myClassNode == null)
+                    throw new MetadataObjectNotFoundException(Util.formatString(
+                             "Can not find the Class with the name %1s", parentClassName));
 
-            for (Relationship rel : rels)
-            {
-                Node childClassNode = rel.getStartNode();
-                ClassMetadataLight clmdl = Util.createMetadataLightFromNode(childClassNode);
-                cml.add(clmdl);
-            }//end for
+                Iterable<Relationship> rels = myClassNode.getRelationships(RelTypes.EXTENDS, Direction.INCOMING);
+
+                for (Relationship rel : rels)
+                {
+                    Node childClassNode = rel.getStartNode();
+                    ClassMetadataLight clmdl = Util.createMetadataLightFromNode(childClassNode);
+                    cml.add(clmdl);
+                }//end for
+            }
 
             tx.success();
 
