@@ -25,15 +25,15 @@ import org.inventory.communications.core.LocalClassMetadataImpl;
 import org.inventory.communications.core.LocalClassMetadataLightImpl;
 import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.communications.core.LocalObjectLightImpl;
-import org.inventory.communications.core.LocalObjectListItemImpl;
-import org.inventory.communications.core.queries.LocalResultRecordImpl;
-import org.inventory.communications.core.LocalUserGroupObjectImpl;
-import org.inventory.communications.core.LocalUserObjectImpl;
-import org.inventory.communications.core.queries.LocalQueryImpl;
-import org.inventory.communications.core.queries.LocalQueryLightImpl;
-import org.inventory.communications.core.queries.LocalTransientQueryImpl;
-import org.inventory.communications.core.views.LocalObjectViewImpl;
-import org.inventory.core.services.factories.ObjectFactory;
+//import org.inventory.communications.core.LocalObjectListItemImpl;
+//import org.inventory.communications.core.queries.LocalResultRecordImpl;
+//import org.inventory.communications.core.LocalUserGroupObjectImpl;
+//import org.inventory.communications.core.LocalUserObjectImpl;
+//import org.inventory.communications.core.queries.LocalQueryImpl;
+//import org.inventory.communications.core.queries.LocalQueryLightImpl;
+//import org.inventory.communications.core.queries.LocalTransientQueryImpl;
+//import org.inventory.communications.core.views.LocalObjectViewImpl;
+//import org.inventory.core.services.factories.ObjectFactory;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.LocalObject;
@@ -140,15 +140,8 @@ public class CommunicationsStub {
     public LocalObjectLight[] getRootNodeChildren(){
         try{
             
-            if (cache.getMetaForClass("DummyRoot")==null){
-                cache.addMeta(
-                        new LocalClassMetadataImpl[]{new LocalClassMetadataImpl(
-                                                            port.getMetadataForClass("DummyRoot",this.session.getSessionId()))});
-
-            }
-
             List<RemoteObjectLight> result = port.getObjectChildren(null,
-                                                                    cache.getMetaForClass("DummyRoot").getOid(),
+                                                                    null,
                                                                     this.session.getSessionId());
             LocalObjectLightImpl[] children = new LocalObjectLightImpl[result.size()];
             int i = 0;
@@ -392,7 +385,7 @@ public class CommunicationsStub {
                 lm[i] = new LocalClassMetadataImpl(cm);
                 i++;
             }
-            cache.addMeta(lm); //wipe out the cache and write it again
+            cache.addMeta(lm); //Refresh the cache
             return lm;
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
@@ -666,17 +659,18 @@ public class CommunicationsStub {
      * @return success or failure
      */
     public LocalQueryLight createQuery(String queryName, byte[] queryStructure, String description, boolean isPublic){
-        try{
-            return new LocalQueryLightImpl(port.createQuery(queryName,
-                                                            isPublic ? null : session.getUserId(),
-                                                            queryStructure,
-                                                            description,
-                                                            session.getSessionId()
-                                                            ));
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return null;
-        }
+//        try{
+//            return new LocalQueryLightImpl(port.createQuery(queryName,
+//                                                            isPublic ? null : session.getUserId(),
+//                                                            queryStructure,
+//                                                            description,
+//                                                            session.getSessionId()
+//                                                            ));
+//        }catch(Exception ex){
+//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+//            return null;
+//        }
+        return null;
     }
 
     /**

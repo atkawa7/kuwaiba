@@ -32,20 +32,20 @@ public class LocalAttributeMetadataImpl
     private Class type;
     private String displayName;
     private Boolean isVisible;
-    private Boolean isMultiple;
+    private Integer mapping;
     private String description;
 
     private String listAttributeClassName = null;
 
     public LocalAttributeMetadataImpl(){}
     public LocalAttributeMetadataImpl(Long oid, String _name, String _type, String _displayName,
-            Boolean _isVisible, Boolean _isMultiple, String _description){
+            Boolean _isVisible, Integer mapping, String _description){
         this.id = oid;
         this.name = _name;
         this.type = Utils.getRealType(_type);
         this.displayName = _displayName;
         this.isVisible = _isVisible;
-        this.isMultiple = _isMultiple;
+        this.mapping = mapping;
         this.description = _description;
 
         if (this.type.equals(LocalObjectLight.class))
@@ -107,8 +107,8 @@ public class LocalAttributeMetadataImpl
         this.id =_id;
     }
 
-    public Boolean isMultiple() {
-        return this.isMultiple;
+    public Integer getMapping() {
+        return mapping;
     }
 
     @Override

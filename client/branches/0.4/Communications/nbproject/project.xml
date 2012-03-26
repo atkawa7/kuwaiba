@@ -65,6 +65,7 @@
             </module-dependencies>
             <public-packages>
                 <package>org.inventory.communications</package>
+                <package>org.inventory.communications.core.util</package>
             </public-packages>
         </data>
     </configuration>

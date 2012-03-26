@@ -22,7 +22,7 @@ import org.inventory.communications.core.LocalAttributeWrapperImpl;
 import org.inventory.communications.core.LocalClassWrapperImpl;
 import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.communications.core.LocalObjectLightImpl;
-import org.inventory.communications.core.queries.LocalTransientQueryImpl;
+//import org.inventory.communications.core.queries.LocalTransientQueryImpl;
 import org.inventory.communications.core.views.LocalEdgeImpl;
 import org.inventory.communications.core.views.LocalNodeImpl;
 import org.inventory.communications.core.views.LocalObjectViewImpl;
@@ -59,11 +59,13 @@ public class LocalStuffFactory {
     }
 
     public static LocalTransientQuery createLocalTransientQuery(LocalQuery localQuery) throws XMLStreamException {
-        return new LocalTransientQueryImpl(localQuery);
+        //return new LocalTransientQueryImpl(localQuery);
+        return null;
     }
 
     public static LocalTransientQuery createLocalTransientQuery(String nodeName, int logicalConnector, boolean isJoin, int limit, int page) {
-        return new LocalTransientQueryImpl(nodeName, logicalConnector, isJoin, limit, page);
+        //return new LocalTransientQueryImpl(nodeName, logicalConnector, isJoin, limit, page);
+        return null;
     }
 
     public static LocalEdge createLocalEdge(LocalObject toAdd, LocalNode nodeA, LocalNode nodeB, Point[] controlPoints) {

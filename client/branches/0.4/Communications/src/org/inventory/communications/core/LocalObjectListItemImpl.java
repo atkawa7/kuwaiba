@@ -25,8 +25,8 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ServiceProvider(service=LocalObjectListItem.class)
 public class LocalObjectListItemImpl extends LocalObjectLightImpl implements LocalObjectListItem{
-    private String name;
 
+    String displayName;
 
     public LocalObjectListItemImpl(){
         oid = LocalObjectListItem.NULL_ID;
@@ -35,7 +35,7 @@ public class LocalObjectListItemImpl extends LocalObjectLightImpl implements Loc
     public LocalObjectListItemImpl(LocalObjectLight lol){
         this.oid = lol.getOid();
         this.className = lol.getClassName();
-        this.name = lol.getDisplayname();
+        this.name = lol.getName();
     }
 
     /**
@@ -45,11 +45,11 @@ public class LocalObjectListItemImpl extends LocalObjectLightImpl implements Loc
      * @param _name
      * @param _displayName
      */
-    public LocalObjectListItemImpl(Long _id, String _className,String _name, String _displayName){
-        this.oid = _id;
-        this.className = _className;
-        this.name = _name;
-        this.displayName = _displayName;
+    public LocalObjectListItemImpl(Long id, String className,String name, String displayName){
+        this.oid = id;
+        this.className = className;
+        this.name = name;
+        this.displayName = displayName;
     }
 
     public Long getId() {
@@ -60,12 +60,12 @@ public class LocalObjectListItemImpl extends LocalObjectLightImpl implements Loc
         this.oid = id;
     }
 
-    public String getName() {
-        return name;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     @Override
