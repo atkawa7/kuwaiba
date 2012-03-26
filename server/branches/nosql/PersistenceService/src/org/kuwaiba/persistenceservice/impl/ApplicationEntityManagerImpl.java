@@ -23,19 +23,22 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.interfaces.ApplicationEntityManager;
+import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.persistenceservice.caching.CacheManager;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.kuwaiba.persistenceservice.util.Util;
+import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 /**
  * Application Entity Manager reference implementation
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ApplicationEntityManagerImpl implements ApplicationEntityManager{
+public class ApplicationEntityManagerImpl implements ApplicationEntityManager, ApplicationEntityManagerRemote{
 
     /**
      * Index name for user nodes
@@ -58,8 +61,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager{
      */
     private Index<Node> groupIndex;
 
-    public ApplicationEntityManagerImpl(GraphDatabaseService graphDb) {
-        this.graphDb = graphDb;
+    public ApplicationEntityManagerImpl(ConnectionManager cmn) {
+        this.graphDb = (EmbeddedGraphDatabase)cmn.getConnectionHandler();
         this.userIndex = graphDb.index().forNodes(INDEX_USER);
         this.groupIndex = graphDb.index().forNodes(INDEX_GROUP);
     }

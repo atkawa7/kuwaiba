@@ -21,8 +21,10 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.persistence.factory.PersistenceLayerFactory;
+import org.kuwaiba.persistenceservice.impl.ApplicationEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.BusinessEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
+import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
 
@@ -44,11 +46,13 @@ public class Main {
             final ConnectionManager cm = plf.createConnectionManager();
             cm.openConnection();
             MetadataEntityManagerRemote meri = new MetadataEntityManagerImpl(cm);
-            
             MetadataEntityManagerRemote memStub = (MetadataEntityManagerRemote)UnicastRemoteObject.exportObject(meri,0);
 
             BusinessEntityManagerRemote bemri = new BusinessEntityManagerImpl(cm);
             BusinessEntityManagerRemote bemStub = (BusinessEntityManagerRemote)UnicastRemoteObject.exportObject(bemri,0);
+
+            ApplicationEntityManagerRemote aemri = new ApplicationEntityManagerImpl(cm);
+            ApplicationEntityManagerRemote aemStub = (ApplicationEntityManagerRemote)UnicastRemoteObject.exportObject(aemri,0);
 
             System.out.println("Starting...");
 
@@ -57,6 +61,7 @@ public class Main {
 
             registry.rebind(MetadataEntityManagerRemote.REFERENCE_MEM, memStub);
             registry.rebind(BusinessEntityManagerRemote.REFERENCE_BEM, bemStub);
+            registry.rebind(ApplicationEntityManagerRemote.REFERENCE_AEM, aemStub);
             System.out.println("Remote Interface bound");
 
             Runtime.getRuntime().addShutdownHook(new Thread() {

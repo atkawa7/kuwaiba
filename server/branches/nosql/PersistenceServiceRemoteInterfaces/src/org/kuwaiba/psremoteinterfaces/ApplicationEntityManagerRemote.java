@@ -16,6 +16,7 @@
 
 package org.kuwaiba.psremoteinterfaces;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.UserProfile;
@@ -26,7 +27,7 @@ import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
  * RMI wrapper for the ApplicationEntityManager interface
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface ApplicationEntityManagerRemote {
+public interface ApplicationEntityManagerRemote extends Remote{
     public static final String REFERENCE_AEM = "aem";
     /**
      * Verifies if a pair username/password matches
