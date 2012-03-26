@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.inventory.communications.core.util;
+package org.inventory.core.services.utils;
 
 /**
  * Misc constants

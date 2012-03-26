@@ -31,7 +31,11 @@ public interface LocalClassMetadataLight extends Transferable{
     public Boolean isAbstract();
     public Long getOid();
     public Image getSmallIcon();
-    public Boolean isPhysicalNode();
-    public Boolean isPhysicalEndpoint();
+    /**
+     * Retrieves the value of a given validator
+     * @param validatorName validator's name
+     * @return value for the given validator. false if the validator is not present
+     */
+    public boolean getValidator(String validatorName);
     public Boolean isViewable();
 }

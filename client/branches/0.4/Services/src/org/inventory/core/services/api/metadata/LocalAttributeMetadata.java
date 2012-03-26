@@ -27,7 +27,7 @@ public interface LocalAttributeMetadata {
     public String getDisplayName();
     public void setDisplayName(String displayName);
     public Boolean isVisible();
-    public Boolean isMultiple();
+    public Integer getMapping();
     public void setVisible(Boolean isVisible);
     public String getName();
     public void setName(String name);

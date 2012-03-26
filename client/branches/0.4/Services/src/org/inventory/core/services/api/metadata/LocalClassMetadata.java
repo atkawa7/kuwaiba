@@ -27,8 +27,7 @@ public interface LocalClassMetadata extends LocalClassMetadataLight{
     public String getDescription();
     public String getDescriptionForAttribute(String att);
     public Boolean isVisible(String att);
-    public Boolean isMultiple(String att);
+    public Integer getMappingFor(String att);
     public String getTypeForAttribute(String att);
     public Image getIcon();
-    public LocalClassMetadataLight getLightMetadata();
 }
