@@ -58,6 +58,11 @@ public class ClassMetadataLight implements Serializable{
      *  Icon to show in trees and lists
      */
     private byte[] smallIcon;
+    /**
+     * Set of flags to be used by upper layers to indicate certain conditions. E.g., if the instances of such class can be ignored given a business condition
+     * they're separate, because each value depends on the business
+     */
+    private Long validators;
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public Long getId() {
@@ -139,6 +144,14 @@ public class ClassMetadataLight implements Serializable{
 
     public void setSmallIcon(byte[] smallIcon) {
         this.smallIcon = smallIcon;
+    }
+
+    public Long getValidators() {
+        return validators;
+    }
+
+    public void setValidators(Long validators) {
+        this.validators = validators;
     }
     // </editor-fold>
 }

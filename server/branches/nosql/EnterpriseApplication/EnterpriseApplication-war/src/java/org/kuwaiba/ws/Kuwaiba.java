@@ -16,7 +16,6 @@
 
 package org.kuwaiba.ws;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -242,8 +241,7 @@ public class Kuwaiba {
     public RemoteObjectLight getObjectInfoLight(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") Long oid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
-        if (oid == null)
-                throw new ServerSideException(Level.WARNING, "Object id can't be null");
+        assert oid == null : "Object id can't be null";
 
         try{
             //sbr.validateCall("getObjectInfoLight", getIPAddress(), sessionId);

@@ -170,7 +170,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         assert mem == null : "Can't reach the Metadata Entity Manager";
         try
         {
-            return new ClassInfo(mem.getClass(className), 0);
+            return new ClassInfo(mem.getClass(className), new Long(0));
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
@@ -184,7 +184,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         assert mem == null : "Can't reach the Metadata Entity Manager";
         try
         {
-            return new ClassInfo(mem.getClass(classId), 0);
+            return new ClassInfo(mem.getClass(classId), mem.get);
 
          } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -751,22 +751,6 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }// </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Returns the singleton for the Metadata Entity Manager
-     * @return the MEM unique instance
-     */
-    private MetadataEntityManagerRemote getMEMInstance(){
-        try{
-            if (mem == null) {
-                Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-                mem = (MetadataEntityManagerRemote) registry.lookup(MetadataEntityManagerRemote.REFERENCE_MEM);
-            }
-        }
-        catch(Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE,
-                    ex.getClass().getSimpleName()+": {0}",ex.getMessage()); //NOI18N
-            mem = null;
-        }
-        return mem;
-    }// </editor-fold>
+
+    // </editor-fold>
 }

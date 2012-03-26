@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
  * This is a wrapper class for ClassMetadata, containing the info required for the clients
  * to render the object attributes in the right way
  *
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ClassInfo extends ClassInfoLight{
@@ -67,8 +67,8 @@ public class ClassInfo extends ClassInfoLight{
     protected String description;
 
     public ClassInfo(){}
-    public ClassInfo(ClassMetadata myClass, int flags){
-        super (myClass, flags);
+    public ClassInfo(ClassMetadata myClass, Long validators){
+        super (myClass, validators);
         this.abstractClass = myClass.isAbstractClass();
         this.icon = myClass.getIcon();
         List<AttributeMetadata> ar = myClass.getAttributes();

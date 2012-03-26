@@ -1,5 +1,5 @@
-/*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+/**
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,16 +22,13 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 /**
  * Same as ClassInfo, but lighter, since it's intended to provide the information to
  * render a node in a view (usually a tree) at client side.
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ClassInfoLight {
     protected Long id;
     protected Boolean abstractClass;
-//    protected Boolean physicalNode;
-//    protected Boolean physicalConnection;
-//    protected Boolean physicalEndpoint;
-    protected int flags;
+    protected Long validators;
     protected Boolean viewable;
     protected String className;
     protected String displayName;
@@ -43,25 +40,22 @@ public class ClassInfoLight {
 
     public ClassInfoLight(){}
 
-    public ClassInfoLight(ClassMetadataLight myClassLight, int flags) {
+    public ClassInfoLight(ClassMetadataLight myClassLight, Long validators) {
         this.id = myClassLight.getId();
         this.className = myClassLight.getName();
         this.parentClassName = myClassLight.getParentClassName();
         this.smallIcon = myClassLight.getSmallIcon();
         this.abstractClass = myClassLight.isAbstractClass();
         this.displayName = myClassLight.getDisplayName();
-        this.flags = flags;
+        this.validators = validators;
         this.viewable = myClassLight.isViewable();
     }
 
-    public ClassInfoLight(Long id, String name, String displayName,int flags, boolean isViewable,
+    public ClassInfoLight(Long id, String name, String displayName,Long validators, boolean isViewable,
             boolean isAbstract, byte[] smallIcon) {
         this.id = id;
         this.abstractClass = isAbstract;
-//        this.physicalNode = isPhysicalNode;
-//        this.physicalConnection = isPhysicalConnection;
-//        this.physicalEndpoint = isPhysicalEndpoint;
-        this.flags = flags;
+        this.validators = validators;
         this.viewable = isViewable;
         this.className = name;
         this.displayName = displayName;
@@ -116,12 +110,12 @@ public class ClassInfoLight {
         this.abstractClass = abstractClass;
     }
 
-    public int getFlags() {
-        return flags;
+    public Long getFlags() {
+        return validators;
     }
 
-    public void setFlags(int flags) {
-        this.flags = flags;
+    public void setFlags(Long validators) {
+        this.validators = validators;
     }
 
     public String getParentClassName() {
