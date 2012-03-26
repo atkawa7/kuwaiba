@@ -18,10 +18,7 @@ package org.inventory.communications;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.inventory.communications.core.LocalClassMetadataImpl;
@@ -207,9 +204,8 @@ public class CommunicationsStub {
      *
      * @param obj is the object to be updated. Note that this object doesn't have
      *            every field within the "original". it only has field(s) to be updated
-     * @return success or failure
      */
-    public void saveObject(LocalObject obj){
+    public boolean saveObject(LocalObject obj){
 
         try{
             List<String> attributeNames = new ArrayList<String>();
@@ -223,8 +219,10 @@ public class CommunicationsStub {
             LocalClassMetadata lcmd = getMetaForClass(obj.getClassName(), false);
 
             port.updateObject(obj.getClassName(),obj.getOid(), attributeNames, attributeValues, this.session.getSessionId());
+            return true;
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return false;
         }
     }
 

@@ -404,7 +404,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
             update.setLocalObject(object.getClassName(),
                     new String[]{"name"}, new Object[]{newName}); //NOI18N
             update.setOid(object.getOid());
-            if (com.saveObject(update) != null){
+            if (com.saveObject(update)){
                 object.setDisplayName(newName);
                 fireDisplayNameChange(object.getDisplayname(), newName);
                 

@@ -7,14 +7,20 @@
 <xsd:import namespace="http://jaxb.dev.java.net/array" schemaLocation="http://localhost:8080/EnterpriseApplication-war/KuwaibaService?xsd=2"/>
 </xsd:schema>
 </types>
+<message name="getMetadata">
+<part name="parameters" element="tns:getMetadata"/>
+</message>
+<message name="getMetadataResponse">
+<part name="parameters" element="tns:getMetadataResponse"/>
+</message>
+<message name="Exception">
+<part name="fault" element="tns:Exception"/>
+</message>
 <message name="createSession">
 <part name="parameters" element="tns:createSession"/>
 </message>
 <message name="createSessionResponse">
 <part name="parameters" element="tns:createSessionResponse"/>
-</message>
-<message name="Exception">
-<part name="fault" element="tns:Exception"/>
 </message>
 <message name="createObject">
 <part name="parameters" element="tns:createObject"/>
@@ -22,11 +28,23 @@
 <message name="createObjectResponse">
 <part name="parameters" element="tns:createObjectResponse"/>
 </message>
+<message name="setClassIcon">
+<part name="parameters" element="tns:setClassIcon"/>
+</message>
+<message name="setClassIconResponse">
+<part name="parameters" element="tns:setClassIconResponse"/>
+</message>
 <message name="getMetadataForClass">
 <part name="parameters" element="tns:getMetadataForClass"/>
 </message>
 <message name="getMetadataForClassResponse">
 <part name="parameters" element="tns:getMetadataForClassResponse"/>
+</message>
+<message name="getLightMetadata">
+<part name="parameters" element="tns:getLightMetadata"/>
+</message>
+<message name="getLightMetadataResponse">
+<part name="parameters" element="tns:getLightMetadataResponse"/>
 </message>
 <message name="closeSession">
 <part name="parameters" element="tns:closeSession"/>
@@ -119,6 +137,11 @@
 <part name="parameters" element="tns:deleteClassByIdResponse"/>
 </message>
 <portType name="Kuwaiba">
+<operation name="getMetadata">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadataRequest" message="tns:getMetadata"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadataResponse" message="tns:getMetadataResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadata/Fault/Exception"/>
+</operation>
 <operation name="createSession">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSessionRequest" message="tns:createSession"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSessionResponse" message="tns:createSessionResponse"/>
@@ -129,10 +152,20 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectResponse" message="tns:createObjectResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObject/Fault/Exception"/>
 </operation>
+<operation name="setClassIcon">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassIconRequest" message="tns:setClassIcon"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassIconResponse" message="tns:setClassIconResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassIcon/Fault/Exception"/>
+</operation>
 <operation name="getMetadataForClass">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadataForClassRequest" message="tns:getMetadataForClass"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadataForClassResponse" message="tns:getMetadataForClassResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadataForClass/Fault/Exception"/>
+</operation>
+<operation name="getLightMetadata">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightMetadataRequest" message="tns:getLightMetadata"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightMetadataResponse" message="tns:getLightMetadataResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightMetadata/Fault/Exception"/>
 </operation>
 <operation name="closeSession">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/closeSessionRequest" message="tns:closeSession"/>
@@ -212,6 +245,18 @@
 </portType>
 <binding name="KuwaibaPortBinding" type="tns:Kuwaiba">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<operation name="getMetadata">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="createSession">
 <soap:operation soapAction=""/>
 <input>
@@ -236,7 +281,31 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="setClassIcon">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="getMetadataForClass">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getLightMetadata">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

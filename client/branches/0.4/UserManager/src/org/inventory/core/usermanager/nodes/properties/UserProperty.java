@@ -51,12 +51,13 @@ public class UserProperty extends ReadWrite{
      */
     private PasswordEditorSupport pes = null;
 
-    public UserProperty(String _name,String _displayName,String _toolTextTip,Object _value, LocalUserObject _user){
-        super(_name,_value.getClass(),_displayName,_toolTextTip);
-        this.object = _user;
-        this.value = _value;
+    public UserProperty(String name,String displayName,String toolTextTip,
+            Object value, LocalUserObject user){
+        super(name, value.getClass(),displayName, toolTextTip);
+        this.object = user;
+        this.value = value;
         this.com = CommunicationsStub.getInstance();
-        if (_name.equals(UserNode.PROP_PASSWORD) || _name.equals(UserNode.PROP_GROUPS))
+        if (name.equals(UserNode.PROP_PASSWORD) || name.equals(UserNode.PROP_GROUPS))
             this.setValue("canEditAsText", Boolean.FALSE);
     }
 
@@ -113,7 +114,7 @@ public class UserProperty extends ReadWrite{
         update.setLocalObject("User", //NOI18N
                 new String[]{UserNode.PROP_PASSWORD}, new Object[]{Utils.getMD5Hash(passwd)}); //NOI18N
         update.setOid(this.object.getOid());
-        if(com.saveObject(update) == null){
+        if(!com.saveObject(update)){
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             nu.showSimplePopup("User Update", NotificationUtil.ERROR, com.getError());
         }

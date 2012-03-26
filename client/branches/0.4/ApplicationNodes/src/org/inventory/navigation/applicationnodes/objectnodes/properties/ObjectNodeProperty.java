@@ -87,7 +87,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
                 update.setLocalObject(node.getObject().getClassName(),
                     new String[]{this.getName()}, new Object[]{t});
             update.setOid(node.getObject().getOid());
-            if(CommunicationsStub.getInstance().saveObject(update) == null)
+            if(!CommunicationsStub.getInstance().saveObject(update))
                 throw new Exception("[saveObject]: Error "+ CommunicationsStub.getInstance().getError());
             else
                 value = t;

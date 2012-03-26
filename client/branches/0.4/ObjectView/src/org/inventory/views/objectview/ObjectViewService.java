@@ -129,7 +129,7 @@ public class ObjectViewService implements LookupListener{
        LocalObjectView defaultView = com.getObjectDefaultView(myObject.getOid(),myObject.getClassName());
        if(defaultView == null){
            List<LocalObjectLight> myChildren = com.getObjectChildren(myObject.getOid(), com.getMetaForClass(myObject.getClassName(),false).getOid());
-           List<LocalObject> myConnections = com.getChildrenOfClass(myObject.getOid(), SharedInformation.CLASS_GENERICCONNECTION);
+           List<LocalObject> myConnections = com.getChildrenOfClass(myObject.getOid(),myObject.getClassName(), SharedInformation.CLASS_GENERICCONNECTION);
            //TODO: Change for a ViewFactory
            viewBuilder = new ViewBuilder(null, vrtc.getScene());
            viewBuilder.buildDefaultView(myChildren, myConnections);
@@ -205,7 +205,7 @@ public class ObjectViewService implements LookupListener{
         List<LocalObjectLight> childrenNodes = com.getObjectChildren(vrtc.getScene().getCurrentObject().getOid(),
                 com.getMetaForClass(vrtc.getScene().getCurrentObject().getClassName(), false).getOid());
         List<LocalObject> childrenEdges = com.getChildrenOfClass(vrtc.getScene().getCurrentObject().getOid(),
-                SharedInformation.CLASS_GENERICCONNECTION);
+                vrtc.getScene().getCurrentObject().getClassName(),SharedInformation.CLASS_GENERICCONNECTION);
         
         List<LocalObjectLight> currentNodes = new ArrayList<LocalObjectLight>();
         List<LocalObject> currentEdges = new ArrayList<LocalObject>();
