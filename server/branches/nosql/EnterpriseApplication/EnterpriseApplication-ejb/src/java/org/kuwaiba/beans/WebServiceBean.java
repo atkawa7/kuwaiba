@@ -38,6 +38,7 @@ import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.ws.toserialize.application.Validator;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.metadata.CategoryInfo;
@@ -170,7 +171,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         assert mem == null : "Can't reach the Metadata Entity Manager";
         try
         {
-            return new ClassInfo(mem.getClass(className), new Long(0));
+            return new ClassInfo(mem.getClass(className), new Validator[0]);
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
@@ -184,7 +185,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         assert mem == null : "Can't reach the Metadata Entity Manager";
         try
         {
-            return new ClassInfo(mem.getClass(classId), mem.get);
+            return new ClassInfo(mem.getClass(classId), new Validator[0]);
 
          } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -203,7 +204,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             List<ClassMetadataLight> classLightMetadata = mem.getLightMetadata(includeListTypes);
 
             for (ClassMetadataLight classMetadataLight : classLightMetadata) {
-                ClassInfoLight cil =  new ClassInfoLight(classMetadataLight, 0);
+                ClassInfoLight cil =  new ClassInfoLight(classMetadataLight, new Validator[0]);
             }
             return cml;
         } catch (Exception ex) {
@@ -223,7 +224,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             List<ClassMetadata> classMetadataList = mem.getMetadata(includeListTypes);
 
             for (ClassMetadata classMetadata : classMetadataList) {
-                ClassInfo ci =  new ClassInfo(classMetadata, 0);
+                ClassInfo ci =  new ClassInfo(classMetadata, new Validator[0]);
                 cml.add(ci);
             }
             return cml;
@@ -549,7 +550,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             List<ClassMetadataLight> classMetadataList = mem.getPossibleChildren(parentClassName);
 
             for (ClassMetadataLight clMtLg : classMetadataList) {
-                ClassInfoLight ci =  new ClassInfoLight(clMtLg, 0);
+                ClassInfoLight ci =  new ClassInfoLight(clMtLg, new Validator[0]);
                 cml.add(ci);
             }
             return cml;
@@ -570,7 +571,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             List<ClassMetadataLight> classMetadataList = mem.getPossibleChildrenNoRecursive(parentClassName);
 
             for (ClassMetadataLight clMtLg : classMetadataList) {
-                ClassInfoLight ci =  new ClassInfoLight(clMtLg, 0);
+                ClassInfoLight ci =  new ClassInfoLight(clMtLg, new Validator[0]);
                 cml.add(ci);
             }
             return cml;

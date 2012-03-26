@@ -18,6 +18,7 @@ package org.kuwaiba.ws.toserialize.metadata;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
+import org.kuwaiba.ws.toserialize.application.Validator;
 
 /**
  * Same as ClassInfo, but lighter, since it's intended to provide the information to
@@ -28,7 +29,7 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 public class ClassInfoLight {
     protected Long id;
     protected Boolean abstractClass;
-    protected Long validators;
+    protected Validator[] validators;
     protected Boolean viewable;
     protected String className;
     protected String displayName;
@@ -40,7 +41,7 @@ public class ClassInfoLight {
 
     public ClassInfoLight(){}
 
-    public ClassInfoLight(ClassMetadataLight myClassLight, Long validators) {
+    public ClassInfoLight(ClassMetadataLight myClassLight, Validator[] validators) {
         this.id = myClassLight.getId();
         this.className = myClassLight.getName();
         this.parentClassName = myClassLight.getParentClassName();
@@ -51,7 +52,7 @@ public class ClassInfoLight {
         this.viewable = myClassLight.isViewable();
     }
 
-    public ClassInfoLight(Long id, String name, String displayName,Long validators, boolean isViewable,
+    public ClassInfoLight(Long id, String name, String displayName,Validator[] validators, boolean isViewable,
             boolean isAbstract, byte[] smallIcon) {
         this.id = id;
         this.abstractClass = isAbstract;
@@ -110,14 +111,6 @@ public class ClassInfoLight {
         this.abstractClass = abstractClass;
     }
 
-    public Long getFlags() {
-        return validators;
-    }
-
-    public void setFlags(Long validators) {
-        this.validators = validators;
-    }
-
     public String getParentClassName() {
         return parentClassName;
     }
@@ -132,6 +125,14 @@ public class ClassInfoLight {
 
     public void setViewable(Boolean viewable) {
         this.viewable = viewable;
+    }
+
+    public Validator[] getValidators() {
+        return validators;
+    }
+
+    public void setValidators(Validator[] validators) {
+        this.validators = validators;
     }
 
     @Override

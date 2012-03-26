@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
+import org.kuwaiba.ws.toserialize.application.Validator;
 
 /**
  * This is a wrapper class for ClassMetadata, containing the info required for the clients
@@ -67,7 +68,7 @@ public class ClassInfo extends ClassInfoLight{
     protected String description;
 
     public ClassInfo(){}
-    public ClassInfo(ClassMetadata myClass, Long validators){
+    public ClassInfo(ClassMetadata myClass, Validator[] validators){
         super (myClass, validators);
         this.abstractClass = myClass.isAbstractClass();
         this.icon = myClass.getIcon();

@@ -14,12 +14,24 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.persistenceservice.util;
+package org.kuwaiba.util;
 
 /**
  * Misc constants
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class Constants {
-    public static long
+    /**
+     * Name of the validator to indicate if a given class is a connection
+     */
+    public static String IS_PHYSICAL_CONNECTION_VALIDATOR = "physicalConnection";
+    /**
+     * Name of the validator to indicate if a given class is the endpoint to a connection
+     */
+    public static String IS_PHYSICAL_NODE_VALIDATOR = "physicalNode";
+    /**
+     * Name of the validator to indicate if a given class is the endpoint to a link
+     */
+    public static String IS_PHYSICAL_ENDPOINT_VALIDATOR = "physicalEndpoint";
+
 }

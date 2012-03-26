@@ -175,9 +175,9 @@ public class Kuwaiba {
         }
     }
 
-        /**
+     /**
      * Gets all children of an object of a given class
-     * @param parentOid Object oid whose cho
+     * @param parentOid Object oid whose children will be returned
      * @param childrenClass
      * @return An array with children
      * @throws An general exception in case of error. Consumer of this method must check the message for details
@@ -323,8 +323,7 @@ public class Kuwaiba {
     public Long createClassMetadata(@WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "description")
-        String description, @WebParam(name = "flags")
-        Integer flags, @WebParam(name = "abstractClass")
+        String description, @WebParam(name = "abstractClass")
         Boolean abstractClass, @WebParam(name = "parentClassName")
         String parentClassName, @WebParam(name = "icon")
         byte[] icon, @WebParam(name = "smallIcon")
@@ -337,7 +336,6 @@ public class Kuwaiba {
             ci.setClassName(name);
             ci.setDisplayName(displayName);
             ci.setDescription(description);
-            ci.setFlags(flags);
             ci.setIcon(icon);
             ci.setSmallIcon(smallIcon);
             ci.setParentClassName(parentClassName);
@@ -372,8 +370,7 @@ public class Kuwaiba {
     public Boolean changeClassMetadataDefinition(@WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "description")
-        String description, @WebParam(name = "flags")
-        Integer flags, @WebParam(name = "abstractClass")
+        String description, @WebParam(name = "abstractClass")
         Boolean abstractClass, @WebParam(name = "parentClassName")
         String parentClassName, @WebParam(name = "icon")
         byte[] icon, @WebParam(name = "smallIcon")
@@ -386,7 +383,6 @@ public class Kuwaiba {
             ci.setClassName(name);
             ci.setDisplayName(displayName);
             ci.setDescription(description);
-            ci.setFlags(flags);
             ci.setIcon(icon);
             ci.setSmallIcon(smallIcon);
             ci.setParentClassName(parentClassName);

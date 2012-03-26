@@ -42,7 +42,7 @@ public class ClassMetadata extends ClassMetadataLight{
      */
     private boolean dummy;
     /**
-     *
+     * List of interfaces this class implements
      */
     private List<InterfaceMetadata> interfaces;
     /**
