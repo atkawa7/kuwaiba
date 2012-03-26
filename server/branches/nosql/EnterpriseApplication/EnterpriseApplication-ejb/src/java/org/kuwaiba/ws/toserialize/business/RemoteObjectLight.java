@@ -32,6 +32,10 @@ public class RemoteObjectLight {
      */
     protected Long oid;
     /**
+     * Object's name
+     */
+    protected String name;
+    /**
      * Object's class name
      */
     protected String className;
@@ -50,8 +54,9 @@ public class RemoteObjectLight {
      */
     protected RemoteObjectLight(){}
 
-    public RemoteObjectLight(Long oid, String className, boolean isLocked) {
+    public RemoteObjectLight(Long oid, String name, String className, boolean isLocked) {
         this.oid = oid;
+        this.name = name;
         this.className = className;
         this.locked = isLocked;
     }
@@ -59,6 +64,7 @@ public class RemoteObjectLight {
 
     public RemoteObjectLight(org.kuwaiba.apis.persistence.business.RemoteObjectLight obj){
         this.className = obj.getClassName();
+        this.name = obj.getName();
         this.oid = obj.getId();
         this.locked = obj.isLocked();
     }
@@ -67,10 +73,24 @@ public class RemoteObjectLight {
         return className;
     }
 
-
-
     public Long getOid() {
         return oid;
+    }
+
+    public Boolean getLocked() {
+        return locked;
+    }
+
+    public void setLocked(Boolean locked) {
+        this.locked = locked;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**

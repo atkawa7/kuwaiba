@@ -46,7 +46,7 @@ public class RemoteObject extends RemoteObjectLight {
      * @param object The object to be serialized
      */
     public RemoteObject(org.kuwaiba.apis.persistence.business.RemoteObject object){
-        super(object.getId(), object.getClassName(), object.isLocked());
+        super(object.getId(), object.getName(), object.getClassName(), object.isLocked());
         attributes = new String[object.getAttributes().size()];
         values = new String[object.getAttributes().size()][];
         int i = 0;
