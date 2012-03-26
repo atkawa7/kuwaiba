@@ -18,11 +18,13 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.kuwaiba.beans.ToolsBeanRemote;
 
 /**
  *
@@ -30,8 +32,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name="Tools", urlPatterns={"/Tools"})
 public class Tools extends HttpServlet {
-   
-    /** 
+    @EJB
+    private ToolsBeanRemote tbr;
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
@@ -40,26 +43,11 @@ public class Tools extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        try {
-            /* TODO output your page here
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Tools</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Tools at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-            */
-        } finally { 
-            out.close();
-        }
-    } 
+
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
      * @param request servlet request
      * @param response servlet response
@@ -69,10 +57,44 @@ public class Tools extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
-    } 
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println("<html>");
+        out.println("<head>");
+        out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"css/main.css\" />");
+        out.println("<title>Kuwaiba Management Tools</title>");
+        out.println("</head>");
+        out.println("<body>");
+        try {
+            if (request.getParameter("tool") != null){
+                if (request.getParameter("tool").equals("resetadmin")){
+                    out.println("<h1>Admin account reset successfully</h1>");
+                    tbr.resetAdmin();
+                }else
+                    out.println("<h1>Unknown tool</h1>");
+            } else {
+                out.println("<h1>Kuwaiba Management Tools Portal</h1>");
+                out.println("<ul>");
+                out.println("<li><a href=\"?tool=backup_metadata\">Backup class metadata and containment information</a></li>");
+                out.println("<li><a href=\"?tool=rebuild_metadata\">Refresh Cache</a></li>");
+                out.println("<li><a href=\"?tool=restore_metadata\">Restore class metadata from file</a></li>");
+                out.println("<li><a href=\"?tool=resetadmin\">Create/Reset admin account </a></li>");
+                out.println("</ul>");
+           }
+            out.println("<a href=\"/kuwaiba/Tools\">Back</a>");
 
-    /** 
+        } catch (Exception e){
+            out.println("<h1>Oops! Houston, we have a problem</h1>");
+            e.printStackTrace();
+        }
+        finally {
+            out.println("</body>");
+            out.println("</html>");
+            out.close();
+        }
+    }
+
+    /**
      * Handles the HTTP <code>POST</code> method.
      * @param request servlet request
      * @param response servlet response
@@ -85,13 +107,12 @@ public class Tools extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
      * @return a String containing servlet description
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "This servlet is used to perform basic installation tasks";
     }// </editor-fold>
-
 }

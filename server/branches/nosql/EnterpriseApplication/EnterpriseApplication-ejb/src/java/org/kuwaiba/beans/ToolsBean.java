@@ -16,7 +16,15 @@
 
 package org.kuwaiba.beans;
 
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 
 /**
  * Session bean implementing
@@ -24,8 +32,36 @@ import javax.ejb.Stateless;
  */
 @Stateless
 public class ToolsBean implements ToolsBeanRemote {
+    private static ApplicationEntityManagerRemote aem;
+    @Override
+    public boolean resetAdmin() {
+        try {
+            if (getAEMInstance().createUser("admin", "kuwaiba", "Administrator", "Dummy", true, null, null) == null)
+                return false;
+            return true;
+        } catch (InvalidArgumentException ex) {
+            Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (ObjectNotFoundException ex) {
+            Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (RemoteException ex) {
+            Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
     
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
- 
+    private static ApplicationEntityManagerRemote getAEMInstance(){
+        if (aem == null){
+            try{
+                Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+                aem = (ApplicationEntityManagerRemote) registry.lookup(ApplicationEntityManagerRemote.REFERENCE_AEM);
+            }catch(Exception ex){
+                Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE,
+                        ex.getClass().getSimpleName()+": {0}",ex.getMessage()); //NOI18N
+                aem = null;
+            }
+        }
+        return aem;
+    }
 }

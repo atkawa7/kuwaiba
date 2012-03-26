@@ -19,10 +19,13 @@ package org.kuwaiba.beans;
 import javax.ejb.Remote;
 
 /**
- *
+ * Misc management tools
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Remote
 public interface ToolsBeanRemote {
-    
+    /**
+     * Resets/create admin account (sets it to user <b>admin</b> password <b>kuwaiba</b>)
+     */
+    public boolean resetAdmin();
 }
