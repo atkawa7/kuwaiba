@@ -17,7 +17,7 @@
 package org.inventory.communications.core.queries;
 
 import org.inventory.core.services.api.queries.LocalQueryLight;
-import org.kuwaiba.wsclient.RemoteQueryLight;
+//import org.kuwaiba.wsclient.RemoteQueryLight;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -33,12 +33,12 @@ public class LocalQueryLightImpl implements LocalQueryLight{
 
     public LocalQueryLightImpl() {    }
 
-    public LocalQueryLightImpl(RemoteQueryLight remoteQuery) {
-        this.id = remoteQuery.getOid();
-        this.name = remoteQuery.getName();
-        this.description = remoteQuery.getDescription();
-        this.isPublic = remoteQuery.isIsPublic();
-    }
+//    public LocalQueryLightImpl(RemoteQueryLight remoteQuery) {
+//        this.id = remoteQuery.getOid();
+//        this.name = remoteQuery.getName();
+//        this.description = remoteQuery.getDescription();
+//        this.isPublic = remoteQuery.isIsPublic();
+//    }
 
     public LocalQueryLightImpl(Long id, String name, String description, boolean isPublic){
         this.id = id;

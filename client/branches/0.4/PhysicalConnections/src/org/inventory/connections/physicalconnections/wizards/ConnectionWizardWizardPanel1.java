@@ -23,6 +23,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.utils.Constants;
 import org.openide.WizardDescriptor;
 import org.openide.WizardValidationException;
 import org.openide.util.HelpCtx;
@@ -72,8 +73,8 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
                                         }else{
                                             switch(wizardType){
                                                 case ConnectionWizard.WIZARDTYPE_CONTAINERS:
-                                                    if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalNode()){
-                                                        if(com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalNode())
+                                                    if (com.getLightMetaForClass(aSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_NODE_VALIDATOR)){
+                                                        if(com.getLightMetaForClass(bSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_NODE_VALIDATOR))
                                                             isValid = true;
                                                         else{
                                                             errorStr = "The object selected in the right tree cannot be connected using a container";
@@ -86,8 +87,8 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
                                                     }
                                                     break;
                                                 case ConnectionWizard.WIZARDTYPE_CONNECTIONS:
-                                                    if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalEndpoint()){
-                                                        if(com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalEndpoint())
+                                                    if (com.getLightMetaForClass(aSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_ENDPOINT_VALIDATOR)){
+                                                        if(com.getLightMetaForClass(bSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_ENDPOINT_VALIDATOR))
                                                             isValid = true;
                                                         else{
                                                             errorStr = "The object selected in the right tree cannot be connected using a link";
@@ -133,8 +134,8 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
                                         }else{
                                             switch(wizardType){
                                                 case ConnectionWizard.WIZARDTYPE_CONTAINERS:
-                                                    if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalNode()){
-                                                        if(com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalNode())
+                                                    if (com.getLightMetaForClass(aSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_NODE_VALIDATOR)){
+                                                        if(com.getLightMetaForClass(bSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_NODE_VALIDATOR))
                                                             isValid = true;
                                                         else{
                                                             errorStr = "The object selected in the right tree cannot be connected using a container";
@@ -147,8 +148,8 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
                                                     }
                                                     break;
                                                 case ConnectionWizard.WIZARDTYPE_CONNECTIONS:
-                                                    if (com.getLightMetaForClass(aSelection.getClassName(), false).isPhysicalEndpoint()){
-                                                        if(com.getLightMetaForClass(bSelection.getClassName(), false).isPhysicalEndpoint())
+                                                    if (com.getLightMetaForClass(aSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_ENDPOINT_VALIDATOR)){
+                                                        if(com.getLightMetaForClass(bSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_ENDPOINT_VALIDATOR))
                                                             isValid = true;
                                                         else{
                                                             errorStr = "The object selected in the right tree cannot be connected using a link";

@@ -40,6 +40,7 @@ import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.utils.Constants;
 import org.openide.util.Lookup;
 
 /**
@@ -103,7 +104,7 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
                     component = chkValue;
                 }
                 else{
-                    if(lam.isMultiple()){
+                    if(lam.getMapping() == Constants.MAPPING_MANYTOONE){
                         LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(),false);
 
                         JComboBox cmbValue = new JComboBox(list);

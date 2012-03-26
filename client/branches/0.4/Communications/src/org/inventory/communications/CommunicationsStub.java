@@ -134,31 +134,6 @@ public class CommunicationsStub {
     }
 
     /**
-     * Retrieves the root node's children
-     * @return an array of local objects representing the root node's children
-     */
-    public LocalObjectLight[] getRootNodeChildren(){
-        try{
-            
-            List<RemoteObjectLight> result = port.getObjectChildren(null,
-                                                                    null,
-                                                                    this.session.getSessionId());
-            LocalObjectLightImpl[] children = new LocalObjectLightImpl[result.size()];
-            int i = 0;
-            for (RemoteObjectLight obj : result){
-                children[i] = new LocalObjectLightImpl(obj);
-                i++;
-            }
-
-            return children;
-
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return null;
-        }
-    }
-
-    /**
      * Retrieves a given object's children
      * @return an array of local objects representing the object's children
      */

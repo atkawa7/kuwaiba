@@ -33,4 +33,28 @@ public class Constants {
      * Name of the validator to indicate if a given class is the endpoint to a link
      */
     public static String IS_PHYSICAL_ENDPOINT_VALIDATOR = "physicalEndpoint";
+    /**
+     * Integer, Float, Long, Boolean, String or Text
+     */
+    public static final int MAPPING_PRIMITIVE = 1;
+    /**
+     * Dates
+     */
+    public static final int MAPPING_DATE = 2;
+    /**
+     * Timestamp
+     */
+    public static final int MAPPING_TIMESTAMP = 3;
+    /**
+     * Binary
+     */
+    public static final int MAPPING_BINARY = 4;
+    /**
+     * Many to one relationship (such as types)
+     */
+    public static final int MAPPING_MANYTOONE = 5;
+    /**
+     * Many to Many relationship (such as accountable persons for a given equipment)
+     */
+    public static final int MAPPING_MANYTOMANY = 6;
 }

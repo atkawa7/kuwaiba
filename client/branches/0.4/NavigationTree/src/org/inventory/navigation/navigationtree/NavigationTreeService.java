@@ -33,7 +33,7 @@ public class NavigationTreeService {
         this.component = _component;
     }
     public LocalObjectLight[] getRootChildren(){
-        LocalObjectLight[] rootChildren = com.getRootNodeChildren();
+        LocalObjectLight[] rootChildren = com.getObjectChildren(null, null).toArray(new LocalObjectLight[0]);
         if(rootChildren != null)
             return rootChildren;
         else{

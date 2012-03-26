@@ -98,7 +98,7 @@ public class Cache{
             return null;
         LocalClassMetadata possibleMetadata = metadataIndex.get(className);
         if (possibleMetadata != null)
-            return possibleMetadata.getLightMetadata();
+            return possibleMetadata;
         return this.lightMetadataIndex.get(className);
     }
 

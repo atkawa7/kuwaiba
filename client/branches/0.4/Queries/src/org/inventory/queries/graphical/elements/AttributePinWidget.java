@@ -23,6 +23,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
+import org.inventory.core.services.utils.Constants;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDColorScheme;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
@@ -62,7 +63,7 @@ public class AttributePinWidget extends VMDPinWidget{
         insideCheck.setOpaque(false);
 
         //If this attribute is a list type, we save the class name to create
-        if (lam.isMultiple())
+        if (lam.getMapping() == Constants.MAPPING_MANYTOONE)
             insideCheck.putClientProperty("className", attributeClassName); //NOI18N
         addChild(new ComponentWidget(getScene(), insideCheck));
 
@@ -73,7 +74,7 @@ public class AttributePinWidget extends VMDPinWidget{
         isVisible.setToolTipText("Show/hide this attribute in the query results");
         addChild(new ComponentWidget(scene, isVisible));
 
-        if (lam.isMultiple()){ //If this is a list type attribute, force to select the columns
+        if (lam.getMapping() == Constants.MAPPING_MANYTOONE){ //If this is a list type attribute, force to select the columns
                                   //to be shown manually
             isVisible.setEnabled(false);
             isVisible.setToolTipText("Select the columns for this list type attribute manually (select the checkbox)");

@@ -22,6 +22,7 @@ import javax.swing.JCheckBox;
 import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.queries.LocalTransientQuery;
+import org.inventory.core.services.utils.Constants;
 import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.inventory.queries.graphical.elements.filters.SimpleCriteriaNodeWidget;
@@ -74,7 +75,7 @@ public class ClassNodeWidget extends QueryEditorNodeWidget{
                         JCheckBox insideCheck = ((AttributePinWidget)child).getInsideCheck();
                         insideCheck.setSelected(true);
                         //If the related node is not a ClassNodeWidget, we set the condition
-                        if (!((AttributePinWidget)child).getAttribute().isMultiple()){
+                        if (((AttributePinWidget)child).getAttribute().getMapping() != Constants.MAPPING_MANYTOONE){
                             String filterNodeKey = (String) insideCheck.getClientProperty("related-node");
                             SimpleCriteriaNodeWidget filterNode = (SimpleCriteriaNodeWidget) ((QueryEditorScene)getScene()).findWidget(filterNodeKey); //NOI18N
                             filterNode.setCondition(LocalTransientQuery.Criteria.fromId(conditions.get(i)));

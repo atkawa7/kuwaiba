@@ -24,6 +24,7 @@ import org.inventory.communications.SharedInformation;
 import org.inventory.connections.physicalconnections.wizards.ConnectionWizard;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.utils.Constants;
 import org.inventory.views.objectview.ObjectViewTopComponent;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -85,7 +86,7 @@ public class PhysicalConnectionProvider implements ConnectProvider{
         switch (currentConnectionSelection){
             case ObjectViewTopComponent.CONNECTION_WIRECONTAINER:
             case ObjectViewTopComponent.CONNECTION_WIRELESSCONTAINER:
-                if (com.getMetaForClass(myObject.getClassName(), false).isPhysicalNode())
+                if (com.getMetaForClass(myObject.getClassName(), false).getValidator(Constants.IS_PHYSICAL_NODE_VALIDATOR))
                     return true;
                 break;
             case ObjectViewTopComponent.CONNECTION_ELECTRICALLINK:
