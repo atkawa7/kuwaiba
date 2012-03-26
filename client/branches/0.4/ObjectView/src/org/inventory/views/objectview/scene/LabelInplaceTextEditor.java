@@ -35,13 +35,13 @@ public class LabelInplaceTextEditor implements TextFieldInplaceEditor{
     }
 
     public String getText(Widget widget) {
-        return ((ObjectNodeWidget)widget).getObject().getDisplayname();
+        return ((ObjectNodeWidget)widget).getObject().getName();
     }
 
     public void setText(Widget widget, String text) {
         LocalObjectLight myObject = ((ObjectNodeWidget)widget).getObject();
-        myObject.firePropertyChangeEvent(ObjectNode.PROP_NAME, myObject.getDisplayname(), text);
-        if (myObject.getDisplayname().equals(text))
+        myObject.firePropertyChangeEvent(ObjectNode.PROP_NAME, myObject.getName(), text);
+        if (myObject.getName().equals(text))
             ((ObjectNodeWidget)widget).setLabel(text);
     }
 }

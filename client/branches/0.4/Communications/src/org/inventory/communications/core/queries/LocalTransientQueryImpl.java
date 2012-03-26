@@ -28,7 +28,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.inventory.core.services.api.queries.LocalQuery;
 import org.inventory.core.services.api.queries.LocalTransientQuery;
-import org.kuwaiba.wsclient.TransientQuery;
 import org.openide.util.lookup.ServiceProvider;
 
 /**

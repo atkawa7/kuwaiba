@@ -149,7 +149,7 @@ public class ObjectViewService implements LookupListener{
        }
        vrtc.getScene().validate();
        vrtc.getScene().repaint();
-       vrtc.setDisplayName(myObject.getDisplayname() + " ["+myObject.getClassName()+"]");
+       vrtc.setDisplayName(myObject.getName() + " ["+myObject.getClassName()+"]");
     }
 
     private void disableView(){

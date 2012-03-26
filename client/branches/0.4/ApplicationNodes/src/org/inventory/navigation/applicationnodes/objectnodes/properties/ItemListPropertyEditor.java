@@ -39,7 +39,7 @@ public class ItemListPropertyEditor extends PropertyEditorSupport{
     @Override
     public void setAsText(String text){
         for (LocalObjectListItem loli : list)
-            if (text.equals(loli.getDisplayname())){
+            if (text.equals(loli.getName())){
                 setValue(loli);
                 break;
             }
@@ -52,7 +52,7 @@ public class ItemListPropertyEditor extends PropertyEditorSupport{
         String [] res = new String[list.length];
     
         for (int i = 0; i <list.length; i++)
-            res[i] = list[i].getDisplayname().trim().equals("")?list[i].getName():list[i].getDisplayname();
+            res[i] = list[i].getName().trim().equals("")?list[i].getName():list[i].getName();
         return res;
     }
 

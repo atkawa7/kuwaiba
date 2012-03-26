@@ -38,7 +38,7 @@ public class ObjectNodeWidget extends IconNodeWidget implements ActionListener{
     public ObjectNodeWidget(ViewScene scene, LocalNode node){
         super(scene);
         this.object = node.getObject();
-        setLabel(node.getObject().getDisplayname());
+        setLabel(node.getObject().getName());
         getLabelWidget().setFont(defaultFont);
         Image myIcon = CommunicationsStub.getInstance().getMetaForClass(node.getObject().getClassName(), false).getIcon();
         if(myIcon == null)

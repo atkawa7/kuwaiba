@@ -16,10 +16,10 @@ public interface LocalObjectLight extends Transferable {
             new DataFlavor(LocalObjectLight.class,"Object/LocalObjectLight");
     public String getClassName();
     public Long getOid();
-    public String getDisplayname();
+    public String getName();
+    public void setName(String text);
     public Boolean getValidator(String label);
     public void firePropertyChangeEvent(String property, Object oldValue, Object newValue);
     public void addPropertyChangeListener(PropertyChangeListener listener);
     public void removePropertyChangeListener(PropertyChangeListener listener);
-    public void setDisplayName(String text);
 }

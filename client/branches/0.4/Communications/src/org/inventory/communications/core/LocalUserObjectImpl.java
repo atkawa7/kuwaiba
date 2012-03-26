@@ -18,8 +18,6 @@ package org.inventory.communications.core;
 
 import org.inventory.core.services.api.session.LocalUserGroupObjectLight;
 import org.inventory.core.services.api.session.LocalUserObject;
-import org.kuwaiba.wsclient.UserGroupInfoLight;
-import org.kuwaiba.wsclient.UserInfo;
 import org.openide.util.lookup.ServiceProvider;
 
 /**

@@ -46,6 +46,30 @@
 <message name="getLightMetadataResponse">
 <part name="parameters" element="tns:getLightMetadataResponse"/>
 </message>
+<message name="getPossibleChildren">
+<part name="parameters" element="tns:getPossibleChildren"/>
+</message>
+<message name="getPossibleChildrenResponse">
+<part name="parameters" element="tns:getPossibleChildrenResponse"/>
+</message>
+<message name="getPossibleChildrenNoRecursive">
+<part name="parameters" element="tns:getPossibleChildrenNoRecursive"/>
+</message>
+<message name="getPossibleChildrenNoRecursiveResponse">
+<part name="parameters" element="tns:getPossibleChildrenNoRecursiveResponse"/>
+</message>
+<message name="addPossibleChildren">
+<part name="parameters" element="tns:addPossibleChildren"/>
+</message>
+<message name="addPossibleChildrenResponse">
+<part name="parameters" element="tns:addPossibleChildrenResponse"/>
+</message>
+<message name="removePossibleChildren">
+<part name="parameters" element="tns:removePossibleChildren"/>
+</message>
+<message name="removePossibleChildrenResponse">
+<part name="parameters" element="tns:removePossibleChildrenResponse"/>
+</message>
 <message name="closeSession">
 <part name="parameters" element="tns:closeSession"/>
 </message>
@@ -166,6 +190,26 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightMetadataRequest" message="tns:getLightMetadata"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightMetadataResponse" message="tns:getLightMetadataResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightMetadata/Fault/Exception"/>
+</operation>
+<operation name="getPossibleChildren">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPossibleChildrenRequest" message="tns:getPossibleChildren"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPossibleChildrenResponse" message="tns:getPossibleChildrenResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPossibleChildren/Fault/Exception"/>
+</operation>
+<operation name="getPossibleChildrenNoRecursive">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPossibleChildrenNoRecursiveRequest" message="tns:getPossibleChildrenNoRecursive"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPossibleChildrenNoRecursiveResponse" message="tns:getPossibleChildrenNoRecursiveResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPossibleChildrenNoRecursive/Fault/Exception"/>
+</operation>
+<operation name="addPossibleChildren">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addPossibleChildrenRequest" message="tns:addPossibleChildren"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addPossibleChildrenResponse" message="tns:addPossibleChildrenResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addPossibleChildren/Fault/Exception"/>
+</operation>
+<operation name="removePossibleChildren">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenRequest" message="tns:removePossibleChildren"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenResponse" message="tns:removePossibleChildrenResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildren/Fault/Exception"/>
 </operation>
 <operation name="closeSession">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/closeSessionRequest" message="tns:closeSession"/>
@@ -306,6 +350,54 @@
 </fault>
 </operation>
 <operation name="getLightMetadata">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getPossibleChildren">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getPossibleChildrenNoRecursive">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="addPossibleChildren">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="removePossibleChildren">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

@@ -405,8 +405,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                     new String[]{"name"}, new Object[]{newName}); //NOI18N
             update.setOid(object.getOid());
             if (com.saveObject(update)){
-                object.setDisplayName(newName);
-                fireDisplayNameChange(object.getDisplayname(), newName);
+                object.setName(newName);
+                fireDisplayNameChange(object.getName(), newName);
                 
                 if (this instanceof ListElementNode)
                     CommunicationsStub.getInstance().getList(object.getClassName(), true);
@@ -430,8 +430,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
             displayName = (((LocalObject)object).getAttribute("name").equals("")) ?
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME"):((LocalObject)object).getAttribute("name").toString();
         else
-            displayName= (object.getDisplayname().equals(""))?
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME"):object.getDisplayname();
+            displayName= (object.getName().equals(""))?
+                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME"):object.getName();
         return displayName;
     }
 

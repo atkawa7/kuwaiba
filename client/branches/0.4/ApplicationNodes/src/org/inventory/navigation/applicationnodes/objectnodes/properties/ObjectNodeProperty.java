@@ -118,7 +118,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
                 return;
 
             if (this.getName().equals("name")){
-                node.getObject().setDisplayName((String)getPropertyEditor().getValue());
+                node.getObject().setName((String)getPropertyEditor().getValue());
                 node.setDisplayName((String)getPropertyEditor().getValue());
             }
             

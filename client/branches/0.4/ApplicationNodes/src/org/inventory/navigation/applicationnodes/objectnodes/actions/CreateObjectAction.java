@@ -74,7 +74,7 @@ public final class CreateObjectAction extends AbstractAction implements Popup{
 
         List<LocalClassMetadataLight> items;
         if (node instanceof RootObjectNode) //For the root node
-            items = CommunicationsStub.getInstance().getRootPossibleChildren();
+            items = CommunicationsStub.getInstance().getPossibleChildren(null, false);
         else
             items = CommunicationsStub.getInstance().
                     getPossibleChildren(((ObjectNode)node).getObject().getClassName(),false);

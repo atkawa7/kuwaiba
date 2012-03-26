@@ -451,22 +451,24 @@ public class CommunicationsStub {
     }
 
     public byte[] getClassHierarchy(boolean showAll) {
-        try{
-            return port.getClassHierarchy(showAll, session.getSessionId());
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return null;
-        }
+//        try{
+//            return port.getClassHierarchy(showAll, session.getSessionId());
+//        }catch(Exception ex){
+//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+//            return null;
+//        }
+        return null;
     }
 
     public LocalObjectLight createListType(String className){
-        try{
-            RemoteObjectLight myObject = port.createListType(className, this.session.getSessionId());
-            return new LocalObjectLightImpl(myObject);
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return null;
-        }
+//        try{
+//            RemoteObjectLight myObject = port.createListType(className, this.session.getSessionId());
+//            return new LocalObjectLightImpl(myObject);
+//        }catch(Exception ex){
+//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+//            return null;
+//        }
+        return null;
     }
 
     /**
@@ -475,35 +477,36 @@ public class CommunicationsStub {
      * @return 
      */
     public LocalObjectListItem[] getList(String className, boolean ignoreCache){
-        try{
-            LocalObjectListItem[] res;
-
-            if (!ignoreCache){
-                res = cache.getListCached(className);
-                if (res != null)
-                    return res;
-            }
-
-            ObjectList remoteList = port.getMultipleChoice(className,this.session.getSessionId());
-
-            List<LocalObjectListItem> loli = new ArrayList<LocalObjectListItem>();
-            //The +1 represents the empty room left for the "null" value
-            res = new LocalObjectListItemImpl[remoteList.getList().getEntry().size() + 1];
-            res[0] = ObjectFactory.createNullItem();
-            loli.add(res[0]);
-            int i = 1;
-            for(Entry entry : remoteList.getList().getEntry()){
-                res[i] = new LocalObjectListItemImpl(entry.getKey(),className,entry.getValue(),entry.getValue());
-                loli.add(res[i]);
-                i++;
-            }
-
-            cache.addListCached(className, loli);
-            return res;
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return null;
-        }
+//        try{
+//            LocalObjectListItem[] res;
+//
+//            if (!ignoreCache){
+//                res = cache.getListCached(className);
+//                if (res != null)
+//                    return res;
+//            }
+//
+//            ObjectList remoteList = port.getMultipleChoice(className,this.session.getSessionId());
+//
+//            List<LocalObjectListItem> loli = new ArrayList<LocalObjectListItem>();
+//            //The +1 represents the empty room left for the "null" value
+//            res = new LocalObjectListItemImpl[remoteList.getList().getEntry().size() + 1];
+//            res[0] = ObjectFactory.createNullItem();
+//            loli.add(res[0]);
+//            int i = 1;
+//            for(Entry entry : remoteList.getList().getEntry()){
+//                res[i] = new LocalObjectListItemImpl(entry.getKey(),className,entry.getValue(),entry.getValue());
+//                loli.add(res[i]);
+//                i++;
+//            }
+//
+//            cache.addListCached(className, loli);
+//            return res;
+//        }catch(Exception ex){
+//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+//            return null;
+//        }
+        return null;
     }
 
     public boolean addPossibleChildren(Long parentClassId, List<Long> possibleChildren){
@@ -537,79 +540,65 @@ public class CommunicationsStub {
      * @return Success or failure
      */
     public boolean removeObject(String className, Long oid){
-        try{
-            return port.removeObject(className,oid,this.session.getSessionId());
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return false;
-        }
+//        try{
+            //port.removeObject(className,oid,this.session.getSessionId());
+            //return true;
+//        }catch(Exception ex){
+//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+//            return false;
+//        }
+        return false;
     }
 
     public LocalClassMetadata getDummyRootClass(){
         return getMetaForClass("DummyRoot",false);
     }
 
-    /*
-     * The only reason for this method is to avoid calling the getMetaForClass to know details about DummyRoot.
-     * This may be addressed once the local cache is fully functional. But by now, we'll stick to this.
-     */
-    public List<LocalClassMetadataLight> getRootPossibleChildren() {
-        try{
-            List<ClassInfoLight> list = port.getRootPossibleChildren(this.session.getSessionId());
-            List <LocalClassMetadataLight> res = new ArrayList<LocalClassMetadataLight>();
-            for (ClassInfoLight cil : list)
-                res.add(new LocalClassMetadataLightImpl(cil));
-
-            return res;
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return null;
-        }
-    }
-
     public boolean moveObjects(Long targetOid, LocalObjectLight[] _objects) {
 
-        try{
-            List<Long> objectOids = new ArrayList<Long>();
-            List<String> objectClasses = new ArrayList<String>();
-
-            for (LocalObjectLight lol : _objects){
-                objectOids.add(lol.getOid());
-                objectClasses.add(lol.getClassName());
-            }
-
-            return port.moveObjects(targetOid, objectClasses, objectOids,this.session.getSessionId());
-
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return false;
-        }
+//        try{
+//            List<Long> objectOids = new ArrayList<Long>();
+//            List<String> objectClasses = new ArrayList<String>();
+//
+//            for (LocalObjectLight lol : _objects){
+//                objectOids.add(lol.getOid());
+//                objectClasses.add(lol.getClassName());
+//            }
+//
+//            return port.moveObjects(targetOid, objectClasses, objectOids,this.session.getSessionId());
+//
+//        }catch(Exception ex){
+//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+//            return false;
+//        }
+        return false;
     }
 
     public LocalObjectLight[] copyObjects(Long targetOid, LocalObjectLight[] _objects){
-        try{
-            List<Long> objectOids = new ArrayList<Long>();
-            List<String> objectClasses = new ArrayList<String>();
-
-            for (LocalObjectLight lol : _objects){
-                objectOids.add(lol.getOid());
-                objectClasses.add(lol.getClassName());
-            }
-
-            List<RemoteObjectLight> objs = port.copyObjects(targetOid, objectClasses, objectOids,this.session.getSessionId());
-
-            LocalObjectLight[] res = new LocalObjectLight[objs.size()];
-            int i = 0;
-            for (RemoteObjectLight rol : objs){
-                res[i] = new LocalObjectLightImpl(rol);
-                i++;
-            }
-            return res;
-
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return null;
-        }
+//        try{
+//            List<Long> objectOids = new ArrayList<Long>();
+//            List<String> objectClasses = new ArrayList<String>();
+//
+//            for (LocalObjectLight lol : _objects){
+//                objectOids.add(lol.getOid());
+//                objectClasses.add(lol.getClassName());
+//            }
+//
+//            List<RemoteObjectLight> objs = port.copyObjects(targetOid, objectClasses, objectOids,this.session.getSessionId());
+//
+//            LocalObjectLight[] res = new LocalObjectLight[objs.size()];
+//            int i = 0;
+//            for (RemoteObjectLight rol : objs){
+//                res[i] = new LocalObjectLightImpl(rol);
+//                i++;
+//            }
+//            return res;
+//
+//        }catch(Exception ex){
+//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+//            return null;
+//        }
+        return null;
     }
 
     /**
@@ -627,22 +616,23 @@ public class CommunicationsStub {
      */
     public LocalObjectLight[] searchForObjects(String className, List<String> atts,
             List<String> types, List<String> values) {
-        try{
-            List<RemoteObjectLight> found = port.searchForObjects(className,atts, types, values,this.session.getSessionId());
-
-            LocalObjectLight[] res = new LocalObjectLight[found.size()];
-
-            int i = 0;
-            for (RemoteObjectLight rol : found){
-                res[i] = new LocalObjectLightImpl(rol);
-                i++;
-            }
-
-            return res;
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return null;
-        }
+//        try{
+//            List<RemoteObjectLight> found = port.searchForObjects(className,atts, types, values,this.session.getSessionId());
+//
+//            LocalObjectLight[] res = new LocalObjectLight[found.size()];
+//
+//            int i = 0;
+//            for (RemoteObjectLight rol : found){
+//                res[i] = new LocalObjectLightImpl(rol);
+//                i++;
+//            }
+//
+//            return res;
+//        }catch(Exception ex){
+//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+//            return null;
+//        }
+        return null;
     }
 
     /**
@@ -651,20 +641,21 @@ public class CommunicationsStub {
      * @return an array with results
      */
     public LocalResultRecord[] executeQuery(LocalTransientQuery query){
-        try{
-            TransientQuery remoteQuery = LocalTransientQueryImpl.toTransientQuery(query);
-            List<ResultRecord> myResult = port.executeQuery(remoteQuery,session.getSessionId());
-            LocalResultRecordImpl[] res = new LocalResultRecordImpl[myResult.size()];
-            //The first record is used to store the table headers
-            res[0] = new LocalResultRecordImpl(null, myResult.get(0).getExtraColumns());
-            for (int i = 1; i<res.length ; i++)
-                res[i] = new LocalResultRecordImpl(
-                        new LocalObjectLightImpl(myResult.get(i).getObject()), myResult.get(i).getExtraColumns());
-            return res;
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return null;
-        }
+//        try{
+//            TransientQuery remoteQuery = LocalTransientQueryImpl.toTransientQuery(query);
+//            List<ResultRecord> myResult = port.executeQuery(remoteQuery,session.getSessionId());
+//            LocalResultRecordImpl[] res = new LocalResultRecordImpl[myResult.size()];
+//            //The first record is used to store the table headers
+//            res[0] = new LocalResultRecordImpl(null, myResult.get(0).getExtraColumns());
+//            for (int i = 1; i<res.length ; i++)
+//                res[i] = new LocalResultRecordImpl(
+//                        new LocalObjectLightImpl(myResult.get(i).getObject()), myResult.get(i).getExtraColumns());
+//            return res;
+//        }catch(Exception ex){
+//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+//            return null;
+//        }
+        return null;
     }
 
     /**

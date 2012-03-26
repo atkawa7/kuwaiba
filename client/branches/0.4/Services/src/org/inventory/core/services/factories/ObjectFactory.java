@@ -26,7 +26,7 @@ import org.openide.util.Lookup;
 public abstract class ObjectFactory {
     public static LocalObjectListItem createNullItem(){
         LocalObjectListItem nullItem = Lookup.getDefault().lookup(LocalObjectListItem.class);
-        nullItem.setDisplayName("None");
+        nullItem.setName("None");
         return nullItem;
     }
 }
