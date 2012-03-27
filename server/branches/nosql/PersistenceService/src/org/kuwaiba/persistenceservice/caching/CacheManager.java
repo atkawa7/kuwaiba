@@ -41,6 +41,7 @@ public class CacheManager {
 
     private CacheManager(){
         classIndex = new HashMap<String, ClassMetadata>();
+        userIndex = new HashMap<String, UserProfile>();
     }
 
     public static CacheManager getInstance(){
