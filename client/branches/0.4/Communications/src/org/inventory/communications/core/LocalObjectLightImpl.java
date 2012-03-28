@@ -36,6 +36,12 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
     public LocalObjectLightImpl(){
     }
 
+    public LocalObjectLightImpl(Long oid, String name, String className) {
+        this.oid = oid;
+        this.name = name;
+        this.className = className;
+    }
+
     public LocalObjectLightImpl(RemoteObjectLight rol){
         this.className = rol.getClassName();
         this.name = rol.getName();

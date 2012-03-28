@@ -183,9 +183,6 @@ public class CommunicationsStub {
                 attributeNames.add(key);
                 attributeValues.add(obj.getAttribute(key).toString());
             }
-
-            LocalClassMetadata lcmd = getMetaForClass(obj.getClassName(), false);
-
             port.updateObject(obj.getClassName(),obj.getOid(), attributeNames, attributeValues, this.session.getSessionId());
             return true;
         }catch(Exception ex){
@@ -306,7 +303,7 @@ public class CommunicationsStub {
     public LocalObjectLight createObject(String objectClass, Long parentOid, String template){
         try{
             Long objectId  = port.createObject(objectClass,parentOid, new ArrayList<String>(),new ArrayList<String>(),template,this.session.getSessionId());
-            return new LocalObjectLightImpl();
+            return new LocalObjectLightImpl(objectId, null, objectClass);
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return null;
@@ -429,14 +426,14 @@ public class CommunicationsStub {
     }
 
     public LocalObjectLight createListType(String className){
-//        try{
-//            RemoteObjectLight myObject = port.createListType(className, this.session.getSessionId());
-//            return new LocalObjectLightImpl(myObject);
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return null;
+        try{
+            //Long myObjectId = port.createListTypeItem(className, this.session.getSessionId());
+            //return new LocalObjectLightImpl(myObjectId,null,className);
+            return null;
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
     }
 
     /**
@@ -516,10 +513,6 @@ public class CommunicationsStub {
 //            return false;
 //        }
         return false;
-    }
-
-    public LocalClassMetadata getDummyRootClass(){
-        return getMetaForClass("DummyRoot",false);
     }
 
     public boolean moveObjects(Long targetOid, LocalObjectLight[] _objects) {

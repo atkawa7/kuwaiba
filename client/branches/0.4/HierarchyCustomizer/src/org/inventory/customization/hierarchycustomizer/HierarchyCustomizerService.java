@@ -18,6 +18,7 @@ package org.inventory.customization.hierarchycustomizer;
 import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.LocalStuffFactory;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -67,10 +68,10 @@ public class HierarchyCustomizerService implements LookupListener{
             result.allInstances();
             result.addLookupListener(this);
 
-            //Build the lstClasses model, made out of allMeta minus DummyRoot
+            //Build the lstClasses model, made out of all metadata
             //and the bTreeView model, made out of allMeta minus the abstract classes
             //(RootObject, ConfigurationItem, GenericXXX, etc)
-            LocalClassMetadata rootClass = com.getDummyRootClass();
+            LocalClassMetadata rootClass = LocalStuffFactory.createLocalClassMetadata();
             treeModel.add(rootClass);
 
             for (LocalClassMetadataLight item : allMeta){
