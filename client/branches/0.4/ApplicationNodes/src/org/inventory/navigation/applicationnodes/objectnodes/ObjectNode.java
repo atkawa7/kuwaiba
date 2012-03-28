@@ -34,6 +34,7 @@ import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.utils.Constants;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListElementNode;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteObjectAction;
@@ -160,7 +161,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
                 ObjectNodeProperty property = null;
 
-                if (lam.isMultiple()){
+                if (lam.getMapping() == Constants.MAPPING_MANYTOONE){
                     //If so, this can be a reference to an object list item or a 1:1 to any other RootObject subclass
                     LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(),false);
                     LocalObjectListItem val = null;
