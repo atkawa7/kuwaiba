@@ -27,7 +27,7 @@ import java.util.logging.Level;
 public class InvalidSessionException extends ServerSideException{
 
     public InvalidSessionException(String msg) {
-        super(Level.WARNING,ResourceBundle.getBundle("org/kuwaiba/internationalization/Bundle").getString("LBL_NOACTIVESESSION")+": "+msg);
+        super(Level.WARNING,ResourceBundle.getBundle("org/kuwaiba/Bundle").getString("LBL_NOACTIVESESSION")+": "+msg);
     }
 
 }

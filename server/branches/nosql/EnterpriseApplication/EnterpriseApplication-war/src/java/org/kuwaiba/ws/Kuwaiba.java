@@ -26,7 +26,6 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.servlet.http.HttpServletRequest;
-import org.kuwaiba.beans.WebServiceBean;
 import org.kuwaiba.beans.WebServiceBeanRemote;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
@@ -307,7 +306,7 @@ public class Kuwaiba {
     // <editor-fold defaultstate="collapsed" desc="Metadata Methods. Click on the + sign on the left to edit the code.">
 
     /**
-     * Create's a Class Metadata
+     * Creates a Class Metadata entry
      * @param name
      * @param displayName
      * @param description
@@ -330,31 +329,31 @@ public class Kuwaiba {
         byte[] smallIcon, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
 
-        try
-        {
-            ClassInfo ci = new ClassInfo();
-            ci.setClassName(name);
-            ci.setDisplayName(displayName);
-            ci.setDescription(description);
-            ci.setIcon(icon);
-            ci.setSmallIcon(smallIcon);
-            ci.setParentClassName(parentClassName);
-            ci.setIsAbstract(abstractClass);
+            try
+            {
+                ClassInfo ci = new ClassInfo();
+                ci.setClassName(name);
+                ci.setDisplayName(displayName);
+                ci.setDescription(description);
+                ci.setIcon(icon);
+                ci.setSmallIcon(smallIcon);
+                ci.setParentClassName(parentClassName);
+                ci.setIsAbstract(abstractClass);
 
-            return wsBean.createClass(ci);
+                return wsBean.createClass(ci);
 
-        }catch(Exception e){
-            Level level = Level.SEVERE;
-            if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(Kuwaiba.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-            throw e;
-        }
+            }catch(Exception e){
+                Level level = Level.SEVERE;
+                if (e instanceof ServerSideException)
+                    level = ((ServerSideException)e).getLevel();
+                Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                        e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+                throw e;
+            }
     }
 
-        /**
-     * Change's a Class Metadata definition
+     /**
+     * Changes a Class Metadata definition
      * @param name
      * @param displayName
      * @param description
@@ -363,11 +362,10 @@ public class Kuwaiba {
      * @param parentClassName
      * @param icon
      * @param smallIcon
-     * @return
      * @throws Exception
      */
     @WebMethod(operationName = "changeClassMetadataDefinition")
-    public Boolean changeClassMetadataDefinition(@WebParam(name = "name")
+    public void changeClassMetadataDefinition(@WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "description")
         String description, @WebParam(name = "abstractClass")
@@ -388,7 +386,7 @@ public class Kuwaiba {
             ci.setParentClassName(parentClassName);
             ci.setIsAbstract(abstractClass);
 
-            return wsBean.changeClassDefinition(ci);
+            wsBean.changeClassDefinition(ci);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -410,14 +408,14 @@ public class Kuwaiba {
       * @throws Exception
       */
     @WebMethod(operationName = "setClassIcon")
-    public Boolean setClassIcon(@WebParam(name = "classId")Long classId,
+    public void setClassIcon(@WebParam(name = "classId")Long classId,
             @WebParam(name = "iconAttribute")String iconAttribute,
             @WebParam(name = "iconImage")byte[] iconImage,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
 
         try
         {
-            return wsBean.setClassIcon(classId, iconAttribute, iconImage);
+            wsBean.setClassIcon(classId, iconAttribute, iconImage);
         
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -431,7 +429,7 @@ public class Kuwaiba {
      }
 
     /**
-     * add's an attribute to a classMeatdatada by its ClassId
+     * Adds an attribute to a classMeatdatada by its ClassId
      * @param ClassName
      * @param name
      * @param displayName
@@ -441,12 +439,11 @@ public class Kuwaiba {
      * @param visible
      * @param mapping
      * @param readOnly
-     * @param unique
-     * @return
+     * @param unique should this attribute be unique?
      * @throws Exception
      */
     @WebMethod(operationName = "addAttributeByClassId")
-    public Boolean addAttributeByClassId(@WebParam(name = "className")
+    public void addAttributeByClassId(@WebParam(name = "className")
         String ClassName, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "type")
@@ -464,7 +461,7 @@ public class Kuwaiba {
             AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
                                             visible, description, mapping);
 
-            return wsBean.addAttribute(ClassName, ai);
+            wsBean.addAttribute(ClassName, ai);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -477,7 +474,7 @@ public class Kuwaiba {
     }
 
     /*
-     * add's an attribute to a classMeatdatada by its ClassName
+     * Adds an attribute to a classMeatdatada by its ClassName
      * @param ClassName
      * @param name
      * @param displayName
@@ -492,7 +489,7 @@ public class Kuwaiba {
      * @throws Exception
      */
     @WebMethod(operationName = "addAttributeByClassName")
-    public Boolean addAttributeByClassName(@WebParam(name = "ClassId")
+    public void addAttributeByClassName(@WebParam(name = "ClassId")
         Long ClassId, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "type")
@@ -510,7 +507,7 @@ public class Kuwaiba {
             AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
                                                 visible, description, mapping);
 
-            return wsBean.addAttribute(ClassId, ai);
+            wsBean.addAttribute(ClassId, ai);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -523,7 +520,7 @@ public class Kuwaiba {
     }
 
     /**
-     * get's Metadata For Class by its name
+     * Gets the metadata for a given class using its name as argument
      * @param className
      * @return
      * @throws Exception
@@ -535,7 +532,6 @@ public class Kuwaiba {
 
         try
         {
-            wsBean = new WebServiceBean();
             return wsBean.getMetadataForClass(className);
         } catch(Exception e){
             Level level = Level.SEVERE;
@@ -548,7 +544,7 @@ public class Kuwaiba {
     }
 
     /**
-     * get's Metadata For Class by its id
+     * Gets the metadata for a given class using its id as argument
      * @param classId
      * @return
      * @throws Exception
@@ -604,7 +600,7 @@ public class Kuwaiba {
     }
 
      /**
-     * Retrieves all the class metadata
+     * Retrieves all class metadata
      * @param sessionId
      * @param includeListTypes boolean to indicate if the list should include the subclasses of
      * GenericObjectList
@@ -633,19 +629,18 @@ public class Kuwaiba {
     }
 
     /**
-     * delete's a  Class by its name
+     * Deletes a class metadata entry for a given class using its name as argument
      * @param className
-     * @return
      * @throws Exception
      */
     @WebMethod(operationName = "deleteClassByName")
-    public boolean deleteClassByName(@WebParam(name = "className")
+    public void deleteClassByName(@WebParam(name = "className")
     String className, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
         try
         {
-            return wsBean.deleteClass(className);
+            wsBean.deleteClass(className);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -658,21 +653,20 @@ public class Kuwaiba {
     }
 
     /**
-     * delete's a class by it id
+     * Deletes a class metadata entry for a given class using its id as argument
      * @param className
      * @return
      * @throws Exception
      */
 
     @WebMethod(operationName = "deleteClassById")
-    public boolean deleteClassById(@WebParam(name = "classId")
+    public void deleteClassById(@WebParam(name = "classId")
     Long classId, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
         try
         {
-     
-            return wsBean.deleteClass(classId);
+            wsBean.deleteClass(classId);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -722,14 +716,14 @@ public class Kuwaiba {
     }
     
     @WebMethod(operationName = "addPossibleChildren")
-    public boolean addPossibleChildren(@WebParam(name = "parentClassId")
+    public void addPossibleChildren(@WebParam(name = "parentClassId")
     Long parentClassId, @WebParam(name = "childrenToBeRemoved")
     Long[] childrenToBeRemoved, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
         try
         {
-            return wsBean.addPossibleChildren(parentClassId, childrenToBeRemoved);
+            wsBean.addPossibleChildren(parentClassId, childrenToBeRemoved);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -741,15 +735,22 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Removes a set of possible children for a given class
+     * @param parentClassId
+     * @param childrenToBeRemoved
+     * @param sessionId
+     * @throws Exception
+     */
     @WebMethod(operationName = "removePossibleChildren")
-    public boolean removePossibleChildren(@WebParam(name = "parentClassId")
+    public void removePossibleChildren(@WebParam(name = "parentClassId")
     Long parentClassId, @WebParam(name = "childrenToBeRemoved")
     Long[] childrenToBeRemoved, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
         try
         {
-            return wsBean.removePossibleChildren(parentClassId, childrenToBeRemoved);
+            wsBean.removePossibleChildren(parentClassId, childrenToBeRemoved);
             
         }catch(Exception e){
             Level level = Level.SEVERE;

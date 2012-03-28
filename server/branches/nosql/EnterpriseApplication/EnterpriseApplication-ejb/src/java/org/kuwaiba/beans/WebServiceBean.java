@@ -625,7 +625,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             if (currentUser == null)
                 throw new NotAuthorizedException("User or password incorrect");
             Session newSession = new Session(currentUser, IPAddress);
-            sessions.put(user, newSession);
+            sessions.put(newSession.getToken(), newSession);
             return new RemoteSession(newSession.getToken(), currentUser);
 
         } catch (RemoteException ex) {
