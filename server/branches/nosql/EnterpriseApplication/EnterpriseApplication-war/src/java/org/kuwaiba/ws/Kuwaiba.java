@@ -578,8 +578,8 @@ public class Kuwaiba {
      */
     @WebMethod(operationName = "getLightMetadata")
     public List<ClassInfoLight> getLightMetadata(
-            @WebParam(name = "sessionId") String sessionId,
-            @WebParam(name = "includeListTypes")Boolean includeListTypes) throws Exception{
+            @WebParam(name = "includeListTypes")Boolean includeListTypes,
+            @WebParam(name = "sessionId") String sessionId) throws Exception{
 
         try
         {
@@ -609,8 +609,8 @@ public class Kuwaiba {
      */
     @WebMethod(operationName = "getMetadata")
     public List<ClassInfo> getMetadata(
-            @WebParam(name = "sessionId") String sessionId,
-            @WebParam(name = "includeListTypes")Boolean includeListTypes) throws Exception{
+            @WebParam(name = "includeListTypes")Boolean includeListTypes,
+            @WebParam(name = "sessionId") String sessionId) throws Exception{
 
         try
         {
@@ -762,7 +762,29 @@ public class Kuwaiba {
         }
     }
 
+    @WebMethod(operationName = "createListTypeItem")
+    public Long createListTypeItem(
 
+            @WebParam(name = "sessionId") String sessionId,
+            @WebParam(name = "className") String className,
+            @WebParam(name = "name") String name,
+            @WebParam(name = "displayName") String displayName) throws Exception{
+
+        try
+        {
+            //return wsBean.createListTypeItem(className, name, displayName);
+            return null;
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+
+    }
 
     // </editor-fold>
 

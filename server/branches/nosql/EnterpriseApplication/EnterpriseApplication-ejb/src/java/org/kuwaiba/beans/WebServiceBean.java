@@ -607,6 +607,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
         }
     }
+
+
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
