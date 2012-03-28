@@ -203,9 +203,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
             List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
             List<ClassMetadataLight> classLightMetadata = mem.getLightMetadata(includeListTypes);
 
-            for (ClassMetadataLight classMetadataLight : classLightMetadata) {
-                ClassInfoLight cil =  new ClassInfoLight(classMetadataLight, new Validator[0]);
-            }
+            for (ClassMetadataLight classMetadataLight : classLightMetadata) 
+                cml.add(new ClassInfoLight(classMetadataLight, new Validator[0]));
             return cml;
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -223,10 +222,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
             List<ClassInfo> cml = new ArrayList<ClassInfo>();
             List<ClassMetadata> classMetadataList = mem.getMetadata(includeListTypes);
 
-            for (ClassMetadata classMetadata : classMetadataList) {
-                ClassInfo ci =  new ClassInfo(classMetadata, new Validator[0]);
-                cml.add(ci);
-            }
+            for (ClassMetadata classMetadata : classMetadataList)
+                cml.add(new ClassInfo(classMetadata, new Validator[0]));
             return cml;
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
