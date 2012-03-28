@@ -1100,7 +1100,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public List<ClassMetadataLight> getPossibleChildrenNoRecursive(String parentClassName) throws MetadataObjectNotFoundException
     {
         List<ClassMetadataLight> cml =  new ArrayList<ClassMetadataLight>();
-        Transaction tx = graphDb.beginTx();
+
         try{
             if(parentClassName == null){
                 return getPossibleChildrenNoRecursive(DUMMY_ROOT);
@@ -1109,7 +1109,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 Node myClassNode =  classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
 
                 if(myClassNode == null)
-                    throw new MetadataObjectNotFoundException(Util.formatString(
+                        throw new MetadataObjectNotFoundException(Util.formatString(
                              "Can not find the Class with the name %1s", parentClassName));
 
                 Iterable<Relationship> rels = myClassNode.getRelationships(RelTypes.EXTENDS, Direction.INCOMING);
@@ -1121,11 +1121,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     cml.add(clmdl);
                 }//end for
             }
-
-            tx.success();
-
-        }finally{
-            tx.finish();
+        }catch(Exception ex){
+            throw new RuntimeException(ex.getMessage());
         }
 
         return cml;
