@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.business.RemoteObject;
@@ -191,7 +190,7 @@ public class Util {
         myClass.setAbstractClass((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT));
         myClass.setId(classNode.getId());
         myClass.setLocked((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_LOCKED));
-        myClass.setLocked((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_VIEWABLE));
+        myClass.setViewable(true);
         //Parent
         if (classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING) != null)
             myClass.setParentClassName(
@@ -210,7 +209,7 @@ public class Util {
      * @param classNode
      * @return
      */
-    public static ClassMetadata createMetadataFromNode(Node classNode)
+    public static ClassMetadata createClassMetadataFromNode(Node classNode)
     {
         ClassMetadata myClass = new ClassMetadata();
         List<AttributeMetadata> listAttributes = new ArrayList();

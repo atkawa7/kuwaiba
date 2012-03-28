@@ -38,6 +38,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 
@@ -96,15 +97,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     /**
      * Class index
      */
-    private static Index<Node> classIndex;
+    private Index<Node> classIndex;
     /**
      * Category index
      */
-    private static Index<Node> categoryIndex;
+    private Index<Node> categoryIndex;
     /**
      * Helper index
      */
-    private static Index<Node> helperIndex;
+    private Index<Node> helperIndex;
     /**
      * Reference to the CacheManager
      */
@@ -143,8 +144,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         Long id;
 
         classDefinition = Util.createDefaultClassMetadata(classDefinition);
-
-        List<AttributeMetadata> ats = classDefinition.getAttributes();
 
         try{
             //The root must exist
@@ -343,6 +342,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             for (Relationship relationship : relationships) {
                 Node atr = relationship.getEndNode();
                 atr.delete();
+
                 relationship.delete();
             }
             //Deleting other relationships
@@ -351,6 +351,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 relationship.delete();
             }
             node.delete();
+            classIndex.remove(node);
             tx.success();
 
             return true;
@@ -409,28 +410,35 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public List<ClassMetadataLight> getLightMetadata(Boolean includeListTypes) throws MetadataObjectNotFoundException
     {
         List<ClassMetadataLight> cml = new ArrayList<ClassMetadataLight>();
-        Transaction tx = graphDb.beginTx();
         try{
-            Node isNotDummyNode = helperIndex.get(PROPERTY_NAME, PROPERTY_NO_DUMMY).getSingle();
-            Iterable<Relationship> relationships = isNotDummyNode.getRelationships();
-            for (Relationship rel : relationships) {
-                Node classNode = rel.getEndNode();
+//            Node isNotDummyNode = helperIndex.get(PROPERTY_NAME, PROPERTY_NO_DUMMY).getSingle();
+//            Iterable<Relationship> relationships = isNotDummyNode.getRelationships();
+//            for (Relationship rel : relationships) {
+//                Node classNode = rel.getEndNode();
+//                if(includeListTypes)
+//                    cml.add(Util.createMetadataLightFromNode(classNode));
+//                else{
+//                    Relationship parentRel = classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING);
+//                    Node parentNode = parentRel.getEndNode();
+//
+//                    if(!Util.isSubClass(LIST_TYPE, parentNode))
+//                        cml.add(Util.createMetadataLightFromNode(classNode));
+//
+//                }
+//            }//end for
+            IndexHits<Node> classes = classIndex.query(PROPERTY_NAME, "*");
+            for (Node classNode : classes){
                 if(includeListTypes)
                     cml.add(Util.createMetadataLightFromNode(classNode));
                 else{
-                    Relationship parentRel = classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING);
-                    Node parentNode = parentRel.getEndNode();
-
-                    if(!Util.isSubClass(LIST_TYPE, parentNode))
+                    if(!Util.isSubClass(LIST_TYPE, classNode))
                         cml.add(Util.createMetadataLightFromNode(classNode));
-                    
                 }
-            }//end for
-            
-            tx.success();
-        }
-        finally{
-            tx.finish();
+            }
+        }catch(Exception ex){
+            // Re throw the Neo4J-specific exception so whoever is using this, doesn't need to know that
+            // N4J is behind the problem
+            throw new RuntimeException(ex.getMessage());
         }
 
         return cml;
@@ -445,28 +453,26 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public List<ClassMetadata> getMetadata(Boolean includeListTypes) throws MetadataObjectNotFoundException
     {
         List<ClassMetadata> cml = new ArrayList<ClassMetadata>();
-        Transaction tx = graphDb.beginTx();
         try{
             Node isNotDummyNode = helperIndex.get(PROPERTY_NAME, PROPERTY_NO_DUMMY).getSingle();
             Iterable<Relationship> relationships = isNotDummyNode.getRelationships();
             for (Relationship rel : relationships) {
                 Node classNode = rel.getEndNode();
                 if(includeListTypes)
-                    cml.add(Util.createMetadataFromNode(classNode));
+                    cml.add(Util.createClassMetadataFromNode(classNode));
                 else{
                     Relationship parentRel = classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING);
                     Node parentNode = parentRel.getEndNode();
                     
                     if(!Util.isSubClass(LIST_TYPE, parentNode))
-                        cml.add(Util.createMetadataFromNode(classNode));
+                        cml.add(Util.createClassMetadataFromNode(classNode));
                     
                 }
             }//end for
-
-            tx.success();
-        }
-        finally{
-            tx.finish();
+        }catch(Exception ex){
+            // Re throw the Neo4J-specific exception so whoever is using this, doesn't need to know that
+            // N4J is behind the problem
+            throw new RuntimeException(ex.getMessage());
         }
         return cml;
     }
@@ -490,7 +496,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 throw new MetadataObjectNotFoundException(Util.formatString(
                          "Can not find the Class with the id %1s", classId));
 
-            clmt = Util.createMetadataFromNode(node);
+            clmt = Util.createClassMetadataFromNode(node);
 
             tx.success();
         }
@@ -504,31 +510,25 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * Gets a classmetadata, its attributes and Category
      * @param className
      * @return A ClassMetadata with the className
-     * @throws ClassNotFoundException there is no class with such className
+     * @throws MetadataObjectNotFoundException there is no class with such className
      */
     @Override
-    public ClassMetadata getClass(String className)throws MetadataObjectNotFoundException
-    {
-        ClassMetadata clmt = new ClassMetadata();
-        
-        Transaction tx = graphDb.beginTx();
-        
+    public ClassMetadata getClass(String className) throws MetadataObjectNotFoundException
+    {              
         try{
+            ClassMetadata clmt;
             Node node = classIndex.get(PROPERTY_NAME,className).getSingle();
 
             if(node == null)
                 throw new MetadataObjectNotFoundException(Util.formatString(
                          "Can not find the Class with the name %1s", className));
 
-            clmt = Util.createMetadataFromNode(node);
-            
-            tx.success();
-
+            clmt = Util.createClassMetadataFromNode(node);
+            return clmt;
         }
-        finally{
-            tx.finish();
+        catch(Exception ex){
+            throw new RuntimeException(ex.getMessage());
         }
-        return clmt;
     }
 
     /**

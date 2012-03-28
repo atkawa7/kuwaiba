@@ -97,7 +97,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         //Update the cache if necessary
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null){
-            myClass = Util.createMetadataFromNode(classNode);
+            myClass = Util.createClassMetadataFromNode(classNode);
             cm.putClass(myClass);
         }
 
@@ -141,7 +141,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }catch(Exception ex){
             Logger.getLogger("createObject: "+ex.getMessage()); //NOI18N
             tx.failure();
+            tx.finish();
             return null;
+        }finally{
+            tx.finish();
         }
     }
 
@@ -155,7 +158,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         //Update the cache if necessary
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null){
-            myClass = Util.createMetadataFromNode(classNode);
+            myClass = Util.createClassMetadataFromNode(classNode);
             cm.putClass(myClass);
         }
 
@@ -205,7 +208,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         //Update the cache if necessary
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null){
-            myClass = Util.createMetadataFromNode(classNode);
+            myClass = Util.createClassMetadataFromNode(classNode);
             cm.putClass(myClass);
         }
 
@@ -223,22 +226,26 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                             instance.setProperty(attributeName,Util.getRealValue(attributeName, myClass.getAttributeMapping(attributeName),myClass.getType(attributeName)));
                         else{
                             tx.failure();
+                            tx.finish();
                             throw new InvalidArgumentException(
                                 Util.formatString("The attribute %1s is binary or a relationship, so it can't be set using this method. Use setBinaryAttributes or setManyToManyAttributes instead", attributeName), Level.WARNING);
                         }
                     }
                     else{
                         tx.failure();
+                        tx.finish();
                         throw new InvalidArgumentException(
                                 Util.formatString("The attribute %1s does not exist in class %2s", attributeName, className), Level.WARNING);
                     }
                 }
                 tx.success();
+                tx.finish();
                 return;
             }
 
         }
         tx.failure();
+        tx.finish();
         throw new ObjectNotFoundException(className, oid);
     }
 

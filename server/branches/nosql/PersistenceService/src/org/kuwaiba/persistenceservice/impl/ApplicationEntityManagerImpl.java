@@ -16,6 +16,7 @@
 
 package org.kuwaiba.persistenceservice.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
@@ -85,8 +86,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     (String)user.getProperty(UserProfile.PROPERTY_FIRST_NAME),
                     (String)user.getProperty(UserProfile.PROPERTY_LAST_NAME),
                     (Boolean)user.getProperty(UserProfile.PROPERTY_ENABLED),
-                    (List<Integer>)user.getProperty(UserProfile.PROPERTY_PRIVILEGES)
-                    );
+                    //(List<Integer>)user.getProperty(UserProfile.PROPERTY_PRIVILEGES)
+                    new ArrayList<Integer>());
         else
             return null;
     }
@@ -129,6 +130,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     newUser.createRelationshipTo(group, RelTypes.BELONGS_TO_GROUP);
                 else{
                     tx.failure();
+                    tx.finish();
                     throw new InvalidArgumentException(Util.formatString("Group with id %1s can't be found",groupId), Level.OFF);
                 }
             }
@@ -138,6 +140,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         CacheManager.getInstance().putUser(new UserProfile(newUser.getId(), userName, 
                 firstName, lastName, true, privileges));
         tx.success();
+        tx.finish();
         return new Long(newUser.getId());
     }
 
