@@ -113,6 +113,36 @@ public class Util {
     }
 
     /**
+     * Converts a String value to an object value based on a give mapping. This method
+     * does not convert binary or relationship-like attributes
+     * @param value Value as String
+     * @param type Mapping. The allowed values are the AttributeMetadata.MAPPING_XXX
+     * @return the converted value
+     * @throws InvalidArgumentException If the type can't be converted
+     */
+    public Integer setRealValue(String value, int mapping, String type) throws InvalidArgumentException{
+
+        try{
+            if(type.equals("Float") || type.equals("Long")
+                    || type.equals("Integer") || type.equals("Boolean") || type.equals("byte[]"))
+                return AttributeMetadata.MAPPING_PRIMITIVE;
+            else if(type.equals("Date"))
+                return AttributeMetadata.MAPPING_DATE;
+
+            else
+                return AttributeMetadata.MAPPING_MANYTOONE;
+             
+//            throw new InvalidArgumentException("Can not retrieve the correct value for ("+
+//                value+" "+type+"). Please check your mappings", Level.WARNING);
+
+
+        }catch (Exception e){
+            throw new InvalidArgumentException("Can not retrieve the correct value for ("+
+                            value+" "+type+"). Please check your mappings", Level.WARNING);
+        }
+    }
+
+    /**
      * Creates a ClassMetadata with default values
      * @param classMetadata
      * @return
@@ -153,7 +183,7 @@ public class Util {
      */
     public static AttributeMetadata createDefaultAttributeMetadata(AttributeMetadata AttributeDefinition) throws MetadataObjectNotFoundException{
 
-        Integer mapping = null;
+        //Integer mapping = null;
 
         if(AttributeDefinition.getName() == null)
             throw new MetadataObjectNotFoundException(Util.formatString(
@@ -164,12 +194,6 @@ public class Util {
 
         if(AttributeDefinition.getDescription() == null)
             AttributeDefinition.setDisplayName("");
-
-        try {
-            mapping = Integer.valueOf(AttributeDefinition.getMapping());
-        } catch (NumberFormatException e) {
-            AttributeDefinition.setMapping(0);
-        }
 
         if(AttributeDefinition.getType() == null)
             AttributeDefinition.setType("");
@@ -268,7 +292,7 @@ public class Util {
             myClass.setCategory(null);
 
         //IsDummy
-        if(classNode.getSingleRelationship(RelTypes.IS_NOT_DUMMY, Direction.BOTH) != null)
+        if(classNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.BOTH) != null)
             myClass.setDummy(false);
         else
             myClass.setDummy(true);
@@ -285,15 +309,18 @@ public class Util {
     public static AttributeMetadata createAttributeMetadataFromNode(Node AttibuteNode)
     {
         AttributeMetadata attribute =  new AttributeMetadata();
-
-        attribute.setName((String)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
-        attribute.setDescription((String)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION));
-        attribute.setDisplayName((String)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME));
-        attribute.setMapping((Integer)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_MAPPING));
-        attribute.setReadOnly((Boolean)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_READONLY));
-        attribute.setType((String)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
-        attribute.setVisible((Boolean)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_VISIBLE));
-        attribute.setAdministrative((Boolean)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ADMINISTRATIVE));
+        try{
+            attribute.setName((String)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
+            attribute.setDescription((String)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION));
+            attribute.setDisplayName((String)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME));
+            attribute.setMapping((Integer)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_MAPPING));
+            attribute.setReadOnly((Boolean)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_READONLY));
+            attribute.setType((String)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
+            attribute.setVisible((Boolean)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_VISIBLE));
+            attribute.setAdministrative((Boolean)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ADMINISTRATIVE));
+        }catch(Exception e){
+            return null;
+        }
 
         return attribute;
     }
