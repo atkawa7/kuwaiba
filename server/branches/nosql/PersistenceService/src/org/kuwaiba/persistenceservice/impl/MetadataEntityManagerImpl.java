@@ -38,7 +38,6 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 /**
@@ -150,6 +149,18 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 rootNode.setProperty(PROPERTY_ICON, classDefinition.getIcon());
                 rootNode.setProperty(PROPERTY_SMALL_ICON, classDefinition.getSmallIcon());
                 rootNode.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+
+                dummyRootNode.setProperty(PROPERTY_NAME, DUMMYROOT);
+                dummyRootNode.setProperty(PROPERTY_DISPLAY_NAME, DUMMYROOT);
+                dummyRootNode.setProperty(PROPERTY_CUSTOM, classDefinition.isCustom());
+                dummyRootNode.setProperty(PROPERTY_COUNTABLE, classDefinition.isCountable());
+                dummyRootNode.setProperty(PROPERTY_COLOR, classDefinition.getColor());
+                dummyRootNode.setProperty(PROPERTY_LOCKED, classDefinition.isLocked());
+                dummyRootNode.setProperty(PROPERTY_DESCRIPTION, classDefinition.getDescription());
+                dummyRootNode.setProperty(PROPERTY_ABSTRACT, classDefinition.isAbstractClass());
+                dummyRootNode.setProperty(PROPERTY_ICON, classDefinition.getIcon());
+                dummyRootNode.setProperty(PROPERTY_SMALL_ICON, classDefinition.getSmallIcon());
+                dummyRootNode.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
 
                 classIndex.putIfAbsent(rootNode, PROPERTY_NAME, classDefinition.getName());
                 classIndex.putIfAbsent(rootNode, PROPERTY_ID, rootNode.getId());
@@ -994,11 +1005,24 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         List<ClassMetadataLight> cml = new ArrayList<ClassMetadataLight>();
         Transaction tx = graphDb.beginTx();
         try {
-            if (parentClassName == null) {
+            if (parentClassName == null)
+            {
                 Node referenceNode = graphDb.getReferenceNode();
-                Relationship rel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.INCOMING);
-                Node dummyRootNode = rel.getStartNode();
-                System.out.println((String) dummyRootNode.getProperty(PROPERTY_NAME));
+                Relationship rel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
+                Node dummyRootNode = rel.getEndNode();
+                
+                if (dummyRootNode == null) {
+                    throw new MetadataObjectNotFoundException(Util.formatString(
+                            "Can not find the Class with the name %1s", DUMMYROOT));
+                }
+                else {
+                    Traverser classChildsTraverser = Util.possibleChildren(dummyRootNode);
+                    for (Node childClassNode : classChildsTraverser)
+                    {
+                        cml.add(Util.createClassMetadataLightFromNode(childClassNode));
+                    }
+                }
+
             } else {
                 Node myClassNode = classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
 
@@ -1030,8 +1054,21 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         try {
             if (parentClassName == null) {
                 Node referenceNode = graphDb.getReferenceNode();
-                Relationship rel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.INCOMING);
-                Node dummyRootNode = rel.getStartNode();
+                Relationship rel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
+                Node dummyRootNode = rel.getEndNode();
+
+                if (dummyRootNode == null) {
+                    throw new MetadataObjectNotFoundException(Util.formatString(
+                            "Can not find the Class with the name %1s", DUMMYROOT));
+                }
+                else {
+                    Traverser classChildsTraverser = Util.possibleChildren(dummyRootNode);
+                    for (Node childClassNode : classChildsTraverser)
+                    {
+                        cml.add(Util.createClassMetadataLightFromNode(childClassNode));
+                    }
+                }
+
             } else {
                 Node myClassNode = classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
 
@@ -1047,7 +1084,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     ClassMetadataLight clmdl = Util.createClassMetadataLightFromNode(childClassNode);
                     cml.add(clmdl);
                 }//end for
-            }
+            }//end if dummyRoot
         } catch (Exception ex) {
             throw new RuntimeException(ex.getMessage());
         }
