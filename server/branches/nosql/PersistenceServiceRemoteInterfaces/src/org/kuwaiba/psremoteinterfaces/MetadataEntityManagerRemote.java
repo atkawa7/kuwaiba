@@ -25,6 +25,7 @@ import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
+import org.kuwaiba.apis.persistence.metadata.InterfaceMetadata;
 
 /**
  * RMI wrapper for the MetadataEntityManager interface
@@ -45,21 +46,19 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public boolean changeClassDefinition(ClassMetadata newClassDefinition) throws RemoteException, MetadataObjectNotFoundException;
+    public void changeClassDefinition(ClassMetadata newClassDefinition) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param className
-     * @return
      * @throws RemoteException, Exception
      */
-    public boolean deleteClass(String className) throws RemoteException, MetadataObjectNotFoundException;
+    public void deleteClass(String className) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param classId
-     * @return
      * @throws RemoteException, Exception
      */
-    public boolean deleteClass(Long classId) throws RemoteException, MetadataObjectNotFoundException;
+    public void deleteClass(Long classId) throws RemoteException, MetadataObjectNotFoundException;
 
     /**
      * Retrieves the simplified list of classes. This list won't include either
@@ -99,7 +98,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public boolean moveClass(String classToMoveName, String targetParentName) throws RemoteException, MetadataObjectNotFoundException;
+    public void moveClass(String classToMoveName, String targetParentName) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param classToMoveId
@@ -107,7 +106,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public boolean moveClass(Long classToMoveId, Long targetParentId) throws RemoteException, MetadataObjectNotFoundException;
+    public void moveClass(Long classToMoveId, Long targetParentId) throws RemoteException, MetadataObjectNotFoundException;
     
     /**
      * Set a class icon (big or small)
@@ -116,7 +115,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @param iconImage
      * @return
      */
-    public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws RemoteException, MetadataObjectNotFoundException;
+    public void setClassIcon(Long classId, String attributeName, byte[] iconImage) throws RemoteException, MetadataObjectNotFoundException;
     
     /**
      * See Persistence Abstraction API documentation
@@ -125,7 +124,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public boolean addAttribute(String className, AttributeMetadata attributeDefinition) throws RemoteException, MetadataObjectNotFoundException;
+    public void addAttribute(String className, AttributeMetadata attributeDefinition) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param classId
@@ -133,7 +132,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public boolean addAttribute(Long classId, AttributeMetadata attributeDefinition) throws RemoteException, MetadataObjectNotFoundException;
+    public void addAttribute(Long classId, AttributeMetadata attributeDefinition) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param className
@@ -154,26 +153,23 @@ public interface MetadataEntityManagerRemote extends Remote{
      * See Persistence Abstraction API documentation
      * @param ClassId
      * @param newAttributeDefinition
-     * @return
      * @throws RemoteException, Exception
      */
-    public boolean changeAttributeDefinition(Long ClassId, AttributeMetadata newAttributeDefinition) throws RemoteException, MetadataObjectNotFoundException;
+    public void changeAttributeDefinition(Long ClassId, AttributeMetadata newAttributeDefinition) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param className
      * @param attributeName
-     * @return
      * @throws RemoteException, Exception
      */
-    public boolean  deleteAttribute(String className, String attributeName) throws RemoteException, MetadataObjectNotFoundException;
+    public void  deleteAttribute(String className, String attributeName) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param classId
      * @param attributeName
-     * @return
      * @throws RemoteException, Exception
      */
-    public boolean deleteAttribute(Long classId,String attributeName) throws RemoteException, MetadataObjectNotFoundException;
+    public void deleteAttribute(Long classId,String attributeName) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param categoryDefinition
@@ -198,69 +194,62 @@ public interface MetadataEntityManagerRemote extends Remote{
     /**
      * See Persistence Abstraction API documentation
      * @param categoryDefinition
-     * @return
      */
-    public boolean changeCategoryDefinition(CategoryMetadata categoryDefinition) throws RemoteException, MetadataObjectNotFoundException;
+    public void changeCategoryDefinition(CategoryMetadata categoryDefinition) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param categoryName
-     * @return
      * @throws RemoteException, Exception
      */
-    public boolean deleteCategory(String categoryName) throws RemoteException, MetadataObjectNotFoundException;
+    public void deleteCategory(String categoryName) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param categoryId
-     * @return
      * @throws RemoteException, Exception
      */
-    public boolean deleteCategory(Integer categoryId) throws RemoteException, MetadataObjectNotFoundException;
+    public void deleteCategory(Integer categoryId) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param classWhichImplementsName
      * @param interfaceToImplementName
-     * @return
      * @throws RemoteException, Exception
      */
-    public boolean addImplementor(String classWhichImplementsName,String interfaceToImplementName) throws RemoteException, MetadataObjectNotFoundException;
+    public void addImplementor(String classWhichImplementsName,String interfaceToImplementName) throws RemoteException, MetadataObjectNotFoundException;
     /**
      *
      * @param classWhichImplementsName
      * @param interfaceToBeRemovedName
-     * @return
      * @throws RemoteException, Exception
      */
-    public boolean removeImplementor(String classWhichImplementsName ,String interfaceToBeRemovedName) throws RemoteException, MetadataObjectNotFoundException;
+    public void removeImplementor(String classWhichImplementsName ,String interfaceToBeRemovedName) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param classWhichImplementsId
      * @param interfaceToImplementId
-     * @return
      * @throws RemoteException, Exception
      */
-    public boolean addImplementor(Integer classWhichImplementsId, Integer interfaceToImplementId) throws RemoteException, MetadataObjectNotFoundException;
+    public void addImplementor(Integer classWhichImplementsId, Integer interfaceToImplementId) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param classWhichImplementsId
      * @param interfaceToBeRemovedId
-     * @return
      * @throws RemoteException, Exception
      */
-    public boolean removeImplementor(Integer classWhichImplementsId ,Integer interfaceToBeRemovedId) throws RemoteException, MetadataObjectNotFoundException;
+    public void removeImplementor(Integer classWhichImplementsId ,Integer interfaceToBeRemovedId) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param interfaceName
-     * @return
+     * @return The requested interface metadata
      * @throws RemoteException, Exception
      */
-    public boolean getInterface(String interfaceName) throws RemoteException, MetadataObjectNotFoundException;
+    public InterfaceMetadata getInterface(String interfaceName) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param interfaceid
-     * @return
+     * @return The requested interface metadata
      * @throws RemoteException, Exception
      */
-    public boolean getInterface(Integer interfaceid) throws RemoteException, MetadataObjectNotFoundException;
+    public InterfaceMetadata getInterface(Integer interfaceid) throws RemoteException, MetadataObjectNotFoundException;
 
     /**
      * Gets all classes whose instances can be contained into the given parent class. This method
@@ -282,9 +271,8 @@ public interface MetadataEntityManagerRemote extends Remote{
      *
      * @param parentClassId Id of the class whose instances can contain the instances of the next param
      * @param _possibleChildren ids of the candidates to be contained
-     * @return success or failure
      */
-    public Boolean addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws RemoteException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public void addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws RemoteException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * The opposite of addPossibleChildren. It removes the given possible children
@@ -292,8 +280,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * "children to be deleted" with parentClass as their parent
      * @param parentClassId Id of the class whos instances can contain the instances of the next param
      * @param childrenTBeRemoved ids of the candidates to be deleted
-     * @return success or failure
      */
-    public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws RemoteException, MetadataObjectNotFoundException;
+    public void removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws RemoteException, MetadataObjectNotFoundException;
 
 }
