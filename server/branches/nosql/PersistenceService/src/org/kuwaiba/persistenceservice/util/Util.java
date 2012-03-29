@@ -206,7 +206,7 @@ public class Util {
      * @param classNode
      * @return
      */
-    public static ClassMetadataLight createMetadataLightFromNode(Node classNode)
+    public static ClassMetadataLight createClassMetadataLightFromNode(Node classNode)
     {
         ClassMetadataLight myClass = new ClassMetadataLight();
         
