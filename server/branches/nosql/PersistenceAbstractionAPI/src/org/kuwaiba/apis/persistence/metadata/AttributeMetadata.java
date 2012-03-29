@@ -79,7 +79,7 @@ public class AttributeMetadata implements Serializable{
     /**
      * Indicates how this attribute should be mapped (into a primitive type, a relationship, etc)
      */
-    private int mapping;
+    private Integer mapping;
     /**
      * Marks the attribute as read only
      */
