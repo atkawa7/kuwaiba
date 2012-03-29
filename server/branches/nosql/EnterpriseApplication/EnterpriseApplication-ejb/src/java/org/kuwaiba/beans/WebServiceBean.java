@@ -123,13 +123,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) 
+    public void setClassIcon(Long classId, String attributeName, byte[] iconImage)
             throws ServerSideException
     {
         assert mem == null : "Can't reach the Metadata Entity Manager";
         try
         {
-            return mem.setClassIcon(classId, attributeName, iconImage);
+            mem.setClassIcon(classId, attributeName, iconImage);
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
@@ -137,13 +137,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public boolean deleteClass(String className) 
+    public void deleteClass(String className)
             throws ServerSideException
     {
         assert mem == null : "Can't reach the Metadata Entity Manager";
         try
         {
-            return mem.deleteClass(className);
+            mem.deleteClass(className);
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
@@ -151,13 +151,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public boolean deleteClass(Long classId) 
+    public void deleteClass(Long classId)
             throws ServerSideException
     {
         assert mem == null : "Can't reach the Metadata Entity Manager";
         try
         {
-            return mem.deleteClass(classId);
+            mem.deleteClass(classId);
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
@@ -232,13 +232,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public boolean moveClass(String classToMoveName, String targetParentName) 
+    public void moveClass(String classToMoveName, String targetParentName)
             throws ServerSideException
     {
         assert mem == null : "Can't reach the Metadata Entity Manager";
         try
         {
-            return mem.moveClass(classToMoveName, targetParentName);
+            mem.moveClass(classToMoveName, targetParentName);
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
@@ -246,13 +246,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public boolean moveClass(Long classToMoveId, Long targetParentId) 
+    public void moveClass(Long classToMoveId, Long targetParentId)
             throws ServerSideException
     {
         assert mem == null : "Can't reach the Metadata Entity Manager";
         try
         {
-            return mem.moveClass(classToMoveId, targetParentId);
+            mem.moveClass(classToMoveId, targetParentId);
             
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -261,7 +261,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public boolean addAttribute(String className, AttributeInfo attributeDefinition) 
+    public void addAttribute(String className, AttributeInfo attributeDefinition)
             throws ServerSideException
     {
 
@@ -279,7 +279,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             atm.setUnique(attributeDefinition.isUnique());
             atm.setVisible(attributeDefinition.isVisible());
 
-            return mem.addAttribute(className, atm);
+            mem.addAttribute(className, atm);
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -288,7 +288,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public boolean addAttribute(Long classId, AttributeInfo attributeDefinition) 
+    public void addAttribute(Long classId, AttributeInfo attributeDefinition)
             throws ServerSideException
     {
         assert mem == null : "Can't reach the Metadata Entity Manager";
@@ -305,7 +305,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             atm.setUnique(attributeDefinition.isUnique());
             atm.setVisible(attributeDefinition.isVisible());
 
-            return mem.addAttribute(classId, atm);
+            mem.addAttribute(classId, atm);
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -314,7 +314,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public boolean changeClassDefinition(ClassInfo newClassDefinition) 
+    public void changeClassDefinition(ClassInfo newClassDefinition)
             throws ServerSideException
     {
         assert mem == null : "Can't reach the Metadata Entity Manager";
@@ -338,7 +338,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             cm.setDummy(false);
             cm.setLocked(true);
 
-            return mem.changeClassDefinition(cm);
+            mem.changeClassDefinition(cm);
 
          } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -394,7 +394,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public boolean changeAttributeDefinition(Long ClassId, AttributeInfo newAttributeDefinition) 
+    public void changeAttributeDefinition(Long ClassId, AttributeInfo newAttributeDefinition)
             throws ServerSideException
     {
         assert mem == null : "Can't reach the Metadata Entity Manager";
@@ -412,7 +412,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             attrMtdt.setVisible(newAttributeDefinition.isVisible());
             attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
 
-            return mem.changeAttributeDefinition(ClassId, attrMtdt);
+            mem.changeAttributeDefinition(ClassId, attrMtdt);
             
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -421,13 +421,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public boolean deleteAttribute(String className, String attributeName) 
+    public void deleteAttribute(String className, String attributeName)
             throws ServerSideException
     {
         assert mem == null : "Can't reach the Metadata Entity Manager";
         try
         {
-            return mem.deleteAttribute(className, attributeName);
+            mem.deleteAttribute(className, attributeName);
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
@@ -435,13 +435,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public boolean deleteAttribute(Long classId, String attributeName) 
+    public void deleteAttribute(Long classId, String attributeName)
             throws ServerSideException
     {
         assert mem == null : "Can't reach the Metadata Entity Manager";
         try
         {
-            return mem.deleteAttribute(classId, attributeName);
+            mem.deleteAttribute(classId, attributeName);
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -516,7 +516,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public boolean changeCategoryDefinition(CategoryInfo categoryDefinition)
+    public void changeCategoryDefinition(CategoryInfo categoryDefinition)
             throws ServerSideException
     {
         try{
@@ -529,7 +529,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             ctgrMtdt.setDescription(categoryDefinition.getDescription());
             ctgrMtdt.setCreationDate(categoryDefinition.getCreationDate());
 
-            return mem.changeCategoryDefinition(ctgrMtdt);
+            mem.changeCategoryDefinition(ctgrMtdt);
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -580,11 +580,11 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public Boolean addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws ServerSideException {
+    public void addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws ServerSideException {
         assert mem == null : "Can't reach the Metadata Entity Manager";
         try
         {
-            return mem.addPossibleChildren(parentClassId, _possibleChildren);
+            mem.addPossibleChildren(parentClassId, _possibleChildren);
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -593,11 +593,11 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws ServerSideException {
+    public void removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws ServerSideException {
         assert mem == null : "Can't reach the Metadata Entity Manager";
         try
         {
-            return mem.removePossibleChildren(parentClassId, childrenToBeRemoved);
+            mem.removePossibleChildren(parentClassId, childrenToBeRemoved);
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);

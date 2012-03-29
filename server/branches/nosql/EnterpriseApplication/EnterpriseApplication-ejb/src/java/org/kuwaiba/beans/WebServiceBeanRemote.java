@@ -73,16 +73,15 @@ public interface WebServiceBeanRemote {
      * @throws ClassNotFoundException if there is no class with such classId
      */
 
-    public boolean changeClassDefinition(ClassInfo newClassDefinition) throws ServerSideException;
+    public void changeClassDefinition(ClassInfo newClassDefinition) throws ServerSideException;
 
    /**
      * Set a class icon (big or small)
      * @param classId
      * @param attributeName
      * @param iconImage
-     * @return
      */
-    public Boolean setClassIcon(Long classId, String attributeName, byte[] iconImage) throws ServerSideException;
+    public void setClassIcon(Long classId, String attributeName, byte[] iconImage) throws ServerSideException;
 
     /**
      * Deletes a classmetadata, its attributes and category relationships
@@ -91,15 +90,13 @@ public interface WebServiceBeanRemote {
      * @throws ClassNotFoundException if there is not a class with de ClassId
      */
     
-    public boolean deleteClass(String className) throws ServerSideException;
+    public void deleteClass(String className) throws ServerSideException;
 
     /**
      * Deletes a classmetadata, its attributes and category relationships
      * @param classId
-     * @return true if success
-     * @throws ClassNotFoundException if there is not a class with de ClassName
      */
-    public boolean deleteClass(Long classId) throws ServerSideException;
+    public void deleteClass(Long classId) throws ServerSideException;
 
     /**
      * Retrieves the simplified list of classes. This list won't include either
@@ -139,46 +136,36 @@ public interface WebServiceBeanRemote {
      * Moves a class from one parentClass to an other parentClass
      * @param classToMoveName
      * @param targetParentName
-     * @return
      * @throws Exception
      */
-    public boolean moveClass(String classToMoveName, String targetParentName) throws ServerSideException;
+    public void moveClass(String classToMoveName, String targetParentName) throws ServerSideException;
     
     /**
      * Moves a class from one parentClass to an other parentClass
      * @param classToMoveId
      * @param targetParentClassId
-     * @return true if success
-     * @throws ClassNotFoundException if there is no a classToMove with such classId
-     * or if there is no a targetParentClass with such classId
      */
-    public boolean moveClass(Long classToMoveId, Long targetParentId) throws ServerSideException;
+    public void moveClass(Long classToMoveId, Long targetParentId) throws ServerSideException;
 
     /**
      * Adds an attribute to the class
      * @param className
      * @param attributeDefinition
-     * @return true if success
-     * @throws ClassNotFoundException if there is no a class with such className
      */
-    public boolean addAttribute(String className, AttributeInfo attributeDefinition) throws ServerSideException;
+    public void addAttribute(String className, AttributeInfo attributeDefinition) throws ServerSideException;
 
     /**
      * Adds an attribute to a class
      * @param classId
      * @param attributeDefinition
-     * @return true if success
-     * @throws ClassNotFoundException if there is no a class with such classId
      */
-    public boolean addAttribute(Long classId, AttributeInfo attributeDefinition) throws ServerSideException;
+    public void addAttribute(Long classId, AttributeInfo attributeDefinition) throws ServerSideException;
     
     /**
      * Gets an attribute belonging to a class
      * @param className
      * @param attributeName
      * @return AttributeMetada, null if there is no attribute with such name
-     * @throws ClassNotFoundException if there is no a class with such className
-     * @throws MiscException if the attributeName does not exist
      */
     public AttributeInfo getAttribute(String className, String attributeName) throws ServerSideException;
 
@@ -187,8 +174,6 @@ public interface WebServiceBeanRemote {
      * @param classId
      * @param attributeName
      * @return AttributeMetada, null if there is no attribute with such name
-     * @throws ClassNotFoundException if there is no a class with such classId
-     * @throws MiscException if the attributeName does not exist
      */
     public AttributeInfo getAttribute(Long classId, String attributeName) throws ServerSideException;
 
@@ -196,29 +181,22 @@ public interface WebServiceBeanRemote {
      * Changes an attribute definition belonging to a classMetadata
      * @param ClassId
      * @param newAttributeDefinition
-     * @return
      */
-    public boolean changeAttributeDefinition(Long ClassId, AttributeInfo newAttributeDefinition) throws ServerSideException;
+    public void changeAttributeDefinition(Long ClassId, AttributeInfo newAttributeDefinition) throws ServerSideException;
 
     /**
      * Deletes an attribute belonging to a classMetadata
      * @param className
      * @param attributeName
-     * @return true if success
-     * @throws ClassNotFoundException if there is no a class with such className
-     * @throws MiscException if the attributeName does not exist
      */
-    public boolean  deleteAttribute(String className, String attributeName) throws ServerSideException;
+    public void  deleteAttribute(String className, String attributeName) throws ServerSideException;
 
     /**
      * Deletes an attribute belonging to a classMetadata
      * @param classId
      * @param attributeName
-     * @return true if success
-     * @throws ClassNotFoundException if there is no a class with such classId
-     * @throws MiscException if the attributeName does not exist
      */
-    public boolean deleteAttribute(Long classId,String attributeName) throws ServerSideException;
+    public void deleteAttribute(Long classId,String attributeName) throws ServerSideException;
 
     /**
      * Creates a new category
@@ -246,10 +224,8 @@ public interface WebServiceBeanRemote {
     /**
      * Changes a category definition
      * @param categoryDefinition
-     * @return true if success
-     * @throws MiscException if there is no Category with such cetegoryId
      */
-    public boolean changeCategoryDefinition(CategoryInfo categoryDefinition) throws ServerSideException;
+    public void changeCategoryDefinition(CategoryInfo categoryDefinition) throws ServerSideException;
 
         /**
      * Gets all classes whose instances can be contained into the given parent class. This method
@@ -271,9 +247,8 @@ public interface WebServiceBeanRemote {
      *
      * @param parentClassId Id of the class whose instances can contain the instances of the next param
      * @param _possibleChildren ids of the candidates to be contained
-     * @return success or failure
      */
-    public Boolean addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws ServerSideException;
+    public void addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws ServerSideException;
 
     /**
      * The opposite of addPossibleChildren. It removes the given possible children
@@ -281,9 +256,8 @@ public interface WebServiceBeanRemote {
      * "children to be deleted" with parentClass as their parent
      * @param parentClassId Id of the class whos instances can contain the instances of the next param
      * @param childrenTBeRemoved ids of the candidates to be deleted
-     * @return success or failure
      */
-    public Boolean removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws ServerSideException;
+    public void removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws ServerSideException;
 
 
     // </editor-fold>
