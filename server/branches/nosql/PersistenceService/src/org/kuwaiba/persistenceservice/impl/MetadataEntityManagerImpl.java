@@ -378,35 +378,35 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @return the list of classes
      * @throws Exception EntityManagerNotAvailableException or something unexpected
      */
+    @Override
     public List<ClassMetadataLight> getLightMetadata(Boolean includeListTypes) throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> cml = new ArrayList<ClassMetadataLight>();
         try {
-//            Node isNotDummyNode = helperIndex.get(PROPERTY_NAME, PROPERTY_NO_DUMMY).getSingle();
-//            Iterable<Relationship> relationships = isNotDummyNode.getRelationships();
-//            for (Relationship rel : relationships) {
-//                Node classNode = rel.getEndNode();
-//                if(includeListTypes)
-//                    cml.add(Util.createMetadataLightFromNode(classNode));
-//                else{
-//                    Relationship parentRel = classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING);
-//                    Node parentNode = parentRel.getEndNode();
-//
-//                    if(!Util.isSubClass(LIST_TYPE, parentNode))
-//                        cml.add(Util.createMetadataLightFromNode(classNode));
-//
-//                }
-//            }//end for
-            IndexHits<Node> classes = classIndex.query(PROPERTY_NAME, "*");
-            for (Node classNode : classes) {
-                if (includeListTypes) {
-                    cml.add(Util.createMetadataLightFromNode(classNode));
-                } else {
-                    if (!Util.isSubClass(LIST_TYPE, classNode)) {
-                        cml.add(Util.createMetadataLightFromNode(classNode));
-                    }
-                }
+
+            Node myClassNode =  classIndex.get(PROPERTY_NAME, INVENTORY_OBJECT).getSingle();
+
+            if(myClassNode == null)
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the name %1s", INVENTORY_OBJECT));
+
+            Traverser classChildsTraverser = Util.possibleChildren(myClassNode);
+            for (Node childClassNode : classChildsTraverser)
+            {
+                cml.add(Util.createClassMetadataLightFromNode(childClassNode));
             }
-        } catch (Exception ex) {
+
+            if(includeListTypes)
+            {
+                myClassNode =  classIndex.get(PROPERTY_NAME, LIST_TYPE).getSingle();
+                 classChildsTraverser = Util.possibleChildren(myClassNode);
+
+                for (Node childClassNode : classChildsTraverser) {
+                    cml.add(Util.createClassMetadataLightFromNode(childClassNode));
+                    }
+                
+            }
+
+        }catch(Exception ex){
             // Re throw the Neo4J-specific exception so whoever is using this, doesn't need to know that
             // N4J is behind the problem
             throw new RuntimeException(ex.getMessage());
@@ -421,35 +421,34 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * the subclasses of GenericObjectList
      * @return An array of classes
      */
+    @Override
     public List<ClassMetadata> getMetadata(Boolean includeListTypes) throws MetadataObjectNotFoundException {
         List<ClassMetadata> cml = new ArrayList<ClassMetadata>();
         try {
-//            Node isNotDummyNode = helperIndex.get(PROPERTY_NAME, PROPERTY_NO_DUMMY).getSingle();
-//            Iterable<Relationship> relationships = isNotDummyNode.getRelationships();
-//            for (Relationship rel : relationships) {
-//                Node classNode = rel.getEndNode();
-//                if(includeListTypes)
-//                    cml.add(Util.createClassMetadataFromNode(classNode));
-//                else{
-//                    Relationship parentRel = classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING);
-//                    Node parentNode = parentRel.getEndNode();
-//
-//                    if(!Util.isSubClass(LIST_TYPE, parentNode))
-//                        cml.add(Util.createClassMetadataFromNode(classNode));
-//
-//                }
-//            }//end for
-            IndexHits<Node> classes = classIndex.query(PROPERTY_NAME, "*");
-            for (Node classNode : classes) {
-                if (includeListTypes) {
-                    cml.add(Util.createClassMetadataFromNode(classNode));
-                } else {
-                    if (!Util.isSubClass(LIST_TYPE, classNode)) {
-                        cml.add(Util.createClassMetadataFromNode(classNode));
-                    }
-                }
+
+            Node myClassNode =  classIndex.get(PROPERTY_NAME, INVENTORY_OBJECT).getSingle();
+
+            if(myClassNode == null)
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                         "Can not find the Class with the name %1s", INVENTORY_OBJECT));
+
+            Traverser classChildsTraverser = Util.possibleChildren(myClassNode);
+            for (Node childClassNode : classChildsTraverser)
+            {
+                cml.add(Util.createClassMetadataFromNode(childClassNode));
             }
-        } catch (Exception ex) {
+
+            if(includeListTypes)
+            {
+                myClassNode =  classIndex.get(PROPERTY_NAME, LIST_TYPE).getSingle();
+                classChildsTraverser = Util.possibleChildren(myClassNode);
+
+                for (Node childClassNode : classChildsTraverser) {
+                    cml.add(Util.createClassMetadataFromNode(childClassNode));
+                    }
+            }
+
+        }catch(Exception ex){
             // Re throw the Neo4J-specific exception so whoever is using this, doesn't need to know that
             // N4J is behind the problem
             throw new RuntimeException(ex.getMessage());
@@ -1011,7 +1010,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 Traverser classChildsTraverser = Util.possibleChildren(myClassNode);
                 for (Node childClassNode : classChildsTraverser) {
 
-                    cml.add(Util.createMetadataLightFromNode(childClassNode));
+                    cml.add(Util.createClassMetadataLightFromNode(childClassNode));
                 }
             }
 
@@ -1045,7 +1044,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
                 for (Relationship rel : rels) {
                     Node childClassNode = rel.getStartNode();
-                    ClassMetadataLight clmdl = Util.createMetadataLightFromNode(childClassNode);
+                    ClassMetadataLight clmdl = Util.createClassMetadataLightFromNode(childClassNode);
                     cml.add(clmdl);
                 }//end for
             }
@@ -1087,7 +1086,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                             "Can not find the Class with the id %1s", parentClassId));
                 }
 
-                ClassMetadataLight possibleChild = Util.createMetadataLightFromNode(childNode);
+                ClassMetadataLight possibleChild =  Util.createClassMetadataLightFromNode(childNode);
 
                 for (ClassMetadataLight existingPossibleChild : currenPossibleChildren) {
                     if (Util.isSubClass(possibleChild.getName(), classIndex.get(PROPERTY_ID, existingPossibleChild.getId()).getSingle())) {
