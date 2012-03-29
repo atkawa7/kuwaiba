@@ -40,6 +40,7 @@ import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.kernel.impl.util.RelIdArray;
 
 
 /**
@@ -74,9 +75,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public static final String PROPERTY_MAPPING = "mapping"; //NOI18N
 
     public static final String INVENTORY_OBJECT = "InventoryObject"; //NOI18N
-    public static final String DUMMY_ROOT = "DummyRoot"; //NOI18N
 
-     /**
+    public static final String DUMMYROOT = "DummyRoot"; //NOI18N
+
+    public static final String ROOTOBJECT = "RootObject"; //NOI18N
+
+   /**
      * Label used for the class index
      */
     public static final String INDEX_CLASS = "classes"; //NOI18N
@@ -151,8 +155,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Relationship rootRel = referenceNode.getSingleRelationship(
                     RelTypes.ROOT, Direction.BOTH);
 
-            if (rootRel == null && classDefinition.getName().equals("RootObject")){
+            if (rootRel == null && classDefinition.getName().equals(ROOTOBJECT)){
                 Node rootNode = graphDb.createNode();
+                Node dummyRootNode = graphDb.createNode();
 
                 rootNode.setProperty(PROPERTY_NAME, classDefinition.getName());
                 rootNode.setProperty(PROPERTY_DISPLAY_NAME, classDefinition.getDisplayName());
@@ -164,20 +169,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 rootNode.setProperty(PROPERTY_ABSTRACT, classDefinition.isAbstractClass());
                 rootNode.setProperty(PROPERTY_ICON, classDefinition.getIcon());
                 rootNode.setProperty(PROPERTY_SMALL_ICON, classDefinition.getSmallIcon());
-                rootNode.setProperty(PROPERTY_VIEWABLE, classDefinition.isViewable());
                 rootNode.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
 
                 classIndex.putIfAbsent(rootNode, PROPERTY_NAME, classDefinition.getName());
                 classIndex.putIfAbsent(rootNode, PROPERTY_ID, rootNode.getId());
 
                 referenceNode.createRelationshipTo(rootNode, RelTypes.ROOT);
+                referenceNode.createRelationshipTo(dummyRootNode, RelTypes.DUMMY_ROOT);
 
                 id = rootNode.getId();
-
-                //DummyNode?
-                Node noDummyNode = graphDb.createNode();
-                helperIndex.putIfAbsent(noDummyNode, PROPERTY_NAME, PROPERTY_NO_DUMMY);
-                noDummyNode.createRelationshipTo(rootNode,RelTypes.IS_NOT_DUMMY);
 
             }//end if is rootNode
             else
@@ -195,15 +195,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 classNode.setProperty(PROPERTY_ABSTRACT, classDefinition.isAbstractClass());
                 classNode.setProperty(PROPERTY_ICON, classDefinition.getIcon());
                 classNode.setProperty(PROPERTY_SMALL_ICON, classDefinition.getSmallIcon());
-                classNode.setProperty(PROPERTY_VIEWABLE, classDefinition.isViewable());
+                //classNode.setProperty(PROPERTY_VIEWABLE, classDefinition.isViewable());
                 classNode.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
                 
-                //If the Class is not a dummy Class
-                if(!classDefinition.isDummy())
-                {
-                    Node noDummyNode = helperIndex.get(PROPERTY_NAME, PROPERTY_NO_DUMMY).getSingle();
-                    noDummyNode.createRelationshipTo(classNode,RelTypes.IS_NOT_DUMMY);
-                }//end if is not a dummy Class
 
                 id = classNode.getId();
                 
@@ -230,7 +224,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 {
                     classNode.createRelationshipTo(parentNode, RelTypes.EXTENDS);
                     Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.HAS);
-                    ////Set extendended attributes from parent
+                    //Set extendended attributes from parent
                     for (Relationship rel : relationships)
                     {
                         Node parentAttrNode = rel.getEndNode();
@@ -243,6 +237,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         newAttrNode.setProperty(PROPERTY_READONLY, parentAttrNode.getProperty(PROPERTY_READONLY));
                         newAttrNode.setProperty(PROPERTY_VISIBLE, parentAttrNode.getProperty(PROPERTY_VISIBLE));
                         newAttrNode.setProperty(PROPERTY_ADMINISTRATIVE, parentAttrNode.getProperty(PROPERTY_ADMINISTRATIVE));
+                        newAttrNode.setProperty(PROPERTY_MAPPING, parentAttrNode.getProperty(PROPERTY_MAPPING));
 
                         classNode.createRelationshipTo(newAttrNode, RelTypes.HAS);
                     }
@@ -269,6 +264,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }finally{
             tx.finish();
         }
+
+        /*
+         catch(Exception ex){
+            // Re throw the Neo4J-specific exception so whoever is using this, doesn't need to know that
+            // N4J is behind the problem
+            throw new RuntimeException(ex.getMessage());
+        }
+         */
 
     }
 
@@ -298,7 +301,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             newcm.setProperty(PROPERTY_ABSTRACT, newClassDefinition.isAbstractClass());
             newcm.setProperty(PROPERTY_ICON, newClassDefinition.getIcon());
             newcm.setProperty(PROPERTY_SMALL_ICON, newClassDefinition.getSmallIcon());
-            newcm.setProperty(PROPERTY_VIEWABLE, newClassDefinition.isViewable());
+            //newcm.setProperty(PROPERTY_VIEWABLE, newClassDefinition.isViewable());
 
             Iterable<Relationship> relationships = newcm.getRelationships(RelTypes.HAS);
 
@@ -454,21 +457,30 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     {
         List<ClassMetadata> cml = new ArrayList<ClassMetadata>();
         try{
-            Node isNotDummyNode = helperIndex.get(PROPERTY_NAME, PROPERTY_NO_DUMMY).getSingle();
-            Iterable<Relationship> relationships = isNotDummyNode.getRelationships();
-            for (Relationship rel : relationships) {
-                Node classNode = rel.getEndNode();
+//            Node isNotDummyNode = helperIndex.get(PROPERTY_NAME, PROPERTY_NO_DUMMY).getSingle();
+//            Iterable<Relationship> relationships = isNotDummyNode.getRelationships();
+//            for (Relationship rel : relationships) {
+//                Node classNode = rel.getEndNode();
+//                if(includeListTypes)
+//                    cml.add(Util.createClassMetadataFromNode(classNode));
+//                else{
+//                    Relationship parentRel = classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING);
+//                    Node parentNode = parentRel.getEndNode();
+//
+//                    if(!Util.isSubClass(LIST_TYPE, parentNode))
+//                        cml.add(Util.createClassMetadataFromNode(classNode));
+//
+//                }
+//            }//end for
+            IndexHits<Node> classes = classIndex.query(PROPERTY_NAME, "*");
+            for (Node classNode : classes){
                 if(includeListTypes)
                     cml.add(Util.createClassMetadataFromNode(classNode));
                 else{
-                    Relationship parentRel = classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING);
-                    Node parentNode = parentRel.getEndNode();
-                    
-                    if(!Util.isSubClass(LIST_TYPE, parentNode))
+                    if(!Util.isSubClass(LIST_TYPE, classNode))
                         cml.add(Util.createClassMetadataFromNode(classNode));
-                    
                 }
-            }//end for
+            }
         }catch(Exception ex){
             // Re throw the Neo4J-specific exception so whoever is using this, doesn't need to know that
             // N4J is behind the problem
@@ -773,7 +785,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         AttributeMetadata attribute = null;
         Transaction tx = graphDb.beginTx();
         try{
-            //TODO poner exception no hay classId
             Node node = classIndex.get(PROPERTY_ID, classId).getSingle();
 
             if(node == null)
@@ -1071,7 +1082,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         Transaction tx = graphDb.beginTx();
         try{
             if(parentClassName == null){
-                return getPossibleChildren(DUMMY_ROOT);
+                Node referenceNode = graphDb.getReferenceNode();
+                Relationship rel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.INCOMING);
+                Node dummyRootNode = rel.getStartNode();
+                System.out.println((String)dummyRootNode.getProperty(PROPERTY_NAME));
             }
             else{
                 Node myClassNode =  classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
@@ -1103,7 +1117,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
         try{
             if(parentClassName == null){
-                return getPossibleChildrenNoRecursive(DUMMY_ROOT);
+                Node referenceNode = graphDb.getReferenceNode();
+                Relationship rel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.INCOMING);
+                Node dummyRootNode = rel.getStartNode();
             }
             else{
                 Node myClassNode =  classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
@@ -1137,7 +1153,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Node parentNode = classIndex.get(PROPERTY_ID, parentClassId).getSingle();
             
             Node inventoryObjectNode = classIndex.get(PROPERTY_NAME, INVENTORY_OBJECT).getSingle();
-            Node dummyRootNode = classIndex.get(PROPERTY_NAME, DUMMY_ROOT).getSingle();
 
             if(parentNode == null)
                 throw new MetadataObjectNotFoundException(Util.formatString(
@@ -1147,7 +1162,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
             if (!Util.isSubClass((String)parentNode.getProperty(PROPERTY_NAME), inventoryObjectNode)
                     &&
-                !((String)parentNode.getProperty(PROPERTY_NAME)).equals((String)dummyRootNode.getProperty(PROPERTY_NAME)))
+                !((String)parentNode.getProperty(PROPERTY_NAME)).equals((DUMMYROOT)))
 
                 throw new InvalidArgumentException("Can't perform this operation for classes other than subclasses of InventoryObject", Level.WARNING);
 
