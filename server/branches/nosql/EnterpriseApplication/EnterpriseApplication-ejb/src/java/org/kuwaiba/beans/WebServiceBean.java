@@ -605,7 +605,23 @@ public class WebServiceBean implements WebServiceBeanRemote {
         }
     }
 
+    @Override
+    public Long createListTypeItem(String className, String name, String displayName) throws ServerSideException{
+        assert bem == null : "Can't reach the Business Entity Manager";
+        try
+        {
+            return bem.createListTypeItem(className, name, displayName);
 
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public RemoteObjectLight[] getListTypeItems(String className) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
@@ -749,6 +765,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
         }
     }// </editor-fold>
+
 
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
 

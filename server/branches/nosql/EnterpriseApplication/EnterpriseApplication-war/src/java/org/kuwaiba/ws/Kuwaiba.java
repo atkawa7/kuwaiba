@@ -764,17 +764,33 @@ public class Kuwaiba {
 
     @WebMethod(operationName = "createListTypeItem")
     public Long createListTypeItem(
-
-            @WebParam(name = "sessionId") String sessionId,
             @WebParam(name = "className") String className,
             @WebParam(name = "name") String name,
-            @WebParam(name = "displayName") String displayName) throws Exception{
+            @WebParam(name = "displayName") String displayName,
+            @WebParam(name = "sessionId") String sessionId) throws Exception{
 
         try
         {
-            //return wsBean.createListTypeItem(className, name, displayName);
-            return null;
+            return wsBean.createListTypeItem(className, name, displayName);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
 
+    }
+
+
+    @WebMethod(operationName = "getMultipleChoice")
+    public RemoteObjectLight[] getMultipleChoice(
+            @WebParam(name = "className") String className,
+            @WebParam(name = "sessionId") String sessionId) throws Exception{
+        try
+        {
+            return wsBean.getListTypeItems(className);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
