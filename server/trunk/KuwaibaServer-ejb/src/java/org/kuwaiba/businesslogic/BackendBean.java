@@ -437,9 +437,9 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             String sentence;
             if (includeListTypes)
-                sentence = "SELECT x.id, x.name, x.displayName, x.isAbstract,x.isPhysicalNode, x.isPhysicalConnection, x.isPhysicalEndpoint, x.smallIcon FROM ClassMetadata x WHERE x.isDummy = false ORDER BY x.name";
+                sentence = "SELECT x.id, x.name, x.displayName, x.abstractClass,x.physicalNode, x.physicalConnection, x.physicalEndpoint, x.smallIcon FROM ClassMetadata x WHERE x.dummy = false ORDER BY x.name";
             else
-                sentence = "SELECT x.id, x.name, x.displayName, x.isAbstract,x.isPhysicalNode, x.isPhysicalConnection, x.isPhysicalEndpoint, x.smallIcon FROM ClassMetadata x WHERE x.isDummy = false AND x.isListType=false ORDER BY x.name";
+                sentence = "SELECT x.id, x.name, x.displayName, x.abstractClass,x.physicalNode, x.physicalConnection, x.physicalEndpoint, x.smallIcon FROM ClassMetadata x WHERE x.dummy = false AND x.listType=false ORDER BY x.name";
             Query q = em.createQuery(sentence);
             List<Object[]> cr = q.getResultList();
             List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
@@ -466,9 +466,9 @@ public class BackendBean implements BackendBeanRemote {
         if (em != null){
             String sentence;
             if (includeListTypes)
-                sentence = "SELECT x FROM ClassMetadata x WHERE x.isDummy=false ORDER BY x.name ";
+                sentence = "SELECT x FROM ClassMetadata x WHERE x.dummy=false ORDER BY x.name ";
             else
-                sentence = "SELECT x FROM ClassMetadata x WHERE x.isDummy=false AND x.isListType=false ORDER BY x.name ";
+                sentence = "SELECT x FROM ClassMetadata x WHERE x.dummy=false AND x.listType=false ORDER BY x.name ";
             Query q = em.createQuery(sentence);
             List<ClassMetadata> cr = q.getResultList();
             List<ClassInfo> cm = new ArrayList<ClassInfo>();
@@ -509,35 +509,31 @@ public class BackendBean implements BackendBeanRemote {
 
     @Override
     public byte[] getClassHierarchy(Boolean showAll) throws Exception {
-        if (em != null){
-            if (classIndex == null)
-                generateClassIndex();
-            List<Class> remainingClasses = new ArrayList<Class>(classIndex.values());
-            List<ClassWrapper> roots = new ArrayList<ClassWrapper>();
-            
-            remainingClasses.remove(RootObject.class);
-            roots.add(HierarchyUtils.createTree(RootObject.class, remainingClasses));
-            if (!remainingClasses.isEmpty()){
-                for (Class anExtraClass : remainingClasses)
-                    roots.add(new ClassWrapper(anExtraClass, ClassWrapper.TYPE_OTHER));
-            }
-            ByteArrayOutputStream bas = new ByteArrayOutputStream();
-            WAX xmlWriter = new WAX(bas);
-            StartTagWAX rootTag = xmlWriter.start("hierarchy");
-            rootTag.attr("documentVersion", Constants.CLASSHIERARCHY_DOCUMENT_VERSION);
-            rootTag.attr("serverVersion", Constants.SERVER_VERSION);
-            rootTag.attr("date", Calendar.getInstance().getTimeInMillis());
-            StartTagWAX inventoryTag = rootTag.start("inventory");
-            StartTagWAX classesTag = inventoryTag.start("classes");
-            for (ClassWrapper aRoot : roots)
-                getXMLNodeForClass(aRoot, classesTag);
-            classesTag.end();
-            inventoryTag.end();
-            rootTag.end().close();
-            return bas.toByteArray();
+        if (classIndex == null)
+            generateClassIndex();
+        List<Class> remainingClasses = new ArrayList<Class>(classIndex.values());
+        List<ClassWrapper> roots = new ArrayList<ClassWrapper>();
+
+        remainingClasses.remove(RootObject.class);
+        roots.add(HierarchyUtils.createTree(RootObject.class, remainingClasses));
+        if (!remainingClasses.isEmpty()){
+            for (Class anExtraClass : remainingClasses)
+                roots.add(new ClassWrapper(anExtraClass, ClassWrapper.TYPE_OTHER));
         }
-        else
-            throw new EntityManagerNotAvailableException();
+        ByteArrayOutputStream bas = new ByteArrayOutputStream();
+        WAX xmlWriter = new WAX(bas);
+        StartTagWAX rootTag = xmlWriter.start("hierarchy");
+        rootTag.attr("documentVersion", Constants.CLASSHIERARCHY_DOCUMENT_VERSION);
+        rootTag.attr("serverVersion", Constants.SERVER_VERSION);
+        rootTag.attr("date", Calendar.getInstance().getTimeInMillis());
+        StartTagWAX inventoryTag = rootTag.start("inventory");
+        StartTagWAX classesTag = inventoryTag.start("classes");
+        for (ClassWrapper aRoot : roots)
+            getXMLNodeForClass(aRoot, classesTag);
+        classesTag.end();
+        inventoryTag.end();
+        rootTag.end().close();
+        return bas.toByteArray();
     }
 
     /**
@@ -1233,7 +1229,7 @@ public class BackendBean implements BackendBeanRemote {
     @Override
     public List<ClassInfoLight> getInstanceableListTypes() throws Exception{
         if (em != null){
-            String sentence = "SELECT x.id, x.name, x.displayName, x.isAbstract,x.isPhysicalNode, x.isPhysicalConnection, x.isPhysicalEndpoint, x.smallIcon FROM ClassMetadata x WHERE x.isListType=true AND x.isAbstract=false ORDER BY x.name";
+            String sentence = "SELECT x.id, x.name, x.displayName, x.abstract,x.physicalNode, x.physicalConnection, x.physicalEndpoint, x.smallIcon FROM ClassMetadata x WHERE x.listType=true AND x.abstract=false ORDER BY x.name";
             Query q = em.createQuery(sentence);
             List<Object[]> cr = q.getResultList();
             List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
@@ -1853,6 +1849,7 @@ public class BackendBean implements BackendBeanRemote {
         currentTag.attr("javaModifiers",root.getJavaModifiers());
         currentTag.attr("applicationModifiers",root.getApplicationModifiers());
         currentTag.attr("classType",root.getClassType());
+        currentTag.attr("classPackage", root.getClassPackage());
 
         StartTagWAX attributesTag = currentTag.start("attributes");
         for (AttributeWrapper myAttribute : root.getAttributes()){
