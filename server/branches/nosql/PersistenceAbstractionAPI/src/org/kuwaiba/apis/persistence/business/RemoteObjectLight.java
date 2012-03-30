@@ -41,12 +41,10 @@ public class RemoteObjectLight implements Serializable{
      */
     private Boolean locked;
 
-    public RemoteObjectLight(Long id, String name, Boolean isLocked) {
+    public RemoteObjectLight(Long id, String name) {
         this.id = id;
         this.name = name;
-        if (isLocked == null)
-            isLocked = false;
-        this.locked = isLocked;
+        this.locked = false;
     }
 
     public Long getId() {

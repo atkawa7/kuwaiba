@@ -365,7 +365,7 @@ public class Util {
                     attributes.get(attributeName).add(String.valueOf(relationship.getEndNode().getId()));
 
                 }
-                return new RemoteObject(instance.getId(), myClass.getName(),(Boolean)instance.getProperty(MetadataEntityManagerImpl.PROPERTY_LOCKED));
+                return new RemoteObject(instance.getId(), myClass.getName());
     }
 
     /**

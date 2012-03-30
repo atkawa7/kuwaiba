@@ -59,4 +59,8 @@ public interface BusinessEntityManagerRemote extends Remote{
     public Long createObject(String className, Long parentOid,
             HashMap<String,String> attributes,String template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, RemoteException;
+    public Long createListTypeItem(String className, String name, String displayName)
+            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+    public List<RemoteObjectLight> getListTypeItems(String className)
+            throws MetadataObjectNotFoundException, InvalidArgumentException;
 }

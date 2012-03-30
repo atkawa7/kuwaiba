@@ -31,12 +31,12 @@ public class RemoteObject extends RemoteObjectLight{
      */
     private HashMap <String, List<String>> attributes;
 
-    public RemoteObject(Long id, String name, boolean isLocked) {
-        super(id,name, isLocked);
+    public RemoteObject(Long id, String name) {
+        super(id,name);
     }
 
-    public RemoteObject(Long id, String name, boolean isLocked,HashMap<String, List<String>> attributes) {
-        this(id,name, isLocked);
+    public RemoteObject(Long id, String name, HashMap<String, List<String>> attributes) {
+        this(id,name);
         this.attributes = attributes;
     }
 
