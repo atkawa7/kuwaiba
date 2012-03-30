@@ -43,13 +43,11 @@ public class LocalObjectListItemImpl extends LocalObjectLightImpl implements Loc
      * @param _id
      * @param _className
      * @param _name
-     * @param _displayName
      */
-    public LocalObjectListItemImpl(Long id, String className,String name, String displayName){
+    public LocalObjectListItemImpl(Long id, String className,String name){
         this.oid = id;
         this.className = className;
         this.name = name;
-        this.displayName = displayName;
     }
 
     public Long getId() {

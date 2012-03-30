@@ -25,7 +25,7 @@ import org.inventory.communications.core.LocalClassMetadataImpl;
 import org.inventory.communications.core.LocalClassMetadataLightImpl;
 import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.communications.core.LocalObjectLightImpl;
-//import org.inventory.communications.core.LocalObjectListItemImpl;
+import org.inventory.communications.core.LocalObjectListItemImpl;
 //import org.inventory.communications.core.queries.LocalResultRecordImpl;
 //import org.inventory.communications.core.LocalUserGroupObjectImpl;
 //import org.inventory.communications.core.LocalUserObjectImpl;
@@ -33,7 +33,7 @@ import org.inventory.communications.core.LocalObjectLightImpl;
 //import org.inventory.communications.core.queries.LocalQueryLightImpl;
 //import org.inventory.communications.core.queries.LocalTransientQueryImpl;
 //import org.inventory.communications.core.views.LocalObjectViewImpl;
-//import org.inventory.core.services.factories.ObjectFactory;
+import org.inventory.core.services.factories.ObjectFactory;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.LocalObject;
@@ -425,10 +425,10 @@ public class CommunicationsStub {
         return null;
     }
 
-    public LocalObjectLight createListType(String className){
+    public LocalObjectLight createListTypeItem(String className){
         try{
-            //Long myObjectId = port.createListTypeItem(className, this.session.getSessionId());
-            //return new LocalObjectLightImpl(myObjectId,null,className);
+            Long myObjectId = port.createListTypeItem(className, this.session.getSessionId());
+            return new LocalObjectLightImpl(myObjectId,null,className);
             return null;
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
@@ -437,41 +437,40 @@ public class CommunicationsStub {
     }
 
     /**
-     * Retrieves a List type attribute.
+     * Retrieves the list of items corresponding to a list type attribute.
      * @param className attribute class (usually descendant of GenericListType)
      * @return 
      */
     public LocalObjectListItem[] getList(String className, boolean ignoreCache){
-//        try{
-//            LocalObjectListItem[] res;
-//
-//            if (!ignoreCache){
-//                res = cache.getListCached(className);
-//                if (res != null)
-//                    return res;
-//            }
-//
-//            ObjectList remoteList = port.getMultipleChoice(className,this.session.getSessionId());
-//
-//            List<LocalObjectListItem> loli = new ArrayList<LocalObjectListItem>();
-//            //The +1 represents the empty room left for the "null" value
-//            res = new LocalObjectListItemImpl[remoteList.getList().getEntry().size() + 1];
-//            res[0] = ObjectFactory.createNullItem();
-//            loli.add(res[0]);
-//            int i = 1;
-//            for(Entry entry : remoteList.getList().getEntry()){
-//                res[i] = new LocalObjectListItemImpl(entry.getKey(),className,entry.getValue(),entry.getValue());
-//                loli.add(res[i]);
-//                i++;
-//            }
-//
-//            cache.addListCached(className, loli);
-//            return res;
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return null;
+        try{
+            LocalObjectListItem[] res;
+
+            if (!ignoreCache){
+                res = cache.getListCached(className);
+                if (res != null)
+                    return res;
+            }
+
+            List<RemoteObjectLight> remoteList = port.getMultipleChoice(className,this.session.getSessionId());
+
+            List<LocalObjectListItem> loli = new ArrayList<LocalObjectListItem>();
+            //The +1 represents the empty room left for the "null" value
+            res = new LocalObjectListItemImpl[remoteList.size() + 1];
+            res[0] = ObjectFactory.createNullItem();
+            loli.add(res[0]);
+            int i = 1;
+            for(RemoteObjectLight entry : remoteList){
+                res[i] = new LocalObjectListItemImpl(entry.getOid(),entry.getClassName(),entry.getName());
+                loli.add(res[i]);
+                i++;
+            }
+
+            cache.addListCached(className, res);
+            return res;
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
     }
 
     public boolean addPossibleChildren(Long parentClassId, List<Long> possibleChildren){
