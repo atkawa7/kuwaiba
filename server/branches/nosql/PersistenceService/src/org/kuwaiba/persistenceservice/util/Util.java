@@ -424,7 +424,21 @@ public class Util {
      * @return
      */
 
-    public static Traverser possibleChildren(final Node ClassMetadata)
+    public static Traverser traverserPossibleChildren(final Node ClassMetadata)
+    {
+        return ClassMetadata.traverse(Order.BREADTH_FIRST,
+                StopEvaluator.END_OF_GRAPH,
+                ReturnableEvaluator.ALL_BUT_START_NODE, RelTypes.POSSIBLE_CHILD,
+                Direction.OUTGOING);
+    }
+
+    /**
+     * Retrieves the Metadata children of a classMetadata
+     * @param ClassMetadata
+     * @return
+     */
+
+    public static Traverser traverserMetadata(final Node ClassMetadata)
     {
         return ClassMetadata.traverse(Order.BREADTH_FIRST,
                 StopEvaluator.END_OF_GRAPH,
