@@ -400,7 +400,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 throw new MetadataObjectNotFoundException(Util.formatString(
                          "Can not find the Class with the name %1s", INVENTORY_OBJECT));
 
-            Traverser classChildsTraverser = Util.possibleChildren(myClassNode);
+            Traverser classChildsTraverser = Util.traverserMetadata(myClassNode);
             for (Node childClassNode : classChildsTraverser)
             {
                 cml.add(Util.createClassMetadataLightFromNode(childClassNode));
@@ -409,11 +409,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             if(includeListTypes)
             {
                 myClassNode =  classIndex.get(PROPERTY_NAME, LIST_TYPE).getSingle();
-                 classChildsTraverser = Util.possibleChildren(myClassNode);
+                 classChildsTraverser = Util.traverserMetadata(myClassNode);
 
-                for (Node childClassNode : classChildsTraverser) {
+                for (Node childClassNode : classChildsTraverser)
+                {
                     cml.add(Util.createClassMetadataLightFromNode(childClassNode));
-                    }
+                }
                 
             }
 
@@ -443,7 +444,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 throw new MetadataObjectNotFoundException(Util.formatString(
                          "Can not find the Class with the name %1s", INVENTORY_OBJECT));
 
-            Traverser classChildsTraverser = Util.possibleChildren(myClassNode);
+            Traverser classChildsTraverser = Util.traverserMetadata(myClassNode);
             for (Node childClassNode : classChildsTraverser)
             {
                 cml.add(Util.createClassMetadataFromNode(childClassNode));
@@ -452,7 +453,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             if(includeListTypes)
             {
                 myClassNode =  classIndex.get(PROPERTY_NAME, LIST_TYPE).getSingle();
-                classChildsTraverser = Util.possibleChildren(myClassNode);
+                classChildsTraverser = Util.traverserMetadata(myClassNode);
 
                 for (Node childClassNode : classChildsTraverser) {
                     cml.add(Util.createClassMetadataFromNode(childClassNode));
@@ -1003,88 +1004,67 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     @Override
     public List<ClassMetadataLight> getPossibleChildren(String parentClassName) throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> cml = new ArrayList<ClassMetadataLight>();
-        Transaction tx = graphDb.beginTx();
-        try {
-            if (parentClassName == null)
-            {
-                Node referenceNode = graphDb.getReferenceNode();
-                Relationship rel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
-                Node dummyRootNode = rel.getEndNode();
-                
-                if (dummyRootNode == null) {
-                    throw new MetadataObjectNotFoundException(Util.formatString(
-                            "Can not find the Class with the name %1s", DUMMYROOT));
-                }
-                else {
-                    Traverser classChildsTraverser = Util.possibleChildren(dummyRootNode);
-                    for (Node childClassNode : classChildsTraverser)
-                    {
-                        cml.add(Util.createClassMetadataLightFromNode(childClassNode));
-                    }
-                }
+        Node myClassNode;
+        if (parentClassName == null)
+        {
+            Node referenceNode = graphDb.getReferenceNode();
+            Relationship rel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
+            myClassNode = rel.getEndNode();
 
-            } else {
-                Node myClassNode = classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
+            if (myClassNode == null) {
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                        "Can not find the Class with the name %1s", DUMMYROOT));
+            }
+        }//End if is dummy
+        else {
+            myClassNode = classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
 
-                if (myClassNode == null) {
-                    throw new MetadataObjectNotFoundException(Util.formatString(
-                            "Can not find the Class with the name %1s", parentClassName));
-                }
-
-                Traverser classChildsTraverser = Util.possibleChildren(myClassNode);
-                for (Node childClassNode : classChildsTraverser) {
-
-                    cml.add(Util.createClassMetadataLightFromNode(childClassNode));
-                }
+            if (myClassNode == null) {
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                        "Can not find the Class with the name %1s", parentClassName));
             }
 
-            tx.success();
+            Traverser classChildsTraverser = Util.traverserPossibleChildren(myClassNode);
+            for (Node childClassNode : classChildsTraverser) {
 
-        } finally {
-            tx.finish();
-        }
-
+                cml.add(Util.createClassMetadataLightFromNode(childClassNode));
+            }
+        }//End else is dummy
         return cml;
     }
 
     @Override
     public List<ClassMetadataLight> getPossibleChildrenNoRecursive(String parentClassName) throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> cml = new ArrayList<ClassMetadataLight>();
-
+        Node myClassNode;
         try {
             if (parentClassName == null) {
                 Node referenceNode = graphDb.getReferenceNode();
-                Relationship rel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
-                Node dummyRootNode = rel.getEndNode();
+                Relationship rootRel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
+                myClassNode = rootRel.getEndNode();
 
-                if (dummyRootNode == null) {
+                if (myClassNode == null)
                     throw new MetadataObjectNotFoundException(Util.formatString(
                             "Can not find the Class with the name %1s", DUMMYROOT));
-                }
-                else {
-                    Traverser classChildsTraverser = Util.possibleChildren(dummyRootNode);
-                    for (Node childClassNode : classChildsTraverser)
-                    {
-                        cml.add(Util.createClassMetadataLightFromNode(childClassNode));
-                    }
-                }
 
-            } else {
-                Node myClassNode = classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
+            } //end if is dummyRoot
+            else
+            {
+                myClassNode = classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
 
                 if (myClassNode == null) {
                     throw new MetadataObjectNotFoundException(Util.formatString(
                             "Can not find the Class with the name %1s", parentClassName));
                 }
 
-                Iterable<Relationship> rels = myClassNode.getRelationships(RelTypes.EXTENDS, Direction.INCOMING);
+                Iterable<Relationship> rels = myClassNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.OUTGOING);
 
                 for (Relationship rel : rels) {
-                    Node childClassNode = rel.getStartNode();
+                    Node childClassNode = rel.getEndNode();
                     ClassMetadataLight clmdl = Util.createClassMetadataLightFromNode(childClassNode);
                     cml.add(clmdl);
                 }//end for
-            }//end if dummyRoot
+            }//end else dummyRoot
         } catch (Exception ex) {
             throw new RuntimeException(ex.getMessage());
         }
@@ -1093,7 +1073,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     @Override
-    public void addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException {
+    public void addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException
+    {
         Transaction tx = graphDb.beginTx();
         try {
             Node parentNode = classIndex.get(PROPERTY_ID, parentClassId).getSingle();
@@ -1107,42 +1088,46 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
             boolean alreadyAdded = false;
 
-            if (!Util.isSubClass((String) parentNode.getProperty(PROPERTY_NAME), inventoryObjectNode)
+            if (!Util.isSubClass((String) inventoryObjectNode.getProperty(PROPERTY_NAME), parentNode)
                     && !((String) parentNode.getProperty(PROPERTY_NAME)).equals((DUMMYROOT))) {
                 throw new InvalidArgumentException("Can't perform this operation for classes other than subclasses of InventoryObject", Level.WARNING);
             }
 
-
-            List<ClassMetadataLight> currenPossibleChildren = getPossibleChildren((String) parentNode.getProperty(PROPERTY_NAME));
+            List<ClassMetadataLight> currentPossibleChildren = getPossibleChildren((String) parentNode.getProperty(PROPERTY_NAME));
 
             for (Long id : _possibleChildren) {
                 Node childNode = classIndex.get(PROPERTY_ID, id).getSingle();
 
-                if (childNode == null) {
+                if (childNode == null)
+                {
                     throw new MetadataObjectNotFoundException(Util.formatString(
                             "Can not find the Class with the id %1s", parentClassId));
                 }
 
                 ClassMetadataLight possibleChild =  Util.createClassMetadataLightFromNode(childNode);
 
-                for (ClassMetadataLight existingPossibleChild : currenPossibleChildren) {
-                    if (Util.isSubClass(possibleChild.getName(), classIndex.get(PROPERTY_ID, existingPossibleChild.getId()).getSingle())) {
+                for (ClassMetadataLight existingPossibleChild : currentPossibleChildren)
+                {
+                    if (Util.isSubClass(possibleChild.getName(), classIndex.get(PROPERTY_ID, existingPossibleChild.getId()).getSingle()))
+                    {
                         getPossibleChildren((String) parentNode.getProperty(PROPERTY_NAME)).remove(existingPossibleChild);
-                    } else if (Util.isSubClass(existingPossibleChild.getName(), classIndex.get(PROPERTY_ID, possibleChild.getId()).getSingle())) {
+                    }
+                    else if (Util.isSubClass(existingPossibleChild.getName(), classIndex.get(PROPERTY_ID, possibleChild.getId()).getSingle()))
+                    {
                         alreadyAdded = true;
                     }
+                }//end for currentPossibleChlidren
+                if (!currentPossibleChildren.contains(possibleChild) && !alreadyAdded)
+                {   // If the class is already a possible child, it won't add it
+                    parentNode.createRelationshipTo(childNode, RelTypes.POSSIBLE_CHILD);
                 }
-
-                if (!currenPossibleChildren.contains(possibleChild) && !alreadyAdded) // If the class is already a possible child, it won't add it
+                else
                 {
-                    getPossibleChildren((String) parentNode.getProperty(PROPERTY_NAME)).add(possibleChild);
-                } else {
                     throw new InvalidArgumentException(
                             "This class has already been added to the containment hierarchy: "
                             + possibleChild.getName(), Level.INFO);
                 }
-
-            }
+            }//end for _PossibleChildren.
             tx.success();
 
         } finally {
@@ -1160,17 +1145,20 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 throw new MetadataObjectNotFoundException(Util.formatString(
                         "Can not find the Class with the id %1s", parentClassId));
             }
+            for (Long id : childrenToBeRemoved)
+            {
+                Node childNode = classIndex.get(PROPERTY_ID, id).getSingle();
+                Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.OUTGOING);
 
-            for (Long id : childrenToBeRemoved) {
-                for (ClassMetadataLight classMetadataLight : getPossibleChildren(
-                        (String) parentNode.getProperty(PROPERTY_NAME))) {
-                    if (id == classMetadataLight.getId()) {
-                        getPossibleChildren((String) parentNode.getProperty(PROPERTY_NAME)).remove(classMetadataLight);
+                for (Relationship rel: relationships) {
+                    Node possiblechild = rel.getEndNode();
+                    if(childNode.getId() == possiblechild.getId())
+                    {
+                        rel.delete();
                         break;
                     }
-
-                }
-            }
+                }//end for
+            }//end for
 
             tx.success();
 
