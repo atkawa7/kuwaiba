@@ -208,11 +208,9 @@ public class Util {
      */
     public static ClassMetadataLight createClassMetadataLightFromNode(Node classNode)
     {
-        ClassMetadataLight myClass = new ClassMetadataLight();
+        ClassMetadataLight myClass = new ClassMetadataLight(classNode.getId(),(String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),(String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME));
         
-        myClass.setName((String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
         myClass.setAbstractClass((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT));
-        myClass.setId(classNode.getId());
         myClass.setLocked((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_LOCKED));
         myClass.setViewable(true);
         //Parent
@@ -287,9 +285,14 @@ public class Util {
 
             myClass.setCategory(ctgr);
         }
-
         else
             myClass.setCategory(null);
+
+        Iterable<Relationship> possibleChildren = classNode.getRelationships(RelTypes.POSSIBLE_CHILD);
+        while (possibleChildren.iterator().hasNext()){
+            Relationship possibleChild = possibleChildren.iterator().next();
+            myClass.getPossibleChildren().add((String)possibleChild.getStartNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
+        }
 
         //IsDummy
         if(classNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.BOTH) != null)
@@ -433,7 +436,7 @@ public class Util {
     }
 
     /**
-     * Retrieves the Metadata children of a classMetadata
+     * Retrieves the children of a given class metadata node within the class hierarchy
      * @param ClassMetadata
      * @return
      */

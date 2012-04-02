@@ -59,6 +59,17 @@ public class ClassMetadataLight implements Serializable{
      */
     private byte[] smallIcon;
 
+    public ClassMetadataLight() {
+    }
+
+    
+    public ClassMetadataLight(Long id, String name, String displayName) {
+        this.id = id;
+        this.name = name;
+        this.displayName = displayName;
+    }
+
+    
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public Long getId() {

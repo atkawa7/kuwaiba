@@ -16,6 +16,7 @@
 
 package org.kuwaiba.apis.persistence.metadata;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -62,6 +63,10 @@ public class ClassMetadata extends ClassMetadataLight{
      */
     private List<AttributeMetadata> attributes;
     /**
+     * List of possible children
+     */
+    private List<String> possibleChildren;
+    /**
      *  Classmetada's category
      */
     private CategoryMetadata category;
@@ -73,6 +78,12 @@ public class ClassMetadata extends ClassMetadataLight{
      *  ClassMetada's creationDate
      */
     private Long creationDate;
+
+    public ClassMetadata() {
+        attributes = new ArrayList<AttributeMetadata>();
+        possibleChildren = new ArrayList<String>();
+    }
+
 
    // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public Integer getColor() {
@@ -161,7 +172,16 @@ public class ClassMetadata extends ClassMetadataLight{
 
     public void setCreationDate(Long creationDate) {
         this.creationDate = creationDate;
-    }// </editor-fold>
+    }
+
+    public List<String> getPossibleChildren() {
+        return possibleChildren;
+    }
+
+    public void setPossibleChildren(List<String> possibleChildren) {
+        this.possibleChildren = possibleChildren;
+    }
+    // </editor-fold>
 
     public boolean implementsInterface(String interfaceName){
         if (interfaces == null)

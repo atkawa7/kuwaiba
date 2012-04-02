@@ -27,6 +27,8 @@ import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
+
 
 /**
  * RMI wrapper for the BusinessEntityManager interface
@@ -56,11 +58,14 @@ public interface BusinessEntityManagerRemote extends Remote{
     public void updateObject(String className, Long oid, HashMap<String,String> attributes)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
                 WrongMappingException, InvalidArgumentException, RemoteException;
-    public Long createObject(String className, Long parentOid,
-            HashMap<String,String> attributes,String template)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, RemoteException;
+    public Long createObject(String className, String parentClassName, Long parentOid,
+            HashMap<String,String> attributes, Long template)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException, RemoteException;
     public Long createListTypeItem(String className, String name, String displayName)
             throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
     public List<RemoteObjectLight> getListTypeItems(String className)
-            throws MetadataObjectNotFoundException, InvalidArgumentException;
+            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    public List<ClassMetadataLight> getInstanceableListTypes()
+            throws MetadataObjectNotFoundException, RemoteException;
 }

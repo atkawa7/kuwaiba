@@ -35,6 +35,5 @@ public enum RelTypes implements RelationshipType{
     BELONGS_TO_GROUP, //Used to associate an entity to a group (group of user)
     BELONGS_TO_USER, //Used to associate an entity to a user
     DUMMY_ROOT, //Used to associate dummies class
-    POSSIBLE_CHILD //Used to associate a possible class
-
+    POSSIBLE_CHILD //Used to build the containment hierarchy
 }

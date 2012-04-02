@@ -36,6 +36,7 @@ import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 import org.kuwaiba.apis.persistence.interfaces.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.persistenceservice.caching.CacheManager;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.kuwaiba.persistenceservice.util.Util;
@@ -45,6 +46,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
@@ -95,10 +97,24 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         this.listTypeItemsIndex = graphDb.index().forNodes(INDEX_LIST_TYPE_ITEMS);
     }
 
-    public Long createObject(String className, Long parentOid, HashMap<String,String> attributes, String template)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+    public Long createObject(String className, String parentClassName, Long parentOid, HashMap<String,String> attributes, Long template)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
 
-        
+
+        ClassMetadata myClass= cm.getClass(className);
+        if (myClass == null)
+            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
+
+        //The object should be created under an instance other than the dummy root
+        if (parentClassName != null){
+            ClassMetadata myParentObjectClass= cm.getClass(parentClassName);
+            if (myParentObjectClass == null)
+                throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
+
+            if (myParentObjectClass.getPossibleChildren().contains(className))
+                throw new OperationNotPermittedException("Create Object", Util.formatString("An instance of class %1s can't be created as child of object with id %2s", className, parentOid));
+        }
+
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
             throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
@@ -106,18 +122,18 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         if (!Util.isSubClass("InventoryObject", classNode))
             throw new OperationNotPermittedException("Create Object", "You can't create non-inventory objects using this method");
 
-        ClassMetadata myClass= cm.getClass(className);
-
         Node parentNode = null;
         if (parentOid != null){
-             parentNode = objectIndex.get(MetadataEntityManagerImpl.PROPERTY_ID,parentOid).getSingle();
+             parentNode = getInstanceOfClass(parentClassName, parentOid);
             if (parentNode == null)
-                throw new ObjectNotFoundException(null, parentOid);
-        }
+                throw new ObjectNotFoundException(parentClassName, parentOid);
+        }else
+            parentNode = graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING).getEndNode();
 
-        Transaction tx = graphDb.beginTx();
+        Transaction tx = null;
         try{
 
+            tx = graphDb.beginTx();
             Node newObject = graphDb.createNode();
             newObject.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
 
@@ -148,10 +164,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }catch(Exception ex){
             Logger.getLogger("createObject: "+ex.getMessage()); //NOI18N
             tx.failure();
-            tx.finish();
-            return null;
+            throw new RuntimeException(ex.getMessage());
         }finally{
-            tx.finish();
+            if (tx != null)
+                tx.finish();
         }
     }
 
@@ -375,6 +391,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
              newItem.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, name);
              newItem.setProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME, displayName);
              newItem.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
+             listTypeItemsIndex.putIfAbsent(newItem, MetadataEntityManagerImpl.PROPERTY_ID, newItem.getId());
              tx.success();
              return newItem.getId();
         }catch(Exception ex){
@@ -402,6 +419,18 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             children.add(new RemoteObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME)));
         }
         return children;
+    }
+
+    public List<ClassMetadataLight> getInstanceableListTypes() throws MetadataObjectNotFoundException {
+        Node genericObjectListNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, "GenericObjectList").getSingle();
+        if (genericObjectListNode == null)
+            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s is not a list type", "GenericObjectList"));
+        Traverser traverserMetadata = Util.traverserMetadata(genericObjectListNode);
+        List<ClassMetadataLight> res = new ArrayList<ClassMetadataLight>();
+        for (Node child : traverserMetadata)
+            res.add(new ClassMetadataLight(child.getId(),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME)));
+
+        return res;
     }
 
     public List<ResultRecord> executeQuery() throws MetadataObjectNotFoundException {

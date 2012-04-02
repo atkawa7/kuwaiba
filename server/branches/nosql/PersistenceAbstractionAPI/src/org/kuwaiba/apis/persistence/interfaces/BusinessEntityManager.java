@@ -37,19 +37,21 @@ public interface BusinessEntityManager {
     /**
      *
      * @param className Name of the class which this object will be instantiated from
+     * @param parentClassName Parent object class name
      * @param parentOid Parent's oid
      * @param attributes Attributes to be set by default in the new object. It's a HashMap where the keys are the attribute names and the values, the values for such attributes.
      * Note that one-to-many and binary type attributes can't be set here
-     * @param template Template name to be use to create the current object. Template values can be
+     * @param template Template id to be used to create the current object. Template values can be
      * overridden if "attributeValues" is not empty
      * @return The object's id
      * @throws MetadataObjectNotFoundException Thrown if the object's class can't be found
      * @throws ObjectNotFoundException Thrown if the parent id is not found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
+     * @throws InvalidArgumentException If the parent node is malformed.
      */
-    public Long createObject(String className, Long parentOid,
-            HashMap<String,String> attributes,String template)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
+    public Long createObject(String className, String parentClassName, Long parentOid,
+            HashMap<String,String> attributes,Long template)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException;
     /**
      * Gets the detailed information about an object
      * @param className Object class name
