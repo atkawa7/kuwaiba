@@ -275,11 +275,13 @@ public interface WebServiceBeanRemote {
 
     public void updateObject(String className, Long oid, String[] attributeNames, String[] attributeValues) throws ServerSideException;
 
-    public Long createObject(String className, Long parentOid, String[] attributeNames, String[] attributeValues, String template) throws ServerSideException;
+    public Long createObject(String className, String parentClassName, Long parentOid, String[] attributeNames, String[] attributeValues, Long templateId) throws ServerSideException;
 
     public Long createListTypeItem(String className, String name, String displayName) throws ServerSideException;
     public RemoteObjectLight[] getListTypeItems(String className) throws ServerSideException;
-    
+
+    public ClassInfoLight[] getInstanceableListTypes()throws ServerSideException;
+   
     // </editor-fold>
 
 

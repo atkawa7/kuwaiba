@@ -730,8 +730,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public Long createObject(String className, Long parentOid, String[] attributeNames,
-            String[] attributeValues, String template) throws ServerSideException{
+    public Long createObject(String className, String parentClassName, Long parentOid, String[] attributeNames,
+            String[] attributeValues, Long template) throws ServerSideException{
         assert bem == null : "Can't reach the Business Entity Manager";
         if (attributeNames.length != attributeValues.length)
             throw new ServerSideException(Level.SEVERE, "Attribute names and attribute values arrays sizes doesn't match");
@@ -741,7 +741,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             for (int i = 0; i < attributeNames.length; i++)
                 attributes.put(attributeNames[i], attributeValues[i]);
 
-            return bem.createObject(className, parentOid,attributes, template);
+            return bem.createObject(className, parentClassName, parentOid,attributes, template);
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
@@ -764,7 +764,22 @@ public class WebServiceBean implements WebServiceBeanRemote {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
         }
-    }// </editor-fold>
+    }
+
+    @Override
+    public ClassInfoLight[] getInstanceableListTypes() throws ServerSideException{
+        assert bem == null : "Can't reach the Business Entity Manager";
+
+        try {
+            //Replace this for a reference node
+            return bem.getInstanceableListTypes().toArray(new ClassInfoLight[0]);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    // </editor-fold>
 
 
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">

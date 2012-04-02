@@ -285,14 +285,15 @@ public class Kuwaiba {
 
     @WebMethod(operationName = "createObject")
     public Long createObject(@WebParam(name = "className")String className,
+            @WebParam(name = "parentObjectClassName")String parentObjectClassName,
             @WebParam(name = "parentOid")Long parentOid,
             @WebParam(name = "attributeNames")String[] attributeNames,
             @WebParam(name = "attributeValues")String[] attributeValues,
-            @WebParam(name = "template")String template,
+            @WebParam(name = "templateId")Long templateId,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             //sbr.validateCall("createObject", getIPAddress(), sessionId);
-            return wsBean.createObject(className,parentOid,attributeNames,attributeValues, template);
+            return wsBean.createObject(className,parentObjectClassName, parentOid,attributeNames,attributeValues, templateId);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -718,12 +719,12 @@ public class Kuwaiba {
     @WebMethod(operationName = "addPossibleChildren")
     public void addPossibleChildren(@WebParam(name = "parentClassId")
     Long parentClassId, @WebParam(name = "childrenToBeRemoved")
-    Long[] childrenToBeRemoved, @WebParam(name = "sessionId")
+    Long[] newPossibleChildren, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
         try
         {
-            wsBean.addPossibleChildren(parentClassId, childrenToBeRemoved);
+            wsBean.addPossibleChildren(parentClassId, newPossibleChildren);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -791,6 +792,23 @@ public class Kuwaiba {
         try
         {
             return wsBean.getListTypeItems(className);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+
+    }
+
+    @WebMethod(operationName = "getInstanceableListTypes")
+    public ClassInfoLight[] getInstanceableListTypes(
+            @WebParam(name = "sessionId") String sessionId) throws Exception{
+        try
+        {
+            return wsBean.getInstanceableListTypes();
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
