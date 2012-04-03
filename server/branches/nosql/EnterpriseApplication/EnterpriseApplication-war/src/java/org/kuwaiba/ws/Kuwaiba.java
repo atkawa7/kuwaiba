@@ -400,6 +400,33 @@ public class Kuwaiba {
     }
 
     /**
+     * Sets the string attributes in a class meta data (by now only the display name and description)
+     * @param classId Class to be modified
+     * @param attributeName attribute to be modified
+     * @param attributeValue value for such attribute
+     * @param sessionId
+     * @return Success or failure
+     * @throws Exception
+     */
+    @WebMethod(operationName = "setClassPlainAttribute")
+    public void setClassPlainAttribute(@WebParam(name = "classId")Long classId,
+            @WebParam(name = "attributeName")String attributeName,
+            @WebParam(name = "attributeValue")String attributeValue,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try
+        {
+            wsBean.setClassPlainAttribute(classId, attributeName, attributeValue);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    /**
       * Sets the image (icons) attributes in a class meta data (smallIcon and Icon)
       * @param classId Class to be modified
       * @param iconAttribute icon attribute to be modified
