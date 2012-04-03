@@ -212,7 +212,8 @@ public class Util {
         
         myClass.setAbstractClass((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT));
         myClass.setLocked((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_LOCKED));
-        myClass.setViewable(true);
+        myClass.setSmallIcon((byte[])classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_SMALL_ICON));
+        myClass.setViewable((Boolean)isSubClass(MetadataEntityManagerImpl.VIEWABLE_OBJECT, classNode));
         //Parent
         if (classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING) != null)
             myClass.setParentClassName(
@@ -249,7 +250,8 @@ public class Util {
         myClass.setId(classNode.getId());
         myClass.setListType(isSubClass("GenericListType", classNode));
         myClass.setLocked((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_LOCKED));
-        myClass.setLocked((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_VIEWABLE));
+        //Is Viewable if is subclass of
+        myClass.setViewable((Boolean)isSubClass(MetadataEntityManagerImpl.VIEWABLE_OBJECT, classNode));
         //Parent
         if (classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING) != null)
             myClass.setParentClassName(
