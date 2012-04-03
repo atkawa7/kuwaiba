@@ -166,6 +166,15 @@ public interface MetadataEntityManager {
     public void changeAttributeDefinition(Long ClassId, AttributeMetadata newAttributeDefinition) throws Exception;
 
     /**
+     * Set plain like name, displayname anda description attributes in a class attibute.
+     * @param classId
+     * @param attributeName
+     * @param attributeValue
+     * @throws MetadataObjectNotFoundException
+     */
+    public void setClassPlainAttribute(Long classId, String attributeName, String attributeValue) throws MetadataObjectNotFoundException;
+
+    /**
      * Deletes an attribute belonging to a classMetadata
      * @param className
      * @param attributeName
