@@ -123,6 +123,21 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
+    public void setClassPlainAttribute(Long classId, String attributeName,
+            String attributeValue) throws ServerSideException
+    {
+        assert mem == null : "Can't reach the Metadata Entity Manager";
+        try
+        {
+            mem.setClassPlainAttribute(classId, attributeName, attributeValue);
+            
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
     public void setClassIcon(Long classId, String attributeName, byte[] iconImage)
             throws ServerSideException
     {
