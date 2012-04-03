@@ -55,7 +55,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public static final String PROPERTY_VISIBLE = "visible"; //NOI18N
     public static final String PROPERTY_DESCRIPTION = "description"; //NOI18N
     public static final String PROPERTY_READONLY = "readOnly"; //NOI18N
-    public static final String PROPERTY_LOCKED = "locked"; //NOI18N
     public static final String PROPERTY_ID = "id"; //NOI18N
     public static final String PROPERTY_ABSTRACT = "abstract"; //NOI18N
     public static final String PROPERTY_CUSTOM = "custom"; //NOI18N
@@ -63,6 +62,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public static final String PROPERTY_COLOR = "color"; //NOI18N
     public static final String PROPERTY_ICON = "icon"; //NOI18N
     public static final String PROPERTY_SMALL_ICON = "smallIcon"; //NOI18N
+    public static final String PROPERTY_NO_COPY = "noCopy"; //NOI18N
+    public static final String PROPERTY_NO_SERIALIZE = "noSerialize"; //NOI18N
+    public static final String PROPERTY_UNIQUE = "unique"; //NOI18N
     /**
      * How an attribute should be mapped (as a Float, Integer, relationship, etc)
      */
@@ -238,6 +240,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         newAttrNode.setProperty(PROPERTY_VISIBLE, parentAttrNode.getProperty(PROPERTY_VISIBLE));
                         newAttrNode.setProperty(PROPERTY_ADMINISTRATIVE, parentAttrNode.getProperty(PROPERTY_ADMINISTRATIVE));
                         newAttrNode.setProperty(PROPERTY_MAPPING, parentAttrNode.getProperty(PROPERTY_MAPPING));
+                        newAttrNode.setProperty(PROPERTY_NO_COPY, parentAttrNode.getProperty(PROPERTY_NO_COPY));
+                        newAttrNode.setProperty(PROPERTY_NO_SERIALIZE, parentAttrNode.getProperty(PROPERTY_NO_SERIALIZE));
+                        newAttrNode.setProperty(PROPERTY_UNIQUE, parentAttrNode.getProperty(PROPERTY_UNIQUE));
 
                         classNode.createRelationshipTo(newAttrNode, RelTypes.HAS);
                     }
@@ -669,6 +674,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             atr.setProperty(PROPERTY_READONLY, attributeDefinition.isVisible());
             atr.setProperty(PROPERTY_VISIBLE, attributeDefinition.isVisible());
             atr.setProperty(PROPERTY_ADMINISTRATIVE, attributeDefinition.isAdministrative());
+            atr.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+            atr.setProperty(PROPERTY_NO_COPY, attributeDefinition.isNoCopy());
+            atr.setProperty(PROPERTY_NO_SERIALIZE, attributeDefinition.isNoSerialize());
+            atr.setProperty(PROPERTY_UNIQUE, attributeDefinition.isUnique());
 
             node.createRelationshipTo(atr, RelTypes.HAS);
 
@@ -712,6 +721,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             atr.setProperty(PROPERTY_VISIBLE, attributeDefinition.isVisible());
             atr.setProperty(PROPERTY_ADMINISTRATIVE, attributeDefinition.isAdministrative());
             atr.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+            atr.setProperty(PROPERTY_NO_COPY, attributeDefinition.isNoCopy());
+            atr.setProperty(PROPERTY_NO_SERIALIZE, attributeDefinition.isNoSerialize());
+            atr.setProperty(PROPERTY_UNIQUE, attributeDefinition.isUnique());
 
             node.createRelationshipTo(atr, RelTypes.HAS);
 
@@ -821,6 +833,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     atr.setProperty(PROPERTY_READONLY, newAttributeDefinition.isVisible());
                     atr.setProperty(PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
                     atr.setProperty(PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
+                    atr.setProperty(PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
+                    atr.setProperty(PROPERTY_NO_SERIALIZE, newAttributeDefinition.isNoSerialize());
 
                     couldDelAtt = true;
                 }
