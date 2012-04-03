@@ -92,6 +92,14 @@ public class AttributeMetadata implements Serializable{
      * Attribute's creation Date
      */
     private Long creationDate;
+    /**
+     *
+     */
+    private boolean noCopy;
+    /**
+     *
+     */
+    private boolean noSerialize;
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public boolean isAdministrative() {
@@ -132,10 +140,6 @@ public class AttributeMetadata implements Serializable{
 
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
-    }
-
-    public int getMapping() {
-        return mapping;
     }
 
     public void setMapping(int mapping) {
@@ -181,6 +185,29 @@ public class AttributeMetadata implements Serializable{
     public void setCreationDate(Long creationDate) {
         this.creationDate = creationDate;
     }
-    // </editor-fold>
+
+    public Integer getMapping() {
+        return mapping;
+    }
+
+    public void setMapping(Integer mapping) {
+        this.mapping = mapping;
+    }
+
+    public boolean isNoCopy() {
+        return noCopy;
+    }
+
+    public void setNoCopy(boolean noCopy) {
+        this.noCopy = noCopy;
+    }
+
+    public boolean isNoSerialize() {
+        return noSerialize;
+    }
+
+    public void setNoSerialize(boolean noSerialize) {
+        this.noSerialize = noSerialize;
+    }// </editor-fold>
     
 }
