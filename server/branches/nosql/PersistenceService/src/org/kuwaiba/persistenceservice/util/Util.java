@@ -213,6 +213,8 @@ public class Util {
         myClass.setAbstractClass((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT));
         myClass.setSmallIcon((byte[])classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_SMALL_ICON));
         myClass.setViewable((Boolean)isSubClass(MetadataEntityManagerImpl.VIEWABLE_OBJECT, classNode));
+        myClass.setId(classNode.getId());
+        
         //Parent
         if (classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING) != null)
             myClass.setParentClassName(
@@ -321,6 +323,11 @@ public class Util {
             attribute.setType((String)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
             attribute.setVisible((Boolean)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_VISIBLE));
             attribute.setAdministrative((Boolean)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ADMINISTRATIVE));
+            attribute.setNoCopy((Boolean)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NO_COPY));
+            attribute.setNoSerialize((Boolean)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NO_SERIALIZE));
+            attribute.setUnique((Boolean)AttibuteNode.getProperty(MetadataEntityManagerImpl.PROPERTY_UNIQUE));
+            attribute.setId(AttibuteNode.getId());
+
         }catch(Exception e){
             return null;
         }
