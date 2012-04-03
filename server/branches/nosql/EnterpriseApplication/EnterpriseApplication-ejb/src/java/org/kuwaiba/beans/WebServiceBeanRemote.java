@@ -75,7 +75,19 @@ public interface WebServiceBeanRemote {
 
     public void changeClassDefinition(ClassInfo newClassDefinition) throws ServerSideException;
 
-   /**
+    /**
+     * Sets a given attribute for a class metadata
+     * @param classId
+     * @param attributeName
+     * @param attributeValue
+     * @return
+     * @throws Exception
+     * @throws ServerSideException
+     */
+    public void setClassPlainAttribute(Long classId, String attributeName,
+            String attributeValue)throws ServerSideException;
+
+    /**
      * Set a class icon (big or small)
      * @param classId
      * @param attributeName
