@@ -300,9 +300,9 @@ public class CommunicationsStub {
         }
     }
 
-    public LocalObjectLight createObject(String objectClass, Long parentOid, String template){
+    public LocalObjectLight createObject(String objectClass, String parentClass, Long parentOid, Long template){
         try{
-            Long objectId  = port.createObject(objectClass,parentOid, new ArrayList<String>(),new ArrayList<String>(),template,this.session.getSessionId());
+            Long objectId  = port.createObject(objectClass,parentClass, parentOid, new ArrayList<String>(),new ArrayList<String>(),template,this.session.getSessionId());
             return new LocalObjectLightImpl(objectId, null, objectClass);
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
@@ -320,7 +320,7 @@ public class CommunicationsStub {
     public LocalClassMetadataLight[] getAllLightMeta(boolean includeListTypes) {
         try{
             List<ClassInfoLight> metas;
-            metas= port.getLightMetadata(this.session.getSessionId(), includeListTypes);
+            metas= port.getLightMetadata(includeListTypes, this.session.getSessionId());
 
             LocalClassMetadataLight[] lm = new LocalClassMetadataLight[metas.size()];
             int i=0;
@@ -350,7 +350,7 @@ public class CommunicationsStub {
     public LocalClassMetadata[] getAllMeta(boolean includeListTypes) {
         try{
             List<ClassInfo> metas;
-            metas= port.getMetadata(this.session.getSessionId(), includeListTypes);
+            metas= port.getMetadata(includeListTypes, this.session.getSessionId());
             LocalClassMetadata[] lm = new LocalClassMetadata[metas.size()];
             int i=0;
             for (ClassInfo cm : metas){
@@ -427,9 +427,8 @@ public class CommunicationsStub {
 
     public LocalObjectLight createListTypeItem(String className){
         try{
-            Long myObjectId = port.createListTypeItem(className, this.session.getSessionId());
+            Long myObjectId = port.createListTypeItem(className, "","",this.session.getSessionId());
             return new LocalObjectLightImpl(myObjectId,null,className);
-            return null;
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return null;
@@ -475,7 +474,8 @@ public class CommunicationsStub {
 
     public boolean addPossibleChildren(Long parentClassId, List<Long> possibleChildren){
         try{
-            return port.addPossibleChildren(parentClassId, possibleChildren,this.session.getSessionId());
+            port.addPossibleChildren(parentClassId, possibleChildren,this.session.getSessionId());
+            return true;
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return false;
@@ -490,7 +490,8 @@ public class CommunicationsStub {
      */
     public boolean removePossibleChildren(Long parentClassId, List<Long> childrenToBeDeleted){
         try{
-            return port.removePossibleChildren(parentClassId, childrenToBeDeleted,this.session.getSessionId());
+            port.removePossibleChildren(parentClassId, childrenToBeDeleted,this.session.getSessionId());
+            return true;
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return false;
@@ -805,23 +806,22 @@ public class CommunicationsStub {
      * @return an array with all possible instanceable list types
      */
     public LocalClassMetadataLight[] getInstanceableListTypes() {
-//        try{
-//            List<ClassInfoLight> listTypes;
-//            listTypes = port.getInstanceableListTypes(this.session.getSessionId());
-//
-//
-//            LocalClassMetadataLight[] res = new LocalClassMetadataLight[listTypes.size()];
-//            int i = 0;
-//            for (ClassInfoLight cil : listTypes){
-//                res[i] = new LocalClassMetadataLightImpl(cil);
-//                i++;
-//            }
-//            return res;
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return new LocalClassMetadataLight[0];
+        try{
+            List<ClassInfoLight> listTypes;
+            listTypes = port.getInstanceableListTypes(this.session.getSessionId());
+
+
+            LocalClassMetadataLight[] res = new LocalClassMetadataLight[listTypes.size()];
+            int i = 0;
+            for (ClassInfoLight cil : listTypes){
+                res[i] = new LocalClassMetadataLightImpl(cil);
+                i++;
+            }
+            return res;
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
     }
 
     /**

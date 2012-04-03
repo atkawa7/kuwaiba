@@ -57,6 +57,7 @@ public final class CreateObjectAction extends AbstractAction implements Popup{
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         LocalObjectLight myLol = CommunicationsStub.getInstance().createObject(
                 ((JMenuItem)ev.getSource()).getName(),
+                (node instanceof RootObjectNode) ? null : (((ObjectNode)node)).getObject().getClassName(),
                 (node instanceof RootObjectNode) ? null : (((ObjectNode)node)).getObject().getOid(), null);
         if (myLol == null)
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR,
