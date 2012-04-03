@@ -76,6 +76,8 @@ public class Main {
 
         }catch(Exception e){
             e.printStackTrace();
+            System.out.println("Abnormal program termination. See log file for details");
+            System.exit(1);
         }
     }
 

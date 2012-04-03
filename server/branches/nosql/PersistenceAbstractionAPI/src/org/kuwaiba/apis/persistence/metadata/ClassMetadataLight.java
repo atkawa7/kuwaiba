@@ -42,10 +42,6 @@ public class ClassMetadataLight implements Serializable{
     private Boolean viewable;
 
     /**
-     * Set if the classMetada is locked
-     */
-    private Boolean locked;
-    /**
      * Indicates if a class can have instances by itself (All GenericXXX classes
      * and others in package entity.core are used to take advantage of OOP)
      */
@@ -102,19 +98,6 @@ public class ClassMetadataLight implements Serializable{
 
     public Boolean isViewable() {
         return viewable;
-    }
-
-
-    public Boolean getLocked() {
-        return locked;
-    }
-
-    public Boolean isLocked() {
-        return locked;
-    }
-
-    public void setLocked(Boolean locked) {
-        this.locked = locked;
     }
 
     public String getName() {

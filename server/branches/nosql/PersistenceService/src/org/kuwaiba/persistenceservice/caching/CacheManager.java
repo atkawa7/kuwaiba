@@ -83,4 +83,12 @@ public class CacheManager {
     public void putUser(UserProfile newUser){
         userIndex.put(newUser.getUserName(), newUser);
     }
+
+    /**
+     * Clear the cache
+     */
+    public void clear() {
+        classIndex.clear();
+        userIndex.clear();
+    }
 }

@@ -125,6 +125,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         graphDb = (EmbeddedGraphDatabase) cmn.getConnectionHandler();
         classIndex = graphDb.index().forNodes(INDEX_CLASS);
         categoryIndex = graphDb.index().forNodes(INDEX_CATEGORY);
+        cm.clear();
+        for (Node classNode : classIndex.query(MetadataEntityManagerImpl.PROPERTY_ID, "*"))
+            cm.putClass(Util.createClassMetadataFromNode(classNode));
     }
 
     /**
@@ -158,7 +161,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 rootNode.setProperty(PROPERTY_CUSTOM, classDefinition.isCustom());
                 rootNode.setProperty(PROPERTY_COUNTABLE, classDefinition.isCountable());
                 rootNode.setProperty(PROPERTY_COLOR, classDefinition.getColor());
-                rootNode.setProperty(PROPERTY_LOCKED, classDefinition.isLocked());
                 rootNode.setProperty(PROPERTY_DESCRIPTION, classDefinition.getDescription());
                 rootNode.setProperty(PROPERTY_ABSTRACT, classDefinition.isAbstractClass());
                 rootNode.setProperty(PROPERTY_ICON, classDefinition.getIcon());
@@ -170,7 +172,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 dummyRootNode.setProperty(PROPERTY_CUSTOM, classDefinition.isCustom());
                 dummyRootNode.setProperty(PROPERTY_COUNTABLE, classDefinition.isCountable());
                 dummyRootNode.setProperty(PROPERTY_COLOR, classDefinition.getColor());
-                dummyRootNode.setProperty(PROPERTY_LOCKED, classDefinition.isLocked());
                 dummyRootNode.setProperty(PROPERTY_DESCRIPTION, classDefinition.getDescription());
                 dummyRootNode.setProperty(PROPERTY_ABSTRACT, classDefinition.isAbstractClass());
                 dummyRootNode.setProperty(PROPERTY_ICON, classDefinition.getIcon());
@@ -195,7 +196,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 classNode.setProperty(PROPERTY_CUSTOM, classDefinition.isCustom());
                 classNode.setProperty(PROPERTY_COUNTABLE, classDefinition.isCountable());
                 classNode.setProperty(PROPERTY_COLOR, classDefinition.getColor());
-                classNode.setProperty(PROPERTY_LOCKED, classDefinition.isLocked());
                 classNode.setProperty(PROPERTY_DESCRIPTION, classDefinition.getDescription());
                 classNode.setProperty(PROPERTY_ABSTRACT, classDefinition.isAbstractClass());
                 classNode.setProperty(PROPERTY_ICON, classDefinition.getIcon());
@@ -293,7 +293,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             newcm.setProperty(PROPERTY_CUSTOM, newClassDefinition.isCustom());
             newcm.setProperty(PROPERTY_COUNTABLE, newClassDefinition.isCountable());
             newcm.setProperty(PROPERTY_COLOR, newClassDefinition.getColor());
-            newcm.setProperty(PROPERTY_LOCKED, newClassDefinition.isLocked());
             newcm.setProperty(PROPERTY_DESCRIPTION, newClassDefinition.getDescription());
             newcm.setProperty(PROPERTY_ABSTRACT, newClassDefinition.isAbstractClass());
             newcm.setProperty(PROPERTY_ICON, newClassDefinition.getIcon());

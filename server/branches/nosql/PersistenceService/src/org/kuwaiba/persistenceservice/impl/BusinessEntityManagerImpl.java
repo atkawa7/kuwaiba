@@ -87,6 +87,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
     private BusinessEntityManagerImpl() {
         cm= CacheManager.getInstance();
+        
     }
 
     public BusinessEntityManagerImpl(ConnectionManager cmn) {
@@ -146,7 +147,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 else{
                     String value = attributes.get(att.getName());
 
-                    if (value == null){
+                    if (value != null){
                         if (att.getMapping() != AttributeMetadata.MAPPING_BINARY){
 
                             if (att.getMapping() != AttributeMetadata.MAPPING_MANYTOMANY &&
@@ -427,8 +428,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throw new MetadataObjectNotFoundException(Util.formatString("Class %1s is not a list type", "GenericObjectList"));
         Traverser traverserMetadata = Util.traverserMetadata(genericObjectListNode);
         List<ClassMetadataLight> res = new ArrayList<ClassMetadataLight>();
-        for (Node child : traverserMetadata)
-            res.add(new ClassMetadataLight(child.getId(),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME)));
+        for (Node child : traverserMetadata){
+            if (!(Boolean)child.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT))
+                res.add(new ClassMetadataLight(child.getId(),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME)));
+        }
 
         return res;
     }
@@ -448,6 +451,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
      * @throws MetadataObjectNotFoundException id the class cannot be found
      */
     private Node getInstanceOfClass(String className, Long oid) throws MetadataObjectNotFoundException, ObjectNotFoundException{
+
+        //if any of the parameters is null, return the dummy root
+        if (className == null || oid == null)
+            return graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.BOTH).getEndNode();
+
+
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
 
         if (classNode == null)
@@ -470,6 +479,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
      * @throws MetadataObjectNotFoundException id the class cannot be found
      */
     private Node getInstanceOfClass(Long oid, Long classId) throws MetadataObjectNotFoundException, ObjectNotFoundException{
+
+        //if any of the parameters is null, return the dummy root
+        if (classId == null || oid == null)
+            return graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.BOTH).getEndNode();
+
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_ID,classId).getSingle();
 
         if (classNode == null)
