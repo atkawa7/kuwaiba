@@ -73,7 +73,7 @@ public class CommunicationsStub {
         if (serverURL == null){
             try{
                 //Default values
-                serverURL = new URL("http", "localhost", 8080,"/kuwaiba/KuwaibaService?wsdl"); //NOI18n
+                serverURL = new URL("http", "localhost", 8080,"/EnterpriseApplication-war/KuwaibaService?wsdl"); //NOI18n
             }catch (MalformedURLException mue){
                 Logger.getAnonymousLogger("Malformed URL: "+mue.getMessage());
             }
@@ -785,23 +785,23 @@ public class CommunicationsStub {
     }
 
     public boolean setClassPlainAttribute(Long classId, String attributeName, String attributeValue){
-//        try{
-//            return port.setClassPlainAttribute(classId, attributeName, attributeValue,this.session.getSessionId());
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return false;
-//        }
-        return false;
+        try{
+            port.setClassPlainAttribute(classId, attributeName, attributeValue,this.session.getSessionId());
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return false;
+        }
+        return true;
     }
 
     public boolean setClassIcon(Long classId, String attributeName, byte[] attributeValue){
-//        try{
-//            return port.setClassIcon(classId, attributeName, attributeValue,this.session.getSessionId());
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return false;
-//        }
-        return false;
+        try{
+            port.setClassIcon(classId, attributeName, attributeValue,this.session.getSessionId());
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return false;
+        }
+        return true;
     }
 
     /**
