@@ -1150,10 +1150,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 }
             }//End else is dummy
 
-            Traverser classChildsTraverser = Util.traverserPossibleChildren(myClassNode);
-            for (Node childClassNode : classChildsTraverser) {
-
-                cml.add(Util.createClassMetadataLightFromNode(childClassNode));
+            Iterable<Relationship> relationships = myClassNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.OUTGOING);
+            for (Relationship rel : relationships)
+            {
+                cml.add(Util.createClassMetadataLightFromNode(rel.getEndNode()));
             }
            
         }catch (Exception ex) {
