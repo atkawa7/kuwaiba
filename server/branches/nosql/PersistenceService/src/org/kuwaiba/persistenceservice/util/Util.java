@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.kuwaiba.apis.persistence.business.RemoteObject;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -337,13 +337,13 @@ public class Util {
 
     
     /**
-     * Builds a RemoteObject instance from a node representing a business object
+     * Builds a RemoteBusinessObject instance from a node representing a business object
      * @param instance
      * @param myClass
      * @return
      * @throws InvalidArgumentException
      */
-    public static RemoteObject createRemoteObjectFromNode(Node instance, ClassMetadata myClass) throws InvalidArgumentException{
+    public static RemoteBusinessObject createRemoteObjectFromNode(Node instance, ClassMetadata myClass) throws InvalidArgumentException{
         HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
 
                 //Iterates through attributes
@@ -375,7 +375,7 @@ public class Util {
                     attributes.get(attributeName).add(String.valueOf(relationship.getEndNode().getId()));
 
                 }
-                return new RemoteObject(instance.getId(), myClass.getName());
+                return new RemoteBusinessObject(instance.getId(), (String)instance.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), myClass.getName());
     }
 
     /**

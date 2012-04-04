@@ -18,8 +18,8 @@ package org.kuwaiba.apis.persistence.interfaces;
 
 import java.util.HashMap;
 import java.util.List;
-import org.kuwaiba.apis.persistence.business.RemoteObject;
-import org.kuwaiba.apis.persistence.business.RemoteObjectLight;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -62,7 +62,7 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
-    public RemoteObject getObjectInfo(String className, Long oid)
+    public RemoteBusinessObject getObjectInfo(String className, Long oid)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException;
 
     /**
@@ -74,7 +74,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the requested object can't be found
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
-    public RemoteObjectLight getObjectInfoLight(String className, Long oid)
+    public RemoteBusinessObjectLight getObjectInfoLight(String className, Long oid)
             throws MetadataObjectNotFoundException, ObjectNotFoundException;
 
     /**
@@ -164,7 +164,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException
      * @throws OperationNotPermittedException
      */
-    public RemoteObjectLight[] copyObjects(HashMap<String, Long> objects, String targetClassName, Long targetOid)
+    public RemoteBusinessObjectLight[] copyObjects(HashMap<String, Long> objects, String targetClassName, Long targetOid)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
 
     /**
@@ -189,7 +189,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the object or its new parent can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
      */
-    public List<RemoteObjectLight> getObjectChildren(String className, Long oid)
+    public List<RemoteBusinessObjectLight> getObjectChildren(String className, Long oid)
             throws MetadataObjectNotFoundException, ObjectNotFoundException;
     
     /**

@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
-import org.kuwaiba.apis.persistence.business.RemoteObject;
-import org.kuwaiba.apis.persistence.business.RemoteObjectLight;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -106,6 +106,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         if (myClass == null)
             throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
 
+        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
+        if (classNode == null)
+            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
+
+        if (!Util.isSubClass("InventoryObject", classNode))
+            throw new OperationNotPermittedException("Create Object", "You can't create non-inventory objects using this method");
+
         //The object should be created under an instance other than the dummy root
         if (parentClassName != null){
             ClassMetadata myParentObjectClass= cm.getClass(parentClassName);
@@ -115,13 +122,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             if (myParentObjectClass.getPossibleChildren().contains(className))
                 throw new OperationNotPermittedException("Create Object", Util.formatString("An instance of class %1s can't be created as child of object with id %2s", className, parentOid));
         }
-
-        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
-        if (classNode == null)
-            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
-
-        if (!Util.isSubClass("InventoryObject", classNode))
-            throw new OperationNotPermittedException("Create Object", "You can't create non-inventory objects using this method");
 
         Node parentNode = null;
         if (parentOid != null){
@@ -138,7 +138,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             Node newObject = graphDb.createNode();
             newObject.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
 
-            if (parentOid !=null)
+            if (parentNode !=null)
                 newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
 
             for (AttributeMetadata att : myClass.getAttributes()){
@@ -159,6 +159,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     }
                 }
             }
+
+            //The object's name can't be null in N4J, it has to be set to ""
+            if (attributes.get(MetadataEntityManagerImpl.PROPERTY_NAME) == null)
+                newObject.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, "");
+            
             objectIndex.putIfAbsent(newObject, MetadataEntityManagerImpl.PROPERTY_ID, newObject.getId());
             tx.success();
             return new Long(newObject.getId());
@@ -172,7 +177,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
 
-    public RemoteObject getObjectInfo(String className, Long oid)
+    public RemoteBusinessObject getObjectInfo(String className, Long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         //Perform benchmarks to see if accessing to the objects index is less expensive
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
@@ -197,7 +202,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         throw new ObjectNotFoundException(className, oid);
     }
 
-    public RemoteObjectLight getObjectInfoLight(String className, Long oid) 
+    public RemoteBusinessObjectLight getObjectInfoLight(String className, Long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException {
         //Perform benchmarks to see if accessing to the objects index is less expensive
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
@@ -208,8 +213,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             Node instance = instances.iterator().next().getEndNode();
 
             if (instance.getId() == oid.longValue())
-                return new RemoteObjectLight(oid,
-                        instance.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME) == null ? null : instance.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).toString());
+                return new RemoteBusinessObjectLight(oid,
+                        instance.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME) == null ? null : instance.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).toString(),
+                        className);
 
         }
         throw new ObjectNotFoundException(className, oid);
@@ -300,7 +306,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
     }
 
-    public RemoteObjectLight[] copyObjects(HashMap<String, Long> objects, String targetClassName, Long targetOid)
+    public RemoteBusinessObjectLight[] copyObjects(HashMap<String, Long> objects, String targetClassName, Long targetOid)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException{
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -310,38 +316,44 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public List<RemoteObjectLight> getObjectChildren(String className, Long oid)
+    public List<RemoteBusinessObjectLight> getObjectChildren(String className, Long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException {
-
-        Node parentNode = getInstanceOfClass(className, oid);
-        Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF);
-        List<RemoteObjectLight> res = new ArrayList<RemoteObjectLight>();
-        while(children.iterator().hasNext()){
-            Node child = children.iterator().next().getStartNode();
-            res.add(new RemoteObjectLight(child.getId(),getClassName(child)));
+        try{
+            Node parentNode = getInstanceOfClass(className, oid);
+            Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF);
+            List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
+            while(children.iterator().hasNext()){
+                Node child = children.iterator().next().getStartNode();
+                res.add(new RemoteBusinessObjectLight(child.getId(),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), getClassName(child)));
+            }
+            return res;
+        }catch (Exception ex){
+            throw new RuntimeException (ex.getMessage());
         }
-        return res;
     }
 
-    public List<RemoteObjectLight> getObjectChildren(Long oid, Long classId)
+    public List<RemoteBusinessObjectLight> getObjectChildren(Long oid, Long classId)
             throws ObjectNotFoundException, MetadataObjectNotFoundException {
-
-        Node parentNode = getInstanceOfClass(oid, classId);
-        Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF);
-        List<RemoteObjectLight> res = new ArrayList<RemoteObjectLight>();
-        while(children.iterator().hasNext()){
-            Node child = children.iterator().next().getStartNode();
-            res.add(new RemoteObjectLight(child.getId(), getClassName(child)));
+        try{
+            Node parentNode = getInstanceOfClass(oid, classId);
+            Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF);
+            List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
+            while(children.iterator().hasNext()){
+                Node child = children.iterator().next().getStartNode();
+                res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),getClassName(child)));
+            }
+            return res;
+        }catch(Exception ex){
+            throw new RuntimeException(ex.getMessage());
         }
-        return res;
     }
 
     @Override
-    public List<RemoteObject> getChildrenOfClass(Long parentOid, String parentClass, String classToFilter)
+    public List<RemoteBusinessObject> getChildrenOfClass(Long parentOid, String parentClass, String classToFilter)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException{
         Node parentNode = getInstanceOfClass(parentClass, parentOid);
         Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF);
-        List<RemoteObject> res = new ArrayList<RemoteObject>();
+        List<RemoteBusinessObject> res = new ArrayList<RemoteBusinessObject>();
         while(children.iterator().hasNext()){
             Node child = children.iterator().next().getStartNode();
 
@@ -358,11 +370,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
 
     @Override
-    public List<RemoteObjectLight> getChildrenOfClassLight(Long parentOid, String parentClass, String classToFilter)
+    public List<RemoteBusinessObjectLight> getChildrenOfClassLight(Long parentOid, String parentClass, String classToFilter)
             throws MetadataObjectNotFoundException, ObjectNotFoundException {
         Node parentNode = getInstanceOfClass(parentClass, parentOid);
         Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF);
-        List<RemoteObjectLight> res = new ArrayList<RemoteObjectLight>();
+        List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
         while(children.iterator().hasNext()){
             Node child = children.iterator().next().getStartNode();
 
@@ -372,7 +384,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             Node classNode = child.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode();
 
             if (classToFilter.equals((String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME)))
-                res.add(new RemoteObjectLight(child.getId(), getClassName(child)));
+                res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),getClassName(child)));
         }
         return res;
     }
@@ -404,7 +416,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
 
-    public List<RemoteObjectLight> getListTypeItems(String className) throws MetadataObjectNotFoundException, InvalidArgumentException{
+    public List<RemoteBusinessObjectLight> getListTypeItems(String className) throws MetadataObjectNotFoundException, InvalidArgumentException{
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, className).getSingle();
         if (classNode ==  null)
             throw new MetadataObjectNotFoundException(Util.formatString("Class for object with oid %1s could not be found",className));
@@ -413,11 +425,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", className), Level.SEVERE);
 
         Iterable<Relationship> childrenAsRelationships = classNode.getRelationships(RelTypes.INSTANCE_OF);
-        List<RemoteObjectLight> children = new ArrayList<RemoteObjectLight>();
+        List<RemoteBusinessObjectLight> children = new ArrayList<RemoteBusinessObjectLight>();
 
         while(childrenAsRelationships.iterator().hasNext()){
             Node child = childrenAsRelationships.iterator().next().getEndNode();
-            children.add(new RemoteObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME)));
+            children.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), getClassName(child)));
         }
         return children;
     }

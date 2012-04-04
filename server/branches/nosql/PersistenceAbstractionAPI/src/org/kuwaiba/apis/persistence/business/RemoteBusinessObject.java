@@ -23,7 +23,7 @@ import java.util.List;
  * Contains a business object detailed information
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RemoteObject extends RemoteObjectLight{
+public class RemoteBusinessObject extends RemoteBusinessObjectLight{
 
     /**
      * Map of attributes and values. Note that there's a little of overhead here, since
@@ -31,12 +31,12 @@ public class RemoteObject extends RemoteObjectLight{
      */
     private HashMap <String, List<String>> attributes;
 
-    public RemoteObject(Long id, String name) {
-        super(id,name);
+    public RemoteBusinessObject(Long id, String name, String className) {
+        super(id,name, className);
     }
 
-    public RemoteObject(Long id, String name, HashMap<String, List<String>> attributes) {
-        this(id,name);
+    public RemoteBusinessObject(Long id, String name, String className, HashMap<String, List<String>> attributes) {
+        this(id,name, className);
         this.attributes = attributes;
     }
 

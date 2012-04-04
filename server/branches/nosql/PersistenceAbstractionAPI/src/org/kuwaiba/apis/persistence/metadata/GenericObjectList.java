@@ -17,7 +17,7 @@
 package org.kuwaiba.apis.persistence.metadata;
 
 import java.util.List;
-import org.kuwaiba.apis.persistence.business.RemoteObjectLight;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 
 /**
  * This class represents a list type attribute (packing many list items) (people in charge of an equipment, antenna types, etc)
@@ -41,7 +41,7 @@ public class GenericObjectList {
     /**
      * Items in this list
      */
-    private List<RemoteObjectLight> list;
+    private List<RemoteBusinessObjectLight> list;
 
     public String getClassName() {
         return className;
@@ -59,11 +59,11 @@ public class GenericObjectList {
         this.dislayName = dislayName;
     }
 
-    public List<RemoteObjectLight> getList() {
+    public List<RemoteBusinessObjectLight> getList() {
         return list;
     }
 
-    public void setList(List<RemoteObjectLight> list) {
+    public void setList(List<RemoteBusinessObjectLight> list) {
         this.list = list;
     }
 

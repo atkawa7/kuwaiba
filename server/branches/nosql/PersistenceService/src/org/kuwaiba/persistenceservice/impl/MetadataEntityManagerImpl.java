@@ -517,7 +517,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * Gets a classmetadata, its attributes and Category
      * @param className
      * @return A ClassMetadata with the className
-     * @throws MetadataObjectNotFoundException there is no class with such className
+     * @throws MetadataObjectNotFoundException there is no a class with such name
      */
     @Override
     public ClassMetadata getClass(String className) throws MetadataObjectNotFoundException {

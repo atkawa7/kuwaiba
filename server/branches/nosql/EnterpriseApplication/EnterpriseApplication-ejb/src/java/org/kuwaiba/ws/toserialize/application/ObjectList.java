@@ -53,7 +53,7 @@ public class ObjectList {
         this.type = listType.getType();
         this.displayName = listType.getDislayName();
         this.list = new HashMap<Long, String>();
-        for (org.kuwaiba.apis.persistence.business.RemoteObjectLight item : listType.getList())
+        for (org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight item : listType.getList())
             this.list.put(item.getId(), item.getName());
     }
 

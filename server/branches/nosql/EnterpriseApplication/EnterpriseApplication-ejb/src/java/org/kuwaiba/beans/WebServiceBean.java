@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.kuwaiba.apis.persistence.application.UserProfile;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
@@ -188,7 +189,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return new ClassInfo(mem.getClass(className), new Validator[0]);
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -636,8 +637,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
         assert bem == null : "Can't reach the Business Entity Manager";
         try
         {
-            return bem.getListTypeItems(className).toArray(new RemoteObjectLight[0]);
+            List<RemoteBusinessObjectLight> listTypeItems = bem.getListTypeItems(className);
+            RemoteObjectLight[] res = new RemoteObjectLight[listTypeItems.size()];
 
+            for (int i = 0; i < res.length; i++)
+                res[i] = new RemoteObjectLight(listTypeItems.get(i));
+
+            return res;
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -685,7 +691,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId) throws ServerSideException {
         assert bem == null : "Can't reach the Business Entity Manager";
         try {
-            return bem.getObjectChildren(oid, objectClassId).toArray(new RemoteObjectLight[0]);
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(oid, objectClassId));
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -697,7 +703,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             throws ServerSideException {
         assert bem == null : "Can't reach the Business Entity Manager";
         try {
-            return bem.getObjectChildren(className, oid).toArray(new RemoteObjectLight[0]);
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(className, oid));
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
@@ -709,7 +715,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             throws ServerSideException {
         assert bem == null : "Can't reach the Business Entity Manager";
         try {
-            return bem.getChildrenOfClass(parentOid, parentClass,classToFilter).toArray(new RemoteObject[0]);
+            return RemoteObject.toRemoteObjectArray(bem.getChildrenOfClass(parentOid, parentClass,classToFilter));
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
@@ -721,7 +727,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             throws ServerSideException {
         assert bem == null : "Can't reach the Business Entity Manager";
         try {
-            return bem.getChildrenOfClassLight(parentOid, parentClass,classToFilter).toArray(new RemoteObjectLight[0]);
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getChildrenOfClassLight(parentOid, parentClass,classToFilter));
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");

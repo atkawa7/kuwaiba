@@ -16,7 +16,7 @@
 
 package org.kuwaiba.apis.persistence.application;
 
-import org.kuwaiba.apis.persistence.business.RemoteObjectLight;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import java.util.List;
 
 /**
@@ -25,11 +25,11 @@ import java.util.List;
  * provided when the query was executed
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ResultRecord extends RemoteObjectLight{
+public class ResultRecord extends RemoteBusinessObjectLight{
     private List<String> extraColumns;
 
-    public ResultRecord(Long id, String name) {
-        super(id,name);
+    public ResultRecord(Long id, String name, String className) {
+        super(id,name, className);
     }
 
     public List<String> getExtraColumns() {

@@ -22,7 +22,7 @@ import java.io.Serializable;
  * Contains a business object basic information
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RemoteObjectLight implements Serializable{
+public class RemoteBusinessObjectLight implements Serializable{
 
     /**
      * Object's id
@@ -36,15 +36,12 @@ public class RemoteObjectLight implements Serializable{
      * Class this object is instance of
      */
     private String className;
-    /**
-     * Is this object locked?
-     */
-    private Boolean locked;
+    
 
-    public RemoteObjectLight(Long id, String name) {
+    public RemoteBusinessObjectLight(Long id, String name, String className) {
         this.id = id;
         this.name = name;
-        this.locked = false;
+        this.className = className;
     }
 
     public Long getId() {
@@ -61,14 +58,6 @@ public class RemoteObjectLight implements Serializable{
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Boolean isLocked() {
-        return locked;
-    }
-
-    public void setLocked(Boolean locked) {
-        this.locked = locked;
     }
 
     public String getClassName() {

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.ws.toserialize.application.Validator;
 
 /**
@@ -39,10 +40,7 @@ public class RemoteObjectLight {
      * Object's class name
      */
     protected String className;
-    /**
-     * Is this object locked (read-only)?
-     */
-    protected Boolean locked;
+
     
     /**
      * Misc flags used to give more information about the object (i.e. is it already connected?)
@@ -54,19 +52,17 @@ public class RemoteObjectLight {
      */
     protected RemoteObjectLight(){}
 
-    public RemoteObjectLight(Long oid, String name, String className, boolean isLocked) {
+    public RemoteObjectLight(Long oid, String name, String className) {
         this.oid = oid;
         this.name = name;
         this.className = className;
-        this.locked = isLocked;
     }
 
 
-    public RemoteObjectLight(org.kuwaiba.apis.persistence.business.RemoteObjectLight obj){
+    public RemoteObjectLight(org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight obj){
         this.className = obj.getClassName();
         this.name = obj.getName();
         this.oid = obj.getId();
-        this.locked = obj.isLocked();
     }
 
     public String getClassName() {
@@ -75,14 +71,6 @@ public class RemoteObjectLight {
 
     public Long getOid() {
         return oid;
-    }
-
-    public Boolean getLocked() {
-        return locked;
-    }
-
-    public void setLocked(Boolean locked) {
-        this.locked = locked;
     }
 
     public String getName() {
@@ -116,5 +104,16 @@ public class RemoteObjectLight {
         if (this.validators == null)
             this.validators = new ArrayList<Validator>();
         this.validators.add(newValidator);
+    }
+
+    public final static RemoteObjectLight[] toRemoteObjectLightArray(List<RemoteBusinessObjectLight> toBeWrapped){
+        if (toBeWrapped == null)
+            return null;
+
+        RemoteObjectLight[] res = new RemoteObjectLight[toBeWrapped.size()];
+        for (int i = 0; i < toBeWrapped.size(); i++)
+            res[i] = new RemoteObjectLight(toBeWrapped.get(i));
+
+        return res;
     }
 }

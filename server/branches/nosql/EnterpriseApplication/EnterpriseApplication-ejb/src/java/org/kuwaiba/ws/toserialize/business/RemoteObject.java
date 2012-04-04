@@ -15,8 +15,10 @@
  */
 package org.kuwaiba.ws.toserialize.business;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 
 /**
  * Instances of this class are proxies that represents the entities in the database. This is a wrapper of
@@ -45,8 +47,8 @@ public class RemoteObject extends RemoteObjectLight {
      *
      * @param object The object to be serialized
      */
-    public RemoteObject(org.kuwaiba.apis.persistence.business.RemoteObject object){
-        super(object.getId(), object.getName(), object.getClassName(), object.isLocked());
+    public RemoteObject(org.kuwaiba.apis.persistence.business.RemoteBusinessObject object){
+        super(object.getId(), object.getName(), object.getClassName());
         attributes = new String[object.getAttributes().size()];
         values = new String[object.getAttributes().size()][];
         int i = 0;
@@ -71,5 +73,16 @@ public class RemoteObject extends RemoteObjectLight {
 
     public void setValues(String[][] values) {
         this.values = values;
+    }
+
+    public static RemoteObject[] toRemoteObjectArray(List<RemoteBusinessObject> toBeWrapped){
+        if (toBeWrapped == null)
+            return null;
+
+        RemoteObject[] res = new RemoteObject[toBeWrapped.size()];
+        for (int i = 0; i < toBeWrapped.size(); i++)
+            res[i] = new RemoteObject(toBeWrapped.get(i));
+
+        return res;
     }
 }
