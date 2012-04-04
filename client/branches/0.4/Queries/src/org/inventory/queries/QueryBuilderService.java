@@ -105,7 +105,7 @@ public class QueryBuilderService implements ListSelectionListener,ItemListener{
                 }
                 else{
                     if(lam.getMapping() == Constants.MAPPING_MANYTOONE){
-                        LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(),false);
+                        LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(), true,false);
 
                         JComboBox cmbValue = new JComboBox(list);
 

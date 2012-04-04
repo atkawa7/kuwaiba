@@ -37,7 +37,7 @@ public class Cache{
     private HashMap<String,LocalClassMetadata> metadataIndex; //Cache for metadata (the complete metadata information)
     private HashMap<String,LocalClassMetadataLight> lightMetadataIndex; //Cache for lightmetadata (usually for administrative purposes)
     private HashMap<String,List<LocalClassMetadataLight>> possibleChildrenIndex; //Cache for possible children
-    private HashMap<String,List<LocalObjectListItem>> listIndex; //Cache for list-type attributes
+    private HashMap<String,LocalObjectListItem[]> listIndex; //Cache for list-type attributes
     private Long rootClassId = null;
     /**
      * Information about the current logged user
@@ -53,7 +53,7 @@ public class Cache{
         this.metadataIndex = new HashMap<String, LocalClassMetadata>();
         this.lightMetadataIndex = new HashMap<String, LocalClassMetadataLight>();
         this.possibleChildrenIndex = new HashMap<String, List<LocalClassMetadataLight>>();
-        this.listIndex = new HashMap<String, List<LocalObjectListItem>>();
+        this.listIndex = new HashMap<String, LocalObjectListItem[]>();
     }
 
     /**
@@ -143,17 +143,14 @@ public class Cache{
     public LocalObjectListItem[] getListCached(String className){
         if (className == null)
             return null;
-        List<LocalObjectListItem> existingItems = listIndex.get(className);
-        if (existingItems == null) //The list is not cached
-            return null;
-        return existingItems.toArray(new LocalObjectListItem[0]);
+        return listIndex.get(className);
     }
 
-    public void addListCached(String className, List<LocalObjectListItem> items){
+    public void addListCached(String className, LocalObjectListItem[] items){
         listIndex.put(className, items);
     }
 
-    public HashMap<String, List<LocalObjectListItem>> getAllList() {
+    public HashMap<String, LocalObjectListItem[]> getAllList() {
         return listIndex;
     }
 

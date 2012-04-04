@@ -101,7 +101,7 @@ public class ConnectionWizardWizardPanel2 implements WizardDescriptor.Panel {
     @Override
     public void readSettings(Object settings) {
         this.connectionTypeClass = (String)((WizardDescriptor)settings).getProperty("connectionTypeClass");
-        LocalObjectListItem[] types = com.getList(connectionTypeClass, false);
+        LocalObjectListItem[] types = com.getList(connectionTypeClass, true, false);
             if (types != null){
                 for(LocalObjectListItem type : types)
                     ((ConnectionWizardVisualPanel2)component).getCmbType().addItem(type);

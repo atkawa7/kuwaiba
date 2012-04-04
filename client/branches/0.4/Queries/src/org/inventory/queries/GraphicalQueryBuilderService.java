@@ -174,7 +174,7 @@ public class GraphicalQueryBuilderService implements ActionListener{
                     if (newNode == null){
                         newNode = (QueryEditorNodeWidget) qbtc.getQueryScene().addNode(myMetadata);
                         if (newNode instanceof ListTypeFilter)
-                            ((ListTypeFilter)newNode).build(com.getList(((ListTypeFilter)newNode).getWrappedClass().getClassName(), false));
+                            ((ListTypeFilter)newNode).build(com.getList(((ListTypeFilter)newNode).getWrappedClass().getClassName(), true, false));
                         qbtc.getQueryScene().validate();
                     }
                     insideCheck.putClientProperty("related-node", myMetadata);
