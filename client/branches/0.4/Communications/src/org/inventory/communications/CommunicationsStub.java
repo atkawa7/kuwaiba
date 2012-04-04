@@ -319,8 +319,7 @@ public class CommunicationsStub {
      */
     public LocalClassMetadataLight[] getAllLightMeta(boolean includeListTypes) {
         try{
-            List<ClassInfoLight> metas;
-            metas= port.getLightMetadata(includeListTypes, this.session.getSessionId());
+            List<ClassInfoLight> metas = port.getLightMetadata(includeListTypes, this.session.getSessionId());
 
             LocalClassMetadataLight[] lm = new LocalClassMetadataLight[metas.size()];
             int i=0;
@@ -438,9 +437,11 @@ public class CommunicationsStub {
     /**
      * Retrieves the list of items corresponding to a list type attribute.
      * @param className attribute class (usually descendant of GenericListType)
+     * @param includeNullValue Add an entry for a "null" value to the list to be returned (usually used to display a list type attribute in a property sheet)
+     * @param ignoreCache Use cached values or not
      * @return 
      */
-    public LocalObjectListItem[] getList(String className, boolean ignoreCache){
+    public LocalObjectListItem[] getList(String className, boolean includeNullValue,boolean ignoreCache){
         try{
             LocalObjectListItem[] res;
 
@@ -451,16 +452,18 @@ public class CommunicationsStub {
             }
 
             List<RemoteObjectLight> remoteList = port.getMultipleChoice(className,this.session.getSessionId());
+            int i = 0;
 
-            List<LocalObjectListItem> loli = new ArrayList<LocalObjectListItem>();
-            //The +1 represents the empty room left for the "null" value
-            res = new LocalObjectListItemImpl[remoteList.size() + 1];
-            res[0] = ObjectFactory.createNullItem();
-            loli.add(res[0]);
-            int i = 1;
+            if (includeNullValue){
+                //The +1 represents the empty room left for the "null" value
+                res = new LocalObjectListItemImpl[remoteList.size() + 1];
+                res[0] = ObjectFactory.createNullItem();
+                i = 1;
+            }else
+                res = new LocalObjectListItemImpl[remoteList.size()];
+            
             for(RemoteObjectLight entry : remoteList){
                 res[i] = new LocalObjectListItemImpl(entry.getOid(),entry.getClassName(),entry.getName());
-                loli.add(res[i]);
                 i++;
             }
 

@@ -50,7 +50,10 @@ public final class Create extends AbstractAction{
         else{
             ((ListElementChildren)node.getChildren()).add(new ListElementNode[]{new ListElementNode(myLol)});
             //Refreshes the cache
-            CommunicationsStub.getInstance().getList(node.getObject().getClassName(), true);
+            /**
+             * TODO: Provide a method only for this instead of calling the standard
+             */
+            CommunicationsStub.getInstance().getList(node.getObject().getClassName(), false, true);
         }
     }
 }

@@ -163,7 +163,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
                 if (lam.getMapping() == Constants.MAPPING_MANYTOONE){
                     //If so, this can be a reference to an object list item or a 1:1 to any other RootObject subclass
-                    LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(),false);
+                    LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(), true, false);
                     LocalObjectListItem val = null;
 
                     for (LocalObjectListItem loli : list)
@@ -410,7 +410,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                 fireDisplayNameChange(object.getName(), newName);
                 
                 if (this instanceof ListElementNode)
-                    CommunicationsStub.getInstance().getList(object.getClassName(), true);
+                    CommunicationsStub.getInstance().getList(object.getClassName(), true, true);
             }
 
             //So the PropertySheet reflects the changes too
@@ -426,14 +426,11 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     }
 
     public String getEditableText(){
-        String displayName;
-        if (object instanceof LocalObject)
-            displayName = (((LocalObject)object).getAttribute("name").equals("")) ?
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME"):((LocalObject)object).getAttribute("name").toString();
-        else
-            displayName= (object.getName().equals(""))?
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME"):object.getName();
-        return displayName;
+        if (object.getName() == null)
+            return java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME");
+        if (object.getName().equals(""))
+            return java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME");
+        return object.getName();
     }
 
     /**

@@ -93,7 +93,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
                 value = t;
             
             if (node instanceof ListElementNode)
-                CommunicationsStub.getInstance().getList(node.getObject().getClassName(), true);
+                CommunicationsStub.getInstance().getList(node.getObject().getClassName(), true, true);
             
         }catch(Exception e){
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);

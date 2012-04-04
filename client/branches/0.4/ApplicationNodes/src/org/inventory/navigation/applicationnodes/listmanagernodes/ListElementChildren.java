@@ -51,7 +51,7 @@ public class ListElementChildren extends ObjectChildren{
     public void addNotify(){
         if (this.getNode() instanceof ListTypeNode){
             LocalClassMetadataLight lcml = ((ListTypeNode)this.getNode()).getObject();
-            LocalObjectLight[] myObjects = CommunicationsStub.getInstance().getList(lcml.getClassName(), false);
+            LocalObjectLight[] myObjects = CommunicationsStub.getInstance().getList(lcml.getClassName(), false, false);
             if (myObjects == null){
                 Lookup.getDefault().lookup(NotificationUtil.class).
                         showSimplePopup("List Generation", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());

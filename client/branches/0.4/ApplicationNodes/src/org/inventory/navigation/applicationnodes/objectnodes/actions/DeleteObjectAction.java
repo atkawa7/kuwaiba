@@ -65,7 +65,7 @@ public final class DeleteObjectAction extends AbstractAction implements ObjectAc
                 nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
                 
                 if (node instanceof ListElementNode)
-                    CommunicationsStub.getInstance().getList(node.getObject().getClassName(), true);
+                    CommunicationsStub.getInstance().getList(node.getObject().getClassName(), false, true);
             }
             else
                 nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_ERROR"),
