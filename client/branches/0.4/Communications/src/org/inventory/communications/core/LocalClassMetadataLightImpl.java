@@ -140,6 +140,10 @@ public class LocalClassMetadataLightImpl
     }
     
     public String getDisplayName(){
+        if (displayName == null)
+            return className;
+        if (displayName.trim().equals(""))
+            return className;
         return displayName;
     }
     
