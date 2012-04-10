@@ -179,27 +179,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
     public RemoteBusinessObject getObjectInfo(String className, Long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
-        //Perform benchmarks to see if accessing to the objects index is less expensive
-        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
-        if (classNode == null)
-            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
-
-        //Update the cache if necessary
-        ClassMetadata myClass= cm.getClass(className);
-        if (myClass == null){
-            myClass = Util.createClassMetadataFromNode(classNode);
-            cm.putClass(myClass);
-        }
-
-        Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
-        while (instances.iterator().hasNext()){
-            Node instance = instances.iterator().next().getEndNode();
-
-            if (instance.getId() == oid.longValue()){
-                return Util.createRemoteObjectFromNode(instance, myClass);
-            }
-        }
-        throw new ObjectNotFoundException(className, oid);
+        
+        ClassMetadata myClass = cm.getClass(className);
+        Node instance = getInstanceOfClass(className, oid);
+        return Util.createRemoteObjectFromNode(instance, myClass);
     }
 
     public RemoteBusinessObjectLight getObjectInfoLight(String className, Long oid)
@@ -210,7 +193,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
         Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
         while (instances.iterator().hasNext()){
-            Node instance = instances.iterator().next().getEndNode();
+            Node instance = instances.iterator().next().getStartNode();
 
             if (instance.getId() == oid.longValue())
                 return new RemoteBusinessObjectLight(oid,
@@ -236,15 +219,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
         //Update the cache if necessary
         ClassMetadata myClass= cm.getClass(className);
-        if (myClass == null){
-            myClass = Util.createClassMetadataFromNode(classNode);
-            cm.putClass(myClass);
-        }
 
         Transaction tx = graphDb.beginTx();
         Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
         while (instances.iterator().hasNext()){
-            Node instance = instances.iterator().next().getEndNode();
+            Node instance = instances.iterator().next().getStartNode();
 
             if (instance.getId() == oid.longValue()){
                 for (String attributeName : attributes.keySet()){
@@ -252,7 +231,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                         if (myClass.getAttributeMapping(attributeName) != AttributeMetadata.MAPPING_BINARY
                                 &&myClass.getAttributeMapping(attributeName) != AttributeMetadata.MAPPING_MANYTOMANY
                                 &&myClass.getAttributeMapping(attributeName) != AttributeMetadata.MAPPING_MANYTOONE)
-                            instance.setProperty(attributeName,Util.getRealValue(attributeName, myClass.getAttributeMapping(attributeName),myClass.getType(attributeName)));
+                            instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), myClass.getAttributeMapping(attributeName),myClass.getType(attributeName)));
                         else{
                             tx.failure();
                             tx.finish();
@@ -320,7 +299,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throws ObjectNotFoundException, MetadataObjectNotFoundException {
         try{
             Node parentNode = getInstanceOfClass(className, oid);
-            Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF);
+            Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING);
             List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
             while(children.iterator().hasNext()){
                 Node child = children.iterator().next().getStartNode();
@@ -428,8 +407,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         List<RemoteBusinessObjectLight> children = new ArrayList<RemoteBusinessObjectLight>();
 
         while(childrenAsRelationships.iterator().hasNext()){
-            Node child = childrenAsRelationships.iterator().next().getEndNode();
-            children.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), getClassName(child)));
+            Node child = childrenAsRelationships.iterator().next().getStartNode();
+            children.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), className));
         }
         return children;
     }

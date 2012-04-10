@@ -16,13 +16,12 @@
 package org.kuwaiba.persistenceservice.impl;
 
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 
-import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 /**
@@ -32,11 +31,11 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
 public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseService>{
 
     /**
-     * Neo4J Database instance
+     * Neo4J Database handler
      */
     private GraphDatabaseService graphDb;
     /**
-     * Neo4J Transaction instance
+     * Neo4J Transaction handler
      */
     private Transaction tx;
     
@@ -82,8 +81,8 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
 //        graphDb = new EmbeddedGraphDatabase(props.getProperty("conection_DB_PATH") +
 //                                            props.getProperty("connection_database"));
 
+        //graphDb = new EmbeddedGraphDatabase("target/kuwaiba_db");
         graphDb = new EmbeddedGraphDatabase("target/kuwaiba_db");
-        //graphDb.toString();
 
         registerShutdownHook( graphDb );
     }
