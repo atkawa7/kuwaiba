@@ -133,6 +133,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @throws RemoteException, Exception
      */
     public void addAttribute(Long classId, AttributeMetadata attributeDefinition) throws RemoteException, MetadataObjectNotFoundException;
+
     /**
      * See Persistence Abstraction API documentation
      * @param className
@@ -141,6 +142,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @throws RemoteException, Exception
      */
     public AttributeMetadata getAttribute(String className, String attributeName) throws RemoteException, MetadataObjectNotFoundException;
+
     /**
      * See Persistence Abstraction API documentation
      * @param classId
@@ -149,20 +151,30 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @throws RemoteException, Exception
      */
     public AttributeMetadata getAttribute(Long classId, String attributeName) throws RemoteException, MetadataObjectNotFoundException;
+
     /**
      * See Persistence Abstraction API documentation
      * @param ClassId
      * @param newAttributeDefinition
      * @throws RemoteException, Exception
      */
+    public void setAttributePropertyValue(Long classId, String attributeName,
+            String propertyName, String propertyValue) throws RemoteException, MetadataObjectNotFoundException;
+    /**
+     * See Persistence Abstraction API documentation
+     * @param classId
+     * @param attributeName
+     * @return
+     * @throws RemoteException, Exception
+     */
     public void changeAttributeDefinition(Long ClassId, AttributeMetadata newAttributeDefinition) throws RemoteException, MetadataObjectNotFoundException;
 
     /**
-     * Set plain like name, displayname anda description attributes in a class attibute.
+     * See Persistence Abstraction API documentation
      * @param classId
      * @param attributeName
-     * @param attributeValue
-     * @throws RemoteException
+     * @return
+     * @throws RemoteException, Exception
      */
     public void setClassPlainAttribute(Long classId, String attributeName, String attributeValue) throws RemoteException, MetadataObjectNotFoundException;
 
