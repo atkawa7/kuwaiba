@@ -404,6 +404,61 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
     }
 
+    @Override
+    public void setAttributePropertyValue(Long classId, String attributeName,
+            String propertyName, String propertyValue) throws MetadataObjectNotFoundException
+    {
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            Node classNode = classIndex.get(PROPERTY_ID, classId).getSingle();
+
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                        "Can not find the Class with the id %1s", classId));
+
+            Iterable<Relationship> relationships = classNode.getRelationships(RelTypes.HAS);
+
+            for (Relationship relationship : relationships) {
+                Node atr = relationship.getEndNode();
+                String dd = String.valueOf(atr.getProperty(PROPERTY_NAME));
+                if (dd.equals(attributeName))
+                {
+                    if(propertyName.equalsIgnoreCase(PROPERTY_DISPLAY_NAME))
+                    {
+                        atr.setProperty(PROPERTY_DISPLAY_NAME, propertyValue);
+                        break;
+                    }
+
+                    if(propertyName.equalsIgnoreCase(PROPERTY_VISIBLE))
+                    {
+                        atr.setProperty(PROPERTY_VISIBLE, propertyValue);
+                        break;
+                    }
+
+                    if(propertyName.equalsIgnoreCase(PROPERTY_ADMINISTRATIVE))
+                    {
+                        atr.setProperty(PROPERTY_ADMINISTRATIVE, propertyValue);
+                        break;
+                    }
+
+                    if(propertyName.equalsIgnoreCase(PROPERTY_DESCRIPTION))
+                    {
+                        atr.setProperty(PROPERTY_DESCRIPTION, propertyValue);
+                        break;
+                    }
+                }//end if   
+            }//end for
+            tx.success();
+            
+        } catch(Exception ex){
+            throw new RuntimeException(ex.getMessage());
+        } finally {
+            if( tx != null)
+                tx.finish();
+        }
+    }
+
     /**
      * Retrieves the simplified list of classes. This list won't include either
      * those classes marked as dummy
