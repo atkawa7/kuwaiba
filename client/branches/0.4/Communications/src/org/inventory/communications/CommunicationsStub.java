@@ -774,14 +774,14 @@ public class CommunicationsStub {
     }
     
     public boolean setAttributePropertyValue(Long classId, String attributeName,
-            String propertyName, String propertyType) {
-//        try{
-//            return port.setAttributePropertyValue(classId, attributeName, propertyName, propertyType,this.session.getSessionId());
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return false;
-//        }
-        return false;
+        String propertyName, String propertyType) {
+        try{
+            port.setAttributePropertyValue(classId, attributeName, propertyName, propertyType,this.session.getSessionId());
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return false;
+        }
+        return true;
     }
 
     public boolean setClassPlainAttribute(Long classId, String attributeName, String attributeValue){
