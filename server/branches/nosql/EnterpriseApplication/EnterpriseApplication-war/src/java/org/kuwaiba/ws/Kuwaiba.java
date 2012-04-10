@@ -398,6 +398,41 @@ public class Kuwaiba {
             throw e;
         }
     }
+    
+    /**
+     * Sets the value of a property associated to an attribute. So far there are only
+     * 4 possible properties:
+     * -displayName
+     * -isVisible
+     * -isAdministrative
+     * -description
+     * @param classId The id of the class associated to the attribute
+     * @param attributeName The name of the attribute
+     * @param propertyName The name of the property
+     * @param propertyValue The value of the property
+     * @param sessionId
+     * @return Success or failure
+     * @throws Exception
+     */
+    @WebMethod(operationName = "setAttributePropertyValue")
+    public void setAttributePropertyValue(@WebParam(name = "classId")Long classId,
+            @WebParam(name = "attributeName")String attributeName,
+            @WebParam(name = "propertyName")String propertyName,
+            @WebParam(name = "propertyValue")String propertyValue,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try
+        {
+            wsBean.setAttributePropertyValue(classId, attributeName, propertyName, propertyValue);
+            
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
 
     /**
      * Sets the string attributes in a class meta data (by now only the display name and description)
