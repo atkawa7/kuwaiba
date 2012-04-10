@@ -76,6 +76,24 @@ public interface WebServiceBeanRemote {
     public void changeClassDefinition(ClassInfo newClassDefinition) throws ServerSideException;
 
     /**
+     * Sets the value of a property associated to an attribute. So far there are only
+     * 4 possible properties:
+     * -displayName
+     * -isVisible
+     * -isAdministrative
+     * -description
+     * @param classId
+     * @param attributeName
+     * @param propertyName
+     * @param propertyValue
+     * @return
+     * @throws ServerSideException
+     */
+
+    public void setAttributePropertyValue(Long classId, String attributeName,
+            String propertyName, String propertyValue) throws ServerSideException;
+
+    /**
      * Sets a given attribute for a class metadata
      * @param classId
      * @param attributeName
