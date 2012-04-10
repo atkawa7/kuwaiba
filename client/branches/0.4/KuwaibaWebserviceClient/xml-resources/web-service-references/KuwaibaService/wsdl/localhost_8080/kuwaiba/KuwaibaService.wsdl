@@ -28,6 +28,12 @@
 <message name="createObjectResponse">
 <part name="parameters" element="tns:createObjectResponse"/>
 </message>
+<message name="setClassPlainAttribute">
+<part name="parameters" element="tns:setClassPlainAttribute"/>
+</message>
+<message name="setClassPlainAttributeResponse">
+<part name="parameters" element="tns:setClassPlainAttributeResponse"/>
+</message>
 <message name="setClassIcon">
 <part name="parameters" element="tns:setClassIcon"/>
 </message>
@@ -194,6 +200,11 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectResponse" message="tns:createObjectResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObject/Fault/Exception"/>
 </operation>
+<operation name="setClassPlainAttribute">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassPlainAttributeRequest" message="tns:setClassPlainAttribute"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassPlainAttributeResponse" message="tns:setClassPlainAttributeResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassPlainAttribute/Fault/Exception"/>
+</operation>
 <operation name="setClassIcon">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassIconRequest" message="tns:setClassIcon"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassIconResponse" message="tns:setClassIconResponse"/>
@@ -347,6 +358,18 @@
 </fault>
 </operation>
 <operation name="createObject">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="setClassPlainAttribute">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

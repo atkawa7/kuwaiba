@@ -112,6 +112,10 @@
 
 <xs:element name="setClassIconResponse" type="tns:setClassIconResponse"/>
 
+<xs:element name="setClassPlainAttribute" type="tns:setClassPlainAttribute"/>
+
+<xs:element name="setClassPlainAttributeResponse" type="tns:setClassPlainAttributeResponse"/>
+
 <xs:element name="updateObject" type="tns:updateObject"/>
 
 <xs:element name="updateObjectResponse" type="tns:updateObjectResponse"/>
@@ -271,7 +275,6 @@
 <xs:element name="oid" type="xs:long" minOccurs="0"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="locked" type="xs:boolean" minOccurs="0"/>
 <xs:element name="validators" type="tns:validator" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
@@ -317,6 +320,19 @@
 <xs:sequence>
 <xs:element name="return" type="xs:long" minOccurs="0"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setClassPlainAttribute">
+<xs:sequence>
+<xs:element name="classId" type="xs:long" minOccurs="0"/>
+<xs:element name="attributeName" type="xs:string" minOccurs="0"/>
+<xs:element name="attributeValue" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setClassPlainAttributeResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getLightMetadata">
@@ -366,6 +382,19 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="getMetadataForClassById">
+<xs:sequence>
+<xs:element name="classId" type="xs:long" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getMetadataForClassByIdResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfo" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="updateObject">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
@@ -378,19 +407,6 @@
 
 <xs:complexType name="updateObjectResponse">
 <xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="getMetadataForClassById">
-<xs:sequence>
-<xs:element name="classId" type="xs:long" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getMetadataForClassByIdResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:classInfo" minOccurs="0"/>
-</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getChildrenOfClass">
@@ -543,20 +559,6 @@
 <xs:sequence/>
 </xs:complexType>
 
-<xs:complexType name="getObjectChildren">
-<xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0"/>
-<xs:element name="objectClassId" type="xs:long" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getObjectChildrenResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="createListTypeItem">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
@@ -582,6 +584,20 @@
 <xs:complexType name="getMetadataResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:classInfo" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getObjectChildren">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0"/>
+<xs:element name="objectClassId" type="xs:long" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getObjectChildrenResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 </xs:schema>
