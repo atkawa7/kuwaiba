@@ -753,7 +753,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public RemoteObject getObjectInfo(String objectClass, Long oid) throws ServerSideException{
         assert bem == null : "Can't reach the Business Entity Manager";
         try {
-            return new RemoteObject(bem.getObjectInfo(objectClass, oid));
+            RemoteObject res = new RemoteObject(bem.getObjectInfo(objectClass, oid));
+            return res;
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");

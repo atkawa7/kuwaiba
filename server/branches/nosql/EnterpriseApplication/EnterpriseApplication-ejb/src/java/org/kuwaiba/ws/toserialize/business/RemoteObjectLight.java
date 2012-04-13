@@ -35,7 +35,7 @@ public class RemoteObjectLight {
     /**
      * Object's name
      */
-    protected String name;
+    private String name;
     /**
      * Object's class name
      */
@@ -59,7 +59,7 @@ public class RemoteObjectLight {
     }
 
 
-    public RemoteObjectLight(org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight obj){
+    public RemoteObjectLight(RemoteBusinessObjectLight obj){
         this.className = obj.getClassName();
         this.name = obj.getName();
         this.oid = obj.getId();

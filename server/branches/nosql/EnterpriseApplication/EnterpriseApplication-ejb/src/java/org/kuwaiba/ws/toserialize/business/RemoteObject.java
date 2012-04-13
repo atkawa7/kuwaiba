@@ -23,11 +23,18 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 /**
  * Instances of this class are proxies that represents the entities in the database. This is a wrapper of
  * the idem class in the Persistence Abstraction API
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@XmlAccessorType(XmlAccessType.FIELD) //This annotation tell the serializer to include all fiels
-                                      //no matter their modifier. Default takes only public ones
-public class RemoteObject extends RemoteObjectLight {
+@XmlAccessorType(XmlAccessType.FIELD)
+public class RemoteObject {
+    /**
+     * Object's id
+     */
+    private Long id;
+    /**
+     * Object's class
+     */
+    private String className;
     /**
      * Attribute names in this object. This information is already in the meta, but we don't know
      * if it's sorted correctly there, so we take it here too
@@ -47,8 +54,9 @@ public class RemoteObject extends RemoteObjectLight {
      *
      * @param object The object to be serialized
      */
-    public RemoteObject(org.kuwaiba.apis.persistence.business.RemoteBusinessObject object){
-        super(object.getId(), object.getName(), object.getClassName());
+    public RemoteObject(RemoteBusinessObject object){
+        this.id = object.getId();
+        this.className = object.getName();
         attributes = new String[object.getAttributes().size()];
         values = new String[object.getAttributes().size()][];
         int i = 0;
