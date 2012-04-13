@@ -182,7 +182,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         
         ClassMetadata myClass = cm.getClass(className);
         Node instance = getInstanceOfClass(className, oid);
-        return Util.createRemoteObjectFromNode(instance, myClass);
+        RemoteBusinessObject res = Util.createRemoteObjectFromNode(instance, myClass);
+        return res;
     }
 
     public RemoteBusinessObjectLight getObjectInfoLight(String className, Long oid)
@@ -315,7 +316,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throws ObjectNotFoundException, MetadataObjectNotFoundException {
         try{
             Node parentNode = getInstanceOfClass(oid, classId);
-            Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF);
+            Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING);
             List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
             while(children.iterator().hasNext()){
                 Node child = children.iterator().next().getStartNode();
@@ -331,7 +332,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     public List<RemoteBusinessObject> getChildrenOfClass(Long parentOid, String parentClass, String classToFilter)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException{
         Node parentNode = getInstanceOfClass(parentClass, parentOid);
-        Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF);
+        Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING);
         List<RemoteBusinessObject> res = new ArrayList<RemoteBusinessObject>();
         while(children.iterator().hasNext()){
             Node child = children.iterator().next().getStartNode();

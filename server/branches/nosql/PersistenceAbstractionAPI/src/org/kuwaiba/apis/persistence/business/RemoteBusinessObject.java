@@ -35,8 +35,9 @@ public class RemoteBusinessObject extends RemoteBusinessObjectLight{
         super(id,name, className);
     }
 
-    public RemoteBusinessObject(Long id, String name, String className, HashMap<String, List<String>> attributes) {
-        this(id,name, className);
+    public RemoteBusinessObject(Long id, String className, HashMap<String, List<String>> attributes) {
+        setId(id);
+        setClassName(className);
         this.attributes = attributes;
     }
 

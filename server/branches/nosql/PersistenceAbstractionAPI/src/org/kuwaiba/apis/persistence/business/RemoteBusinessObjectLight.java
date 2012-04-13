@@ -36,7 +36,9 @@ public class RemoteBusinessObjectLight implements Serializable{
      * Class this object is instance of
      */
     private String className;
-    
+
+    protected RemoteBusinessObjectLight() {
+    }
 
     public RemoteBusinessObjectLight(Long id, String name, String className) {
         this.id = id;

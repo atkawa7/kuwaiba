@@ -26,7 +26,6 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -341,41 +340,47 @@ public class Util {
      * @param instance
      * @param myClass
      * @return
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException if an attribute value can't be mapped into value
      */
     public static RemoteBusinessObject createRemoteObjectFromNode(Node instance, ClassMetadata myClass) throws InvalidArgumentException{
+        
         HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
 
-                //Iterates through attributes
-                Iterable<String> attributeNames = instance.getPropertyKeys();
-                while (attributeNames.iterator().hasNext()){
-                    String attributeName = attributeNames.iterator().next();
-                    List<String> attributeValue = null;
-                    if (instance.getProperty(attributeName) != null ){
-                        try {
-                            if (myClass.getAttributeMapping(attributeName) != AttributeMetadata.MAPPING_BINARY) {
-                                attributeValue = new ArrayList<String>();
-                                attributeValue.add(instance.getProperty(attributeName).toString());
-                            }
-                        } catch (InvalidArgumentException ex) { //This should never happen
-                            Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+        for (AttributeMetadata myAtt : myClass.getAttributes()){
+            //Only set the attributes existing in the current node. Please note that properties can't be null in
+            //Neo4J, so a null value is actually a non-existing relationship/value
+            if (instance.hasProperty(myAtt.getName())){
+               if (myAtt.getMapping() == AttributeMetadata.MAPPING_MANYTOMANY ||
+                       myAtt.getMapping() == AttributeMetadata.MAPPING_MANYTOONE){
+                       continue;
+               }else{
+                   if (myAtt.getMapping() != AttributeMetadata.MAPPING_BINARY) {
+                            List<String> attributeValue = new ArrayList<String>();
+                            attributeValue.add(instance.getProperty(myAtt.getName()).toString());
+                            attributes.put(myAtt.getName(),attributeValue);
                     }
-                    attributes.put(attributeName,attributeValue);
                 }
+            }
+        }
 
-                //Iterates through relationships and transform the into "plain" attributes
-                Iterable<Relationship> relationships = instance.getRelationships(RelTypes.RELATED_TO);
-                while(relationships.iterator().hasNext()){
-                    Relationship relationship = relationships.iterator().next();
-                    String attributeName = relationship.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).toString();
+        //Iterates through relationships and transform the into "plain" attributes
+        Iterable<Relationship> relationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
+        while(relationships.iterator().hasNext()){
+            Relationship relationship = relationships.iterator().next();
+            if (!relationship.hasProperty(MetadataEntityManagerImpl.PROPERTY_NAME))
+                throw new InvalidArgumentException(Util.formatString("The object with id %1s is malformed", instance.getId()), Level.SEVERE);
+
+            String attributeName = (String)relationship.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME);
+            for (AttributeMetadata myAtt :myClass.getAttributes()){
+                if (myAtt.getName().equals(attributeName)){
                     if (attributes.get(attributeName)==null)
                         attributes.put(attributeName, new ArrayList<String>());
-
                     attributes.get(attributeName).add(String.valueOf(relationship.getEndNode().getId()));
-
                 }
-                return new RemoteBusinessObject(instance.getId(), (String)instance.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), myClass.getName());
+            }
+        }
+        RemoteBusinessObject res = new RemoteBusinessObject(instance.getId(), myClass.getName(), attributes);
+        return res;
     }
 
     /**
