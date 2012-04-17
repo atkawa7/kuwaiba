@@ -30,7 +30,7 @@ public class RemoteObject {
     /**
      * Object's id
      */
-    private Long id;
+    private Long oid;
     /**
      * Object's class
      */
@@ -55,8 +55,8 @@ public class RemoteObject {
      * @param object The object to be serialized
      */
     public RemoteObject(RemoteBusinessObject object){
-        this.id = object.getId();
-        this.className = object.getName();
+        this.oid = object.getId();
+        this.className = object.getClassName();
         attributes = new String[object.getAttributes().size()];
         values = new String[object.getAttributes().size()][];
         int i = 0;
@@ -81,6 +81,22 @@ public class RemoteObject {
 
     public void setValues(String[][] values) {
         this.values = values;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public Long getOid() {
+        return oid;
+    }
+
+    public void setOid(Long oid) {
+        this.oid = oid;
     }
 
     public static RemoteObject[] toRemoteObjectArray(List<RemoteBusinessObject> toBeWrapped){
