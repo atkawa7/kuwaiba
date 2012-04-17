@@ -129,36 +129,44 @@ public class Utils {
             return LocalObjectLight.class;
     }
 
-    public static Object getRealValue (String type, String valueAsString){
+    public static Object getRealValue (String type, Integer mapping, List<String> valueAsString) throws IllegalArgumentException{
         if (valueAsString == null)
             return null;
+        if (valueAsString.isEmpty())
+            return null;
         try{
-            if (type.equals("Boolean"))
-                return Boolean.valueOf(valueAsString);
+            if (mapping.intValue() != Constants.MAPPING_MANYTOMANY){
+                if (type.equals("Boolean"))
+                    return Boolean.valueOf(valueAsString.get(0));
 
-            if (type.equals("String"))
-                return valueAsString;
+                if (type.equals("String"))
+                    return valueAsString.get(0);
 
-            if (type.equals("Integer"))
-                return Integer.valueOf(valueAsString);
+                if (type.equals("Integer"))
+                    return Integer.valueOf(valueAsString.get(0));
 
-            if (type.equals("Float"))
-                return Float.valueOf(valueAsString);
+                if (type.equals("Float"))
+                    return Float.valueOf(valueAsString.get(0));
 
-            if (type.equals("Long"))
-                return Long.valueOf(valueAsString);
+                if (type.equals("Long"))
+                    return Long.valueOf(valueAsString.get(0));
 
-            if (type.equals("Date"))
-                return new Date(Long.valueOf(valueAsString));
-            if (type.equals("Timestamp"))
-                return Timestamp.valueOf(valueAsString);
-            if (type.equals("Time"))
-                return Time.valueOf(valueAsString);
-            //In any other case we treat it as a LocalObjectListItem, returning its id
-            return Long.valueOf(valueAsString);
+                if (type.equals("Date"))
+                    return new Date(Long.valueOf(valueAsString.get(0)));
+                if (type.equals("Timestamp"))
+                    return Timestamp.valueOf(valueAsString.get(0));
 
+                //In any other case we treat it as a LocalObjectListItem, returning its id
+                return Long.valueOf(valueAsString.get(0));
+            }else{
+                List<Long> res = new ArrayList<Long>();
+                for (String value : valueAsString)
+                    res.add(Long.valueOf(value));
+                return res;
+            }
+            
         }catch(Exception e){
-            return valueAsString;
+            throw new IllegalArgumentException();
         }
     }
 

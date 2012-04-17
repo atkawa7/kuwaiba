@@ -113,7 +113,7 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         return att;
     }
 
-    public Integer getMappingFor(String att){
+    public Integer getMappingForAttribute(String att){
         for (int i=0; i< this.attributeNames.length;i++)
             if(this.attributeNames[i].equals(att))
                 return this.attributeMappings[i];

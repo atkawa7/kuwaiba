@@ -160,36 +160,51 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
             if(lam.isVisible()){
 
                 ObjectNodeProperty property = null;
-
-                if (lam.getMapping() == Constants.MAPPING_MANYTOONE){
-                    //If so, this can be a reference to an object list item or a 1:1 to any other RootObject subclass
-                    LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(), true, false);
-                    LocalObjectListItem val = null;
-
-                    for (LocalObjectListItem loli : list)
-                        if(loli.getOid().equals(lo.getAttribute(lam.getName()))){
-                            val = loli;
+                int mapping = lam.getMapping();
+                switch (mapping){
+                    case Constants.MAPPING_DATE:
+                    case Constants.MAPPING_TIMESTAMP:
+                    case Constants.MAPPING_PRIMITIVE:
+                        //Those attributes that are not multiple, but reference another object
+                        //like nodeA or endpointB in physicalConnections should be ignored, at least by now
+                        if (!lam.getType().equals(LocalObjectLight.class))
+                            property = new ObjectNodeProperty(
+                                                                lam.getName(),
+                                                                lam.getType(),
+                                                                lo.getAttribute(lam.getName()),
+                                                                lam.getDisplayName().equals("")?lam.getName():lam.getDisplayName(),
+                                                                lam.getDescription(),this);
+                    break;
+                    case Constants.MAPPING_MANYTOONE:
+                        //If so, this can be a reference to an object list item or a 1:1 to any other RootObject subclass
+                        LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(), true, false);
+                        if (list == null){
+                            property = new ObjectNodeProperty(lam.getName(), String.class, "",
+                                    lam.getDisplayName(),  "", this);
                             break;
                         }
-                    property = new ObjectNodeProperty(
-                                           lam.getName(),
-                                           LocalObjectListItem.class,
-                                           val,
-                                           lam.getDisplayName().equals("")?lam.getName():lam.getDisplayName(),
-                                           lam.getDescription(),
-                                           list,
-                                           this);
-                }
-                else{
-                    //Those attributes that are not multiple, but reference another object
-                    //like nodeA or endpointB in physicalConnections should be ignored, at least by now
-                    if (!lam.getType().equals(LocalObjectLight.class))
+                        LocalObjectListItem val = null;
+
+                        for (LocalObjectListItem loli : list)
+                            if(loli.getOid().equals(lo.getAttribute(lam.getName()))){
+                                val = loli;
+                                break;
+                            }
                         property = new ObjectNodeProperty(
-                                                            lam.getName(),
-                                                            lam.getType(),
-                                                            lo.getAttribute(lam.getName()),
-                                                            lam.getDisplayName().equals("")?lam.getName():lam.getDisplayName(),
-                                                            lam.getDescription(),this);
+                                               lam.getName(),
+                                               LocalObjectListItem.class,
+                                               val,
+                                               lam.getDisplayName().equals("")?lam.getName():lam.getDisplayName(),
+                                               lam.getDescription(),
+                                               list,
+                                               this);
+                    break;
+                    case Constants.MAPPING_MANYTOMANY:
+                        property = new ObjectNodeProperty(lam.getName(), String.class, "",
+                                    lam.getDisplayName(),  "", this);
+                    break;
+                    default:
+                        throw new RuntimeException("sadfsfdfdfsdfsdfsadfsadfsad");
                 }
                 generalPropertySet.put(property);
             }         

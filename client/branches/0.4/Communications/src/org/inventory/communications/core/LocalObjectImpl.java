@@ -20,6 +20,7 @@ import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.utils.Utils;
 import org.kuwaiba.wsclient.RemoteObject;
+import org.kuwaiba.wsclient.StringArray;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -46,22 +47,24 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
     }
 
     /**
-     * This constructor takes a semideserialized remote object and converts it to a proxy local object
+     * This constructor takes a remote object and converts it to a proxy local object
      * using the metadata
      * @param ro
      * @param lcmdt
      */
-    public LocalObjectImpl(RemoteObject ro, LocalClassMetadata lcmdt){
+    public LocalObjectImpl(RemoteObject ro, LocalClassMetadata lcmdt) throws IllegalArgumentException{
         this.className = ro.getClassName();
         this.myMetadata = lcmdt;
         this.oid = ro.getOid();
 
         attributes = new HashMap<String, Object>();
-        String[] atts = ro.getAttributes().toArray(new String[0]);
-        String[] vals = ro.getValues().toArray(new String[0]);
+        
+        for (int i = 0; i< ro.getAttributes().size(); i++){
+            attributes.put(ro.getAttributes().get(i),
+                    Utils.getRealValue(lcmdt.getTypeForAttribute(ro.getAttributes().get(i)), lcmdt.getMappingForAttribute(ro.getAttributes().get(i)), ro.getValues().get(i).getItem()));
+            i++;
+        }
 
-        for (int i =0; i<atts.length; i++)
-            attributes.put(atts[i], Utils.getRealValue(lcmdt.getTypeForAttribute(atts[i]), vals[i]));
     }
 
     public LocalClassMetadata getObjectMetadata() {

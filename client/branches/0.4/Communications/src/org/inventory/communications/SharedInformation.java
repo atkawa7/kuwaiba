@@ -23,7 +23,7 @@ package org.inventory.communications;
  */
 public class SharedInformation {
 
-        /**
+    /**
      * Generic classes
      */
     public static String CLASS_GENERICCONNECTION="GenericConnection";
