@@ -226,7 +226,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
                 if (parentNode != null) {
                     classNode.createRelationshipTo(parentNode, RelTypes.EXTENDS);
-                    Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.HAS);
+                    Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.HAS_ATTRIBUTE);
                     //Set extendended attributes from parent
                     for (Relationship rel : relationships) {
                         Node parentAttrNode = rel.getEndNode();
@@ -244,7 +244,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         newAttrNode.setProperty(PROPERTY_NO_SERIALIZE, parentAttrNode.getProperty(PROPERTY_NO_SERIALIZE));
                         newAttrNode.setProperty(PROPERTY_UNIQUE, parentAttrNode.getProperty(PROPERTY_UNIQUE));
 
-                        classNode.createRelationshipTo(newAttrNode, RelTypes.HAS);
+                        classNode.createRelationshipTo(newAttrNode, RelTypes.HAS_ATTRIBUTE);
                     }
                 }//end if there is a Parent
                 else {
@@ -303,7 +303,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             newcm.setProperty(PROPERTY_ICON, newClassDefinition.getIcon());
             newcm.setProperty(PROPERTY_SMALL_ICON, newClassDefinition.getSmallIcon());
 
-            Iterable<Relationship> relationships = newcm.getRelationships(RelTypes.HAS);
+            Iterable<Relationship> relationships = newcm.getRelationships(RelTypes.HAS_ATTRIBUTE);
 
             int count = 0;
             List atrList = newClassDefinition.getAttributes();
@@ -343,7 +343,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         "Can not find the Class with the id %1s", classId));
             }
 
-            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
+            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
             for (Relationship relationship : relationships) {
                 Node atr = relationship.getEndNode();
                 atr.delete();
@@ -384,7 +384,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         "Can not find the Class with the name %1s", className));
             }
 
-            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
+            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
             for (Relationship relationship : relationships) {
                 Node atr = relationship.getEndNode();
                 atr.delete();
@@ -417,7 +417,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 throw new MetadataObjectNotFoundException(Util.formatString(
                         "Can not find the Class with the id %1s", classId));
 
-            Iterable<Relationship> relationships = classNode.getRelationships(RelTypes.HAS);
+            Iterable<Relationship> relationships = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE);
 
             for (Relationship relationship : relationships) {
                 Node atr = relationship.getEndNode();
@@ -734,7 +734,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             atr.setProperty(PROPERTY_NO_SERIALIZE, attributeDefinition.isNoSerialize());
             atr.setProperty(PROPERTY_UNIQUE, attributeDefinition.isUnique());
 
-            node.createRelationshipTo(atr, RelTypes.HAS);
+            node.createRelationshipTo(atr, RelTypes.HAS_ATTRIBUTE);
 
             tx.success();
         } catch(Exception ex){
@@ -780,7 +780,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             atr.setProperty(PROPERTY_NO_SERIALIZE, attributeDefinition.isNoSerialize());
             atr.setProperty(PROPERTY_UNIQUE, attributeDefinition.isUnique());
 
-            node.createRelationshipTo(atr, RelTypes.HAS);
+            node.createRelationshipTo(atr, RelTypes.HAS_ATTRIBUTE);
 
             tx.success();
 
@@ -809,7 +809,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 throw new MetadataObjectNotFoundException(Util.formatString(
                         "Can not find the Class with the name %1s", className));
 
-            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
+            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
             for (Relationship relationship : relationships) {
                 Node atr = relationship.getEndNode();
                 if (String.valueOf(atr.getProperty(PROPERTY_NAME)).equals(attributeName)) {
@@ -842,7 +842,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         "Can not find the Class with the id %1s", classId));
             }
 
-            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
+            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
             for (Relationship relationship : relationships) {
                 Node atr = relationship.getEndNode();
                 if (String.valueOf(atr.getProperty(PROPERTY_NAME)).equals(attributeName)) {
@@ -875,7 +875,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         "Can not find the Class with the id %1s", classId));
             }
 
-            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
+            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
             for (Relationship relationship : relationships) {
                 Node atr = relationship.getEndNode();
                 if (String.valueOf(atr.getProperty(PROPERTY_NAME)).equals(newAttributeDefinition.getName()))
@@ -956,7 +956,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         "Can not find the Class with the name %1s", attributeName));
             }
 
-            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
+            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
             for (Relationship relationship : relationships) {
                 Node atr = relationship.getEndNode();
                 if (String.valueOf(atr.getProperty(PROPERTY_NAME)).equals(attributeName)) {
@@ -998,7 +998,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 throw new MetadataObjectNotFoundException(Util.formatString(
                         "Can not find the Class with the id %1s", classId));
 
-            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS);
+            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
             for (Relationship relationship : relationships) {
                 Node atr = relationship.getEndNode();
                 //TODO poner exception no hay attributename, si un atributo no esta

@@ -26,7 +26,7 @@ public enum RelTypes implements RelationshipType{
     
     ROOT, //Relationship to the root node
     EXTENDS, //Inheritance
-    HAS, //A class has attributes
+    HAS_ATTRIBUTE, //A class has attributes
     IMPLEMENTS, //A class implements an interface
     BELONGS_TO_CATEGORY, //A class belongs to a category
     INSTANCE_OF, //An object is instance of a given class
@@ -35,5 +35,7 @@ public enum RelTypes implements RelationshipType{
     BELONGS_TO_GROUP, //Used to associate an entity to a group (group of user)
     BELONGS_TO_USER, //Used to associate an entity to a user
     DUMMY_ROOT, //Used to associate dummies class
-    POSSIBLE_CHILD //Used to build the containment hierarchy
+    POSSIBLE_CHILD, //Used to build the containment hierarchy
+    HAS_VIEW, //Used to link an object to a particular view
+    HAS_HISTORY_ENTRY //Used to link an object to a particular historic entry
 }

@@ -61,7 +61,7 @@ public class Util {
      * @return attribute's type. 0 if it can't find the attribute
      */
     public static int getTypeOfAttribute (Node classNode, String attributeName){
-        Iterable<Relationship> attributes = classNode.getRelationships(RelTypes.HAS);
+        Iterable<Relationship> attributes = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE);
         while (attributes.iterator().hasNext()){
             Relationship rel = attributes.iterator().next();
             if (rel.getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals(attributeName))
@@ -260,7 +260,7 @@ public class Util {
         else
             myClass.setParentClassName(null);
         //Attributes
-        Iterable<Relationship> attributes = classNode.getRelationships(RelTypes.HAS);
+        Iterable<Relationship> attributes = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE);
         while (attributes.iterator().hasNext()){
             Node attributeNode = attributes.iterator().next().getEndNode();
             AttributeMetadata attribute = new AttributeMetadata();
