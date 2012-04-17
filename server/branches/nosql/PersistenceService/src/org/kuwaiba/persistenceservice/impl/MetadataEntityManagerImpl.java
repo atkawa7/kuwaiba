@@ -1208,8 +1208,17 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Iterable<Relationship> relationships = myClassNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.OUTGOING);
             for (Relationship rel : relationships)
             {
-                cml.add(Util.createClassMetadataLightFromNode(rel.getEndNode()));
-            }
+                
+                if((Boolean)rel.getEndNode().getProperty(PROPERTY_ABSTRACT)){
+                    Traverser traverserMetadata = Util.traverserMetadata(rel.getEndNode());
+                    for (Node childNode : traverserMetadata) {
+                        if(!(Boolean)childNode.getProperty(PROPERTY_ABSTRACT))
+                            cml.add(Util.createClassMetadataLightFromNode(childNode));
+                    }//end for
+                }//end if
+                else
+                    cml.add(Util.createClassMetadataLightFromNode(rel.getEndNode()));
+            }//end for
            
         }catch (Exception ex) {
             throw new RuntimeException(ex.getMessage());
