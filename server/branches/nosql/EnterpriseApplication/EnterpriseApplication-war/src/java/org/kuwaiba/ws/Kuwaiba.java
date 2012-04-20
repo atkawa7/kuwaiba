@@ -268,7 +268,7 @@ public class Kuwaiba {
     public void updateObject(@WebParam(name = "className")String className,
             @WebParam(name = "oid")Long oid,
             @WebParam(name = "attributeNames")String[] attributeNames,
-            @WebParam(name = "attributeValues")String[] attributeValues,
+            @WebParam(name = "attributeValues")String[][] attributeValues,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             //sbr.validateCall("updateObject", getIPAddress(), sessionId);

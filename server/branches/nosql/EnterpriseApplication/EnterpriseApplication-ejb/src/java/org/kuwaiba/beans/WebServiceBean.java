@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -792,20 +793,20 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public void updateObject(String className, Long oid, String[] attributeNames, String[] attributeValues) throws ServerSideException{
+    public void updateObject(String className, Long oid, String[] attributeNames, String[][] attributeValues) throws ServerSideException{
         assert bem == null : "Can't reach the Business Entity Manager";
         if (attributeNames.length != attributeValues.length)
             throw new ServerSideException(Level.SEVERE, "Attribute names and attribute values arrays sizes doesn't match");
 
         try {
-            HashMap<String,String> attributes = new HashMap<String, String>();
+            HashMap<String,List<String>> attributes = new HashMap<String, List<String>>();
             for (int i = 0; i < attributeNames.length; i++)
-                attributes.put(attributeNames[i], attributeValues[i]);
-            
+                attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
+
             bem.updateObject(className, oid,attributes);
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
