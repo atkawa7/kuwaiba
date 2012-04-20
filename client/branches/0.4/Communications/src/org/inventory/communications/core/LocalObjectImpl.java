@@ -59,12 +59,9 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
 
         attributes = new HashMap<String, Object>();
         
-        for (int i = 0; i< ro.getAttributes().size(); i++){
+        for (int i = 0; i< ro.getAttributes().size(); i++)
             attributes.put(ro.getAttributes().get(i),
                     Utils.getRealValue(lcmdt.getTypeForAttribute(ro.getAttributes().get(i)), lcmdt.getMappingForAttribute(ro.getAttributes().get(i)), ro.getValues().get(i).getItem()));
-            i++;
-        }
-
     }
 
     public LocalClassMetadata getObjectMetadata() {

@@ -18,6 +18,7 @@ package org.inventory.communications;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.xml.ws.soap.SOAPFaultException;
@@ -53,6 +54,7 @@ import org.kuwaiba.wsclient.Kuwaiba;
 import org.kuwaiba.wsclient.KuwaibaService;
 import org.kuwaiba.wsclient.RemoteObject;
 import org.kuwaiba.wsclient.RemoteObjectLight;
+import org.kuwaiba.wsclient.StringArray;
 
 /**
  * Singleton class that provides communication and caching services to the rest of the modules
@@ -171,22 +173,28 @@ public class CommunicationsStub {
      * Updates the attributes of a given object
      *
      * @param obj is the object to be updated. Note that this object doesn't have
-     *            every field within the "original". it only has field(s) to be updated
+     *            every field within the "original". it only has the field(s) to be updated
      */
     public boolean saveObject(LocalObject obj){
 
         try{
             List<String> attributeNames = new ArrayList<String>();
-            List<String> attributeValues = new ArrayList<String>();
+            List<StringArray> attributeValues = new ArrayList<StringArray>();
 
             for (String key : obj.getAttributes().keySet()){
+                StringArray value = new StringArray();
                 attributeNames.add(key);
-                attributeValues.add(obj.getAttribute(key).toString());
+                if (obj.getAttribute(key) instanceof List){
+                    for (Long itemId : (List<Long>)obj.getAttribute(key))
+                        value.getItem().add(itemId.toString());
+                }else
+                    value.getItem().add(obj.getAttribute(key).toString());
+                attributeValues.add(value);
             }
             port.updateObject(obj.getClassName(),obj.getOid(), attributeNames, attributeValues, this.session.getSessionId());
             return true;
         }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            this.error = ex.getMessage();
             return false;
         }
     }
@@ -441,34 +449,31 @@ public class CommunicationsStub {
      * @param ignoreCache Use cached values or not
      * @return 
      */
-    public LocalObjectListItem[] getList(String className, boolean includeNullValue,boolean ignoreCache){
+    public List<LocalObjectListItem> getList(String className, boolean includeNullValue,boolean ignoreCache){
         try{
-            LocalObjectListItem[] res;
+            List<LocalObjectListItem> res = null;
 
-            if (!ignoreCache){
+            if (!ignoreCache)
                 res = cache.getListCached(className);
-                if (res != null)
-                    return res;
+
+            if (res == null){
+               res = new ArrayList<LocalObjectListItem>();
+               res.add(ObjectFactory.createNullItem());
+
+                List<RemoteObjectLight> remoteList = port.getMultipleChoice(className,this.session.getSessionId());
+
+                for(RemoteObjectLight entry : remoteList)
+                    res.add(new LocalObjectListItemImpl(entry.getOid(),entry.getClassName(),entry.getName()));
+
+                //Warning, the null value is always cached
+                cache.addListCached(className, res);
             }
 
-            List<RemoteObjectLight> remoteList = port.getMultipleChoice(className,this.session.getSessionId());
-            int i = 0;
+            if (includeNullValue)
+                return res;
+            else
+                return res.subList(1, res.size());
 
-            if (includeNullValue){
-                //The +1 represents the empty room left for the "null" value
-                res = new LocalObjectListItemImpl[remoteList.size() + 1];
-                res[0] = ObjectFactory.createNullItem();
-                i = 1;
-            }else
-                res = new LocalObjectListItemImpl[remoteList.size()];
-            
-            for(RemoteObjectLight entry : remoteList){
-                res[i] = new LocalObjectListItemImpl(entry.getOid(),entry.getClassName(),entry.getName());
-                i++;
-            }
-
-            cache.addListCached(className, res);
-            return res;
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return null;
@@ -736,41 +741,39 @@ public class CommunicationsStub {
      */
     public void refreshCache(boolean refreshMeta, boolean refreshLightMeta,
             boolean refreshList, boolean refreshPossibleChildren){
-//        try{
-//            if (refreshMeta)
-//                for (LocalClassMetadata lcm : cache.getMetadataIndex()){
-//                    LocalClassMetadata myLocal =
-//                            new LocalClassMetadataImpl(port.getMetadataForClass(lcm.getClassName(),this.session.getSessionId()));
-//                    if(myLocal!=null)
-//                    cache.addMeta(new LocalClassMetadata[]{myLocal});
-//                }
-//
-//            if (refreshLightMeta){
-//                List<ClassInfoLight> myLocalLight  = port.getLightMetadata(this.session.getSessionId(), true);
-//                if (myLocalLight != null)
-//                    getAllLightMeta(true);
-//            }
-//
-//            if (refreshList){
-//                HashMap<String, List<LocalObjectListItem>> myLocalList = cache.getAllList();
-//                Set<String> keys = myLocalList.keySet();
-//            for (String key : keys){
-//                    myLocalList.remove(key);
-//                    getList(key,true);
-//                }
-//            }
-//            if (refreshPossibleChildren){
-//                HashMap<String, List<LocalClassMetadataLight>> myLocalPossibleChildren
-//                        = cache.getAllPossibleChildren();
-//                Set<String> keys = myLocalPossibleChildren.keySet();
-//                for (String key : keys){
-//                    myLocalPossibleChildren.remove(key);
-//                    getPossibleChildren(key,true);
-//                }
-//            }
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//        }
+        try{
+            if (refreshMeta)
+                for (LocalClassMetadata lcm : cache.getMetadataIndex()){
+                    LocalClassMetadata myLocal =
+                            new LocalClassMetadataImpl(port.getMetadataForClass(lcm.getClassName(),this.session.getSessionId()));
+                    if(myLocal!=null)
+                    cache.addMeta(new LocalClassMetadata[]{myLocal});
+                }
+
+            if (refreshLightMeta){
+                List<ClassInfoLight> myLocalLight  = port.getLightMetadata(true, this.session.getSessionId());
+                if (myLocalLight != null)
+                    getAllLightMeta(true);
+            }
+
+            if (refreshList){
+                HashMap<String, List<LocalObjectListItem>> myLocalList = cache.getAllList();
+            for (String key : myLocalList.keySet()){
+                    myLocalList.remove(key);
+                    getList(key,false,true);
+                }
+            }
+            if (refreshPossibleChildren){
+                HashMap<String, List<LocalClassMetadataLight>> myLocalPossibleChildren
+                        = cache.getAllPossibleChildren();
+                for (String key : myLocalPossibleChildren.keySet()){
+                    myLocalPossibleChildren.remove(key);
+                    getPossibleChildren(key,true);
+                }
+            }
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+        }
     }
     
     public boolean setAttributePropertyValue(Long classId, String attributeName,

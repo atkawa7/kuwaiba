@@ -16,6 +16,7 @@
 package org.inventory.connections.physicalconnections.wizards;
 
 import java.awt.Component;
+import java.util.List;
 import javax.swing.event.ChangeListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.LocalObjectListItem;
@@ -101,7 +102,7 @@ public class ConnectionWizardWizardPanel2 implements WizardDescriptor.Panel {
     @Override
     public void readSettings(Object settings) {
         this.connectionTypeClass = (String)((WizardDescriptor)settings).getProperty("connectionTypeClass");
-        LocalObjectListItem[] types = com.getList(connectionTypeClass, true, false);
+        List<LocalObjectListItem> types = com.getList(connectionTypeClass, true, false);
             if (types != null){
                 for(LocalObjectListItem type : types)
                     ((ConnectionWizardVisualPanel2)component).getCmbType().addItem(type);

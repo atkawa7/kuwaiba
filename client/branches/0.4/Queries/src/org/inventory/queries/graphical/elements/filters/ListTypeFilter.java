@@ -16,6 +16,7 @@
 
 package org.inventory.queries.graphical.elements.filters;
 
+import java.util.List;
 import java.util.Random;
 import javax.swing.JComboBox;
 import org.inventory.core.services.api.LocalObjectListItem;
@@ -61,8 +62,8 @@ public class ListTypeFilter extends SimpleCriteriaNodeWidget{
         dummyPin.addChild(new ComponentWidget(this.getScene(), listItems));
     }
 
-    public void build(LocalObjectListItem[] items){
-        listItems = new JComboBox(items);
+    public void build(List<LocalObjectListItem> items){
+        listItems = new JComboBox(items.toArray());
         build(""); //NOI18N
     }
 

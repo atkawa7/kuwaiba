@@ -22,6 +22,7 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.api.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.openide.nodes.Node;
@@ -51,12 +52,13 @@ public class ListElementChildren extends ObjectChildren{
     public void addNotify(){
         if (this.getNode() instanceof ListTypeNode){
             LocalClassMetadataLight lcml = ((ListTypeNode)this.getNode()).getObject();
-            LocalObjectLight[] myObjects = CommunicationsStub.getInstance().getList(lcml.getClassName(), false, false);
+            List<LocalObjectListItem> myObjects = CommunicationsStub.getInstance().getList(lcml.getClassName(), false, false);
+
             if (myObjects == null){
                 Lookup.getDefault().lookup(NotificationUtil.class).
                         showSimplePopup("List Generation", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
             }else{
-                for (LocalObjectLight child : myObjects){
+                for (LocalObjectListItem child : myObjects){
                     ListElementNode newNode = new ListElementNode(child);
                     // Remove it if it already exists (if this is not done,
                     // it will duplicate the nodes created when the parent was collapsed)

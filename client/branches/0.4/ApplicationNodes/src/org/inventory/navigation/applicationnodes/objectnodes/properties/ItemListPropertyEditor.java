@@ -16,6 +16,7 @@
 package org.inventory.navigation.applicationnodes.objectnodes.properties;
 
 import java.beans.PropertyEditorSupport;
+import java.util.List;
 import org.inventory.core.services.api.LocalObjectListItem;
 
 
@@ -25,10 +26,10 @@ import org.inventory.core.services.api.LocalObjectListItem;
  */
 public class ItemListPropertyEditor extends PropertyEditorSupport{
 
-    private LocalObjectListItem[] list;
+    private List<LocalObjectListItem> list;
 
-    public ItemListPropertyEditor(LocalObjectListItem[] _list){
-        this.list = _list;
+    public ItemListPropertyEditor(List<LocalObjectListItem> list){
+        this.list = list;
     }
 
     @Override
@@ -49,10 +50,10 @@ public class ItemListPropertyEditor extends PropertyEditorSupport{
     public String[] getTags(){
         //Remember that CommunicationsStub->getList returns the list, but adds the null value as well,
         //so it's not necessary to add it here
-        String [] res = new String[list.length];
+        String [] res = new String[list.size()];
     
-        for (int i = 0; i <list.length; i++)
-            res[i] = list[i].getName().trim().equals("")?list[i].getName():list[i].getName();
+        for (int i = 0; i <list.size(); i++)
+            res[i] = list.get(i).getName().trim().equals("")?list.get(i).getName():list.get(i).getName();
         return res;
     }
 

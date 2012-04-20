@@ -177,11 +177,10 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                     break;
                     case Constants.MAPPING_MANYTOONE:
                         //If so, this can be a reference to an object list item or a 1:1 to any other RootObject subclass
-                        LocalObjectListItem[] list = com.getList(lam.getListAttributeClassName(), true, false);
+                        List<LocalObjectListItem> list = com.getList(lam.getListAttributeClassName(), true, false);
                         if (list == null){
-                            property = new ObjectNodeProperty(lam.getName(), String.class, "",
-                                    lam.getDisplayName(),  "", this);
-                            break;
+                            nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+                            return sheet;
                         }
                         LocalObjectListItem val = null;
 
@@ -204,7 +203,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                                     lam.getDisplayName(),  "", this);
                     break;
                     default:
-                        throw new RuntimeException("sadfsfdfdfsdfsdfsadfsadfsad");
+                        nu.showSimplePopup("Error", NotificationUtil.ERROR, "Mapping not supported");
+                        return sheet;
                 }
                 generalPropertySet.put(property);
             }         

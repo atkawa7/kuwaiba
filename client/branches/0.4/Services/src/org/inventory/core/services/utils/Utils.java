@@ -135,36 +135,44 @@ public class Utils {
         if (valueAsString.isEmpty())
             return null;
         try{
-            if (mapping.intValue() != Constants.MAPPING_MANYTOMANY){
-                if (type.equals("Boolean"))
-                    return Boolean.valueOf(valueAsString.get(0));
+            switch (mapping){
+                case Constants.MAPPING_PRIMITIVE:
+                case Constants.MAPPING_DATE:
+                case Constants.MAPPING_TIMESTAMP:
+                    if (type.equals("Boolean"))
+                        return Boolean.valueOf(valueAsString.get(0));
 
-                if (type.equals("String"))
-                    return valueAsString.get(0);
+                    if (type.equals("String"))
+                        return valueAsString.get(0);
 
-                if (type.equals("Integer"))
-                    return Integer.valueOf(valueAsString.get(0));
+                    if (type.equals("Integer"))
+                        return Integer.valueOf(valueAsString.get(0));
 
-                if (type.equals("Float"))
-                    return Float.valueOf(valueAsString.get(0));
+                    if (type.equals("Float"))
+                        return Float.valueOf(valueAsString.get(0));
 
-                if (type.equals("Long"))
+                    if (type.equals("Long"))
+                        return Long.valueOf(valueAsString.get(0));
+
+                    if (type.equals("Date"))
+                        return new Date(Long.valueOf(valueAsString.get(0)));
+                    if (type.equals("Timestamp"))
+                        return Timestamp.valueOf(valueAsString.get(0));
+
+                    //In any other case we treat it as a LocalObjectListItem, returning its id
                     return Long.valueOf(valueAsString.get(0));
-
-                if (type.equals("Date"))
-                    return new Date(Long.valueOf(valueAsString.get(0)));
-                if (type.equals("Timestamp"))
-                    return Timestamp.valueOf(valueAsString.get(0));
-
-                //In any other case we treat it as a LocalObjectListItem, returning its id
-                return Long.valueOf(valueAsString.get(0));
-            }else{
-                List<Long> res = new ArrayList<Long>();
-                for (String value : valueAsString)
-                    res.add(Long.valueOf(value));
-                return res;
+                case Constants.MAPPING_MANYTOMANY:
+                    List<Long> res = new ArrayList<Long>();
+                    for (String value : valueAsString)
+                        res.add(Long.valueOf(value));
+                    return res;
+                case Constants.MAPPING_MANYTOONE:
+                    if (valueAsString.isEmpty())
+                        return null;
+                    return Long.valueOf(valueAsString.get(0));
+                default:
+                    throw new Exception();
             }
-            
         }catch(Exception e){
             throw new IllegalArgumentException();
         }

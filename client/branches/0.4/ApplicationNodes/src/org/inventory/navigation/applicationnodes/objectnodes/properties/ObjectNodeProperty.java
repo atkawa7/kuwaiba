@@ -20,6 +20,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.factories.ObjectFactory;
 import org.inventory.core.services.api.LocalObject;
@@ -37,7 +38,7 @@ import org.openide.util.Lookup;
  */
 public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListener{
     private Object value;
-    private LocalObjectListItem[] list;
+    private List<LocalObjectListItem> list;
     private ObjectNode node;
 
 
@@ -58,7 +59,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
      * @param _name
      */
     public ObjectNodeProperty(String _name, Class _valueType, Object _value,
-            String _displayName,String _toolTextTip, LocalObjectListItem[] _list, ObjectNode _node) {
+            String _displayName,String _toolTextTip, List<LocalObjectListItem> _list, ObjectNode _node) {
         super(_name,_valueType,_displayName,_toolTextTip);
         if (_value != null)
             this.value = _value;

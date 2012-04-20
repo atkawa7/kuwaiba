@@ -17,6 +17,8 @@
 package org.inventory.queries.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.LocalObjectListItem;
@@ -60,9 +62,9 @@ public class SwitchClassNodeWidgetFilterAction extends AbstractAction{
 
                 ListTypeFilter newNode = (ListTypeFilter) ((QueryEditorScene)node.getScene()).
                         addNode(node.getWrappedClass());
-                LocalObjectListItem[] items = CommunicationsStub.getInstance().getList(node.getWrappedClass().getClassName(), true, false);
+                List<LocalObjectListItem> items = CommunicationsStub.getInstance().getList(node.getWrappedClass().getClassName(), true, false);
                 if (items == null)
-                    newNode.build(new LocalObjectListItem[0]);
+                    newNode.build(new ArrayList<LocalObjectListItem>());
                 else
                     newNode.build(items);
                 newNode.getScene().validate();
