@@ -101,13 +101,45 @@ public class Util {
                 case AttributeMetadata.MAPPING_TIMESTAMP:
                     return Timestamp.valueOf(value);
                 default:
-                    throw new InvalidArgumentException("Can not retrieve the correct value for ("+
-                            value+" "+type+"). Please check your mappings", Level.WARNING);
+                    throw new InvalidArgumentException(formatString("Can not convert value %1s to a typ %2s", value, type), Level.WARNING);
             }
 
         }catch (Exception e){
-            throw new InvalidArgumentException("Can not retrieve the correct value for ("+
-                            value+" "+type+"). Please check your mappings", Level.WARNING);
+            throw new InvalidArgumentException(formatString("Can not convert value %1s to a typ %2s", value, type), Level.WARNING);
+        }
+    }
+
+    /**
+     * Gets the requested nodes representing list type items
+     * @param values A list of Long objects containing the ids of the required list type items
+     * @param listType Node the list items are supposed to be instance of
+     * @return A list of nodes representing the list type items
+     */
+    public static List<Node> getRealValue(List<Long> values, Node listType) throws InvalidArgumentException{
+        Iterable<Relationship> listTypeItems = listType.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
+        List<Node> res = new ArrayList<Node>();
+        for (Relationship listTypeItem : listTypeItems){
+            Node instance = listTypeItem.getStartNode();
+            if (values.contains(new Long(instance.getId())))
+                res.add(instance);
+        }
+        return res;
+    }
+
+    /**
+     * Releases all relationships related to an object given its direction and a relationsship's property value
+     * @param instance Object from/to the relationships are connected
+     * @param relationshipType Relationship type
+     * @param relationshipDirection Relationship Direction
+     * @param propertyName Relationship's property to be used as filter
+     * @param propertyValue Relationship's property value to be used as filter
+     */
+    public static void releaseRelationships(Node instance, RelTypes relationshipType,
+            Direction relationshipDirection, String propertyName, String propertyValue) {
+        Iterable<Relationship> relatedItems = instance.getRelationships(relationshipType, relationshipDirection);
+        for (Relationship relatedItemRelationship : relatedItems){
+            if (relatedItemRelationship.getProperty(propertyName).equals(propertyValue))
+                relatedItemRelationship.delete();
         }
     }
 
@@ -248,7 +280,7 @@ public class Util {
         myClass.setIcon((byte[])classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ICON));
         myClass.setSmallIcon((byte[])classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_SMALL_ICON));
         myClass.setId(classNode.getId());
-        myClass.setListType(isSubClass("GenericListType", classNode));
+        myClass.setListType(isSubClass("GenericObjectList", classNode));
         //Is Viewable if is subclass of
         myClass.setViewable((Boolean)isSubClass(MetadataEntityManagerImpl.VIEWABLE_OBJECT, classNode));
         //Parent
@@ -352,7 +384,7 @@ public class Util {
             if (instance.hasProperty(myAtt.getName())){
                if (myAtt.getMapping() == AttributeMetadata.MAPPING_MANYTOMANY ||
                        myAtt.getMapping() == AttributeMetadata.MAPPING_MANYTOONE){
-                       continue;
+                   continue;
                }else{
                    if (myAtt.getMapping() != AttributeMetadata.MAPPING_BINARY) {
                             List<String> attributeValue = new ArrayList<String>();
@@ -371,7 +403,7 @@ public class Util {
                 throw new InvalidArgumentException(Util.formatString("The object with id %1s is malformed", instance.getId()), Level.SEVERE);
 
             String attributeName = (String)relationship.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME);
-            for (AttributeMetadata myAtt :myClass.getAttributes()){
+            for (AttributeMetadata myAtt : myClass.getAttributes()){
                 if (myAtt.getName().equals(attributeName)){
                     if (attributes.get(attributeName)==null)
                         attributes.put(attributeName, new ArrayList<String>());

@@ -210,7 +210,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void updateObject(String className, Long oid, HashMap<String,String> attributes) 
+    public void updateObject(String className, Long oid, HashMap<String,List<String>> attributes)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, WrongMappingException, InvalidArgumentException {
 
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
@@ -222,40 +222,75 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         ClassMetadata myClass= cm.getClass(className);
 
         Transaction tx = graphDb.beginTx();
-        Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
-        while (instances.iterator().hasNext()){
-            Node instance = instances.iterator().next().getStartNode();
+        Node instance = getInstanceOfClass(className, oid);
 
-            if (instance.getId() == oid.longValue()){
-                for (String attributeName : attributes.keySet()){
-                    if(instance.hasProperty(attributeName)){
-                        if (myClass.getAttributeMapping(attributeName) != AttributeMetadata.MAPPING_BINARY
-                                &&myClass.getAttributeMapping(attributeName) != AttributeMetadata.MAPPING_MANYTOMANY
-                                &&myClass.getAttributeMapping(attributeName) != AttributeMetadata.MAPPING_MANYTOONE)
-                            instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), myClass.getAttributeMapping(attributeName),myClass.getType(attributeName)));
+        for (String attributeName : attributes.keySet()){
+            if(myClass.hasAttribute(attributeName)){
+
+                switch (myClass.getAttributeMapping(attributeName)){
+                    case AttributeMetadata.MAPPING_PRIMITIVE:
+                    case AttributeMetadata.MAPPING_DATE:
+                    case AttributeMetadata.MAPPING_TIMESTAMP:
+                        if (attributes.get(attributeName) == null)
+                            instance.removeProperty(attributeName);
                         else{
-                            tx.failure();
-                            tx.finish();
-                            throw new InvalidArgumentException(
-                                Util.formatString("The attribute %1s is binary or a relationship, so it can't be set using this method. Use setBinaryAttributes or setManyToManyAttributes instead", attributeName), Level.WARNING);
+                            //If the array is empty, it means the attribute should be set to null
+                            if (attributes.get(attributeName).isEmpty())
+                                instance.removeProperty(attributeName);
+                            else{
+                                if (attributes.get(attributeName).get(0) == null)
+                                    instance.removeProperty(attributeName);
+                                else
+                                    instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName).get(0), myClass.getAttributeMapping(attributeName),myClass.getType(attributeName)));
+                            }
                         }
-                    }
-                    else{
+                    break;
+                    case AttributeMetadata.MAPPING_MANYTOMANY:
+                    case AttributeMetadata.MAPPING_MANYTOONE:
+                        List<Long> listTypeItems = new ArrayList<Long>();
+                        if (!cm.getClass(myClass.getType(attributeName)).isListType())
+                            throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", myClass.getType(attributeName)), Level.WARNING);
+                        
+                        if (attributes.get(attributeName) == null){
+                            Util.releaseRelationships(instance, RelTypes.RELATED_TO, Direction.OUTGOING, MetadataEntityManagerImpl.PROPERTY_NAME,
+                                attributeName);
+                            break;
+                        }
+
+                        try{
+                            for (String value : attributes.get(attributeName))
+                                listTypeItems.add(Long.valueOf(value));
+                        }catch(NumberFormatException ex){
+                            throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
+                        }
+                        Node listTypeNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, myClass.getType(attributeName)).getSingle();
+                        List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
+
+                        Util.releaseRelationships(instance, RelTypes.RELATED_TO, Direction.OUTGOING, MetadataEntityManagerImpl.PROPERTY_NAME,
+                                attributeName);
+
+                        //Create the new relationships
+                        for (Node item : listTypeNodes){
+                            Relationship newRelationship = instance.createRelationshipTo(item, RelTypes.RELATED_TO);
+                            newRelationship.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, attributeName);
+                        }
+                    break;
+                    default:
                         tx.failure();
                         tx.finish();
                         throw new InvalidArgumentException(
-                                Util.formatString("The attribute %1s does not exist in class %2s", attributeName, className), Level.WARNING);
-                    }
+                            Util.formatString("The attribute %1s is binary so it can't be set using this method. Use setBinaryAttributes instead", attributeName), Level.WARNING);
                 }
-                tx.success();
-                tx.finish();
-                return;
             }
-
+            else{
+                tx.failure();
+                tx.finish();
+                throw new InvalidArgumentException(
+                        Util.formatString("The attribute %1s does not exist in class %2s", attributeName, className), Level.WARNING);
+            }
         }
-        tx.failure();
+        tx.success();
         tx.finish();
-        throw new ObjectNotFoundException(className, oid);
     }
 
     public boolean setBinaryAttributes(String className, Long oid, List<String> attributeNames, List<byte[]> attributeValues)

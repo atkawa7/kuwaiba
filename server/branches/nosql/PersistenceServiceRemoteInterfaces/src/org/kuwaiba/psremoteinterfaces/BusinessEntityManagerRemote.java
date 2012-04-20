@@ -55,7 +55,7 @@ public interface BusinessEntityManagerRemote extends Remote{
     public RemoteBusinessObjectLight getObjectInfoLight(String objectClass, Long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
 
-    public void updateObject(String className, Long oid, HashMap<String,String> attributes)
+    public void updateObject(String className, Long oid, HashMap<String,List<String>> attributes)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
                 WrongMappingException, InvalidArgumentException, RemoteException;
     public Long createObject(String className, String parentClassName, Long parentOid,

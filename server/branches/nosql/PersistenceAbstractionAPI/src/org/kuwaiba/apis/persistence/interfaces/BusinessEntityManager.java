@@ -93,17 +93,18 @@ public interface BusinessEntityManager {
 
 
     /**
-     * Updates an object attributes. Note that you can't set one-to-many or binary attributes through this
-     * method. Use setBinaryAttributes and setManyToManyAttribute instead.
+     * Updates an object attributes. Note that you can't set binary attributes through this
+     * method. Use setBinaryAttributes instead.
      * @param className Object class name
      * @param oid Object's oid
-     * @param attributes The attributes to be updated (the key is the attribute name, the value is the value)
+     * @param attributes The attributes to be updated (the key is the attribute name, 
+     * the value is and array with the value -or values in case of MANY TO MANY list type attributes-)
      * @throws MetadataObjectNotFoundException If the object class can't be found
      * @throws ObjectNotFoundException If the object can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
-     * @throws InvalidArhumentException If any of the names provided does not exist or can't be set using this method
+     * @throws InvalidArgumentException If any of the names provided does not exist or can't be set using this method
      */
-    public void updateObject(String className, Long oid, HashMap<String,String> attributes)
+    public void updateObject(String className, Long oid, HashMap<String,List<String>> attributes)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
                 WrongMappingException, InvalidArgumentException;
 
