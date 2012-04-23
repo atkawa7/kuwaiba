@@ -512,15 +512,14 @@ public class CommunicationsStub {
      * @param oid object id
      * @return Success or failure
      */
-    public boolean removeObject(String className, Long oid){
-//        try{
-            //port.removeObject(className,oid,this.session.getSessionId());
-            //return true;
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return false;
-//        }
-        return false;
+    public boolean deleteObject(String className, Long oid){
+        try{
+            port.deleteObject(className,oid,this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return false;
+        }
     }
 
     public boolean moveObjects(Long targetOid, LocalObjectLight[] _objects) {

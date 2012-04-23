@@ -124,6 +124,12 @@
 <message name="getObjectInfoLightResponse">
 <part name="parameters" element="tns:getObjectInfoLightResponse"/>
 </message>
+<message name="deleteObject">
+<part name="parameters" element="tns:deleteObject"/>
+</message>
+<message name="deleteObjectResponse">
+<part name="parameters" element="tns:deleteObjectResponse"/>
+</message>
 <message name="updateObject">
 <part name="parameters" element="tns:updateObject"/>
 </message>
@@ -285,6 +291,11 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectInfoLightRequest" message="tns:getObjectInfoLight"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectInfoLightResponse" message="tns:getObjectInfoLightResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectInfoLight/Fault/Exception"/>
+</operation>
+<operation name="deleteObject">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteObjectRequest" message="tns:deleteObject"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteObjectResponse" message="tns:deleteObjectResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteObject/Fault/Exception"/>
 </operation>
 <operation name="updateObject">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/updateObjectRequest" message="tns:updateObject"/>
@@ -561,6 +572,18 @@
 </fault>
 </operation>
 <operation name="getObjectInfoLight">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="deleteObject">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

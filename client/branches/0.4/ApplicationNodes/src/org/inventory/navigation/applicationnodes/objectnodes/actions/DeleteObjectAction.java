@@ -57,7 +57,7 @@ public final class DeleteObjectAction extends AbstractAction implements ObjectAc
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CONFIRMATIOn"),JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
 
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-            if (CommunicationsStub.getInstance().removeObject(node.getObject().getClassName(),
+            if (CommunicationsStub.getInstance().deleteObject(node.getObject().getClassName(),
                     node.getObject().getOid())){
                 if (node.getParentNode() != null) //Delete can be call for nodes outside the tree structure
                                                   //e.g. In a search result list

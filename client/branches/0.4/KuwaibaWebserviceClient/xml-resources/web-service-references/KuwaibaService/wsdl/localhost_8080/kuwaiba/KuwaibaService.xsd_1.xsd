@@ -48,6 +48,10 @@
 
 <xs:element name="deleteClassByNameResponse" type="tns:deleteClassByNameResponse"/>
 
+<xs:element name="deleteObject" type="tns:deleteObject"/>
+
+<xs:element name="deleteObjectResponse" type="tns:deleteObjectResponse"/>
+
 <xs:element name="getChildrenOfClass" type="tns:getChildrenOfClass"/>
 
 <xs:element name="getChildrenOfClassLight" type="tns:getChildrenOfClassLight"/>
@@ -350,20 +354,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getObjectInfoLight">
-<xs:sequence>
-<xs:element name="objectclass" type="xs:string" minOccurs="0"/>
-<xs:element name="oid" type="xs:long" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getObjectInfoLightResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteObjectLight" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="addAttributeByClassId">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
@@ -382,6 +372,20 @@
 
 <xs:complexType name="addAttributeByClassIdResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getObjectInfoLight">
+<xs:sequence>
+<xs:element name="objectclass" type="xs:string" minOccurs="0"/>
+<xs:element name="oid" type="xs:long" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getObjectInfoLightResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" minOccurs="0"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getMetadataForClassById">
@@ -480,6 +484,18 @@
 </xs:complexType>
 
 <xs:complexType name="changeClassMetadataDefinitionResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="deleteObject">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="oid" type="xs:long" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteObjectResponse">
 <xs:sequence/>
 </xs:complexType>
 
