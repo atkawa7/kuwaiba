@@ -19,6 +19,8 @@ package org.kuwaiba.beans;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -36,8 +38,13 @@ public class ToolsBean implements ToolsBeanRemote {
     @Override
     public boolean resetAdmin() {
         try {
-            if (getAEMInstance().createUser("admin", "kuwaiba", "Administrator", "Dummy", true, null, null) == null)
+            List<Long> listGroups = new ArrayList<Long>();
+            listGroups.add(getAEMInstance().createGroup("admins", "admins group"));
+            listGroups.add(getAEMInstance().createGroup("users", "users group"));
+            
+            if (getAEMInstance().createUser("admin", "kuwaiba", "Administrator", "Dummy", true, null, listGroups) == null)
                 return false;
+
             return true;
         } catch (InvalidArgumentException ex) {
             Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
