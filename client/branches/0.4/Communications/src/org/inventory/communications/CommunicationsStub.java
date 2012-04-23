@@ -514,7 +514,11 @@ public class CommunicationsStub {
      */
     public boolean deleteObject(String className, Long oid){
         try{
-            port.deleteObject(className,oid,this.session.getSessionId());
+            List classes = new ArrayList();
+            classes.add(className);
+            List ids = new ArrayList();
+            ids.add(oid);
+            port.deleteObjects(classes,ids,this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
@@ -522,24 +526,22 @@ public class CommunicationsStub {
         }
     }
 
-    public boolean moveObjects(Long targetOid, LocalObjectLight[] _objects) {
+    public boolean moveObjects(String targetClass, Long targetOid, LocalObjectLight[] _objects) {
 
-//        try{
-//            List<Long> objectOids = new ArrayList<Long>();
-//            List<String> objectClasses = new ArrayList<String>();
-//
-//            for (LocalObjectLight lol : _objects){
-//                objectOids.add(lol.getOid());
-//                objectClasses.add(lol.getClassName());
-//            }
-//
-//            return port.moveObjects(targetOid, objectClasses, objectOids,this.session.getSessionId());
-//
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return false;
-//        }
-        return false;
+        try{
+            List<Long> objectOids = new ArrayList<Long>();
+            List<String> objectClasses = new ArrayList<String>();
+
+            for (LocalObjectLight lol : _objects){
+                objectOids.add(lol.getOid());
+                objectClasses.add(lol.getClassName());
+            }
+            port.moveObjects(targetClass, targetOid, objectClasses, objectOids,this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return false;
+        }
     }
 
     public LocalObjectLight[] copyObjects(Long targetOid, LocalObjectLight[] _objects){

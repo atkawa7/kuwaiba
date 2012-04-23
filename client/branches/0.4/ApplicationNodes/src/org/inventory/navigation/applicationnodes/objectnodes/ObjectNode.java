@@ -356,7 +356,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                           }
                           else{
                               if (action == DnDConstants.ACTION_MOVE){
-                                    if (com.moveObjects(getObject().getOid(),new LocalObjectLight[] {obj})){
+                                    if (com.moveObjects(getObject().getClassName(),getObject().getOid(),new LocalObjectLight[] {obj})){
                                         dropNode.getParentNode().getChildren().remove(new Node[]{dropNode});
                                         getChildren().add(new Node[]{new ObjectNode(obj)});
                                     }

@@ -48,9 +48,9 @@
 
 <xs:element name="deleteClassByNameResponse" type="tns:deleteClassByNameResponse"/>
 
-<xs:element name="deleteObject" type="tns:deleteObject"/>
+<xs:element name="deleteObjects" type="tns:deleteObjects"/>
 
-<xs:element name="deleteObjectResponse" type="tns:deleteObjectResponse"/>
+<xs:element name="deleteObjectsResponse" type="tns:deleteObjectsResponse"/>
 
 <xs:element name="getChildrenOfClass" type="tns:getChildrenOfClass"/>
 
@@ -107,6 +107,10 @@
 <xs:element name="getPossibleChildrenNoRecursiveResponse" type="tns:getPossibleChildrenNoRecursiveResponse"/>
 
 <xs:element name="getPossibleChildrenResponse" type="tns:getPossibleChildrenResponse"/>
+
+<xs:element name="moveObjects" type="tns:moveObjects"/>
+
+<xs:element name="moveObjectsResponse" type="tns:moveObjectsResponse"/>
 
 <xs:element name="removePossibleChildren" type="tns:removePossibleChildren"/>
 
@@ -459,6 +463,20 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="moveObjects">
+<xs:sequence>
+<xs:element name="targetClass" type="xs:string" minOccurs="0"/>
+<xs:element name="targetOid" type="xs:long" minOccurs="0"/>
+<xs:element name="objectsClasses" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="objectsOids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="moveObjectsResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="deleteClassByName">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
@@ -484,18 +502,6 @@
 </xs:complexType>
 
 <xs:complexType name="changeClassMetadataDefinitionResponse">
-<xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="deleteObject">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="oid" type="xs:long" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteObjectResponse">
 <xs:sequence/>
 </xs:complexType>
 
@@ -631,5 +637,17 @@
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteObjects">
+<xs:sequence>
+<xs:element name="classNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="oid" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteObjectsResponse">
+<xs:sequence/>
 </xs:complexType>
 </xs:schema>
