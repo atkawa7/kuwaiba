@@ -16,13 +16,20 @@
 
 package org.kuwaiba.apis.persistence.application;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Represents a group
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class GroupProfile {
+public class GroupProfile implements Serializable{
+    public static final String PROPERTY_ID = "id"; //NOI18N
+    public static final String PROPERTY_GROUPNAME = "username"; //NOI18N
+    public static final String PROPERTY_DESCRIPTION = "description"; //NOI18N
+    public static final String PROPERTY_PRIVILEGES = "privileges"; //NOI18N
+    public static final String PROPERTY_CREATION_DATE = "creationDate"; //NOI18N
+
     /**
      * Group's id (oid)
      */
@@ -48,6 +55,26 @@ public class GroupProfile {
      */
     private List<Integer> privileges;
 
+    public GroupProfile() {
+    }
+
+    public GroupProfile(Long id, String name, String description, Long creationDate) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.creationDate = creationDate;
+    }
+
+    public GroupProfile(Long id, String name, String description, Long creationDate,
+            List<UserProfile> users, List<Integer> privileges) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.creationDate = creationDate;
+        this.users = users;
+        this.privileges = privileges;
+    }
+    
     public Long getId() {
         return id;
     }
