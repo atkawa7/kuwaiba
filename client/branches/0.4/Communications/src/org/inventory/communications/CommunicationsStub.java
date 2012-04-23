@@ -18,6 +18,7 @@ package org.inventory.communications;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
@@ -34,6 +35,8 @@ import org.inventory.communications.core.LocalObjectListItemImpl;
 //import org.inventory.communications.core.queries.LocalQueryLightImpl;
 //import org.inventory.communications.core.queries.LocalTransientQueryImpl;
 //import org.inventory.communications.core.views.LocalObjectViewImpl;
+import org.inventory.communications.core.LocalUserGroupObjectImpl;
+import org.inventory.communications.core.LocalUserObjectImpl;
 import org.inventory.core.services.factories.ObjectFactory;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
@@ -55,6 +58,8 @@ import org.kuwaiba.wsclient.KuwaibaService;
 import org.kuwaiba.wsclient.RemoteObject;
 import org.kuwaiba.wsclient.RemoteObjectLight;
 import org.kuwaiba.wsclient.StringArray;
+import org.kuwaiba.wsclient.UserGroupInfo;
+import org.kuwaiba.wsclient.UserInfo;
 
 /**
  * Singleton class that provides communication and caching services to the rest of the modules
@@ -840,42 +845,42 @@ public class CommunicationsStub {
      * @return An array of LocalUserObject
      */
     public LocalUserObject[] getUsers() {
-//        try{
-//            List<UserInfo> users = port.getUsers(this.session.getSessionId());
-//            LocalUserObject[] localUsers = new LocalUserObject[users.size()];
-//
-//            int i = 0;
-//            for (UserInfo user : users){
-//                localUsers[i] = (LocalUserObject) new LocalUserObjectImpl(user);
-//                i++;
-//            }
-//            return localUsers;
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return new LocalUserObject[0];
+        try{
+            List<UserInfo> users = port.getUsers(this.session.getSessionId());
+            LocalUserObject[] localUsers = new LocalUserObject[users.size()];
+
+            int i = 0;
+            for (UserInfo user : users){
+                localUsers[i] = (LocalUserObject) new LocalUserObjectImpl(user);
+                i++;
+            }
+            return localUsers;
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
+        //return new LocalUserObject[0];
     }
     /**
      * Retrieves the group list
      * @return An array of LocalUserObject
      */
     public LocalUserGroupObject[] getGroups() {
-//        try{
-//            List<UserGroupInfo> groups = port.getGroups(this.session.getSessionId());
-//            LocalUserGroupObject[] localGroups = new LocalUserGroupObject[groups.size()];
-//
-//            int i = 0;
-//            for (UserGroupInfo group : groups){
-//                localGroups[i] = (LocalUserGroupObject) new LocalUserGroupObjectImpl(group);
-//                i++;
-//            }
-//            return localGroups;
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return new LocalUserGroupObject[0];
+        try{
+            List<UserGroupInfo> groups = port.getGroups(this.session.getSessionId());
+            LocalUserGroupObject[] localGroups = new LocalUserGroupObject[groups.size()];
+
+            int i = 0;
+            for (UserGroupInfo group : groups){
+                localGroups[i] = (LocalUserGroupObject) new LocalUserGroupObjectImpl(group);
+                i++;
+            }
+            return localGroups;
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
+        //return new LocalUserGroupObject[0];
     }
 
     /**
@@ -883,14 +888,13 @@ public class CommunicationsStub {
      * @return The newly created user
      */
     public LocalUserObject addUser(){
-//        try{
-//            UserInfo newUser = port.createUser(this.session.getSessionId());
-//            return new LocalUserObjectImpl(newUser);
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return null;
+        try{
+            UserInfo newUser = port.addUser(this.session.getSessionId());
+            return new LocalUserObjectImpl(newUser);
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
     }
 
     /**
@@ -899,7 +903,7 @@ public class CommunicationsStub {
      * @return success or failure
      */
     public boolean setUserProperties(LocalObject user) {
-//        try{
+        try{
 //            ObjectUpdate update = new ObjectUpdate();
 //            List<String> atts = new ArrayList<String>();
 //            List<String> vals = new ArrayList<String>();
@@ -915,10 +919,10 @@ public class CommunicationsStub {
 //            update.setUpdatedAttributes(atts);
 //            update.setNewValues(vals);
 //            return port.setUserProperties(update, this.session.getSessionId());
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return false;
-//        }
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return false;
+        }
         return false;
     }
 
@@ -928,7 +932,7 @@ public class CommunicationsStub {
      * @return success or failure
      */
     public boolean setGroupProperties(LocalObject group) {
-//        try{
+        try{
 //            ObjectUpdate update = new ObjectUpdate();
 //            List<String> atts = new ArrayList<String>();
 //            List<String> vals = new ArrayList<String>();
@@ -944,10 +948,9 @@ public class CommunicationsStub {
 //            update.setUpdatedAttributes(atts);
 //            update.setNewValues(vals);
 //            return port.setGroupProperties(update, this.session.getSessionId());
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return false;
-//        }
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+        }
         return false;
     }
 
@@ -956,14 +959,13 @@ public class CommunicationsStub {
      * @return The newly created group
      */
     public LocalUserGroupObject addGroup(){
-//        try{
-//            UserGroupInfo newGroup = port.createGroup(this.session.getSessionId());
-//            return new LocalUserGroupObjectImpl(newGroup);
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return null;
+        try{
+            UserGroupInfo newGroup = port.addGroup(this.session.getSessionId());
+            return new LocalUserGroupObjectImpl(newGroup);
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
     }
 
     /**
@@ -972,14 +974,14 @@ public class CommunicationsStub {
      * @return success or failure
      */
     public boolean deleteUsers(Long[] oids){
-//        try{
-//            return port.deleteUsers(Arrays.asList(oids), session.getSessionId());
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return false;
-//        }
-        return false;
+        try{
+            port.deleteUsers(Arrays.asList(oids), session.getSessionId());
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+        }
+        return true;
     }
+
 
     /**
      * Removes a list of groups
@@ -987,13 +989,12 @@ public class CommunicationsStub {
      * @return success or failure
      */
     public boolean deleteGroups(Long[] oids){
-//        try{
-//            return port.deleteGroups(Arrays.asList(oids),session.getSessionId());
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return false;
-//        }
-        return false;
+        try{
+            port.deleteGroups(Arrays.asList(oids),session.getSessionId());
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+        }
+        return true;
     }
 
     /**
@@ -1003,23 +1004,21 @@ public class CommunicationsStub {
      * @return Success or failure
      */
     public boolean addGroupsToUser(List<Long> groupsOids, Long userOid){
-//        try{
-//            return port.addGroupsToUser(groupsOids, userOid,this.session.getSessionId());
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return false;
-//        }
-        return false;
+        try{
+            port.addGroupsToUser(groupsOids, userOid,this.session.getSessionId());
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+        }
+        return true;
     }
 
     public boolean removeGroupsFromUser(List<Long> groupsOids, Long userOid){
-//        try{
-//            return port.removeGroupsFromUser(groupsOids, userOid,this.session.getSessionId());
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return false;
-//        }
-        return false;
+        try{
+            port.removeGroupsFromUser(groupsOids, userOid,this.session.getSessionId());
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+        }
+        return true;
     }
 
     /**
