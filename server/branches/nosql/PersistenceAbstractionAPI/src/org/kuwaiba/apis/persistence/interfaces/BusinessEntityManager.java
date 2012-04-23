@@ -25,7 +25,6 @@ import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectWithRelationsException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 
@@ -79,17 +78,16 @@ public interface BusinessEntityManager {
 
     /**
      * Deletes an object
+     * @param  className Class the requested object is instance of
      * @param oid object's id
-     * @return Success of failure
-     * @throws ObjectWithRelationsException If the requested object or one of it's children have
-     * relationships that should be released manually before to delete them
      * @throws ObjectNotFoundException If the requested object can't be found
+     * @throws MetadataObjectNotFoundException If the requested object class can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
-     * or it is blocked
+     * or it is blocked or if the requested object or one of it's children have
+     * relationships that should be released manually before to delete them
      */
-    public boolean deleteObject(Long oid)
-            throws ObjectWithRelationsException, ObjectNotFoundException, 
-                OperationNotPermittedException;
+    public void deleteObject(String className, Long oid)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException;
 
 
     /**

@@ -18,6 +18,7 @@ package org.kuwaiba.persistenceservice.caching;
 
 import java.util.HashMap;
 import org.kuwaiba.apis.persistence.application.UserProfile;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 
 /**
@@ -90,5 +91,27 @@ public class CacheManager {
     public void clear() {
         classIndex.clear();
         userIndex.clear();
+    }
+
+    /**
+     * According to the cached metadata, finds out if a given class if subclass of another
+     * @param allegedParentClass Possible super class
+     * @param className Class to be evaluated
+     * @return is className subClass of allegedParentClass?
+     */
+    public boolean isSubClass(String allegedParentClass, String className) throws MetadataObjectNotFoundException{
+
+        if (className == null)
+            return false;
+
+        ClassMetadata currentClass = getClass(className);
+
+        if (currentClass == null)
+            throw new MetadataObjectNotFoundException(className);
+
+        if (currentClass.getParentClassName().equals(allegedParentClass))
+            return true;
+        else
+            return isSubClass(allegedParentClass, currentClass.getParentClassName());
     }
 }

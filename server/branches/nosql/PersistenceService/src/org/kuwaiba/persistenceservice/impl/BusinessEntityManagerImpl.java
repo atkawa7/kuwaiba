@@ -30,7 +30,6 @@ import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectWithRelationsException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 import org.kuwaiba.apis.persistence.interfaces.BusinessEntityManager;
@@ -100,7 +99,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
     public Long createObject(String className, String parentClassName, Long parentOid, HashMap<String,String> attributes, Long template)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
-
 
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null)
@@ -177,6 +175,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
 
+
+
     public RemoteBusinessObject getObjectInfo(String className, Long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
@@ -205,9 +205,27 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         throw new ObjectNotFoundException(className, oid);
     }
 
-    public boolean deleteObject(Long oid)
-            throws ObjectWithRelationsException, ObjectNotFoundException, OperationNotPermittedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void deleteObject(String className, Long oid)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
+
+        if (!cm.isSubClass("InventoryObject", className))
+            throw new OperationNotPermittedException(className, Util.formatString("Class %1s is not a business-related class", className));
+        
+        Node instance = getInstanceOfClass(className, oid);
+
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            Util.deleteObject(instance);
+            tx.success();
+        }catch(Exception ex){
+            Logger.getLogger("deleteObject: "+ex.getMessage()); //NOI18N
+            tx.failure();
+            throw new RuntimeException(ex.getMessage());
+        }finally{
+            if (tx != null)
+                tx.finish();
+        }
     }
 
     public void updateObject(String className, Long oid, HashMap<String,List<String>> attributes)
