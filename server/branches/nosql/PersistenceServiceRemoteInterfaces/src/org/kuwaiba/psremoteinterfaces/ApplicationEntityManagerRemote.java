@@ -19,6 +19,7 @@ package org.kuwaiba.psremoteinterfaces;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
@@ -52,6 +53,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
     public Long createUser(String userName, String password, String firstName,
             String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
             throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+
     /**
      * Creates a user
      * @param userName New user's name. Mandatory.
@@ -64,7 +66,102 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
      * @throws ObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
      */
-    public void setUserProperties(String userName, String password, String firstName,
-            String lastName, List<Integer> privileges, List<Long> groups)
+    public void setUserProperties(UserProfile user, String pwd)
             throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+
+
+    /**
+     * Creates a group
+     * @param name
+     * @param description
+     * @param creationDate
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public Long createGroup(String groupName, String description)
+            throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+
+    /**
+     * Retrieves the user list
+     * @return An array of UserProfile
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public List<UserProfile> getUsers()throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+
+    /**
+     * Retrieves the group list
+     * @return An array of GroupProfile
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public List<GroupProfile> getGroups()throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+
+    /**
+     * Creates a new user
+     * @return The newly created user
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public UserProfile addUser()throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+
+    /**
+     * Set user attributes (group membership is managed using other methods)
+     * @param groupName
+     * @param description
+     * @param creationDate
+     * @param privileges
+     * @return
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public void setGroupProperties(String groupName, String description,
+            List<Integer> privileges)throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+
+    /**
+     * Creates a new group
+     * @return
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public GroupProfile addGroup()throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+
+    /**
+     * Removes a list of users
+     * @param oids
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public void deleteUsers(Long[] oids)throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+
+    /**
+     * Removes a list of groups
+     * @param oids
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public void deleteGroups(Long[] oids)
+            throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+
+    /**
+     * Assigns groups to a user
+     * @param groupsOids
+     * @param userOid
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public void addGroupsToUser(List<Long> groupsOids, Long userOid)
+            throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+
+    /**
+     * Removes groups to a user
+     * @param groupsOids
+     * @param userOid
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public void removeGroupsFromUser(List<Long> groupsOids, Long userOid)
+            throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+
+
 }
