@@ -18,6 +18,7 @@ package org.kuwaiba.persistenceservice.caching;
 
 import java.util.HashMap;
 import java.util.List;
+import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -43,6 +44,10 @@ public class CacheManager {
      * Users index. It is used to ease the username uniqueness validation
      */
     private HashMap<String, UserProfile> userIndex;
+    /**
+     * Groups index. It is used to ease the username uniqueness validation
+     */
+    private HashMap<String, GroupProfile> groupIndex;
 
 
     private CacheManager(){
@@ -106,6 +111,38 @@ public class CacheManager {
         userIndex.put(newUser.getUserName(), newUser);
     }
 
+        /**
+     * Tries to retrieve a cached user
+     * @param userName the class to be retrieved from the cache
+     * @return the cached version of the class. Null if it's  not cached
+     */
+    public GroupProfile getGroup(String groupName){
+        return groupIndex.get(groupName);
+    }
+
+    /**
+     * Put/replaces an entry into the group cache
+     * @param newUser user to be added
+     */
+    public void putGroup(GroupProfile newGroup){
+        groupIndex.put(newGroup.getName(), newGroup);
+    }
+
+    /**
+     * Removes an entry into the users cache
+     * @param userName
+     */
+    public void removeUser(String userName){
+        userIndex.remove(userName);
+    }
+
+    /**
+     * Removes an entry into the group cache
+     * @param groupName
+     */
+    public void removeGroup(String groupName){
+        userIndex.remove(groupName);
+    }
     /**
      * Clear the cache
      */
