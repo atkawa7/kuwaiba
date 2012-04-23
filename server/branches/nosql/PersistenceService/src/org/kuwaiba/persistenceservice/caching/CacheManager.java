@@ -17,6 +17,7 @@
 package org.kuwaiba.persistenceservice.caching;
 
 import java.util.HashMap;
+import java.util.List;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -35,6 +36,10 @@ public class CacheManager {
      */
     private HashMap<String, ClassMetadata> classIndex;
     /**
+     * Possible children index. The key is the class, the value its possible children. Note that a blank key ("") represents the navigation tree root
+     */
+    private HashMap<String, List<String>> possibleChildrenIndex;
+    /**
      * Users index. It is used to ease the username uniqueness validation
      */
     private HashMap<String, UserProfile> userIndex;
@@ -43,6 +48,7 @@ public class CacheManager {
     private CacheManager(){
         classIndex = new HashMap<String, ClassMetadata>();
         userIndex = new HashMap<String, UserProfile>();
+        possibleChildrenIndex = new HashMap<String, List<String>>();
     }
 
     public static CacheManager getInstance(){
@@ -69,6 +75,21 @@ public class CacheManager {
     }
 
     /**
+     * Adds an entry to the possible children index
+     * @param parent
+     * @param children
+     */
+    public void putPossibleChildren(String parent, List<String>children){
+        possibleChildrenIndex.put(parent, children);
+    }
+
+    public List<String> getPossibleChildren(String parent){
+        if (parent == null)
+            return possibleChildrenIndex.get("");
+        return possibleChildrenIndex.get(parent);
+    }
+
+    /**
      * Tries to retrieve a cached user
      * @param userName the class to be retrieved from the cache
      * @return the cached version of the class. Null if it's  not cached
@@ -91,14 +112,16 @@ public class CacheManager {
     public void clear() {
         classIndex.clear();
         userIndex.clear();
+        possibleChildrenIndex.clear();
     }
 
-    /**
-     * According to the cached metadata, finds out if a given class if subclass of another
-     * @param allegedParentClass Possible super class
-     * @param className Class to be evaluated
-     * @return is className subClass of allegedParentClass?
-     */
+     /**
+      * According to the cached metadata, finds out if a given class if subclass of another
+      * @param allegedParentClass Possible super class
+      * @param className Class to be evaluated
+      * @return is className subClass of allegedParentClass?
+      * @throws MetadataObjectNotFoundException If the class can not be found
+      */
     public boolean isSubClass(String allegedParentClass, String className) throws MetadataObjectNotFoundException{
 
         if (className == null)
@@ -113,5 +136,29 @@ public class CacheManager {
             return true;
         else
             return isSubClass(allegedParentClass, currentClass.getParentClassName());
+    }
+
+    /**
+     * Finds out if a an instance of a given class can be child of an instance of allegedParent
+     * @param allegedParent Possible parent
+     * @param childToBeEvaluated Class to be evaluated
+     * @return can an instance of childToBeEvaluated be a child of an instance of allegedParent
+     * @throws MetadataObjectNotFoundException
+     */
+    public boolean canBeChild(String allegedParent, String childToBeEvaluated) throws MetadataObjectNotFoundException{
+        List<String> possibleChildren;
+        if (allegedParent == null) //The navigation tree root
+            possibleChildren = possibleChildrenIndex.get("");
+        else
+            possibleChildren = possibleChildrenIndex.get(allegedParent);
+
+        if (possibleChildren == null)
+           throw new MetadataObjectNotFoundException(allegedParent);
+
+        for (String possibleChild : possibleChildren){
+            if (possibleChild.equals(childToBeEvaluated))
+                return true;
+        }
+        return false;
     }
 }

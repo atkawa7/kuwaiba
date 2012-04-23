@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011,2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import java.util.logging.Level;
 public class OperationNotPermittedException extends InventoryException{
 
     public OperationNotPermittedException(String operationName, String reason) {
-        super(ResourceBundle.getBundle("org/kuwaiba/internationalization/Bundle").
+        super(ResourceBundle.getBundle("org/kuwaiba/Bundle").
                 getString("LBL_OPERATIONNOTPERMITTED")+operationName+", "+reason, Level.WARNING);
     }
 

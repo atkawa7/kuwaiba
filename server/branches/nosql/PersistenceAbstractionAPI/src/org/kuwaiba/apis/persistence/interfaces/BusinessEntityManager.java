@@ -77,16 +77,15 @@ public interface BusinessEntityManager {
             throws MetadataObjectNotFoundException, ObjectNotFoundException;
 
     /**
-     * Deletes an object
-     * @param  className Class the requested object is instance of
-     * @param oid object's id
+     * Deletes a set of objects
+     * @param  objects a hashmap where the class name is the key and the value is a list of Long containing the ids of the objects to be deleted that are instance of the key class
      * @throws ObjectNotFoundException If the requested object can't be found
      * @throws MetadataObjectNotFoundException If the requested object class can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * or it is blocked or if the requested object or one of it's children have
      * relationships that should be released manually before to delete them
      */
-    public void deleteObject(String className, Long oid)
+    public void deleteObjects(HashMap<String, List<Long>> oids)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException;
 
 
@@ -149,7 +148,7 @@ public interface BusinessEntityManager {
      * @throws ArraySizeMismatchException If the oids and classNames array sizes do not match
      */
 
-    public void moveObjects(HashMap<String,List<Long>> objects, String targetClassName, Long targetOid)
+    public void moveObjects(String targetClassName, Long targetOid, HashMap<String,List<Long>> objects)
             throws MetadataObjectNotFoundException, ObjectNotFoundException,
                  OperationNotPermittedException;
 

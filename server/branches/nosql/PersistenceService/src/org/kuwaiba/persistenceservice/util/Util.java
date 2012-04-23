@@ -339,11 +339,14 @@ public class Util {
         else
             myClass.setCategory(null);
 
-        Iterable<Relationship> possibleChildren = classNode.getRelationships(RelTypes.POSSIBLE_CHILD);
-        while (possibleChildren.iterator().hasNext()){
-            Relationship possibleChild = possibleChildren.iterator().next();
-            myClass.getPossibleChildren().add((String)possibleChild.getStartNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
+        Iterable<Relationship> possibleChildren = classNode.getRelationships(Direction.OUTGOING, RelTypes.POSSIBLE_CHILD);
+        for (Relationship relationship : possibleChildren) {
+            Node possibleChildNode = relationship.getEndNode();
+            myClass.getPossibleChildren().add((String)possibleChildNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
         }
+        Traverser traverserPossibleChildren = traverserPossibleChildren(classNode);
+        for (Node possibleChild : traverserPossibleChildren)
+            myClass.getPossibleChildren().add((String)possibleChild.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
 
         //IsDummy
         if(classNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.BOTH) != null)

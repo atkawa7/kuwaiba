@@ -69,6 +69,9 @@ public interface BusinessEntityManagerRemote extends Remote{
     public List<ClassMetadataLight> getInstanceableListTypes()
             throws MetadataObjectNotFoundException, RemoteException;
 
-    public void deleteObject(String className, Long oid)
+    public void deleteObjects(HashMap<String, List<Long>> objects)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
+
+    public void moveObjects(String targetClass, Long targetOid, HashMap<String, List<Long>> objects)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
 }

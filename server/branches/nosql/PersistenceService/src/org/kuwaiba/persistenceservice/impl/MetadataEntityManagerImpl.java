@@ -128,8 +128,19 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         classIndex = graphDb.index().forNodes(INDEX_CLASS);
         categoryIndex = graphDb.index().forNodes(INDEX_CATEGORY);
         cm.clear();
-        for (Node classNode : classIndex.query(MetadataEntityManagerImpl.PROPERTY_ID, "*"))
-            cm.putClass(Util.createClassMetadataFromNode(classNode));
+        for (Node classNode : classIndex.query(MetadataEntityManagerImpl.PROPERTY_ID, "*")){
+            ClassMetadata aClass = Util.createClassMetadataFromNode(classNode);
+            cm.putClass(aClass);
+            cm.putPossibleChildren(aClass.getName(), aClass.getPossibleChildren());
+        }
+
+        //TODO: Take this out of here, let the nav tree root possible children to be cached at getPossibleChildren
+        try{
+            List<String> possibleChildrenOfRoot = new ArrayList<String>();
+            for (ClassMetadataLight aClass : getPossibleChildren(null))
+                possibleChildrenOfRoot.add(aClass.getName());
+                cm.putPossibleChildren("", possibleChildrenOfRoot);
+        }catch(Exception e){}
     }
 
     /**
