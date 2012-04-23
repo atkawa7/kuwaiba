@@ -18,11 +18,16 @@ package org.kuwaiba.beans;
 
 import java.util.List;
 import javax.ejb.Remote;
+import org.kuwaiba.apis.persistence.application.GroupProfile;
+import org.kuwaiba.apis.persistence.application.UserProfile;
 
 import org.kuwaiba.exceptions.InvalidSessionException;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.ws.todeserialize.ObjectUpdate;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.ws.toserialize.application.UserGroupInfo;
+import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
@@ -318,5 +323,112 @@ public interface WebServiceBeanRemote {
    
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
+
+    /**
+     * 
+     * @param userName
+     * @param password
+     * @param firstName
+     * @param lastName
+     * @param privileges
+     * @param groups
+     * @throws ServerSideException
+     */
+    public void setUserProperties(ObjectUpdate user)
+            throws ServerSideException;
+
+
+    /**
+     * Creates a group
+     * @param name
+     * @param description
+     * @param creationDate
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public Long createGroup(String groupName, String description)
+            throws ServerSideException;
+
+    /**
+     * Get all users
+     * @return
+     * @throws ServerSideException
+     */
+    public UserInfo[] getUsers() throws ServerSideException;
+
+    /**
+     * Get All Groups
+     * @return
+     * @throws ServerSideException
+     */
+
+    public UserGroupInfo[] getGroups() throws ServerSideException;
+
+    /**
+     * Creates a new user
+     * @return The newly created user
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public UserInfo addUser()throws ServerSideException;
+
+    /**
+     * Set user attributes (group membership is managed using other methods)
+     * @param groupName
+     * @param description
+     * @param privileges
+     * @return
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public void setGroupProperties(String groupName, String description,
+            Integer[] privileges)throws ServerSideException;
+
+    /**
+     * Creates a new group
+     * @return
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public UserGroupInfo addGroup()throws ServerSideException;
+
+    /**
+     * Removes a list of users
+     * @param oids
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public void deleteUsers(Long[] oids)throws ServerSideException;
+
+    /**
+     * Removes a list of groups
+     * @param oids
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public void deleteGroups(Long[] oids)
+            throws ServerSideException;
+
+    /**
+     * Assigns groups to a user
+     * @param groupsOids
+     * @param userOid
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public void addGroupsToUser(Long[] groupsOids, Long userOid)
+            throws ServerSideException;
+
+    /**
+     * Removes groups to a user
+     * @param groupsOids
+     * @param userOid
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
+     */
+    public void removeGroupsFromUser(Long[] groupsOids, Long userOid)
+            throws ServerSideException;
+    // </editor-fold>
 
 }
