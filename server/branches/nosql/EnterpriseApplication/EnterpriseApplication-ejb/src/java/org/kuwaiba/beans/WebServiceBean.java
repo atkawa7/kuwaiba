@@ -793,6 +793,17 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
+    public void deleteObject(String className, Long oid) throws ServerSideException{
+        assert bem == null : "Can't reach the Business Entity Manager";
+        try{
+            bem.deleteObject(className, oid);
+        }catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
     public void updateObject(String className, Long oid, String[] attributeNames, String[][] attributeValues) throws ServerSideException{
         assert bem == null : "Can't reach the Business Entity Manager";
         if (attributeNames.length != attributeValues.length)
@@ -822,7 +833,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return res;
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 

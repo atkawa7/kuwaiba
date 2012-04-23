@@ -302,7 +302,33 @@ public class Kuwaiba {
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
-    }// </editor-fold>
+    }
+    
+    /**
+     * Deletes an object. Note that this method must be used only for business objects (not metadata or application ones)
+     * @param className Object's class name
+     * @param oid objet's oid
+     * @param sessionId Session token
+     * @throws Exception If something goes wrong
+     */
+    @WebMethod(operationName = "deleteObject")
+    public void deleteObject(@WebParam(name = "className")String className,
+            @WebParam(name = "oid")Long oid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            //sbr.validateCall("createObject", getIPAddress(), sessionId);
+            wsBean.deleteObject(className,oid);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }        
+        
+    }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Metadata Methods. Click on the + sign on the left to edit the code.">
 

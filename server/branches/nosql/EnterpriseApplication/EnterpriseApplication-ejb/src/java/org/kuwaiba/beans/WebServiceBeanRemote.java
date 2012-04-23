@@ -310,7 +310,9 @@ public interface WebServiceBeanRemote {
     public Long createListTypeItem(String className, String name, String displayName) throws ServerSideException;
     public RemoteObjectLight[] getListTypeItems(String className) throws ServerSideException;
 
-    public ClassInfoLight[] getInstanceableListTypes()throws ServerSideException;
+    public ClassInfoLight[] getInstanceableListTypes() throws ServerSideException;
+
+    public void deleteObject(String className, Long oid) throws ServerSideException;
    
     // </editor-fold>
 
