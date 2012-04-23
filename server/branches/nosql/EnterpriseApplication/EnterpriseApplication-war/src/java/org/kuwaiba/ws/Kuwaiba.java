@@ -28,7 +28,10 @@ import javax.xml.ws.WebServiceContext;
 import javax.servlet.http.HttpServletRequest;
 import org.kuwaiba.beans.WebServiceBeanRemote;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.ws.todeserialize.ObjectUpdate;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.ws.toserialize.application.UserGroupInfo;
+import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
@@ -950,4 +953,183 @@ public class Kuwaiba {
         return ((HttpServletRequest)context.getMessageContext().
                     get("javax.xml.ws.servlet.request")).getRemoteAddr().toString(); //NOI18N
     }
+
+    // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
+
+    /**
+     * An user list
+     * @param sessionId
+     * @return An user list
+     * @throws Exception
+     */
+
+    @WebMethod(operationName = "getUsers")
+    public UserInfo[] getUsers(@WebParam(name = "sessionId")String sessionId) throws Exception {
+        try
+        {
+            return wsBean.getUsers();
+        } catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    /**
+     * Retrieves all groups
+     * @param sessionId
+     * @return A group list
+     * @throws Exception
+     */
+    @WebMethod(operationName = "getGroups")
+    public UserGroupInfo[] getGroups(@WebParam(name = "sessionId")String sessionId) throws Exception {
+        try
+        {
+            return wsBean.getGroups();
+        } catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "setUserProperties")
+    public void setUserPropertiesUsers(
+            @WebParam(name = "user")ObjectUpdate user,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try
+        {
+            wsBean.setUserProperties(user);
+
+        } catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "addUser")
+    public UserInfo addUser(@WebParam(name = "sessionId")String sessionId) throws Exception {
+        try
+        {
+            return wsBean.addUser();
+        } catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "setGroupProperties")
+    public void setGroupProperties(@WebParam(name = "groupName")String groupName,
+            @WebParam(name = "description")String description,
+            @WebParam(name = "privileges")Integer[] privileges,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try
+        {
+            wsBean.setGroupProperties(groupName, description, privileges);
+        } catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "addGroup")
+    public UserGroupInfo addGroup(@WebParam(name = "sessionId")String sessionId) throws Exception {
+        try
+        {
+            return wsBean.addGroup();
+        } catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "deleteUsers")
+    public void deleteUsers(@WebParam(name = "oids")Long[] oids,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try
+        {
+            wsBean.deleteUsers(oids);
+        } catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "deleteGroups")
+    public void deleteGroups(@WebParam(name = "oids")Long[] oids,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try
+        {
+            wsBean.deleteGroups(oids);
+        } catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "addGroupsToUser")
+    public void addGroupsToUser(@WebParam(name = "groupsOids")Long[] groupsOids,
+            @WebParam(name = "userOid")Long userOid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try
+        {
+            wsBean.addGroupsToUser(groupsOids, userOid);
+        } catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "removeGroupsFromUser")
+    public void removeGroupsFromUser(@WebParam(name = "groupsOids")Long [] groupsOids,
+            @WebParam(name = "userOid")Long userOid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try
+        {
+            wsBean.removeGroupsFromUser(groupsOids, userOid);
+        } catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    // </editor-fold>
+
 }
