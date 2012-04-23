@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
+import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
@@ -39,7 +40,10 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
+import org.kuwaiba.ws.todeserialize.ObjectUpdate;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.ws.toserialize.application.UserGroupInfo;
+import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.application.Validator;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
@@ -870,6 +874,165 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
+    @Override
+    public UserInfo[] getUsers() throws ServerSideException
+    {
+        assert aem == null : "Can't reach the Application Entity Manager";
+        try{
+            List<UserProfile> users = aem.getUsers();
+
+            UserInfo[] usersInfo = new UserInfo[users.size()];
+            int i=0;
+            for (UserProfile user: users)  {
+                usersInfo[i]=(new UserInfo(user));
+                i++;
+            }
+            return usersInfo;
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public UserGroupInfo[] getGroups() throws ServerSideException
+    {
+        assert aem == null : "Can't reach the Application Entity Manager";
+        try{
+            List<GroupProfile> groups = aem.getGroups();
+
+            UserGroupInfo [] userGroupInfo = new UserGroupInfo[groups.size()];
+            int i=0;
+            for (GroupProfile group : groups) {
+               userGroupInfo[i] = new UserGroupInfo(group);
+               i++;
+            }
+            return userGroupInfo;
+            
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public void setUserProperties(ObjectUpdate newUser) throws ServerSideException {
+        assert aem == null : "Can't reach the Application Entity Manager";
+        try{
+            UserProfile user =  new UserProfile();
+            String pwd = null;
+            if (newUser.getUpdatedAttributes() == null || newUser.getNewValues() == null || newUser.getOid() == null)
+                throw new ServerSideException(Level.SEVERE, "Malformed update object (null parameters)");
+
+            if (newUser.getUpdatedAttributes().length != newUser.getNewValues().length)
+                throw new ServerSideException(Level.SEVERE, "updatedAttributes");
+
+            for (int i = 0; i < newUser.getUpdatedAttributes().length; i++){
+                if(newUser.getUpdatedAttributes()[i].equals(UserProfile.PROPERTY_USERNAME))
+                    user.setUserName(newUser.getNewValues()[i]);
+                if(newUser.getUpdatedAttributes()[i].equals(UserProfile.PROPERTY_FIRST_NAME))
+                    user.setFirstName(newUser.getNewValues()[i]);
+                if(newUser.getUpdatedAttributes()[i].equals(UserProfile.PROPERTY_LAST_NAME))
+                    user.setLastName(newUser.getNewValues()[i]);
+                if (newUser.getUpdatedAttributes()[i].equals(UserProfile.PROPERTY_PASSWORD))
+                    pwd = newUser.getNewValues()[i];
+            }
+            aem.setUserProperties(user, pwd);
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public Long createGroup(String groupName, String description) throws ServerSideException {
+        assert aem == null : "Can't reach the Application Entity Manager";
+        try{
+            return aem.createGroup(groupName, description);
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public UserInfo addUser() throws ServerSideException {
+        assert aem == null : "Can't reach the Application Entity Manager";
+        try{
+            return new UserInfo(aem.addUser());
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public void setGroupProperties(String groupName, String description, Integer[] privileges) throws ServerSideException {
+        assert aem == null : "Can't reach the Application Entity Manager";
+        try{
+            aem.setGroupProperties(groupName, description, Arrays.asList(privileges));
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public UserGroupInfo addGroup() throws ServerSideException {
+        assert aem == null : "Can't reach the Application Entity Manager";
+        try{
+            return new UserGroupInfo(aem.addGroup());
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public void deleteUsers(Long[] oids) throws ServerSideException {
+        assert aem == null : "Can't reach the Application Entity Manager";
+        try{
+            aem.deleteUsers(oids);
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public void deleteGroups(Long[] oids) throws ServerSideException {
+        assert aem == null : "Can't reach the Application Entity Manager";
+        try{
+            aem.deleteGroups(oids);
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public void addGroupsToUser(Long[] groupsOids, Long userOid) throws ServerSideException {
+        assert aem == null : "Can't reach the Application Entity Manager";
+        try{
+            aem.addGroupsToUser(Arrays.asList(groupsOids), userOid);
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+    @Override
+    public void removeGroupsFromUser(Long[] groupsOids, Long userOid) throws ServerSideException {
+        assert aem == null : "Can't reach the Application Entity Manager";
+        try{
+            aem.removeGroupsFromUser(Arrays.asList(groupsOids), userOid);
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
 
