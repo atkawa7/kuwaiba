@@ -16,8 +16,10 @@
 
 package org.kuwaiba.ws.toserialize.application;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 
 /**
@@ -52,9 +54,11 @@ public class UserInfo {
     protected Boolean enabled;
 
     private UserGroupInfoLight[] groups;
+
     private int[] privileges;
 
     public UserInfo(){}
+
     public UserInfo(UserProfile user){
 
         this.oid = user.getId();
@@ -73,17 +77,17 @@ public class UserInfo {
             for (int i = 0; i <user.getPrivileges().size(); i++)
                 this.privileges[i] = user.getPrivileges().get(i);
         }
-//        List<GroupProfile> entityGroups = user.getGroups();
-//        if (entityGroups == null)
-//            this.groups = null;
-//        else{
-//            this.groups = new UserGroupInfoLight[entityGroups.size()];
-//            int i = 0;
-//            for (GroupProfile group : entityGroups){
-//                this.groups[i] = new UserGroupInfoLight(group);
-//                i++;
-//            }
-//        }
+        List<GroupProfile> entityGroups = user.getGroups();
+        if (entityGroups == null)
+            this.groups = null;
+        else{
+            this.groups = new UserGroupInfoLight[entityGroups.size()];
+            int i = 0;
+            for (GroupProfile group : entityGroups){
+                this.groups[i] = new UserGroupInfoLight(group);
+                i++;
+            }
+        }
     }
 
     public String getFirstName() {
