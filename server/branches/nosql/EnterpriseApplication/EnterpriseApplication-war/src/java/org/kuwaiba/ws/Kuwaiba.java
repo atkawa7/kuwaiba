@@ -305,19 +305,19 @@ public class Kuwaiba {
     }
     
     /**
-     * Deletes an object. Note that this method must be used only for business objects (not metadata or application ones)
-     * @param className Object's class name
-     * @param oid objet's oid
+     * Delete a set of objects. Note that this method must be used only for business objects (not metadata or application ones)
+     * @param className Objects class names
+     * @param oid objects oid
      * @param sessionId Session token
      * @throws Exception If something goes wrong
      */
-    @WebMethod(operationName = "deleteObject")
-    public void deleteObject(@WebParam(name = "className")String className,
-            @WebParam(name = "oid")Long oid,
+    @WebMethod(operationName = "deleteObjects")
+    public void deleteObjects(@WebParam(name = "classNames")String[] classNames,
+            @WebParam(name = "oid")Long[] oids,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             //sbr.validateCall("createObject", getIPAddress(), sessionId);
-            wsBean.deleteObject(className,oid);
+            wsBean.deleteObjects(classNames,oids);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -326,7 +326,35 @@ public class Kuwaiba {
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }        
-        
+    }
+
+    /**
+     * Moves objects from its current parent to a target.
+     * @param targetOid The new parent's oid
+     * @param objectClasses Class names of the objects to be moved
+     * @param objectOids Oids of the objects to be moved
+     * @param sessionId
+     * @return Success or failure
+     * @throws Exception
+     */
+    @WebMethod(operationName = "moveObjects")
+    public void moveObjects(@WebParam(name = "targetClass")String targetClass,
+            @WebParam(name = "targetOid")Long targetOid,
+            @WebParam(name = "objectsClasses")String[] objectClasses,
+            @WebParam(name = "objectsOids")Long[] objectOids,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            //sbr.validateCall("moveObjects", getIPAddress(), sessionId);
+
+            wsBean.moveObjects(targetClass,targetOid, objectOids,objectClasses);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
     }
     // </editor-fold>
 

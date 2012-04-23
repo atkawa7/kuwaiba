@@ -793,15 +793,46 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public void deleteObject(String className, Long oid) throws ServerSideException{
+    public void deleteObjects(String[] classNames, Long[] oids) throws ServerSideException{
         assert bem == null : "Can't reach the Business Entity Manager";
+        if (classNames.length != oids.length)
+            throw new ServerSideException(Level.SEVERE, "Array sizes do not match");
         try{
-            bem.deleteObject(className, oid);
+            HashMap<String,List<Long>> objects = new HashMap<String, List<Long>>();
+            for (int i = 0; i< classNames.length;i++){
+                if (objects.get(classNames[i]) == null)
+                    objects.put(classNames[i], new ArrayList<Long>());
+                objects.get(classNames[i]).add(oids[i]);
+            }
+
+            bem.deleteObjects(objects);
         }catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
+
+    @Override
+    public void moveObjects(String targetClass, Long targetOid, Long[] objectOids, String[] objectClasses) throws ServerSideException {
+        assert bem == null : "Can't reach the Business Entity Manager";
+        if (objectClasses.length != objectOids.length)
+            throw new ServerSideException(Level.SEVERE, "Array sizes do not match");
+        try{
+            HashMap<String,List<Long>> objects = new HashMap<String, List<Long>>();
+            for (int i = 0; i< objectClasses.length;i++){
+                if (objects.get(objectClasses[i]) == null)
+                    objects.put(objectClasses[i], new ArrayList<Long>());
+                objects.get(objectClasses[i]).add(objectOids[i]);
+            }
+
+            bem.moveObjects(targetClass, targetOid, objects);
+        }catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+
 
     @Override
     public void updateObject(String className, Long oid, String[] attributeNames, String[][] attributeValues) throws ServerSideException{

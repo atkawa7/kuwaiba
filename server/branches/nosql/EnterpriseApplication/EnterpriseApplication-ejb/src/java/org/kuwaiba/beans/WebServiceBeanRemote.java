@@ -312,7 +312,9 @@ public interface WebServiceBeanRemote {
 
     public ClassInfoLight[] getInstanceableListTypes() throws ServerSideException;
 
-    public void deleteObject(String className, Long oid) throws ServerSideException;
+    public void deleteObjects(String classNames[], Long[] oids) throws ServerSideException;
+
+    public void moveObjects(String targetClass, Long targetOid, Long[] objectOids, String[] objectClasses) throws ServerSideException;
    
     // </editor-fold>
 
