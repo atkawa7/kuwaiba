@@ -62,9 +62,16 @@ public class UserProfile implements Serializable{
     /**
      * User's privileges. See class Privileges for the complete list of supported privileges
      */
+    private List<GroupProfile> groups;
+    /**
+     * User's privileges. See class Privileges for the complete list of supported privileges
+     */
     private List<Integer> privileges;
 
-    public UserProfile(Long id, String userName, String firstName, String lastName, Boolean enabled,
+    public UserProfile() {
+    }
+
+    public UserProfile(Long id, String userName, String firstName, String lastName, Boolean enabled, Long creationDate,
             List<Integer> privileges) {
         this.id = id;
         this.userName = userName;
@@ -72,6 +79,7 @@ public class UserProfile implements Serializable{
         this.lastName = lastName;
         this.privileges = privileges;
         this.enabled = enabled;
+        this.creationDate = creationDate;
     }
 
     public String getUserName() {
@@ -80,6 +88,14 @@ public class UserProfile implements Serializable{
 
     public void setUserName(String login) {
         this.userName = login;
+    }
+
+    public List<GroupProfile> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<GroupProfile> groups) {
+        this.groups = groups;
     }
 
     public List<Integer> getPrivileges() {
@@ -129,4 +145,6 @@ public class UserProfile implements Serializable{
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
+
+
 }
