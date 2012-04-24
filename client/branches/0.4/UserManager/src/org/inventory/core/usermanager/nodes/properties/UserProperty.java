@@ -68,14 +68,18 @@ public class UserProperty extends ReadWrite{
 
     @Override
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-
-        LocalObject update = Lookup.getDefault().lookup(LocalObject.class);
-
-        update.setLocalObject("User", //NOI18N
-                new String[]{this.getName()}, new Object[]{t});
-        update.setOid(this.object.getOid());
         
-        if(!com.setUserProperties(update)){
+        boolean success = false;
+        if (this.getName().equals(UserNode.PROP_USERNAME))
+            success = com.setUserProperties(object.getOid(), (String)t, null, null, null, null);
+        else if(this.getName().equals(UserNode.PROP_PASSWORD))
+            success = com.setUserProperties(object.getOid(), null, (String)t, null, null, null);
+        else if(this.getName().equals(UserNode.PROP_FIRSTNAME))
+            success = com.setUserProperties(object.getOid(), null, null, (String)t, null, null);
+        else if(this.getName().equals(UserNode.PROP_LASTNAME))
+            success = com.setUserProperties(object.getOid(), null, null, null, (String)t, null);
+        
+        if(!success){
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             nu.showSimplePopup("User Update", NotificationUtil.ERROR, com.getError());
         }else
