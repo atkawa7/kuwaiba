@@ -28,7 +28,6 @@ import javax.xml.ws.WebServiceContext;
 import javax.servlet.http.HttpServletRequest;
 import org.kuwaiba.beans.WebServiceBeanRemote;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.ws.todeserialize.ObjectUpdate;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.application.UserGroupInfo;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
@@ -1001,11 +1000,16 @@ public class Kuwaiba {
 
     @WebMethod(operationName = "setUserProperties")
     public void setUserPropertiesUsers(
-            @WebParam(name = "user")ObjectUpdate user,
+            @WebParam(name = "oid")Long oid,
+            @WebParam(name = "username")String username,
+            @WebParam(name = "firstName")String firstName,
+            @WebParam(name = "LastName")String lastName,
+            @WebParam(name = "password")String password,
+            @WebParam(name = "groups")Long[] groups,
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try
         {
-            wsBean.setUserProperties(user);
+            wsBean.setUserProperties(oid, username, password, firstName, lastName, null, null, groups);
 
         } catch(Exception e){
             Level level = Level.SEVERE;
@@ -1033,13 +1037,14 @@ public class Kuwaiba {
     }
 
     @WebMethod(operationName = "setGroupProperties")
-    public void setGroupProperties(@WebParam(name = "groupName")String groupName,
+    public void setGroupProperties(@WebParam(name = "oid")Long oid,
+            @WebParam(name = "groupName")String groupName,
             @WebParam(name = "description")String description,
             @WebParam(name = "privileges")Integer[] privileges,
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try
         {
-            wsBean.setGroupProperties(groupName, description, privileges);
+            wsBean.setGroupProperties(oid, groupName, description, privileges);
         } catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
