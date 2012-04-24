@@ -158,21 +158,56 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         return new Long(newUser.getId());
     }
 
-     public void setUserProperties(UserProfile user, String pwd)
+     public void setUserProperties(Long oid, String userName, String password, String firstName,
+            String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
             throws InvalidArgumentException, ObjectNotFoundException
     {
         Transaction tx = null;
         try{
             tx =  graphDb.beginTx();
-            Node userNode = userIndex.get(UserProfile.PROPERTY_USERNAME, user.getUserName()).getSingle();
-            userNode.setProperty(UserProfile.PROPERTY_USERNAME, user.getUserName());
+            Node userNode = userIndex.get(UserProfile.PROPERTY_ID, oid).getSingle();
 
-            if(pwd != null)
-                userNode.setProperty(UserProfile.PROPERTY_PASSWORD, Util.getMD5Hash(pwd));
+            if(userName != null){
+                if (userName.trim().equals("")) //NOI18N
+                    throw new InvalidArgumentException("User name can't be an empty string", Level.INFO);
 
-            userNode.setProperty(UserProfile.PROPERTY_FIRST_NAME, user.getFirstName());
-            userNode.setProperty(UserProfile.PROPERTY_LAST_NAME, user.getLastName());
+                if (CacheManager.getInstance().getUser(userName) == null)
+                {
+                    Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,userName).getSingle();
+                    if (storedUser != null)
+                        throw new InvalidArgumentException(Util.formatString("The username %1s is already in use", userName), Level.WARNING);
+                }
+
+                userNode.setProperty(UserProfile.PROPERTY_USERNAME, userName);
+            }
+
+            if(password != null){
+                if (password.trim().equals("")) //NOI18N
+                    throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
+
+                userNode.setProperty(UserProfile.PROPERTY_PASSWORD, Util.getMD5Hash(password));
+            }
+
+            if(firstName != null)
+                userNode.setProperty(UserProfile.PROPERTY_FIRST_NAME, firstName);
+
+            if(lastName != null)
+                userNode.setProperty(UserProfile.PROPERTY_LAST_NAME, lastName);
             
+            if(groups != null){
+                Boolean isPartOf = false;
+                for (Long id : groups) {
+                    Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
+                    Iterable<Relationship> relationships = groupNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.INCOMING);
+                    for (Relationship relationship : relationships) {
+                        if(userNode.getId() != relationship.getStartNode().getId())
+                            isPartOf = true;
+                    }
+                    if(!isPartOf)
+                        userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
+                }
+            }
+
             tx.success();
         } catch (Exception ex) {
             throw new RuntimeException(ex.getMessage());
@@ -282,27 +317,30 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         return newUser;
     }
 
-    public void setGroupProperties(String groupName, String description, List<Integer> privileges) throws InvalidArgumentException, ObjectNotFoundException {
-        if (groupName == null)
-            throw new InvalidArgumentException("Group name can't be null", Level.INFO);
-
-        if (groupName.trim().equals("")) //NOI18N
-            throw new InvalidArgumentException("User name can't be an empty string", Level.INFO);
-
-        if (CacheManager.getInstance().getUser(groupName) == null)
-        {
-            Node storedGroup = groupIndex.get(GroupProfile.PROPERTY_GROUPNAME,groupName).getSingle();
-            if (storedGroup != null)
-                throw new InvalidArgumentException(Util.formatString("The group name %1s is already in use", groupName), Level.WARNING);
-        }
+    public void setGroupProperties(Long id, String groupName, String description, List<Integer> privileges) throws InvalidArgumentException, ObjectNotFoundException {
 
         Transaction tx = null;
         try{
             tx = graphDb.beginTx();
-            Node groupNode = groupIndex.get(GroupProfile.PROPERTY_GROUPNAME, groupName).getSingle();
 
-            groupNode.setProperty(GroupProfile.PROPERTY_DESCRIPTION, description);
-            groupNode.setProperty(GroupProfile.PROPERTY_GROUPNAME, groupName);
+            Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
+
+            if(groupName != null){
+                if (groupName.trim().equals("")) //NOI18N
+                    throw new InvalidArgumentException("User name can't be an empty string", Level.INFO);
+
+                if (CacheManager.getInstance().getUser(groupName) == null)
+                {
+                    Node storedGroup = groupIndex.get(GroupProfile.PROPERTY_GROUPNAME, groupName).getSingle();
+                    if (storedGroup != null)
+                        throw new InvalidArgumentException(Util.formatString("The group name %1s is already in use", groupName), Level.WARNING);
+                }
+
+                groupNode.setProperty(GroupProfile.PROPERTY_GROUPNAME, groupName);
+            }
+            
+            if(description != null)
+                groupNode.setProperty(GroupProfile.PROPERTY_DESCRIPTION, description);
 
             tx.success();
         } catch (Exception ex) {
