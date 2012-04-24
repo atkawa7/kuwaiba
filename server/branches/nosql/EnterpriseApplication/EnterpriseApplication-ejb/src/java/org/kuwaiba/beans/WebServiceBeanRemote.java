@@ -335,7 +335,8 @@ public interface WebServiceBeanRemote {
      * @param groups
      * @throws ServerSideException
      */
-    public void setUserProperties(ObjectUpdate user)
+    public void setUserProperties(Long oid, String userName, String password, String firstName,
+            String lastName, Boolean enabled, List<Integer> privileges, Long[] groups)
             throws ServerSideException;
 
 
@@ -382,7 +383,7 @@ public interface WebServiceBeanRemote {
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public void setGroupProperties(String groupName, String description,
+    public void setGroupProperties(Long oid, String groupName, String description,
             Integer[] privileges)throws ServerSideException;
 
     /**
