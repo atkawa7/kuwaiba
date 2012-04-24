@@ -24,7 +24,6 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.exceptions.InvalidSessionException;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.ws.todeserialize.ObjectUpdate;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.application.UserGroupInfo;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
