@@ -917,28 +917,11 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public void setUserProperties(ObjectUpdate newUser) throws ServerSideException {
+    public void setUserProperties(Long oid, String userName, String password, String firstName,
+            String lastName, Boolean enabled, List<Integer> privileges, Long[] groups) throws ServerSideException {
         assert aem == null : "Can't reach the Application Entity Manager";
         try{
-            UserProfile user =  new UserProfile();
-            String pwd = null;
-            if (newUser.getUpdatedAttributes() == null || newUser.getNewValues() == null || newUser.getOid() == null)
-                throw new ServerSideException(Level.SEVERE, "Malformed update object (null parameters)");
-
-            if (newUser.getUpdatedAttributes().length != newUser.getNewValues().length)
-                throw new ServerSideException(Level.SEVERE, "updatedAttributes");
-
-            for (int i = 0; i < newUser.getUpdatedAttributes().length; i++){
-                if(newUser.getUpdatedAttributes()[i].equals(UserProfile.PROPERTY_USERNAME))
-                    user.setUserName(newUser.getNewValues()[i]);
-                if(newUser.getUpdatedAttributes()[i].equals(UserProfile.PROPERTY_FIRST_NAME))
-                    user.setFirstName(newUser.getNewValues()[i]);
-                if(newUser.getUpdatedAttributes()[i].equals(UserProfile.PROPERTY_LAST_NAME))
-                    user.setLastName(newUser.getNewValues()[i]);
-                if (newUser.getUpdatedAttributes()[i].equals(UserProfile.PROPERTY_PASSWORD))
-                    pwd = newUser.getNewValues()[i];
-            }
-            aem.setUserProperties(user, pwd);
+            aem.setUserProperties(oid, userName, password, firstName, lastName, enabled, privileges, Arrays.asList(groups));
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
@@ -968,10 +951,10 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public void setGroupProperties(String groupName, String description, Integer[] privileges) throws ServerSideException {
+    public void setGroupProperties(Long oid, String groupName, String description, Integer[] privileges) throws ServerSideException {
         assert aem == null : "Can't reach the Application Entity Manager";
         try{
-            aem.setGroupProperties(groupName, description, Arrays.asList(privileges));
+            aem.setGroupProperties(oid, groupName, description, Arrays.asList(privileges));
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
