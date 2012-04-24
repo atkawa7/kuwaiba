@@ -16,6 +16,7 @@
 package org.inventory.customization.attributecustomizer.nodes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
@@ -48,8 +49,7 @@ public class AttributeMetadataChildren extends Children.Array{
     @Override
     public void addNotify(){
         LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(lcml.getClassName(),true);
-        for (LocalAttributeMetadata lam : lcm.getAttributes())
-            keys.add(lam);
+        keys.addAll(Arrays.asList(lcm.getAttributes()));
         initCollection();
     }
 }
