@@ -40,7 +40,6 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
-import org.kuwaiba.ws.todeserialize.ObjectUpdate;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.application.UserGroupInfo;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
