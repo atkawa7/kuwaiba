@@ -902,28 +902,18 @@ public class CommunicationsStub {
      * @param update
      * @return success or failure
      */
-    public boolean setUserProperties(LocalObject user) {
+    public boolean setUserProperties(Long oid, String userName, String password, String firstName,
+            String lastName, List<Long> groups) {
         try{
-//            ObjectUpdate update = new ObjectUpdate();
-//            List<String> atts = new ArrayList<String>();
-//            List<String> vals = new ArrayList<String>();
-//
-//            update.setClassname(user.getClassName());
-//            update.setOid(user.getOid());
-//
-//            for (String key : user.getAttributes().keySet()){
-//                atts.add(key);
-//                vals.add(user.getAttribute(key).toString());
-//            }
-//
-//            update.setUpdatedAttributes(atts);
-//            update.setNewValues(vals);
-//            return port.setUserProperties(update, this.session.getSessionId());
+            
+            port.setUserProperties(oid, userName, firstName, lastName, password, groups, this.session.getSessionId());
+            return true;
+
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return false;
         }
-        return false;
+        
     }
 
     /**
@@ -931,23 +921,10 @@ public class CommunicationsStub {
      * @param update
      * @return success or failure
      */
-    public boolean setGroupProperties(LocalObject group) {
+    public boolean setGroupProperties(Long oid, String groupName, String description) {
         try{
-//            ObjectUpdate update = new ObjectUpdate();
-//            List<String> atts = new ArrayList<String>();
-//            List<String> vals = new ArrayList<String>();
-//
-//            update.setClassname(group.getClassName());
-//            update.setOid(group.getOid());
-//
-//            for (String key : group.getAttributes().keySet()){
-//                atts.add(key);
-//                vals.add(group.getAttribute(key).toString());
-//            }
-//
-//            update.setUpdatedAttributes(atts);
-//            update.setNewValues(vals);
-//            return port.setGroupProperties(update, this.session.getSessionId());
+            port.setGroupProperties(oid, groupName, description, null, this.session.getSessionId());
+            return true;
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
         }
