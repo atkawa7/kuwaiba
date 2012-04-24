@@ -66,7 +66,8 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
      * @throws ObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
      */
-    public void setUserProperties(UserProfile user, String pwd)
+    public void setUserProperties(Long oid, String userName, String password, String firstName,
+            String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
             throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
 
@@ -115,7 +116,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public void setGroupProperties(String groupName, String description,
+    public void setGroupProperties(Long oid, String groupName, String description,
             List<Integer> privileges)throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
     /**
