@@ -74,4 +74,7 @@ public interface BusinessEntityManagerRemote extends Remote{
 
     public void moveObjects(String targetClass, Long targetOid, HashMap<String, List<Long>> objects)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
+
+    public List<Long> copyObjects(String targetClass, Long targetOid, HashMap<String, List<Long>> objects, boolean recursive)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
 }

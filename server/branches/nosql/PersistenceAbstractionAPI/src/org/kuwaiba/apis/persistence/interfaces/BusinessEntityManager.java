@@ -157,12 +157,13 @@ public interface BusinessEntityManager {
      * @param objects Hashmap with the objects class names as keys and their oids as values
      * @param targetClassName Target parent's class name
      * @param targetOid Target parent's oid
-     * @return A list containing the newly created objects
+     * @param recursive If this operation should also copy the children objects recursively
+     * @return A list containing the newly created object ids
      * @throws MetadataObjectNotFoundException If any of the provided classes couldn't be found
-     * @throws ObjectNotFoundException
-     * @throws OperationNotPermittedException
+     * @throws ObjectNotFoundException If any of the template objects couldn't be found
+     * @throws OperationNotPermittedException If the target parent can't contain any of the new instances
      */
-    public RemoteBusinessObjectLight[] copyObjects(HashMap<String, Long> objects, String targetClassName, Long targetOid)
+    public List<Long> copyObjects(String targetClassName, Long targetOid, HashMap<String, List<Long>> objects, boolean recursive)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
 
     /**

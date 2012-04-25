@@ -263,7 +263,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         
         for (Node node : usersNodes)
         {
-            users.add(Util.createsUserProfileFormNode(node));
+            users.add(Util.createUserProfileFromNode(node));
             
         }
         return users;
@@ -274,7 +274,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         List<GroupProfile> groups =  new ArrayList<GroupProfile>();
         for (Node node : groupsNodes)
         {
-            groups.add((Util.createsGroupProfileFormNode(node)));
+            groups.add((Util.createGroupProfileFromNode(node)));
         }
         return groups;
     }
@@ -289,7 +289,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             Node newUserNode = graphDb.createNode();
 
             newUserNode.setProperty(UserProfile.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-            newUserNode.setProperty(UserProfile.PROPERTY_USERNAME, "user"+random.nextInt(10000));
+            newUserNode.setProperty(UserProfile.PROPERTY_USERNAME, newUser.getUserName());
             newUserNode.setProperty(UserProfile.PROPERTY_FIRST_NAME, "");
             newUserNode.setProperty(UserProfile.PROPERTY_LAST_NAME, "");
             newUserNode.setProperty(UserProfile.PROPERTY_ENABLED, true);

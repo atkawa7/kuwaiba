@@ -117,8 +117,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             if (myParentObjectClass == null)
                 throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
 
-            if (myParentObjectClass.getPossibleChildren().contains(className))
-                throw new OperationNotPermittedException("Create Object", Util.formatString("An instance of class %1s can't be created as child of object with id %2s", className, parentOid));
+            if (!myParentObjectClass.getPossibleChildren().contains(className))
+                throw new OperationNotPermittedException("Create Object", Util.formatString("An instance of class %1s can't be created as child of object with id %2s of class %3s", className, parentOid,myParentObjectClass.getName()));
         }
 
         Node parentNode = null;
@@ -363,9 +363,43 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
 
-    public RemoteBusinessObjectLight[] copyObjects(HashMap<String, Long> objects, String targetClassName, Long targetOid)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException{
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List<Long> copyObjects(String targetClassName, Long targetOid, HashMap<String, List<Long>> objects, boolean recursive)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+
+        ClassMetadata newParentClass = cm.getClass(targetClassName);
+
+        if (newParentClass == null)
+            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", targetClassName));
+
+        Node newParentNode = getInstanceOfClass(targetClassName, targetOid);
+
+        Transaction tx = null;
+        List res = new ArrayList<Long>();
+        try{
+            tx = graphDb.beginTx();
+            for (String myClass : objects.keySet()){
+                if (!cm.canBeChild(targetClassName, myClass))
+                    throw new OperationNotPermittedException("moveObjects", Util.formatString("An instance of class %1s can not be child of an instance of class %2s", myClass,targetClassName));
+
+                Node instanceClassNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, myClass).getSingle();
+                if (instanceClassNode == null)
+                    throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", myClass));
+                for (Long oid : objects.get(myClass)){
+                    Node templateObject = getInstanceOfClass(instanceClassNode, oid);
+                    Node newInstance = Util.copyObject(templateObject, newParentNode, recursive, graphDb);
+                    res.add(newInstance.getId());
+                }
+            }
+            tx.success();
+        }catch(Exception ex){
+            Logger.getLogger("copyObjects: "+ex.getMessage()); //NOI18N
+            tx.failure();
+            throw new RuntimeException(ex.getMessage());
+        }finally{
+            if (tx != null)
+                tx.finish();
+        }
+        return res;
     }
 
     public boolean setObjectLockState(String className, Long oid, Boolean value)

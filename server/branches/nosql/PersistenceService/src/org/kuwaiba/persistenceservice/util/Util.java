@@ -39,6 +39,7 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ReturnableEvaluator;
@@ -161,6 +162,22 @@ public class Util {
             rel.delete();
         
         instance.delete();
+    }
+
+    public static Node copyObject(Node templateObject, Node newParentNode, boolean recursive, GraphDatabaseService graphDb) {
+        Node newInstance = graphDb.createNode();
+        for (String property : templateObject.getPropertyKeys())
+            newInstance.setProperty(property, templateObject.getProperty(property));
+        for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING))
+            newInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, rel.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
+
+        newInstance.createRelationshipTo(templateObject.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode(), RelTypes.INSTANCE_OF);
+        newInstance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF);
+        if (recursive){
+            for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING))
+                copyObject(rel.getStartNode(), newInstance, true, graphDb);
+        }
+        return newInstance;
     }
 
     /**
@@ -356,24 +373,18 @@ public class Util {
                 }
 
         }
-        
-
-//        while (possibleChildren.iterator().hasNext()){
-//            Relationship possibleChild = possibleChildren.iterator().next();
-//            myClass.getPossibleChildren().add((String)possibleChild.getStartNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
-//        }
 
         //IsDummy
         if(classNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.BOTH) != null)
             myClass.setDummy(false);
         else
             myClass.setDummy(true);
-        
+
         return myClass;
     }
 
     /**
-     * Converts a atttribute metadata node into a AttrributeMetadata object
+     * Converts a attribute metadata node into a AttrributeMetadata object
      * @param AttibuteNode
      * @return
      */
@@ -400,78 +411,6 @@ public class Util {
 
         return attribute;
     }
-
-    /**
-     * Converts a UserProfile node into a UserProfile object
-     * @param userNode
-     * @return UserProfile
-     */
-
-    public static UserProfile createsUserProfileFormNode(Node userNode)
-    {
-        
-       Iterable<Relationship> relationships = userNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.OUTGOING);
-       List<GroupProfile> groups = new ArrayList<GroupProfile>();
-
-       for (Relationship relationship : relationships) {
-            Node groupNode = relationship.getEndNode();
-            groups.add(new GroupProfile(groupNode.getId(),
-                        (String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME),
-                        (String)groupNode.getProperty(GroupProfile.PROPERTY_DESCRIPTION),
-                        (Long)groupNode.getProperty(GroupProfile.PROPERTY_CREATION_DATE))
-                     );
-        }
-
-       UserProfile user =  new UserProfile(
-                userNode.getId(),
-                (String)userNode.getProperty(UserProfile.PROPERTY_USERNAME),
-                (String)userNode.getProperty(UserProfile.PROPERTY_FIRST_NAME),
-                (String)userNode.getProperty(UserProfile.PROPERTY_LAST_NAME),
-                (Boolean)userNode.getProperty(UserProfile.PROPERTY_ENABLED),
-                (Long)userNode.getProperty(UserProfile.PROPERTY_CREATION_DATE),
-                null);
-
-       user.setGroups(groups);
-        
-        return user;
-    }
-    
-    /**
-     * Converts a GroupProfile node into a GroupProfile object
-     * @param groupNode
-     * @return
-     */
-    public static GroupProfile createsGroupProfileFormNode(Node groupNode)
-    {
-        Iterable<Relationship> relationships = groupNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.INCOMING);
-        List<UserProfile> users = new ArrayList<UserProfile>();
-
-        for (Relationship relationship : relationships) {
-            Node userNode = relationship.getStartNode();
-            users.add(new UserProfile(userNode.getId(),
-                        (String)userNode.getProperty(UserProfile.PROPERTY_USERNAME),
-                        (String)userNode.getProperty(UserProfile.PROPERTY_FIRST_NAME),
-                        (String)userNode.getProperty(UserProfile.PROPERTY_LAST_NAME),
-                        (Boolean)userNode.getProperty(UserProfile.PROPERTY_ENABLED),
-                        (Long)userNode.getProperty(UserProfile.PROPERTY_CREATION_DATE),
-                        null)
-                     );
-        }
-
-        GroupProfile group =  new GroupProfile(
-                groupNode.getId(), 
-                (String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME),
-                (String)groupNode.getProperty(GroupProfile.PROPERTY_DESCRIPTION),
-                (Long)groupNode.getProperty(GroupProfile.PROPERTY_CREATION_DATE),
-                null, 
-                null);
-        
-        group.setUsers(users);
-
-        return group;
-    }
-
-
 
     
     /**
@@ -520,6 +459,76 @@ public class Util {
         }
         RemoteBusinessObject res = new RemoteBusinessObject(instance.getId(), myClass.getName(), attributes);
         return res;
+    }
+
+    /**
+     * Converts a node representing a user into a UserProfile object
+     * @param userNode
+     * @return UserProfile
+     */
+
+    public static UserProfile createUserProfileFromNode(Node userNode)
+    {
+
+       Iterable<Relationship> relationships = userNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.OUTGOING);
+       List<GroupProfile> groups = new ArrayList<GroupProfile>();
+
+       for (Relationship relationship : relationships) {
+            Node groupNode = relationship.getEndNode();
+            groups.add(new GroupProfile(groupNode.getId(),
+                        (String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME),
+                        (String)groupNode.getProperty(GroupProfile.PROPERTY_DESCRIPTION),
+                        (Long)groupNode.getProperty(GroupProfile.PROPERTY_CREATION_DATE))
+                     );
+        }
+
+       UserProfile user =  new UserProfile(
+                userNode.getId(),
+                (String)userNode.getProperty(UserProfile.PROPERTY_USERNAME),
+                (String)userNode.getProperty(UserProfile.PROPERTY_FIRST_NAME),
+                (String)userNode.getProperty(UserProfile.PROPERTY_LAST_NAME),
+                (Boolean)userNode.getProperty(UserProfile.PROPERTY_ENABLED),
+                (Long)userNode.getProperty(UserProfile.PROPERTY_CREATION_DATE),
+                null);
+
+       user.setGroups(groups);
+
+        return user;
+    }
+
+    /**
+     * Converts a node representing a group into a GroupProfile object
+     * @param groupNode
+     * @return
+     */
+    public static GroupProfile createGroupProfileFromNode(Node groupNode)
+    {
+        Iterable<Relationship> relationships = groupNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.INCOMING);
+        List<UserProfile> users = new ArrayList<UserProfile>();
+
+        for (Relationship relationship : relationships) {
+            Node userNode = relationship.getStartNode();
+            users.add(new UserProfile(userNode.getId(),
+                        (String)userNode.getProperty(UserProfile.PROPERTY_USERNAME),
+                        (String)userNode.getProperty(UserProfile.PROPERTY_FIRST_NAME),
+                        (String)userNode.getProperty(UserProfile.PROPERTY_LAST_NAME),
+                        (Boolean)userNode.getProperty(UserProfile.PROPERTY_ENABLED),
+                        (Long)userNode.getProperty(UserProfile.PROPERTY_CREATION_DATE),
+                        null)
+                     );
+        }
+
+        GroupProfile group =  new GroupProfile(
+                groupNode.getId(),
+                (String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME),
+                (String)groupNode.getProperty(GroupProfile.PROPERTY_DESCRIPTION),
+                (Long)groupNode.getProperty(GroupProfile.PROPERTY_CREATION_DATE),
+                null,
+                null);
+
+        group.setUsers(users);
+
+        return group;
     }
 
     /**
