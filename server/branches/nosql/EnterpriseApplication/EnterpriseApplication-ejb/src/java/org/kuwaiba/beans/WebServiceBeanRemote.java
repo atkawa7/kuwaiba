@@ -318,7 +318,9 @@ public interface WebServiceBeanRemote {
 
     public void deleteObjects(String classNames[], Long[] oids) throws ServerSideException;
 
-    public void moveObjects(String targetClass, Long targetOid, Long[] objectOids, String[] objectClasses) throws ServerSideException;
+    public void moveObjects(String targetClass, Long targetOid, String[] objectClasses, Long[] objectOids) throws ServerSideException;
+
+    public Long[] copyObjects(String targetClass, Long targetOid, String[] templateClasses, Long[] templateOids, boolean recursive) throws ServerSideException;
    
     // </editor-fold>
 

@@ -348,7 +348,39 @@ public class Kuwaiba {
         try{
             //sbr.validateCall("moveObjects", getIPAddress(), sessionId);
 
-            wsBean.moveObjects(targetClass,targetOid, objectOids,objectClasses);
+            wsBean.moveObjects(targetClass,targetOid, objectClasses, objectOids);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+     /**
+     * Copy objects from its current parent to a target. This is <b>not</b> a deep copy. Only the selected object will be copied, not the children
+     * Note: This method does *not* check if the parent change is possible according to the container hierarchy
+     * the developer must check it on his side!
+     * @param targetClass  The new parent class name
+     * @param targetOid The new parent oid
+     * @param objectClasses Class names of the objects to be copied
+     * @param templateObjects Oids of the objects to be copied
+     * @param sessionId Session token
+     * @return An array with the ids of the new objects
+     * @throws Exception If something goes wrong
+     */
+    @WebMethod(operationName = "copyObjects")
+    public Long[] copyObjects(
+            @WebParam(name = "targetClass")String targetClass,
+            @WebParam(name = "targetOid")Long targetOid,
+            @WebParam(name = "templateClases")String[] objectClasses,
+            @WebParam(name = "templateOids")Long[] objectOids,
+            @WebParam(name = "recursive")Boolean recursive,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+           return wsBean.copyObjects(targetClass,targetOid, objectClasses, objectOids, recursive);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)

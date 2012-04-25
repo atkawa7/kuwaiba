@@ -725,7 +725,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(className, oid));
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -737,7 +737,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return RemoteObject.toRemoteObjectArray(bem.getChildrenOfClass(parentOid, parentClass,classToFilter));
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -749,7 +749,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getChildrenOfClassLight(parentOid, parentClass,classToFilter));
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -761,7 +761,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return res;
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -772,7 +772,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return new RemoteObjectLight(bem.getObjectInfoLight(objectClass, oid));
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -816,7 +816,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public void moveObjects(String targetClass, Long targetOid, Long[] objectOids, String[] objectClasses) throws ServerSideException {
+    public void moveObjects(String targetClass, Long targetOid, String[] objectClasses, Long[] objectOids) throws ServerSideException {
         assert bem == null : "Can't reach the Business Entity Manager";
         if (objectClasses.length != objectOids.length)
             throw new ServerSideException(Level.SEVERE, "Array sizes do not match");
@@ -835,7 +835,25 @@ public class WebServiceBean implements WebServiceBeanRemote {
         }
     }
 
+    @Override
+    public Long[] copyObjects(String targetClass, Long targetOid, String[] objectClasses, Long[] objectOids, boolean recursive) throws ServerSideException {
+        assert bem == null : "Can't reach the Business Entity Manager";
+        if (objectClasses.length != objectOids.length)
+            throw new ServerSideException(Level.SEVERE, "Array sizes do not match");
+        try{
+            HashMap<String,List<Long>> objects = new HashMap<String, List<Long>>();
+            for (int i = 0; i< objectClasses.length;i++){
+                if (objects.get(objectClasses[i]) == null)
+                    objects.put(objectClasses[i], new ArrayList<Long>());
+                objects.get(objectClasses[i]).add(objectOids[i]);
+            }
 
+            return bem.copyObjects(targetClass, targetOid, objects, recursive).toArray(new Long[0]);
+        }catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
 
     @Override
     public void updateObject(String className, Long oid, String[] attributeNames, String[][] attributeValues) throws ServerSideException{
