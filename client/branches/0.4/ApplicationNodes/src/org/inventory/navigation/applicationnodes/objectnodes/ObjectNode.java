@@ -343,7 +343,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                     }
                     if (canMove){
                           if (action == DnDConstants.ACTION_COPY){
-                              LocalObjectLight[] copiedNodes = com.copyObjects(getObject().getOid(),
+                              LocalObjectLight[] copiedNodes = com.copyObjects(getObject().getClassName(),getObject().getOid(),
                                                                 new LocalObjectLight[] {obj});
                                 if (copiedNodes!= null){
                                     for (LocalObjectLight lol : copiedNodes)

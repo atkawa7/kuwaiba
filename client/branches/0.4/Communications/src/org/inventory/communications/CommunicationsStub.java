@@ -549,31 +549,30 @@ public class CommunicationsStub {
         }
     }
 
-    public LocalObjectLight[] copyObjects(Long targetOid, LocalObjectLight[] _objects){
-//        try{
-//            List<Long> objectOids = new ArrayList<Long>();
-//            List<String> objectClasses = new ArrayList<String>();
-//
-//            for (LocalObjectLight lol : _objects){
-//                objectOids.add(lol.getOid());
-//                objectClasses.add(lol.getClassName());
-//            }
-//
-//            List<RemoteObjectLight> objs = port.copyObjects(targetOid, objectClasses, objectOids,this.session.getSessionId());
-//
-//            LocalObjectLight[] res = new LocalObjectLight[objs.size()];
-//            int i = 0;
-//            for (RemoteObjectLight rol : objs){
-//                res[i] = new LocalObjectLightImpl(rol);
-//                i++;
-//            }
-//            return res;
-//
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return null;
+    public LocalObjectLight[] copyObjects(String targetClass, Long targetOid, LocalObjectLight[] objects){
+        try{
+            List<Long> objectOids = new ArrayList<Long>();
+            List<String> objectClasses = new ArrayList<String>();
+
+            for (LocalObjectLight lol : objects){
+                objectOids.add(lol.getOid());
+                objectClasses.add(lol.getClassName());
+            }
+
+            //Let's do the copy recursive by default
+            List<Long> objs = port.copyObjects(targetClass, targetOid, objectClasses, objectOids, true, this.session.getSessionId());
+
+            LocalObjectLight[] res = new LocalObjectLight[objs.size()];
+            for (int i = 0; i < res.length ; i++){
+                res[i] = new LocalObjectLightImpl(objs.get(i), objects[i].getName(), objects[i].getClassName());
+                i++;
+            }
+            return res;
+
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
     }
 
     /**

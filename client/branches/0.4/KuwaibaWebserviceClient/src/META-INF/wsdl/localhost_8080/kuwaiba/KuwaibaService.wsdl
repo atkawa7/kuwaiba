@@ -22,11 +22,29 @@
 <message name="createSessionResponse">
 <part name="parameters" element="tns:createSessionResponse"/>
 </message>
+<message name="getGroups">
+<part name="parameters" element="tns:getGroups"/>
+</message>
+<message name="getGroupsResponse">
+<part name="parameters" element="tns:getGroupsResponse"/>
+</message>
+<message name="addUser">
+<part name="parameters" element="tns:addUser"/>
+</message>
+<message name="addUserResponse">
+<part name="parameters" element="tns:addUserResponse"/>
+</message>
 <message name="createObject">
 <part name="parameters" element="tns:createObject"/>
 </message>
 <message name="createObjectResponse">
 <part name="parameters" element="tns:createObjectResponse"/>
+</message>
+<message name="copyObjects">
+<part name="parameters" element="tns:copyObjects"/>
+</message>
+<message name="copyObjectsResponse">
+<part name="parameters" element="tns:copyObjectsResponse"/>
 </message>
 <message name="setAttributePropertyValue">
 <part name="parameters" element="tns:setAttributePropertyValue"/>
@@ -148,6 +166,48 @@
 <message name="getInstanceableListTypesResponse">
 <part name="parameters" element="tns:getInstanceableListTypesResponse"/>
 </message>
+<message name="getUsers">
+<part name="parameters" element="tns:getUsers"/>
+</message>
+<message name="getUsersResponse">
+<part name="parameters" element="tns:getUsersResponse"/>
+</message>
+<message name="setGroupProperties">
+<part name="parameters" element="tns:setGroupProperties"/>
+</message>
+<message name="setGroupPropertiesResponse">
+<part name="parameters" element="tns:setGroupPropertiesResponse"/>
+</message>
+<message name="addGroup">
+<part name="parameters" element="tns:addGroup"/>
+</message>
+<message name="addGroupResponse">
+<part name="parameters" element="tns:addGroupResponse"/>
+</message>
+<message name="deleteUsers">
+<part name="parameters" element="tns:deleteUsers"/>
+</message>
+<message name="deleteUsersResponse">
+<part name="parameters" element="tns:deleteUsersResponse"/>
+</message>
+<message name="deleteGroups">
+<part name="parameters" element="tns:deleteGroups"/>
+</message>
+<message name="deleteGroupsResponse">
+<part name="parameters" element="tns:deleteGroupsResponse"/>
+</message>
+<message name="addGroupsToUser">
+<part name="parameters" element="tns:addGroupsToUser"/>
+</message>
+<message name="addGroupsToUserResponse">
+<part name="parameters" element="tns:addGroupsToUserResponse"/>
+</message>
+<message name="removeGroupsFromUser">
+<part name="parameters" element="tns:removeGroupsFromUser"/>
+</message>
+<message name="removeGroupsFromUserResponse">
+<part name="parameters" element="tns:removeGroupsFromUserResponse"/>
+</message>
 <message name="getObjectChildrenByClassName">
 <part name="parameters" element="tns:getObjectChildrenByClassName"/>
 </message>
@@ -202,6 +262,12 @@
 <message name="getMultipleChoiceResponse">
 <part name="parameters" element="tns:getMultipleChoiceResponse"/>
 </message>
+<message name="setUserProperties">
+<part name="parameters" element="tns:setUserProperties"/>
+</message>
+<message name="setUserPropertiesResponse">
+<part name="parameters" element="tns:setUserPropertiesResponse"/>
+</message>
 <portType name="Kuwaiba">
 <operation name="getMetadata">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadataRequest" message="tns:getMetadata"/>
@@ -213,10 +279,25 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSessionResponse" message="tns:createSessionResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSession/Fault/Exception"/>
 </operation>
+<operation name="getGroups">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGroupsRequest" message="tns:getGroups"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGroupsResponse" message="tns:getGroupsResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGroups/Fault/Exception"/>
+</operation>
+<operation name="addUser">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addUserRequest" message="tns:addUser"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addUserResponse" message="tns:addUserResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addUser/Fault/Exception"/>
+</operation>
 <operation name="createObject">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectRequest" message="tns:createObject"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectResponse" message="tns:createObjectResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObject/Fault/Exception"/>
+</operation>
+<operation name="copyObjects">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsRequest" message="tns:copyObjects"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsResponse" message="tns:copyObjectsResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjects/Fault/Exception"/>
 </operation>
 <operation name="setAttributePropertyValue">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setAttributePropertyValueRequest" message="tns:setAttributePropertyValue"/>
@@ -318,6 +399,41 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getInstanceableListTypesResponse" message="tns:getInstanceableListTypesResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getInstanceableListTypes/Fault/Exception"/>
 </operation>
+<operation name="getUsers">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getUsersRequest" message="tns:getUsers"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getUsersResponse" message="tns:getUsersResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getUsers/Fault/Exception"/>
+</operation>
+<operation name="setGroupProperties">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setGroupPropertiesRequest" message="tns:setGroupProperties"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setGroupPropertiesResponse" message="tns:setGroupPropertiesResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setGroupProperties/Fault/Exception"/>
+</operation>
+<operation name="addGroup">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addGroupRequest" message="tns:addGroup"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addGroupResponse" message="tns:addGroupResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addGroup/Fault/Exception"/>
+</operation>
+<operation name="deleteUsers">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteUsersRequest" message="tns:deleteUsers"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteUsersResponse" message="tns:deleteUsersResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteUsers/Fault/Exception"/>
+</operation>
+<operation name="deleteGroups">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteGroupsRequest" message="tns:deleteGroups"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteGroupsResponse" message="tns:deleteGroupsResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteGroups/Fault/Exception"/>
+</operation>
+<operation name="addGroupsToUser">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addGroupsToUserRequest" message="tns:addGroupsToUser"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addGroupsToUserResponse" message="tns:addGroupsToUserResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addGroupsToUser/Fault/Exception"/>
+</operation>
+<operation name="removeGroupsFromUser">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removeGroupsFromUserRequest" message="tns:removeGroupsFromUser"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removeGroupsFromUserResponse" message="tns:removeGroupsFromUserResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removeGroupsFromUser/Fault/Exception"/>
+</operation>
 <operation name="getObjectChildrenByClassName">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectChildrenByClassNameRequest" message="tns:getObjectChildrenByClassName"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectChildrenByClassNameResponse" message="tns:getObjectChildrenByClassNameResponse"/>
@@ -363,6 +479,11 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMultipleChoiceResponse" message="tns:getMultipleChoiceResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMultipleChoice/Fault/Exception"/>
 </operation>
+<operation name="setUserProperties">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setUserPropertiesRequest" message="tns:setUserProperties"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setUserPropertiesResponse" message="tns:setUserPropertiesResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setUserProperties/Fault/Exception"/>
+</operation>
 </portType>
 <binding name="KuwaibaPortBinding" type="tns:Kuwaiba">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
@@ -390,7 +511,43 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="getGroups">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="addUser">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="createObject">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="copyObjects">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -642,6 +799,90 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="getUsers">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="setGroupProperties">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="addGroup">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="deleteUsers">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="deleteGroups">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="addGroupsToUser">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="removeGroupsFromUser">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="getObjectChildrenByClassName">
 <soap:operation soapAction=""/>
 <input>
@@ -739,6 +980,18 @@
 </fault>
 </operation>
 <operation name="getMultipleChoice">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="setUserProperties">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
