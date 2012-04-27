@@ -77,7 +77,8 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public Long createGroup(String groupName, String description)throws InvalidArgumentException, ObjectNotFoundException;
+    public Long createGroup(String groupName, String description, List<Integer>
+            privileges, List<Long> users)throws InvalidArgumentException, ObjectNotFoundException;
 
     /**
      * Retrieves the user list
@@ -101,7 +102,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public UserProfile addUser()throws InvalidArgumentException, ObjectNotFoundException;
+    //public UserProfile addUser()throws InvalidArgumentException, ObjectNotFoundException;
 
     /**
      * Set user attributes (group membership is managed using other methods)
@@ -114,7 +115,7 @@ public interface ApplicationEntityManager {
      * @throws ObjectNotFoundException
      */
     public void setGroupProperties(Long oid, String groupName, String description,
-            List<Integer> privileges)throws InvalidArgumentException, ObjectNotFoundException;
+            List<Integer> privileges, List<Long> users)throws InvalidArgumentException, ObjectNotFoundException;
 
     /**
      * Creates a new group
@@ -122,7 +123,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public GroupProfile addGroup()throws InvalidArgumentException, ObjectNotFoundException;
+    //public GroupProfile addGroup()throws InvalidArgumentException, ObjectNotFoundException;
 
     /**
      * Removes a list of users
@@ -130,7 +131,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public void deleteUsers(Long[] oids)throws InvalidArgumentException, ObjectNotFoundException;
+    public void deleteUsers(List<Long> oids)throws InvalidArgumentException, ObjectNotFoundException;
 
     /**
      * Removes a list of groups
@@ -138,7 +139,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public void deleteGroups(Long[] oids)throws InvalidArgumentException, ObjectNotFoundException;
+    public void deleteGroups(List<Long> oids)throws InvalidArgumentException, ObjectNotFoundException;
 
     /**
      * Assigns groups to a user
@@ -147,7 +148,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public void addGroupsToUser(List<Long> groupsOids, Long userOid)throws InvalidArgumentException, ObjectNotFoundException;
+    //public void addGroupsToUser(List<Long> groupsOids, Long userOid)throws InvalidArgumentException, ObjectNotFoundException;
 
     /**
      * Removes groups to a user
@@ -156,7 +157,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public void removeGroupsFromUser(List<Long> groupsOids, Long userOid)throws InvalidArgumentException, ObjectNotFoundException;
+    //public void removeGroupsFromUser(List<Long> groupsOids, Long userOid)throws InvalidArgumentException, ObjectNotFoundException;
 
     /**
      * Creates a list type item
