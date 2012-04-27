@@ -104,14 +104,12 @@ public class GroupsEditorSupport extends PropertyEditorSupport
     @Override
     public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
         if(evt.getNewValue().equals(PropertyEnv.STATE_VALID)){
-            if (!com.addGroupsToUser(myPanel.toBeAdded(), this.user.getOid()))
+            Boolean success = com.setUserProperties(this.user.getOid(), null, null, null, null, myPanel.toBeAdded());
+            if (!success)
                 nu.showSimplePopup("User Update", NotificationUtil.ERROR, com.getError());
-            else{
-                if(!com.removeGroupsFromUser(myPanel.toBeDeleted(), this.user.getOid()))
-                    nu.showSimplePopup("User Update", NotificationUtil.ERROR, com.getError());
-                else
-                    user.setGroups(myPanel.getSelectedGroups());
-            }
+            else
+                user.setGroups(myPanel.getSelectedGroups());
+            
         }
     }
 }
