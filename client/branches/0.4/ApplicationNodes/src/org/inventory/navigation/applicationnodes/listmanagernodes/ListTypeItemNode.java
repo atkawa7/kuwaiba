@@ -18,6 +18,7 @@ package org.inventory.navigation.applicationnodes.listmanagernodes;
 
 import javax.swing.Action;
 import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.navigation.applicationnodes.listmanagernodes.actions.Delete;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 
 /**
@@ -32,6 +33,6 @@ public class ListTypeItemNode extends ObjectNode {
 
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{editAction,deleteAction};
+        return new Action[]{editAction,new Delete(this)};
     }
 }

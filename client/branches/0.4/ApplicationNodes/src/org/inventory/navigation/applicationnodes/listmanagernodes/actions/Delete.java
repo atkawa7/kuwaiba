@@ -61,7 +61,7 @@ public final class Delete extends AbstractAction implements ObjectAction {
 
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             if (CommunicationsStub.getInstance().deleteListTypeItem(node.getObject().getClassName(),
-                    node.getObject().getOid(),true)){
+                    node.getObject().getOid(),false)){
                 if (node.getParentNode() != null) //Delete can be called for nodes outside the tree structure
                                                   //e.g. In a search result list
                     ((ObjectChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
