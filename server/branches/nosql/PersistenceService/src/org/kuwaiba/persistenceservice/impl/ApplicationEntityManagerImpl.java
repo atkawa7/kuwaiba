@@ -16,6 +16,7 @@
 
 package org.kuwaiba.persistenceservice.impl;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -153,23 +154,38 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         newUser.setProperty(UserProfile.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
         newUser.setProperty(UserProfile.PROPERTY_USERNAME, userName);
         newUser.setProperty(UserProfile.PROPERTY_PASSWORD, Util.getMD5Hash(password));
+        
+        if(firstName == null)
+            firstName = "";
+
         newUser.setProperty(UserProfile.PROPERTY_FIRST_NAME, firstName);
+
+        if(lastName == null)
+            lastName = "";
+
         newUser.setProperty(UserProfile.PROPERTY_LAST_NAME, lastName);
+        
+        if(enabled == null)
+            enabled = true;
+
         newUser.setProperty(UserProfile.PROPERTY_ENABLED, enabled);
 
-        if (privileges != null)
-            newUser.setProperty(UserProfile.PROPERTY_PRIVILEGES, privileges);
+//        TODO privileges
+//        if (privileges != null || privileges.size()<1)
+//            newUser.setProperty(UserProfile.PROPERTY_PRIVILEGES, privileges);
 
-        if (groups != null)
-        {
-            for (Long groupId : groups){
-                Node group = groupIndex.get(UserProfile.PROPERTY_ID,groupId).getSingle();
-                if (group != null)
-                    newUser.createRelationshipTo(group, RelTypes.BELONGS_TO_GROUP);
-                else{
-                    tx.failure();
-                    tx.finish();
-                    throw new InvalidArgumentException(Util.formatString("Group with id %1s can't be found",groupId), Level.OFF);
+        if (groups != null){
+            if(groups.size()<1)
+            {
+                for (Long groupId : groups){
+                    Node group = groupIndex.get(UserProfile.PROPERTY_ID,groupId).getSingle();
+                    if (group != null)
+                        newUser.createRelationshipTo(group, RelTypes.BELONGS_TO_GROUP);
+                    else{
+                        tx.failure();
+                        tx.finish();
+                        throw new InvalidArgumentException(Util.formatString("Group with id %1s can't be found",groupId), Level.OFF);
+                    }
                 }
             }
         }
@@ -220,15 +236,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 userNode.setProperty(UserProfile.PROPERTY_LAST_NAME, lastName);
             
             if(groups != null){
-                Boolean isPartOf = false;
+                Iterable<Relationship> relationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP);
+                for (Relationship relationship : relationships) {
+                    relationship.delete();
+                }
+
                 for (Long id : groups) {
                     Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
-                    Iterable<Relationship> relationships = groupNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.INCOMING);
-                    for (Relationship relationship : relationships) {
-                        if(userNode.getId() != relationship.getStartNode().getId())
-                            isPartOf = true;
-                    }
-                    if(!isPartOf)
                         userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
                 }
             }
@@ -242,8 +256,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
-    public Long createGroup(String groupName, String description)
-            throws InvalidArgumentException, ObjectNotFoundException
+    public Long createGroup(String groupName, String description, 
+            List<Integer> privileges, List<Long> users) throws InvalidArgumentException, ObjectNotFoundException
     {
         if (groupName == null)
             throw new InvalidArgumentException("Group name can't be null", Level.INFO);
@@ -264,10 +278,15 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
             newGroup.setProperty(GroupProfile.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
             newGroup.setProperty(GroupProfile.PROPERTY_GROUPNAME, groupName);
+            
+            if(description == null)
+                description = "";
+
             newGroup.setProperty(GroupProfile.PROPERTY_DESCRIPTION, description);
 
             groupIndex.putIfAbsent(newGroup, GroupProfile.PROPERTY_ID, newGroup.getId());
             groupIndex.putIfAbsent(newGroup, GroupProfile.PROPERTY_GROUPNAME, groupName);
+
             cm.putGroup(new GroupProfile(newGroup.getId(), groupName,
                 description, (Long)newGroup.getProperty(UserProfile.PROPERTY_CREATION_DATE)));
 
@@ -304,45 +323,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         return groups;
     }
 
-    public UserProfile addUser() throws InvalidArgumentException, ObjectNotFoundException {
-        UserProfile newUser = new UserProfile();
-        Random random = new Random();
-        newUser.setUserName("user"+random.nextInt(10000));
-        Transaction tx = null;
-        try{
-            tx = graphDb.beginTx();
-            Node newUserNode = graphDb.createNode();
-
-            newUserNode.setProperty(UserProfile.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-            newUserNode.setProperty(UserProfile.PROPERTY_USERNAME, newUser.getUserName());
-            newUserNode.setProperty(UserProfile.PROPERTY_FIRST_NAME, "");
-            newUserNode.setProperty(UserProfile.PROPERTY_LAST_NAME, "");
-            newUserNode.setProperty(UserProfile.PROPERTY_ENABLED, true);
-            newUserNode.setProperty(UserProfile.PROPERTY_PASSWORD, Util.getMD5Hash("kuwaiba"));
-
-            
-            cm.putUser(new UserProfile(newUserNode.getId(), "",
-                "", "", true, (Long)newUserNode.getProperty(UserProfile.PROPERTY_CREATION_DATE), null));
-
-            userIndex.putIfAbsent(newUserNode, UserProfile.PROPERTY_ID, newUserNode.getId());
-            userIndex.putIfAbsent(newUserNode, UserProfile.PROPERTY_USERNAME, newUser.getUserName());
-           
-            //becomes a users group member default
-            Node groupUserNode =  groupIndex.get(GroupProfile.PROPERTY_GROUPNAME, "users").getSingle();
-            newUserNode.createRelationshipTo(groupUserNode, RelTypes.BELONGS_TO_GROUP);
-
-            tx.success();
-
-        } catch (Exception ex) {
-            throw new RuntimeException(ex.getMessage());
-        } finally {
-            if(tx != null)
-                tx.finish();
-        }
-        return newUser;
-    }
-
-    public void setGroupProperties(Long id, String groupName, String description, List<Integer> privileges) throws InvalidArgumentException, ObjectNotFoundException {
+    public void setGroupProperties(Long id, String groupName, String description, List<Integer> privileges, List<Long> users) throws InvalidArgumentException, ObjectNotFoundException {
 
         Transaction tx = null;
         try{
@@ -367,6 +348,18 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             if(description != null)
                 groupNode.setProperty(GroupProfile.PROPERTY_DESCRIPTION, description);
 
+            if(users != null){
+                Iterable<Relationship> relationships = groupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP);
+                for (Relationship relationship : relationships) {
+                    relationship.delete();
+                }
+                for (Long userId : users) {
+                    Node userNode = userIndex.get(UserProfile.PROPERTY_ID, userId).getSingle();
+                    userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
+                }
+            }
+
+
             tx.success();
         } catch (Exception ex) {
             throw new RuntimeException(ex.getMessage());
@@ -376,39 +369,39 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
-    public GroupProfile addGroup() throws InvalidArgumentException, ObjectNotFoundException {
-        
-        Transaction tx = null;
-        try{
-            tx = graphDb.beginTx();
-            GroupProfile newGroup = new GroupProfile();
-            Random random = new Random();
-            newGroup.setName("user"+random.nextInt(10000));
+//    public GroupProfile addGroup() throws InvalidArgumentException, ObjectNotFoundException {
+//
+//        Transaction tx = null;
+//        try{
+//            tx = graphDb.beginTx();
+//            GroupProfile newGroup = new GroupProfile();
+//            Random random = new Random();
+//            newGroup.setName("user"+random.nextInt(10000));
+//
+//            Node newGroupNode = graphDb.createNode();
+//
+//            newGroupNode.setProperty(GroupProfile.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+//            newGroupNode.setProperty(GroupProfile.PROPERTY_GROUPNAME, newGroup.getName());
+//
+//            CacheManager.getInstance().putGroup(new GroupProfile(newGroupNode.getId(), newGroup.getName(),
+//                "", (Long)newGroupNode.getProperty(UserProfile.PROPERTY_CREATION_DATE)));
+//
+//            groupIndex.putIfAbsent(newGroupNode, GroupProfile.PROPERTY_ID, newGroupNode.getId());
+//            groupIndex.putIfAbsent(newGroupNode, GroupProfile.PROPERTY_GROUPNAME, newGroup.getName());
+//
+//            tx.success();
+//
+//            return newGroup;
+//
+//        } catch (Exception ex) {
+//            throw new RuntimeException(ex.getMessage());
+//        } finally {
+//            if(tx != null)
+//                tx.finish();
+//        }
+//    }
 
-            Node newGroupNode = graphDb.createNode();
-
-            newGroupNode.setProperty(GroupProfile.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-            newGroupNode.setProperty(GroupProfile.PROPERTY_GROUPNAME, newGroup.getName());
-
-            cm.putGroup(new GroupProfile(newGroupNode.getId(), newGroup.getName(),
-                "", (Long)newGroupNode.getProperty(UserProfile.PROPERTY_CREATION_DATE)));
-
-            groupIndex.putIfAbsent(newGroupNode, GroupProfile.PROPERTY_ID, newGroupNode.getId());
-            groupIndex.putIfAbsent(newGroupNode, GroupProfile.PROPERTY_GROUPNAME, newGroup.getName());
-
-            tx.success();
-
-            return newGroup;
-
-        } catch (Exception ex) {
-            throw new RuntimeException(ex.getMessage());
-        } finally {
-            if(tx != null)
-                tx.finish();
-        }
-    }
-
-    public void deleteUsers(Long[] oids) throws InvalidArgumentException, ObjectNotFoundException {
+    public void deleteUsers(List<Long> oids) throws InvalidArgumentException, ObjectNotFoundException {
         Transaction tx = null;
         try{
             tx = graphDb.beginTx();
@@ -438,7 +431,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
-    public void deleteGroups(Long[] oids) throws InvalidArgumentException, ObjectNotFoundException {
+    public void deleteGroups(List<Long> oids) throws InvalidArgumentException, ObjectNotFoundException {
         Transaction tx = null;
         try{
             if(oids != null){
@@ -464,48 +457,48 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
-    public void addGroupsToUser(List<Long> groupsOids, Long userOid) throws InvalidArgumentException, ObjectNotFoundException {
-        Transaction tx = null;
-        try{
-            tx = graphDb.beginTx();
-            Node userNode = userIndex.get(UserProfile.PROPERTY_ID, userOid).getSingle();
-            for (Long groupIds : groupsOids) {
-                Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, groupIds).getSingle();
-                userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
-            }
-            tx.success();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex.getMessage());
-        } finally {
-            if(tx != null)
-                tx.finish();
-        }
-    }
-
-    public void removeGroupsFromUser(List<Long> groupsOids, Long userOid) throws InvalidArgumentException, ObjectNotFoundException {
-        Transaction tx = null;
-        try{
-            tx = graphDb.beginTx();
-            Node userNode = userIndex.get(UserProfile.PROPERTY_ID, userOid).getSingle();
-            Iterable<Relationship> relationships = userNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.OUTGOING);
-            for (Relationship relationship : relationships)
-            {
-                Node groupNode = relationship.getEndNode();
-                for (Long groupIds : groupsOids)
-                {
-                    if(groupNode.getId() == groupIds)
-                        relationship.delete();
-                }
-            }
-            
-            tx.success();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex.getMessage());
-        } finally {
-            if(tx != null)
-                tx.finish();
-        }
-    }
+//    public void addGroupsToUser(List<Long> groupsOids, Long userOid) throws InvalidArgumentException, ObjectNotFoundException {
+//        Transaction tx = null;
+//        try{
+//            tx = graphDb.beginTx();
+//            Node userNode = userIndex.get(UserProfile.PROPERTY_ID, userOid).getSingle();
+//            for (Long groupIds : groupsOids) {
+//                Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, groupIds).getSingle();
+//                userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
+//            }
+//            tx.success();
+//        } catch (Exception ex) {
+//            throw new RuntimeException(ex.getMessage());
+//        } finally {
+//            if(tx != null)
+//                tx.finish();
+//        }
+//    }
+//
+//    public void removeGroupsFromUser(List<Long> groupsOids, Long userOid) throws InvalidArgumentException, ObjectNotFoundException {
+//        Transaction tx = null;
+//        try{
+//            tx = graphDb.beginTx();
+//            Node userNode = userIndex.get(UserProfile.PROPERTY_ID, userOid).getSingle();
+//            Iterable<Relationship> relationships = userNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.OUTGOING);
+//            for (Relationship relationship : relationships)
+//            {
+//                Node groupNode = relationship.getEndNode();
+//                for (Long groupIds : groupsOids)
+//                {
+//                    if(groupNode.getId() == groupIds)
+//                        relationship.delete();
+//                }
+//            }
+//
+//            tx.success();
+//        } catch (Exception ex) {
+//            throw new RuntimeException(ex.getMessage());
+//        } finally {
+//            if(tx != null)
+//                tx.finish();
+//        }
+//    }
 
     //List type related methods
    public Long createListTypeItem(String className, String name, String displayName)
