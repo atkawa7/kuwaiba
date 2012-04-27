@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *   Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -18,8 +18,11 @@ package org.inventory.core.usermanager.nodes.properties;
 
 import java.beans.PropertyEditorSupport;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.LocalObject;
+import org.inventory.core.services.api.session.LocalUserGroupObjectLight;
 import org.inventory.core.services.api.session.LocalUserObject;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
@@ -68,16 +71,22 @@ public class UserProperty extends ReadWrite{
 
     @Override
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        
+
+        LocalUserGroupObjectLight[] groups = object.getGroups();
+        List<Long> oids = new ArrayList<Long>();
+        for (LocalUserGroupObjectLight group : groups) {
+            oids.add(group.getOid());
+        }
+
         boolean success = false;
         if (this.getName().equals(UserNode.PROP_USERNAME))
-            success = com.setUserProperties(object.getOid(), (String)t, null, null, null, null);
+            success = com.setUserProperties(object.getOid(), (String)t, null, null, null, oids);
         else if(this.getName().equals(UserNode.PROP_PASSWORD))
-            success = com.setUserProperties(object.getOid(), null, (String)t, null, null, null);
+            success = com.setUserProperties(object.getOid(), null, (String)t, null, null, oids);
         else if(this.getName().equals(UserNode.PROP_FIRSTNAME))
-            success = com.setUserProperties(object.getOid(), null, null, (String)t, null, null);
+            success = com.setUserProperties(object.getOid(), null, null, (String)t, null, oids);
         else if(this.getName().equals(UserNode.PROP_LASTNAME))
-            success = com.setUserProperties(object.getOid(), null, null, null, (String)t, null);
+            success = com.setUserProperties(object.getOid(), null, null, null, (String)t, oids);
         
         if(!success){
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
