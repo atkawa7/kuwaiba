@@ -241,8 +241,10 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         if (this.sheet != null)
             setSheet(createSheet());
 
-        icon = (com.getMetaForClass(object.getClassName(),false)).getSmallIcon();
-        fireIconChange();
+        if (!(this instanceof ListTypeItemNode)){
+            icon = (com.getMetaForClass(object.getClassName(),false)).getSmallIcon();
+            fireIconChange();
+        }
 
         //Don't try to refresh the anything if the node is a leaf (used only in views)
         if (!(getChildren() instanceof ObjectChildren))
