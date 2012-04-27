@@ -337,7 +337,7 @@ public interface WebServiceBeanRemote {
      * @throws ServerSideException
      */
     public void setUserProperties(Long oid, String userName, String password, String firstName,
-            String lastName, Boolean enabled, List<Integer> privileges, Long[] groups)
+            String lastName, Boolean enabled, Integer[] privileges, Long[] groups)
             throws ServerSideException;
 
 
@@ -349,8 +349,8 @@ public interface WebServiceBeanRemote {
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public Long createGroup(String groupName, String description)
-            throws ServerSideException;
+    public Long createGroup(String groupName, String description,
+            Integer[] privileges, Long[] users) throws ServerSideException;
 
     /**
      * Get all users
@@ -373,7 +373,9 @@ public interface WebServiceBeanRemote {
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public UserInfo addUser()throws ServerSideException;
+    public Long createUser(String userName, String password, String firstName,
+            String lastName, Boolean enabled, Integer[] privileges, Long[] groups)
+            throws ServerSideException;;
 
     /**
      * Set user attributes (group membership is managed using other methods)
@@ -385,17 +387,9 @@ public interface WebServiceBeanRemote {
      * @throws ObjectNotFoundException
      */
     public void setGroupProperties(Long oid, String groupName, String description,
-            Integer[] privileges)throws ServerSideException;
+            Integer[] privileges, Long[] users)throws ServerSideException;
 
-    /**
-     * Creates a new group
-     * @return
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
-    public UserGroupInfo addGroup()throws ServerSideException;
-
-    /**
+     /**
      * Removes a list of users
      * @param oids
      * @throws InvalidArgumentException
@@ -410,26 +404,6 @@ public interface WebServiceBeanRemote {
      * @throws ObjectNotFoundException
      */
     public void deleteGroups(Long[] oids)
-            throws ServerSideException;
-
-    /**
-     * Assigns groups to a user
-     * @param groupsOids
-     * @param userOid
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
-    public void addGroupsToUser(Long[] groupsOids, Long userOid)
-            throws ServerSideException;
-
-    /**
-     * Removes groups to a user
-     * @param groupsOids
-     * @param userOid
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
-    public void removeGroupsFromUser(Long[] groupsOids, Long userOid)
             throws ServerSideException;
 
     // </editor-fold>
