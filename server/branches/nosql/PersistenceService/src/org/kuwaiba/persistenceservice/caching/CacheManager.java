@@ -53,6 +53,7 @@ public class CacheManager {
     private CacheManager(){
         classIndex = new HashMap<String, ClassMetadata>();
         userIndex = new HashMap<String, UserProfile>();
+        groupIndex = new HashMap<String, GroupProfile>();
         possibleChildrenIndex = new HashMap<String, List<String>>();
     }
 
