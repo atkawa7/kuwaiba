@@ -47,7 +47,7 @@ public interface WebServiceBeanRemote {
      * @return
      * @throws NotAuthorizedException
      */
-    public RemoteSession createSession(String user, String password, String IPAddress) throws NotAuthorizedException;
+    public RemoteSession createSession(String user, String password, String IPAddress) throws ServerSideException;
     /**
      * 
      * @param sessionId

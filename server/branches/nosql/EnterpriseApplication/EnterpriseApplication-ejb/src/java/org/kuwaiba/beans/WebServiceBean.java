@@ -33,7 +33,6 @@ import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.exceptions.InvalidSessionException;
-import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.beans.sessions.Session;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -98,7 +97,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public Long createClass(ClassInfo classDefinition) 
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
 
             ClassMetadata cm = new ClassMetadata();
@@ -122,7 +122,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -130,14 +130,15 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void setAttributePropertyValue(Long classId, String attributeName,
             String propertyName, String propertyValue) throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             mem.setAttributePropertyValue(classId, attributeName, propertyName, propertyValue);
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -145,14 +146,15 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void setClassPlainAttribute(Long classId, String attributeName,
             String attributeValue) throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             mem.setClassPlainAttribute(classId, attributeName, attributeValue);
             
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -160,13 +162,14 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void setClassIcon(Long classId, String attributeName, byte[] iconImage)
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             mem.setClassIcon(classId, attributeName, iconImage);
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -174,13 +177,14 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void deleteClass(String className)
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             mem.deleteClass(className);
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -188,13 +192,14 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void deleteClass(Long classId)
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             mem.deleteClass(classId);
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -202,7 +207,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public ClassInfo getMetadataForClass(String className) 
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             return new ClassInfo(mem.getClass(className), new Validator[0]);
@@ -216,14 +222,15 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public ClassInfo getMetadataForClass(Long classId) 
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             return new ClassInfo(mem.getClass(classId), new Validator[0]);
 
          } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -231,7 +238,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public List<ClassInfoLight> getLightMetadata(Boolean includeListTypes) 
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
@@ -242,7 +250,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return cml;
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -250,7 +258,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public List<ClassInfo> getMetadata(Boolean includeListTypes) 
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             List<ClassInfo> cml = new ArrayList<ClassInfo>();
@@ -261,7 +270,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return cml;
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -269,13 +278,14 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void moveClass(String classToMoveName, String targetParentName)
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             mem.moveClass(classToMoveName, targetParentName);
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -283,14 +293,15 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void moveClass(Long classToMoveId, Long targetParentId)
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             mem.moveClass(classToMoveId, targetParentId);
             
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -299,7 +310,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
             throws ServerSideException
     {
 
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             AttributeMetadata atm = new AttributeMetadata();
@@ -317,7 +329,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -325,7 +337,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void addAttribute(Long classId, AttributeInfo attributeDefinition)
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             AttributeMetadata atm = new AttributeMetadata();
@@ -343,7 +356,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -351,7 +364,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void changeClassDefinition(ClassInfo newClassDefinition)
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             ClassMetadata cm = new ClassMetadata();
@@ -375,7 +389,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
          } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -383,7 +397,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public AttributeInfo getAttribute(String className, String attributeName) 
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             AttributeMetadata atrbMtdt = mem.getAttribute(className, attributeName);
@@ -398,7 +413,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return atrbInfo;
          } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -406,7 +421,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public AttributeInfo getAttribute(Long classId, String attributeName) 
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             AttributeMetadata atrbMtdt = mem.getAttribute(classId, attributeName);
@@ -422,7 +438,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
          } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -430,7 +446,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void changeAttributeDefinition(Long ClassId, AttributeInfo newAttributeDefinition)
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             AttributeMetadata attrMtdt = new AttributeMetadata();
@@ -449,7 +466,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -457,13 +474,14 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void deleteAttribute(String className, String attributeName)
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             mem.deleteAttribute(className, attributeName);
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -471,14 +489,15 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void deleteAttribute(Long classId, String attributeName)
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             mem.deleteAttribute(classId, attributeName);
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -486,7 +505,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public Long createCategory(CategoryInfo categoryDefinition) 
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             CategoryMetadata ctgrMtdt = new CategoryMetadata();
@@ -499,7 +519,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return mem.createCategory(ctgrMtdt);
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -507,7 +527,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public CategoryInfo getCategory(String categoryName) 
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             CategoryMetadata ctgrMtdt = new CategoryMetadata();
@@ -520,7 +541,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return ctgrInfo;
          } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -528,7 +549,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public CategoryInfo getCategory(Integer categoryId) 
             throws ServerSideException
     {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             CategoryMetadata ctgrMtdt = new CategoryMetadata();
@@ -544,7 +566,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return ctgrInfo;
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -553,7 +575,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
             throws ServerSideException
     {
         try{
-            assert mem == null : "Can't reach the Metadata Entity Manager";
+         if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
 
             CategoryMetadata ctgrMtdt = new CategoryMetadata();
 
@@ -566,14 +589,15 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
     public List<ClassInfoLight> getPossibleChildren(String parentClassName) throws ServerSideException {
 
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
@@ -587,14 +611,15 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
 
     }
 
     @Override
     public List<ClassInfoLight> getPossibleChildrenNoRecursive(String parentClassName) throws ServerSideException {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
@@ -608,39 +633,42 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
     public void addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws ServerSideException {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             mem.addPossibleChildren(parentClassId, _possibleChildren);
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
     public void removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws ServerSideException {
-        assert mem == null : "Can't reach the Metadata Entity Manager";
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             mem.removePossibleChildren(parentClassId, childrenToBeRemoved);
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
     public Long createListTypeItem(String className, String name, String displayName) throws ServerSideException{
-        assert aem == null : "Can't reach the Application Entity Manager";
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             return aem.createListTypeItem(className, name, displayName);
@@ -653,7 +681,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public void deleteListTypeItem(String className, Long oid, boolean realeaseRelationships) throws ServerSideException {
-        assert aem == null : "Can't reach the Application Entity Manager";
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             aem.deleteListTypeItem(className, oid, realeaseRelationships);
@@ -666,7 +695,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public RemoteObjectLight[] getListTypeItems(String className) throws ServerSideException {
-        assert aem == null : "Can't reach the Application Entity Manager";
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
             List<RemoteBusinessObjectLight> listTypeItems = aem.getListTypeItems(className);
@@ -686,18 +716,20 @@ public class WebServiceBean implements WebServiceBeanRemote {
     // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
     @Override
     public RemoteSession createSession(String user, String password, String IPAddress)
-            throws NotAuthorizedException {
-        assert aem == null : "Can't reach the Application Entity Manager";
+            throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+
         try {
 
             for (Session aSession : sessions.values()){
                 if (aSession.getUser().getUserName().equals(user))
-                    throw new NotAuthorizedException("There's already an active session associated to that user");
+                    throw new ServerSideException(Level.INFO,"There's already an active session associated to that user");
             }
 
             UserProfile currentUser = aem.login(user, password);
             if (currentUser == null)
-                throw new NotAuthorizedException("User or password incorrect");
+                throw new ServerSideException(Level.INFO,"User or password incorrect");
             Session newSession = new Session(currentUser, IPAddress);
             sessions.put(newSession.getToken(), newSession);
             return new RemoteSession(newSession.getToken(), currentUser);
@@ -721,7 +753,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
     @Override
     public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId, int maxResults) throws ServerSideException {
-        assert bem == null : "Can't reach the Business Entity Manager";
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(oid, objectClassId, maxResults));
         } catch (Exception ex) {
@@ -733,7 +766,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     @Override
     public RemoteObjectLight[] getObjectChildren(String className, Long oid, int maxResults)
             throws ServerSideException {
-        assert bem == null : "Can't reach the Business Entity Manager";
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(className, oid, maxResults));
         } catch (Exception ex) {
@@ -745,7 +779,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     @Override
     public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass, String classToFilter, int maxResults)
             throws ServerSideException {
-        assert bem == null : "Can't reach the Business Entity Manager";
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
             return RemoteObject.toRemoteObjectArray(bem.getChildrenOfClass(parentOid, parentClass,classToFilter, maxResults));
         } catch (Exception ex) {
@@ -757,7 +792,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     @Override
     public RemoteObjectLight[] getChildrenOfClassLight(Long parentOid, String parentClass, String classToFilter, int maxResults)
             throws ServerSideException {
-        assert bem == null : "Can't reach the Business Entity Manager";
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getChildrenOfClassLight(parentOid, parentClass,classToFilter, maxResults));
         } catch (Exception ex) {
@@ -768,7 +804,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public RemoteObject getObjectInfo(String objectClass, Long oid) throws ServerSideException{
-        assert bem == null : "Can't reach the Business Entity Manager";
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
             RemoteObject res = new RemoteObject(bem.getObjectInfo(objectClass, oid));
             return res;
@@ -780,7 +817,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid) throws ServerSideException{
-        assert bem == null : "Can't reach the Business Entity Manager";
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
             return new RemoteObjectLight(bem.getObjectInfoLight(objectClass, oid));
         } catch (Exception ex) {
@@ -792,7 +830,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     @Override
     public Long createObject(String className, String parentClassName, Long parentOid, String[] attributeNames,
             String[] attributeValues, Long template) throws ServerSideException{
-        assert bem == null : "Can't reach the Business Entity Manager";
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         if (attributeNames.length != attributeValues.length)
             throw new ServerSideException(Level.SEVERE, "Attribute names and attribute values arrays sizes doesn't match");
 
@@ -810,7 +849,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public void deleteObjects(String[] classNames, Long[] oids, boolean releaseRelationships) throws ServerSideException{
-        assert bem == null : "Can't reach the Business Entity Manager";
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         if (classNames.length != oids.length)
             throw new ServerSideException(Level.SEVERE, "Array sizes do not match");
         try{
@@ -830,7 +870,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public void moveObjects(String targetClass, Long targetOid, String[] objectClasses, Long[] objectOids) throws ServerSideException {
-        assert bem == null : "Can't reach the Business Entity Manager";
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         if (objectClasses.length != objectOids.length)
             throw new ServerSideException(Level.SEVERE, "Array sizes do not match");
         try{
@@ -850,7 +891,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public Long[] copyObjects(String targetClass, Long targetOid, String[] objectClasses, Long[] objectOids, boolean recursive) throws ServerSideException {
-        assert bem == null : "Can't reach the Business Entity Manager";
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         if (objectClasses.length != objectOids.length)
             throw new ServerSideException(Level.SEVERE, "Array sizes do not match");
         try{
@@ -870,7 +912,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public void updateObject(String className, Long oid, String[] attributeNames, String[][] attributeValues) throws ServerSideException{
-        assert bem == null : "Can't reach the Business Entity Manager";
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         if (attributeNames.length != attributeValues.length)
             throw new ServerSideException(Level.SEVERE, "Attribute names and attribute values arrays sizes doesn't match");
 
@@ -888,7 +931,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public ClassInfoLight[] getInstanceableListTypes() throws ServerSideException{
-        assert aem == null : "Can't reach the Business Entity Manager";
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
 
         try {
             List<ClassMetadataLight> instanceableListTypes = aem.getInstanceableListTypes();
@@ -908,7 +952,8 @@ public class WebServiceBean implements WebServiceBeanRemote {
     @Override
     public UserInfo[] getUsers() throws ServerSideException
     {
-        assert aem == null : "Can't reach the Application Entity Manager";
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
             List<UserProfile> users = aem.getUsers();
 
@@ -921,14 +966,15 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return usersInfo;
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
     public UserGroupInfo[] getGroups() throws ServerSideException
     {
-        assert aem == null : "Can't reach the Application Entity Manager";
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
             List<GroupProfile> groups = aem.getGroups();
 
@@ -942,7 +988,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -950,12 +996,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void setUserProperties(Long oid, String userName, String password, String firstName,
             String lastName, Boolean enabled, Integer[] privileges, Long[] groups) throws ServerSideException
     {
-        assert aem == null : "Can't reach the Application Entity Manager";
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
             aem.setUserProperties(oid, userName, password, firstName, lastName, enabled, Arrays.asList(privileges), Arrays.asList(groups));
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -963,56 +1010,61 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public Long createGroup(String groupName, String description, Integer[] privileges, Long[] users) throws ServerSideException {
-        assert aem == null : "Can't reach the Application Entity Manager";
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
             return aem.createGroup(groupName, description, Arrays.asList(privileges), Arrays.asList(users));
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
     public Long createUser(String userName, String password, String firstName, String lastName, Boolean enabled, Integer[] privileges, Long[] groups) throws ServerSideException {
-        assert aem == null : "Can't reach the Application Entity Manager";
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
             return aem.createUser(userName, password, firstName, lastName, enabled,  Arrays.asList(privileges), Arrays.asList(groups));
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
     public void setGroupProperties(Long oid, String groupName, String description, Integer[] privileges, Long[] users) throws ServerSideException {
-        assert aem == null : "Can't reach the Application Entity Manager";
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
             aem.setGroupProperties(oid, groupName, description, Arrays.asList(privileges), Arrays.asList(users));
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
     public void deleteUsers(Long[] oids) throws ServerSideException {
-        assert aem == null : "Can't reach the Application Entity Manager";
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
             aem.deleteUsers(Arrays.asList(oids));
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
     public void deleteGroups(Long[] oids) throws ServerSideException {
-        assert aem == null : "Can't reach the Application Entity Manager";
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
             aem.deleteGroups(Arrays.asList(oids));
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }// </editor-fold>
 
