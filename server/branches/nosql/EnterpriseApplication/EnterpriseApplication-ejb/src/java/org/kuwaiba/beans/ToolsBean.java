@@ -39,8 +39,8 @@ public class ToolsBean implements ToolsBeanRemote {
     public boolean resetAdmin() {
         try {
             List<Long> listGroups = new ArrayList<Long>();
-            listGroups.add(getAEMInstance().createGroup("admins", "admins group"));
-            listGroups.add(getAEMInstance().createGroup("users", "users group"));
+            listGroups.add(getAEMInstance().createGroup("admins", "admins group", null, null));
+            listGroups.add(getAEMInstance().createGroup("users", "users group", null, null));
             
             if (getAEMInstance().createUser("admin", "kuwaiba", "Administrator", "Dummy", true, null, listGroups) == null)
                 return false;
