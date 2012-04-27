@@ -505,9 +505,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2"
-     inkscape:cx="208.284"
-     inkscape:cy="600.96909"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="271.69904"
+     inkscape:cy="459.78476"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -1858,8 +1858,8 @@
        d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
        transform="matrix(0.74400118,0,0,0.81966231,195.41175,389.01544)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/refresh.png"
-       inkscape:export-xdpi="29.776609"
-       inkscape:export-ydpi="29.776609" />
+       inkscape:export-xdpi="40.942837"
+       inkscape:export-ydpi="40.942837" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
@@ -1868,8 +1868,8 @@
        id="text4205-3-80-4-9"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/refresh.png"
-       inkscape:export-xdpi="29.776609"
-       inkscape:export-ydpi="29.776609"><tspan
+       inkscape:export-xdpi="40.942837"
+       inkscape:export-ydpi="40.942837"><tspan
          sodipodi:role="line"
          id="tspan4207-1-2-6-1"
          x="335.54999"
@@ -1977,5 +1977,89 @@
          x="31.049988"
          y="364.31216"
          style="font-size:24px;font-weight:bold;fill:#ffffff">CH</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#2c89a0;fill-opacity:1;stroke:none"
+       id="path3435-6-1-7-8"
+       sodipodi:cx="214.5"
+       sodipodi:cy="120.59447"
+       sodipodi:rx="32.5"
+       sodipodi:ry="29.5"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,-118.08825,548.01544)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/addUser.png"
+       inkscape:export-xdpi="40.942863"
+       inkscape:export-ydpi="40.942863" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       x="23.424984"
+       y="656.06219"
+       id="text4205-3-8-9-1"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/addUser.png"
+       inkscape:export-xdpi="40.942863"
+       inkscape:export-ydpi="40.942863"><tspan
+         sodipodi:role="line"
+         id="tspan4207-1-9-4-0"
+         x="23.424984"
+         y="656.06219"
+         style="font-size:24px;font-weight:bold;fill:#ffffff">U+</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#006680;fill-opacity:1;stroke:none"
+       id="path3435-6-1-7-8-7"
+       sodipodi:cx="214.5"
+       sodipodi:cy="120.59447"
+       sodipodi:rx="32.5"
+       sodipodi:ry="29.5"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,-58.088252,548.51544)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/addGroup.png"
+       inkscape:export-xdpi="40.942863"
+       inkscape:export-ydpi="40.942863" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       x="83.42498"
+       y="656.56219"
+       id="text4205-3-8-9-1-7"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/addGroup.png"
+       inkscape:export-xdpi="40.942863"
+       inkscape:export-ydpi="40.942863"><tspan
+         sodipodi:role="line"
+         id="tspan4207-1-9-4-0-9"
+         x="83.42498"
+         y="656.56219"
+         style="font-size:24px;font-weight:bold;fill:#ffffff">G+</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#d4aa00;fill-opacity:1;stroke:none"
+       id="path3435-6-1-7-9"
+       sodipodi:cx="214.5"
+       sodipodi:cy="120.59447"
+       sodipodi:rx="32.5"
+       sodipodi:ry="29.5"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,-54.229342,476.21836)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/list-type-item.png"
+       inkscape:export-xdpi="29.776628"
+       inkscape:export-ydpi="29.776628" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       x="86.783897"
+       y="584.26514"
+       id="text4205-3-8-9-19"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/list-type-item.png"
+       inkscape:export-xdpi="29.776628"
+       inkscape:export-ydpi="29.776628"><tspan
+         sodipodi:role="line"
+         id="tspan4207-1-9-4-1"
+         x="86.783897"
+         y="584.26514"
+         style="font-size:24px;font-weight:bold;fill:#ffffff">LTI</tspan></text>
   </g>
 </svg>
