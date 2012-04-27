@@ -83,7 +83,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public Long createGroup(String groupName, String description)
+    public Long createGroup(String groupName, String description, List<Integer> privileges, List<Long> users)
             throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
     /**
@@ -108,7 +108,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public UserProfile addUser()throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+    //public UserProfile addUser()throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
     /**
      * Set user attributes (group membership is managed using other methods)
@@ -121,7 +121,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws ObjectNotFoundException
      */
     public void setGroupProperties(Long oid, String groupName, String description,
-            List<Integer> privileges)throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+            List<Integer> privileges,  List<Long> users)throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
     /**
      * Creates a new group
@@ -129,7 +129,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public GroupProfile addGroup()throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+    //public GroupProfile addGroup()throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
     /**
      * Removes a list of users
@@ -137,7 +137,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public void deleteUsers(Long[] oids)throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+    public void deleteUsers(List<Long> oids)throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
     /**
      * Removes a list of groups
@@ -145,7 +145,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public void deleteGroups(Long[] oids)
+    public void deleteGroups(List<Long> oids)
             throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
     /**
@@ -155,8 +155,8 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public void addGroupsToUser(List<Long> groupsOids, Long userOid)
-            throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+    //public void addGroupsToUser(List<Long> groupsOids, Long userOid)
+            //throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
     /**
      * Removes groups to a user
@@ -165,8 +165,8 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public void removeGroupsFromUser(List<Long> groupsOids, Long userOid)
-            throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+    //public void removeGroupsFromUser(List<Long> groupsOids, Long userOid)
+            //throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
 
         /**
