@@ -31,7 +31,7 @@ public class RemoteObjectLight {
     /**
      * Object's oid
      */
-    protected Long oid;
+    private Long oid;
     /**
      * Object's name
      */
@@ -39,7 +39,7 @@ public class RemoteObjectLight {
     /**
      * Object's class name
      */
-    protected String className;
+    private String className;
 
     
     /**

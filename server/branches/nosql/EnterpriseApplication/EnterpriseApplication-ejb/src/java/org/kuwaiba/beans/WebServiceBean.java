@@ -640,10 +640,23 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public Long createListTypeItem(String className, String name, String displayName) throws ServerSideException{
-        assert bem == null : "Can't reach the Business Entity Manager";
+        assert aem == null : "Can't reach the Application Entity Manager";
         try
         {
-            return bem.createListTypeItem(className, name, displayName);
+            return aem.createListTypeItem(className, name, displayName);
+
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteListTypeItem(String className, Long oid, boolean realeaseRelationships) throws ServerSideException {
+        assert aem == null : "Can't reach the Application Entity Manager";
+        try
+        {
+            aem.deleteListTypeItem(className, oid, realeaseRelationships);
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -653,10 +666,10 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public RemoteObjectLight[] getListTypeItems(String className) throws ServerSideException {
-        assert bem == null : "Can't reach the Business Entity Manager";
+        assert aem == null : "Can't reach the Application Entity Manager";
         try
         {
-            List<RemoteBusinessObjectLight> listTypeItems = bem.getListTypeItems(className);
+            List<RemoteBusinessObjectLight> listTypeItems = aem.getListTypeItems(className);
             RemoteObjectLight[] res = new RemoteObjectLight[listTypeItems.size()];
 
             for (int i = 0; i < res.length; i++)
@@ -707,10 +720,10 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
     @Override
-    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId) throws ServerSideException {
+    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId, int maxResults) throws ServerSideException {
         assert bem == null : "Can't reach the Business Entity Manager";
         try {
-            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(oid, objectClassId));
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(oid, objectClassId, maxResults));
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -718,11 +731,11 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public RemoteObjectLight[] getObjectChildren(String className, Long oid) 
+    public RemoteObjectLight[] getObjectChildren(String className, Long oid, int maxResults)
             throws ServerSideException {
         assert bem == null : "Can't reach the Business Entity Manager";
         try {
-            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(className, oid));
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(className, oid, maxResults));
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -730,11 +743,11 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass, String classToFilter)
+    public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass, String classToFilter, int maxResults)
             throws ServerSideException {
         assert bem == null : "Can't reach the Business Entity Manager";
         try {
-            return RemoteObject.toRemoteObjectArray(bem.getChildrenOfClass(parentOid, parentClass,classToFilter));
+            return RemoteObject.toRemoteObjectArray(bem.getChildrenOfClass(parentOid, parentClass,classToFilter, maxResults));
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -742,11 +755,11 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public RemoteObjectLight[] getChildrenOfClassLight(Long parentOid, String parentClass, String classToFilter)
+    public RemoteObjectLight[] getChildrenOfClassLight(Long parentOid, String parentClass, String classToFilter, int maxResults)
             throws ServerSideException {
         assert bem == null : "Can't reach the Business Entity Manager";
         try {
-            return RemoteObjectLight.toRemoteObjectLightArray(bem.getChildrenOfClassLight(parentOid, parentClass,classToFilter));
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getChildrenOfClassLight(parentOid, parentClass,classToFilter, maxResults));
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -796,7 +809,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public void deleteObjects(String[] classNames, Long[] oids) throws ServerSideException{
+    public void deleteObjects(String[] classNames, Long[] oids, boolean releaseRelationships) throws ServerSideException{
         assert bem == null : "Can't reach the Business Entity Manager";
         if (classNames.length != oids.length)
             throw new ServerSideException(Level.SEVERE, "Array sizes do not match");
@@ -808,7 +821,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
                 objects.get(classNames[i]).add(oids[i]);
             }
 
-            bem.deleteObjects(objects);
+            bem.deleteObjects(objects, releaseRelationships);
         }catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -875,10 +888,10 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public ClassInfoLight[] getInstanceableListTypes() throws ServerSideException{
-        assert bem == null : "Can't reach the Business Entity Manager";
+        assert aem == null : "Can't reach the Business Entity Manager";
 
         try {
-            List<ClassMetadataLight> instanceableListTypes = bem.getInstanceableListTypes();
+            List<ClassMetadataLight> instanceableListTypes = aem.getInstanceableListTypes();
             ClassInfoLight[] res = new ClassInfoLight[instanceableListTypes.size()];
             for (int i = 0; i < instanceableListTypes.size(); i++)
                 res[i] = new ClassInfoLight(instanceableListTypes.get(i), new Validator[0]);

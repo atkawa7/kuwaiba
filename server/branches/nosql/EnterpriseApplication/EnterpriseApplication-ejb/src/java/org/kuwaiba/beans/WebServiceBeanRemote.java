@@ -18,9 +18,6 @@ package org.kuwaiba.beans;
 
 import java.util.List;
 import javax.ejb.Remote;
-import org.kuwaiba.apis.persistence.application.GroupProfile;
-import org.kuwaiba.apis.persistence.application.UserProfile;
-
 import org.kuwaiba.exceptions.InvalidSessionException;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -297,11 +294,11 @@ public interface WebServiceBeanRemote {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
-    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId) throws ServerSideException;
-    public RemoteObjectLight[] getObjectChildren(String objectClassName, Long oid) throws ServerSideException;
+    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId, int maxResults) throws ServerSideException;
+    public RemoteObjectLight[] getObjectChildren(String objectClassName, Long oid, int maxResults) throws ServerSideException;
 
-    public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass,String classToFilter) throws ServerSideException;
-    public RemoteObjectLight[] getChildrenOfClassLight(Long parentOid, String parentClass,String classToFilter) throws ServerSideException;
+    public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass,String classToFilter, int maxResults) throws ServerSideException;
+    public RemoteObjectLight[] getChildrenOfClassLight(Long parentOid, String parentClass,String classToFilter, int maxResults) throws ServerSideException;
 
     public RemoteObject getObjectInfo(String objectClass, Long oid) throws ServerSideException;
 
@@ -312,11 +309,14 @@ public interface WebServiceBeanRemote {
     public Long createObject(String className, String parentClassName, Long parentOid, String[] attributeNames, String[] attributeValues, Long templateId) throws ServerSideException;
 
     public Long createListTypeItem(String className, String name, String displayName) throws ServerSideException;
+
+    public void deleteListTypeItem(String className, Long oid, boolean releaseRelationships) throws ServerSideException;
+
     public RemoteObjectLight[] getListTypeItems(String className) throws ServerSideException;
 
     public ClassInfoLight[] getInstanceableListTypes() throws ServerSideException;
 
-    public void deleteObjects(String classNames[], Long[] oids) throws ServerSideException;
+    public void deleteObjects(String classNames[], Long[] oids, boolean releaseRelationships) throws ServerSideException;
 
     public void moveObjects(String targetClass, Long targetOid, String[] objectClasses, Long[] objectOids) throws ServerSideException;
 
@@ -431,6 +431,7 @@ public interface WebServiceBeanRemote {
      */
     public void removeGroupsFromUser(Long[] groupsOids, Long userOid)
             throws ServerSideException;
+
     // </editor-fold>
 
 }
