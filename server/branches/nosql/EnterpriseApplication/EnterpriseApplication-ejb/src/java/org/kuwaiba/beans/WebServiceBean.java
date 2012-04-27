@@ -948,10 +948,24 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public void setUserProperties(Long oid, String userName, String password, String firstName,
-            String lastName, Boolean enabled, List<Integer> privileges, Long[] groups) throws ServerSideException {
+            String lastName, Boolean enabled, Integer[] privileges, Long[] groups) throws ServerSideException
+    {
         assert aem == null : "Can't reach the Application Entity Manager";
         try{
-            aem.setUserProperties(oid, userName, password, firstName, lastName, enabled, privileges, Arrays.asList(groups));
+            aem.setUserProperties(oid, userName, password, firstName, lastName, enabled, Arrays.asList(privileges), Arrays.asList(groups));
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
+        }
+    }
+
+
+
+    @Override
+    public Long createGroup(String groupName, String description, Integer[] privileges, Long[] users) throws ServerSideException {
+        assert aem == null : "Can't reach the Application Entity Manager";
+        try{
+            return aem.createGroup(groupName, description, Arrays.asList(privileges), Arrays.asList(users));
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
@@ -959,10 +973,10 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public Long createGroup(String groupName, String description) throws ServerSideException {
+    public Long createUser(String userName, String password, String firstName, String lastName, Boolean enabled, Integer[] privileges, Long[] groups) throws ServerSideException {
         assert aem == null : "Can't reach the Application Entity Manager";
         try{
-            return aem.createGroup(groupName, description);
+            return aem.createUser(userName, password, firstName, lastName, enabled,  Arrays.asList(privileges), Arrays.asList(groups));
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
@@ -970,32 +984,10 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public UserInfo addUser() throws ServerSideException {
+    public void setGroupProperties(Long oid, String groupName, String description, Integer[] privileges, Long[] users) throws ServerSideException {
         assert aem == null : "Can't reach the Application Entity Manager";
         try{
-            return new UserInfo(aem.addUser());
-        }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
-        }
-    }
-
-    @Override
-    public void setGroupProperties(Long oid, String groupName, String description, Integer[] privileges) throws ServerSideException {
-        assert aem == null : "Can't reach the Application Entity Manager";
-        try{
-            aem.setGroupProperties(oid, groupName, description, Arrays.asList(privileges));
-        }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
-        }
-    }
-
-    @Override
-    public UserGroupInfo addGroup() throws ServerSideException {
-        assert aem == null : "Can't reach the Application Entity Manager";
-        try{
-            return new UserGroupInfo(aem.addGroup());
+            aem.setGroupProperties(oid, groupName, description, Arrays.asList(privileges), Arrays.asList(users));
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
@@ -1006,7 +998,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void deleteUsers(Long[] oids) throws ServerSideException {
         assert aem == null : "Can't reach the Application Entity Manager";
         try{
-            aem.deleteUsers(oids);
+            aem.deleteUsers(Arrays.asList(oids));
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
@@ -1017,35 +1009,12 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void deleteGroups(Long[] oids) throws ServerSideException {
         assert aem == null : "Can't reach the Application Entity Manager";
         try{
-            aem.deleteGroups(oids);
+            aem.deleteGroups(Arrays.asList(oids));
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
         }
-    }
-
-    @Override
-    public void addGroupsToUser(Long[] groupsOids, Long userOid) throws ServerSideException {
-        assert aem == null : "Can't reach the Application Entity Manager";
-        try{
-            aem.addGroupsToUser(Arrays.asList(groupsOids), userOid);
-        }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
-        }
-    }
-
-    @Override
-    public void removeGroupsFromUser(Long[] groupsOids, Long userOid) throws ServerSideException {
-        assert aem == null : "Can't reach the Application Entity Manager";
-        try{
-            aem.removeGroupsFromUser(Arrays.asList(groupsOids), userOid);
-        }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend");
-        }
-    }
-    // </editor-fold>
+    }// </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
 
