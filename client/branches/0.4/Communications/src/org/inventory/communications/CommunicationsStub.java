@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.inventory.communications.core.LocalClassMetadataImpl;
@@ -903,7 +904,10 @@ public class CommunicationsStub {
      */
     public LocalUserObject addUser(){
         try{
-            UserInfo newUser = port.addUser(this.session.getSessionId());
+            Random random = new Random();
+            UserInfo newUser = new UserInfo();
+            newUser.setUserName("user"+random.nextInt(10000));
+            port.createUser(newUser.getUserName(), "kuwaiba", null, null, null, null, null, this.session.getSessionId());
             return new LocalUserObjectImpl(newUser);
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
@@ -919,15 +923,12 @@ public class CommunicationsStub {
     public boolean setUserProperties(Long oid, String userName, String password, String firstName,
             String lastName, List<Long> groups) {
         try{
-            
-            port.setUserProperties(oid, userName, firstName, lastName, password, groups, this.session.getSessionId());
-            return true;
-
+            port.setUserProperties(oid, userName, firstName, lastName, password, null, null, groups, this.session.getSessionId());
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return false;
         }
-        
+        return true;
     }
 
     /**
@@ -937,12 +938,13 @@ public class CommunicationsStub {
      */
     public boolean setGroupProperties(Long oid, String groupName, String description) {
         try{
-            port.setGroupProperties(oid, groupName, description, null, this.session.getSessionId());
+            port.setGroupProperties(oid, groupName, description, null, null, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return false;
         }
-        return false;
+        
     }
 
     /**
@@ -951,7 +953,10 @@ public class CommunicationsStub {
      */
     public LocalUserGroupObject addGroup(){
         try{
-            UserGroupInfo newGroup = port.addGroup(this.session.getSessionId());
+            Random random = new Random();
+            UserGroupInfo newGroup = new UserGroupInfo();
+            newGroup.setName("group"+random.nextInt(10000));
+            port.createGroup(newGroup.getName(), null, null, null, this.session.getSessionId());
             return new LocalUserGroupObjectImpl(newGroup);
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
@@ -982,30 +987,6 @@ public class CommunicationsStub {
     public boolean deleteGroups(Long[] oids){
         try{
             port.deleteGroups(Arrays.asList(oids),session.getSessionId());
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-        }
-        return true;
-    }
-
-    /**
-     * Assigns groups to a user
-     * @param groupsOids An array with The groups oids
-     * @param userOid The user's oid
-     * @return Success or failure
-     */
-    public boolean addGroupsToUser(List<Long> groupsOids, Long userOid){
-        try{
-            port.addGroupsToUser(groupsOids, userOid,this.session.getSessionId());
-        }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-        }
-        return true;
-    }
-
-    public boolean removeGroupsFromUser(List<Long> groupsOids, Long userOid){
-        try{
-            port.removeGroupsFromUser(groupsOids, userOid,this.session.getSessionId());
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
         }
