@@ -106,6 +106,12 @@
 <message name="createListTypeItemResponse">
 <part name="parameters" element="tns:createListTypeItemResponse"/>
 </message>
+<message name="deleteListTypeItem">
+<part name="parameters" element="tns:deleteListTypeItem"/>
+</message>
+<message name="deleteListTypeItemResponse">
+<part name="parameters" element="tns:deleteListTypeItemResponse"/>
+</message>
 <message name="closeSession">
 <part name="parameters" element="tns:closeSession"/>
 </message>
@@ -208,6 +214,18 @@
 <message name="removeGroupsFromUserResponse">
 <part name="parameters" element="tns:removeGroupsFromUserResponse"/>
 </message>
+<message name="setUserProperties">
+<part name="parameters" element="tns:setUserProperties"/>
+</message>
+<message name="setUserPropertiesResponse">
+<part name="parameters" element="tns:setUserPropertiesResponse"/>
+</message>
+<message name="getMultipleChoice">
+<part name="parameters" element="tns:getMultipleChoice"/>
+</message>
+<message name="getMultipleChoiceResponse">
+<part name="parameters" element="tns:getMultipleChoiceResponse"/>
+</message>
 <message name="getObjectChildrenByClassName">
 <part name="parameters" element="tns:getObjectChildrenByClassName"/>
 </message>
@@ -255,18 +273,6 @@
 </message>
 <message name="deleteClassByIdResponse">
 <part name="parameters" element="tns:deleteClassByIdResponse"/>
-</message>
-<message name="getMultipleChoice">
-<part name="parameters" element="tns:getMultipleChoice"/>
-</message>
-<message name="getMultipleChoiceResponse">
-<part name="parameters" element="tns:getMultipleChoiceResponse"/>
-</message>
-<message name="setUserProperties">
-<part name="parameters" element="tns:setUserProperties"/>
-</message>
-<message name="setUserPropertiesResponse">
-<part name="parameters" element="tns:setUserPropertiesResponse"/>
 </message>
 <portType name="Kuwaiba">
 <operation name="getMetadata">
@@ -348,6 +354,11 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createListTypeItemRequest" message="tns:createListTypeItem"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createListTypeItemResponse" message="tns:createListTypeItemResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createListTypeItem/Fault/Exception"/>
+</operation>
+<operation name="deleteListTypeItem">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteListTypeItemRequest" message="tns:deleteListTypeItem"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteListTypeItemResponse" message="tns:deleteListTypeItemResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteListTypeItem/Fault/Exception"/>
 </operation>
 <operation name="closeSession">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/closeSessionRequest" message="tns:closeSession"/>
@@ -434,6 +445,16 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removeGroupsFromUserResponse" message="tns:removeGroupsFromUserResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removeGroupsFromUser/Fault/Exception"/>
 </operation>
+<operation name="setUserProperties">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setUserPropertiesRequest" message="tns:setUserProperties"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setUserPropertiesResponse" message="tns:setUserPropertiesResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setUserProperties/Fault/Exception"/>
+</operation>
+<operation name="getMultipleChoice">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMultipleChoiceRequest" message="tns:getMultipleChoice"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMultipleChoiceResponse" message="tns:getMultipleChoiceResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMultipleChoice/Fault/Exception"/>
+</operation>
 <operation name="getObjectChildrenByClassName">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectChildrenByClassNameRequest" message="tns:getObjectChildrenByClassName"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectChildrenByClassNameResponse" message="tns:getObjectChildrenByClassNameResponse"/>
@@ -473,16 +494,6 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteClassByIdRequest" message="tns:deleteClassById"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteClassByIdResponse" message="tns:deleteClassByIdResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteClassById/Fault/Exception"/>
-</operation>
-<operation name="getMultipleChoice">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMultipleChoiceRequest" message="tns:getMultipleChoice"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMultipleChoiceResponse" message="tns:getMultipleChoiceResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMultipleChoice/Fault/Exception"/>
-</operation>
-<operation name="setUserProperties">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setUserPropertiesRequest" message="tns:setUserProperties"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setUserPropertiesResponse" message="tns:setUserPropertiesResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setUserProperties/Fault/Exception"/>
 </operation>
 </portType>
 <binding name="KuwaibaPortBinding" type="tns:Kuwaiba">
@@ -679,6 +690,18 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="deleteListTypeItem">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="closeSession">
 <soap:operation soapAction=""/>
 <input>
@@ -883,6 +906,30 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="setUserProperties">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getMultipleChoice">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="getObjectChildrenByClassName">
 <soap:operation soapAction=""/>
 <input>
@@ -968,30 +1015,6 @@
 </fault>
 </operation>
 <operation name="deleteClassById">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
-<operation name="getMultipleChoice">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
-<operation name="setUserProperties">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

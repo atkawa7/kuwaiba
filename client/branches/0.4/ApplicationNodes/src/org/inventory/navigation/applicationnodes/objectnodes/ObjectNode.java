@@ -35,7 +35,7 @@ import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.Constants;
-import org.inventory.navigation.applicationnodes.listmanagernodes.ListElementNode;
+import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
@@ -424,7 +424,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                 object.setName(newName);
                 fireDisplayNameChange(object.getName(), newName);
                 
-                if (this instanceof ListElementNode)
+                if (this instanceof ListTypeItemNode)
                     CommunicationsStub.getInstance().getList(object.getClassName(), true, true);
             }
 

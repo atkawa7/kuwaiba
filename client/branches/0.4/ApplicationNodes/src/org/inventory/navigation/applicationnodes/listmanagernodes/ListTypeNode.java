@@ -31,7 +31,7 @@ public class ListTypeNode extends AbstractNode{
     public static final String ICON_PATH="org/inventory/navigation/applicationnodes/res/list-type.png";
 
     public ListTypeNode(LocalClassMetadataLight lcm) {
-        super(new ListElementChildren());
+        super(new ListTypeItemChildren());
         this.object = lcm;
         setIconBaseWithExtension(ICON_PATH);
     }

@@ -26,7 +26,7 @@ import org.inventory.core.services.factories.ObjectFactory;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.listmanagernodes.ListElementNode;
+import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.PropertySupport.ReadWrite;
 import org.openide.util.Lookup;
@@ -93,7 +93,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
             else
                 value = t;
             
-            if (node instanceof ListElementNode)
+            if (node instanceof ListTypeItemNode)
                 CommunicationsStub.getInstance().getList(node.getObject().getClassName(), true, true);
             
         }catch(Exception e){

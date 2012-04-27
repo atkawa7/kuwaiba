@@ -68,6 +68,10 @@
 
 <xs:element name="deleteGroupsResponse" type="tns:deleteGroupsResponse"/>
 
+<xs:element name="deleteListTypeItem" type="tns:deleteListTypeItem"/>
+
+<xs:element name="deleteListTypeItemResponse" type="tns:deleteListTypeItemResponse"/>
+
 <xs:element name="deleteObjects" type="tns:deleteObjects"/>
 
 <xs:element name="deleteObjectsResponse" type="tns:deleteObjectsResponse"/>
@@ -580,6 +584,7 @@
 <xs:element name="parentOid" type="xs:long" minOccurs="0"/>
 <xs:element name="parentClass" type="xs:string" minOccurs="0"/>
 <xs:element name="childrenClass" type="xs:string" minOccurs="0"/>
+<xs:element name="maxResults" type="xs:int" minOccurs="0"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
@@ -682,6 +687,19 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="deleteListTypeItem">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="oid" type="xs:long" minOccurs="0"/>
+<xs:element name="releaseRelationships" type="xs:boolean" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteListTypeItemResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="getPossibleChildrenNoRecursive">
 <xs:sequence>
 <xs:element name="parentClassName" type="xs:string" minOccurs="0"/>
@@ -700,6 +718,7 @@
 <xs:element name="parentOid" type="xs:long" minOccurs="0"/>
 <xs:element name="parentClass" type="xs:string" minOccurs="0"/>
 <xs:element name="childrenClass" type="xs:string" minOccurs="0"/>
+<xs:element name="maxResults" type="xs:int" minOccurs="0"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
@@ -755,6 +774,7 @@
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0"/>
 <xs:element name="objectClassName" type="xs:long" minOccurs="0"/>
+<xs:element name="maxResults" type="xs:int" minOccurs="0"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
@@ -846,6 +866,7 @@
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0"/>
 <xs:element name="objectClassId" type="xs:long" minOccurs="0"/>
+<xs:element name="maxResults" type="xs:int" minOccurs="0"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
@@ -860,6 +881,7 @@
 <xs:sequence>
 <xs:element name="classNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="oid" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="releaseRelationships" type="xs:boolean" minOccurs="0"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>

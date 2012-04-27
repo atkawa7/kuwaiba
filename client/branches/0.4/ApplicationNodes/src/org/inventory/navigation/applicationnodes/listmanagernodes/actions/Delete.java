@@ -14,7 +14,7 @@
  *  limitations under the License.
  *  under the License.
  */
-package org.inventory.navigation.applicationnodes.objectnodes.actions;
+package org.inventory.navigation.applicationnodes.listmanagernodes.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -26,46 +26,48 @@ import org.inventory.core.services.actions.ObjectAction;
 import org.inventory.core.services.exceptions.ObjectActionException;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Action to delete an object
+ * Action to delete an a list type item
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=ObjectAction.class)
-public final class DeleteObjectAction extends AbstractAction implements ObjectAction {
+public final class Delete extends AbstractAction implements ObjectAction {
 
-    private ObjectNode node;
+    private ListTypeItemNode node;
 
-    public DeleteObjectAction() {
+    public Delete() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE"));
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
         putValue(MNEMONIC_KEY,KeyEvent.VK_D);
     }
 
 
-    public DeleteObjectAction(ObjectNode _node) {
+    public Delete(ListTypeItemNode node) {
         this();
-        this.node = _node;
+        this.node = node;
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
 
-        if(JOptionPane.showConfirmDialog(null, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_BUSINESS_OBJECT"),
+        if(JOptionPane.showConfirmDialog(null, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_LIST_TYPE_ITEM"),
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CONFIRMATION"),JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
 
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-            if (CommunicationsStub.getInstance().deleteObject(node.getObject().getClassName(),
-                    node.getObject().getOid())){
-                if (node.getParentNode() != null) //Delete can be call for nodes outside the tree structure
+            if (CommunicationsStub.getInstance().deleteListTypeItem(node.getObject().getClassName(),
+                    node.getObject().getOid(),true)){
+                if (node.getParentNode() != null) //Delete can be called for nodes outside the tree structure
                                                   //e.g. In a search result list
                     ((ObjectChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
                 nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
+                
+                CommunicationsStub.getInstance().getList(node.getObject().getClassName(), false, true);
             }
             else
                 nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_ERROR"),
@@ -75,7 +77,7 @@ public final class DeleteObjectAction extends AbstractAction implements ObjectAc
 
     @Override
     public void setObject(LocalObjectLight lol) throws ObjectActionException {
-        this.node = new ObjectNode(lol);
+        this.node = new ListTypeItemNode(lol);
     }
 
     @Override

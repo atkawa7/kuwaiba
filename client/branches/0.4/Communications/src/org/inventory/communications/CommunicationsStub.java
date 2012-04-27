@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,8 +29,6 @@ import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.communications.core.LocalObjectLightImpl;
 import org.inventory.communications.core.LocalObjectListItemImpl;
 //import org.inventory.communications.core.queries.LocalResultRecordImpl;
-//import org.inventory.communications.core.LocalUserGroupObjectImpl;
-//import org.inventory.communications.core.LocalUserObjectImpl;
 //import org.inventory.communications.core.queries.LocalQueryImpl;
 //import org.inventory.communications.core.queries.LocalQueryLightImpl;
 //import org.inventory.communications.core.queries.LocalTransientQueryImpl;
@@ -64,7 +62,7 @@ import org.kuwaiba.wsclient.UserInfo;
 /**
  * Singleton class that provides communication and caching services to the rest of the modules
  * TODO: Make it a thread to support simultaneous operations
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class CommunicationsStub {
     private static CommunicationsStub instance=null;
@@ -146,7 +144,7 @@ public class CommunicationsStub {
      */
     public List<LocalObjectLight> getObjectChildren(Long oid, Long objectClassId){
         try{
-            List <RemoteObjectLight> children = port.getObjectChildren(oid, objectClassId,this.session.getSessionId());
+            List <RemoteObjectLight> children = port.getObjectChildren(oid, objectClassId, 0,this.session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
 
             for (RemoteObjectLight rol : children)
@@ -161,7 +159,7 @@ public class CommunicationsStub {
 
     public List<LocalObject> getChildrenOfClass(Long oid, String parentClassName, String childrenClassName){
         try{
-            List <RemoteObject> children = port.getChildrenOfClass(oid, parentClassName, childrenClassName,this.session.getSessionId());
+            List <RemoteObject> children = port.getChildrenOfClass(oid, parentClassName, childrenClassName, 0, this.session.getSessionId());
             List <LocalObject> res = new ArrayList<LocalObject>();
 
             for (RemoteObject rol : children)
@@ -523,7 +521,7 @@ public class CommunicationsStub {
             classes.add(className);
             List ids = new ArrayList();
             ids.add(oid);
-            port.deleteObjects(classes,ids,this.session.getSessionId());
+            port.deleteObjects(classes, ids, false, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
@@ -830,8 +828,25 @@ public class CommunicationsStub {
             }
             return res;
         }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            this.error =  ex.getMessage();
             return null;
+        }
+    }
+
+    /**
+     * Deletes a list type item
+     * @param className The class the object is instance of
+     * @param oid The object's id
+     * @param force should it release all relationships to (or from) this object?
+     * @return success or failure
+     */
+    public boolean deleteListTypeItem(String className, Long oid, boolean force){
+        try{
+            port.deleteListTypeItem(className, oid, force, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
         }
     }
 

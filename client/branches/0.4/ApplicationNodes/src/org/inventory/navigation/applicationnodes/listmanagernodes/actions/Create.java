@@ -20,8 +20,8 @@ import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.listmanagernodes.ListElementChildren;
-import org.inventory.navigation.applicationnodes.listmanagernodes.ListElementNode;
+import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemChildren;
+import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeNode;
 import org.openide.util.Lookup;
 
@@ -48,7 +48,7 @@ public final class Create extends AbstractAction{
                 nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR,
                     CommunicationsStub.getInstance().getError());
         else{
-            ((ListElementChildren)node.getChildren()).add(new ListElementNode[]{new ListElementNode(myLol)});
+            ((ListTypeItemChildren)node.getChildren()).add(new ListTypeItemNode[]{new ListTypeItemNode(myLol)});
             //Refreshes the cache
             /**
              * TODO: Provide a method only for this instead of calling the standard

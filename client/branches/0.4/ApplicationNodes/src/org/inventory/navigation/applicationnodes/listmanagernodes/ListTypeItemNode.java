@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  * 
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 
 /**
  * Represents a single element within the list as a node
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ListElementNode extends ObjectNode {
+public class ListTypeItemNode extends ObjectNode {
 
-    public ListElementNode(LocalObjectLight _lol) {
-        super(_lol,true);
+    public ListTypeItemNode(LocalObjectLight lol) {
+        super(lol,true);
     }
 
     @Override

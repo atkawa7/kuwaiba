@@ -32,9 +32,9 @@ import org.openide.util.Lookup;
  * These children represent the items within the list
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class ListElementChildren extends ObjectChildren{
+public class ListTypeItemChildren extends ObjectChildren{
 
-    public ListElementChildren() {
+    public ListTypeItemChildren() {
         keys = new ArrayList<LocalObjectLight>();
     }
 
@@ -44,7 +44,7 @@ public class ListElementChildren extends ObjectChildren{
         List<Node> myNodes = new ArrayList<Node>();
 
         for (LocalObjectLight lol : keys)
-            myNodes.add(new ListElementNode(lol));
+            myNodes.add(new ListTypeItemNode(lol));
         return myNodes;
     }
 
@@ -59,7 +59,7 @@ public class ListElementChildren extends ObjectChildren{
                         showSimplePopup("List Generation", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
             }else{
                 for (LocalObjectListItem child : myObjects){
-                    ListElementNode newNode = new ListElementNode(child);
+                    ListTypeItemNode newNode = new ListTypeItemNode(child);
                     // Remove it if it already exists (if this is not done,
                     // it will duplicate the nodes created when the parent was collapsed)
                     keys.remove(child);
