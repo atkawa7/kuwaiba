@@ -21,8 +21,12 @@ import java.rmi.RemoteException;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 
 /**
  * RMI wrapper for the ApplicationEntityManager interface
@@ -165,4 +169,36 @@ public interface ApplicationEntityManagerRemote extends Remote{
             throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
 
+        /**
+     * Creates a list type item
+     * @param className List type
+     * @param name new item's name
+     * @param displayName new item's display name
+     * @return new item's id
+     * @throws MetadataObjectNotFoundException if className is not an existing class
+     * @throws InvalidArgumentException if the class provided is not a list type
+     */
+    public Long createListTypeItem(String className, String name, String displayName)
+            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    /**
+     * Retrieves all the items related to a given list type
+     * @param className list type
+     * @return A list of RemoteBusinessObjectLight instances representing the items
+     * @throws MetadataObjectNotFoundException if className is not an existing class
+     * @throws InvalidArgumentException if the class provided is not a list type
+     */
+    public List<RemoteBusinessObjectLight> getListTypeItems(String className)
+            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    /**
+     * Get the possible list types
+     * @return A list of ClassMetadataLight instances representing the possible list types
+     * @throws MetadataObjectNotFoundException
+     */
+    public List<ClassMetadataLight> getInstanceableListTypes()
+            throws MetadataObjectNotFoundException, RemoteException;
+
+    public void deleteListTypeItem(String className, Long oid, boolean realeaseRelationships)
+            throws MetadataObjectNotFoundException, OperationNotPermittedException, ObjectNotFoundException, RemoteException;
 }

@@ -21,12 +21,17 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.interfaces.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.persistenceservice.caching.CacheManager;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.kuwaiba.persistenceservice.util.Util;
@@ -36,6 +41,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
@@ -55,9 +61,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
      */
     public static final String INDEX_GROUP = "groupIndex";
     /**
+     * Name of the index for list type items
+     */
+    public static final String INDEX_LIST_TYPE_ITEMS = "listTypeItems"; //NOI18N
+    /**
      * Graph db service
      */
     private GraphDatabaseService graphDb;
+    /**
+     * Class index
+     */
+    private Index<Node> classIndex;
     /**
      * Users index
      */
@@ -66,11 +80,22 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
      * Groups index
      */
     private Index<Node> groupIndex;
+    /**
+     * Index for list type items (of all classes)
+     */
+    private Index<Node> listTypeItemsIndex;
+    /**
+     * Reference to the singleton instance of CacheManager
+     */
+    private CacheManager cm;
 
     public ApplicationEntityManagerImpl(ConnectionManager cmn) {
         this.graphDb = (EmbeddedGraphDatabase)cmn.getConnectionHandler();
         this.userIndex = graphDb.index().forNodes(INDEX_USER);
         this.groupIndex = graphDb.index().forNodes(INDEX_GROUP);
+        this.classIndex = graphDb.index().forNodes(MetadataEntityManagerImpl.INDEX_CLASS);
+        this.listTypeItemsIndex = graphDb.index().forNodes(INDEX_LIST_TYPE_ITEMS);
+        this.cm = CacheManager.getInstance();
     }
 
     public UserProfile login(String username, String password) {
@@ -114,7 +139,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         if (password.trim().equals("")) //NOI18N
             throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
 
-        if (CacheManager.getInstance().getUser(userName) == null)
+        if (cm.getUser(userName) == null)
         {
             Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,userName).getSingle();
             if (storedUser != null)
@@ -151,7 +176,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         
         userIndex.putIfAbsent(newUser, UserProfile.PROPERTY_ID, newUser.getId());
         userIndex.putIfAbsent(newUser, UserProfile.PROPERTY_USERNAME, userName);
-        CacheManager.getInstance().putUser(new UserProfile(newUser.getId(), userName,
+        cm.putUser(new UserProfile(newUser.getId(), userName,
                 firstName, lastName, true, (Long)newUser.getProperty(UserProfile.PROPERTY_CREATION_DATE), privileges));
         tx.success();
         tx.finish();
@@ -171,7 +196,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 if (userName.trim().equals("")) //NOI18N
                     throw new InvalidArgumentException("User name can't be an empty string", Level.INFO);
 
-                if (CacheManager.getInstance().getUser(userName) == null)
+                if (cm.getUser(userName) == null)
                 {
                     Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,userName).getSingle();
                     if (storedUser != null)
@@ -226,7 +251,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         if (groupName.trim().equals("")) //NOI18N
             throw new InvalidArgumentException("User name can't be an empty string", Level.INFO);
 
-        if (CacheManager.getInstance().getGroup(groupName) == null)
+        if (cm.getGroup(groupName) == null)
         {
             Node storedUser = groupIndex.get(GroupProfile.PROPERTY_GROUPNAME,groupName).getSingle();
             if (storedUser != null)
@@ -243,7 +268,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
             groupIndex.putIfAbsent(newGroup, GroupProfile.PROPERTY_ID, newGroup.getId());
             groupIndex.putIfAbsent(newGroup, GroupProfile.PROPERTY_GROUPNAME, groupName);
-            CacheManager.getInstance().putGroup(new GroupProfile(newGroup.getId(), groupName,
+            cm.putGroup(new GroupProfile(newGroup.getId(), groupName,
                 description, (Long)newGroup.getProperty(UserProfile.PROPERTY_CREATION_DATE)));
 
             tx.success();
@@ -296,7 +321,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             newUserNode.setProperty(UserProfile.PROPERTY_PASSWORD, Util.getMD5Hash("kuwaiba"));
 
             
-            CacheManager.getInstance().putUser(new UserProfile(newUserNode.getId(), "",
+            cm.putUser(new UserProfile(newUserNode.getId(), "",
                 "", "", true, (Long)newUserNode.getProperty(UserProfile.PROPERTY_CREATION_DATE), null));
 
             userIndex.putIfAbsent(newUserNode, UserProfile.PROPERTY_ID, newUserNode.getId());
@@ -329,7 +354,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 if (groupName.trim().equals("")) //NOI18N
                     throw new InvalidArgumentException("User name can't be an empty string", Level.INFO);
 
-                if (CacheManager.getInstance().getUser(groupName) == null)
+                if (cm.getUser(groupName) == null)
                 {
                     Node storedGroup = groupIndex.get(GroupProfile.PROPERTY_GROUPNAME, groupName).getSingle();
                     if (storedGroup != null)
@@ -365,7 +390,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             newGroupNode.setProperty(GroupProfile.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
             newGroupNode.setProperty(GroupProfile.PROPERTY_GROUPNAME, newGroup.getName());
 
-            CacheManager.getInstance().putGroup(new GroupProfile(newGroupNode.getId(), newGroup.getName(),
+            cm.putGroup(new GroupProfile(newGroupNode.getId(), newGroup.getName(),
                 "", (Long)newGroupNode.getProperty(UserProfile.PROPERTY_CREATION_DATE)));
 
             groupIndex.putIfAbsent(newGroupNode, GroupProfile.PROPERTY_ID, newGroupNode.getId());
@@ -393,7 +418,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 {
                     Node userNode = userIndex.get(UserProfile.PROPERTY_ID, id).getSingle();
 
-                    CacheManager.getInstance().removeUser((String)userNode.getProperty(UserProfile.PROPERTY_USERNAME));
+                    cm.removeUser((String)userNode.getProperty(UserProfile.PROPERTY_USERNAME));
 
                     Iterable<Relationship> relationships = userNode.getRelationships();
                     for (Relationship relationship : relationships) {
@@ -421,7 +446,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 for (Long id : oids) {
                     Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
 
-                    CacheManager.getInstance().removeGroup((String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME));
+                    cm.removeGroup((String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME));
 
                     Iterable<Relationship> relationships = groupNode.getRelationships();
                     for (Relationship relationship : relationships) {
@@ -482,4 +507,106 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
+    //List type related methods
+   public Long createListTypeItem(String className, String name, String displayName)
+            throws MetadataObjectNotFoundException, InvalidArgumentException {
+        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, className).getSingle();
+        if (classNode ==  null)
+            throw new MetadataObjectNotFoundException(Util.formatString("Class for object with oid %1s could not be found",className));
+        if (!cm.isSubClass("GenericObjectList", className))
+            throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", className), Level.SEVERE);
+
+        Transaction tx = null;
+        try{
+             tx = graphDb.beginTx();
+             Node newItem = graphDb.createNode();
+             newItem.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, name);
+             newItem.setProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME, displayName);
+             newItem.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
+             listTypeItemsIndex.putIfAbsent(newItem, MetadataEntityManagerImpl.PROPERTY_ID, newItem.getId());
+             tx.success();
+             return newItem.getId();
+        }catch(Exception ex){
+            tx.failure();
+            throw new RuntimeException(ex.getMessage());
+        }finally{
+            if (tx != null)
+                tx.finish();
+        }
+    }
+
+    public void deleteListTypeItem(String className, Long oid, boolean realeaseRelationships) throws MetadataObjectNotFoundException, OperationNotPermittedException, ObjectNotFoundException{
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            if (!cm.isSubClass("GenericObjectList", className))
+                throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", className), Level.SEVERE);
+
+            Node instance = getInstanceOfClass(className, oid);
+            Util.deleteObject(instance, realeaseRelationships);
+
+            tx.success();
+        }catch(Exception ex){
+            Logger.getLogger("deleteObject: "+ex.getMessage()); //NOI18N
+            tx.failure();
+            throw new RuntimeException(ex.getMessage());
+        }finally{
+            if (tx != null)
+                tx.finish();
+        }
+    }
+
+    public List<RemoteBusinessObjectLight> getListTypeItems(String className) throws MetadataObjectNotFoundException, InvalidArgumentException{
+        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, className).getSingle();
+        if (classNode ==  null)
+            throw new MetadataObjectNotFoundException(Util.formatString("Class for object with oid %1s could not be found",className));
+
+        if (!Util.isSubClass("GenericObjectList", classNode))
+            throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", className), Level.SEVERE);
+
+        Iterable<Relationship> childrenAsRelationships = classNode.getRelationships(RelTypes.INSTANCE_OF);
+        List<RemoteBusinessObjectLight> children = new ArrayList<RemoteBusinessObjectLight>();
+
+        while(childrenAsRelationships.iterator().hasNext()){
+            Node child = childrenAsRelationships.iterator().next().getStartNode();
+            children.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), className));
+        }
+        return children;
+    }
+
+    public List<ClassMetadataLight> getInstanceableListTypes() throws MetadataObjectNotFoundException {
+        Node genericObjectListNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, "GenericObjectList").getSingle();
+        if (genericObjectListNode == null)
+            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s is not a list type", "GenericObjectList"));
+        Traverser traverserMetadata = Util.traverserMetadata(genericObjectListNode);
+        List<ClassMetadataLight> res = new ArrayList<ClassMetadataLight>();
+        for (Node child : traverserMetadata){
+            if (!(Boolean)child.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT))
+                res.add(new ClassMetadataLight(child.getId(),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME)));
+        }
+
+        return res;
+    }
+
+    //Helpers
+    private Node getInstanceOfClass(String className, Long oid) throws MetadataObjectNotFoundException, ObjectNotFoundException{
+
+        //if any of the parameters is null, return the dummy root
+        if (className == null || oid == null)
+            return graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.BOTH).getEndNode();
+
+
+        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
+
+        if (classNode == null)
+            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
+
+        Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
+        while (instances.iterator().hasNext()){
+            Node otherSide = instances.iterator().next().getStartNode();
+            if (otherSide.getId() == oid.longValue())
+                return otherSide;
+        }
+        throw new ObjectNotFoundException(className, oid);
+    }
 }

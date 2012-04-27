@@ -79,13 +79,14 @@ public interface BusinessEntityManager {
     /**
      * Deletes a set of objects
      * @param  objects a hashmap where the class name is the key and the value is a list of Long containing the ids of the objects to be deleted that are instance of the key class
+     * @param  should all relationships be released, forcing the deletion?
      * @throws ObjectNotFoundException If the requested object can't be found
      * @throws MetadataObjectNotFoundException If the requested object class can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * or it is blocked or if the requested object or one of it's children have
      * relationships that should be released manually before to delete them
      */
-    public void deleteObjects(HashMap<String, List<Long>> oids)
+    public void deleteObjects(HashMap<String, List<Long>> oids, boolean releaseRelationships)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException;
 
 
@@ -183,12 +184,13 @@ public interface BusinessEntityManager {
      * Gets the children of a given object
      * @param className Object's class name
      * @param oid Object's oid
+     * @param maxResults max number of children to be returned
      * @return The list of children
      * @throws MetadataObjectNotFoundException If the object's can't be found
      * @throws ObjectNotFoundException If the object or its new parent can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
      */
-    public List<RemoteBusinessObjectLight> getObjectChildren(String className, Long oid)
+    public List<RemoteBusinessObjectLight> getObjectChildren(String className, Long oid, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException;
     
     /**

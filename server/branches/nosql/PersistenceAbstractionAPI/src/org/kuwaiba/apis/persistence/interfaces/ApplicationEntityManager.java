@@ -19,8 +19,11 @@ package org.kuwaiba.apis.persistence.interfaces;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 
 /**
  * This is the entity in charge of manipulating application objects such as users, views, etc
@@ -155,5 +158,33 @@ public interface ApplicationEntityManager {
      */
     public void removeGroupsFromUser(List<Long> groupsOids, Long userOid)throws InvalidArgumentException, ObjectNotFoundException;
 
+    /**
+     * Creates a list type item
+     * @param className List type
+     * @param name new item's name
+     * @param displayName new item's display name
+     * @return new item's id
+     * @throws MetadataObjectNotFoundException if className is not an existing class
+     * @throws InvalidArgumentException if the class provided is not a list type
+     */
+    public Long createListTypeItem(String className, String name, String displayName)
+            throws MetadataObjectNotFoundException, InvalidArgumentException;
 
+    /**
+     * Retrieves all the items related to a given list type
+     * @param className list type
+     * @return A list of RemoteBusinessObjectLight instances representing the items
+     * @throws MetadataObjectNotFoundException if className is not an existing class
+     * @throws InvalidArgumentException if the class provided is not a list type
+     */
+    public List<RemoteBusinessObjectLight> getListTypeItems(String className)
+            throws MetadataObjectNotFoundException, InvalidArgumentException;
+
+    /**
+     * Get the possible list types
+     * @return A list of ClassMetadataLight instances representing the possible list types
+     * @throws MetadataObjectNotFoundException
+     */
+    public List<ClassMetadataLight> getInstanceableListTypes()
+            throws MetadataObjectNotFoundException;
 }

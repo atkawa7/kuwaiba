@@ -169,6 +169,9 @@ public class CacheManager {
         if (currentClass == null)
             throw new MetadataObjectNotFoundException(className);
 
+        if (currentClass.getParentClassName() == null)
+            return false;
+
         if (currentClass.getParentClassName().equals(allegedParentClass))
             return true;
         else

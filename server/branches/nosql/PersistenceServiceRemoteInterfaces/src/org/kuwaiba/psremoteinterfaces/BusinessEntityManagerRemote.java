@@ -27,8 +27,6 @@ import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
-import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
-
 
 /**
  * RMI wrapper for the BusinessEntityManager interface
@@ -37,16 +35,16 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 public interface BusinessEntityManagerRemote extends Remote{
     public static final String REFERENCE_BEM = "bem";
 
-    public List<RemoteBusinessObjectLight> getObjectChildren(String className, Long oid)
+    public List<RemoteBusinessObjectLight> getObjectChildren(String className, Long oid, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
 
-    public List<RemoteBusinessObjectLight> getObjectChildren(Long oid, Long classId)
+    public List<RemoteBusinessObjectLight> getObjectChildren(Long oid, Long classId, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
 
-    public List<RemoteBusinessObject> getChildrenOfClass(Long parentOid, String parentClass, String myClass)
+    public List<RemoteBusinessObject> getChildrenOfClass(Long parentOid, String parentClass, String myClass, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, RemoteException;
 
-    public List<RemoteBusinessObjectLight> getChildrenOfClassLight(Long parentOid, String parentClass, String myClass)
+    public List<RemoteBusinessObjectLight> getChildrenOfClassLight(Long parentOid, String parentClass, String myClass, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
 
     public RemoteBusinessObject getObjectInfo(String objectClass, Long oid)
@@ -61,15 +59,8 @@ public interface BusinessEntityManagerRemote extends Remote{
     public Long createObject(String className, String parentClassName, Long parentOid,
             HashMap<String,String> attributes, Long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException, RemoteException;
-    public Long createListTypeItem(String className, String name, String displayName)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
-    public List<RemoteBusinessObjectLight> getListTypeItems(String className)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
-    public List<ClassMetadataLight> getInstanceableListTypes()
-            throws MetadataObjectNotFoundException, RemoteException;
-
-    public void deleteObjects(HashMap<String, List<Long>> objects)
+    public void deleteObjects(HashMap<String, List<Long>> objects, boolean releaseRelationships)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
 
     public void moveObjects(String targetClass, Long targetOid, HashMap<String, List<Long>> objects)

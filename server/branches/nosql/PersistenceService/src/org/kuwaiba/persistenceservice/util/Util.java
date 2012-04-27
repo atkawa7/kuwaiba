@@ -151,12 +151,13 @@ public class Util {
      * Deletes recursively and object and all its children. Note that the transaction should be handled by the caller
      * @param instance The object to be deleted
      */
-    public static void deleteObject(Node instance) throws OperationNotPermittedException {
-        if (instance.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING).iterator().hasNext())
-            throw new OperationNotPermittedException("deleteObject",Util.formatString("The object with id %1s can not be deleted since it has relationships", instance.getId()));
+    public static void deleteObject(Node instance, boolean releaseAll) throws OperationNotPermittedException {
+        if(!releaseAll)
+            if (instance.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING).iterator().hasNext())
+                throw new OperationNotPermittedException("deleteObject",Util.formatString("The object with id %1s can not be deleted since it has relationships", instance.getId()));
 
         for (Relationship rel : instance.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING))
-            deleteObject(rel.getStartNode());
+            deleteObject(rel.getStartNode(), releaseAll);
 
         for (Relationship rel : instance.getRelationships())
             rel.delete();
