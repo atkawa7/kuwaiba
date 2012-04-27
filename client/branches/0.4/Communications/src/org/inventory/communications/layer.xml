@@ -28,7 +28,6 @@
     </folder>
     <folder name="Toolbars">
         <folder name="System">
-            <!-- <attr name="org-inventory-navigation-navigationtree-NavigationTreeAction.shadow/org-inventory-communications-actions-RefreshLocalCache.shadow" boolvalue="true"/> -->
             <file name="org-inventory-communications-actions-RefreshLocalCache.shadow">
                 <attr name="originalFile" stringvalue="Actions/System/org-inventory-communications-actions-RefreshLocalCache.instance"/>
                 <attr name="position" intvalue="0"/>

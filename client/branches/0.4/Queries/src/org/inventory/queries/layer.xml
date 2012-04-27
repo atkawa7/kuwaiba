@@ -3,13 +3,6 @@
 <filesystem>
     <folder name="Actions">
         <folder name="Edit">
-            <file name="org-inventory-queries-actions-ShowQueryBuilder.instance">
-                <attr name="delegate" newvalue="org.inventory.queries.actions.ShowQueryBuilder"/>
-                <attr name="displayName" bundlevalue="org.inventory.queries.Bundle#CTL_ShowQueryBuilder"/>
-                <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
-                <attr name="iconBase" stringvalue="org/inventory/queries/res/icon.png"/>
-                <attr name="noIconInMenu" boolvalue="false"/>
-            </file>
             <file name="org-inventory-queries-QueryBuilderAction.instance">
                 <attr name="component" methodvalue="org.inventory.queries.QueryBuilderTopComponent.findInstance"/>
                 <attr name="displayName" bundlevalue="org.inventory.queries.Bundle#CTL_QueryBuilderAction"/>
@@ -57,10 +50,6 @@
     </folder>
     <folder name="Toolbars">
         <folder name="Edit">
-            <file name="org-inventory-queries-actions-ShowQueryBuilder.shadow">
-                <attr name="originalFile" stringvalue="Actions/Edit/org-inventory-queries-actions-ShowQueryBuilder.instance"/>
-                <attr name="displayName" bundlevalue="org.inventory.queries.Bundle#CTL_ShowQueryBuilder"/>
-            </file>
             <file name="QueryBuilderAction.shadow">
                 <attr name="originalFile" stringvalue="Actions/Edit/org-inventory-queries-QueryBuilderAction.instance"/>
                 <attr name="displayName" bundlevalue="org.inventory.queries.Bundle#CTL_ShowQueryBuilder2"/>

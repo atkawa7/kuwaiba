@@ -26,7 +26,7 @@
         </file>
     </folder>
     <folder name="Toolbars">
-        <folder name="View">
+        <folder name="System">
             <file name="org-inventory-core-services-actions-Refresh.shadow">
                 <attr name="originalFile" stringvalue="Actions/View/org-inventory-core-services-actions-RefreshComponent.instance"/>
                 <attr name="position" intvalue="0"/>

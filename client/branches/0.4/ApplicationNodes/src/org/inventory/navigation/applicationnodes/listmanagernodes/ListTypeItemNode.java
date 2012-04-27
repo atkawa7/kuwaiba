@@ -16,10 +16,12 @@
 
 package org.inventory.navigation.applicationnodes.listmanagernodes;
 
+import java.awt.Image;
 import javax.swing.Action;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.listmanagernodes.actions.Delete;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.openide.util.ImageUtilities;
 
 /**
  * Represents a single element within the list as a node
@@ -27,8 +29,13 @@ import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
  */
 public class ListTypeItemNode extends ObjectNode {
 
+    public static final String ICON_PATH="org/inventory/navigation/applicationnodes/res/list-type-item.png";
+    private static Image defaultIcon = ImageUtilities.loadImage(ICON_PATH);
+
     public ListTypeItemNode(LocalObjectLight lol) {
         super(lol,true);
+        this.icon = defaultIcon;
+        
     }
 
     @Override

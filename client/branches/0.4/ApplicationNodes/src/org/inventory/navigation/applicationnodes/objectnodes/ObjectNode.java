@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ import org.openide.util.lookup.Lookups;
 
 /**
  * Represents a node within the navigation tree
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
@@ -81,6 +81,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
     protected Sheet sheet;
     protected Image icon;
+    private Image defaultIcon = ImageUtilities.loadImage(GENERIC_ICON_PATH);;
     private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
 
     public ObjectNode(LocalObjectLight _lol, boolean isLeaf){
@@ -403,8 +404,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     @Override
     public Image getIcon(int i){
         if (icon==null)
-            //TODO: Inefficient, create only one instance to save memory
-            return ImageUtilities.loadImage(GENERIC_ICON_PATH);
+            return defaultIcon;
         return icon;
     }
 
