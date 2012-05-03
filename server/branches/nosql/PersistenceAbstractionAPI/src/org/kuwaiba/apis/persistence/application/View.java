@@ -24,37 +24,61 @@ import java.io.Serializable;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class View implements Serializable{
+    //NOTE: GIS views are not handled here
     /**
-     * Background image
+     * Id for a default view
      */
-    protected byte[] background;
+    public static final int TYPE_DEFAULT = 0;
     /**
-     * Structure as an XML file
+     * Id for a view used for racks
      */
-    protected byte[] structure;
+    public static final int TYPE_RACK = 1;
     /**
-     * View description
+     * Id for a view used in equipment with slots and boards
      */
-    protected String description;
-    /**
-     * What class this view is instance of. call it a "type" (i.e. RackView, DefaultView, etc)
-     */
-    private String viewClass;
+    public static final int TYPE_EQUIPMENT = 2;
 
-    public byte[] getBackground() {
-        return background;
+    private Long id;
+    /**
+     * Relative path pointing to the background image
+     */
+    private String backgroundPath;
+    /**
+     * Structure as an XML document
+     */
+    private byte[] structure;
+    /**
+     * View type (see supported types above)
+     */
+    private int viewType;
+
+    public View(Long id, int viewType) {
+        this.id = id;
+        this.viewType = viewType;
     }
 
-    public void setBackground(byte[] background) {
-        this.background = background;
+    public Long getId() {
+        return id;
     }
 
-    public String getDescription() {
-        return description;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public String getBackgroundPath() {
+        return backgroundPath;
+    }
+
+    public void setBackgroundPath(String backgroundPath) {
+        this.backgroundPath = backgroundPath;
+    }
+
+    public int getViewType() {
+        return viewType;
+    }
+
+    public void setViewType(int viewType) {
+        this.viewType = viewType;
     }
 
     public byte[] getStructure() {
@@ -63,13 +87,5 @@ public class View implements Serializable{
 
     public void setStructure(byte[] structure) {
         this.structure = structure;
-    }
-
-    public String getViewClass() {
-        return viewClass;
-    }
-
-    public void setViewClass(String viewClass) {
-        this.viewClass = viewClass;
     }
 }

@@ -19,6 +19,7 @@ package org.kuwaiba.apis.persistence.interfaces;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
+import org.kuwaiba.apis.persistence.application.View;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -188,4 +189,31 @@ public interface ApplicationEntityManager {
      */
     public List<ClassMetadataLight> getInstanceableListTypes()
             throws MetadataObjectNotFoundException;
+
+    /**
+     * Get a simple view such as the default, rack or equipment
+     * @param oid object's id
+     * @param objectClass object's class
+     * @param viewType type (see class View in the API for all supported types)
+     * @return The associated view (there should be only one of each type). Null if there's none yet
+     * @throws ObjectNotFoundException if the object can not be found
+     * @throws MetadataObjectNotFoundException if the corresponding class metadata can not be found
+     * @throws InvalidArgumentException if the provided view type is not supported
+     */
+    public View getView(Long oid, String objectClass, int viewType)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+
+    /**
+     * Saves/create a view for a given object. If there's already a view of the provided view type, it will be overwritten
+     * @param oid object's oid
+     * @param objectClass object's class
+     * @param viewType view type (See class View for details about the supported types)
+     * @param structure XML document with the view structure (see http://sourceforge.net/apps/mediawiki/kuwaiba/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
+     * @param background background image path/file name
+     * @throws ObjectNotFoundException if the object can not be found
+     * @throws MetadataObjectNotFoundException if the object class can not be found
+     * @throws InvalidArgumentException if the view type is not supported
+     */
+    public void saveView(Long oid, String objectClass, int viewType, byte[] structure, String backgroundPath)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
 }
