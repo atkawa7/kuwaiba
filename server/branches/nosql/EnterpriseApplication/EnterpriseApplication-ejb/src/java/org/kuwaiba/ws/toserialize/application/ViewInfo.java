@@ -16,19 +16,86 @@
 
 package org.kuwaiba.ws.toserialize.application;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.application.View;
+import org.kuwaiba.util.Constants;
 
 /**
- * This is a wrapper class for the entity class ObjectView. It's the object returned
+ * This is a wrapper class for the entity class View (see Persistence Abstraction Layer API docs for details). It's the object returned
  * when a view is requested
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ViewInfo extends View{
+public class ViewInfo{
+    
+    private Long id;
+    private int type;
+    private byte[] background;
+    private byte[] structure;
+
     /**
      * Required by the serializer.
      */
-    public ViewInfo(){}    
+    public ViewInfo(){}
+
+    public ViewInfo(View myView) {
+        this.id = myView.getId();
+        this.type = myView.getViewType();
+        this.structure = myView.getStructure();
+
+        if (myView.getBackgroundPath() != null){
+            try {
+                URL location = new URL(Constants.BASE_URL_FOR_IMAGES+myView.getBackgroundPath());
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                InputStream is = location.openStream();
+                byte[] buf = new byte[4 * 1024]; // 4K buffer
+                int bytesRead;
+                while ((bytesRead = is.read(buf)) != -1)
+                    baos.write(buf, 0, bytesRead);
+
+                this.background = baos.toByteArray();
+                is.close();
+            } catch (MalformedURLException e) {
+            } catch (IOException e) {
+            }
+        }
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public byte[] getBackground() {
+        return background;
+    }
+
+    public void setBackground(byte[] background) {
+        this.background = background;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public byte[] getStructure() {
+        return structure;
+    }
+
+    public void setStructure(byte[] structure) {
+        this.structure = structure;
+    }
 }

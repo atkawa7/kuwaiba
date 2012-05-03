@@ -16,6 +16,7 @@
 
 package org.kuwaiba.beans;
 
+import java.io.FileOutputStream;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -28,6 +29,7 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
+import org.kuwaiba.apis.persistence.application.View;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
@@ -43,6 +45,7 @@ import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.application.UserGroupInfo;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.application.Validator;
+import org.kuwaiba.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.metadata.CategoryInfo;
@@ -1066,7 +1069,45 @@ public class WebServiceBean implements WebServiceBeanRemote {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
-    }// </editor-fold>
+    }
+
+    @Override
+    public ViewInfo getView(Long oid, String objectClass, Integer viewType) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            View myView =  aem.getView(oid, objectClass, viewType);
+            if (myView == null)
+                return null;
+            return new ViewInfo(myView);
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public void saveView(Long oid, String objectClass, int viewType, byte[] structure, byte[] background) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            String backgroundPath = null;
+            if (background != null){
+                FileOutputStream fos = new FileOutputStream("aaa.jpg");
+                fos.write(background);
+                fos.close();
+                backgroundPath = "aaa.jpg";
+            }
+            aem.saveView(oid, objectClass, viewType, structure, backgroundPath);
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+
+
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
 

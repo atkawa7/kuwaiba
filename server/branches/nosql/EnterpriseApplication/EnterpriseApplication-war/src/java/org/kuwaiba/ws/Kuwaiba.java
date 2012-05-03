@@ -31,6 +31,7 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.application.UserGroupInfo;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
+import org.kuwaiba.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
@@ -264,7 +265,64 @@ public class Kuwaiba {
     }
 
     /**
-     * 
+     * This method generates/retrieves the default view for a given object
+     * @param oid Object id for the object
+     * @param objectClass
+     * @param viewType
+     * @param sessionId
+     * @return a view object associated to the given object. If there's no default view, an empty one (all field set to null) is returned
+     * @throws Exception
+     */
+    @WebMethod(operationName = "getView")
+    public ViewInfo getView(@WebParam(name="oid")Long oid,
+            @WebParam(name="objectClass")String objectClass,
+            @WebParam(name="viewType")Integer viewType,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+       try{
+           //sbr.validateCall("getView", getIPAddress(), sessionId);
+                return wsBean.getView(oid, objectClass,viewType);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    /**
+     * Saves/create a view
+     * @param oid Object id
+     * @param objectClass object class
+     * @param viewType View type. Search on the class View (Persistence Abstraction Layer) documentation for supported types
+     * @param structure XML document containing the view structure. Null if you don't want to change the current structure
+     * @param background View background . Null if you don't want to change the current background
+     * @param sessionId Session token
+     * @throws Exception If something -unexpected or not- goes wrong
+     */
+    @WebMethod(operationName = "saveView")
+    public void saveView(@WebParam(name="oid")Long oid,
+            @WebParam(name="objectClass")String objectClass,
+            @WebParam(name="viewType")Integer viewType,
+            @WebParam(name="structure")byte[] structure,
+            @WebParam(name="background")byte[] background,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+           //sbr.validateCall("saveView", getIPAddress(), sessionId);
+           wsBean.saveView(oid, objectClass,viewType, structure, background);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    /**
+     * Creates a list type item
      * @param className
      * @param name
      * @param displayName

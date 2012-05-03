@@ -22,6 +22,14 @@ package org.kuwaiba.util;
  */
 public class Constants {
     /**
+     * Server version
+     */
+    public static final String SERVER_VERSION = "0.4";
+    /**
+     * Base URL to retrieve images (mostly view backgrounds)
+     */
+    public static final String BASE_URL_FOR_IMAGES = "http://localhost:80/kuwaiba/images/";
+    /**
      * Name of the validator to indicate if a given class is a connection
      */
     public static String IS_PHYSICAL_CONNECTION_VALIDATOR = "physicalConnection";

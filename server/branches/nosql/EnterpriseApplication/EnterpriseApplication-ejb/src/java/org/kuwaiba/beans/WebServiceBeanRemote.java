@@ -24,6 +24,7 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.application.UserGroupInfo;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
+import org.kuwaiba.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
@@ -405,6 +406,10 @@ public interface WebServiceBeanRemote {
      */
     public void deleteGroups(Long[] oids)
             throws ServerSideException;
+
+    public ViewInfo getView(Long oid, String objectClass, Integer viewType) throws ServerSideException;
+
+    public void saveView(Long oid, String objectClass, int viewType, byte[] structure, byte[] background) throws ServerSideException;
 
     // </editor-fold>
 
