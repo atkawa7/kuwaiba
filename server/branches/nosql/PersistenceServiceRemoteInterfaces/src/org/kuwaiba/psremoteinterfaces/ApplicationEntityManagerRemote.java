@@ -21,6 +21,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
+import org.kuwaiba.apis.persistence.application.View;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -201,4 +202,10 @@ public interface ApplicationEntityManagerRemote extends Remote{
 
     public void deleteListTypeItem(String className, Long oid, boolean realeaseRelationships)
             throws MetadataObjectNotFoundException, OperationNotPermittedException, ObjectNotFoundException, RemoteException;
+
+    public View getView(Long oid, String objectClass, int viewType)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    public void saveView(Long oid, String objectClass, int viewType, byte[] structure, String backgroundPath)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 }
