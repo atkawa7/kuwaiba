@@ -16,15 +16,14 @@
 
 package org.kuwaiba.persistenceservice.impl;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
+import org.kuwaiba.apis.persistence.application.View;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -65,6 +64,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
      * Name of the index for list type items
      */
     public static final String INDEX_LIST_TYPE_ITEMS = "listTypeItems"; //NOI18N
+    /**
+     * Property "background path" for views
+     */
+    public static final String PROPERTY_BACKGROUND_PATH = "backgroundPath";
+    /**
+     * Property "structure" for views
+     */
+    public static final String PROPERTY_STRUCTURE = "structure";
     /**
      * Graph db service
      */
@@ -520,7 +527,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
              tx.success();
              return newItem.getId();
         }catch(Exception ex){
-            tx.failure();
+            Logger.getLogger("createListTypeItem: "+ex.getMessage()); //NOI18N
+            if (tx != null)
+                tx.failure();
             throw new RuntimeException(ex.getMessage());
         }finally{
             if (tx != null)
@@ -540,8 +549,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
             tx.success();
         }catch(Exception ex){
-            Logger.getLogger("deleteObject: "+ex.getMessage()); //NOI18N
-            tx.failure();
+            Logger.getLogger("deleteListTypeItem: "+ex.getMessage()); //NOI18N
+            if (tx != null)
+                tx.failure();
             throw new RuntimeException(ex.getMessage());
         }finally{
             if (tx != null)
@@ -579,6 +589,60 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
 
         return res;
+    }
+
+    public View getView(Long oid, String objectClass, int viewType) throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+        Node instance = getInstanceOfClass(objectClass, oid);
+
+        for (Relationship rel : instance.getRelationships(RelTypes.HAS_VIEW, Direction.OUTGOING)){
+            Node viewNode = rel.getEndNode();
+            if (((Integer)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE)).intValue() == viewType){
+                View res = new View(viewNode.getId(), viewType);
+                if (viewNode.hasProperty(PROPERTY_BACKGROUND_PATH))
+                    res.setBackgroundPath((String)viewNode.getProperty(PROPERTY_BACKGROUND_PATH));
+                if (viewNode.hasProperty(PROPERTY_STRUCTURE))
+                    res.setStructure((byte[])viewNode.getProperty(PROPERTY_STRUCTURE));
+                return res;
+            }
+        }
+        return null;
+    }
+
+    public void saveView(Long oid, String objectClass, int viewType, byte[] structure, String backgroundPath) throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+        if (oid ==  null || objectClass == null)
+            throw new InvalidArgumentException("The root object does not have any view", Level.INFO);
+        Node instance = getInstanceOfClass(objectClass, oid);
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            Node viewNode = null;
+            for (Relationship rel : instance.getRelationships(RelTypes.HAS_VIEW, Direction.OUTGOING)){
+                if (((Integer)rel.getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE)).intValue() == viewType){
+                    viewNode = rel.getEndNode();
+                    break;
+                }
+            }
+
+            if (viewNode == null){
+                viewNode = graphDb.createNode();
+                viewNode.setProperty(MetadataEntityManagerImpl.PROPERTY_TYPE, viewType);
+                instance.createRelationshipTo(viewNode, RelTypes.HAS_VIEW);
+            }
+            if (structure != null)
+                viewNode.setProperty(PROPERTY_STRUCTURE, structure);
+            if (backgroundPath != null)
+                viewNode.setProperty(PROPERTY_BACKGROUND_PATH, backgroundPath);
+
+            tx.success();
+        }catch (Exception ex){
+            Logger.getLogger("saveView: "+ex.getMessage()); //NOI18N
+            if (tx != null)
+                tx.failure();
+            throw new RuntimeException(ex.getMessage());
+        }finally{
+            if (tx != null)
+                tx.finish();
+        }
     }
 
     //Helpers
