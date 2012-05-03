@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -30,9 +31,10 @@ import javax.swing.border.TitledBorder;
 /**
  * This is the main auth panel which contains the login and password textfields
  * and the connection settings section
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class AuthenticationPanel extends javax.swing.JPanel {
+    private String detailedError;
 
     /** Creates new form AuthenticationPanel */
     public AuthenticationPanel() {
@@ -74,7 +76,6 @@ public class AuthenticationPanel extends javax.swing.JPanel {
         pnlSettingsContainer.getComponent(0).setVisible(false);
         txtUser.setRequestFocusEnabled(true);
         lblError.setVisible(false);
-        lblDetails.setVisible(false);
     }
 
     /** This method is called from within the constructor to
@@ -92,10 +93,12 @@ public class AuthenticationPanel extends javax.swing.JPanel {
         txtUser = new javax.swing.JTextField();
         txtPassword = new javax.swing.JPasswordField();
         lblError = new javax.swing.JLabel();
-        lblDetails = new javax.swing.JLabel();
         pnlSettingsContainer = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
+
+        pnlLogin.setMaximumSize(new java.awt.Dimension(380, 110));
+        pnlLogin.setPreferredSize(new java.awt.Dimension(380, 110));
 
         lblUser.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.lblUser.text")); // NOI18N
 
@@ -110,10 +113,11 @@ public class AuthenticationPanel extends javax.swing.JPanel {
         lblError.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.lblError.text")); // NOI18N
         lblError.setAutoscrolls(true);
         lblError.setFocusable(false);
-
-        lblDetails.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
-        lblDetails.setForeground(new java.awt.Color(0, 0, 204));
-        lblDetails.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.lblDetails.text")); // NOI18N
+        lblError.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblErrorMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlLoginLayout = new javax.swing.GroupLayout(pnlLogin);
         pnlLogin.setLayout(pnlLoginLayout);
@@ -133,10 +137,7 @@ public class AuthenticationPanel extends javax.swing.JPanel {
                         .addContainerGap(37, Short.MAX_VALUE))
                     .addGroup(pnlLoginLayout.createSequentialGroup()
                         .addComponent(lblError, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(360, 360, 360))
-                    .addGroup(pnlLoginLayout.createSequentialGroup()
-                        .addComponent(lblDetails)
-                        .addContainerGap(250, Short.MAX_VALUE))))
+                        .addGap(360, 360, 360))))
         );
         pnlLoginLayout.setVerticalGroup(
             pnlLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -151,9 +152,7 @@ public class AuthenticationPanel extends javax.swing.JPanel {
                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblError, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblDetails)
-                .addGap(12, 12, 12))
+                .addGap(31, 31, 31))
         );
 
         add(pnlLogin, java.awt.BorderLayout.NORTH);
@@ -164,9 +163,12 @@ public class AuthenticationPanel extends javax.swing.JPanel {
         add(pnlSettingsContainer, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void lblErrorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblErrorMouseClicked
+        JOptionPane.showMessageDialog(this, detailedError, "Error", JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_lblErrorMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lblDetails;
     private javax.swing.JLabel lblError;
     private javax.swing.JLabel lblPassword;
     private javax.swing.JLabel lblUser;
@@ -205,10 +207,6 @@ public class AuthenticationPanel extends javax.swing.JPanel {
         return this.lblError;
     }
 
-    public JLabel getLblDetails(){
-        return this.lblDetails;
-    }
-
     public JTextField getTxtUser(){
         return this.txtUser;
     }
@@ -219,5 +217,13 @@ public class AuthenticationPanel extends javax.swing.JPanel {
 
     public ConnectionSettingsPanel getContainedPanel(){
         return (ConnectionSettingsPanel)this.pnlSettingsContainer.getComponent(0);
+    }
+
+    public String getDetailedError() {
+        return detailedError;
+    }
+
+    public void setDetailedError(String detailedError) {
+        this.detailedError = detailedError;
     }
 }

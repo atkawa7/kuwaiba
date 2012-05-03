@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This class represents the elements inside a view as recorded in the database
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@@kuwaiba.org>
  */
 @ServiceProvider(service=LocalObjectView.class)
 public class LocalObjectViewImpl  implements LocalObjectView {
@@ -63,9 +63,9 @@ public class LocalObjectViewImpl  implements LocalObjectView {
      */
     private Image background;
     /**
-     * Type of view (DefaultView, RackView, etc)
+     * Type of view 
      */
-    private String viewClass;
+    private int viewType;
     /**
      * Mark the current view as outdated
      */
@@ -74,9 +74,9 @@ public class LocalObjectViewImpl  implements LocalObjectView {
     public LocalObjectViewImpl() {    }
 
 
-    public LocalObjectViewImpl(byte[] viewStructure, byte[] _background, String viewClass) {
+    public LocalObjectViewImpl(byte[] viewStructure, byte[] _background, int viewType) {
         this.background = Utils.getImageFromByteArray(_background);
-        this.viewClass = viewClass;
+        this.viewType = viewType;
         nodes = new ArrayList<LocalNode>();
         edges = new ArrayList<LocalEdge>();
         labels = new ArrayList<LocalLabel>();
@@ -118,9 +118,10 @@ public class LocalObjectViewImpl  implements LocalObjectView {
         return background;
     }
 
-    public String getViewClass() {
-        return this.viewClass;
+    public int getViewType() {
+        return viewType;
     }
+
     /**
      * Parse the XML document using StAX. Thanks to <a href="http://www.ibm.com/developerworks/java/library/os-ag-renegade15/index.html">Michael Galpin</a>
      * for his ideas on this

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.openide.modules.ModuleInstall;
 /**
  * This installer shows the login window
  * TODO: Inject the user profile into the global lookup
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class Installer extends ModuleInstall {
     private AuthenticationPanel pnlAuthentication;
@@ -97,15 +98,13 @@ public class Installer extends ModuleInstall {
     private void showExceptions(String errorText){
         if (errorText == null)
             errorText = "Unknown Error";
-        //If the message is too long we assigned to the tooltiptext
-        if (errorText.length() > 70){
-            pnlAuthentication.getLblDetails().setToolTipText(errorText);
-            pnlAuthentication.getLblDetails().setVisible(true);
-            pnlAuthentication.getLblError().setText(errorText.substring(0, 50)+"..."); //NOI18n
-        }else{
+        //If the message is too long we better display it on a JOPtionPane
+        if (errorText.length() > 50)
+            pnlAuthentication.getLblError().setText("Error connecting to the server. Click here for further details");
+        else
             pnlAuthentication.getLblError().setText(errorText);
-            pnlAuthentication.getLblDetails().setVisible(false);
-        }
+
+        pnlAuthentication.setDetailedError(errorText);
         pnlAuthentication.getLblError().setVisible(true);
     }
 

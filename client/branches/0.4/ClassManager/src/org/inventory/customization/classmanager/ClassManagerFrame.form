@@ -111,9 +111,9 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnSmallIconChooser" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="txtDescription" alignment="0" pref="526" max="32767" attributes="0"/>
-                          <Component id="txtDisplayName" alignment="0" pref="526" max="32767" attributes="1"/>
-                          <Component id="cmbClass" alignment="0" pref="526" max="32767" attributes="1"/>
+                          <Component id="txtDescription" alignment="0" pref="548" max="32767" attributes="0"/>
+                          <Component id="txtDisplayName" alignment="0" pref="548" max="32767" attributes="1"/>
+                          <Component id="cmbClass" alignment="0" pref="548" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
