@@ -28,7 +28,11 @@ import javax.xml.ws.WebServiceContext;
 import javax.servlet.http.HttpServletRequest;
 import org.kuwaiba.beans.WebServiceBeanRemote;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.ws.todeserialize.TransientQuery;
+import org.kuwaiba.ws.toserialize.application.RemoteQuery;
+import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.UserGroupInfo;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfo;
@@ -98,7 +102,7 @@ public class Kuwaiba {
         }
     }
 
-         /**
+   /**
      * An user list
      * @param sessionId
      * @return An user list
@@ -1261,4 +1265,145 @@ public class Kuwaiba {
         return ((HttpServletRequest)context.getMessageContext().
                     get("javax.xml.ws.servlet.request")).getRemoteAddr().toString(); //NOI18N
     }
+
+    // <editor-fold defaultstate="collapsed" desc="Query methods. Click on the + sign on the left to edit the code.">
+
+    /**
+     * Execute a complex query generated using the Graphical Query Builder.  Please note
+     * that the first record is reserved for the column headers, so and empty result set
+     * will have at least one record.
+     * @param query The TransientQuery object (a code friendly version of the graphical query designed at client side).
+     * @return An array of records
+     * @throws Exception
+     */
+    @WebMethod(operationName = "executeQuery")
+    public ResultRecord[] executeQuery(@WebParam(name="query")TransientQuery query,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            return wsBean.executeQuery(query);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    /**
+     * Creates a query designed using the graphical query editor
+     * @param queryName Query name
+     * @param ownerOid OwnerOid. Null if public
+     * @param queryStructure XML document as a byte array
+     * @param sessionId session id to check permissions
+     * @return a RemoteObjectLight wrapping the newly created query
+     * @throws Exception in case something goes wrong
+     */
+    @WebMethod(operationName = "createQuery")
+    public Long createQuery(@WebParam(name="queryName")String queryName,
+            @WebParam(name="ownerOid")Long ownerOid,
+            @WebParam(name="queryStructure")byte[] queryStructure,
+            @WebParam(name="description")String description,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            //sbr.validateCall("createQuery", getIPAddress(), sessionId);
+            //return new RemoteQueryLight(sbr.createQuery(queryName, ownerOid, queryStructure, description));
+            return wsBean.createQuery(queryName, ownerOid, queryStructure, description);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    /**
+     *
+     * @param queryOid query oid to be updated
+     * @param queryName query name (the same if unchanged)
+     * @param ownerOid owneroid (if unchanged)
+     * @param queryStructure XML document if unchanged
+     * @param sessionId session id to check permissions
+     * @return success or failure
+     * @throws Exception
+     */
+    @WebMethod(operationName = "saveQuery")
+    public void saveQuery(@WebParam(name="queryOid")Long queryOid,
+            @WebParam(name = "queryName")String queryName,
+            @WebParam(name = "ownerOid")Long ownerOid,
+            @WebParam(name = "queryStructure")byte[] queryStructure,
+            @WebParam(name = "description")String description,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.saveQuery(queryOid, queryName, ownerOid, queryStructure, description);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    /**
+     * Deletes a query
+     * @param queryOid query oid to be deleted
+     * @param sessionId session id to check permissions
+     * @return success or failure
+     * @throws Exception
+     */
+    @WebMethod(operationName = "deleteQuery")
+    public void deleteQuery(@WebParam(name="queryOid")Long queryOid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            //sbr.validateCall("deleteQuery", getIPAddress(), sessionId);
+            wsBean.deleteQuery(queryOid);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "getQueries")
+    public RemoteQueryLight[] getQueries(@WebParam(name="showPublic")boolean showPublic,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            //sbr.validateCall("getQueries", getIPAddress(), sessionId);
+            return wsBean.getQueries(showPublic);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "getQuery")
+    public RemoteQuery getQuery(@WebParam(name="queryOid")Long queryOid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            //sbr.validateCall("getQuery", getIPAddress(), sessionId);
+            //return sbr.getQuery(queryOid);
+            return wsBean.getQuery(queryOid);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    // </editor-fold>
 }
