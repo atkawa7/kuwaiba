@@ -19,7 +19,11 @@ package org.kuwaiba.psremoteinterfaces;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import org.kuwaiba.apis.persistence.application.CompactQuery;
+import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
+import org.kuwaiba.apis.persistence.application.ResultRecord;
+import org.kuwaiba.apis.persistence.application.TransientQuery;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.View;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
@@ -103,15 +107,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
      */
     public List<GroupProfile> getGroups()throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
-    /**
-     * Creates a new user
-     * @return The newly created user
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
-    //public UserProfile addUser()throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
-
-    /**
+   /**
      * Set user attributes (group membership is managed using other methods)
      * @param groupName
      * @param description
@@ -124,15 +120,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
     public void setGroupProperties(Long oid, String groupName, String description,
             List<Integer> privileges,  List<Long> users)throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
-    /**
-     * Creates a new group
-     * @return
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
-    //public GroupProfile addGroup()throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
-
-    /**
+   /**
      * Removes a list of users
      * @param oids
      * @throws InvalidArgumentException
@@ -149,28 +137,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
     public void deleteGroups(List<Long> oids)
             throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
-    /**
-     * Assigns groups to a user
-     * @param groupsOids
-     * @param userOid
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
-    //public void addGroupsToUser(List<Long> groupsOids, Long userOid)
-            //throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
-
-    /**
-     * Removes groups to a user
-     * @param groupsOids
-     * @param userOid
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
-    //public void removeGroupsFromUser(List<Long> groupsOids, Long userOid)
-            //throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
-
-
-        /**
+   /**
      * Creates a list type item
      * @param className List type
      * @param name new item's name
@@ -208,4 +175,19 @@ public interface ApplicationEntityManagerRemote extends Remote{
 
     public void saveView(Long oid, String objectClass, int viewType, byte[] structure, String backgroundPath)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    //--
+    public Long createQuery(String queryName, Long ownerOid, byte[] queryStructure,
+            String description) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    public void saveQuery(Long queryOid, String queryName, Long ownerOid, byte[] queryStructure, String description) throws MetadataObjectNotFoundException, RemoteException;
+
+    public void deleteQuery(Long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    public List<CompactQuery> getQueries(boolean showPublic) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    public CompactQuery getQuery(Long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    public List<ResultRecord> executeQuery(TransientQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
 }
