@@ -21,7 +21,11 @@ import javax.ejb.Remote;
 import org.kuwaiba.exceptions.InvalidSessionException;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.ws.todeserialize.TransientQuery;
+import org.kuwaiba.ws.toserialize.application.RemoteQuery;
+import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.UserGroupInfo;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfo;
@@ -326,7 +330,6 @@ public interface WebServiceBeanRemote {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
-
     /**
      * 
      * @param userName
@@ -365,7 +368,6 @@ public interface WebServiceBeanRemote {
      * @return
      * @throws ServerSideException
      */
-
     public UserGroupInfo[] getGroups() throws ServerSideException;
 
     /**
@@ -411,6 +413,22 @@ public interface WebServiceBeanRemote {
 
     public void saveView(Long oid, String objectClass, int viewType, byte[] structure, byte[] background) throws ServerSideException;
 
+    //__________________________________________________________________________
+
+    public ResultRecord[] executeQuery(TransientQuery query) throws ServerSideException;
+
+    public Long createQuery(String queryName, Long ownerOid, byte[] queryStructure,
+            String description) throws ServerSideException;
+
+    public void saveQuery(Long queryOid, String queryName,
+            Long ownerOid, byte[] queryStructure, String description) throws ServerSideException;
+
+    public void deleteQuery(Long queryOid) throws ServerSideException;
+
+    public RemoteQueryLight[] getQueries(boolean showPublic) throws ServerSideException;
+
+    public RemoteQuery getQuery(Long queryOid) throws ServerSideException;
+    
     // </editor-fold>
 
 }
