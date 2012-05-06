@@ -15,9 +15,9 @@
  */
 
 package org.kuwaiba.ws.toserialize.application;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 
 /**
@@ -27,6 +27,22 @@ import org.kuwaiba.apis.persistence.application.CompactQuery;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteQuery extends CompactQuery{
-    
+public class RemoteQuery extends RemoteQueryLight{
+    private byte[] content;
+
+    public RemoteQuery() {
+    }
+
+    public RemoteQuery(CompactQuery query) {
+        super (query.getId(), query.getName(),query.getDescription(),query.getIsPublic());
+        this.content = query.getContent();
+    }
+
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
 }
