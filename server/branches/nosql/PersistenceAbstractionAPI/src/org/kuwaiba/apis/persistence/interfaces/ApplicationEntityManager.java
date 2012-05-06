@@ -17,7 +17,10 @@
 package org.kuwaiba.apis.persistence.interfaces;
 
 import java.util.List;
+import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
+import org.kuwaiba.apis.persistence.application.ResultRecord;
+import org.kuwaiba.apis.persistence.application.TransientQuery;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.View;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
@@ -98,14 +101,6 @@ public interface ApplicationEntityManager {
     public List<GroupProfile> getGroups()throws InvalidArgumentException, ObjectNotFoundException;
 
     /**
-     * Creates a new user
-     * @return The newly created user
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
-    //public UserProfile addUser()throws InvalidArgumentException, ObjectNotFoundException;
-
-    /**
      * Set user attributes (group membership is managed using other methods)
      * @param groupName
      * @param description
@@ -118,15 +113,7 @@ public interface ApplicationEntityManager {
     public void setGroupProperties(Long oid, String groupName, String description,
             List<Integer> privileges, List<Long> users)throws InvalidArgumentException, ObjectNotFoundException;
 
-    /**
-     * Creates a new group
-     * @return
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
-    //public GroupProfile addGroup()throws InvalidArgumentException, ObjectNotFoundException;
-
-    /**
+   /**
      * Removes a list of users
      * @param oids
      * @throws InvalidArgumentException
@@ -142,25 +129,7 @@ public interface ApplicationEntityManager {
      */
     public void deleteGroups(List<Long> oids)throws InvalidArgumentException, ObjectNotFoundException;
 
-    /**
-     * Assigns groups to a user
-     * @param groupsOids
-     * @param userOid
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
-    //public void addGroupsToUser(List<Long> groupsOids, Long userOid)throws InvalidArgumentException, ObjectNotFoundException;
-
-    /**
-     * Removes groups to a user
-     * @param groupsOids
-     * @param userOid
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     */
-    //public void removeGroupsFromUser(List<Long> groupsOids, Long userOid)throws InvalidArgumentException, ObjectNotFoundException;
-
-    /**
+   /**
      * Creates a list type item
      * @param className List type
      * @param name new item's name
@@ -216,4 +185,19 @@ public interface ApplicationEntityManager {
      */
     public void saveView(Long oid, String objectClass, int viewType, byte[] structure, String backgroundPath)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+
+    public Long createQuery(String queryName, Long ownerOid, byte[] queryStructure,
+            String description) throws MetadataObjectNotFoundException, InvalidArgumentException;
+
+    public void saveQuery(Long queryOid, String queryName, Long ownerOid, byte[] queryStructure, String description) throws MetadataObjectNotFoundException;
+
+    public void deleteQuery(Long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException;
+
+    public List<CompactQuery> getQueries(boolean showPublic) throws MetadataObjectNotFoundException, InvalidArgumentException;
+
+    public CompactQuery getQuery(Long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException;
+
+    public List<ResultRecord> executeQuery(TransientQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException;
 }
+
+
