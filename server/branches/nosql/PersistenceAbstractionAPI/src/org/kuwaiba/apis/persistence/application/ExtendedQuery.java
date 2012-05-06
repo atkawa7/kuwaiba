@@ -16,6 +16,7 @@
 
 package org.kuwaiba.apis.persistence.application;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ import java.util.List;
  * The store-friendly can is @CompactQuery.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ExtendedQuery {
+public class ExtendedQuery implements Serializable{
     /**
      * OR logical connector
      */
