@@ -1,24 +1,22 @@
-/*
- *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+/**
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
- *   Licensed under the EPL License, Version 1.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *        http://www.eclipse.org/legal/epl-v10.html
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ *       http://www.eclipse.org/legal/epl-v10.html
  *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kuwaiba.ws.todeserialize;
 
 import java.util.ArrayList;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * This is a representation in a code friendly flavor of a complex query.
@@ -31,7 +29,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
  * one is used only for query execution purposes
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
+
 public class TransientQuery {
     
     /**
@@ -93,6 +91,11 @@ public class TransientQuery {
      */
     private ArrayList<String> visibleAttributeNames;
 
+    /**
+     * Attributes values to be shown in the final result (read this as "SELECT visibleAttributesNames" FROM...).
+     * If this is the master query(see @isJoin) and the it's empty or null, all attributes will be shown; if
+     * this is a join, none will be shown
+     */
     private ArrayList<String> attributeValues;
     /**
      * Equal to, less than, like, etc
@@ -157,5 +160,45 @@ public class TransientQuery {
     }
     public int getPage(){
         return page;
+    }
+
+    public void setAttributeNames(ArrayList<String> attributeNames) {
+        this.attributeNames = attributeNames;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public void setConditions(ArrayList<Integer> conditions) {
+        this.conditions = conditions;
+    }
+
+    public void setJoin(boolean join) {
+        this.join = join;
+    }
+
+    public void setJoins(ArrayList<TransientQuery> joins) {
+        this.joins = joins;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public void setLogicalConnector(int logicalConnector) {
+        this.logicalConnector = logicalConnector;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public void setVisibleAttributeNames(ArrayList<String> visibleAttributeNames) {
+        this.visibleAttributeNames = visibleAttributeNames;
+    }
+
+    public void setAttributeValues(ArrayList<String> attributeValues) {
+        this.attributeValues = attributeValues;
     }
 }
