@@ -21,7 +21,10 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
+import org.kuwaiba.apis.persistence.application.ResultRecord;
+import org.kuwaiba.apis.persistence.application.TransientQuery;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.View;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
@@ -61,6 +64,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
      */
     public static final String INDEX_GROUP = "groupIndex";
     /**
+     * Index name for group nodes
+     */
+    public static final String INDEX_QUERY = "queryIndex";
+    /**
      * Name of the index for list type items
      */
     public static final String INDEX_LIST_TYPE_ITEMS = "listTypeItems"; //NOI18N
@@ -89,6 +96,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
      */
     private Index<Node> groupIndex;
     /**
+     * query index; 
+     */
+    private Index<Node> queryIndex;
+    /**
      * Index for list type items (of all classes)
      */
     private Index<Node> listTypeItemsIndex;
@@ -101,6 +112,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         this.graphDb = (EmbeddedGraphDatabase)cmn.getConnectionHandler();
         this.userIndex = graphDb.index().forNodes(INDEX_USER);
         this.groupIndex = graphDb.index().forNodes(INDEX_GROUP);
+        this.queryIndex = graphDb.index().forNodes(INDEX_QUERY);
         this.classIndex = graphDb.index().forNodes(MetadataEntityManagerImpl.INDEX_CLASS);
         this.listTypeItemsIndex = graphDb.index().forNodes(INDEX_LIST_TYPE_ITEMS);
         this.cm = CacheManager.getInstance();
@@ -376,38 +388,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
-//    public GroupProfile addGroup() throws InvalidArgumentException, ObjectNotFoundException {
-//
-//        Transaction tx = null;
-//        try{
-//            tx = graphDb.beginTx();
-//            GroupProfile newGroup = new GroupProfile();
-//            Random random = new Random();
-//            newGroup.setName("user"+random.nextInt(10000));
-//
-//            Node newGroupNode = graphDb.createNode();
-//
-//            newGroupNode.setProperty(GroupProfile.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-//            newGroupNode.setProperty(GroupProfile.PROPERTY_GROUPNAME, newGroup.getName());
-//
-//            CacheManager.getInstance().putGroup(new GroupProfile(newGroupNode.getId(), newGroup.getName(),
-//                "", (Long)newGroupNode.getProperty(UserProfile.PROPERTY_CREATION_DATE)));
-//
-//            groupIndex.putIfAbsent(newGroupNode, GroupProfile.PROPERTY_ID, newGroupNode.getId());
-//            groupIndex.putIfAbsent(newGroupNode, GroupProfile.PROPERTY_GROUPNAME, newGroup.getName());
-//
-//            tx.success();
-//
-//            return newGroup;
-//
-//        } catch (Exception ex) {
-//            throw new RuntimeException(ex.getMessage());
-//        } finally {
-//            if(tx != null)
-//                tx.finish();
-//        }
-//    }
-
     public void deleteUsers(List<Long> oids) throws InvalidArgumentException, ObjectNotFoundException {
         Transaction tx = null;
         try{
@@ -463,49 +443,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 tx.finish();
         }
     }
-
-//    public void addGroupsToUser(List<Long> groupsOids, Long userOid) throws InvalidArgumentException, ObjectNotFoundException {
-//        Transaction tx = null;
-//        try{
-//            tx = graphDb.beginTx();
-//            Node userNode = userIndex.get(UserProfile.PROPERTY_ID, userOid).getSingle();
-//            for (Long groupIds : groupsOids) {
-//                Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, groupIds).getSingle();
-//                userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
-//            }
-//            tx.success();
-//        } catch (Exception ex) {
-//            throw new RuntimeException(ex.getMessage());
-//        } finally {
-//            if(tx != null)
-//                tx.finish();
-//        }
-//    }
-//
-//    public void removeGroupsFromUser(List<Long> groupsOids, Long userOid) throws InvalidArgumentException, ObjectNotFoundException {
-//        Transaction tx = null;
-//        try{
-//            tx = graphDb.beginTx();
-//            Node userNode = userIndex.get(UserProfile.PROPERTY_ID, userOid).getSingle();
-//            Iterable<Relationship> relationships = userNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.OUTGOING);
-//            for (Relationship relationship : relationships)
-//            {
-//                Node groupNode = relationship.getEndNode();
-//                for (Long groupIds : groupsOids)
-//                {
-//                    if(groupNode.getId() == groupIds)
-//                        relationship.delete();
-//                }
-//            }
-//
-//            tx.success();
-//        } catch (Exception ex) {
-//            throw new RuntimeException(ex.getMessage());
-//        } finally {
-//            if(tx != null)
-//                tx.finish();
-//        }
-//    }
 
     //List type related methods
    public Long createListTypeItem(String className, String name, String displayName)
@@ -666,4 +603,180 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
         throw new ObjectNotFoundException(className, oid);
     }
+
+    //Queries
+    public Long createQuery(String queryName, Long ownerOid, byte[] queryStructure,
+            String description) throws MetadataObjectNotFoundException, InvalidArgumentException{
+
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            Node queryNode =  graphDb.createNode();
+            queryNode.setProperty(CompactQuery.PROPERTY_QUERYNAME, queryName);
+            if(description == null)
+                description = "";
+            queryNode.setProperty(CompactQuery.PROPERTY_DESCRIPTION, description);
+            queryNode.setProperty(CompactQuery.PROPERTY_QUERYSTRUCTURE, queryStructure);
+            queryNode.setProperty(CompactQuery.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+            
+            if(ownerOid != null)
+            {
+                queryNode.setProperty(CompactQuery.PROPERTY_IS_PUBLIC, false);
+                Node userNode = userIndex.get(UserProfile.PROPERTY_ID, ownerOid).getSingle();
+
+                if(userNode != null)
+                    userNode.createRelationshipTo(queryNode, RelTypes.OWNS);
+            }
+            else
+                queryNode.setProperty(CompactQuery.PROPERTY_IS_PUBLIC, true);
+
+
+            queryIndex.putIfAbsent(queryNode, CompactQuery.PROPERTY_QUERYNAME, queryName);
+            queryIndex.putIfAbsent(queryNode, CompactQuery.PROPERTY_ID, queryNode.getId());
+            tx.success();
+            return queryNode.getId();
+
+        }catch(Exception ex){
+            Logger.getLogger("createQuery: "+ex.getMessage()); //NOI18N
+            tx.failure();
+            throw new RuntimeException(ex.getMessage());
+        }finally{
+            if (tx != null)
+                tx.finish();
+        }
+    }
+
+    public void saveQuery(Long queryOid, String queryName, Long ownerOid,
+            byte[] queryStructure, String description) throws MetadataObjectNotFoundException{
+
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            Node queryNode =  queryIndex.get(CompactQuery.PROPERTY_ID, queryOid).getSingle();
+            if(queryNode == null)
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                        "Can not find the query with the id %1s", queryOid));
+
+            queryNode.setProperty(CompactQuery.PROPERTY_QUERYNAME, queryName);
+            if(description == null)
+                description = "";
+            queryNode.setProperty(CompactQuery.PROPERTY_DESCRIPTION, description);
+            queryNode.setProperty(CompactQuery.PROPERTY_QUERYSTRUCTURE, queryStructure);
+            
+            if(ownerOid != null)
+            {
+                queryNode.setProperty(CompactQuery.PROPERTY_IS_PUBLIC, false);
+                Node userNode = userIndex.get(UserProfile.PROPERTY_ID, ownerOid).getSingle();
+                if(userNode == null)
+                    throw new MetadataObjectNotFoundException(Util.formatString(
+                            "Can not find the query with the id %1s", queryOid));
+
+                Relationship singleRelationship = queryNode.getSingleRelationship(RelTypes.OWNS, Direction.INCOMING);
+
+                if(singleRelationship == null)
+                    userNode.createRelationshipTo(queryNode, RelTypes.OWNS);
+            }
+            else
+                queryNode.setProperty(CompactQuery.PROPERTY_IS_PUBLIC, true);
+            tx.success();
+
+        }catch(Exception ex){
+            Logger.getLogger("saveQuery: "+ex.getMessage()); //NOI18N
+            tx.failure();
+            throw new RuntimeException(ex.getMessage());
+        }finally{
+            if (tx != null)
+                tx.finish();
+        }
+    }
+
+    public void deleteQuery(Long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException {
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            Node queryNode =  queryIndex.get(CompactQuery.PROPERTY_ID, queryOid).getSingle();
+            if(queryNode == null)
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                        "Can not find the query with the id %1s", queryOid));
+
+            Iterable<Relationship> relationships = queryNode.getRelationships(RelTypes.OWNS, Direction.INCOMING);
+            for (Relationship relationship : relationships) {
+                relationship.delete();
+            }
+            queryIndex.remove(queryNode);
+            queryNode.delete();
+            tx.success();
+
+        }catch(Exception ex){
+            Logger.getLogger("deleteQuery: "+ex.getMessage()); //NOI18N
+            tx.failure();
+            throw new RuntimeException(ex.getMessage());
+        }finally{
+            if (tx != null)
+                tx.finish();
+        }
+    }
+
+    @Override
+    public List<CompactQuery> getQueries(boolean showPublic) 
+            throws MetadataObjectNotFoundException, InvalidArgumentException
+    {
+        List<CompactQuery> queryList = new ArrayList<CompactQuery>();
+        IndexHits<Node> queries = queryIndex.query(CompactQuery.PROPERTY_QUERYNAME, "*");
+        for (Node queryNode : queries)
+        {
+            CompactQuery cq =  new CompactQuery();
+            cq.setName((String)queryNode.getProperty(CompactQuery.PROPERTY_QUERYNAME));
+            cq.setDescription((String)queryNode.getProperty(CompactQuery.PROPERTY_DESCRIPTION));
+            cq.setContent((byte[])queryNode.getProperty(CompactQuery.PROPERTY_QUERYSTRUCTURE));
+            cq.setIsPublic((Boolean)queryNode.getProperty(CompactQuery.PROPERTY_IS_PUBLIC));
+            cq.setId(queryNode.getId());
+
+            Relationship ownRelationship = queryNode.getSingleRelationship(RelTypes.OWNS, Direction.INCOMING);
+
+            if(ownRelationship != null){
+                Node ownerNode =  ownRelationship.getStartNode();
+                cq.setOwnerId(ownerNode.getId());
+            }
+            
+
+            queryList.add(cq);
+        }//end for
+
+        return queryList;
+    }
+
+    @Override
+    public CompactQuery getQuery(Long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException {
+        
+        CompactQuery cq =  new CompactQuery();
+
+        Node queryNode = queryIndex.get(CompactQuery.PROPERTY_ID, queryOid).getSingle();
+
+        if (queryNode == null){
+             throw new MetadataObjectNotFoundException(Util.formatString(
+                        "Can not find the query with the id %1s", queryOid));
+        }
+                
+        cq.setName((String)queryNode.getProperty(CompactQuery.PROPERTY_QUERYNAME));
+        cq.setDescription((String)queryNode.getProperty(CompactQuery.PROPERTY_DESCRIPTION));
+        cq.setContent((byte[])queryNode.getProperty(CompactQuery.PROPERTY_QUERYSTRUCTURE));
+        cq.setIsPublic((Boolean)queryNode.getProperty(CompactQuery.PROPERTY_IS_PUBLIC));
+        cq.setId(queryNode.getId());
+
+        Relationship ownRelationship = queryNode.getSingleRelationship(RelTypes.OWNS, Direction.INCOMING);
+
+        if(ownRelationship != null){
+            Node ownerNode =  ownRelationship.getStartNode();
+            cq.setOwnerId(ownerNode.getId());
+        }
+
+        return cq;
+    }
+
+    @Override
+    public List<ResultRecord> executeQuery(TransientQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }
