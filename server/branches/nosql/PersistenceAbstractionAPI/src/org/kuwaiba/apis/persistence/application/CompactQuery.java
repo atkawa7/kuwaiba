@@ -16,12 +16,21 @@
 
 package org.kuwaiba.apis.persistence.application;
 
+import java.io.Serializable;
+
 /**
  * The store-friendly version of an ExtendedQuery. Its structure is not meant to be executed, but
  * to be transported and stored
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class CompactQuery {
+public class CompactQuery implements Serializable{
+
+    public static final String PROPERTY_ID = "id"; //NOI18N
+    public static final String PROPERTY_QUERYNAME = "name"; //NOI18N
+    public static final String PROPERTY_DESCRIPTION = "description"; //NOI18N
+    public static final String PROPERTY_QUERYSTRUCTURE = "querystructure"; //NOI18N
+    public static final String PROPERTY_CREATION_DATE = "creationDate"; //NOI18N
+    public static final String PROPERTY_IS_PUBLIC = "ispublic"; //NOI18N
     /**
      * Query id
      */
@@ -37,7 +46,12 @@ public class CompactQuery {
     /**
      * Query owner
      */
-    protected UserProfile owner;
+    protected Long ownerId;
+    
+    /**
+     * Is a public query
+     */
+    protected Boolean isPublic;
     /**
      * Query body
      */
@@ -75,11 +89,20 @@ public class CompactQuery {
         this.name = name;
     }
 
-    public UserProfile getOwner() {
-        return owner;
+    public Long getOwnerId() {
+        return ownerId;
     }
 
-    public void setOwner(UserProfile owner) {
-        this.owner = owner;
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
+
+    public Boolean getIsPublic() {
+        return isPublic;
+    }
+
+    public void setIsPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+ 
 }
