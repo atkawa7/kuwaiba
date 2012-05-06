@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
+import org.kuwaiba.apis.persistence.application.CompactQuery;
+import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.View;
@@ -41,6 +43,9 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
+import org.kuwaiba.ws.todeserialize.TransientQuery;
+import org.kuwaiba.ws.toserialize.application.RemoteQuery;
+import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.application.UserGroupInfo;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
@@ -52,6 +57,7 @@ import org.kuwaiba.ws.toserialize.metadata.CategoryInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.ws.toserialize.application.ResultRecord;
 
 /**
  * Session bean to implement the logic for webservice calls
@@ -1103,6 +1109,84 @@ public class WebServiceBean implements WebServiceBeanRemote {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
+    }
+
+    @Override
+    public Long createQuery(String queryName, Long ownerOid, byte[] queryStructure,
+            String description) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            return aem.createQuery(queryName, ownerOid, queryStructure, description);
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public void saveQuery(Long queryOid, String queryName,
+            Long ownerOid, byte[] queryStructure, String description) throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            aem.saveQuery(queryOid, queryName, ownerOid, queryStructure, description);
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+
+    }
+
+    @Override
+    public void deleteQuery(Long queryOid) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            aem.deleteQuery(queryOid);
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public RemoteQueryLight[] getQueries(boolean showPublic) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            List<CompactQuery> queries = aem.getQueries(showPublic);
+            RemoteQueryLight[] rql =  new RemoteQueryLight[queries.size()];
+            Integer i = 0;
+            for (CompactQuery compactQuery : queries) {
+                rql[i] = new RemoteQueryLight(compactQuery.getId(),
+                        compactQuery.getName(),
+                        compactQuery.getDescription(),
+                        compactQuery.getIsPublic());
+                i++;
+            }
+            return rql;
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public RemoteQuery getQuery(Long queryOid) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            return new RemoteQuery(aem.getQuery(queryOid));
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public ResultRecord[] executeQuery(TransientQuery query) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 
