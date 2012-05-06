@@ -34,6 +34,8 @@ import org.inventory.communications.core.LocalObjectListItemImpl;
 //import org.inventory.communications.core.queries.LocalQueryLightImpl;
 //import org.inventory.communications.core.queries.LocalTransientQueryImpl;
 //import org.inventory.communications.core.views.LocalObjectViewImpl;
+import org.inventory.communications.core.queries.LocalQueryImpl;
+import org.inventory.communications.core.queries.LocalQueryLightImpl;
 import org.inventory.communications.core.LocalUserGroupObjectImpl;
 import org.inventory.communications.core.LocalUserObjectImpl;
 import org.inventory.communications.core.views.LocalObjectViewImpl;
@@ -57,6 +59,7 @@ import org.kuwaiba.wsclient.Kuwaiba;
 import org.kuwaiba.wsclient.KuwaibaService;
 import org.kuwaiba.wsclient.RemoteObject;
 import org.kuwaiba.wsclient.RemoteObjectLight;
+import org.kuwaiba.wsclient.RemoteQueryLight;
 import org.kuwaiba.wsclient.StringArray;
 import org.kuwaiba.wsclient.UserGroupInfo;
 import org.kuwaiba.wsclient.UserInfo;
@@ -640,19 +643,16 @@ public class CommunicationsStub {
      * @param description
      * @return success or failure
      */
-    public LocalQueryLight createQuery(String queryName, byte[] queryStructure, String description, boolean isPublic){
-//        try{
-//            return new LocalQueryLightImpl(port.createQuery(queryName,
-//                                                            isPublic ? null : session.getUserId(),
-//                                                            queryStructure,
-//                                                            description,
-//                                                            session.getSessionId()
-//                                                            ));
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return null;
+    public Long createQuery(String queryName, byte[] queryStructure, String description, boolean isPublic){
+        try{
+//            return new LocalQueryLightImpl(port.createQuery(queryName, isPublic ? null : session.getUserId(), queryStructure, description, session.getSessionId());
+            return port.createQuery(queryName, isPublic ? null : session.getUserId(), queryStructure, description, session.getSessionId());
+            
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
+        //return null;
     }
 
     /**
@@ -661,17 +661,17 @@ public class CommunicationsStub {
      * @return
      */
     public boolean saveQuery(LocalQuery query){
-//        try{
-//            return port.saveQuery(query.getId(),query.getName(),
-//                    query.isPublic() ? null : session.getUserId(),
-//                    query.getStructure(),
-//                    query.getDescription(),
-//                    session.getSessionId());
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return false;
-//        }
-        return false;
+        try{
+            port.saveQuery(query.getId(),query.getName(),
+                    query.isPublic() ? null : session.getUserId(),
+                    query.getStructure(),
+                    query.getDescription(),
+                    session.getSessionId());
+            return  true;
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return false;
+        }
     }
     
     /**
@@ -680,13 +680,13 @@ public class CommunicationsStub {
      * @return success or failure
      */
     public boolean deleteQuery(Long queryId){
-//        try{
-//            return port.deleteQuery(queryId, session.getSessionId());
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return false;
-//        }
-        return false;
+        try{
+            port.deleteQuery(queryId, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return false;
+        }
     }
 
     /**
@@ -696,20 +696,19 @@ public class CommunicationsStub {
      * @return An array with the list of available queries
      */
     public LocalQueryLight[] getQueries(boolean showAll){
-//        try{
-//            List<RemoteQueryLight> queries = port.getQueries(showAll, session.getSessionId());
-//            LocalQueryLightImpl[] res = new LocalQueryLightImpl[queries.size()];
-//            int i = 0;
-//            for (RemoteQueryLight query : queries){
-//                res[i] = new LocalQueryLightImpl(query);
-//                i++;
-//            }
-//            return res;
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return new LocalQueryLight[0];
+        try{
+            List<RemoteQueryLight> queries = port.getQueries(showAll, session.getSessionId());
+            LocalQueryLightImpl[] res = new LocalQueryLightImpl[queries.size()];
+            int i = 0;
+            for (RemoteQueryLight query : queries){
+                res[i] = new LocalQueryLightImpl(query);
+                i++;
+            }
+            return res;
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
     }
 
     /**
@@ -718,13 +717,12 @@ public class CommunicationsStub {
      * @return The query
      */
     public LocalQuery getQuery(Long queryId){
-//        try{
-//            return new LocalQueryImpl(port.getQuery(queryId, session.getSessionId()));
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return null;
+        try{
+            return new LocalQueryImpl(port.getQuery(queryId, session.getSessionId()));
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
     }
 
     /**
