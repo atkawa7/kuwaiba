@@ -123,6 +123,16 @@ public class TransientQuery {
     public TransientQuery() {
     }
 
+    public TransientQuery(String className, int logicalConnector, ArrayList<String> attributeNames, ArrayList<String> visibleAttributeNames, ArrayList<String> attributeValues, ArrayList<Integer> conditions, ArrayList<TransientQuery> joins) {
+        this.className = className;
+        this.logicalConnector = logicalConnector;
+        this.attributeNames = attributeNames;
+        this.visibleAttributeNames = visibleAttributeNames;
+        this.attributeValues = attributeValues;
+        this.conditions = conditions;
+        this.joins = joins;
+    }
+
     public ArrayList<String> getAttributeNames() {
         return attributeNames;
     }
