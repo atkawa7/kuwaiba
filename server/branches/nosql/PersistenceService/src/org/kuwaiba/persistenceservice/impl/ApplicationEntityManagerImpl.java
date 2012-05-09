@@ -19,9 +19,11 @@ package org.kuwaiba.persistenceservice.impl;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
+import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.application.TransientQuery;
@@ -775,7 +777,18 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     }
 
     @Override
-    public List<ResultRecord> executeQuery(TransientQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException {
+    public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException {
+
+        Node classNode =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, query.getClassName()).getSingle();
+        query.getAttributeNames();
+        query.getAttributeValues();
+        query.getConditions();
+        query.getVisibleAttributeNames();
+        query.getPage();
+        query.getLogicalConnector();
+        query.getLimit();
+        query.getConditions();
+
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
