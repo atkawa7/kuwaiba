@@ -23,7 +23,6 @@ import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
-import org.kuwaiba.apis.persistence.application.TransientQuery;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.View;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
@@ -176,18 +175,64 @@ public interface ApplicationEntityManagerRemote extends Remote{
     public void saveView(Long oid, String objectClass, int viewType, byte[] structure, String backgroundPath)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
-    //--
+    /**
+     * Creates a Query
+     * @param queryName
+     * @param ownerOid
+     * @param queryStructure
+     * @param description
+     * @return
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException
+     */
     public Long createQuery(String queryName, Long ownerOid, byte[] queryStructure,
             String description) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
+    /**
+     * Resaves a edited query
+     * @param queryOid
+     * @param queryName
+     * @param ownerOid
+     * @param queryStructure
+     * @param description
+     * @throws MetadataObjectNotFoundException
+     */
     public void saveQuery(Long queryOid, String queryName, Long ownerOid, byte[] queryStructure, String description) throws MetadataObjectNotFoundException, RemoteException;
 
+    /**
+     * Deletes a Query
+     * @param queryOid
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException
+     */
     public void deleteQuery(Long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
+    /**
+     * Gets all queries
+     * @param showPublic
+     * @return
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException
+     */
     public List<CompactQuery> getQueries(boolean showPublic) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
+    /**
+     * Gets a single query
+     * @param queryOid
+     * @return
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException
+     */
     public CompactQuery getQuery(Long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
-    public List<ResultRecord> executeQuery(TransientQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+    /**
+     * Used to perform complex queries. Please note
+     * that the first record is reserved for the column headers, so and empty result set
+     * will have at least one record.
+     * @param myQuery The code-friendly representation of the query made using the graphical query builder
+     * @return a set of objects matching the specified criteria as ResultRecord array
+     * @throws Exception
+     */
+    public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
 }
