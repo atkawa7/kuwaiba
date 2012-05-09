@@ -145,6 +145,16 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             return null;
     }
 
+    public boolean isSubClass(String allegedParent, String classToBeEvaluated) {
+        try {
+            return cm.isSubClass(allegedParent, classToBeEvaluated);
+        } catch (MetadataObjectNotFoundException ex) {
+            return false;
+        }
+    }
+
+
+
     public Long createUser(String userName, String password, String firstName, 
             String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups) 
             throws InvalidArgumentException, ObjectNotFoundException
@@ -699,7 +709,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             Node queryNode =  queryIndex.get(CompactQuery.PROPERTY_ID, queryOid).getSingle();
             if(queryNode == null)
                 throw new MetadataObjectNotFoundException(Util.formatString(
-                        "Can not find the query with the id %1s", queryOid));
+                        "Can not find the query with id %1s", queryOid));
 
             Iterable<Relationship> relationships = queryNode.getRelationships(RelTypes.OWNS, Direction.INCOMING);
             for (Relationship relationship : relationships) {

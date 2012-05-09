@@ -39,4 +39,5 @@ public enum RelTypes implements RelationshipType{
     POSSIBLE_CHILD, //Used to build the containment hierarchy
     HAS_VIEW, //Used to link an object to a particular view
     HAS_HISTORY_ENTRY, //Used to link an object to a particular historic entry
+    RELATED_TO_SPECIAL, //Used to implement the relationships for models
 }

@@ -86,18 +86,21 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         this.objectIndex = graphDb.index().forNodes(INDEX_OBJECTS);
     }
 
-    public Long createObject(String className, String parentClassName, Long parentOid, HashMap<String,String> attributes, Long template)
+    public Long createObject(String className, String parentClassName, Long parentOid, HashMap<String,List<String>> attributes, Long template)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
 
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null)
             throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
 
+        if (myClass.isAbstractClass())
+            throw new OperationNotPermittedException("Create Object", "You can't create objects from an abstract class");
+
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
             throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
 
-        if (!Util.isSubClass("InventoryObject", classNode))
+        if (!cm.isSubClass("InventoryObject", className))
             throw new OperationNotPermittedException("Create Object", "You can't create non-inventory objects using this method");
 
         //The object should be created under an instance other than the dummy root
@@ -106,7 +109,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             if (myParentObjectClass == null)
                 throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
 
-            if (!myParentObjectClass.getPossibleChildren().contains(className))
+            if (!cm.getPossibleChildren(parentClassName).contains(className))
                 throw new OperationNotPermittedException("Create Object", Util.formatString("An instance of class %1s can't be created as child of object with id %2s of class %3s", className, parentOid,myParentObjectClass.getName()));
         }
 
@@ -129,21 +132,51 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
 
             for (AttributeMetadata att : myClass.getAttributes()){
-                if (att.getName().equals(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE))
+                if (att.getName().equals(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE)){
                     newObject.setProperty(att.getName(), Calendar.getInstance().getTimeInMillis());
-                else{
-                    String value = attributes.get(att.getName());
-
-                    if (value != null){
-                        if (att.getMapping() != AttributeMetadata.MAPPING_BINARY){
-
-                            if (att.getMapping() != AttributeMetadata.MAPPING_MANYTOMANY &&
-                                    att.getMapping() != AttributeMetadata.MAPPING_MANYTOONE){
-                                Object actualValue = Util.getRealValue(value, att.getMapping(),att.getType());
-                                newObject.setProperty(att.getName(), actualValue);
+                    continue;
+                }
+                
+                switch (att.getMapping()){
+                    case AttributeMetadata.MAPPING_PRIMITIVE:
+                    case AttributeMetadata.MAPPING_DATE:
+                    case AttributeMetadata.MAPPING_TIMESTAMP:
+                        if (attributes.get(att.getName()) != null){
+                            //If the array is empty, it means the attribute should be set to null
+                            if (!attributes.get(att.getName()).isEmpty()){
+                                if (attributes.get(att.getName()).get(0) != null)
+                                    newObject.setProperty(att.getName(),
+                                            Util.getRealValue(attributes.get(att.getName()).get(0),
+                                            myClass.getAttributeMapping(att.getName()),
+                                            myClass.getType(att.getName())));
                             }
                         }
-                    }
+                    break;
+                    case AttributeMetadata.MAPPING_MANYTOMANY:
+                    case AttributeMetadata.MAPPING_MANYTOONE:
+                        List<Long> listTypeItems = new ArrayList<Long>();
+                        if (!cm.isSubClass("GenericObjectList", att.getType()))
+                            throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", att.getName()), Level.WARNING);
+                        try{
+                            for (String value : attributes.get(att.getName()))
+                                listTypeItems.add(Long.valueOf(value));
+                        }catch(NumberFormatException ex){
+                            throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
+                        }
+                        Node listTypeNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, att.getType()).getSingle();
+                        List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
+
+                        //Create the new relationships
+                        for (Node item : listTypeNodes){
+                            Relationship newRelationship = newObject.createRelationshipTo(item, RelTypes.RELATED_TO);
+                            newRelationship.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, att.getName());
+                        }
+                    break;
+                    default:
+                        tx.failure();
+                        tx.finish();
+                        throw new InvalidArgumentException(
+                            Util.formatString("The attribute %1s is binary so it can't be set using this method. Use setBinaryAttributes instead", att.getName()), Level.WARNING);
                 }
             }
 
@@ -229,7 +262,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         if (classNode == null)
             throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
 
-        //Update the cache if necessary
         ClassMetadata myClass= cm.getClass(className);
 
         Transaction tx = graphDb.beginTx();
@@ -309,10 +341,33 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean setManyToManyAttribute(String className, Long oid, String attributeTypeClassName, String attributeName, List<Long> attributeValues)
-            throws ObjectNotFoundException, OperationNotPermittedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void createSpecialRelationship(String aObjectClass, Long aObjectId, String bObjectClass, Long bObjectId, String name)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+
+        if (!cm.isSubClass("InventoryObject", aObjectClass))
+            throw new OperationNotPermittedException("Create Relationship", Util.formatString("You can't create relationships between non-inventory objects (%1s)",aObjectClass));
+
+        if (!cm.isSubClass("InventoryObject", bObjectClass))
+            throw new OperationNotPermittedException("Create Relationship", Util.formatString("You can't create relationships between non-inventory objects (%1s)",bObjectClass));
+
+        Transaction tx = null;
+        try{
+            Node nodeA = getInstanceOfClass(aObjectClass, aObjectId);
+            Node nodeB = getInstanceOfClass(bObjectClass, bObjectId);
+            Relationship rel = nodeA.createRelationshipTo(nodeB, RelTypes.RELATED_TO_SPECIAL);
+            rel.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, name);
+            tx.success();
+        }catch(Exception ex){
+            Logger.getLogger("createSpecialRelationship: "+ex.getMessage()); //NOI18N
+            tx.failure();
+            throw new RuntimeException(ex.getMessage());
+        }finally{
+            if (tx != null)
+                tx.finish();
+        }
     }
+
+
 
     public void moveObjects(String targetClassName, Long targetOid, HashMap<String, List<Long>> objects)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {

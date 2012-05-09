@@ -34,22 +34,22 @@ import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
  */
 public interface BusinessEntityManager {
     /**
-     *
+     * Creates a new inventory object
      * @param className Name of the class which this object will be instantiated from
      * @param parentClassName Parent object class name
      * @param parentOid Parent's oid
      * @param attributes Attributes to be set by default in the new object. It's a HashMap where the keys are the attribute names and the values, the values for such attributes.
-     * Note that one-to-many and binary type attributes can't be set here
+     * Note that binary type attributes can't be set here.
      * @param template Template id to be used to create the current object. Template values can be
      * overridden if "attributeValues" is not empty
      * @return The object's id
      * @throws MetadataObjectNotFoundException Thrown if the object's class can't be found
      * @throws ObjectNotFoundException Thrown if the parent id is not found
-     * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
+     * @throws OperationNotPermittedException If the update can't be performed due to a format issue
      * @throws InvalidArgumentException If the parent node is malformed.
      */
     public Long createObject(String className, String parentClassName, Long parentOid,
-            HashMap<String,String> attributes,Long template)
+            HashMap<String,List<String>> attributes,Long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException;
     /**
      * Gets the detailed information about an object
@@ -123,21 +123,6 @@ public interface BusinessEntityManager {
                 ArraySizeMismatchException;
 
     /**
-     * Updates an object many-to-one, one-to-many and many-to-may type of attribute.
-     * @param className Object's class name
-     * @param oid Object's oid
-     * @param attributeTypeClassName The class where the values are instance of
-     * @param attributeName The attribute to be updated
-     * @param attributeValues The attribute value(s) (given as oids)
-     * @return Success or failure
-     * @throws MetadataObjectNotFoundException If the object class or the list type class can't be found
-     * @throws ObjectNotFoundException If the object can't be found
-     * @throws OperationNotPermittedException If the update can't be performed due to a business rule
-     */
-    public boolean setManyToManyAttribute(String className, Long oid, String attributeTypeClassName, String attributeName, List<Long> attributeValues)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
-
-    /**
      * Move a list of objects to a new parent: this methods ignores those who can't be moved and raises
      * an OperationNotPermittedException, however, it will move those which can be moved
      * @param objects Map using the object class name as keys and the respective objects oids as values
@@ -201,4 +186,17 @@ public interface BusinessEntityManager {
     public List<ResultRecord> executeQuery()
             throws MetadataObjectNotFoundException;
 
+    /**
+     * Creates a relationship between two elements and labels it
+     * @param aObjectClass a side object class
+     * @param aObjectId a side object id
+     * @param bObjectClass b side object class
+     * @param bObjectId b side object id
+     * @param name Name to label the new relationship
+     * @throws ObjectNotFoundException If any of the objects can't be found
+     * @throws OperationNotPermittedException if any of the objects involved can't be connected (i.e. if it's not an inventory object)
+     * @throws MetadataObjectNotFoundException if any of the classes provided can not be found
+     */
+    public void createSpecialRelationship(String aObjectClass, Long aObjectId, String bObjectClass, Long bObjectId, String name)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException;
 }

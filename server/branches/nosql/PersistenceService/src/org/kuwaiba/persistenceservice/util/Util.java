@@ -36,6 +36,7 @@ import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
+import org.kuwaiba.persistenceservice.impl.BusinessEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.neo4j.graphdb.Direction;
@@ -161,7 +162,8 @@ public class Util {
 
         for (Relationship rel : instance.getRelationships())
             rel.delete();
-        
+
+        instance.getGraphDatabase().index().forNodes(BusinessEntityManagerImpl.INDEX_OBJECTS).remove(instance);
         instance.delete();
     }
 
