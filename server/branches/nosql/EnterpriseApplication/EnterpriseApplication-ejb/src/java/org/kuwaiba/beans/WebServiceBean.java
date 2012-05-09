@@ -82,10 +82,24 @@ public class WebServiceBean implements WebServiceBeanRemote {
      * Hashmap with the current sessions. The key is the username, the value is the respective session object
      */
     private HashMap<String, Session> sessions;
+    /**
+     * Hard-coded (for now) valid mappings for physical connections (this is, instances of what classes can be connected each other -i.e. ports with GenericPhysicalLink instances- )
+     * They key is the connecting element (say WireContainer) and the value is a list with the pairs of elements that can be connected
+     */
+    private HashMap<String, List<String[]>> physicalConnectionMappings;
 
     public WebServiceBean() {
         super();
         sessions = new HashMap<String, Session>();
+        physicalConnectionMappings = new HashMap<String, List<String[]>>();
+        List<String[]> links = new ArrayList<String[]>();
+        links.add(new String[]{"GenericPort", "GenericPort"});
+        physicalConnectionMappings.put("GenericPhysicalLink", links);
+
+        List<String[]> containers = new ArrayList<String[]>();
+        containers.add(new String[]{"GenericLocation", "GenericLocation"});
+        physicalConnectionMappings.put("GenericPhysicalContainer", links);
+
         try{
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
             mem = (MetadataEntityManagerRemote) registry.lookup(MetadataEntityManagerRemote.REFERENCE_MEM);
@@ -838,16 +852,16 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public Long createObject(String className, String parentClassName, Long parentOid, String[] attributeNames,
-            String[] attributeValues, Long template) throws ServerSideException{
+            String[][] attributeValues, Long template) throws ServerSideException{
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         if (attributeNames.length != attributeValues.length)
             throw new ServerSideException(Level.SEVERE, "Attribute names and attribute values arrays sizes doesn't match");
 
         try {
-            HashMap<String,String> attributes = new HashMap<String, String>();
+            HashMap<String,List<String>> attributes = new HashMap<String, List<String>>();
             for (int i = 0; i < attributeNames.length; i++)
-                attributes.put(attributeNames[i], attributeValues[i]);
+                attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
 
             return bem.createObject(className, parentClassName, parentOid,attributes, template);
         } catch (Exception ex) {
@@ -940,7 +954,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public ClassInfoLight[] getInstanceableListTypes() throws ServerSideException{
-        if (bem == null)
+        if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
 
         try {
@@ -954,6 +968,48 @@ public class WebServiceBean implements WebServiceBeanRemote {
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
+
+    @Override
+    public Long createPhysicalConnection(String aObjectClass, Long aObjectId,
+            String bObjectClass, Long bObjectId, String parentClass, Long parentId,
+            String[] attributeNames, String[][] attributeValues, String connectionClass) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+
+        if (attributeNames.length != attributeValues.length)
+            throw new ServerSideException(Level.SEVERE, "Attribute names and attribute values arrays sizes doesn't match");
+
+        HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
+        for (int i = 0; i < attributeValues.length; i++)
+            attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
+
+        Long newConnectionId = null;
+        try {
+            newConnectionId = bem.createObject(connectionClass, parentClass, parentId, attributes, null);
+            bem.createSpecialRelationship(aObjectClass, aObjectId, connectionClass, newConnectionId, "aPhysicalConnection");
+            bem.createSpecialRelationship(bObjectClass, bObjectId, connectionClass, newConnectionId, "bPhysicalConnection");
+            return newConnectionId;
+        } catch (Exception ex) {
+            //If the new connection was successfully created, but there's a problem creating the relationships, 
+            //delete the connection and throw an exception
+            if (newConnectionId != null)
+                deleteObjects(new String[]{connectionClass}, new Long[]{newConnectionId}, true);
+            
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deletePhysicalConnection(String objectClass, Long objectId) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Models
+     */
+    //Physical connections
+
 
     // </editor-fold>
 

@@ -311,7 +311,7 @@ public interface WebServiceBeanRemote {
 
     public void updateObject(String className, Long oid, String[] attributeNames, String[][] attributeValues) throws ServerSideException;
 
-    public Long createObject(String className, String parentClassName, Long parentOid, String[] attributeNames, String[] attributeValues, Long templateId) throws ServerSideException;
+    public Long createObject(String className, String parentClassName, Long parentOid, String[] attributeNames, String[][] attributeValues, Long templateId) throws ServerSideException;
 
     public Long createListTypeItem(String className, String name, String displayName) throws ServerSideException;
 
@@ -326,7 +326,13 @@ public interface WebServiceBeanRemote {
     public void moveObjects(String targetClass, Long targetOid, String[] objectClasses, Long[] objectOids) throws ServerSideException;
 
     public Long[] copyObjects(String targetClass, Long targetOid, String[] templateClasses, Long[] templateOids, boolean recursive) throws ServerSideException;
-   
+
+    /**
+     * Models
+     */
+    //Physical connections
+    public Long createPhysicalConnection(String aObjectClass, Long aObjectId, String bObjectClass, Long bObjectId, String parentClass, Long parentId, String[] attributeNames, String[][] attributeValues, String connectionClass) throws ServerSideException;
+    public void deletePhysicalConnection(String objectClass, Long objectId) throws ServerSideException;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
@@ -428,6 +434,8 @@ public interface WebServiceBeanRemote {
     public RemoteQueryLight[] getQueries(boolean showPublic) throws ServerSideException;
 
     public RemoteQuery getQuery(Long queryOid) throws ServerSideException;
+
+    
     
     // </editor-fold>
 

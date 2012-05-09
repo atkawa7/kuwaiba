@@ -777,7 +777,7 @@ public class Kuwaiba {
             @WebParam(name = "parentObjectClassName")String parentObjectClassName,
             @WebParam(name = "parentOid")Long parentOid,
             @WebParam(name = "attributeNames")String[] attributeNames,
-            @WebParam(name = "attributeValues")String[] attributeValues,
+            @WebParam(name = "attributeValues")String[][] attributeValues,
             @WebParam(name = "templateId")Long templateId,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
@@ -869,7 +869,68 @@ public class Kuwaiba {
             @WebParam(name = "recursive")Boolean recursive,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            //sbr.validateCall("copyObjects", getIPAddress(), sessionId);
            return wsBean.copyObjects(targetClass,targetOid, objectClasses, objectOids, recursive);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    /**
+     * Models
+     */
+
+    //Physical connections
+    /**
+     * Creates a physical connection (a container or a link). The validations are made at server side (this is,
+     * if the connection can be established between the two endpoints, if they're not already connected, etc)
+     * @param aObjectClass "a" endpoint object class
+     * @param aObjectId "a" endpoint object id
+     * @param bObjectClass "b" endpoint object class
+     * @param bObjectId "b" endpoint object id
+     * @param connectionClass Class used to create the connection. See Constants class for supported values
+     * @param sessionId Session token
+     * @return The new connection id
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "createPhysicalConnection")
+    public Long createPhysicalConnection(
+            @WebParam(name = "aObjectClass")String aObjectClass,
+            @WebParam(name = "aObjectId")Long aObjectId,
+            @WebParam(name = "bObjectClass")String bObjectClass,
+            @WebParam(name = "bObjectId")Long bObjectId,
+            @WebParam(name = "parentClass")String parentClass,
+            @WebParam(name = "parentId")Long parentId,
+            @WebParam(name = "attributeNames")String[] attributeNames,
+            @WebParam(name = "attributeValues")String[][] attributeValues,
+            @WebParam(name = "connectionClass") String connectionClass,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            //sbr.validateCall("createPhysicalConnection", getIPAddress(), sessionId);
+           return wsBean.createPhysicalConnection(aObjectClass, aObjectId,bObjectClass, bObjectId,
+                   parentClass, parentId, attributeNames, attributeValues, connectionClass);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "deletePhysicalConnection")
+    public void deletePhysicalConnection(
+            @WebParam(name = "objectClass")String objectClass,
+            @WebParam(name = "objectId")Long objectId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            //sbr.validateCall("deletePhysicalConnection", getIPAddress(), sessionId);
+           wsBean.deletePhysicalConnection(objectClass, objectId);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
