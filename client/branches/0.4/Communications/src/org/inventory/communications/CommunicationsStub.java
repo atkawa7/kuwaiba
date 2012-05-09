@@ -29,11 +29,11 @@ import org.inventory.communications.core.LocalClassMetadataLightImpl;
 import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.communications.core.LocalObjectLightImpl;
 import org.inventory.communications.core.LocalObjectListItemImpl;
-//import org.inventory.communications.core.queries.LocalResultRecordImpl;
-//import org.inventory.communications.core.queries.LocalQueryImpl;
-//import org.inventory.communications.core.queries.LocalQueryLightImpl;
-//import org.inventory.communications.core.queries.LocalTransientQueryImpl;
-//import org.inventory.communications.core.views.LocalObjectViewImpl;
+import org.inventory.communications.core.queries.LocalResultRecordImpl;
+import org.inventory.communications.core.queries.LocalQueryImpl;
+import org.inventory.communications.core.queries.LocalQueryLightImpl;
+import org.inventory.communications.core.queries.LocalTransientQueryImpl;
+import org.inventory.communications.core.views.LocalObjectViewImpl;
 import org.inventory.communications.core.queries.LocalQueryImpl;
 import org.inventory.communications.core.queries.LocalQueryLightImpl;
 import org.inventory.communications.core.LocalUserGroupObjectImpl;
@@ -60,7 +60,9 @@ import org.kuwaiba.wsclient.KuwaibaService;
 import org.kuwaiba.wsclient.RemoteObject;
 import org.kuwaiba.wsclient.RemoteObjectLight;
 import org.kuwaiba.wsclient.RemoteQueryLight;
+import org.kuwaiba.wsclient.ResultRecord;
 import org.kuwaiba.wsclient.StringArray;
+import org.kuwaiba.wsclient.TransientQuery;
 import org.kuwaiba.wsclient.UserGroupInfo;
 import org.kuwaiba.wsclient.UserInfo;
 import org.kuwaiba.wsclient.ViewInfo;
@@ -619,21 +621,21 @@ public class CommunicationsStub {
      * @return an array with results
      */
     public LocalResultRecord[] executeQuery(LocalTransientQuery query){
-//        try{
-//            TransientQuery remoteQuery = LocalTransientQueryImpl.toTransientQuery(query);
-//            List<ResultRecord> myResult = port.executeQuery(remoteQuery,session.getSessionId());
-//            LocalResultRecordImpl[] res = new LocalResultRecordImpl[myResult.size()];
-//            //The first record is used to store the table headers
-//            res[0] = new LocalResultRecordImpl(null, myResult.get(0).getExtraColumns());
-//            for (int i = 1; i<res.length ; i++)
-//                res[i] = new LocalResultRecordImpl(
-//                        new LocalObjectLightImpl(myResult.get(i).getObject()), myResult.get(i).getExtraColumns());
-//            return res;
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return null;
+        try{
+            TransientQuery remoteQuery = LocalTransientQueryImpl.toTransientQuery(query);
+            List<ResultRecord> myResult = port.executeQuery(remoteQuery,session.getSessionId());
+            LocalResultRecordImpl[] res = new LocalResultRecordImpl[myResult.size()];
+            //The first record is used to store the table headers
+            res[0] = new LocalResultRecordImpl(null, myResult.get(0).getExtraColumns());
+            for (int i = 1; i<res.length ; i++)
+                res[i] = new LocalResultRecordImpl(
+                        new LocalObjectLightImpl(myResult.get(i).getObject()), myResult.get(i).getExtraColumns());
+            return res;
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
+        //return null;
     }
 
     /**
