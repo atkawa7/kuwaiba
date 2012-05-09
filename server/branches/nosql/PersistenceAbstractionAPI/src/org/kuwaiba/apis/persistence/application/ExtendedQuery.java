@@ -108,6 +108,20 @@ public class ExtendedQuery implements Serializable{
      */
     private int page = 1;
 
+    public ExtendedQuery() {
+    }
+
+    public ExtendedQuery(String className, int logicalConnector, List<String> attributeNames,
+            List<String> visibleAttributeNames, List<String> attributeValues, List<Integer> conditions, List<ExtendedQuery> joins) {
+        this.className = className;
+        this.logicalConnector = logicalConnector;
+        this.attributeNames = attributeNames;
+        this.visibleAttributeNames = visibleAttributeNames;
+        this.attributeValues = attributeValues;
+        this.conditions = conditions;
+        this.joins = joins;
+    }
+
     public List<String> getAttributeNames() {
         return attributeNames;
     }
