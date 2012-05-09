@@ -1186,7 +1186,27 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     @Override
     public ResultRecord[] executeQuery(TransientQuery query) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            ExtendedQuery eq = new ExtendedQuery(query.getClassName(), query.getLogicalConnector(),
+                    query.getAttributeNames(), query.getVisibleAttributeNames(), query.getAttributeValues(), query.getConditions(), null);
+
+            
+            List<org.kuwaiba.apis.persistence.application.ResultRecord> rrList = aem.executeQuery(eq);
+            ResultRecord[] rrArray = new ResultRecord[rrList.size()];
+            int i = 0;
+            for (org.kuwaiba.apis.persistence.application.ResultRecord rrApi : rrList)
+            {
+                RemoteObjectLight rol = new RemoteObjectLight(rrApi.getId(), rrApi.getName(), rrApi.getClassName());
+                rrArray[i] = new ResultRecord(rol, (ArrayList<String>) rrApi.getExtraColumns());
+                i++;
+            }
+            return rrArray;
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
     }
 
 
