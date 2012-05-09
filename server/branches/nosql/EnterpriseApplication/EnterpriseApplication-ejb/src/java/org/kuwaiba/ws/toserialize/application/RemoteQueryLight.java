@@ -24,6 +24,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteQueryLight{
 
+    /**
+     * Object id
+     */
     protected Long oid;
     private String name;
     private String description;
@@ -31,6 +34,7 @@ public class RemoteQueryLight{
 
     public RemoteQueryLight() {
     }
+
 
     public RemoteQueryLight(Long id, String name, String description, boolean isPublic) {
         this.oid = id;
