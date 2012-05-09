@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -24,19 +24,20 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.SharedInformation;
-import org.inventory.core.services.api.LocalObject;
+import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.LocalObjectListItem;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
-import org.openide.util.Lookup;
 
-// An example action demonstrating how the wizard could be called from within
-// your code. You can copy-paste the code below wherever you need.
+/**
+ * Connection wizard
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ */
 public final class ConnectionWizardWizardAction implements ActionListener {
 
     private WizardDescriptor.Panel[] panels;
     private ConnectionWizard myWizard;
-    private LocalObject newConnection;
+    private LocalObjectLight newConnection;
 
     public ConnectionWizardWizardAction(ConnectionWizard myWizard) {
         this.myWizard = myWizard;
@@ -55,24 +56,27 @@ public final class ConnectionWizardWizardAction implements ActionListener {
         dialog.toFront();
         boolean cancelled = wizardDescriptor.getValue() != WizardDescriptor.FINISH_OPTION;
         if (!cancelled) {
+            String aSideClass = (String)wizardDescriptor.getProperty("aSideClass");
             Long aSide = (Long)wizardDescriptor.getProperty("aSide");
+            String bSideClass = (String)wizardDescriptor.getProperty("bSideClass");
             Long bSide = (Long)wizardDescriptor.getProperty("bSide");
             String name = (String)wizardDescriptor.getProperty("name");
             LocalObjectListItem type = (LocalObjectListItem)wizardDescriptor.getProperty("type");
-            if (myWizard.getWizardType() == ConnectionWizard.WIZARDTYPE_CONTAINERS)
-                newConnection = CommunicationsStub.getInstance().createPhysicalContainerConnection(
-                    aSide,
-                    bSide,
-                    myWizard.getConnectionClass(),
-                    myWizard.getConnectionParent());
-            else
-                newConnection = CommunicationsStub.getInstance().createPhysicalConnection(
-                    aSide,
-                    bSide,
-                    myWizard.getConnectionClass(),
-                    myWizard.getConnectionParent());
-            if (setConnectionDetails(newConnection.getOid(), name, type))
+            newConnection = CommunicationsStub.getInstance().createPhysicalConnection(
+                aSideClass,
+                aSide,
+                bSideClass,
+                bSide,
+                myWizard.getConnectionParent().getClassName(),
+                myWizard.getConnectionParent().getOid(),
+                name,
+                type.getOid().toString(),
+                myWizard.getConnectionClass());
+
+            if (newConnection != null)
                 JOptionPane.showMessageDialog(null, "The object was successfully created","New Connection",JOptionPane.INFORMATION_MESSAGE);
+            else
+                JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(),"New Connection",JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -115,29 +119,7 @@ public final class ConnectionWizardWizardAction implements ActionListener {
         return "Physical Connection Wizard";
     }
 
-    public LocalObject getNewConnection() {
-        return this.newConnection;
-    }
-
-    public boolean setConnectionDetails(Long oid, String name, LocalObjectListItem type){
-        try{
-            LocalObject update = Lookup.getDefault().lookup(LocalObject.class);
-            update.setLocalObject(myWizard.getConnectionClass(),
-                    new String[]{"name","type"}, new Object[]{name,type.getOid()});
-            
-            update.setOid(oid);
-            
-            if(!CommunicationsStub.getInstance().saveObject(update)){
-                JOptionPane.showMessageDialog(null, "The object could not be updated \n"+CommunicationsStub.getInstance().getError(),
-                        "New Connection",JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
-            newConnection = update;
-            
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(null, "The object could not be updated","New Connection",JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        return true;
+    public LocalObjectLight getNewConnection() {
+        return newConnection;
     }
 }

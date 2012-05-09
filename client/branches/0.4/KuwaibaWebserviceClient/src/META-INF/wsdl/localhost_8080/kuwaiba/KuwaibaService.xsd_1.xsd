@@ -44,6 +44,10 @@
 
 <xs:element name="createObjectResponse" type="tns:createObjectResponse"/>
 
+<xs:element name="createPhysicalConnection" type="tns:createPhysicalConnection"/>
+
+<xs:element name="createPhysicalConnectionResponse" type="tns:createPhysicalConnectionResponse"/>
+
 <xs:element name="createSession" type="tns:createSession"/>
 
 <xs:element name="createSessionResponse" type="tns:createSessionResponse"/>
@@ -71,6 +75,10 @@
 <xs:element name="deleteObjects" type="tns:deleteObjects"/>
 
 <xs:element name="deleteObjectsResponse" type="tns:deleteObjectsResponse"/>
+
+<xs:element name="deletePhysicalConnection" type="tns:deletePhysicalConnection"/>
+
+<xs:element name="deletePhysicalConnectionResponse" type="tns:deletePhysicalConnectionResponse"/>
 
 <xs:element name="deleteUsers" type="tns:deleteUsers"/>
 
@@ -377,6 +385,27 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="createPhysicalConnection">
+<xs:sequence>
+<xs:element name="aObjectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="aObjectId" type="xs:long" minOccurs="0"/>
+<xs:element name="bObjectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="bObjectId" type="xs:long" minOccurs="0"/>
+<xs:element name="parentClass" type="xs:string" minOccurs="0"/>
+<xs:element name="parentId" type="xs:long" minOccurs="0"/>
+<xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="attributeValues" type="ns1:stringArray" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="connectionClass" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createPhysicalConnectionResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="saveView">
 <xs:sequence>
 <xs:element name="oid" type="xs:long" minOccurs="0"/>
@@ -398,7 +427,7 @@
 <xs:element name="parentObjectClassName" type="xs:string" minOccurs="0"/>
 <xs:element name="parentOid" type="xs:long" minOccurs="0"/>
 <xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="attributeValues" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="attributeValues" type="ns1:stringArray" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="templateId" type="xs:long" minOccurs="0"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
@@ -762,6 +791,18 @@
 </xs:complexType>
 
 <xs:complexType name="deleteGroupsResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="deletePhysicalConnection">
+<xs:sequence>
+<xs:element name="objectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="objectId" type="xs:long" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deletePhysicalConnectionResponse">
 <xs:sequence/>
 </xs:complexType>
 

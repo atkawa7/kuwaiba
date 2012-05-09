@@ -40,6 +40,12 @@
 <message name="createObjectResponse">
 <part name="parameters" element="tns:createObjectResponse"/>
 </message>
+<message name="copyObjects">
+<part name="parameters" element="tns:copyObjects"/>
+</message>
+<message name="copyObjectsResponse">
+<part name="parameters" element="tns:copyObjectsResponse"/>
+</message>
 <message name="createUser">
 <part name="parameters" element="tns:createUser"/>
 </message>
@@ -160,12 +166,6 @@
 <message name="moveObjectsResponse">
 <part name="parameters" element="tns:moveObjectsResponse"/>
 </message>
-<message name="copyObjects">
-<part name="parameters" element="tns:copyObjects"/>
-</message>
-<message name="copyObjectsResponse">
-<part name="parameters" element="tns:copyObjectsResponse"/>
-</message>
 <message name="updateObject">
 <part name="parameters" element="tns:updateObject"/>
 </message>
@@ -177,6 +177,18 @@
 </message>
 <message name="getInstanceableListTypesResponse">
 <part name="parameters" element="tns:getInstanceableListTypesResponse"/>
+</message>
+<message name="createPhysicalConnection">
+<part name="parameters" element="tns:createPhysicalConnection"/>
+</message>
+<message name="createPhysicalConnectionResponse">
+<part name="parameters" element="tns:createPhysicalConnectionResponse"/>
+</message>
+<message name="deletePhysicalConnection">
+<part name="parameters" element="tns:deletePhysicalConnection"/>
+</message>
+<message name="deletePhysicalConnectionResponse">
+<part name="parameters" element="tns:deletePhysicalConnectionResponse"/>
 </message>
 <message name="getUsers">
 <part name="parameters" element="tns:getUsers"/>
@@ -300,6 +312,11 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectResponse" message="tns:createObjectResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObject/Fault/Exception"/>
 </operation>
+<operation name="copyObjects">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsRequest" message="tns:copyObjects"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsResponse" message="tns:copyObjectsResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjects/Fault/Exception"/>
+</operation>
 <operation name="createUser">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createUserRequest" message="tns:createUser"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createUserResponse" message="tns:createUserResponse"/>
@@ -400,11 +417,6 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/moveObjectsResponse" message="tns:moveObjectsResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/moveObjects/Fault/Exception"/>
 </operation>
-<operation name="copyObjects">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsRequest" message="tns:copyObjects"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsResponse" message="tns:copyObjectsResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjects/Fault/Exception"/>
-</operation>
 <operation name="updateObject">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/updateObjectRequest" message="tns:updateObject"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/updateObjectResponse" message="tns:updateObjectResponse"/>
@@ -414,6 +426,16 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getInstanceableListTypesRequest" message="tns:getInstanceableListTypes"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getInstanceableListTypesResponse" message="tns:getInstanceableListTypesResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getInstanceableListTypes/Fault/Exception"/>
+</operation>
+<operation name="createPhysicalConnection">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createPhysicalConnectionRequest" message="tns:createPhysicalConnection"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createPhysicalConnectionResponse" message="tns:createPhysicalConnectionResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createPhysicalConnection/Fault/Exception"/>
+</operation>
+<operation name="deletePhysicalConnection">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deletePhysicalConnectionRequest" message="tns:deletePhysicalConnection"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deletePhysicalConnectionResponse" message="tns:deletePhysicalConnectionResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deletePhysicalConnection/Fault/Exception"/>
 </operation>
 <operation name="getUsers">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getUsersRequest" message="tns:getUsers"/>
@@ -558,6 +580,18 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="copyObjects">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="createUser">
 <soap:operation soapAction=""/>
 <input>
@@ -798,18 +832,6 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="copyObjects">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
 <operation name="updateObject">
 <soap:operation soapAction=""/>
 <input>
@@ -823,6 +845,30 @@
 </fault>
 </operation>
 <operation name="getInstanceableListTypes">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="createPhysicalConnection">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="deletePhysicalConnection">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

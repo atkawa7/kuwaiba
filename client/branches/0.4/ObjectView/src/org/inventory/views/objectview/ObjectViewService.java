@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ import org.openide.util.Utilities;
 
 /**
  * Contains the business logic for the associated TopComponent
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ObjectViewService implements LookupListener{
     
@@ -208,7 +208,7 @@ public class ObjectViewService implements LookupListener{
                 vrtc.getScene().getCurrentObject().getClassName(),SharedInformation.CLASS_GENERICCONNECTION);
         
         List<LocalObjectLight> currentNodes = new ArrayList<LocalObjectLight>();
-        List<LocalObject> currentEdges = new ArrayList<LocalObject>();
+        List<LocalObjectLight> currentEdges = new ArrayList<LocalObjectLight>();
 
         for (Widget widget : vrtc.getScene().getNodesLayer().getChildren())
             currentNodes.add(((ObjectNodeWidget)widget).getObject());

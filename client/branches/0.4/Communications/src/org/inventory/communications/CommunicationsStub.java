@@ -321,7 +321,7 @@ public class CommunicationsStub {
 
     public LocalObjectLight createObject(String objectClass, String parentClass, Long parentOid, Long template){
         try{
-            Long objectId  = port.createObject(objectClass,parentClass, parentOid, new ArrayList<String>(),new ArrayList<String>(),template,this.session.getSessionId());
+            Long objectId  = port.createObject(objectClass,parentClass, parentOid, new ArrayList<String>(),new ArrayList<StringArray>(),template,this.session.getSessionId());
             return new LocalObjectLightImpl(objectId, null, objectClass);
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -994,35 +994,34 @@ public class CommunicationsStub {
     }
 
     /**
-     * Creates a physical connection (cable, fiber optics)
-     * @param sourceNode source object oid
-     * @param targetNode target object oid
-     * @param connectionClass container class
-     * @param parentOid container parent oid
-     * @return The object containing
+     * Creates a physical link (cable, fiber optics, mw link) or container (pipe, conduit, ditch)
+     * @param endpointAClass source object class name
+     * @param endpointAId source object oid
+     * @param endpointBClass target object class name
+     * @param endpointBId target object oid
+     * @param parentClass connection's parent class
+     * @param parentId connection's parent id
+     * @param connectionClass Class for the corresponding connection to be created
+     * @return A local object light representing the new connection
      */
-    public LocalObject createPhysicalConnection(Long endpointA, Long endpointB, String connectionClass, Long parentOid) {
-//        try{
-//            RemoteObject myObject = port.createPhysicalConnection(endpointA,endpointB,connectionClass,parentOid,this.session.getSessionId());
-//            LocalClassMetadata lcmd = getMetaForClass(myObject.getClassName(), false);
-//            return new LocalObjectImpl(myObject, lcmd);
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return null;
-    }
+    public LocalObjectLight createPhysicalConnection(String endpointAClass, Long endpointAId,
+            String endpointBClass, Long endpointBId, String parentClass, Long parentId, String name, String type, String connectionClass) {
+        try{
+            List<StringArray> values = new ArrayList<StringArray>();
+            StringArray valueName = new StringArray();
+            valueName.getItem().add(name);
+            StringArray valueType = new StringArray();
+            valueName.getItem().add(name);
+            values.add(valueName);
+            values.add(valueType);
 
-    public LocalObject createPhysicalContainerConnection(Long sourceNode, Long targetNode, String connectionClass, Long parentNode) {
-//        try{
-//            RemoteObject myObject = port.createPhysicalContainerConnection(sourceNode, targetNode, connectionClass, parentNode,this.session.getSessionId());
-//            LocalClassMetadata lcmd = getMetaForClass(myObject.getClassName(), false);
-//            return new LocalObjectImpl(myObject, lcmd);
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return null;
+            Long myObjectId = port.createPhysicalConnection(endpointAClass, endpointAId,
+                    endpointBClass, endpointBId, parentClass, parentId, Arrays.asList(new String[]{"name","type"}), values, connectionClass, this.session.getSessionId());
+            return new LocalObjectLightImpl(myObjectId, "", connectionClass);
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
     }
 
     /**

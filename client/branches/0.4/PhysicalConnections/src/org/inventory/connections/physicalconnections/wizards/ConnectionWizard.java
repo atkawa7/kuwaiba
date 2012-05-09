@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
 
 package org.inventory.connections.physicalconnections.wizards;
 
-import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
 
 /**
  * This class manages the wizard life cycle
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ConnectionWizard {
 
@@ -29,13 +28,13 @@ public class ConnectionWizard {
     private String connectionClass;
     private LocalObjectLight aSide;
     private LocalObjectLight bSide;
-    private Long connectionParent;
+    private LocalObjectLight connectionParent;
     private int wizardType;
     public static final int WIZARDTYPE_CONTAINERS = 1;
     public static final int WIZARDTYPE_CONNECTIONS = 2;
     
     public ConnectionWizard(int wizardType, LocalObjectLight aSide,
-            LocalObjectLight bSide, String connectionClass, Long connectionParent) {
+            LocalObjectLight bSide, String connectionClass, LocalObjectLight connectionParent) {
         this.connectionClass = connectionClass;
         this.aSide = aSide;
         this.bSide = bSide;
@@ -64,11 +63,11 @@ public class ConnectionWizard {
         return wizardType;
     }
 
-    public LocalObject getNewConnection(){
+    public LocalObjectLight getNewConnection(){
         return action.getNewConnection();
     }
 
-    public Long getConnectionParent() {
+    public LocalObjectLight getConnectionParent() {
         return connectionParent;
     }
 }

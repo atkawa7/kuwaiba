@@ -21,7 +21,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.inventory.communications.SharedInformation;
-import org.inventory.core.services.api.LocalObject;
+import org.inventory.core.services.api.LocalObjectLight;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.Router;
 import org.netbeans.api.visual.widget.FreeConnectionWidget;
@@ -47,7 +47,7 @@ public class ObjectConnectionWidget extends FreeConnectionWidget implements Acti
     /**
      * The wrapped business object
      */
-    private LocalObject object;
+    private LocalObjectLight object;
 
     /**
      * We don't take the router from the scene directly because it's possible that in some
@@ -56,11 +56,11 @@ public class ObjectConnectionWidget extends FreeConnectionWidget implements Acti
      * @param connection
      * @param router
      */
-    public ObjectConnectionWidget(ViewScene scene, LocalObject connection,
+    public ObjectConnectionWidget(ViewScene scene, LocalObjectLight connection,
             Router router, Color lineColor){
         super(scene);
         this.object = connection;
-        setToolTipText((String)connection.getAttribute("name")+" ["+connection.getClassName()+"]"); //NOI18N
+        setToolTipText((String)connection.getName()+" ["+connection.getClassName()+"]"); //NOI18N
         setRouter(router);
         setStroke(new BasicStroke(3));
         setLineColor(lineColor);
@@ -78,7 +78,7 @@ public class ObjectConnectionWidget extends FreeConnectionWidget implements Acti
         //getActions().addAction(ActionFactory.createPopupMenuAction(scene.getEdgeMenu()));
     }
 
-    public LocalObject getObject() {
+    public LocalObjectLight getObject() {
         return object;
     }
 
