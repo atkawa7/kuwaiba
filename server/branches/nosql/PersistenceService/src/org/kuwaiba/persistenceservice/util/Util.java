@@ -348,30 +348,21 @@ public class Util {
 
             myClass.setCategory(ctgr);
         }
-        else
-            myClass.setCategory(null);
 
-        Iterable<Relationship> possibleChildren = classNode.getRelationships(Direction.OUTGOING, RelTypes.POSSIBLE_CHILD);
-        for (Relationship relationship : possibleChildren)
+        //Possible Children
+        for (Relationship rel : classNode.getRelationships(Direction.OUTGOING, RelTypes.POSSIBLE_CHILD))
         {
-            Node possibleChildNode = relationship.getEndNode();
-                if(!(Boolean)possibleChildNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT))
-                    myClass.getPossibleChildren().add((String)possibleChildNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
-                Traverser traverserMetadata = traverserMetadata(possibleChildNode);
 
-                for (Node possibleChild : traverserMetadata)
-                {
-                    if(!(Boolean)possibleChildNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT))
-                        myClass.getPossibleChildren().add((String)possibleChild.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
-                }
-
+            if((Boolean)rel.getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT)){
+                Traverser traverserMetadata = Util.getAllSubclasses(rel.getEndNode());
+                for (Node childNode : traverserMetadata) {
+                    if(!(Boolean)childNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT))
+                        myClass.getPossibleChildren().add((String)childNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
+                }//end for
+            }//end if
+            else
+                myClass.getPossibleChildren().add((String)rel.getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
         }
-
-        //IsDummy
-        if(classNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.BOTH) != null)
-            myClass.setDummy(false);
-        else
-            myClass.setDummy(true);
 
         return myClass;
     }
@@ -574,26 +565,12 @@ public class Util {
     }
 
     /**
-     * Retrieves the posible children of a classMetadata
+     * Retrieves the subclasses of a given class metadata node within the class hierarchy
      * @param ClassMetadata
      * @return
      */
 
-    public static Traverser traverserPossibleChildren(final Node ClassMetadata)
-    {
-        return ClassMetadata.traverse(Order.BREADTH_FIRST,
-                StopEvaluator.END_OF_GRAPH,
-                ReturnableEvaluator.ALL_BUT_START_NODE, RelTypes.POSSIBLE_CHILD,
-                Direction.OUTGOING);
-    }
-
-    /**
-     * Retrieves the children of a given class metadata node within the class hierarchy
-     * @param ClassMetadata
-     * @return
-     */
-
-    public static Traverser traverserMetadata(final Node ClassMetadata)
+    public static Traverser getAllSubclasses(final Node ClassMetadata)
     {
         return ClassMetadata.traverse(Order.BREADTH_FIRST,
                 StopEvaluator.END_OF_GRAPH,

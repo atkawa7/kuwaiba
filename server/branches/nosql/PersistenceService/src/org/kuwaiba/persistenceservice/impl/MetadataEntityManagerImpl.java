@@ -144,9 +144,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Creates a classmetadata with its:
-     * attributes(some new attributes and others extedended from the parent).
-     * category (if the category does not exist it will be create).
+     * Creates a classmetadata with its attributes(some new attributes and others
+     * extended from the parent) and a category (if the category does not exist it will be created).
      * @param classDefinition
      * @return the Id of the newClassMetadata
      * @throws ClassNotFoundException if there's no Parent Class whit the ParentId
@@ -471,8 +470,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Retrieves the simplified list of classes. This list won't include either
-     * those classes marked as dummy
+     * Retrieves the simplified list of classes
      * @param includeListTypes boolean to indicate if the list should include
      * the subclasses of GenericObjectList
      * @return the list of classes
@@ -489,7 +487,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 throw new MetadataObjectNotFoundException(Util.formatString(
                          "Can not find the Class with the name %1s", INVENTORY_OBJECT));
 
-            Traverser classChildsTraverser = Util.traverserMetadata(myClassNode);
+            Traverser classChildsTraverser = Util.getAllSubclasses(myClassNode);
             for (Node childClassNode : classChildsTraverser)
             {
                 cml.add(Util.createClassMetadataLightFromNode(childClassNode));
@@ -498,7 +496,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             if(includeListTypes)
             {
                 myClassNode =  classIndex.get(PROPERTY_NAME, LIST_TYPE).getSingle();
-                 classChildsTraverser = Util.traverserMetadata(myClassNode);
+                 classChildsTraverser = Util.getAllSubclasses(myClassNode);
 
                 for (Node childClassNode : classChildsTraverser)
                 {
@@ -515,7 +513,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Retrieves all the class metadata except for classes marked as dummy
+     * Retrieves all the class metadata
      * @param includeListTypes boolean to indicate if the list should include
      * the subclasses of GenericObjectList
      * @return An array of classes
@@ -531,7 +529,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 throw new MetadataObjectNotFoundException(Util.formatString(
                          "Can not find the Class with the name %1s", INVENTORY_OBJECT));
 
-            Traverser classChildsTraverser = Util.traverserMetadata(myClassNode);
+            Traverser classChildsTraverser = Util.getAllSubclasses(myClassNode);
             for (Node childClassNode : classChildsTraverser)
             {
                 cml.add(Util.createClassMetadataFromNode(childClassNode));
@@ -540,7 +538,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             if(includeListTypes)
             {
                 myClassNode =  classIndex.get(PROPERTY_NAME, LIST_TYPE).getSingle();
-                classChildsTraverser = Util.traverserMetadata(myClassNode);
+                classChildsTraverser = Util.getAllSubclasses(myClassNode);
 
                 for (Node childClassNode : classChildsTraverser) {
                     cml.add(Util.createClassMetadataFromNode(childClassNode));
@@ -1221,7 +1219,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             {
                 
                 if((Boolean)rel.getEndNode().getProperty(PROPERTY_ABSTRACT)){
-                    Traverser traverserMetadata = Util.traverserMetadata(rel.getEndNode());
+                    Traverser traverserMetadata = Util.getAllSubclasses(rel.getEndNode());
                     for (Node childNode : traverserMetadata) {
                         if(!(Boolean)childNode.getProperty(PROPERTY_ABSTRACT))
                             cml.add(Util.createClassMetadataLightFromNode(childNode));
@@ -1350,6 +1348,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 if (!currentPossibleChildren.contains(possibleChild) && !alreadyAdded)
                 {   // If the class is already a possible child, it won't add it
                     parentNode.createRelationshipTo(childNode, RelTypes.POSSIBLE_CHILD);
+                    cm.putPossibleChild((String)parentNode.getProperty(PROPERTY_NAME), (String)childNode.getProperty(PROPERTY_NAME));
                 }
                 else
                 {
@@ -1361,6 +1360,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             tx.success();
 
         }catch (Exception ex) {
+            tx.failure();
             throw new RuntimeException(ex.getMessage());
         } finally {
             if(tx != null)
@@ -1390,6 +1390,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     if(childNode.getId() == possiblechild.getId())
                     {
                         rel.delete();
+                        cm.removePossibleChild((String)parentNode.getProperty(PROPERTY_NAME), (String)childNode.getProperty(PROPERTY_NAME));
                         break;
                     }
                 }//end for

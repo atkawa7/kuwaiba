@@ -19,14 +19,12 @@ package org.kuwaiba.persistenceservice.impl;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
-import org.kuwaiba.apis.persistence.application.TransientQuery;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.View;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
@@ -530,7 +528,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         Node genericObjectListNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, "GenericObjectList").getSingle();
         if (genericObjectListNode == null)
             throw new MetadataObjectNotFoundException(Util.formatString("Class %1s is not a list type", "GenericObjectList"));
-        Traverser traverserMetadata = Util.traverserMetadata(genericObjectListNode);
+        Traverser traverserMetadata = Util.getAllSubclasses(genericObjectListNode);
         List<ClassMetadataLight> res = new ArrayList<ClassMetadataLight>();
         for (Node child : traverserMetadata){
             if (!(Boolean)child.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT))
@@ -637,7 +635,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 Node userNode = userIndex.get(UserProfile.PROPERTY_ID, ownerOid).getSingle();
 
                 if(userNode != null)
-                    userNode.createRelationshipTo(queryNode, RelTypes.OWNS);
+                    userNode.createRelationshipTo(queryNode, RelTypes.OWNS_QUERY);
             }
             else
                 queryNode.setProperty(CompactQuery.PROPERTY_IS_PUBLIC, true);
@@ -683,10 +681,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     throw new MetadataObjectNotFoundException(Util.formatString(
                             "Can not find the query with the id %1s", queryOid));
 
-                Relationship singleRelationship = queryNode.getSingleRelationship(RelTypes.OWNS, Direction.INCOMING);
+                Relationship singleRelationship = queryNode.getSingleRelationship(RelTypes.OWNS_QUERY, Direction.INCOMING);
 
                 if(singleRelationship == null)
-                    userNode.createRelationshipTo(queryNode, RelTypes.OWNS);
+                    userNode.createRelationshipTo(queryNode, RelTypes.OWNS_QUERY);
             }
             else
                 queryNode.setProperty(CompactQuery.PROPERTY_IS_PUBLIC, true);
@@ -711,7 +709,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 throw new MetadataObjectNotFoundException(Util.formatString(
                         "Can not find the query with id %1s", queryOid));
 
-            Iterable<Relationship> relationships = queryNode.getRelationships(RelTypes.OWNS, Direction.INCOMING);
+            Iterable<Relationship> relationships = queryNode.getRelationships(RelTypes.OWNS_QUERY, Direction.INCOMING);
             for (Relationship relationship : relationships) {
                 relationship.delete();
             }
@@ -744,7 +742,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             cq.setIsPublic((Boolean)queryNode.getProperty(CompactQuery.PROPERTY_IS_PUBLIC));
             cq.setId(queryNode.getId());
 
-            Relationship ownRelationship = queryNode.getSingleRelationship(RelTypes.OWNS, Direction.INCOMING);
+            Relationship ownRelationship = queryNode.getSingleRelationship(RelTypes.OWNS_QUERY, Direction.INCOMING);
 
             if(ownRelationship != null){
                 Node ownerNode =  ownRelationship.getStartNode();
@@ -767,7 +765,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
         if (queryNode == null){
              throw new MetadataObjectNotFoundException(Util.formatString(
-                        "Can not find the query with the id %1s", queryOid));
+                        "Can not find the query with id %1s", queryOid));
         }
                 
         cq.setName((String)queryNode.getProperty(CompactQuery.PROPERTY_QUERYNAME));
@@ -776,7 +774,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         cq.setIsPublic((Boolean)queryNode.getProperty(CompactQuery.PROPERTY_IS_PUBLIC));
         cq.setId(queryNode.getId());
 
-        Relationship ownRelationship = queryNode.getSingleRelationship(RelTypes.OWNS, Direction.INCOMING);
+        Relationship ownRelationship = queryNode.getSingleRelationship(RelTypes.OWNS_QUERY, Direction.INCOMING);
 
         if(ownRelationship != null){
             Node ownerNode =  ownRelationship.getStartNode();

@@ -178,7 +178,6 @@ public class readXMLBackup {
             clmt.setCustom(false);
             clmt.setDescription("");
             clmt.setDisplayName("");
-            clmt.setDummy(false);
             clmt.setIcon(x);
             clmt.setInterfaces(null);
             clmt.setListType(false);

@@ -89,6 +89,23 @@ public class CacheManager {
         possibleChildrenIndex.put(parent, children);
     }
 
+    /**
+     * Adds an entry to the possible children index
+     * @param parent
+     * @param children
+     */
+    public void putPossibleChild(String parent, String child){
+        List<String> myList = possibleChildrenIndex.get(parent);
+        if (myList != null)
+            myList.add(child);
+    }
+
+    public void removePossibleChild(String parent, String child){
+        List<String> myList = possibleChildrenIndex.get(parent);
+        if (myList != null)
+            myList.remove(child);
+    }
+
     public List<String> getPossibleChildren(String parent){
         if (parent == null)
             return possibleChildrenIndex.get("");

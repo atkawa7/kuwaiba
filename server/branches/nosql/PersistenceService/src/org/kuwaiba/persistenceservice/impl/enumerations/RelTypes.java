@@ -34,10 +34,10 @@ public enum RelTypes implements RelationshipType{
     RELATED_TO, //Represents the many-to-one, many-to-may relationships (like type, responsible, etc)
     BELONGS_TO_GROUP, //Used to associate an entity to a group (group of user)
     BELONGS_TO_USER, //Used to associate an entity to a user
-    OWNS, //Used to asociate a user to a query
+    OWNS_QUERY, //Used to asociate a user to a query
     DUMMY_ROOT, //Used to associate dummies class
     POSSIBLE_CHILD, //Used to build the containment hierarchy
     HAS_VIEW, //Used to link an object to a particular view
     HAS_HISTORY_ENTRY, //Used to link an object to a particular historic entry
-    RELATED_TO_SPECIAL, //Used to implement the relationships for models
+    RELATED_TO_SPECIAL, //Used to implement relationships for models
 }

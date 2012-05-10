@@ -39,10 +39,6 @@ public class ClassMetadata extends ClassMetadataLight{
      */
     private boolean countable;
     /**
-     *  Is this a dummy class as described in the Dummy annotation?
-     */
-    private boolean dummy;
-    /**
      * List of interfaces this class implements
      */
     private List<InterfaceMetadata> interfaces;
@@ -108,14 +104,6 @@ public class ClassMetadata extends ClassMetadataLight{
 
     public void setCustom(boolean custom) {
         this.custom = custom;
-    }
-
-    public boolean isDummy() {
-        return dummy;
-    }
-
-    public void setDummy(boolean dummy) {
-        this.dummy = dummy;
     }
 
     public List<InterfaceMetadata> getInterfaces() {

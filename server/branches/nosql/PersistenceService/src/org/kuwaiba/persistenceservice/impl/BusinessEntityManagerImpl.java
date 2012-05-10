@@ -94,14 +94,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
 
         if (myClass.isAbstractClass())
-            throw new OperationNotPermittedException("Create Object", "You can't create objects from an abstract class");
+            throw new OperationNotPermittedException("Create Object", "Can't create objects from an abstract classes");
 
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
             throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
 
         if (!cm.isSubClass("InventoryObject", className))
-            throw new OperationNotPermittedException("Create Object", "You can't create non-inventory objects using this method");
+            throw new OperationNotPermittedException("Create Object", "Can't create non-inventory objects");
 
         //The object should be created under an instance other than the dummy root
         if (parentClassName != null){
@@ -110,7 +110,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
 
             if (!cm.getPossibleChildren(parentClassName).contains(className))
-                throw new OperationNotPermittedException("Create Object", Util.formatString("An instance of class %1s can't be created as child of object with id %2s of class %3s", className, parentOid,myParentObjectClass.getName()));
+                throw new OperationNotPermittedException("Create Object", Util.formatString("An instance of class %1s can't be created as child of class %2s", className, myParentObjectClass.getName()));
         }
 
         Node parentNode = null;
@@ -136,7 +136,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     newObject.setProperty(att.getName(), Calendar.getInstance().getTimeInMillis());
                     continue;
                 }
-                
+
+                if (attributes.get(att.getName()) == null)
+                    continue;
+
                 switch (att.getMapping()){
                     case AttributeMetadata.MAPPING_PRIMITIVE:
                     case AttributeMetadata.MAPPING_DATE:
