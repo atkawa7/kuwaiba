@@ -7,14 +7,20 @@
 <xsd:import namespace="http://jaxb.dev.java.net/array" schemaLocation="http://localhost:8080/kuwaiba/KuwaibaService?xsd=2"/>
 </xsd:schema>
 </types>
+<message name="getQuery">
+<part name="parameters" element="tns:getQuery"/>
+</message>
+<message name="getQueryResponse">
+<part name="parameters" element="tns:getQueryResponse"/>
+</message>
+<message name="Exception">
+<part name="fault" element="tns:Exception"/>
+</message>
 <message name="createGroup">
 <part name="parameters" element="tns:createGroup"/>
 </message>
 <message name="createGroupResponse">
 <part name="parameters" element="tns:createGroupResponse"/>
-</message>
-<message name="Exception">
-<part name="fault" element="tns:Exception"/>
 </message>
 <message name="getMetadata">
 <part name="parameters" element="tns:getMetadata"/>
@@ -33,6 +39,12 @@
 </message>
 <message name="getGroupsResponse">
 <part name="parameters" element="tns:getGroupsResponse"/>
+</message>
+<message name="executeQuery">
+<part name="parameters" element="tns:executeQuery"/>
+</message>
+<message name="executeQueryResponse">
+<part name="parameters" element="tns:executeQueryResponse"/>
 </message>
 <message name="createObject">
 <part name="parameters" element="tns:createObject"/>
@@ -232,6 +244,30 @@
 <message name="saveViewResponse">
 <part name="parameters" element="tns:saveViewResponse"/>
 </message>
+<message name="createQuery">
+<part name="parameters" element="tns:createQuery"/>
+</message>
+<message name="createQueryResponse">
+<part name="parameters" element="tns:createQueryResponse"/>
+</message>
+<message name="saveQuery">
+<part name="parameters" element="tns:saveQuery"/>
+</message>
+<message name="saveQueryResponse">
+<part name="parameters" element="tns:saveQueryResponse"/>
+</message>
+<message name="deleteQuery">
+<part name="parameters" element="tns:deleteQuery"/>
+</message>
+<message name="deleteQueryResponse">
+<part name="parameters" element="tns:deleteQueryResponse"/>
+</message>
+<message name="getQueries">
+<part name="parameters" element="tns:getQueries"/>
+</message>
+<message name="getQueriesResponse">
+<part name="parameters" element="tns:getQueriesResponse"/>
+</message>
 <message name="getMultipleChoice">
 <part name="parameters" element="tns:getMultipleChoice"/>
 </message>
@@ -287,6 +323,11 @@
 <part name="parameters" element="tns:deleteClassByIdResponse"/>
 </message>
 <portType name="Kuwaiba">
+<operation name="getQuery">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getQueryRequest" message="tns:getQuery"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getQueryResponse" message="tns:getQueryResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getQuery/Fault/Exception"/>
+</operation>
 <operation name="createGroup">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createGroupRequest" message="tns:createGroup"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createGroupResponse" message="tns:createGroupResponse"/>
@@ -306,6 +347,11 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGroupsRequest" message="tns:getGroups"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGroupsResponse" message="tns:getGroupsResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGroups/Fault/Exception"/>
+</operation>
+<operation name="executeQuery">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryRequest" message="tns:executeQuery"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryResponse" message="tns:executeQueryResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQuery/Fault/Exception"/>
 </operation>
 <operation name="createObject">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectRequest" message="tns:createObject"/>
@@ -472,6 +518,26 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/saveViewResponse" message="tns:saveViewResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/saveView/Fault/Exception"/>
 </operation>
+<operation name="createQuery">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createQueryRequest" message="tns:createQuery"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createQueryResponse" message="tns:createQueryResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createQuery/Fault/Exception"/>
+</operation>
+<operation name="saveQuery">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/saveQueryRequest" message="tns:saveQuery"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/saveQueryResponse" message="tns:saveQueryResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/saveQuery/Fault/Exception"/>
+</operation>
+<operation name="deleteQuery">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteQueryRequest" message="tns:deleteQuery"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteQueryResponse" message="tns:deleteQueryResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteQuery/Fault/Exception"/>
+</operation>
+<operation name="getQueries">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getQueriesRequest" message="tns:getQueries"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getQueriesResponse" message="tns:getQueriesResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getQueries/Fault/Exception"/>
+</operation>
 <operation name="getMultipleChoice">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMultipleChoiceRequest" message="tns:getMultipleChoice"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMultipleChoiceResponse" message="tns:getMultipleChoiceResponse"/>
@@ -520,6 +586,18 @@
 </portType>
 <binding name="KuwaibaPortBinding" type="tns:Kuwaiba">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<operation name="getQuery">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="createGroup">
 <soap:operation soapAction=""/>
 <input>
@@ -557,6 +635,18 @@
 </fault>
 </operation>
 <operation name="getGroups">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="executeQuery">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -953,6 +1043,54 @@
 </fault>
 </operation>
 <operation name="saveView">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="createQuery">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="saveQuery">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="deleteQuery">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getQueries">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
