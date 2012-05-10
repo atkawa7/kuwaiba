@@ -1025,7 +1025,7 @@ public class Kuwaiba {
             ci.setParentClassName(parentClassName);
             ci.setIsAbstract(abstractClass);
 
-            wsBean.changeClassDefinition(ci);
+            wsBean.updateClassDefinition(ci);
 
         }catch(Exception e){
             Level level = Level.SEVERE;

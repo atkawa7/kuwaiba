@@ -22,6 +22,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -135,11 +136,10 @@ public class WebServiceBean implements WebServiceBeanRemote {
             //cm.setCategory(classDefinition.getCategory());
             cm.setColor(0);
             cm.setCountable(false);
-            //cm.setCreationDate(null);
+            cm.setCreationDate(Calendar.getInstance().getTimeInMillis());
             cm.setIcon(classDefinition.getIcon());
             cm.setSmallIcon(classDefinition.getSmallIcon());
-            cm.setCustom(false);
-            cm.setDummy(false);
+            cm.setCustom(true);
 
             return mem.createClass(cm);
 
@@ -384,7 +384,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public void changeClassDefinition(ClassInfo newClassDefinition)
+    public void updateClassDefinition(ClassInfo newClassDefinition)
             throws ServerSideException
     {
         if (mem == null)
@@ -402,11 +402,9 @@ public class WebServiceBean implements WebServiceBeanRemote {
             //cm.setCategory(classDefinition.getCategory());
             cm.setColor(0);
             cm.setCountable(false);
-            //cm.setCreationDate(null);
             cm.setIcon(newClassDefinition.getIcon());
             cm.setSmallIcon(newClassDefinition.getSmallIcon());
             cm.setCustom(false);
-            cm.setDummy(false);
 
             mem.changeClassDefinition(cm);
 

@@ -79,7 +79,7 @@ public interface WebServiceBeanRemote {
      * @throws ClassNotFoundException if there is no class with such classId
      */
 
-    public void changeClassDefinition(ClassInfo newClassDefinition) throws ServerSideException;
+    public void updateClassDefinition(ClassInfo newClassDefinition) throws ServerSideException;
 
     /**
      * Sets the value of a property associated to an attribute. So far there are only
