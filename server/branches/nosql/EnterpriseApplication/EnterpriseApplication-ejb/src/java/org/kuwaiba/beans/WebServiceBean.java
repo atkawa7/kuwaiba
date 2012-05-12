@@ -44,6 +44,7 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
+import org.kuwaiba.util.bre.TempBusinessRulesEngine;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
@@ -84,22 +85,14 @@ public class WebServiceBean implements WebServiceBeanRemote {
      */
     private HashMap<String, Session> sessions;
     /**
-     * Hard-coded (for now) valid mappings for physical connections (this is, instances of what classes can be connected each other -i.e. ports with GenericPhysicalLink instances- )
-     * They key is the connecting element (say WireContainer) and the value is a list with the pairs of elements that can be connected
+     * Business rules engine reference
      */
-    private HashMap<String, List<String[]>> physicalConnectionMappings;
+    private TempBusinessRulesEngine bre;
 
     public WebServiceBean() {
         super();
         sessions = new HashMap<String, Session>();
-        physicalConnectionMappings = new HashMap<String, List<String[]>>();
-        List<String[]> links = new ArrayList<String[]>();
-        links.add(new String[]{"GenericPort", "GenericPort"});
-        physicalConnectionMappings.put("GenericPhysicalLink", links);
-
-        List<String[]> containers = new ArrayList<String[]>();
-        containers.add(new String[]{"GenericLocation", "GenericLocation"});
-        physicalConnectionMappings.put("GenericPhysicalContainer", links);
+        bre = new TempBusinessRulesEngine();
 
         try{
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
@@ -234,7 +227,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
-            return new ClassInfo(mem.getClass(className), new Validator[0]);
+            ClassMetadata myClass = mem.getClass(className);
+            List<Validator> validators = new ArrayList<Validator>();
+            for (String mapping : bre.getSubclassOfValidators().keySet()){
+                if (mem.isSubClass(mapping, className))
+                    validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
+            }
+            return new ClassInfo(myClass, validators.toArray(new Validator[0]));
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -249,7 +248,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
-            return new ClassInfo(mem.getClass(classId), new Validator[0]);
+            ClassMetadata myClass = mem.getClass(classId);
+            List<Validator> validators = new ArrayList<Validator>();
+            for (String mapping : bre.getSubclassOfValidators().keySet()){
+                if (mem.isSubClass(mapping, myClass.getName()))
+                    validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
+            }
+            return new ClassInfo(myClass, validators.toArray(new Validator[0]));
 
          } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -268,8 +273,14 @@ public class WebServiceBean implements WebServiceBeanRemote {
             List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
             List<ClassMetadataLight> classLightMetadata = mem.getLightMetadata(includeListTypes);
 
-            for (ClassMetadataLight classMetadataLight : classLightMetadata) 
-                cml.add(new ClassInfoLight(classMetadataLight, new Validator[0]));
+            for (ClassMetadataLight classMetadataLight : classLightMetadata){
+                List<Validator> validators = new ArrayList<Validator>();
+                for (String mapping : bre.getSubclassOfValidators().keySet()){
+                    if (mem.isSubClass(mapping, classMetadataLight.getName()))
+                        validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
+                }
+                cml.add(new ClassInfoLight(classMetadataLight, validators.toArray(new Validator[0])));
+            }
             return cml;
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -288,8 +299,14 @@ public class WebServiceBean implements WebServiceBeanRemote {
             List<ClassInfo> cml = new ArrayList<ClassInfo>();
             List<ClassMetadata> classMetadataList = mem.getMetadata(includeListTypes);
 
-            for (ClassMetadata classMetadata : classMetadataList)
-                cml.add(new ClassInfo(classMetadata, new Validator[0]));
+            for (ClassMetadata classMetadata : classMetadataList){
+                List<Validator> validators = new ArrayList<Validator>();
+                for (String mapping : bre.getSubclassOfValidators().keySet()){
+                    if (mem.isSubClass(mapping, classMetadata.getName()))
+                        validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
+                }
+                cml.add(new ClassInfo(classMetadata, validators.toArray(new Validator[0])));
+            }
             return cml;
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);

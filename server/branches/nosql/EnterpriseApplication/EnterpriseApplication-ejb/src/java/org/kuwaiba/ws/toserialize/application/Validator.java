@@ -40,16 +40,16 @@ public class Validator {
     /**
      * The value of this validator
      */
-    private Boolean value;
+    private Integer value;
 
     /**
      * Required by the serializer
      */
     public Validator(){}
 
-    public Validator(String _label, Boolean _value){
-        this.label = _label;
-        this.value = _value;
+    public Validator(String label, Integer value){
+        this.label = label;
+        this.value = value;
     }
 
     public String getLabel() {
@@ -60,11 +60,11 @@ public class Validator {
         this.label = label;
     }
 
-    public Boolean getValue() {
+    public Integer getValue() {
         return value;
     }
 
-    public void setValue(Boolean value) {
+    public void setValue(Integer value) {
         this.value = value;
     }
 }
