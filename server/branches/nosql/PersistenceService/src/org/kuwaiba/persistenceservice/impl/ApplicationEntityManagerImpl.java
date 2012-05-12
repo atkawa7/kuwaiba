@@ -143,16 +143,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             return null;
     }
 
-    public boolean isSubClass(String allegedParent, String classToBeEvaluated) {
-        try {
-            return cm.isSubClass(allegedParent, classToBeEvaluated);
-        } catch (MetadataObjectNotFoundException ex) {
-            return false;
-        }
-    }
-
-
-
     public Long createUser(String userName, String password, String firstName, 
             String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups) 
             throws InvalidArgumentException, ObjectNotFoundException

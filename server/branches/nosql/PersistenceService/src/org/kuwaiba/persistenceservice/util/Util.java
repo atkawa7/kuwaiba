@@ -258,7 +258,7 @@ public class Util {
 
         if(AttributeDefinition.getName() == null)
             throw new MetadataObjectNotFoundException(Util.formatString(
-                         "Can not create a AttributeMetada without a name"));
+                         "Can not create an attribute without a name"));
 
         if(AttributeDefinition.getDisplayName() == null)
             AttributeDefinition.setDisplayName("");

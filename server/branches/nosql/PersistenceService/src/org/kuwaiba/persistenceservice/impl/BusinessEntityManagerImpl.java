@@ -355,6 +355,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
         Transaction tx = null;
         try{
+            tx = graphDb.beginTx();
             Node nodeA = getInstanceOfClass(aObjectClass, aObjectId);
             Node nodeB = getInstanceOfClass(bObjectClass, bObjectId);
             Relationship rel = nodeA.createRelationshipTo(nodeB, RelTypes.RELATED_TO_SPECIAL);

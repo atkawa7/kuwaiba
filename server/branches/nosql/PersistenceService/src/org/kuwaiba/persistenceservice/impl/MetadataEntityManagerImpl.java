@@ -1405,4 +1405,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 tx.finish();
         }
     }
+
+    public boolean isSubClass(String allegedParent, String classToBeEvaluated) {
+        try {
+            return cm.isSubClass(allegedParent, classToBeEvaluated);
+        } catch (MetadataObjectNotFoundException ex) {
+            return false;
+        }
+    }
 }

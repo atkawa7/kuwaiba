@@ -279,4 +279,11 @@ public interface MetadataEntityManager {
      * @param childrenTBeRemoved ids of the candidates to be deleted
      */
     public void removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws MetadataObjectNotFoundException;
+    /**
+     * Assess if a given class is subclass of another
+     * @param allegedParent Alleget super class
+     * @param classToBeEvaluated class to be evaluated
+     * @return True if classToBeEvaluated is subclass of allegedParent
+     */
+    public boolean isSubClass(String allegedParent, String classToBeEvaluated);
 }
