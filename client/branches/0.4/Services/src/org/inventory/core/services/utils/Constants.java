@@ -22,9 +22,9 @@ package org.inventory.core.services.utils;
  */
 public class Constants {
      /**
-     * Name of the validator to indicate if a given class is a connection
+     * Name of the validator to indicate if a given class is a link
      */
-    public static String IS_PHYSICAL_CONNECTION_VALIDATOR = "physicalConnection";
+    public static String IS_PHYSICAL_LINK_VALIDATOR = "physicalLink";
     /**
      * Name of the validator to indicate if a given class is the endpoint to a connection
      */

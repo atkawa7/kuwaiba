@@ -86,7 +86,7 @@ public class PhysicalConnectionProvider implements ConnectProvider{
         switch (currentConnectionSelection){
             case ObjectViewTopComponent.CONNECTION_WIRECONTAINER:
             case ObjectViewTopComponent.CONNECTION_WIRELESSCONTAINER:
-                if (com.getMetaForClass(myObject.getClassName(), false).getValidator(Constants.IS_PHYSICAL_NODE_VALIDATOR))
+                if (com.getMetaForClass(myObject.getClassName(), false).getValidator(Constants.IS_PHYSICAL_NODE_VALIDATOR) == 1)
                     return true;
                 break;
             case ObjectViewTopComponent.CONNECTION_ELECTRICALLINK:

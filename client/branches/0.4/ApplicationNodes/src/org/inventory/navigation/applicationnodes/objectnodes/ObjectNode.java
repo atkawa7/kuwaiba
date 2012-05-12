@@ -113,7 +113,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         deleteAction = new DeleteObjectAction(this);
         editAction = new EditObjectAction(this);
         refreshAction = new RefreshObjectAction(this);
-        if (object.getValidator("isRelatableToService")){
+        if (object.getValidator("isRelatableToService") == 1){
             relateToServiceAction = new RelateToServiceAction(object);
             showRelatedServicesAction = new ShowRelatedServicesAction(object);
         }

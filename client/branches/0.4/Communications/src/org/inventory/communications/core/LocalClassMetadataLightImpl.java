@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import org.openide.util.lookup.ServiceProvider;
  * Implementation of the common interface to represent the classmetadata in a simple
  * way so it can be shown in trees and lists. This is done because to bring the whole
  * metadata is not necessary (ie. Container Hierarchy Manager)
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=LocalClassMetadataLight.class)
 public class LocalClassMetadataLightImpl
@@ -44,7 +44,7 @@ public class LocalClassMetadataLightImpl
     protected String className;
     protected String displayName;
     protected Image smallIcon;
-    protected HashMap<String, Boolean> validators;
+    protected HashMap<String, Integer> validators;
 
     public LocalClassMetadataLightImpl() {    }
 
@@ -61,10 +61,10 @@ public class LocalClassMetadataLightImpl
         this.className = ci.getClassName();
         this.displayName = ci.getDisplayName();
         this.smallIcon = ci.getSmallIcon()==null ? null : Utils.getImageFromByteArray(ci.getSmallIcon());
-        this.validators = new HashMap<String, Boolean>();
+        this.validators = new HashMap<String, Integer>();
 
         for (Validator validator : ci.getValidators())
-            validators.put(validator.getLabel(), validator.isValue());
+            validators.put(validator.getLabel(), validator.getValue());
     }
 
 
@@ -79,10 +79,10 @@ public class LocalClassMetadataLightImpl
         this.className = cil.getClassName();
         this.displayName = cil.getDisplayName();
         this.smallIcon = cil.getSmallIcon()==null ? null : Utils.getImageFromByteArray(cil.getSmallIcon());
-        this.validators = new HashMap<String, Boolean>();
+        this.validators = new HashMap<String, Integer>();
 
         for (Validator validator : cil.getValidators())
-            validators.put(validator.getLabel(), validator.isValue());
+            validators.put(validator.getLabel(), validator.getValue());
 
     }
 
@@ -164,8 +164,8 @@ public class LocalClassMetadataLightImpl
      * @param validatorName validator's name
      * @return value for the given validator. false if the validator is not present
      */
-    public boolean getValidator(String validatorName){
-        return validators.get(validatorName) == null ? false : validators.get(validatorName);
+    public int getValidator(String validatorName){
+        return validators.get(validatorName) == null ? 0 : validators.get(validatorName);
     }
 
     public boolean isDataFlavorSupported(DataFlavor flavor) {

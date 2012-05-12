@@ -31,7 +31,7 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
     /**
      * Collection of flags
      */
-    protected HashMap<String, Boolean> validators;
+    protected HashMap<String, Integer> validators;
 
     public LocalObjectLightImpl(){
     }
@@ -40,7 +40,7 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
         this.oid = oid;
         this.name = name;
         this.className = className;
-        this.validators = new HashMap<String,Boolean>();
+        this.validators = new HashMap<String, Integer>();
     }
 
     public LocalObjectLightImpl(RemoteObjectLight rol){
@@ -50,9 +50,9 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
         this.propertyChangeListeners = new ArrayList<PropertyChangeListener>();
 
         if (rol.getValidators() != null){
-            this.validators = new HashMap<String,Boolean>();
+            this.validators = new HashMap<String, Integer>();
             for (Validator validator : rol.getValidators())
-                validators.put(validator.getLabel(), validator.isValue());
+                validators.put(validator.getLabel(), validator.getValue());
         }
     }
 
@@ -64,12 +64,12 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class impl
         return oid;
     }
 
-    public Boolean getValidator(String label){
+    public int getValidator(String label){
         if (this.validators == null)
-            return false;
-        Boolean res = (Boolean)this.validators.get(label);
+            return 0;
+        Integer res = this.validators.get(label);
         if(res == null)
-            return false;
+            return 0;
         else
             return res;
     }
