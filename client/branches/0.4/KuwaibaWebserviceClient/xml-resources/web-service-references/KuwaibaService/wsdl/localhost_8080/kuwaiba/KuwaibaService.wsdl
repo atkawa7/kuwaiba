@@ -166,6 +166,12 @@
 <message name="getObjectInfoLightResponse">
 <part name="parameters" element="tns:getObjectInfoLightResponse"/>
 </message>
+<message name="getSpecialAttribute">
+<part name="parameters" element="tns:getSpecialAttribute"/>
+</message>
+<message name="getSpecialAttributeResponse">
+<part name="parameters" element="tns:getSpecialAttributeResponse"/>
+</message>
 <message name="deleteObjects">
 <part name="parameters" element="tns:deleteObjects"/>
 </message>
@@ -452,6 +458,11 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectInfoLightRequest" message="tns:getObjectInfoLight"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectInfoLightResponse" message="tns:getObjectInfoLightResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectInfoLight/Fault/Exception"/>
+</operation>
+<operation name="getSpecialAttribute">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSpecialAttributeRequest" message="tns:getSpecialAttribute"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSpecialAttributeResponse" message="tns:getSpecialAttributeResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSpecialAttribute/Fault/Exception"/>
 </operation>
 <operation name="deleteObjects">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteObjectsRequest" message="tns:deleteObjects"/>
@@ -887,6 +898,18 @@
 </fault>
 </operation>
 <operation name="getObjectInfoLight">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getSpecialAttribute">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

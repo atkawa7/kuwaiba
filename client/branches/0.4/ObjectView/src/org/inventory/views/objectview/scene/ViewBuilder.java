@@ -18,6 +18,7 @@ package org.inventory.views.objectview.scene;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.LocalStuffFactory;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
@@ -43,6 +44,10 @@ public class ViewBuilder {
      * Reference to the scene
      */
     private ViewScene scene;
+    /**
+     * Reference to the singleton of CommunicationStub
+     */
+    private CommunicationsStub com = CommunicationsStub.getInstance();
 
     /**
      * This constructor should be used if there's already a view
@@ -124,14 +129,23 @@ public class ViewBuilder {
 
         //TODO: This algorithm to find the endpoints for a connection could be improved in many ways
         for (LocalObject container : myPhysicalConnections){
+            String aSideString, bSideString;
+            //Hardcoded for now
+            if (container.getClassName().equals("WireContainer") || container.getClassName().equals("WirelessContainer")){ //NOI18N
+                aSideString = "nodeA";
+                bSideString = "nodeB";
+            }else{
+                aSideString = "endpointA";
+                bSideString = "endpointB";
+            }
             LocalEdge le = LocalStuffFactory.createLocalEdge(container,null);
 
             for (LocalNode myNode : myLocalNodes){
                 
-                if (((Long)container.getAttribute("nodeA")).equals(myNode.getObject().getOid())) //NOI18N
+                if (Long.valueOf(com.getSpecialAttribute(container.getClassName(), container.getOid(),aSideString).get(0)).equals(myNode.getObject().getOid())) //NOI18N
                     le.setaSide(myNode);
                 else{
-                    if (((Long)container.getAttribute("nodeB")).equals(myNode.getObject().getOid())) //NOI18N
+                    if (Long.valueOf(com.getSpecialAttribute(container.getClassName(), container.getOid(),bSideString).get(0)).equals(myNode.getObject().getOid())) //NOI18N
                        le.setbSide(myNode);
                 }
                 if (le.getaSide() != null && le.getbSide() != null)
@@ -177,10 +191,19 @@ public class ViewBuilder {
 
         if (newPhysicalConnections != null)
             for (LocalObject toAdd : newPhysicalConnections){
-                LocalNode nodeA = getNodeMatching(myView.getNodes(), (Long)toAdd.getAttribute("nodeA"));
+                String aSideString, bSideString;
+                //Hardcoded for now
+                if (toAdd.getClassName().equals("WireContainer") || toAdd.getClassName().equals("WirelessContainer")){ //NOI18N
+                    aSideString = "nodeA";
+                    bSideString = "nodeB";
+                }else{
+                    aSideString = "endpointA";
+                    bSideString = "endpointB";
+                }
+                LocalNode nodeA = getNodeMatching(myView.getNodes(), Long.valueOf(com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(),aSideString).get(0)));
                 if (nodeA == null)
                     continue;
-                LocalNode nodeB = getNodeMatching(myView.getNodes(), (Long)toAdd.getAttribute("nodeB"));
+                LocalNode nodeB = getNodeMatching(myView.getNodes(), Long.valueOf(com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(),bSideString).get(0)));
                 if (nodeB == null)
                     continue;
                 myView.getEdges().add(LocalStuffFactory.createLocalEdge(toAdd, nodeA, nodeB, null));

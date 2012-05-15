@@ -30,10 +30,7 @@ import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.communications.core.LocalObjectLightImpl;
 import org.inventory.communications.core.LocalObjectListItemImpl;
 import org.inventory.communications.core.queries.LocalResultRecordImpl;
-import org.inventory.communications.core.queries.LocalQueryImpl;
-import org.inventory.communications.core.queries.LocalQueryLightImpl;
 import org.inventory.communications.core.queries.LocalTransientQueryImpl;
-import org.inventory.communications.core.views.LocalObjectViewImpl;
 import org.inventory.communications.core.queries.LocalQueryImpl;
 import org.inventory.communications.core.queries.LocalQueryLightImpl;
 import org.inventory.communications.core.LocalUserGroupObjectImpl;
@@ -233,6 +230,20 @@ public class CommunicationsStub {
             LocalClassMetadata lcmd = getMetaForClass(objectClass, false);
             RemoteObject myObject = port.getObjectInfo(objectClass, oid,this.session.getSessionId());
             return new LocalObjectImpl(myObject,lcmd);
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+
+    public List<Long> getSpecialAttribute(String objectClass, Long objectId, String attributeName){
+        try{
+            //This is only temporal, since the result may not be a long in  the future, but it is right now
+            List<Long> res = new ArrayList<Long>();
+            for (String value : port.getSpecialAttribute(objectClass, objectId,attributeName, session.getSessionId()))
+                res.add(Long.valueOf(value));
+
+            return res;
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;

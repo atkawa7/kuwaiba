@@ -164,6 +164,10 @@
 
 <xs:element name="getQueryResponse" type="tns:getQueryResponse"/>
 
+<xs:element name="getSpecialAttribute" type="tns:getSpecialAttribute"/>
+
+<xs:element name="getSpecialAttributeResponse" type="tns:getSpecialAttributeResponse"/>
+
 <xs:element name="getUsers" type="tns:getUsers"/>
 
 <xs:element name="getUsersResponse" type="tns:getUsersResponse"/>
@@ -498,6 +502,21 @@
 
 <xs:complexType name="closeSessionResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getSpecialAttribute">
+<xs:sequence>
+<xs:element name="objectclass" type="xs:string" minOccurs="0"/>
+<xs:element name="oid" type="xs:long" minOccurs="0"/>
+<xs:element name="attributename" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSpecialAttributeResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="moveObjects">
