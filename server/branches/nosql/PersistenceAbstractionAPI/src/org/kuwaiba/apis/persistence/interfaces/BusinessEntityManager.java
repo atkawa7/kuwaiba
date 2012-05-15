@@ -52,6 +52,24 @@ public interface BusinessEntityManager {
             HashMap<String,List<String>> attributes,Long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException;
     /**
+     * Creates a new inventory object for a domain specific model (where the standard containment rules don't apply)
+     * @param className Name of the class which this object will be instantiated from
+     * @param parentClassName Parent object class name
+     * @param parentOid Parent's oid
+     * @param attributes Attributes to be set by default in the new object. It's a HashMap where the keys are the attribute names and the values, the values for such attributes.
+     * Note that binary type attributes can't be set here.
+     * @param template Template id to be used to create the current object. Template values can be
+     * overridden if "attributeValues" is not empty
+     * @return The object's id
+     * @throws MetadataObjectNotFoundException Thrown if the object's class can't be found
+     * @throws ObjectNotFoundException Thrown if the parent id is not found
+     * @throws OperationNotPermittedException If the update can't be performed due to a format issue
+     * @throws InvalidArgumentException If the parent node is malformed.
+     */
+    public Long createSpecialObject(String className, String parentClassName, Long parentOid,
+            HashMap<String,List<String>> attributes,Long template)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException;
+    /**
      * Gets the detailed information about an object
      * @param className Object class name
      * @param oid Object's oid
@@ -199,4 +217,17 @@ public interface BusinessEntityManager {
      */
     public void createSpecialRelationship(String aObjectClass, Long aObjectId, String bObjectClass, Long bObjectId, String name)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException;
+
+    /**
+     * Gets the value of a special attribute. A special attribute is one belonging to a business domain specific attribute
+     * (usually a model. Domain specific attribute information is not filed under the standard metadata but a special one. Implementations may vary)
+     * @param objectClass object's class
+     * @param objectId object's id
+     * @param specialAttributeName Special attribute name
+     * @return A list of string with the value associated to such object (typically a list of longs)
+     * @throws ObjectNotFoundException if the object can not be found
+     * @throws MetadataObjectNotFoundException if either the object class or the attribute can not be found
+     */
+    public List<String> getSpecialAttribute(String objectClass, Long objectId, String specialAttributeName)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException;
 }

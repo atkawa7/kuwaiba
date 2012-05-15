@@ -59,6 +59,9 @@ public interface BusinessEntityManagerRemote extends Remote{
     public Long createObject(String className, String parentClassName, Long parentOid,
             HashMap<String,List<String>> attributes, Long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException, RemoteException;
+   public Long createSpecialObject(String className, String parentClassName, Long parentOid,
+            HashMap<String,List<String>> attributes,Long template)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, RemoteException;
 
     public void deleteObjects(HashMap<String, List<Long>> objects, boolean releaseRelationships)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
@@ -71,4 +74,6 @@ public interface BusinessEntityManagerRemote extends Remote{
 
     public void createSpecialRelationship(String aObjectClass, Long aObjectId, String bObjectClass, Long bObjectId, String name)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
+    public List<String> getSpecialAttribute(String objectClass, Long objectId, String specialAttributeName)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
 }
