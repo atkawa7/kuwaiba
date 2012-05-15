@@ -309,6 +309,8 @@ public interface WebServiceBeanRemote {
 
     public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid) throws ServerSideException;
 
+    public String[] getSpecialAttribute(String objectClass, Long objectId, String attributeName) throws ServerSideException;
+
     public void updateObject(String className, Long oid, String[] attributeNames, String[][] attributeValues) throws ServerSideException;
 
     public Long createObject(String className, String parentClassName, Long parentOid, String[] attributeNames, String[][] attributeValues, Long templateId) throws ServerSideException;

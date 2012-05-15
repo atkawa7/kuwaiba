@@ -866,6 +866,18 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
+    public String[] getSpecialAttribute(String objectClass, Long objectId, String attributeName) throws ServerSideException{
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try {
+            return bem.getSpecialAttribute(objectClass, objectId, attributeName).toArray(new String[0]);
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
     public Long createObject(String className, String parentClassName, Long parentOid, String[] attributeNames,
             String[][] attributeValues, Long template) throws ServerSideException{
         if (bem == null)
@@ -1000,9 +1012,22 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
         Long newConnectionId = null;
         try {
-            newConnectionId = bem.createObject(connectionClass, parentClass, parentId, attributes, null);
-            bem.createSpecialRelationship(aObjectClass, aObjectId, connectionClass, newConnectionId, "aPhysicalConnection");
-            bem.createSpecialRelationship(bObjectClass, bObjectId, connectionClass, newConnectionId, "bPhysicalConnection");
+            if (!mem.isSubClass("GenericPhysicalConnection", connectionClass))
+                throw new ServerSideException(Level.SEVERE, "Class %1s is not subclass of GenericPhysicalConnection");
+
+            String aSideString, bSideString;
+
+            if (mem.isSubClass("GenericPhysicalContainer", connectionClass)){
+                aSideString = "nodeA";
+                bSideString = "nodeB";
+            }else{
+                aSideString = "endpointA";
+                bSideString = "endpointB";
+            }
+
+            newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, null);
+            bem.createSpecialRelationship(aObjectClass, aObjectId, connectionClass, newConnectionId, aSideString);
+            bem.createSpecialRelationship(bObjectClass, bObjectId, connectionClass, newConnectionId, bSideString);
             return newConnectionId;
         } catch (Exception ex) {
             //If the new connection was successfully created, but there's a problem creating the relationships, 

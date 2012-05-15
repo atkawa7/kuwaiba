@@ -744,6 +744,24 @@ public class Kuwaiba {
         }
     }
 
+    @WebMethod(operationName = "getSpecialAttribute")
+    public String[] getSpecialAttribute(@WebParam(name = "objectclass") String objectClass,
+            @WebParam(name = "oid") Long oid,
+            @WebParam(name = "attributename") String attributeName,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            //sbr.validateCall("getSpecialAttribute", getIPAddress(), sessionId);
+            return wsBean.getSpecialAttribute(objectClass, oid, attributeName);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
     /**
      * Updates attributes of a given object
      * @param className object's class name
