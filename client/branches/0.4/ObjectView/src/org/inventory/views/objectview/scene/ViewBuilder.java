@@ -98,7 +98,7 @@ public class ViewBuilder {
             if (widget.getSourceAnchor() == null || widget.getTargetAnchor() == null)
                 scene.getNotifier().showSimplePopup("View Generation",
                         NotificationUtil.WARNING, "The connection "+
-                        edge.getObject().getAttribute("name")+" ["+edge.getObject().getClassName()+"], id="+edge.getObject().getOid()+" has a side missing, please check if it was moved and refresh the view"); //NOI18N
+                        edge.getObject().getName()+" ["+edge.getObject().getClassName()+"], id="+edge.getObject().getOid()+" has a side missing, please check if it was moved and refresh the view"); //NOI18N
             else{
                 widget.setControlPoints(edge.getControlPoints(), true);
                 scene.getEdgesLayer().addChild(widget);
@@ -177,7 +177,7 @@ public class ViewBuilder {
         }
 
         if (physicalConnectionsToDelete != null){
-            for (LocalObject toDelete : physicalConnectionsToDelete)
+            for (LocalObjectLight toDelete : physicalConnectionsToDelete)
                 myView.getEdges().remove(LocalStuffFactory.createLocalEdge(toDelete));
         }
 

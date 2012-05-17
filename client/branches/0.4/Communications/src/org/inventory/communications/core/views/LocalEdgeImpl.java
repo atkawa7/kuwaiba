@@ -20,7 +20,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.inventory.core.services.api.LocalObject;
+import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.visual.LocalEdge;
 import org.inventory.core.services.api.visual.LocalNode;
 import org.openide.util.lookup.ServiceProvider;
@@ -37,7 +37,7 @@ public class LocalEdgeImpl implements LocalEdge {
     /**
      * Wrapped business object
      */
-    private LocalObject object;
+    private LocalObjectLight object;
     /**
      * Reference to the "a" side of the connection
      */
@@ -53,21 +53,21 @@ public class LocalEdgeImpl implements LocalEdge {
 
     public LocalEdgeImpl() {    }
 
-    public LocalEdgeImpl(LocalObject obj) {
+    public LocalEdgeImpl(LocalObjectLight obj) {
         this.object = obj;
     }
 
-    public LocalEdgeImpl(LocalObject _object, Point[] _controlsPoints){
-        this.object = _object;
+    public LocalEdgeImpl(LocalObjectLight object, Point[] controlsPoints){
+        this.object = object;
         this.controlPoints = new ArrayList<Point>();
-        if (_controlsPoints != null)
-            this.controlPoints.addAll(Arrays.asList(_controlsPoints));
+        if (controlsPoints != null)
+            this.controlPoints.addAll(Arrays.asList(controlsPoints));
     }
 
-    public LocalEdgeImpl(LocalObject _object, LocalNode _aSide, LocalNode _bSide, Point[] _controlsPoints){
-        this (_object,_controlsPoints);
-        this.aSide = _aSide;
-        this.bSide =_bSide;
+    public LocalEdgeImpl(LocalObjectLight object, LocalNode aSide, LocalNode bSide, Point[] controlsPoints){
+        this (object,controlsPoints);
+        this.aSide = aSide;
+        this.bSide =bSide;
     }
 
     @Override
@@ -89,7 +89,7 @@ public class LocalEdgeImpl implements LocalEdge {
         return controlPoints;
     }
 
-    public LocalObject getObject() {
+    public LocalObjectLight getObject() {
         return object;
     }
 

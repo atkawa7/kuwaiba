@@ -18,7 +18,7 @@ package org.inventory.core.services.api.visual;
 
 import java.awt.Point;
 import java.util.List;
-import org.inventory.core.services.api.LocalObject;
+import org.inventory.core.services.api.LocalObjectLight;
 
 /**
  * Represents an edge in an object view
@@ -31,7 +31,7 @@ public interface LocalEdge {
 
     public List<Point> getControlPoints();
 
-    public LocalObject getObject();
+    public LocalObjectLight getObject();
 
     public LocalNode getaSide();
 

@@ -23,7 +23,6 @@ import org.inventory.communications.core.LocalClassMetadataImpl;
 import org.inventory.communications.core.LocalClassWrapperImpl;
 import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.communications.core.LocalObjectLightImpl;
-//import org.inventory.communications.core.queries.LocalTransientQueryImpl;
 import org.inventory.communications.core.queries.LocalTransientQueryImpl;
 import org.inventory.communications.core.views.LocalEdgeImpl;
 import org.inventory.communications.core.views.LocalNodeImpl;
@@ -75,11 +74,11 @@ public class LocalStuffFactory {
         return new LocalEdgeImpl(toAdd, nodeB, nodeB, controlPoints);
     }
 
-    public static LocalEdge createLocalEdge(LocalObject container, Point[] controlPoints) {
+    public static LocalEdge createLocalEdge(LocalObjectLight container, Point[] controlPoints) {
         return new LocalEdgeImpl(container, controlPoints);
     }
 
-    public static LocalEdge createLocalEdge(LocalObject obj){
+    public static LocalEdge createLocalEdge(LocalObjectLight obj){
         return new LocalEdgeImpl(obj);
     }
 
