@@ -284,7 +284,14 @@ public interface WebServiceBeanRemote {
      * @param parentClassId Id of the class whose instances can contain the instances of the next param
      * @param _possibleChildren ids of the candidates to be contained
      */
-    public void addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws ServerSideException;
+    public void addPossibleChildren(Long parentClassId, Long[] possibleChildren) throws ServerSideException;
+    /**
+     * Adds to a given class a list of possible children classes whose instances can be contained using the class name to find the parent class
+     * @param parentClassName parent class name
+     * @param newPossibleChildren list of possible children
+     * @throws ServerSideException In case something goes wrong
+     */
+    public void addPossibleChildren(String parentClassName, String[] newPossibleChildren) throws ServerSideException;
 
     /**
      * The opposite of addPossibleChildren. It removes the given possible children

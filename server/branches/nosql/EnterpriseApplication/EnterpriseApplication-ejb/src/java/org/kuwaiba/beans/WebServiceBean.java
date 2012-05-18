@@ -676,12 +676,26 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public void addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws ServerSideException {
+    public void addPossibleChildren(Long parentClassId, Long[] possibleChildren) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try
         {
-            mem.addPossibleChildren(parentClassId, _possibleChildren);
+            mem.addPossibleChildren(parentClassId, possibleChildren);
+
+        } catch (Exception ex) {
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public void addPossibleChildren(String parentClassName, String[] possibleChildren) throws ServerSideException {
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try
+        {
+            mem.addPossibleChildren(parentClassName, possibleChildren);
 
         } catch (Exception ex) {
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);

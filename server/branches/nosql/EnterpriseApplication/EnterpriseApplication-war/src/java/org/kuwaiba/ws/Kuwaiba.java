@@ -1436,13 +1436,32 @@ public class Kuwaiba {
     
     @WebMethod(operationName = "addPossibleChildren")
     public void addPossibleChildren(@WebParam(name = "parentClassId")
-    Long parentClassId, @WebParam(name = "childrenToBeRemoved")
+    Long parentClassId, @WebParam(name = "childrenToBeAdded")
     Long[] newPossibleChildren, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
         try
         {
             wsBean.addPossibleChildren(parentClassId, newPossibleChildren);
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "addPossibleChildrenByClassName")
+    public void addPossibleChildrenByClassName(@WebParam(name = "parentClassName")
+    String parentClassName, @WebParam(name = "childrenToBeAdded")
+    String[] childrenToBeAdded, @WebParam(name = "sessionId")
+    String sessionId) throws Exception {
+        try
+        {
+            wsBean.addPossibleChildren(parentClassName, childrenToBeAdded);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
