@@ -83,7 +83,7 @@ public class CommunicationsStub {
         if (serverURL == null){
             try{
                 //Default values
-                serverURL = new URL("http", "localhost", 8080,"/EnterpriseApplication-war/KuwaibaService?wsdl"); //NOI18n
+                serverURL = new URL("http", "localhost", 8080,"/kuwaiba/KuwaibaService?wsdl"); //NOI18n
             }catch (MalformedURLException mue){
                 Logger.getAnonymousLogger("Malformed URL: "+mue.getMessage());
             }
