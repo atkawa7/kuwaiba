@@ -8,12 +8,12 @@ import java.io.IOException;
  *
  * @author adrian
  */
-public class ImporteFromXml {
+public class LoadTester {
 public static void main(String argv[]) throws IOException, Exception {
 
-        readXMLBackup a = new readXMLBackup();
+        XMLBackupReader a = new XMLBackupReader();
         File nombre = new File("/home/zim/classhierarchy_v3.xml");
-        a.read(readXMLBackup.getBytesFromFile(nombre));
+        a.read(XMLBackupReader.getBytesFromFile(nombre));
         a.axu();
 
     }//fin main

@@ -631,12 +631,32 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             Node classNode = child.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode();
 
             ClassMetadata classMetadata = cm.getClass((String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
-            if (classToFilter.equals(classMetadata.getName())){
+            if (cm.isSubClass(classToFilter, classMetadata.getName())){
                 res.add(Util.createRemoteObjectFromNode(child, classMetadata));
                 if (maxResults > 0){
                     if (++counter == maxResults)
                         break;
                 }
+            }
+        }
+
+        if (maxResults > 0 && counter == maxResults)
+            return res;
+
+        Iterable<Relationship> specialChildren = parentNode.getRelationships(RelTypes.CHILD_OF_SPECIAL,Direction.INCOMING);
+        while(specialChildren.iterator().hasNext()){
+            Node child = specialChildren.iterator().next().getStartNode();
+
+            if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
+                throw new MetadataObjectNotFoundException(Util.formatString("Class for object with oid %1s could not be found",child.getId()));
+
+            Node classNode = child.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode();
+
+            ClassMetadata classMetadata = cm.getClass((String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
+            if (cm.isSubClass(classToFilter, classMetadata.getName())){
+                res.add(Util.createRemoteObjectFromNode(child, classMetadata));
+                if (maxResults > 0 && ++counter == maxResults)
+                        break;
             }
         }
         return res;
@@ -646,7 +666,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     public List<RemoteBusinessObjectLight> getChildrenOfClassLight(Long parentOid, String parentClass, String classToFilter, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException {
         Node parentNode = getInstanceOfClass(parentClass, parentOid);
-        Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF);
+        Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING);
         List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
 
         int counter = 0;
@@ -657,16 +677,37 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
                 throw new MetadataObjectNotFoundException(Util.formatString("Class for object with oid %1s could not be found",child.getId()));
 
-            Node classNode = child.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode();
-
-            if (classToFilter.equals((String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME))){
-                res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),getClassName(child)));
+            String className = getClassName(child);
+            if (cm.isSubClass(classToFilter, className)){
+                res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),className));
                 if (maxResults > 0){
                     if (++counter == maxResults)
                         break;
                 }
             }
         }
+
+        if (maxResults > 0 && counter == maxResults)
+            return res;
+
+        Iterable<Relationship> specialChildren = parentNode.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING);
+        while(specialChildren.iterator().hasNext()){
+            Node child = specialChildren.iterator().next().getStartNode();
+
+            if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
+                throw new MetadataObjectNotFoundException(Util.formatString("Class for object with oid %1s could not be found",child.getId()));
+
+            String className = getClassName(child);
+
+            if (cm.isSubClass(classToFilter, className)){
+                res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),className));
+                if (maxResults > 0){
+                    if (++counter == maxResults)
+                        break;
+                }
+            }
+        }
+
         return res;
     }
 
@@ -677,9 +718,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     public List<String> getSpecialAttribute(String objectClass, Long objectId, String specialAttributeName) throws ObjectNotFoundException, MetadataObjectNotFoundException {
         Node instance = getInstanceOfClass(objectClass, objectId);
         List<String> res = new ArrayList<String>();
-        for (Relationship rel : instance.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.OUTGOING))
-            if (instance.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals(specialAttributeName))
-                res.add(String.valueOf(rel.getEndNode().getId()));
+        for (Relationship rel : instance.getRelationships(RelTypes.RELATED_TO_SPECIAL))
+            if (rel.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals(specialAttributeName))
+                res.add(String.valueOf(rel.getEndNode().getId() == objectId.longValue() ? rel.getStartNode().getId() : rel.getEndNode().getId()));
         return res;
     }
 

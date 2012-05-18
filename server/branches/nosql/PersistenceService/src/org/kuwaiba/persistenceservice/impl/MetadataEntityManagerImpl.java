@@ -1344,17 +1344,22 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     {
                         alreadyAdded = true;
                     }
-                }//end for currentPossibleChlidren
+                }//end for currentPossibleChildren
                 if (!currentPossibleChildren.contains(possibleChild) && !alreadyAdded)
                 {   // If the class is already a possible child, it won't add it
                     parentNode.createRelationshipTo(childNode, RelTypes.POSSIBLE_CHILD);
-                    cm.putPossibleChild((String)parentNode.getProperty(PROPERTY_NAME), (String)childNode.getProperty(PROPERTY_NAME));
+                    String parentClassName = (String)parentNode.getProperty(PROPERTY_NAME);
+                    if (cm.getClass(possibleChild.getName()).isAbstractClass()){
+                        for(Node subClass : Util.getAllSubclasses(childNode))
+                            cm.putPossibleChild(parentClassName,(String)subClass.getProperty(PROPERTY_NAME));
+                    }
+                    else
+                        cm.putPossibleChild(parentClassName, (String)childNode.getProperty(PROPERTY_NAME));
                 }
                 else
                 {
                     throw new InvalidArgumentException(
-                            "This class has already been added to the containment hierarchy: "
-                            + possibleChild.getName(), Level.INFO);
+                            Util.formatString("Class %1s had already been added to the containment hierarchy", possibleChild.getName()), Level.INFO);
                 }
             }//end for _PossibleChildren.
             tx.success();
@@ -1390,7 +1395,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     if(childNode.getId() == possiblechild.getId())
                     {
                         rel.delete();
-                        cm.removePossibleChild((String)parentNode.getProperty(PROPERTY_NAME), (String)childNode.getProperty(PROPERTY_NAME));
+                        String parentClassName = (String)parentNode.getProperty(PROPERTY_NAME);
+                        if (cm.getClass((String)childNode.getProperty(PROPERTY_NAME)).isAbstractClass()){
+                            for(Node subClass : Util.getAllSubclasses(childNode))
+                                cm.removePossibleChild(parentClassName, (String)subClass.getProperty(PROPERTY_NAME));
+                        }
+                        else
+                            cm.removePossibleChild(parentClassName, (String)childNode.getProperty(PROPERTY_NAME));
+                        
                         break;
                     }
                 }//end for

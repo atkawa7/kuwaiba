@@ -2,7 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/src/org/kuwaiba/apis/persistence/application/Privileges.java</file>
-        <file>file:/home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/src/org/kuwaiba/apis/persistence/application/UserProfile.java</file>
+        <file>file:/home/zim/workspace/java/KuwaibaServer04/PersistenceAbstractionAPI/src/org/kuwaiba/apis/persistence/interfaces/BusinessEntityManager.java</file>
     </open-files>
 </project-private>

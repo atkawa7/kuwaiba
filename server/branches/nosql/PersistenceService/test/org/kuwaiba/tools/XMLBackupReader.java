@@ -30,7 +30,7 @@ import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
  *
  * @author adrian
  */
-public class readXMLBackup {
+public class XMLBackupReader {
 
     private String documentVersion;
     private String serverVersion;
@@ -40,7 +40,7 @@ public class readXMLBackup {
     MetadataEntityManagerImpl mem;
     ConnectionManagerImpl cm;
 
-    public readXMLBackup() {
+    public XMLBackupReader() {
         cm = new ConnectionManagerImpl();
         cm.openConnection();
         mem = new MetadataEntityManagerImpl(cm);
@@ -156,7 +156,7 @@ public class readXMLBackup {
         try {
             readRoots(roots, "");
         } catch (Exception ex) {
-            Logger.getLogger(readXMLBackup.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(XMLBackupReader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
