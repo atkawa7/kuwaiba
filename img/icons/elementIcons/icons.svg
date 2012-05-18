@@ -14,7 +14,7 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.1 r9760"
    sodipodi:docname="icons.svg">
   <defs
      id="defs4">
@@ -32,10 +32,10 @@
     </linearGradient>
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 526.18109 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="744.09448 : 526.18109 : 1"
-       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       inkscape:vp_x="31.836362 : 519.79233 : 1"
+       inkscape:vp_y="0 : 944.71706 : 0"
+       inkscape:vp_z="197.61595 : 465.72415 : 1"
+       inkscape:persp3d-origin="235.46948 : 356.11931 : 1"
        id="perspective10" />
     <inkscape:perspective
        id="perspective3598"
@@ -460,14 +460,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70000001"
-     inkscape:cx="75.402658"
-     inkscape:cy="533.90301"
+     inkscape:zoom="5.12"
+     inkscape:cx="70.34481"
+     inkscape:cy="463.71267"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="752"
+     inkscape:window-width="1364"
+     inkscape:window-height="716"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1" />
@@ -1209,5 +1209,51 @@
          x="124.35874"
          y="568.59424"
          style="font-size:27.15151596px;font-weight:bold;fill:#5aa02c;fill-opacity:1;stroke:none">A</tspan></text>
+    <rect
+       style="fill:#e6e6e6;fill-opacity:1;stroke:#4d4d4d;stroke-width:4;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3190-04-2"
+       width="31.030304"
+       height="31.030304"
+       x="158.41342"
+       y="516.48987"
+       ry="0"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/default_32.png"
+       inkscape:export-xdpi="82.506714"
+       inkscape:export-ydpi="82.506714" />
+    <text
+       xml:space="preserve"
+       style="font-size:38.78787613px;font-style:normal;font-weight:normal;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="163.83441"
+       y="569.03906"
+       id="text3630-6-4-4-0"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/default.png"
+       inkscape:export-xdpi="45"
+       inkscape:export-ydpi="45"><tspan
+         sodipodi:role="line"
+         id="tspan3632-8-7-4-2"
+         x="163.83441"
+         y="569.03906"
+         style="font-size:27.15151596px;font-weight:bold;fill:#4d4d4d;fill-opacity:1;stroke:none" /></text>
+    <rect
+       style="fill:#eeffaa;fill-opacity:1;stroke:#88aa00;stroke-width:4;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect3190-04-22"
+       width="31.030304"
+       height="31.030304"
+       x="158.77055"
+       y="577.91846"
+       ry="0"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/default_32.png"
+       inkscape:export-xdpi="82.212311"
+       inkscape:export-ydpi="82.212311" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#88aa00;fill-opacity:1;stroke:#88aa00;stroke-width:4;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path6310"
+       sodipodi:cx="59.472656"
+       sodipodi:cy="585.17468"
+       sodipodi:rx="10.839844"
+       sodipodi:ry="9.375"
+       d="m 70.3125,585.17468 a 10.839844,9.375 0 1 1 -21.679688,0 10.839844,9.375 0 1 1 21.679688,0 z"
+       transform="matrix(1.2316764,0,0,1.4241258,-11.985442,-258.67209)" />
   </g>
 </svg>

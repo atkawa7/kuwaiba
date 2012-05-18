@@ -23,18 +23,6 @@
      id="defs4">
     <linearGradient
        inkscape:collect="always"
-       id="linearGradient3195">
-      <stop
-         style="stop-color:#ffffff;stop-opacity:1;"
-         offset="0"
-         id="stop3197" />
-      <stop
-         style="stop-color:#ffffff;stop-opacity:0;"
-         offset="1"
-         id="stop3199" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
        id="linearGradient3139">
       <stop
          style="stop-color:#c83737;stop-opacity:1;"
@@ -69,18 +57,6 @@
          offset="1"
          id="stop3661" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient3614">
-      <stop
-         style="stop-color:#ffffff;stop-opacity:1;"
-         offset="0"
-         id="stop3616" />
-      <stop
-         style="stop-color:#ffffff;stop-opacity:0;"
-         offset="1"
-         id="stop3618" />
-    </linearGradient>
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
        inkscape:vp_x="0 : 526.18109 : 1"
@@ -95,15 +71,6 @@
        inkscape:vp_y="0 : 1000 : 0"
        inkscape:vp_x="0 : 0.5 : 1"
        sodipodi:type="inkscape:persp3d" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3614"
-       id="linearGradient3620"
-       x1="244.28572"
-       y1="232.66591"
-       x2="221.42857"
-       y2="254.80876"
-       gradientUnits="userSpaceOnUse" />
     <inkscape:perspective
        id="perspective3640"
        inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
@@ -128,27 +95,6 @@
        inkscape:vp_y="0 : 1000 : 0"
        inkscape:vp_x="0 : 0.5 : 1"
        sodipodi:type="inkscape:persp3d" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3614-4"
-       id="linearGradient3620-9"
-       x1="244.28572"
-       y1="232.66591"
-       x2="221.42857"
-       y2="254.80876"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient3614-4">
-      <stop
-         style="stop-color:#ffffff;stop-opacity:1;"
-         offset="0"
-         id="stop3616-4" />
-      <stop
-         style="stop-color:#ffffff;stop-opacity:0;"
-         offset="1"
-         id="stop3618-9" />
-    </linearGradient>
     <inkscape:perspective
        id="perspective3746"
        inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
@@ -156,27 +102,6 @@
        inkscape:vp_y="0 : 1000 : 0"
        inkscape:vp_x="0 : 0.5 : 1"
        sodipodi:type="inkscape:persp3d" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3614-4-7"
-       id="linearGradient3620-9-7"
-       x1="244.28572"
-       y1="232.66591"
-       x2="221.42857"
-       y2="254.80876"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient3614-4-7">
-      <stop
-         style="stop-color:#ffffff;stop-opacity:1;"
-         offset="0"
-         id="stop3616-4-1" />
-      <stop
-         style="stop-color:#ffffff;stop-opacity:0;"
-         offset="1"
-         id="stop3618-9-6" />
-    </linearGradient>
     <inkscape:perspective
        id="perspective2848"
        inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
@@ -393,15 +318,6 @@
        inkscape:vp_y="0 : 1000 : 0"
        inkscape:vp_x="0 : 0.5 : 1"
        sodipodi:type="inkscape:persp3d" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3195"
-       id="linearGradient3201"
-       x1="200.48555"
-       y1="427.02628"
-       x2="191.87096"
-       y2="436.68201"
-       gradientUnits="userSpaceOnUse" />
     <inkscape:perspective
        id="perspective3215"
        inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
@@ -466,9 +382,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="696.09204"
-     inkscape:cy="295.65603"
+     inkscape:zoom="0.7071068"
+     inkscape:cx="-146.65375"
+     inkscape:cy="302.67638"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -502,6 +418,17 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-308.2677)">
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="856.01526"
+       y="831.91632"
+       id="text4012-4-0"><tspan
+         sodipodi:role="line"
+         x="856.01526"
+         y="831.91632"
+         style="font-size:16px"
+         id="tspan5581-8">Main Icons</tspan></text>
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:2.16236496;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3150"
@@ -549,532 +476,6 @@
          x="707.42499"
          y="-818.8797"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans">wless</tspan></text>
-    <path
-       sodipodi:type="arc"
-       style="fill:#000000;fill-opacity:1;stroke:none"
-       id="path3590"
-       sodipodi:cx="301.42856"
-       sodipodi:cy="371.95163"
-       sodipodi:rx="29.285715"
-       sodipodi:ry="45"
-       d="m 330.71427,371.95163 c 0,24.85281 -13.11166,45 -29.28571,45 -16.17406,0 -29.28572,-20.14719 -29.28572,-45 0,0 0,0 0,0"
-       transform="matrix(1,0,0,-1,-80.357143,993.95671)"
-       sodipodi:start="0"
-       sodipodi:end="3.1415927"
-       sodipodi:open="true"
-       inkscape:transform-center-x="-69.642857"
-       inkscape:transform-center-y="62.142857"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addUser.png"
-       inkscape:export-xdpi="19.109003"
-       inkscape:export-ydpi="19.109003" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#aad400;stroke:none"
-       id="path2816"
-       sodipodi:cx="221.42857"
-       sodipodi:cy="254.80876"
-       sodipodi:rx="22.857143"
-       sodipodi:ry="22.142857"
-       d="m 244.28572,254.80876 c 0,12.22916 -10.23349,22.14286 -22.85715,22.14286 -12.62365,0 -22.85714,-9.9137 -22.85714,-22.14286 0,-12.22916 10.23349,-22.14286 22.85714,-22.14286 12.62366,0 22.85715,9.9137 22.85715,22.14286 z"
-       transform="matrix(0.828125,0,0,0.79032258,38.129464,366.3382)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addUser.png"
-       inkscape:export-xdpi="19.109003"
-       inkscape:export-ydpi="19.109003" />
-    <path
-       transform="matrix(0.63403321,0,0,0.65010406,82.585727,400.09131)"
-       sodipodi:type="arc"
-       style="fill:url(#linearGradient3620);fill-opacity:1;stroke:none"
-       id="path2816-2"
-       sodipodi:cx="221.42857"
-       sodipodi:cy="254.80876"
-       sodipodi:rx="22.857143"
-       sodipodi:ry="22.142857"
-       d="m 244.28572,254.80876 c 0,12.22916 -10.23349,22.14286 -22.85715,22.14286 -12.62365,0 -22.85714,-9.9137 -22.85714,-22.14286 0,-12.22916 10.23349,-22.14286 22.85714,-22.14286 12.62366,0 22.85715,9.9137 22.85715,22.14286 z"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addUser.png"
-       inkscape:export-xdpi="19.109003"
-       inkscape:export-ydpi="19.109003" />
-    <path
-       style="fill:#ffffff;fill-opacity:1;stroke:none"
-       d="m 209.15266,581.42381 c 4.33482,12.35357 2.16968,31.64335 11.8575,37.30566 9.29282,-5.75639 7.75954,-24.83668 12.34989,-37.29296 -13.29134,8.10441 -19.02624,1.19644 -24.20739,-0.0127 z"
-       id="path3622"
-       sodipodi:nodetypes="cccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addUser.png"
-       inkscape:export-xdpi="19.109003"
-       inkscape:export-ydpi="19.109003" />
-    <path
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       d="m 213.52099,611.14153 7.07107,-25.21729 9.28078,23.19017 -4.86136,6.32461 -3.97748,3.56772 -4.48255,-4.05424 -3.03046,-3.81097 z"
-       id="path3626"
-       sodipodi:nodetypes="ccccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addUser.png"
-       inkscape:export-xdpi="19.109003"
-       inkscape:export-ydpi="19.109003" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#aad400;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="237.50002"
-       y="625.57648"
-       id="text3628"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addUser.png"
-       inkscape:export-xdpi="19.109003"
-       inkscape:export-ydpi="19.109003"><tspan
-         sodipodi:role="line"
-         id="tspan3630"
-         x="237.50002"
-         y="625.57648"
-         style="font-weight:bold;-inkscape-font-specification:Bitstream Vera Sans Bold;fill:#ff0000">+</tspan></text>
-    <path
-       sodipodi:type="arc"
-       style="fill:#000000;fill-opacity:1;stroke:none"
-       id="path3590-1"
-       sodipodi:cx="301.42856"
-       sodipodi:cy="371.95163"
-       sodipodi:rx="29.285715"
-       sodipodi:ry="45"
-       d="m 330.71427,371.95163 c 0,24.85281 -13.11166,45 -29.28571,45 -16.17406,0 -29.28572,-20.14719 -29.28572,-45 0,0 0,0 0,0"
-       transform="matrix(1,0,0,-1,150.36133,987.70669)"
-       sodipodi:start="0"
-       sodipodi:end="3.1415927"
-       sodipodi:open="true"
-       inkscape:transform-center-x="-69.642857"
-       inkscape:transform-center-y="62.142857"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addGrouppng.png"
-       inkscape:export-xdpi="19.328098"
-       inkscape:export-ydpi="19.328098" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#aad400;stroke:none"
-       id="path2816-9"
-       sodipodi:cx="221.42857"
-       sodipodi:cy="254.80876"
-       sodipodi:rx="22.857143"
-       sodipodi:ry="22.142857"
-       d="m 244.28572,254.80876 c 0,12.22916 -10.23349,22.14286 -22.85715,22.14286 -12.62365,0 -22.85714,-9.9137 -22.85714,-22.14286 0,-12.22916 10.23349,-22.14286 22.85714,-22.14286 12.62366,0 22.85715,9.9137 22.85715,22.14286 z"
-       transform="matrix(0.828125,0,0,0.79032258,268.84793,360.08821)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addGrouppng.png"
-       inkscape:export-xdpi="19.328098"
-       inkscape:export-ydpi="19.328098" />
-    <path
-       transform="matrix(0.63403321,0,0,0.65010406,313.3042,393.84132)"
-       sodipodi:type="arc"
-       style="fill:url(#linearGradient3620-9);fill-opacity:1;stroke:none"
-       id="path2816-2-9"
-       sodipodi:cx="221.42857"
-       sodipodi:cy="254.80876"
-       sodipodi:rx="22.857143"
-       sodipodi:ry="22.142857"
-       d="m 244.28572,254.80876 c 0,12.22916 -10.23349,22.14286 -22.85715,22.14286 -12.62365,0 -22.85714,-9.9137 -22.85714,-22.14286 0,-12.22916 10.23349,-22.14286 22.85714,-22.14286 12.62366,0 22.85715,9.9137 22.85715,22.14286 z"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addGrouppng.png"
-       inkscape:export-xdpi="19.328098"
-       inkscape:export-ydpi="19.328098" />
-    <path
-       style="fill:#ffffff;fill-opacity:1;stroke:none"
-       d="m 439.87113,575.17382 c 4.33482,12.35357 2.16968,31.64335 11.8575,37.30566 9.29282,-5.75639 7.75954,-24.83668 12.34989,-37.29296 -13.29134,8.10441 -19.02624,1.19644 -24.20739,-0.0127 z"
-       id="path3622-3"
-       sodipodi:nodetypes="cccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addGrouppng.png"
-       inkscape:export-xdpi="19.328098"
-       inkscape:export-ydpi="19.328098" />
-    <path
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       d="m 444.23946,604.89154 7.07107,-25.21729 9.28078,23.19017 -4.86136,6.32461 -3.97748,3.56772 -4.48255,-4.05424 -3.03046,-3.81097 z"
-       id="path3626-4"
-       sodipodi:nodetypes="ccccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addGrouppng.png"
-       inkscape:export-xdpi="19.328098"
-       inkscape:export-ydpi="19.328098" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#aad400;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="468.21848"
-       y="619.32648"
-       id="text3628-1"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addGrouppng.png"
-       inkscape:export-xdpi="19.328098"
-       inkscape:export-ydpi="19.328098"><tspan
-         sodipodi:role="line"
-         id="tspan3630-2"
-         x="468.21848"
-         y="619.32648"
-         style="font-weight:bold;fill:#ff0000;-inkscape-font-specification:Bitstream Vera Sans Bold">+</tspan></text>
-    <path
-       sodipodi:type="arc"
-       style="fill:#00002b;fill-opacity:1;stroke:none"
-       id="path3590-1-5"
-       sodipodi:cx="301.42856"
-       sodipodi:cy="371.95163"
-       sodipodi:rx="29.285715"
-       sodipodi:ry="45"
-       d="m 330.71427,371.95163 c 0,24.85281 -13.11166,45 -29.28571,45 -16.17406,0 -29.28572,-20.14719 -29.28572,-45 0,0 0,0 0,0"
-       transform="matrix(1,0,0,-1,104.28573,988.06381)"
-       sodipodi:start="0"
-       sodipodi:end="3.1415927"
-       sodipodi:open="true"
-       inkscape:transform-center-x="-69.642857"
-       inkscape:transform-center-y="62.142857"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addGrouppng.png"
-       inkscape:export-xdpi="19.328098"
-       inkscape:export-ydpi="19.328098" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#ff6600;stroke:none"
-       id="path2816-9-5"
-       sodipodi:cx="221.42857"
-       sodipodi:cy="254.80876"
-       sodipodi:rx="22.857143"
-       sodipodi:ry="22.142857"
-       d="m 244.28572,254.80876 c 0,12.22916 -10.23349,22.14286 -22.85715,22.14286 -12.62365,0 -22.85714,-9.9137 -22.85714,-22.14286 0,-12.22916 10.23349,-22.14286 22.85714,-22.14286 12.62366,0 22.85715,9.9137 22.85715,22.14286 z"
-       transform="matrix(0.828125,0,0,0.79032258,222.77233,360.44534)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addGrouppng.png"
-       inkscape:export-xdpi="19.328098"
-       inkscape:export-ydpi="19.328098" />
-    <path
-       transform="matrix(0.63403321,0,0,0.65010406,267.2286,394.19845)"
-       sodipodi:type="arc"
-       style="fill:url(#linearGradient3620-9-7);fill-opacity:1;stroke:none"
-       id="path2816-2-9-4"
-       sodipodi:cx="221.42857"
-       sodipodi:cy="254.80876"
-       sodipodi:rx="22.857143"
-       sodipodi:ry="22.142857"
-       d="m 244.28572,254.80876 c 0,12.22916 -10.23349,22.14286 -22.85715,22.14286 -12.62365,0 -22.85714,-9.9137 -22.85714,-22.14286 0,-12.22916 10.23349,-22.14286 22.85714,-22.14286 12.62366,0 22.85715,9.9137 22.85715,22.14286 z"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addGrouppng.png"
-       inkscape:export-xdpi="19.328098"
-       inkscape:export-ydpi="19.328098" />
-    <path
-       style="fill:#ffffff;fill-opacity:1;stroke:none"
-       d="m 393.79553,575.53095 c 4.33482,12.35357 2.16968,31.64335 11.8575,37.30566 9.29282,-5.75639 7.75954,-24.83668 12.34989,-37.29296 -13.29134,8.10441 -19.02624,1.19644 -24.20739,-0.0127 z"
-       id="path3622-3-6"
-       sodipodi:nodetypes="cccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addGrouppng.png"
-       inkscape:export-xdpi="19.328098"
-       inkscape:export-ydpi="19.328098" />
-    <path
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       d="m 398.16386,605.24867 7.07107,-25.21729 9.28078,23.19017 -4.86136,6.32461 -3.97748,3.56772 -4.48255,-4.05424 -3.03046,-3.81097 z"
-       id="path3626-4-8"
-       sodipodi:nodetypes="ccccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/addGrouppng.png"
-       inkscape:export-xdpi="19.328098"
-       inkscape:export-ydpi="19.328098" />
-    <path
-       transform="translate(131.50825,447.8489)"
-       sodipodi:type="star"
-       style="fill:#4d4d4d;fill-opacity:1;stroke:none"
-       id="path2816-1"
-       sodipodi:sides="3"
-       sodipodi:cx="120"
-       sodipodi:cy="232.36218"
-       sodipodi:r1="25.714287"
-       sodipodi:r2="12.857143"
-       sodipodi:arg1="0"
-       sodipodi:arg2="1.0471976"
-       inkscape:flatsided="false"
-       inkscape:rounded="0"
-       inkscape:randomized="0"
-       d="m 145.71429,232.36218 -19.28572,11.13462 -19.28571,11.13461 0,-22.26923 0,-22.26922 19.28571,11.13461 z"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/Authentication/src/org/inventory/core/authentication/res/collapsed.png"
-       inkscape:export-xdpi="18.186533"
-       inkscape:export-ydpi="18.186533" />
-    <rect
-       style="fill:#008000;fill-opacity:1;stroke:none"
-       id="rect3018"
-       width="69"
-       height="26"
-       x="677"
-       y="555.36218"
-       ry="6.5"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/optic_link.png"
-       inkscape:export-xdpi="27.692308"
-       inkscape:export-ydpi="27.692308" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="683"
-       y="576.36218"
-       id="text3020"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/optic_link.png"
-       inkscape:export-xdpi="27.692308"
-       inkscape:export-ydpi="27.692308"><tspan
-         sodipodi:role="line"
-         id="tspan3022"
-         x="683"
-         y="576.36218"
-         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold">OPT</tspan></text>
-    <rect
-       style="fill:#ff6600;fill-opacity:1;stroke:none"
-       id="rect3018-6"
-       width="69"
-       height="26"
-       x="679.33704"
-       y="602.75555"
-       ry="6.5"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/electric_link.png"
-       inkscape:export-xdpi="28.695652"
-       inkscape:export-ydpi="28.695652" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="689.33704"
-       y="623.75555"
-       id="text3020-8"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/electric_link.png"
-       inkscape:export-xdpi="28.695652"
-       inkscape:export-ydpi="28.695652"><tspan
-         sodipodi:role="line"
-         id="tspan3022-5"
-         x="689.33704"
-         y="623.75555"
-         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold">ELE</tspan></text>
-    <rect
-       style="fill:#660080;fill-opacity:1;stroke:none"
-       id="rect3018-6-4"
-       width="69"
-       height="26"
-       x="681.23651"
-       y="658.8855"
-       ry="6.5"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/radio_link.png"
-       inkscape:export-xdpi="24.836277"
-       inkscape:export-ydpi="24.836277" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="687.23651"
-       y="679.8855"
-       id="text3020-8-2"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/radio_link.png"
-       inkscape:export-xdpi="24.836277"
-       inkscape:export-ydpi="24.836277"><tspan
-         sodipodi:role="line"
-         id="tspan3022-5-2"
-         x="687.23651"
-         y="679.8855"
-         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold">RAD</tspan></text>
-    <path
-       sodipodi:nodetypes="ccc"
-       id="path3757"
-       d="m 392.95242,652.72126 39.47347,17.08842 -39.47347,-17.08842 z"
-       style="fill:none;stroke:#000000;stroke-width:1.02108836px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       inkscape:export-filename="/home/zim/workspace/java/pruebas/GraphLibrary/Mod1/src/org/tests/mod1/res/select.png"
-       inkscape:export-xdpi="40.585026"
-       inkscape:export-ydpi="40.585026"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 410.65228,692.71 c 7.85174,-8.21282 7.80755,-8.13548 7.80755,-8.13548"
-       id="path3759"
-       sodipodi:nodetypes="cc"
-       inkscape:export-filename="/home/zim/workspace/java/pruebas/GraphLibrary/Mod1/src/org/tests/mod1/res/select.png"
-       inkscape:export-xdpi="40.585026"
-       inkscape:export-ydpi="40.585026"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1.12455678px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 424.20571,677.88388 c 8.85174,-9.21282 8.27487,-8.6367 8.27487,-8.6367"
-       id="path3759-0"
-       sodipodi:nodetypes="cc"
-       inkscape:export-filename="/home/zim/workspace/java/pruebas/GraphLibrary/Mod1/src/org/tests/mod1/res/select.png"
-       inkscape:export-xdpi="40.585026"
-       inkscape:export-ydpi="40.585026"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 417.90012,684.75505 16.6039,15.74213 7,-8 -17,-15"
-       id="path3785"
-       inkscape:export-filename="/home/zim/workspace/java/pruebas/GraphLibrary/Mod1/src/org/tests/mod1/res/select.png"
-       inkscape:export-xdpi="40.585026"
-       inkscape:export-ydpi="40.585026"
-       inkscape:connector-curvature="0" />
-    <g
-       id="g3808"
-       inkscape:export-filename="/home/zim/workspace/java/pruebas/GraphLibrary/Mod1/src/org/tests/mod1/res/select.png"
-       inkscape:export-xdpi="40.585026"
-       inkscape:export-ydpi="40.585026"
-       transform="translate(-218.49598,-125.865)">
-      <path
-         sodipodi:nodetypes="ccc"
-         id="path3755"
-         d="m 611.4484,778.58626 17.62721,40.51862 -17.62721,-40.51862 z"
-         style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         inkscape:connector-curvature="0" />
-      <path
-         transform="translate(0,308.2677)"
-         id="path3804"
-         d="m 644.77807,509.51592 -8.17104,-7.7619 -1.52233,1.55147 c -0.83728,0.8533 -2.52347,2.59209 -3.74708,3.86396 -1.22361,1.27188 -2.24855,2.25625 -2.27764,2.1875 -0.0291,-0.0687 -3.73544,-8.58674 -8.23634,-18.92887 -4.5009,-10.34212 -8.15912,-18.82821 -8.12937,-18.85796 0.0298,-0.0297 8.14301,3.44841 18.02947,7.72923 9.88645,4.28083 18.1629,7.86183 18.39211,7.95777 l 0.41673,0.17445 -1.29173,1.34395 c -0.71046,0.73917 -2.35655,2.45534 -3.65799,3.8137 l -2.36625,2.46976 0.61625,0.60941 c 0.33894,0.33517 4.13188,3.70843 8.42875,7.49613 4.29688,3.7877 7.8125,6.93627 7.8125,6.99683 0,0.0605 -1.26562,1.55562 -2.8125,3.32236 -1.54687,1.76674 -2.925,3.34318 -3.0625,3.50318 l -0.25,0.29092 -8.17104,-7.76189 0,0 z"
-         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.31424999;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-         inkscape:connector-curvature="0" />
-    </g>
-    <rect
-       style="fill:#ff6600;fill-opacity:1;stroke:none"
-       id="rect3034"
-       width="22"
-       height="22"
-       x="794.63171"
-       y="605.21313"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/electrical_link.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="797.62665"
-       y="625.17877"
-       id="text3020-8-26"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/electrical_link.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90"><tspan
-         sodipodi:role="line"
-         id="tspan3022-5-4"
-         x="797.62665"
-         y="625.17877"
-         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold">E</tspan></text>
-    <rect
-       style="fill:#008000;fill-opacity:1;stroke:none"
-       id="rect3034-9"
-       width="22"
-       height="22"
-       x="795.45532"
-       y="556.64044"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/optical_link.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="796.45026"
-       y="576.60608"
-       id="text3020-8-26-7"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/optical_link.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90"><tspan
-         sodipodi:role="line"
-         id="tspan3022-5-4-9"
-         x="796.45026"
-         y="576.60608"
-         style="font-size:24px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold">O</tspan></text>
-    <rect
-       style="fill:#660080;fill-opacity:1;stroke:none"
-       id="rect3034-4"
-       width="22"
-       height="22"
-       x="794.74817"
-       y="659.4032"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/radio_link.png"
-       inkscape:export-xdpi="85.909088"
-       inkscape:export-ydpi="85.909088" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="793.7431"
-       y="679.36884"
-       id="text3020-8-26-6"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/applicationIcons/radio_link.png"
-       inkscape:export-xdpi="85.909088"
-       inkscape:export-ydpi="85.909088"><tspan
-         sodipodi:role="line"
-         id="tspan3022-5-4-3"
-         x="793.7431"
-         y="679.36884"
-         style="font-size:22px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold">W</tspan></text>
-    <rect
-       style="fill:#aaccff;fill-opacity:1;stroke:none"
-       id="rect3001"
-       width="61.518291"
-       height="41.012192"
-       x="540.93671"
-       y="636.58337"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/add-background.png"
-       inkscape:export-xdpi="32.799911"
-       inkscape:export-ydpi="32.799911" />
-    <path
-       style="fill:#00d900;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 541.64382,677.24204 21.56675,-24.04163 18.38478,15.55635 20.15254,-10.96016 0,19.09189 -60.10407,0.35355 z"
-       id="path3003"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/add-background.png"
-       inkscape:export-xdpi="32.799911"
-       inkscape:export-ydpi="32.799911"
-       inkscape:connector-curvature="0" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#f7f600;fill-opacity:1;stroke:none"
-       id="path3777"
-       sodipodi:cx="797.26288"
-       sodipodi:cy="467.79251"
-       sodipodi:rx="5.6568542"
-       sodipodi:ry="5.4800777"
-       d="m 802.91973,467.79251 c 0,3.02656 -2.53266,5.48008 -5.65685,5.48008 -3.1242,0 -5.65686,-2.45352 -5.65686,-5.48008 0,-3.02656 2.53266,-5.48008 5.65686,-5.48008 3.12419,0 5.65685,2.45352 5.65685,5.48008 z"
-       transform="translate(-209.3036,178.86717)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/add-background.png"
-       inkscape:export-xdpi="32.799911"
-       inkscape:export-ydpi="32.799911" />
-    <rect
-       style="fill:#80b3ff;fill-opacity:1;stroke:none"
-       id="rect3001-0"
-       width="61.518291"
-       height="41.012192"
-       x="540.83533"
-       y="697.73602"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/remove-background.png"
-       inkscape:export-xdpi="32.799911"
-       inkscape:export-ydpi="32.799911" />
-    <path
-       style="fill:#00d900;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 541.54243,738.39468 21.56675,-24.04163 18.38478,15.55635 20.15254,-10.96016 0,19.09189 -60.10407,0.35355 z"
-       id="path3003-0"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/remove-background.png"
-       inkscape:export-xdpi="32.799911"
-       inkscape:export-ydpi="32.799911"
-       inkscape:connector-curvature="0" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#f7f600;fill-opacity:1;stroke:none"
-       id="path3777-3"
-       sodipodi:cx="797.26288"
-       sodipodi:cy="467.79251"
-       sodipodi:rx="5.6568542"
-       sodipodi:ry="5.4800777"
-       d="m 802.91973,467.79251 c 0,3.02656 -2.53266,5.48008 -5.65685,5.48008 -3.1242,0 -5.65686,-2.45352 -5.65686,-5.48008 0,-3.02656 2.53266,-5.48008 5.65686,-5.48008 3.12419,0 5.65685,2.45352 5.65685,5.48008 z"
-       transform="translate(-209.40499,240.01982)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/remove-background.png"
-       inkscape:export-xdpi="32.799911"
-       inkscape:export-ydpi="32.799911" />
-    <g
-       transform="matrix(0.54179643,0,0,1.3055795,-113.4619,14.127879)"
-       style="font-size:67.71808624px;font-style:normal;font-weight:normal;fill:#fc0000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       id="text3779-4-8"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/add-background.png"
-       inkscape:export-xdpi="32.799911"
-       inkscape:export-ydpi="32.799911">
-      <path
-         d="m 1246.4182,483.10737 0,4.72837 -35.1817,0 0,-4.72837 35.1817,0"
-         id="path3873"
-         inkscape:connector-curvature="0" />
-    </g>
-    <g
-       transform="matrix(0,-0.51337256,1.3778655,0,-113.4619,14.127879)"
-       style="font-size:67.71808624px;font-style:normal;font-weight:normal;fill:#fc0000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       id="text3779-4-9"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/add-background.png"
-       inkscape:export-xdpi="32.799911"
-       inkscape:export-ydpi="32.799911">
-      <path
-         d="m -1215.9049,480.60664 0,4.72836 -35.1817,0 0,-4.72836 35.1817,0"
-         id="path3870"
-         inkscape:connector-curvature="0" />
-    </g>
-    <g
-       transform="matrix(0.52758449,0,0,1.5947233,-96.306234,-67.445619)"
-       style="font-size:67.71808624px;font-style:normal;font-weight:normal;fill:#fc0000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       id="text3779-4-8-0"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/remove-background.png"
-       inkscape:export-xdpi="32.799911"
-       inkscape:export-ydpi="32.799911">
-      <path
-         d="m 1246.4182,483.10737 0,4.72837 -35.1817,0 0,-4.72837 35.1817,0"
-         id="path3873-4"
-         inkscape:connector-curvature="0" />
-    </g>
     <path
        style="color:#000000;fill:url(#linearGradient3145);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.90856755;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 688.1903,456.24666 0,35 0.15625,0 c 0.20882,1.94355 5.19416,3.5 11.34375,3.5 6.14959,0 11.13493,-1.55645 11.34375,-3.5 l 0.15625,0 0,-35 -23,0 z"
@@ -1218,13 +619,13 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="699"
-       y="724.36218"
+       x="665.0589"
+       y="604.15405"
        id="text4012"><tspan
          sodipodi:role="line"
          id="tspan4014"
-         x="699"
-         y="724.36218"
+         x="665.0589"
+         y="604.15405"
          style="font-size:16px">Physical Connections</tspan></text>
     <text
        xml:space="preserve"
@@ -1276,66 +677,6 @@
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/Queries/src/org/inventory/queries/res/no-eye.png"
        inkscape:export-xdpi="28.988338"
        inkscape:export-ydpi="28.988338" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#000080;fill-opacity:1;stroke:none"
-       id="path3171"
-       sodipodi:cx="190.65367"
-       sodipodi:cy="435.17722"
-       sodipodi:rx="8.7504463"
-       sodipodi:ry="5.9220195"
-       d="m 199.40412,435.17722 c 0,3.27064 -3.91771,5.92202 -8.75045,5.92202 -4.83274,0 -8.75045,-2.65138 -8.75045,-5.92202 0,-3.27065 3.91771,-5.92202 8.75045,-5.92202 4.83274,0 8.75045,2.65137 8.75045,5.92202 z"
-       transform="matrix(1.2570787,0,0,1.8574745,-76.992266,-20.819711)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ObjectView/src/org/inventory/views/objectview/res/hide_node_labels.png"
-       inkscape:export-xdpi="61.248482"
-       inkscape:export-ydpi="61.248482" />
-    <path
-       sodipodi:type="arc"
-       style="fill:url(#linearGradient3201);fill-opacity:1;stroke:none"
-       id="path3171-5"
-       sodipodi:cx="190.65367"
-       sodipodi:cy="435.17722"
-       sodipodi:rx="8.7504463"
-       sodipodi:ry="5.9220195"
-       d="m 199.40412,435.17722 c 0,3.27064 -3.91771,5.92202 -8.75045,5.92202 -4.83274,0 -8.75045,-2.65138 -8.75045,-5.92202 0,-3.27065 3.91771,-5.92202 8.75045,-5.92202 4.83274,0 8.75045,2.65137 8.75045,5.92202 z"
-       transform="matrix(0.94394738,0,0,1.4097133,-16.536979,172.13103)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ObjectView/src/org/inventory/views/objectview/res/hide_node_labels.png"
-       inkscape:export-xdpi="61.248482"
-       inkscape:export-ydpi="61.248482" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="153.85118"
-       y="805.58191"
-       id="text3203"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ObjectView/src/org/inventory/views/objectview/res/hide_node_labels.png"
-       inkscape:export-xdpi="61.248482"
-       inkscape:export-ydpi="61.248482"><tspan
-         sodipodi:role="line"
-         id="tspan3205"
-         x="153.85118"
-         y="805.58191"
-         style="font-size:8px;font-weight:bold">ABC</tspan></text>
-    <path
-       style="fill:#800000;stroke:#800000;stroke-width:1.48682904;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 155.22649,806.9403 15.10384,-8.19687"
-       id="path3151-0"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ObjectView/src/org/inventory/views/objectview/res/hide_node_labels.png"
-       inkscape:export-xdpi="61.248482"
-       inkscape:export-ydpi="61.248482" />
-    <rect
-       style="fill:none;stroke:none;stroke-width:1.36697614000000001;stroke-opacity:1"
-       id="rect4007"
-       width="31.633024"
-       height="31.633024"
-       x="146.90814"
-       y="775.35638"
-       ry="0"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ObjectView/src/org/inventory/views/objectview/res/hide_node_labels.png"
-       inkscape:export-xdpi="61.248482"
-       inkscape:export-ydpi="61.248482" />
     <rect
        style="fill:#ccffaa;fill-opacity:1;stroke:none;stroke-opacity:1"
        id="rect3195"
@@ -1508,243 +849,6 @@
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ClassManager/src/org/inventory/customization/classmanager/res/read-only-glyph.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
-    <path
-       sodipodi:type="arc"
-       style="opacity:1;fill:#d80000;fill-opacity:1;stroke:none;stroke-width:2.09999989999999981;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="path3435"
-       sodipodi:cx="214.5"
-       sodipodi:cy="120.59447"
-       sodipodi:rx="32.5"
-       sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,46.361747,335.56543)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ClassManager/src/org/inventory/customization/classmanager/res/icon24.png"
-       inkscape:export-xdpi="44.664913"
-       inkscape:export-ydpi="44.664913" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="184.5"
-       y="443.36218"
-       id="text4205"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ClassManager/src/org/inventory/customization/classmanager/res/icon24.png"
-       inkscape:export-xdpi="44.664913"
-       inkscape:export-ydpi="44.664913"><tspan
-         sodipodi:role="line"
-         id="tspan4207"
-         x="184.5"
-         y="443.36218"
-         style="font-size:24px;font-weight:bold;fill:#ffffff">CM</tspan></text>
-    <path
-       sodipodi:type="arc"
-       style="fill:#784421;fill-opacity:1;stroke:none"
-       id="path3435-6"
-       sodipodi:cx="214.5"
-       sodipodi:cy="120.59447"
-       sodipodi:rx="32.5"
-       sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,46.911748,390.01544)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/AttributeCustomizer/src/org/inventory/customization/attributecustomizer/res/icon24.png"
-       inkscape:export-xdpi="44.664913"
-       inkscape:export-ydpi="44.664913" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="185.55"
-       y="496.81216"
-       id="text4205-3"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/AttributeCustomizer/src/org/inventory/customization/attributecustomizer/res/icon24.png"
-       inkscape:export-xdpi="44.664913"
-       inkscape:export-ydpi="44.664913"><tspan
-         sodipodi:role="line"
-         id="tspan4207-1"
-         x="185.55"
-         y="496.81216"
-         style="font-size:24px;font-weight:bold;fill:#ffffff">AM</tspan></text>
-    <path
-       sodipodi:type="arc"
-       style="fill:#000080;fill-opacity:1;stroke:none"
-       id="path3435-8"
-       sodipodi:cx="214.5"
-       sodipodi:cy="120.59447"
-       sodipodi:rx="32.5"
-       sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,-42.863252,336.79043)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ListManager/src/org/inventory/customization/listmanager/res/icon24.png"
-       inkscape:export-xdpi="44.66497"
-       inkscape:export-ydpi="44.66497" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="97.274994"
-       y="444.58716"
-       id="text4205-8"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ListManager/src/org/inventory/customization/listmanager/res/icon24.png"
-       inkscape:export-xdpi="44.66497"
-       inkscape:export-ydpi="44.66497"><tspan
-         sodipodi:role="line"
-         id="tspan4207-3"
-         x="97.274994"
-         y="444.58716"
-         style="font-size:24px;font-weight:bold;fill:#ffffff">LM</tspan></text>
-    <path
-       sodipodi:type="arc"
-       style="fill:#008000;fill-opacity:1;stroke:none"
-       id="path3435-6-1"
-       sodipodi:cx="214.5"
-       sodipodi:cy="120.59447"
-       sodipodi:rx="32.5"
-       sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,-42.313252,391.24044)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon24.png"
-       inkscape:export-xdpi="44.66497"
-       inkscape:export-ydpi="44.66497" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="95.199997"
-       y="498.28717"
-       id="text4205-3-8"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon24.png"
-       inkscape:export-xdpi="44.66497"
-       inkscape:export-ydpi="44.66497"><tspan
-         sodipodi:role="line"
-         id="tspan4207-1-9"
-         x="95.199997"
-         y="498.28717"
-         style="font-size:24px;font-weight:bold;fill:#ffffff">HM</tspan></text>
-    <path
-       sodipodi:type="arc"
-       style="fill:#660080;fill-opacity:1;stroke:none"
-       id="path3435-6-6"
-       sodipodi:cx="214.5"
-       sodipodi:cy="120.59447"
-       sodipodi:rx="32.5"
-       sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,129.91175,325.01544)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/icon.png"
-       inkscape:export-xdpi="29.776609"
-       inkscape:export-ydpi="29.776609" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="267.54999"
-       y="433.56216"
-       id="text4205-3-80"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/icon.png"
-       inkscape:export-xdpi="29.776609"
-       inkscape:export-ydpi="29.776609"><tspan
-         sodipodi:role="line"
-         id="tspan4207-1-2"
-         x="267.54999"
-         y="433.56216"
-         style="font-size:24px;font-weight:bold;fill:#ffffff">UM</tspan></text>
-    <path
-       sodipodi:type="arc"
-       style="fill:#373748;fill-opacity:1;stroke:none"
-       id="path3435-6-6-1"
-       sodipodi:cx="214.5"
-       sodipodi:cy="120.59447"
-       sodipodi:rx="32.5"
-       sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,127.41175,386.51544)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
-       inkscape:export-xdpi="29.776609"
-       inkscape:export-ydpi="29.776609" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="268.54999"
-       y="494.56216"
-       id="text4205-3-80-3"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
-       inkscape:export-xdpi="29.776609"
-       inkscape:export-ydpi="29.776609"><tspan
-         sodipodi:role="line"
-         id="tspan4207-1-2-1"
-         x="268.54999"
-         y="494.56216"
-         style="font-size:24px;font-weight:bold;fill:#ffffff">NT</tspan></text>
-    <path
-       sodipodi:type="arc"
-       style="fill:#d40055;fill-opacity:1;stroke:none"
-       id="path3435-6-6-0"
-       sodipodi:cx="214.5"
-       sodipodi:cy="120.59447"
-       sodipodi:rx="32.5"
-       sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,195.91175,327.51544)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon.png"
-       inkscape:export-xdpi="29.776609"
-       inkscape:export-ydpi="29.776609" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="335.54999"
-       y="436.06216"
-       id="text4205-3-80-4"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon.png"
-       inkscape:export-xdpi="29.776609"
-       inkscape:export-ydpi="29.776609"><tspan
-         sodipodi:role="line"
-         id="tspan4207-1-2-6"
-         x="335.54999"
-         y="436.06216"
-         style="font-size:24px;font-weight:bold;fill:#ffffff">GV</tspan></text>
-    <path
-       sodipodi:type="arc"
-       style="fill:#ff6600;fill-opacity:1;stroke:none"
-       id="path3435-6-6-0-4"
-       sodipodi:cx="214.5"
-       sodipodi:cy="120.59447"
-       sodipodi:rx="32.5"
-       sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,195.41175,389.01544)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/refresh.png"
-       inkscape:export-xdpi="40.942837"
-       inkscape:export-ydpi="40.942837" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="335.54999"
-       y="500.56216"
-       id="text4205-3-80-4-9"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/refresh.png"
-       inkscape:export-xdpi="40.942837"
-       inkscape:export-ydpi="40.942837"><tspan
-         sodipodi:role="line"
-         id="tspan4207-1-2-6-1"
-         x="335.54999"
-         y="500.56216"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;font-family:Webdings;-inkscape-font-specification:Webdings Bold">q</tspan></text>
-    <path
-       sodipodi:type="arc"
-       style="fill:#88aa00;fill-opacity:1;stroke:none"
-       id="path3435-6-6-0-4-5"
-       sodipodi:cx="214.5"
-       sodipodi:cy="120.59447"
-       sodipodi:rx="32.5"
-       sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,29.411748,262.01544)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Communications/src/org/inventory/communications/res/refresh-cache.png"
-       inkscape:export-xdpi="29.776609"
-       inkscape:export-ydpi="29.776609" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
@@ -1758,27 +862,6 @@
          y="373.56216"
          style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;font-family:Webdings;-inkscape-font-specification:Webdings Bold" /></text>
     <path
-       sodipodi:type="star"
-       style="fill:#ffffff;fill-opacity:1;stroke:none"
-       id="path4386"
-       sodipodi:sides="5"
-       sodipodi:cx="180.5"
-       sodipodi:cy="44.594479"
-       sodipodi:r1="25.612497"
-       sodipodi:r2="12.806249"
-       sodipodi:arg1="0.67474094"
-       sodipodi:arg2="1.3030595"
-       inkscape:flatsided="false"
-       inkscape:rounded="0"
-       inkscape:randomized="0"
-       d="M 200.5,60.594479 183.88789,56.944467 171.46344,68.559881 169.80138,51.632908 154.9151,43.405912 170.5,36.594478 l 3.22422,-16.699977 11.29406,12.717276 16.87896,-2.094157 -8.60479,14.671142 z"
-       transform="matrix(0.69965108,0.18927661,-0.18173441,0.72868745,71.037494,294.37324)"
-       inkscape:transform-center-x="0.077825155"
-       inkscape:transform-center-y="-1.7640951"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Communications/src/org/inventory/communications/res/refresh-cache.png"
-       inkscape:export-xdpi="29.776609"
-       inkscape:export-ydpi="29.776609" />
-    <path
        sodipodi:type="arc"
        style="fill:#008000;fill-opacity:1;stroke:none"
        id="path3435-6-1-7"
@@ -1786,26 +869,11 @@
        sodipodi:cy="120.59447"
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,-114.58825,459.01544)"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,-118.83089,524.06926)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/list-type.png"
        inkscape:export-xdpi="29.776628"
        inkscape:export-ydpi="29.776628" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="30.924992"
-       y="566.56219"
-       id="text4205-3-8-9"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/list-type.png"
-       inkscape:export-xdpi="29.776628"
-       inkscape:export-ydpi="29.776628"><tspan
-         sodipodi:role="line"
-         id="tspan4207-1-9-4"
-         x="30.924992"
-         y="566.56219"
-         style="font-size:24px;font-weight:bold;fill:#ffffff">LT</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#917c6f;fill-opacity:1;stroke:none"
@@ -1883,61 +951,27 @@
        sodipodi:cy="120.59447"
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,-54.229342,476.21836)"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,-62.714624,527.13004)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/list-type-item.png"
        inkscape:export-xdpi="29.776628"
        inkscape:export-ydpi="29.776628" />
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="86.783897"
-       y="584.26514"
+       style="font-size:45.51146698px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       x="81.796631"
+       y="602.5451"
        id="text4205-3-8-9-19"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/list-type-item.png"
        inkscape:export-xdpi="29.776628"
-       inkscape:export-ydpi="29.776628"><tspan
+       inkscape:export-ydpi="29.776628"
+       transform="scale(0.94651838,1.0565035)"><tspan
          sodipodi:role="line"
          id="tspan4207-1-9-4-1"
-         x="86.783897"
-         y="584.26514"
-         style="font-size:24px;font-weight:bold;fill:#ffffff">LTI</tspan></text>
-    <path
-       sodipodi:type="arc"
-       style="fill:#808000;fill-opacity:1;stroke:none"
-       id="path3435-6-6-0-4-9"
-       sodipodi:cx="214.5"
-       sodipodi:cy="120.59447"
-       sodipodi:rx="32.5"
-       sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,288.71744,352.47469)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Queries/src/org/inventory/queries/res/icon224.png"
-       inkscape:export-xdpi="44.66497"
-       inkscape:export-ydpi="44.66497" />
-    <g
-       id="g4165"
-       transform="matrix(0.85923643,0,0,0.90923929,63.364361,40.823448)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Queries/src/org/inventory/queries/res/icon224.png"
-       inkscape:export-xdpi="44.66497"
-       inkscape:export-ydpi="44.66497">
-      <path
-         transform="translate(415.77878,290.59003)"
-         d="m 34.648231,154.72099 c 0,5.27208 -4.273864,9.54594 -9.545942,9.54594 -5.272078,0 -9.545941,-4.27386 -9.545941,-9.54594 0,-5.27207 4.273863,-9.54594 9.545941,-9.54594 5.272078,0 9.545942,4.27387 9.545942,9.54594 z"
-         sodipodi:ry="9.5459414"
-         sodipodi:rx="9.5459414"
-         sodipodi:cy="154.72099"
-         sodipodi:cx="25.102289"
-         id="path3258"
-         style="fill:none;stroke:#ffffff;stroke-width:5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-         sodipodi:type="arc" />
-      <path
-         inkscape:connector-curvature="0"
-         id="path4028"
-         d="m 449.18958,451.49821 14.14213,12.02082"
-         style="fill:none;stroke:#ffffff;stroke-width:5.5999999;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
-    </g>
+         x="81.796631"
+         y="602.5451"
+         style="font-size:27.30687904px;font-weight:bold;fill:#ffffff">LTI</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#0066ff;fill-opacity:1;stroke:none"
@@ -1946,16 +980,16 @@
        sodipodi:cy="120.59447"
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,384.88395,423.89248)"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,734.19469,295.19905)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Notifications/src/org/inventory/notifications/res/info24.png"
        inkscape:export-xdpi="44.66497"
        inkscape:export-ydpi="44.66497" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="524.31512"
-       y="534.73212"
+       x="873.62585"
+       y="406.0387"
        id="text4205-3-80-4-9-1"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Notifications/src/org/inventory/notifications/res/info24.png"
@@ -1963,8 +997,8 @@
        inkscape:export-ydpi="44.66497"><tspan
          sodipodi:role="line"
          id="tspan4207-1-2-6-1-4"
-         x="524.31512"
-         y="534.73212"
+         x="873.62585"
+         y="406.0387"
          style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;font-family:Webdings;-inkscape-font-specification:Webdings Bold">i</tspan></text>
     <path
        sodipodi:type="arc"
@@ -1974,14 +1008,14 @@
        sodipodi:cy="120.59447"
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,415.28954,318.53357)"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,802.78405,300.14879)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Authentication/src/org/inventory/core/authentication/res/error.png"
        inkscape:export-xdpi="14.888305"
        inkscape:export-ydpi="14.888305" />
     <path
        style="fill:none;stroke:#ffffff;stroke-width:7;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 563.56409,406.0666 23.33453,22.62742"
+       d="m 951.0586,387.68182 23.33453,22.62742"
        id="path4095"
        inkscape:connector-curvature="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Authentication/src/org/inventory/core/authentication/res/error.png"
@@ -1989,7 +1023,7 @@
        inkscape:export-ydpi="14.888305" />
     <path
        style="fill:none;stroke:#ffffff;stroke-width:7;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 587.25217,406.0666 -23.33453,22.62742"
+       d="m 974.74668,387.68182 -23.33453,22.62742"
        id="path4095-4"
        inkscape:connector-curvature="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Authentication/src/org/inventory/core/authentication/res/error.png"
@@ -2003,16 +1037,16 @@
        sodipodi:cy="120.59447"
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,384.88395,237.9234)"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,804.90537,240.75183)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Notifications/src/org/inventory/notifications/res/warning.png"
        inkscape:export-xdpi="29.776609"
        inkscape:export-ydpi="29.776609" />
     <text
        xml:space="preserve"
        style="font-size:48.37116241px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="-505.25415"
-       y="384.28711"
+       x="-887.15601"
+       y="387.39786"
        id="text4205-3-80-4-9-1-1"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Notifications/src/org/inventory/notifications/res/warning.png"
@@ -2021,8 +1055,8 @@
        transform="scale(-1.099815,0.90924383)"><tspan
          sodipodi:role="line"
          id="tspan4207-1-2-6-1-4-0"
-         x="-505.25415"
-         y="384.28711"
+         x="-887.15601"
+         y="387.39786"
          style="font-size:48.37116241px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;font-family:Webdings;-inkscape-font-specification:Webdings Bold">W</tspan></text>
     <path
        sodipodi:type="arc"
@@ -2032,16 +1066,16 @@
        sodipodi:cy="120.59447"
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,238.41174,246.51546)"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,733.38648,238.03018)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/refresh.png"
        inkscape:export-xdpi="40.942837"
        inkscape:export-ydpi="40.942837" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="377.84286"
-       y="358.41574"
+       x="872.81757"
+       y="349.93045"
        id="text4205-3-80-4-9-9"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/refresh.png"
@@ -2049,8 +1083,8 @@
        inkscape:export-ydpi="40.942837"><tspan
          sodipodi:role="line"
          id="tspan4207-1-2-6-1-0"
-         x="377.84286"
-         y="358.41574"
+         x="872.81757"
+         y="349.93045"
          style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;font-family:Webdings;-inkscape-font-specification:Webdings Bold">s</tspan></text>
     <path
        sodipodi:type="arc"
@@ -2699,8 +1733,8 @@
        sodipodi:cy="120.59447"
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,415.99665,700.37122)"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,329.72963,681.98644)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
        inkscape:export-xdpi="29.776609"
        inkscape:export-ydpi="29.776609" />
@@ -2712,14 +1746,14 @@
        sodipodi:cy="120.59447"
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,472.56521,700.37122)"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,386.29819,681.98644)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Communications/src/org/inventory/communications/res/refresh-cache.png"
        inkscape:export-xdpi="29.776636"
        inkscape:export-ydpi="29.776636" />
     <path
        sodipodi:type="star"
-       style="fill:#ffffff;fill-opacity:1;stroke:#b3b3b3;stroke-width:2.03330253;stroke-miterlimit:4;stroke-dasharray:none"
+       style="fill:#ffffff;fill-opacity:1;stroke:#cccccc;stroke-width:2.03330255;stroke-miterlimit:4;stroke-dasharray:none"
        id="path4386-9"
        sodipodi:sides="5"
        sodipodi:cx="180.5"
@@ -2732,7 +1766,7 @@
        inkscape:rounded="0"
        inkscape:randomized="0"
        d="M 200.5,60.594479 183.88789,56.944467 171.46344,68.559881 169.80138,51.632908 154.9151,43.405912 170.5,36.594478 l 3.22422,-16.699977 11.29406,12.717276 16.87896,-2.094157 -8.60479,14.671142 z"
-       transform="matrix(0.69965108,0.18927661,-0.18173441,0.72868745,514.19095,732.72902)"
+       transform="matrix(0.69965108,0.18927661,-0.18173441,0.72868745,427.92393,714.34424)"
        inkscape:transform-center-x="0.077825155"
        inkscape:transform-center-y="-1.7640951"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Communications/src/org/inventory/communications/res/refresh-cache.png"
@@ -2746,21 +1780,21 @@
        sodipodi:cy="120.59447"
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,537.61903,700.19444)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon.png"
-       inkscape:export-xdpi="29.776628"
-       inkscape:export-ydpi="29.776628" />
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,451.35201,681.80966)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon24.png"
+       inkscape:export-xdpi="44.66494"
+       inkscape:export-ydpi="44.66494" />
     <path
        style="fill:#cccccc;stroke:#cccccc;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
-       d="m 689.5,807.48718 16.87901,-0.10743"
+       d="m 603.23298,789.1024 16.87901,-0.10743"
        id="path4440"
        inkscape:connector-type="polyline"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon.png"
-       inkscape:export-xdpi="29.776628"
-       inkscape:export-ydpi="29.776628" />
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon24.png"
+       inkscape:export-xdpi="44.66494"
+       inkscape:export-ydpi="44.66494" />
     <path
        sodipodi:type="arc"
        style="fill:#4d4d4d;fill-opacity:1;stroke:none"
@@ -2769,8 +1803,8 @@
        sodipodi:cy="120.59447"
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,594.18757,700.37121)"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,507.92055,681.98643)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ListManager/src/org/inventory/customization/listmanager/res/icon.png"
        inkscape:export-xdpi="29.776619"
        inkscape:export-ydpi="29.776619" />
@@ -2782,114 +1816,83 @@
        sodipodi:cy="120.59447"
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,652.66174,699.51544)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon24.png"
-       inkscape:export-xdpi="44.664928"
-       inkscape:export-ydpi="44.664928" />
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,566.39472,681.13066)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon.png"
+       inkscape:export-xdpi="29.776619"
+       inkscape:export-ydpi="29.776619" />
     <rect
        style="fill:#ff6600;fill-opacity:1;stroke:none"
        id="rect4169-4"
        width="10.865225"
        height="9.7828684"
-       x="817.63965"
-       y="784.14868"
-       ry="1.2258441"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon24.png"
-       inkscape:export-xdpi="44.664928"
-       inkscape:export-ydpi="44.664928" />
-    <path
-       transform="matrix(0.22251272,8.9630542e-6,-0.02571357,0.35765663,785.32278,706.44937)"
-       sodipodi:type="star"
-       style="fill:#ffffff;fill-opacity:1;stroke:none"
-       id="path2816-0-0-4"
-       sodipodi:sides="3"
-       sodipodi:cx="120"
-       sodipodi:cy="232.36218"
-       sodipodi:r1="25.714287"
-       sodipodi:r2="12.857143"
-       sodipodi:arg1="0"
-       sodipodi:arg2="1.0471976"
-       inkscape:flatsided="false"
-       inkscape:rounded="0"
-       inkscape:randomized="0"
-       d="m 145.71429,232.36218 -19.28572,11.13462 -19.28571,11.13461 0,-22.26923 0,-22.26922 19.28571,11.13461 z"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon24.png"
-       inkscape:export-xdpi="44.664928"
-       inkscape:export-ydpi="44.664928" />
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:none"
-       id="rect4178-9"
-       width="7.0750079"
-       height="12.187161"
-       x="-795.17261"
-       y="850.2851"
-       ry="1.1050476"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon24.png"
-       inkscape:export-xdpi="44.664928"
-       inkscape:export-ydpi="44.664928"
-       transform="matrix(0.07170947,-0.99742556,1,4.0268385e-5,0,0)" />
+       x="731.37262"
+       y="765.76392"
+       ry="0"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon.png"
+       inkscape:export-xdpi="29.776619"
+       inkscape:export-ydpi="29.776619" />
     <path
        style="fill:none;stroke:#cccccc;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
-       d="m 698.84614,790.9626 8.55771,14.54917"
+       d="m 612.57912,772.57782 8.55771,14.54917"
        id="path4440-0"
        inkscape:connector-type="polyline"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon.png"
-       inkscape:export-xdpi="29.776628"
-       inkscape:export-ydpi="29.776628" />
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon24.png"
+       inkscape:export-xdpi="44.66494"
+       inkscape:export-ydpi="44.66494" />
     <path
        style="fill:#cccccc;stroke:#cccccc;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
-       d="m 695.40385,791.3376 -8.55771,14.54917"
+       d="m 609.13683,772.95282 -8.55771,14.54917"
        id="path4440-0-9"
        inkscape:connector-type="polyline"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon.png"
-       inkscape:export-xdpi="29.776628"
-       inkscape:export-ydpi="29.776628"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon24.png"
+       inkscape:export-xdpi="44.66494"
+       inkscape:export-ydpi="44.66494"
        inkscape:transform-center-x="-10.25"
        inkscape:transform-center-y="27.625" />
     <path
-       transform="matrix(1.5927669,0,0,1.629808,-413.30864,21.06126)"
+       transform="matrix(1.5927669,0,0,1.629808,-499.57566,2.6764842)"
        sodipodi:type="arc"
-       style="fill:#ffffff;fill-opacity:1;stroke:#cccccc;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#ffffff;fill-opacity:1;stroke:#ff6600;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="path4385-2"
        sodipodi:cx="690.13623"
        sodipodi:cy="482.55338"
        sodipodi:rx="3.8890872"
        sodipodi:ry="3.800699"
-       d="m 694.02532,482.55338 c 0,2.09906 -1.74121,3.80069 -3.88909,3.80069 -2.14788,0 -3.88909,-1.70163 -3.88909,-3.80069 0,-2.09907 1.74121,-3.8007 3.88909,-3.8007 2.14788,0 3.88909,1.70163 3.88909,3.8007 z"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon.png"
-       inkscape:export-xdpi="29.776628"
-       inkscape:export-ydpi="29.776628" />
+       d="m 694.02532,482.55338 a 3.8890872,3.800699 0 1 1 -7.77818,0 3.8890872,3.800699 0 1 1 7.77818,0 z"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon24.png"
+       inkscape:export-xdpi="44.66494"
+       inkscape:export-ydpi="44.66494" />
     <path
-       transform="matrix(1.5927669,0,0,1.629808,-401.97615,1.1428317)"
+       transform="matrix(1.5927669,0,0,1.629808,-488.24317,-17.241944)"
        sodipodi:type="arc"
-       style="fill:#ffffff;fill-opacity:1;stroke:#cccccc;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#ffffff;fill-opacity:1;stroke:#88aa00;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="path4385-2-3"
        sodipodi:cx="690.13623"
        sodipodi:cy="482.55338"
        sodipodi:rx="3.8890872"
        sodipodi:ry="3.800699"
-       d="m 694.02532,482.55338 c 0,2.09906 -1.74121,3.80069 -3.88909,3.80069 -2.14788,0 -3.88909,-1.70163 -3.88909,-3.80069 0,-2.09907 1.74121,-3.8007 3.88909,-3.8007 2.14788,0 3.88909,1.70163 3.88909,3.8007 z"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon.png"
-       inkscape:export-xdpi="29.776628"
-       inkscape:export-ydpi="29.776628" />
+       d="m 694.02532,482.55338 a 3.8890872,3.800699 0 1 1 -7.77818,0 3.8890872,3.800699 0 1 1 7.77818,0 z"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon24.png"
+       inkscape:export-xdpi="44.66494"
+       inkscape:export-ydpi="44.66494" />
     <path
-       transform="matrix(1.5927669,0,0,1.629808,-390.97615,21.142832)"
+       transform="matrix(1.5927669,0,0,1.629808,-477.24317,2.7580562)"
        sodipodi:type="arc"
-       style="fill:#ffffff;fill-opacity:1;stroke:#cccccc;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#ffffff;fill-opacity:1;stroke:#ff6600;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="path4385-2-1"
        sodipodi:cx="690.13623"
        sodipodi:cy="482.55338"
        sodipodi:rx="3.8890872"
        sodipodi:ry="3.800699"
-       d="m 694.02532,482.55338 c 0,2.09906 -1.74121,3.80069 -3.88909,3.80069 -2.14788,0 -3.88909,-1.70163 -3.88909,-3.80069 0,-2.09907 1.74121,-3.8007 3.88909,-3.8007 2.14788,0 3.88909,1.70163 3.88909,3.8007 z"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon.png"
-       inkscape:export-xdpi="29.776628"
-       inkscape:export-ydpi="29.776628" />
+       d="m 694.02532,482.55338 a 3.8890872,3.800699 0 1 1 -7.77818,0 3.8890872,3.800699 0 1 1 7.77818,0 z"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/icon24.png"
+       inkscape:export-xdpi="44.66494"
+       inkscape:export-ydpi="44.66494" />
     <path
        sodipodi:type="arc"
        style="fill:#4d4d4d;fill-opacity:1;stroke:none"
@@ -2898,14 +1901,14 @@
        sodipodi:cy="120.59447"
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
-       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
-       transform="matrix(0.74400118,0,0,0.81966231,710.41174,701.51544)"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,624.14472,683.13066)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Queries/src/org/inventory/queries/res/icon224.png"
        inkscape:export-xdpi="44.66497"
        inkscape:export-ydpi="44.66497" />
     <g
        id="g4165-9"
-       transform="matrix(0.85923643,0,0,0.90923929,485.05866,389.8642)"
+       transform="matrix(0.85923643,0,0,0.90923929,398.79164,371.47942)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Queries/src/org/inventory/queries/res/icon224.png"
        inkscape:export-xdpi="44.66497"
        inkscape:export-ydpi="44.66497">
@@ -2930,15 +1933,15 @@
        id="rect4488-2"
        width="22.45064"
        height="31.024309"
-       x="742.27466"
-       y="783.35004"
+       x="656.00763"
+       y="764.96527"
        ry="1.8393515"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ListManager/src/org/inventory/customization/listmanager/res/icon.png"
        inkscape:export-xdpi="29.776619"
        inkscape:export-ydpi="29.776619" />
     <path
        style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1.70000005;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 746.40045,794.52742 14,0"
+       d="m 660.13343,776.14264 14,0"
        id="path4515-8-6"
        inkscape:connector-curvature="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ListManager/src/org/inventory/customization/listmanager/res/icon.png"
@@ -2946,7 +1949,7 @@
        inkscape:export-ydpi="29.776619" />
     <path
        style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1.70000005;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 746.40045,789.5274 14,0"
+       d="m 660.13343,771.14262 14,0"
        id="path4515-64"
        inkscape:connector-curvature="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ListManager/src/org/inventory/customization/listmanager/res/icon.png"
@@ -2954,7 +1957,7 @@
        inkscape:export-ydpi="29.776619" />
     <path
        style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1.70000005;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 746.58795,799.40242 14,0"
+       d="m 660.32093,781.01764 14,0"
        id="path4515-6-9"
        inkscape:connector-curvature="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ListManager/src/org/inventory/customization/listmanager/res/icon.png"
@@ -2962,7 +1965,7 @@
        inkscape:export-ydpi="29.776619" />
     <path
        style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1.70000005;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 746.65045,804.27742 14,0"
+       d="m 660.38343,785.89264 14,0"
        id="path4515-0-5"
        inkscape:connector-curvature="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ListManager/src/org/inventory/customization/listmanager/res/icon.png"
@@ -2970,7 +1973,7 @@
        inkscape:export-ydpi="29.776619" />
     <path
        style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1.70000005;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 746.65045,809.27742 14,0"
+       d="m 660.38343,790.89264 14,0"
        id="path4515-9-0"
        inkscape:connector-curvature="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ListManager/src/org/inventory/customization/listmanager/res/icon.png"
@@ -2985,7 +1988,7 @@
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
        d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
-       transform="matrix(0.74400118,0,0,0.81966231,768.84295,700.49254)"
+       transform="matrix(0.74400118,0,0,0.81966231,682.57593,682.10776)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ClassManager/src/org/inventory/customization/classmanager/res/icon24.png"
        inkscape:export-xdpi="44.66494"
        inkscape:export-ydpi="44.66494" />
@@ -2998,7 +2001,7 @@
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
        d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
-       transform="matrix(0.74400118,0,0,0.81966231,825.66175,700.76544)"
+       transform="matrix(0.74400118,0,0,0.81966231,739.39473,682.38066)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/AttributeCustomizer/src/org/inventory/customization/attributecustomizer/res/icon.png"
        inkscape:export-xdpi="29.776609"
        inkscape:export-ydpi="29.776609" />
@@ -3011,7 +2014,7 @@
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
        d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
-       transform="matrix(0.74400118,0,0,0.81966231,885.67852,700.16159)"
+       transform="matrix(0.74400118,0,0,0.81966231,799.4115,681.77681)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/icon24.png"
        inkscape:export-xdpi="44.664928"
        inkscape:export-ydpi="44.664928" />
@@ -3024,7 +2027,7 @@
        sodipodi:rx="29.285715"
        sodipodi:ry="45"
        d="m 330.71427,371.95163 a 29.285715,45 0 1 1 -58.57143,0"
-       transform="matrix(0.38428086,0,0,-0.4699436,929.69442,988.60012)"
+       transform="matrix(0.38428086,0,0,-0.4699436,843.4274,970.21534)"
        sodipodi:start="0"
        sodipodi:end="3.1415927"
        sodipodi:open="true"
@@ -3042,14 +2045,14 @@
        sodipodi:rx="22.857143"
        sodipodi:ry="22.142857"
        d="m 244.28572,254.80876 a 22.857143,22.142857 0 1 1 -45.71429,0 22.857143,22.142857 0 1 1 45.71429,0 z"
-       transform="matrix(0.37445841,0,0,0.33753607,962.94435,703.14586)"
+       transform="matrix(0.37445841,0,0,0.33753607,876.67733,684.76108)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/icon24.png"
        inkscape:export-xdpi="44.664928"
        inkscape:export-ydpi="44.664928" />
     <path
        inkscape:connector-curvature="0"
        style="fill:#e6e6e6;fill-opacity:1;stroke:none"
-       d="m 1040.9474,794.73289 c 1.6657,5.80548 0.8338,14.87058 4.5566,17.53156 3.571,-2.70519 2.9818,-11.67184 4.7458,-17.52558 -5.1076,3.8086 -7.3114,0.56225 -9.3024,-0.006 z"
+       d="m 954.68038,776.34811 c 1.6657,5.80548 0.8338,14.87058 4.5566,17.53156 3.571,-2.70519 2.9818,-11.67184 4.7458,-17.52558 -5.1076,3.8086 -7.3114,0.56225 -9.3024,-0.006 z"
        id="path3622-3-69"
        sodipodi:nodetypes="cccc"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/icon24.png"
@@ -3058,7 +2061,7 @@
     <path
        inkscape:connector-curvature="0"
        style="fill:#88aa00;fill-opacity:1;stroke:none"
-       d="m 1042.6259,808.69855 2.7174,-11.8507 3.5665,10.89806 -1.8682,2.97222 -1.5285,1.67662 -1.7226,-1.90526 -1.1646,-1.79094 z"
+       d="m 956.35888,790.31377 2.7174,-11.8507 3.5665,10.89806 -1.8682,2.97222 -1.5285,1.67662 -1.7226,-1.90526 -1.1646,-1.79094 z"
        id="path3626-4-1"
        sodipodi:nodetypes="ccccccc"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/UserManager/src/org/inventory/core/usermanager/res/icon24.png"
@@ -3069,8 +2072,8 @@
        id="rect4437-9-4-6-6"
        width="17.300892"
        height="17.2607"
-       x="913.57867"
-       y="798.22406"
+       x="827.31165"
+       y="779.83929"
        ry="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ClassManager/src/org/inventory/customization/classmanager/res/icon24.png"
        inkscape:export-xdpi="44.66494"
@@ -3080,8 +2083,8 @@
        id="rect4437-9-4"
        width="17.300892"
        height="17.2607"
-       x="919.94696"
-       y="791.87042"
+       x="833.67993"
+       y="773.48566"
        ry="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ClassManager/src/org/inventory/customization/classmanager/res/icon24.png"
        inkscape:export-xdpi="44.66494"
@@ -3091,41 +2094,41 @@
        id="rect4437-9-4-6"
        width="17.300892"
        height="17.2607"
-       x="926.69"
-       y="783.83508"
+       x="840.42297"
+       y="765.45032"
        ry="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ClassManager/src/org/inventory/customization/classmanager/res/icon24.png"
        inkscape:export-xdpi="44.66494"
        inkscape:export-ydpi="44.66494" />
     <rect
-       style="fill:#ff6600;fill-opacity:1;stroke:#4d4d4d;stroke-width:1.05832517000000004"
+       style="fill:#ff6600;fill-opacity:1;stroke:#4d4d4d;stroke-width:1.05832517"
        id="rect4437-9-4-6-6-6"
        width="17.300892"
        height="17.2607"
-       x="969.9704"
-       y="797.95886"
+       x="883.70337"
+       y="779.5741"
        ry="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/AttributeCustomizer/src/org/inventory/customization/attributecustomizer/res/icon.png"
        inkscape:export-xdpi="29.776609"
        inkscape:export-ydpi="29.776609" />
     <rect
-       style="fill:#ff6600;fill-opacity:1;stroke:#4d4d4d;stroke-width:1.05832517000000004"
+       style="fill:#ff6600;fill-opacity:1;stroke:#4d4d4d;stroke-width:1.05832517"
        id="rect4437-9-4-9"
        width="17.300892"
        height="17.2607"
-       x="976.33868"
-       y="791.60522"
+       x="890.07166"
+       y="773.22046"
        ry="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/AttributeCustomizer/src/org/inventory/customization/attributecustomizer/res/icon.png"
        inkscape:export-xdpi="29.776609"
        inkscape:export-ydpi="29.776609" />
     <rect
-       style="fill:#ff6600;fill-opacity:1;stroke:#4d4d4d;stroke-width:1.05832517000000004"
+       style="fill:#ff6600;fill-opacity:1;stroke:#4d4d4d;stroke-width:1.05832517"
        id="rect4437-9-4-6-60"
        width="17.300892"
        height="17.2607"
-       x="983.08173"
-       y="783.56989"
+       x="896.8147"
+       y="765.18512"
        ry="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/AttributeCustomizer/src/org/inventory/customization/attributecustomizer/res/icon.png"
        inkscape:export-xdpi="29.776609"
@@ -3135,14 +2138,14 @@
        id="rect4169-4-1"
        width="10.865225"
        height="9.7828684"
-       x="796.48309"
-       y="804.52527"
-       ry="1.2258441"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon24.png"
-       inkscape:export-xdpi="44.664928"
-       inkscape:export-ydpi="44.664928" />
+       x="710.21606"
+       y="785.6405"
+       ry="0"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon.png"
+       inkscape:export-xdpi="29.776619"
+       inkscape:export-ydpi="29.776619" />
     <path
-       transform="matrix(-0.22251272,8.9630542e-6,0.02571357,0.35765663,837.29991,726.36416)"
+       transform="matrix(-0.22189507,-0.01656775,-0.00100249,0.35857837,757.16339,709.33964)"
        sodipodi:type="star"
        style="fill:#ffffff;fill-opacity:1;stroke:none"
        id="path2816-0-0-4-5"
@@ -3157,21 +2160,9 @@
        inkscape:rounded="0"
        inkscape:randomized="0"
        d="m 145.71429,232.36218 -19.28572,11.13462 -19.28571,11.13461 0,-22.26923 0,-22.26922 19.28571,11.13461 z"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon24.png"
-       inkscape:export-xdpi="44.664928"
-       inkscape:export-ydpi="44.664928" />
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:none"
-       id="rect4178-9-6"
-       width="7.0750079"
-       height="12.187161"
-       x="-815.20422"
-       y="-770.90112"
-       ry="1.1050476"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon24.png"
-       inkscape:export-xdpi="44.664928"
-       inkscape:export-ydpi="44.664928"
-       transform="matrix(-0.07170947,-0.99742556,-1,4.0268385e-5,0,0)" />
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon.png"
+       inkscape:export-xdpi="29.776619"
+       inkscape:export-ydpi="29.776619" />
     <path
        sodipodi:type="arc"
        style="fill:#4d4d4d;fill-opacity:1;stroke:none"
@@ -3181,15 +2172,15 @@
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
        d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
-       transform="matrix(0.74400118,0,0,0.81966231,941.377,700.37121)"
+       transform="matrix(0.74400118,0,0,0.81966231,855.10998,681.98643)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Services/src/org/inventory/core/services/res/view-refresh.png"
        inkscape:export-xdpi="29.776619"
        inkscape:export-ydpi="29.776619" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
-       x="1081.5153"
-       y="811.91797"
+       x="995.24823"
+       y="793.5332"
        id="text4205-3-80-4-9-97"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Services/src/org/inventory/core/services/res/view-refresh.png"
@@ -3197,8 +2188,8 @@
        inkscape:export-ydpi="29.776619"><tspan
          sodipodi:role="line"
          id="tspan4207-1-2-6-1-5"
-         x="1081.5153"
-         y="811.91797"
+         x="995.24823"
+         y="793.5332"
          style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;font-family:Webdings;-inkscape-font-specification:Webdings Bold">q</tspan></text>
     <path
        sodipodi:type="arc"
@@ -3209,7 +2200,7 @@
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
        d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
-       transform="matrix(0.74400118,0,0,0.81966231,285.88902,715.92756)"
+       transform="matrix(0.74400118,0,0,0.81966231,-108.67655,888.46161)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
        inkscape:export-xdpi="44.664955"
        inkscape:export-ydpi="44.664955" />
@@ -3218,8 +2209,8 @@
        id="rect4169-5-9"
        width="9"
        height="9"
-       x="432.9567"
-       y="797.13684"
+       x="38.391125"
+       y="969.6709"
        ry="1.1277466"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
        inkscape:export-xdpi="44.664955"
@@ -3229,8 +2220,8 @@
        id="rect4169-5-4-5"
        width="7.5"
        height="7.5"
-       x="443.51736"
-       y="806.41852"
+       x="48.951794"
+       y="978.95258"
        ry="0.93978876"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
        inkscape:export-xdpi="44.664955"
@@ -3240,15 +2231,15 @@
        id="rect4169-5-7-7"
        width="7.5"
        height="7.5"
-       x="443.47318"
-       y="826.73419"
+       x="48.907604"
+       y="999.26825"
        ry="0.93978882"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
        inkscape:export-xdpi="44.664955"
        inkscape:export-ydpi="44.664955" />
     <path
        style="fill:#e6e6e6;stroke:#e6e6e6;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 436.96816,810.2782 6.54765,0.0953"
+       d="m 42.402587,982.81225 6.54765,0.0953"
        id="path4288-6"
        inkscape:connector-curvature="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
@@ -3256,7 +2247,7 @@
        inkscape:export-ydpi="44.664955" />
     <path
        style="fill:#e6e6e6;stroke:#e6e6e6;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 446.49682,819.7448 8.98738,-0.0235"
+       d="m 51.931247,992.27885 8.98738,-0.0235"
        id="path4288-4-3"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
@@ -3265,7 +2256,7 @@
        inkscape:export-ydpi="44.664955" />
     <path
        style="fill:#e6e6e6;stroke:#e6e6e6;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 436.6164,830.21155 6.85343,0.0917"
+       d="m 42.050827,1002.7456 6.85343,0.092"
        id="path4288-9-3"
        inkscape:connector-curvature="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
@@ -3273,7 +2264,7 @@
        inkscape:export-ydpi="44.664955" />
     <path
        style="fill:#e6e6e6;stroke:#e6e6e6;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 437.1627,806.11311 -0.0286,24.8256"
+       d="m 42.597127,978.64716 -0.0286,24.82564"
        id="path4288-8-2"
        inkscape:connector-curvature="0"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
@@ -3281,7 +2272,7 @@
        inkscape:export-ydpi="44.664955" />
     <path
        style="fill:#ffffff;stroke:#e6e6e6;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 447.2537,813.90858 0.0117,6.33239"
+       d="m 52.688127,986.44263 0.0117,6.33239"
        id="path4288-8-8-4"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
@@ -3293,31 +2284,363 @@
        id="rect4169-5-3-7"
        width="7.5"
        height="7.5"
-       x="453.47318"
-       y="816.10852"
+       x="58.907604"
+       y="988.64258"
        ry="0.93978882"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
        inkscape:export-xdpi="44.664955"
        inkscape:export-ydpi="44.664955" />
     <path
        style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.1875;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 568.49507,506.50651 c 2.9327,-2.45256 3.79609,-3.73195 3.4781,-7.19664 l -1.7747,-3.78125 5.60359,-6.3438 c 0.23329,-0.26411 5.94733,6.2718 5.94733,6.45022 0,0.11012 -1.90425,2.49293 -1.82536,3.5 -0.54843,3.961 1.25041,4.64014 3.65882,7.68639 -5.09212,-0.0878 -8.90219,-0.1001 -14.42721,-0.0937 l -1,0.0692 0.33947,-0.29038 z"
+       d="m 482.22805,796.38943 c 2.9327,-2.45256 3.79609,-3.73195 3.4781,-7.19664 l -1.7747,-3.78125 5.60359,-6.3438 c 0.23329,-0.26411 5.94733,6.2718 5.94733,6.45022 0,0.11012 -1.90425,2.49293 -1.82536,3.5 -0.54843,3.961 1.25041,4.64014 3.65882,7.68639 -5.09212,-0.0878 -8.90219,-0.1001 -14.42721,-0.0937 l -1,0.0692 0.33947,-0.29038 z"
        id="path4717"
        inkscape:connector-curvature="0"
-       transform="translate(0,308.2677)"
        sodipodi:nodetypes="cccsscccccc"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
        inkscape:export-xdpi="29.776609"
        inkscape:export-ydpi="29.776609" />
     <path
        style="fill:#aad400;fill-opacity:1;stroke:#ffffff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1"
-       d="m 576.40625,473.84375 c -0.2265,0.0139 -0.45859,0.0256 -0.6875,0.0625 -2.19949,0.35502 -3.9589,1.73121 -4.90625,3.53125 -0.87543,-0.21988 -1.82884,-0.27873 -2.78125,-0.125 -3.5378,0.57103 -5.98057,3.72734 -5.625,7.15625 -2.50636,1.27634 -4.02391,3.98512 -3.5625,6.84375 0.57561,3.56619 4.02492,5.99742 7.6875,5.40625 1.98818,-0.32091 3.59606,-1.48572 4.59375,-3.03125 0.92047,2.8495 2.74759,4.01899 4.82414,3.68382 1.43451,-0.23154 3.93034,-0.3532 4.36336,-3.93382 1.30658,2.38452 4.09669,3.78112 7,3.3125 3.66258,-0.59117 6.13811,-3.93381 5.5625,-7.5 -0.38055,-2.35771 -2.00513,-4.2169 -4.125,-5.03125 0.005,-0.36431 -0.003,-0.72227 -0.0625,-1.09375 -0.47417,-2.93773 -2.89736,-5.0999 -5.78125,-5.4375 -1.10889,-2.44374 -3.68571,-4.01695 -6.5,-3.84375 z"
+       d="m 490.13923,763.72667 c -0.2265,0.0139 -0.45859,0.0256 -0.6875,0.0625 -2.19949,0.35502 -3.9589,1.73121 -4.90625,3.53125 -0.87543,-0.21988 -1.82884,-0.27873 -2.78125,-0.125 -3.5378,0.57103 -5.98057,3.72734 -5.625,7.15625 -2.50636,1.27634 -4.02391,3.98512 -3.5625,6.84375 0.57561,3.56619 4.02492,5.99742 7.6875,5.40625 1.98818,-0.32091 3.59606,-1.48572 4.59375,-3.03125 0.92047,2.8495 2.74759,4.01899 4.82414,3.68382 1.43451,-0.23154 3.93034,-0.3532 4.36336,-3.93382 1.30658,2.38452 4.09669,3.78112 7,3.3125 3.66258,-0.59117 6.13811,-3.93381 5.5625,-7.5 -0.38055,-2.35771 -2.00513,-4.2169 -4.125,-5.03125 0.005,-0.36431 -0.003,-0.72227 -0.0625,-1.09375 -0.47417,-2.93773 -2.89736,-5.0999 -5.78125,-5.4375 -1.10889,-2.44374 -3.68571,-4.01695 -6.5,-3.84375 z"
        id="path4649-1"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/NavigationTree/src/org/inventory/navigation/navigationtree/res/icon.png"
        inkscape:export-xdpi="29.776609"
        inkscape:export-ydpi="29.776609"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="sscscsscscsscscs"
-       transform="translate(0,308.2677)" />
+       sodipodi:nodetypes="sscscsscscsscscs" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1.86143875;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3455"
+       width="10.070986"
+       height="5.3976626"
+       x="731.52106"
+       y="787.90948"
+       ry="0"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon.png"
+       inkscape:export-xdpi="29.776619"
+       inkscape:export-ydpi="29.776619" />
+    <path
+       transform="matrix(0.22189507,-0.01656775,0.00100249,0.35857837,694.37952,690.18247)"
+       sodipodi:type="star"
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="path2816-0-0-4-5-5"
+       sodipodi:sides="3"
+       sodipodi:cx="120"
+       sodipodi:cy="232.36218"
+       sodipodi:r1="25.714287"
+       sodipodi:r2="12.857143"
+       sodipodi:arg1="0"
+       sodipodi:arg2="1.0471976"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 145.71429,232.36218 -19.28572,11.13462 -19.28571,11.13461 0,-22.26923 0,-22.26922 19.28571,11.13461 z"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon.png"
+       inkscape:export-xdpi="29.776619"
+       inkscape:export-ydpi="29.776619" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1.86143875;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3455-8"
+       width="10.070986"
+       height="5.3976626"
+       x="-720.02185"
+       y="768.75232"
+       ry="0"
+       transform="scale(-1,1)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/icon.png"
+       inkscape:export-xdpi="29.776619"
+       inkscape:export-ydpi="29.776619" />
+    <path
+       sodipodi:type="star"
+       style="fill:#d45500;fill-opacity:1;stroke:#ffffff;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="path5544"
+       sodipodi:sides="5"
+       sodipodi:cx="59.396969"
+       sodipodi:cy="550.34723"
+       sodipodi:r1="58.309517"
+       sodipodi:r2="29.154758"
+       sodipodi:arg1="0.68231655"
+       sodipodi:arg2="1.3106351"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="M 104.6518,587.11678 66.896633,578.52089 38.41156,604.74955 34.919752,566.18597 1.1724403,547.20016 36.769553,531.96245 44.39764,493.99991 69.889674,523.14607 108.3514,518.66974 88.509233,551.92076 z"
+       transform="matrix(0.42720003,0.12165573,-0.1158788,0.4484973,407.56066,615.9309)"
+       inkscape:transform-center-x="-1.1420451"
+       inkscape:transform-center-y="-6.7764104"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/root.png"
+       inkscape:export-xdpi="28.239172"
+       inkscape:export-ydpi="28.239172" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="890.83862"
+       y="991.72241"
+       id="text4012-4"><tspan
+         sodipodi:role="line"
+         x="890.83862"
+         y="991.72241"
+         style="font-size:16px"
+         id="tspan5581">Graphical View Module</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="-36.353485"
+       y="731.50714"
+       id="text4012-4-3"><tspan
+         sodipodi:role="line"
+         x="-36.353485"
+         y="731.50714"
+         style="font-size:16px"
+         id="tspan5581-5">Class Hierarchy Tree</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="738.6355"
+       y="362.39743"
+       id="text4012-4-9"><tspan
+         sodipodi:role="line"
+         x="738.6355"
+         y="362.39743"
+         style="font-size:16px"
+         id="tspan5581-6">Notifications</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="24.457697"
+       y="942.22498"
+       id="text4012-4-8"><tspan
+         sodipodi:role="line"
+         x="24.457697"
+         y="942.22498"
+         style="font-size:16px"
+         id="tspan5581-0">Tests</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="232.34708"
+       y="724.43604"
+       id="text4012-4-38"><tspan
+         sodipodi:role="line"
+         x="232.34708"
+         y="724.43604"
+         style="font-size:16px"
+         id="tspan5581-2">Queries</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="134.76634"
+       y="633.92639"
+       id="text4012-4-5"><tspan
+         sodipodi:role="line"
+         x="134.76634"
+         y="633.92639"
+         style="font-size:16px"
+         id="tspan5581-80">List Manager</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="83.854668"
+       y="353.91211"
+       id="text4012-4-86"><tspan
+         sodipodi:role="line"
+         x="83.854668"
+         y="353.91211"
+         style="font-size:16px"
+         id="tspan5581-9">Class Manager Module</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="397.81006"
+       y="877.17114"
+       id="text4012-4-96"><tspan
+         sodipodi:role="line"
+         x="397.81006"
+         y="877.17114"
+         style="font-size:16px"
+         id="tspan5581-4">Navigation Tree Module</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#008000;fill-opacity:1;stroke:none"
+       id="path3435-6-1-7-1"
+       sodipodi:cx="214.5"
+       sodipodi:cy="120.59447"
+       sodipodi:rx="32.5"
+       sodipodi:ry="29.5"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,-124.00678,386.29965)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/flag-green.png"
+       inkscape:export-xdpi="29.776628"
+       inkscape:export-ydpi="29.776628" />
+    <text
+       xml:space="preserve"
+       style="font-size:64.6384201px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       x="20.823088"
+       y="526.91193"
+       id="text4205-3-8-9-7"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/flag-green.png"
+       inkscape:export-xdpi="29.776628"
+       inkscape:export-ydpi="29.776628"
+       transform="scale(1.0593707,0.94395662)"><tspan
+         sodipodi:role="line"
+         id="tspan4207-1-9-4-7"
+         x="20.823088"
+         y="526.91193"
+         style="font-size:38.78305435px;font-weight:bold;fill:#ffffff">P</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#d4aa00;fill-opacity:1;stroke:none"
+       id="path3435-6-1-7-9-9"
+       sodipodi:cx="214.5"
+       sodipodi:cy="120.59447"
+       sodipodi:rx="32.5"
+       sodipodi:ry="29.5"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,-67.890515,389.36043)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/flag-black.png"
+       inkscape:export-xdpi="29.776628"
+       inkscape:export-ydpi="29.776628" />
+    <text
+       xml:space="preserve"
+       style="font-size:64.6384201px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       x="70.9077"
+       y="530.45667"
+       id="text4205-3-8-9-7-3"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/flag-black.png"
+       inkscape:export-xdpi="29.776628"
+       inkscape:export-ydpi="29.776628"
+       transform="scale(1.0593707,0.94395663)"><tspan
+         sodipodi:role="line"
+         id="tspan4207-1-9-4-7-7"
+         x="70.9077"
+         y="530.45667"
+         style="font-size:38.78305435px;font-weight:bold;fill:#ffffff">C</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:52.24917984px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       x="18.639078"
+       y="688.56799"
+       id="text4205-3-8-9-7-0"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/list-type.png"
+       inkscape:export-xdpi="29.776628"
+       inkscape:export-ydpi="29.776628"
+       transform="scale(1.086645,0.92026376)"><tspan
+         sodipodi:role="line"
+         id="tspan4207-1-9-4-7-4"
+         x="18.639078"
+         y="688.56799"
+         style="font-size:31.3495121px;font-weight:bold;fill:#ffffff">LT</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#aa0000;fill-opacity:1;stroke:none"
+       id="path3435-6-1-7-9-9-5"
+       sodipodi:cx="214.5"
+       sodipodi:cy="120.59447"
+       sodipodi:rx="32.5"
+       sodipodi:ry="29.5"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,-12.156493,387.47648)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/flag-red.png"
+       inkscape:export-xdpi="29.776628"
+       inkscape:export-ydpi="29.776628" />
+    <text
+       xml:space="preserve"
+       style="font-size:64.6384201px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       x="124.18568"
+       y="528.46088"
+       id="text4205-3-8-9-7-3-3"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/flag-red.png"
+       inkscape:export-xdpi="29.776628"
+       inkscape:export-ydpi="29.776628"
+       transform="scale(1.0593707,0.94395663)"><tspan
+         sodipodi:role="line"
+         id="tspan4207-1-9-4-7-7-1"
+         x="124.18568"
+         y="528.46088"
+         style="font-size:38.78305435px;font-weight:bold;fill:#ffffff">R</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="185.59766"
+       y="488.77625"
+       id="text4012-4-5-4"><tspan
+         sodipodi:role="line"
+         x="185.59766"
+         y="488.77625"
+         style="font-size:16px"
+         id="tspan5581-80-5">Hierarchy Manager</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#008000;fill-opacity:1;stroke:none"
+       id="path3435-6-1-7-1-0"
+       sodipodi:cx="214.5"
+       sodipodi:cy="120.59447"
+       sodipodi:rx="32.5"
+       sodipodi:ry="29.5"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,-124.64638,451.98507)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/flag-green.png"
+       inkscape:export-xdpi="29.776628"
+       inkscape:export-ydpi="29.776628" />
+    <text
+       xml:space="preserve"
+       style="font-size:64.6384201px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       x="17.387455"
+       y="596.49713"
+       id="text4205-3-8-9-7-9"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/flag-green.png"
+       inkscape:export-xdpi="29.776628"
+       inkscape:export-ydpi="29.776628"
+       transform="scale(1.0593707,0.94395663)"><tspan
+         sodipodi:role="line"
+         id="tspan4207-1-9-4-7-6"
+         x="17.387455"
+         y="596.49713"
+         style="font-size:38.78305435px;font-weight:bold;fill:#ffffff">C</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#d4aa00;fill-opacity:1;stroke:none"
+       id="path3435-6-1-7-9-9-6"
+       sodipodi:cx="214.5"
+       sodipodi:cy="120.59447"
+       sodipodi:rx="32.5"
+       sodipodi:ry="29.5"
+       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       transform="matrix(0.74400118,0,0,0.81966231,-68.530125,455.04585)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/AttributeCustomizer/src/org/inventory/customization/attributecustomizer/res/flag-blue.png"
+       inkscape:export-xdpi="29.776628"
+       inkscape:export-ydpi="29.776628" />
+    <text
+       xml:space="preserve"
+       style="font-size:64.6384201px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       x="70.30394"
+       y="598.54376"
+       id="text4205-3-8-9-7-3-0"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/AttributeCustomizer/src/org/inventory/customization/attributecustomizer/res/flag-blue.png"
+       inkscape:export-xdpi="29.776628"
+       inkscape:export-ydpi="29.776628"
+       transform="scale(1.0593707,0.94395663)"><tspan
+         sodipodi:role="line"
+         id="tspan4207-1-9-4-7-7-4"
+         x="70.30394"
+         y="598.54376"
+         style="font-size:38.78305435px;font-weight:bold;fill:#ffffff">A</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="137.13226"
+       y="559.68018"
+       id="text4012-4-5-4-6"><tspan
+         sodipodi:role="line"
+         x="137.13226"
+         y="559.68018"
+         style="font-size:16px"
+         id="tspan5581-80-5-8">Attribute Manager</tspan></text>
   </g>
 </svg>
