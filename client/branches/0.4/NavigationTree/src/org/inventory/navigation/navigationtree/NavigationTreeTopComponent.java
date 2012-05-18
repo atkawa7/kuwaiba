@@ -136,7 +136,7 @@ public final class NavigationTreeTopComponent extends TopComponent
 
     @Override
     public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_ONLY_OPENED;
+        return TopComponent.PERSISTENCE_NEVER;
     }
 
     @Override
