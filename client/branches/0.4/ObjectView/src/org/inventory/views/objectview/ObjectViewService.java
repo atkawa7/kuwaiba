@@ -99,7 +99,7 @@ public class ObjectViewService implements LookupListener{
            vrtc.getScene().getInteractionLayer().removeChildren();
            vrtc.getScene().getLabelsLayer().removeChildren();
 
-           if (myObject != null){ //Other nodes than the root one
+           if (myObject.getOid() != null){ //Other nodes than the root one
                if(!com.getLightMetaForClass(myObject.getClassName(), false).isViewable()){
                    vrtc.getNotifier().showStatusMessage("This object doesn't have any view", false);
                    disableView();
