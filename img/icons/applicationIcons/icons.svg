@@ -383,7 +383,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7071068"
-     inkscape:cx="-146.65375"
+     inkscape:cx="446.7347"
      inkscape:cy="302.67638"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -1178,7 +1178,7 @@
        sodipodi:ry="29.5"
        d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
        transform="matrix(0.74400118,0,0,0.81966231,416.70376,851.69207)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/save.png"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ClassManager/src/org/inventory/customization/classmanager/res/save.png"
        inkscape:export-xdpi="40.94289"
        inkscape:export-ydpi="40.94289" />
     <rect
@@ -1189,7 +1189,7 @@
        x="561.27142"
        y="954.90137"
        ry="1.1277466"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/save.png"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ClassManager/src/org/inventory/customization/classmanager/res/save.png"
        inkscape:export-xdpi="40.94289"
        inkscape:export-ydpi="40.94289" />
     <path
@@ -1208,7 +1208,7 @@
        inkscape:rounded="0"
        inkscape:randomized="0"
        d="m 145.71429,232.36218 -19.28572,11.13462 -19.28571,11.13461 0,-22.26923 0,-22.26922 19.28571,11.13461 z"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/save.png"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ClassManager/src/org/inventory/customization/classmanager/res/save.png"
        inkscape:export-xdpi="40.94289"
        inkscape:export-ydpi="40.94289" />
     <rect
@@ -1219,7 +1219,7 @@
        x="571.6792"
        y="932.40137"
        ry="1.2548919"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ObjectView/src/org/inventory/views/objectview/res/save.png"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ClassManager/src/org/inventory/customization/classmanager/res/save.png"
        inkscape:export-xdpi="40.94289"
        inkscape:export-ydpi="40.94289" />
     <path
@@ -2173,9 +2173,9 @@
        sodipodi:ry="29.5"
        d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
        transform="matrix(0.74400118,0,0,0.81966231,855.10998,681.98643)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Services/src/org/inventory/core/services/res/view-refresh.png"
-       inkscape:export-xdpi="29.776619"
-       inkscape:export-ydpi="29.776619" />
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ClassManager/src/org/inventory/customization/classmanager/res/refresh.png"
+       inkscape:export-xdpi="40.942837"
+       inkscape:export-ydpi="40.942837" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
@@ -2183,9 +2183,9 @@
        y="793.5332"
        id="text4205-3-80-4-9-97"
        sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/Services/src/org/inventory/core/services/res/view-refresh.png"
-       inkscape:export-xdpi="29.776619"
-       inkscape:export-ydpi="29.776619"><tspan
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ClassManager/src/org/inventory/customization/classmanager/res/refresh.png"
+       inkscape:export-xdpi="40.942837"
+       inkscape:export-ydpi="40.942837"><tspan
          sodipodi:role="line"
          id="tspan4207-1-2-6-1-5"
          x="995.24823"
@@ -2583,7 +2583,7 @@
        sodipodi:ry="29.5"
        d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
        transform="matrix(0.74400118,0,0,0.81966231,-124.64638,451.98507)"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/flag-green.png"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/AttributeCustomizer/src/org/inventory/customization/attributecustomizer/res/flag-green.png"
        inkscape:export-xdpi="29.776628"
        inkscape:export-ydpi="29.776628" />
     <text
@@ -2593,7 +2593,7 @@
        y="596.49713"
        id="text4205-3-8-9-7-9"
        sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/HierarchyCustomizer/src/org/inventory/customization/hierarchycustomizer/res/flag-green.png"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/AttributeCustomizer/src/org/inventory/customization/attributecustomizer/res/flag-green.png"
        inkscape:export-xdpi="29.776628"
        inkscape:export-ydpi="29.776628"
        transform="scale(1.0593707,0.94395663)"><tspan

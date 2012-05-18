@@ -1254,6 +1254,9 @@
        sodipodi:rx="10.839844"
        sodipodi:ry="9.375"
        d="m 70.3125,585.17468 a 10.839844,9.375 0 1 1 -21.679688,0 10.839844,9.375 0 1 1 21.679688,0 z"
-       transform="matrix(1.2316764,0,0,1.4241258,-11.985442,-258.67209)" />
+       transform="matrix(1.2316764,0,0,1.4241258,-11.985442,-258.67209)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/default_32.png"
+       inkscape:export-xdpi="91.669876"
+       inkscape:export-ydpi="91.669876" />
   </g>
 </svg>
