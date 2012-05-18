@@ -1373,6 +1373,99 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
     }
 
+    public void addPossibleChildren(String parentClassName, String[] possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException {
+        Transaction tx = null;
+        Node parentNode;
+        Boolean isDummyRoot = false;
+        try{
+            tx = graphDb.beginTx();
+
+            if(parentClassName != null){
+                parentNode = classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
+
+                if (parentNode == null)
+                    throw new MetadataObjectNotFoundException(Util.formatString(
+                            "Class %1s can not be found", parentClassName));
+            }
+            else {
+
+                Node referenceNode = graphDb.getReferenceNode();
+                Relationship rel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
+                parentNode = rel.getEndNode();
+
+                if(!(DUMMYROOT).equals((String)parentNode.getProperty(PROPERTY_NAME)))
+                        throw new MetadataObjectNotFoundException(Util.formatString(
+                            "Class %1s can not be found", parentClassName));
+                else{
+                    isDummyRoot = true;
+                    for (String name : possibleChildren) {
+                        if(name.equals(parentNode.getProperty(PROPERTY_NAME)))
+                            throw new InvalidArgumentException("Can't perform this operation "
+                                + "for Dummyroot, DummyRoot can no be child of other classes ", Level.WARNING);
+                        }
+                }
+            }
+
+            Node inventoryObjectNode = classIndex.get(PROPERTY_NAME, INVENTORY_OBJECT).getSingle();
+            boolean alreadyAdded = false;
+
+            if (!Util.isSubClass((String) inventoryObjectNode.getProperty(PROPERTY_NAME), parentNode) && !isDummyRoot)
+            {
+                throw new InvalidArgumentException("Can't perform this operation "
+                        + "for classes other than subclasses of InventoryObject", Level.WARNING);
+            }
+
+            List<ClassMetadataLight> currentPossibleChildren = getPossibleChildren((String) parentNode.getProperty(PROPERTY_NAME));
+
+            for (String name : possibleChildren) {
+                Node childNode = classIndex.get(PROPERTY_NAME, name).getSingle();
+
+                if (childNode == null)
+                    throw new MetadataObjectNotFoundException(Util.formatString(
+                            "Class %1s can not be found", name));
+
+                ClassMetadataLight possibleChild =  Util.createClassMetadataLightFromNode(childNode);
+
+                for (ClassMetadataLight existingPossibleChild : currentPossibleChildren)
+                {
+                    if (Util.isSubClass(possibleChild.getName(), classIndex.get(PROPERTY_ID, existingPossibleChild.getId()).getSingle()))
+                    {
+                        getPossibleChildren((String) parentNode.getProperty(PROPERTY_NAME)).remove(existingPossibleChild);
+                    }
+                    else if (Util.isSubClass(existingPossibleChild.getName(), classIndex.get(PROPERTY_ID, possibleChild.getId()).getSingle()))
+                    {
+                        alreadyAdded = true;
+                    }
+                }//end for currentPossibleChildren
+                if (!currentPossibleChildren.contains(possibleChild) && !alreadyAdded)
+                {   // If the class is already a possible child, it won't add it
+                    parentNode.createRelationshipTo(childNode, RelTypes.POSSIBLE_CHILD);
+                    if (cm.getClass(possibleChild.getName()).isAbstractClass()){
+                        for(Node subClass : Util.getAllSubclasses(childNode))
+                            cm.putPossibleChild(parentClassName,(String)subClass.getProperty(PROPERTY_NAME));
+                    }
+                    else
+                        cm.putPossibleChild(parentClassName, name);
+                }
+                else
+                {
+                    throw new InvalidArgumentException(
+                            Util.formatString("Class %1s had already been added to the containment hierarchy", possibleChild.getName()), Level.INFO);
+                }
+            }//end for _PossibleChildren.
+            tx.success();
+
+        }catch (Exception ex) {
+            tx.failure();
+            throw new RuntimeException(ex.getMessage());
+        } finally {
+            if(tx != null)
+                tx.finish();
+        }
+    }
+    
+
+
     @Override
     public void removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws MetadataObjectNotFoundException {
         Transaction tx = null;

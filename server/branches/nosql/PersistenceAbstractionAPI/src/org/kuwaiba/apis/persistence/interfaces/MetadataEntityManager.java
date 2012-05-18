@@ -269,7 +269,15 @@ public interface MetadataEntityManager {
      * @param parentClassId Id of the class whose instances can contain the instances of the next param
      * @param _possibleChildren ids of the candidates to be contained
      */
-    public void addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    public void addPossibleChildren(Long parentClassId, Long[] possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Adds to a given class a list of possible children classes whose instances can be contained using the class name to find the parent class
+     * @param parentClassName parent class name
+     * @param newPossibleChildren list of possible children
+     * @throws MetadataObjectNotFoundException if the parent class or any of the possible children can not be found
+     * @throws InvalidArgumentException if any of the given possible children can not be a possible children of parentClassName
+     */
+    public void addPossibleChildren(String parentClassName, String[] possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * The opposite of addPossibleChildren. It removes the given possible children

@@ -297,6 +297,16 @@ public interface MetadataEntityManagerRemote extends Remote{
     public void addPossibleChildren(Long parentClassId, Long[] _possibleChildren) throws RemoteException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
+     * Adds to a given class a list of possible children classes whose instances can be contained
+     * @param parentClassName
+     * @param possibleChildren
+     * @throws RemoteException
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException
+     */
+    public void addPossibleChildren(String parentClassName, String[] possibleChildren) throws RemoteException, MetadataObjectNotFoundException, InvalidArgumentException;
+
+    /**
      * The opposite of addPossibleChildren. It removes the given possible children
      * TODO: Make this method safe. This is, check if there's already intances of the given
      * "children to be deleted" with parentClass as their parent
