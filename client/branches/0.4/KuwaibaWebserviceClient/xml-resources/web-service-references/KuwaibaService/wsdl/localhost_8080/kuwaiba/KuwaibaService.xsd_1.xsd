@@ -14,6 +14,10 @@
 
 <xs:element name="addPossibleChildren" type="tns:addPossibleChildren"/>
 
+<xs:element name="addPossibleChildrenByClassName" type="tns:addPossibleChildrenByClassName"/>
+
+<xs:element name="addPossibleChildrenByClassNameResponse" type="tns:addPossibleChildrenByClassNameResponse"/>
+
 <xs:element name="addPossibleChildrenResponse" type="tns:addPossibleChildrenResponse"/>
 
 <xs:element name="changeClassMetadataDefinition" type="tns:changeClassMetadataDefinition"/>
@@ -846,6 +850,20 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="createGroup">
+<xs:sequence>
+<xs:element name="groupName" type="xs:string" minOccurs="0"/>
+<xs:element name="description" type="xs:string" minOccurs="0"/>
+<xs:element name="priviliges" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="users" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createGroupResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="getLightMetadata">
 <xs:sequence>
 <xs:element name="includeListTypes" type="xs:boolean" minOccurs="0"/>
@@ -859,17 +877,15 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="createGroup">
+<xs:complexType name="addPossibleChildrenByClassName">
 <xs:sequence>
-<xs:element name="groupName" type="xs:string" minOccurs="0"/>
-<xs:element name="description" type="xs:string" minOccurs="0"/>
-<xs:element name="priviliges" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="users" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="parentClassName" type="xs:string" minOccurs="0"/>
+<xs:element name="childrenToBeAdded" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="createGroupResponse">
+<xs:complexType name="addPossibleChildrenByClassNameResponse">
 <xs:sequence/>
 </xs:complexType>
 
@@ -1058,7 +1074,7 @@
 <xs:complexType name="addPossibleChildren">
 <xs:sequence>
 <xs:element name="parentClassId" type="xs:long" minOccurs="0"/>
-<xs:element name="childrenToBeRemoved" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="childrenToBeAdded" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
