@@ -16,6 +16,7 @@
 
 package org.inventory.queries.graphical.elements.filters;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Random;
 import javax.swing.JComboBox;
@@ -39,7 +40,8 @@ public class DateFilterNodeWidget extends SimpleCriteriaNodeWidget{
 
     @Override
     public void build(String id) {
-        insideText = new JTextField(Calendar.getInstance().getTime().toString(), 10);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        insideText = new JTextField(dateFormat.format(Calendar.getInstance().getTime()), 10);
         setNodeProperties(null, "Date", "Filter", null);
         defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
         QueryEditorScene scene = ((QueryEditorScene)getScene());
