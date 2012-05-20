@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
+import javax.persistence.Transient;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
@@ -1299,10 +1300,26 @@ public class WebServiceBean implements WebServiceBeanRemote {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            ExtendedQuery eq = new ExtendedQuery(query.getClassName(), query.getLogicalConnector(),
-                    query.getAttributeNames(), query.getVisibleAttributeNames(), query.getAttributeValues(), query.getConditions(), null);
 
+            List<ExtendedQuery> joinsList = null;
+            if(query.getJoins().get(0) != null){
+                //joins not recursive only one level
+                joinsList =  new ArrayList<ExtendedQuery>();
+
+                for (TransientQuery joinQuery : query.getJoins()) {
+                    //TODO it always come a extra null
+                    if(joinQuery !=null){
+                        //if is not a empty query
+                        if(joinQuery.getAttributeNames() != null)
+                            joinsList.add(new ExtendedQuery(joinQuery.getClassName(), joinQuery.getLogicalConnector(),
+                                joinQuery.getAttributeNames(), joinQuery.getVisibleAttributeNames(), joinQuery.getAttributeValues(), joinQuery.getConditions(), null));
+                    }
+                }
+            }
             
+            ExtendedQuery eq = new ExtendedQuery(query.getClassName(), query.getLogicalConnector(),
+                    query.getAttributeNames(), query.getVisibleAttributeNames(), query.getAttributeValues(), query.getConditions(), joinsList);
+
             List<org.kuwaiba.apis.persistence.application.ResultRecord> rrList = aem.executeQuery(eq);
             ResultRecord[] rrArray = new ResultRecord[rrList.size()];
             int i = 0;
