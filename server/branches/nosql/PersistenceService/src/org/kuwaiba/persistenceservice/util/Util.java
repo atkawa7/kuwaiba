@@ -19,14 +19,18 @@ package org.kuwaiba.persistenceservice.util;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
+import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
+import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
@@ -65,15 +69,15 @@ public class Util {
      * @param attributeName
      * @return attribute's type. 0 if it can't find the attribute
      */
-    public static int getTypeOfAttribute (Node classNode, String attributeName){
-        Iterable<Relationship> attributes = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE);
-        while (attributes.iterator().hasNext()){
-            Relationship rel = attributes.iterator().next();
-            if (rel.getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals(attributeName))
-                return Integer.valueOf(rel.getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE).toString());
-        }
-        return 0;
-    }
+//    public static int getTypeOfAttribute (Node classNode, String attributeName){
+//        Iterable<Relationship> attributes = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE);
+//        while (attributes.iterator().hasNext()){
+//            Relationship rel = attributes.iterator().next();
+//            if (rel.getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals(attributeName))
+//                return Integer.valueOf(rel.getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE).toString());
+//        }
+//        return 0;
+//    }
 
     /**
      * Converts a String value to an object value based on a give mapping. This method
@@ -577,4 +581,150 @@ public class Util {
                 ReturnableEvaluator.ALL_BUT_START_NODE, RelTypes.EXTENDS,
                 Direction.INCOMING);
     }
+
+    public static ResultRecord createResultRecordFromNode(Node objectNode, List<String> visibleAttributes){
+        List<String> extraColumns = new ArrayList<String>();
+        ResultRecord rr = null;
+
+        for (String attrbtName : visibleAttributes) {
+            if(objectNode.hasProperty(attrbtName)){
+                Object property = objectNode.getProperty(attrbtName);
+                if(attrbtName.equals(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE)){
+                    Date creationDate = new Date((Long)property);
+                    SimpleDateFormat formatoDeFecha = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ");
+                        extraColumns.add(formatoDeFecha.format(creationDate));
+                }
+                else
+                    extraColumns.add(property.toString());
+                rr = new ResultRecord(objectNode.getId(), attrbtName, property.toString());
+                rr.setExtraColumns(extraColumns);
+            }
+        }
+        return rr;
+    }
+
+    public static String getTypeOfAttribute(Node classNode, String attributeName){
+        //get attribute type
+        Iterable<Relationship> attributeRels = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING);
+        for (Relationship attrRel:  attributeRels) {
+                    Node endNode = attrRel.getEndNode();
+                    if(attributeName.equals((String)endNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME))){
+                        return (String)endNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE);
+                    }
+        }
+        return "";
+    }
+
+    public static Boolean evalAttribute(Node instanceNode, Integer condition, String attributeType, String attributeName, String attributeValue){
+
+            if(attributeType.equals("String")){
+            String attribute = (String)instanceNode.getProperty(attributeName);
+            if(condition == ExtendedQuery.LIKE)
+            {
+                if(attribute.contains(attributeValue))
+                    return true;
+                else
+                    return false;
+            }//end like
+            else if(condition == ExtendedQuery.EQUAL)
+            {
+                if(attribute.equals(attributeValue))
+                    return true;
+                else
+                    return false;
+            }//end equal
+        }
+        else if(attributeType.equals("Date")){
+            //the date in bd
+            Long attributeDate = ((Long)instanceNode.getProperty(attributeName));
+            //the date you are looking for into long
+            Long attrbtDate = (long)0;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            try {
+                attrbtDate = dateFormat.parse(attributeValue).getTime();
+            } catch (ParseException ex) {
+                System.out.println("wrong date format should be yyyy-MM-dd HH:mm:ss");
+            }
+
+            if(condition == ExtendedQuery.EQUAL)
+            {
+                if(attributeDate == attrbtDate)
+                    return true;
+                else
+                    return false;
+            }//end like
+            else if(condition == ExtendedQuery.LESS_THAN)
+            {
+                if(attributeDate < attrbtDate)
+                    return true;
+                else
+                    return false;
+            }//end Less than
+            else if(condition == ExtendedQuery.EQUAL_OR_LESS_THAN)
+            {
+                if(attributeDate <= attrbtDate)
+                    return true;
+                else
+                    return false;
+            }//end equal
+            else if(condition == ExtendedQuery.EQUAL_OR_GREATER_THAN)
+            {
+                if(attributeDate >= attrbtDate)
+                    return true;
+                else
+                    return false;
+            }//end equal
+            else if(condition == ExtendedQuery.GREATER_THAN)
+            {
+                if(attributeDate > attrbtDate)
+                    return true;
+                else
+                    return false;
+            }//end equal
+        }//end if is date
+        else if(attributeType.equals("Float")){
+            Float attribute = (Float)instanceNode.getProperty(attributeName);
+
+            if(condition == ExtendedQuery.EQUAL)
+            {
+                if(attribute == Float.valueOf(attributeValue))
+                    return true;
+                else
+                    return false;
+            }//end like
+            else if(condition == ExtendedQuery.LESS_THAN)
+            {
+                if(attribute < Float.valueOf(attributeValue))
+                    return true;
+                else
+                    return false;
+            }//end Less than
+            else if(condition == ExtendedQuery.EQUAL_OR_LESS_THAN)
+            {
+                if(attribute <= Float.valueOf(attributeValue))
+                    return true;
+                else
+                    return false;
+            }//end equal
+            else if(condition == ExtendedQuery.EQUAL_OR_GREATER_THAN)
+            {
+                if(attribute >= Float.valueOf(attributeValue))
+                    return true;
+                else
+                    return false;
+            }//end equal
+            else if(condition == ExtendedQuery.GREATER_THAN)
+            {
+                if(attribute > Float.valueOf(attributeValue))
+                    return true;
+                else
+                    return false;
+            }//end equal
+        }
+        
+        return null;
+        
+    }
+
+
 }
