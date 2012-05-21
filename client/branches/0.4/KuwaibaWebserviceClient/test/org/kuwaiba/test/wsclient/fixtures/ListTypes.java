@@ -28,7 +28,7 @@ public class ListTypes {
         listTypes.put("VirtualizationSoftware", new String[]{"VirtualBox 3.x", "VirtualBox 4.x",
                       "VMWare ESX Server 4.x", "VMWare ESX Server 5.x", "VMWare Server 1.x", "VMWare Server 2.x",
                       "Hyper-V", "KVM", "Oracle VM Server", "Xen"});
-        listTypes.put("NetworkService", new String[]{"DNS", "DHCP", "LDAP",
+        listTypes.put("NetworkService", new String[]{"DNS", "DHCP", "LDAP", "Time Server",
                       "Radius", "Web", "FTP", "SSH", "Telnet", "Database", "NFS", "Samba", "Streaming", "Routing"});
         listTypes.put("ServerSidePlatform", new String[]{"PHP 3.x", "PHP 4.x", "PHP 5.x", "ASP 2.0", "ASP 3.0", ".NET 3.5", ".NET 4",
                                                         "Java EE 5", "Java EE 6", "Ruby", "Python", "PERL", "CGI"});
@@ -47,12 +47,25 @@ public class ListTypes {
         listTypes.put("MouseType", new String[]{"Optical USB", "Trackball USB", "Serial RS-232","Serial PS/2", "Wireless"});
         listTypes.put("ComputerMonitorType", new String[]{"CRT", "Flat"});
         listTypes.put("KeyboardType", new String[]{"USB", "Serial PS/2", "Wireless"});
-        listTypes.put("CommunicationsPortType", new String[]{"BNC", "TNC", "RS-232", "RJ-11", "RJ-14", "RJ-21", "RJ-25", "RJ-45","RJ-48", "RJ-61", "V35", //Electrical interfaces
+        listTypes.put("CommunicationsPortType", new String[]{"BNC", "TNC", "DE-9", "RJ-11", "RJ-14", "RJ-21", "RJ-25", "RJ-45","RJ-48", "RJ-61", "V35", //Electrical interfaces
                                                             "ADT-UNI", "DMI", "E-2000/LSH", "EC", "F-3000", "FC", "FiberGate", "FSMA", "LC", "MIC", "MPO/MTP", "MT", "MT-RJ", "SC", "SMC"});
-        listTypes.put("ComputerMonitorType", new String[]{"CRT", "Flat"});
-        listTypes.put("ComputerMonitorType", new String[]{"CRT", "Flat"});
-        listTypes.put("ComputerMonitorType", new String[]{"CRT", "Flat"});
-        listTypes.put("ComputerMonitorType", new String[]{"CRT", "Flat"});
+        listTypes.put("TimeSourceType", new String[]{"Stratum 0", "Stratum 1", "Stratum 2", "Stratum 3"});
+        listTypes.put("IPAddressType", new String[]{"IPv$", "IPv6"});
+        listTypes.put("PowerPortType", new String[]{"NEMA 5-15R", "NEMA 5-15P"});
+        listTypes.put("RackType", new String[]{"Enclosed", "Open Frame", "2Post", "Portable", "Wall Mounted"});
+        listTypes.put("AntennaType", new String[]{"Yagi-Uda", "Log-periodic", "Horn","Helical", "Sector", "Discone", "Monopole", "Loop", "Wire Grid","Dish"});
+        listTypes.put("PolarizationType", new String[]{"Vertical", "Horizontal", "Elliptical", "Circular"});
+        listTypes.put("RateType", new String[]{"Kbps","Mbps", "Gbps"});
+        listTypes.put("PeripheralPortType", new String[]{"USB", "PS/2", "DB-25", "DE-9", "USB 2", "USB 3", "Firewire", "SATA", "HDMI", "VGA (DE-15)", "DVI"});
+        listTypes.put("FacilityType", new String[]{"Campus", "Building", "House"});
+        listTypes.put("EnvironmentalCondition", new String[]{"Indoors Normal", "Indoors Humidity", "Indoors Direct Sunlight", "Indoors No Thermal Control","Outdoors"});
+        listTypes.put("EquipmentVendor", new String[]{"Alcatel-Lucent", "APC", "Cisco", "Juniper","D-Link", "Dell", "HP", "IBM", "Oracle", "Extreme Networks", "Huawei", "ZTE", "Siemens", "Nortel", "ECI",
+                                                     "Ericsson", "Nokia-Siemens Networks", "Harris", "Motorola", "Arris", "NEC", "Fujitsu", "Tellabs", "Lenovo", "Sony", "Avaya", "JDSU", "Symmetricon"});
+        listTypes.put("SoftwareVendor", new String[]{"Microsoft", "Oracle", "Red Hat", "Adobe","Sun Microsystems", "Apple", "SAP", "JD Edwards", "Enterprise DB",  "Neo Technologies", "HP",
+                                                    "VMWare"});
+        listTypes.put("LocationOwner", new String[]{"Owner 1","Owner 2", "Owner 3", "Owner 4", "Owner 5"});
+        listTypes.put("Employee", new String[]{"Employee 1","Employee 2", "Employee 3", "Employee 4", "Employee 5"});
+
 
     }
 
