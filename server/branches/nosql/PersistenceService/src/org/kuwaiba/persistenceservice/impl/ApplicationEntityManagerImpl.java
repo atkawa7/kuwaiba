@@ -830,7 +830,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 else
                 {
                     //joins
-                    if(query.getJoins() != null){
                         List<ExtendedQuery> joinsList = query.getJoins();
                         for (ExtendedQuery extendedQuery : joinsList) {
 
@@ -853,31 +852,48 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                                     Node joinObjectNode = joinListTypeRel.getStartNode();
                                     
                                     if(joinAttributeNames.get(j).equals("id")){
-                                        if(Long.valueOf(joinAttributeValues.get(j)) == joinObjectNode.getId())
-                                                joinExist[j] = true;
+                                        if(Long.valueOf(joinAttributeValues.get(j)) == joinObjectNode.getId()){
+                                            Iterable<Relationship> realtedToRels = joinObjectNode.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING);
+
+                                            for (Relationship relatedRel : realtedToRels) {
+                                                Node fatherNode = relatedRel.getStartNode();
+                                                if(fatherNode.getId() == instanceNode.getId()){
+                                                    joinExist[j] = true;
+                                                    break;
+                                                }
+                                            }
+
+                                        }
                                     }
                                     else{
-                                       joinAttributeType = Util.getTypeOfAttribute(joinClassNode, joinAttributeNames.get(j));
+                                        joinAttributeType = Util.getTypeOfAttribute(joinClassNode, joinAttributeNames.get(j));
+                                        Boolean joinResult = Util.evalAttribute(joinObjectNode, joinConditions.get(j), joinAttributeType, joinAttributeNames.get(j), joinAttributeValues.get(j));
+                                        if(joinResult != null){
+                                            Iterable<Relationship> realtedToRels = joinObjectNode.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING);
+                                            for (Relationship relatedRel : realtedToRels) {
+                                                Node fatherNode = relatedRel.getStartNode();
+                                                if(fatherNode.getId() == instanceNode.getId()){
+                                                    joinExist[j] = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
                                     }
-
-                                    Boolean joinResult = Util.evalAttribute(joinObjectNode, joinConditions.get(j), joinAttributeType, joinAttributeNames.get(j), joinAttributeValues.get(j));
-                                    if(joinResult != null)
-                                        joinExist[j] = joinResult;
-                                }
+                                }//end for rels
                             }
                             
                             for (int j = 0; j < joinExist.length; j++) {
                                 if(extendedQuery.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND){
-                                    if(!joinExist[i])
+                                    if(!joinExist[j])
                                         break;
-                                    else if(i == joinExist.length -1)
+                                    else if(j == joinExist.length -1)
                                     {
                                         rsltrcrdList.add(Util.createResultRecordFromNode(instanceNode, vissibleAtributes));
                                         break;
                                     }
                                 }
                                 else if(extendedQuery.getLogicalConnector() == ExtendedQuery.CONNECTOR_OR){
-                                    if(joinExist[i]){
+                                    if(joinExist[j]){
                                         rsltrcrdList.add(Util.createResultRecordFromNode(instanceNode, vissibleAtributes));
                                         break;
                                     }
@@ -885,7 +901,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                             }//enfor join conditions
                         }//end for joins
                     }//if joins not null
-                }//if is join
             }//end for attribute names
 
             //Logical Connectors
