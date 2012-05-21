@@ -42,14 +42,14 @@ public class MainTest {
                 }
             }
 
-            /*for (String listType : lt.listTypes.keySet()){
+            for (String listType : lt.listTypes.keySet()){
                 try{
                     for (String listTypeItem : lt.listTypes.get(listType))
                         port.createListTypeItem(listType, listTypeItem, null, session.getSessionId());
                 }catch (Exception ex){
                     System.out.println("ERROR: "+ex.getMessage());
                 }
-            }*/
+            }
             
             port.closeSession(session.getSessionId());
             System.out.println("Ending at: " + Calendar.getInstance().getTime());

@@ -16,6 +16,8 @@ public class Containment {
 
     public Containment() {
         containmentHierarchy = new HashMap<String, String[]>();
+        containmentHierarchy.put("Continent", new String[]{"Country"});
+        containmentHierarchy.put("Country", new String[]{"City", "State"});
         containmentHierarchy.put("City", new String[]{"Building", "Warehouse","Shelter", "Facility", "Tower", "Pole"});
         containmentHierarchy.put("Building", new String[]{"Room", "Floor", "Tower"});
         containmentHierarchy.put("Floor", new String[]{"Room"});

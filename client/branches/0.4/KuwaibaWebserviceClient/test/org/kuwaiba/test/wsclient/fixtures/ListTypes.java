@@ -37,7 +37,8 @@ public class ListTypes {
                                                 "Firebird 1.x", "Firebird 2.x"});
         listTypes.put("SoftwareType", new String[]{"Operating System", "Application Server", "Development Tool", "Database Management System",
                                                     "Office Desktop Application", "Network Management Application", "Web Application", "Another Service"});
-        listTypes.put("PhysicalContainerType", new String[]{"Conduit", "Cable Tray", "Trunking", "Microwave Link", "Waveguide"});
+        listTypes.put("WireContainerType", new String[]{"Conduit", "Cable Tray", "Trunking"});
+        listTypes.put("WirelessContainerType", new String[]{"Microwave Link", "Waveguide"});
         listTypes.put("TowerType", new String[]{"Mast", "Metalic Structure"});
         listTypes.put("ElectricalLinkType", new String[]{"Coaxial RG-58", "Coaxial RG-59", "Twisted CAT-5", "Twisted CAT-6", "Twisted CAT-7"});
         listTypes.put("OpticalLinkType", new String[]{"Monomode", "Multimode Graded Index", "Multimode Step Index"});
