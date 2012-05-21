@@ -451,6 +451,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     //List type related methods
    public Long createListTypeItem(String className, String name, String displayName)
             throws MetadataObjectNotFoundException, InvalidArgumentException {
+       if (name == null || className == null)
+           throw new InvalidArgumentException("Item name and class name can not be null", Level.INFO);
+       
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, className).getSingle();
         if (classNode ==  null)
             throw new MetadataObjectNotFoundException(Util.formatString("Class for object with oid %1s could not be found",className));
@@ -462,7 +465,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
              tx = graphDb.beginTx();
              Node newItem = graphDb.createNode();
              newItem.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, name);
-             newItem.setProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME, displayName);
+             if (displayName != null)
+                newItem.setProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME, displayName);
              newItem.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
              listTypeItemsIndex.putIfAbsent(newItem, MetadataEntityManagerImpl.PROPERTY_ID, newItem.getId());
              tx.success();
