@@ -480,7 +480,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public List<ClassMetadataLight> getLightMetadata(Boolean includeListTypes) throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> cml = new ArrayList<ClassMetadataLight>();
         try {
-
             Node myClassNode =  classIndex.get(PROPERTY_NAME, INVENTORY_OBJECT).getSingle();
 
             if(myClassNode == null)
