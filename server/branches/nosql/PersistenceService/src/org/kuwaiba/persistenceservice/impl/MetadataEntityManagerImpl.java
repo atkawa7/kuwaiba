@@ -1309,7 +1309,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     for (Long id : _possibleChildren) {
                         if(id == parentNode.getId())
                             throw new InvalidArgumentException("Can't perform this operation "
-                                + "for Dummyroot, DummyRoot can no be child of other classes ", Level.WARNING);
+                                + "for Dummyroot, DummyRoot can not be child of other classes ", Level.WARNING);
                         }
                     }
             }
@@ -1323,7 +1323,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         + "for classes other than subclasses of InventoryObject", Level.WARNING);
             }
 
-            List<ClassMetadataLight> currentPossibleChildren = getPossibleChildren((String) parentNode.getProperty(PROPERTY_NAME));
+            List<ClassMetadataLight> currentPossibleChildren = getPossibleChildren(isDummyRoot ? null : (String)parentNode.getProperty(PROPERTY_NAME));
 
             for (Long id : _possibleChildren) {
                 Node childNode = classIndex.get(PROPERTY_ID, id).getSingle();
