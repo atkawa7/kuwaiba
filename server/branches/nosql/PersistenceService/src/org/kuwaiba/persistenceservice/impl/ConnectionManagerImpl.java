@@ -83,7 +83,7 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
 
         //graphDb = new EmbeddedGraphDatabase("target/kuwaiba_db");
         graphDb = new EmbeddedGraphDatabase("target/kuwaiba_db");
-
+        System.out.println(graphDb.toString());
         registerShutdownHook( graphDb );
     }
 
