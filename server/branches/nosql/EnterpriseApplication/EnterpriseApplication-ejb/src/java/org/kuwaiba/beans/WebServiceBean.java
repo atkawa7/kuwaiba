@@ -1300,35 +1300,54 @@ public class WebServiceBean implements WebServiceBeanRemote {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-
-            List<ExtendedQuery> joinsList = null;
-            if(query.getJoins().get(0) != null){
-                //joins not recursive only one level
-                joinsList =  new ArrayList<ExtendedQuery>();
-
-                for (TransientQuery joinQuery : query.getJoins()) {
-                    //TODO it always come a extra null
-                    if(joinQuery !=null){
-                        //if is not a empty query
-                        if(joinQuery.getAttributeNames() != null)
-                            joinsList.add(new ExtendedQuery(joinQuery.getClassName(), joinQuery.getLogicalConnector(),
-                                joinQuery.getAttributeNames(), joinQuery.getVisibleAttributeNames(), joinQuery.getAttributeValues(), joinQuery.getConditions(), null));
-                    }
+            ExtendedQuery eq = null;
+            ResultRecord[] rrArray = null;
+            List<org.kuwaiba.apis.persistence.application.ResultRecord> rrList = new ArrayList<org.kuwaiba.apis.persistence.application.ResultRecord>();
+            if(query.getAttributeNames()== null && query.getAttributeValues()== null && query.getConditions() == null){
+                 eq = new ExtendedQuery(query.getClassName(), 0, null, null, null, null, null);
+                 rrList = aem.executeQuery(eq);
+                 rrArray = new ResultRecord[rrList.size()];
+                 int i = 0;
+                for (org.kuwaiba.apis.persistence.application.ResultRecord rrApi : rrList)
+                {
+                    RemoteObjectLight rol = new RemoteObjectLight(rrApi.getId(), rrApi.getName(), rrApi.getClassName());
+                    rrArray[i] = new ResultRecord(rol, null);
+                    i++;
                 }
             }
-            
-            ExtendedQuery eq = new ExtendedQuery(query.getClassName(), query.getLogicalConnector(),
-                    query.getAttributeNames(), query.getVisibleAttributeNames(), query.getAttributeValues(), query.getConditions(), joinsList);
 
-            List<org.kuwaiba.apis.persistence.application.ResultRecord> rrList = aem.executeQuery(eq);
-            ResultRecord[] rrArray = new ResultRecord[rrList.size()];
-            int i = 0;
-            for (org.kuwaiba.apis.persistence.application.ResultRecord rrApi : rrList)
+            else if(query.getJoins() != null)
             {
-                RemoteObjectLight rol = new RemoteObjectLight(rrApi.getId(), rrApi.getName(), rrApi.getClassName());
-                rrArray[i] = new ResultRecord(rol, (ArrayList<String>) rrApi.getExtraColumns());
-                i++;
-            }
+                List<ExtendedQuery> joinsList = null;
+                if(query.getJoins().get(0) != null){
+                    //joins not recursive only one level
+                    joinsList =  new ArrayList<ExtendedQuery>();
+
+                    for (TransientQuery joinQuery : query.getJoins()) {
+                        //TODO it always come a extra null
+                        if(joinQuery !=null){
+                            //if is not a empty query
+                            if(joinQuery.getAttributeNames() != null)
+                                joinsList.add(new ExtendedQuery(joinQuery.getClassName(), joinQuery.getLogicalConnector(),
+                                    joinQuery.getAttributeNames(), joinQuery.getVisibleAttributeNames(), joinQuery.getAttributeValues(), joinQuery.getConditions(), null));
+                        }
+                    }
+                }
+            
+                eq = new ExtendedQuery(query.getClassName(), query.getLogicalConnector(),
+                query.getAttributeNames(), query.getVisibleAttributeNames(), query.getAttributeValues(), query.getConditions(), joinsList);
+                rrList = aem.executeQuery(eq);
+                rrArray = new ResultRecord[rrList.size()];
+                int i = 0;
+                for (org.kuwaiba.apis.persistence.application.ResultRecord rrApi : rrList)
+                {
+                    RemoteObjectLight rol = new RemoteObjectLight(rrApi.getId(), rrApi.getName(), rrApi.getClassName());
+                    rrArray[i] = new ResultRecord(rol, (ArrayList<String>) rrApi.getExtraColumns());
+                    i++;
+                }
+            }//end if are joins
+
+            
             return rrArray;
         }catch (Exception ex){
             Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, null, ex);
