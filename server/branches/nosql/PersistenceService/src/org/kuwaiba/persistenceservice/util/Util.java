@@ -596,7 +596,7 @@ public class Util {
                 }
                 else
                     extraColumns.add(property.toString());
-                rr = new ResultRecord(objectNode.getId(), attrbtName, property.toString());
+                rr = new ResultRecord(objectNode.getId(), (String)objectNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), property.toString());
                 rr.setExtraColumns(extraColumns);
             }
         }
@@ -621,7 +621,7 @@ public class Util {
             String attribute = (String)instanceNode.getProperty(attributeName);
             if(condition == ExtendedQuery.LIKE)
             {
-                if(attribute.contains(attributeValue))
+                if(attribute.toLowerCase().contains(attributeValue.toLowerCase()))
                     return true;
                 else
                     return false;
