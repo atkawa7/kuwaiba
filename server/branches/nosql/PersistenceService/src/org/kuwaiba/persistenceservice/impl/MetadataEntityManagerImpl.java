@@ -52,7 +52,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public static final String PROPERTY_DISPLAY_NAME = "displayName"; //NOI18N
     public static final String PROPERTY_TYPE = "type"; //NOI18N
     public static final String PROPERTY_ADMINISTRATIVE = "administrative"; //NOI18N
-    public static final String PROPERTY_VISIBLE = "visible"; //NOI18N
+    public static final String PROPERTY_VISIBLE = "isVisible"; //NOI18N
     public static final String PROPERTY_DESCRIPTION = "description"; //NOI18N
     public static final String PROPERTY_READONLY = "readOnly"; //NOI18N
     public static final String PROPERTY_ID = "id"; //NOI18N
@@ -442,13 +442,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
                     if(propertyName.equalsIgnoreCase(PROPERTY_VISIBLE))
                     {
-                        atr.setProperty(PROPERTY_VISIBLE, propertyValue);
+                        atr.setProperty(PROPERTY_VISIBLE, Boolean.valueOf(propertyValue));
                         break;
                     }
 
                     if(propertyName.equalsIgnoreCase(PROPERTY_ADMINISTRATIVE))
                     {
-                        atr.setProperty(PROPERTY_ADMINISTRATIVE, propertyValue);
+                        atr.setProperty(PROPERTY_ADMINISTRATIVE, Boolean.valueOf(propertyValue));
                         break;
                     }
 
