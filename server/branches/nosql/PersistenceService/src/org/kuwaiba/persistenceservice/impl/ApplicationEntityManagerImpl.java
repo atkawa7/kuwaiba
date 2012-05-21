@@ -16,12 +16,8 @@
 
 package org.kuwaiba.persistenceservice.impl;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -791,143 +787,174 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             throw new MetadataObjectNotFoundException(Util.formatString(
                         "Can not find the query with name %1s", query.getClassName()));
 
-        if(query.getVisibleAttributeNames() == null)
-            throw new MetadataObjectNotFoundException(Util.formatString(
-                        "Can not create query with out any visible Attributesfind the query with name %1s", query.getClassName()));
         //limits
         int page = query.getPage();
         int limit = query.getLimit();
+        int max = limit*page;
+        int min = max-limit;
         //result Records
         List<ResultRecord> rsltrcrdList = new ArrayList<ResultRecord>();
-        List<String> vissibleAtributes = query.getVisibleAttributeNames();
-        //headers
-        ResultRecord resltRcrdHeader = new ResultRecord(null, null, null);
-        resltRcrdHeader.setExtraColumns(vissibleAtributes);
-        rsltrcrdList.add(resltRcrdHeader);
+
+        if(query.getAttributeNames()== null && query.getAttributeValues() == null && query.getConditions() == null){
+            //get the instance
+            Iterable<Relationship> instanceOfRels = classNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
+            if(limit > 0){
+                int counter = 0;
+                while(instanceOfRels.iterator().hasNext() && (counter <= limit)){
+                    counter++;
+                    Node instanceNode = instanceOfRels.iterator().next().getStartNode();
+                    
+                    rsltrcrdList.add(new ResultRecord(instanceNode.getId(), query.getClassName() , (String)instanceNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME)));
+                    //rr = new ResultRecord(objectNode.getId(), attrbtName, property.toString());
+
+                }
+            }
+            else{
+                while(instanceOfRels.iterator().hasNext()){
+                    Node instanceNode = instanceOfRels.iterator().next().getStartNode();
+                    rsltrcrdList.add(new ResultRecord(instanceNode.getId(), query.getClassName() , (String)instanceNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME)));
+                }
+            }
+            return rsltrcrdList;
+        }
+        else{
+            if(query.getVisibleAttributeNames() == null)
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                            "Can not create query with out any visible Attributesfind the query with name %1s", query.getClassName()));
 
 
-        List<String> attributeNames = query.getAttributeNames();
-        List<String> attributeValues = query.getAttributeValues();
-        List<Integer> conditions = query.getConditions();
-        int logicalConnector = query.getLogicalConnector();
+            List<String> vissibleAtributes = query.getVisibleAttributeNames();
+            //headers
+            ResultRecord resltRcrdHeader = new ResultRecord(null, null, null);
+            resltRcrdHeader.setExtraColumns(vissibleAtributes);
+            rsltrcrdList.add(resltRcrdHeader);
 
-        //get the instance
-        Iterable<Relationship> instanceOfRels = classNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
 
-        //get attribute type
-        //Iterable<Relationship> attributeRels = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING);
+            List<String> attributeNames = query.getAttributeNames();
+            List<String> attributeValues = query.getAttributeValues();
+            List<Integer> conditions = query.getConditions();
+            int logicalConnector = query.getLogicalConnector();
 
-        String attributeType;
+            //get the instance
+            Iterable<Relationship> instanceOfRels = classNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
 
-        boolean[] exist = new boolean[attributeNames.size()];
-        
-        for (Relationship instanceOfRel : instanceOfRels) {
-            Node instanceNode = instanceOfRel.getStartNode();
+            //get attribute type
+            //Iterable<Relationship> attributeRels = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING);
 
-            for (int i = 0; i < attributeNames.size(); i++) {
-                //get Attribute type
-                attributeType = Util.getTypeOfAttribute(classNode, attributeNames.get(i));
+            String attributeType;
+            boolean[] exist = new boolean[attributeNames.size()];
+            if(limit > 0){
+                int counter =0;
+                while(instanceOfRels.iterator().hasNext() && (counter < limit)){
+                    counter++;
+                    Node instanceNode = instanceOfRels.iterator().next().getStartNode();
 
-                Boolean result = Util.evalAttribute(instanceNode, conditions.get(i),attributeType, attributeNames.get(i),attributeValues.get(i));
-                if(result != null)
-                    exist[i] = result;
-                else
-                {
-                    //joins
-                        List<ExtendedQuery> joinsList = query.getJoins();
-                        for (ExtendedQuery extendedQuery : joinsList) {
+                    for (int i = 0; i < attributeNames.size(); i++) {
+                        //get Attribute type
+                        attributeType = Util.getTypeOfAttribute(classNode, attributeNames.get(i));
 
-                            Node joinClassNode =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, extendedQuery.getClassName()).getSingle();
-                            if(joinClassNode == null)
-                                throw new MetadataObjectNotFoundException(Util.formatString(
-                                            "Can not find the query with name %1s", query.getClassName()));
+                        Boolean result = Util.evalAttribute(instanceNode, conditions.get(i),attributeType, attributeNames.get(i),attributeValues.get(i));
+                        if(result != null)
+                            exist[i] = result;
+                        else
+                        {
+                            //joins
+                                List<ExtendedQuery> joinsList = query.getJoins();
+                                for (ExtendedQuery extendedQuery : joinsList) {
 
-                            //get the list types
-                            List<String> joinAttributeNames = extendedQuery.getAttributeNames();
-                            String joinAttributeType = "";
-                            boolean[] joinExist = new boolean[joinAttributeNames.size()];
-                            List<Integer> joinConditions = extendedQuery.getConditions();
-                            List<String> joinAttributeValues = extendedQuery.getAttributeValues();
+                                    Node joinClassNode =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, extendedQuery.getClassName()).getSingle();
+                                    if(joinClassNode == null)
+                                        throw new MetadataObjectNotFoundException(Util.formatString(
+                                                    "Can not find the query with name %1s", query.getClassName()));
 
-                            for (int j = 0; j < joinAttributeNames.size(); j++) {
-                                //get the Class of the instance
-                                Iterable<Relationship> joinInstanceOfRels = joinClassNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
-                                for (Relationship joinListTypeRel : joinInstanceOfRels) {
-                                    Node joinObjectNode = joinListTypeRel.getStartNode();
-                                    
-                                    if(joinAttributeNames.get(j).equals("id")){
-                                        if(Long.valueOf(joinAttributeValues.get(j)) == joinObjectNode.getId()){
-                                            Iterable<Relationship> realtedToRels = joinObjectNode.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING);
+                                    //get the list types
+                                    List<String> joinAttributeNames = extendedQuery.getAttributeNames();
+                                    String joinAttributeType = "";
+                                    boolean[] joinExist = new boolean[joinAttributeNames.size()];
+                                    List<Integer> joinConditions = extendedQuery.getConditions();
+                                    List<String> joinAttributeValues = extendedQuery.getAttributeValues();
 
-                                            for (Relationship relatedRel : realtedToRels) {
-                                                Node fatherNode = relatedRel.getStartNode();
-                                                if(fatherNode.getId() == instanceNode.getId()){
-                                                    joinExist[j] = true;
-                                                    break;
+                                    for (int j = 0; j < joinAttributeNames.size(); j++) {
+                                        //get the Class of the instance
+                                        Iterable<Relationship> joinInstanceOfRels = joinClassNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
+                                        for (Relationship joinListTypeRel : joinInstanceOfRels) {
+                                            Node joinObjectNode = joinListTypeRel.getStartNode();
+
+                                            if(joinAttributeNames.get(j).equals("id")){
+                                                if(Long.valueOf(joinAttributeValues.get(j)) == joinObjectNode.getId()){
+                                                    Iterable<Relationship> realtedToRels = joinObjectNode.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING);
+
+                                                    for (Relationship relatedRel : realtedToRels) {
+                                                        Node fatherNode = relatedRel.getStartNode();
+                                                        if(fatherNode.getId() == instanceNode.getId()){
+                                                            joinExist[j] = true;
+                                                            break;
+                                                        }
+                                                    }
+
                                                 }
                                             }
-
-                                        }
-                                    }
-                                    else{
-                                        joinAttributeType = Util.getTypeOfAttribute(joinClassNode, joinAttributeNames.get(j));
-                                        Boolean joinResult = Util.evalAttribute(joinObjectNode, joinConditions.get(j), joinAttributeType, joinAttributeNames.get(j), joinAttributeValues.get(j));
-                                        if(joinResult != null){
-                                            Iterable<Relationship> realtedToRels = joinObjectNode.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING);
-                                            for (Relationship relatedRel : realtedToRels) {
-                                                Node fatherNode = relatedRel.getStartNode();
-                                                if(fatherNode.getId() == instanceNode.getId()){
-                                                    joinExist[j] = true;
-                                                    break;
+                                            else{
+                                                joinAttributeType = Util.getTypeOfAttribute(joinClassNode, joinAttributeNames.get(j));
+                                                Boolean joinResult = Util.evalAttribute(joinObjectNode, joinConditions.get(j), joinAttributeType, joinAttributeNames.get(j), joinAttributeValues.get(j));
+                                                if(joinResult != null){
+                                                    Iterable<Relationship> realtedToRels = joinObjectNode.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING);
+                                                    for (Relationship relatedRel : realtedToRels) {
+                                                        Node fatherNode = relatedRel.getStartNode();
+                                                        if(fatherNode.getId() == instanceNode.getId()){
+                                                            joinExist[j] = true;
+                                                            break;
+                                                        }
+                                                    }
                                                 }
                                             }
-                                        }
+                                        }//end for rels
                                     }
-                                }//end for rels
+
+                                    for (int j = 0; j < joinExist.length; j++) {
+                                        if(extendedQuery.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND){
+                                            if(!joinExist[j])
+                                                break;
+                                            else if(j == joinExist.length -1)
+                                            {
+                                                rsltrcrdList.add(Util.createResultRecordFromNode(instanceNode, vissibleAtributes));
+                                                break;
+                                            }
+                                        }
+                                        else if(extendedQuery.getLogicalConnector() == ExtendedQuery.CONNECTOR_OR){
+                                            if(joinExist[j]){
+                                                rsltrcrdList.add(Util.createResultRecordFromNode(instanceNode, vissibleAtributes));
+                                                break;
+                                            }
+                                        }
+                                    }//enfor join conditions
+                                }//end for joins
+                            }//if joins not null
+                    }//end for attribute names
+
+                    //Logical Connectors
+                    for (int i = 0; i < exist.length; i++) {
+                        if(logicalConnector == ExtendedQuery.CONNECTOR_AND){
+                            if(!exist[i])
+                                break;
+                            else if(i == exist.length -1)
+                            {
+                                rsltrcrdList.add(Util.createResultRecordFromNode(instanceNode, vissibleAtributes));
+                                break;
                             }
-                            
-                            for (int j = 0; j < joinExist.length; j++) {
-                                if(extendedQuery.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND){
-                                    if(!joinExist[j])
-                                        break;
-                                    else if(j == joinExist.length -1)
-                                    {
-                                        rsltrcrdList.add(Util.createResultRecordFromNode(instanceNode, vissibleAtributes));
-                                        break;
-                                    }
-                                }
-                                else if(extendedQuery.getLogicalConnector() == ExtendedQuery.CONNECTOR_OR){
-                                    if(joinExist[j]){
-                                        rsltrcrdList.add(Util.createResultRecordFromNode(instanceNode, vissibleAtributes));
-                                        break;
-                                    }
-                                }
-                            }//enfor join conditions
-                        }//end for joins
-                    }//if joins not null
-            }//end for attribute names
-
-            //Logical Connectors
-            for (int i = 0; i < exist.length; i++) {
-                if(logicalConnector == ExtendedQuery.CONNECTOR_AND){
-                    if(!exist[i])
-                        break;
-                    else if(i == exist.length -1)
-                    {
-                        rsltrcrdList.add(Util.createResultRecordFromNode(instanceNode, vissibleAtributes));
-                        break;
-                    }
-                }
-                else if(logicalConnector == ExtendedQuery.CONNECTOR_OR){
-                    if(exist[i]){
-                        rsltrcrdList.add(Util.createResultRecordFromNode(instanceNode, vissibleAtributes));
-                        break;
-                    }
-                }
-            }//enf for logiacal contiditions
-        }//end for instancesRelationships
+                        }
+                        else if(logicalConnector == ExtendedQuery.CONNECTOR_OR){
+                            if(exist[i]){
+                                rsltrcrdList.add(Util.createResultRecordFromNode(instanceNode, vissibleAtributes));
+                                break;
+                            }
+                        }
+                    }//enf for logiacal contiditions
+                }//end for instancesRelationships
+            }//en if limit > 0
+            return rsltrcrdList;
+        }
         
-        return rsltrcrdList;
     }
 
 }
