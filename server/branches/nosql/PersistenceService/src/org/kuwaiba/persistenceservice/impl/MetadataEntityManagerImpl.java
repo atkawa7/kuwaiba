@@ -1415,7 +1415,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         + "for classes other than subclasses of InventoryObject", Level.WARNING);
             }
 
-            List<ClassMetadataLight> currentPossibleChildren = getPossibleChildren((String) parentNode.getProperty(PROPERTY_NAME));
+            List<ClassMetadataLight> currentPossibleChildren = getPossibleChildren(isDummyRoot ? null : (String)parentNode.getProperty(PROPERTY_NAME));
 
             for (String name : possibleChildren) {
                 Node childNode = classIndex.get(PROPERTY_NAME, name).getSingle();
