@@ -16,9 +16,15 @@
 
 package org.kuwaiba.persistenceservice.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
@@ -39,6 +45,8 @@ import org.kuwaiba.persistenceservice.caching.CacheManager;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.kuwaiba.persistenceservice.util.Util;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -47,6 +55,7 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
+import org.neo4j.helpers.collection.IteratorUtil;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 /**
@@ -194,7 +203,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 //            newUser.setProperty(UserProfile.PROPERTY_PRIVILEGES, privileges);
 
         if (groups != null){
-            if(groups.size()<1)
+            if(groups.size()>0)
             {
                 for (Long groupId : groups){
                     Node group = groupIndex.get(UserProfile.PROPERTY_ID,groupId).getSingle();
@@ -782,179 +791,186 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException {
 
         Node classNode =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, query.getClassName()).getSingle();
+        Boolean isAbstract = (Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT);
+
+        String cypherQuery = "";
+        String match = "";
+        String returnQuery = "instance";
+        String whereQuery = "";
+
+        Boolean isJoin = false;
 
         if(classNode == null)
             throw new MetadataObjectNotFoundException(Util.formatString(
                         "Can not find the query with name %1s", query.getClassName()));
-
         //limits
         int page = query.getPage();
         int limit = query.getLimit();
         int max = limit*page;
         int min = max-limit;
+
+        //query Params
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("className", query.getClassName());
+
+        params.put( "s", min);
+        params.put( "l", max);
+
+        List<String> visibleAttributeNames = query.getVisibleAttributeNames();
+        List<String> attributeNames = query.getAttributeNames();
+        List<String> attributeValues = query.getAttributeValues();
+        List<Integer> conditions = query.getConditions();
         //result Records
         List<ResultRecord> rsltrcrdList = new ArrayList<ResultRecord>();
 
-        if(query.getAttributeNames()== null && query.getAttributeValues() == null && query.getConditions() == null){
-            //get the instance
-            Iterable<Relationship> instanceOfRels = classNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
-            if(limit > 0){
-                int counter = 0;
-                while(instanceOfRels.iterator().hasNext() && (counter <= limit)){
-                    counter++;
-                    Node instanceNode = instanceOfRels.iterator().next().getStartNode();
-                    
-                    rsltrcrdList.add(new ResultRecord(instanceNode.getId(), query.getClassName() , (String)instanceNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME)));
-                    //rr = new ResultRecord(objectNode.getId(), attrbtName, property.toString());
-
-                }
-            }
-            else{
-                while(instanceOfRels.iterator().hasNext()){
-                    Node instanceNode = instanceOfRels.iterator().next().getStartNode();
-                    rsltrcrdList.add(new ResultRecord(instanceNode.getId(), query.getClassName() , (String)instanceNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME)));
-                }
-            }
-            return rsltrcrdList;
+        if(isAbstract){
+            cypherQuery = "START abstractClassmetadata = node:classes(name = {className})";
+            match = "MATCH abstractClassmetadata<-[:" + RelTypes.EXTENDS + "]-classmetadata<-[:"+RelTypes.INSTANCE_OF+"]-instance";
         }
         else{
-            if(query.getVisibleAttributeNames() == null)
-                throw new MetadataObjectNotFoundException(Util.formatString(
-                            "Can not create query with out any visible Attributesfind the query with name %1s", query.getClassName()));
-
-
-            List<String> vissibleAtributes = query.getVisibleAttributeNames();
-            //headers
-            ResultRecord resltRcrdHeader = new ResultRecord(null, null, null);
-            resltRcrdHeader.setExtraColumns(vissibleAtributes);
-            rsltrcrdList.add(resltRcrdHeader);
-
-
-            List<String> attributeNames = query.getAttributeNames();
-            List<String> attributeValues = query.getAttributeValues();
-            List<Integer> conditions = query.getConditions();
-            int logicalConnector = query.getLogicalConnector();
-
-            //get the instance
-            Iterable<Relationship> instanceOfRels = classNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
-
-            //get attribute type
-            //Iterable<Relationship> attributeRels = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING);
-
-            String attributeType;
-            boolean[] exist = new boolean[attributeNames.size()];
-            if(limit > 0){
-                int counter =0;
-                while(instanceOfRels.iterator().hasNext() && (counter < limit)){
-                    counter++;
-                    Node instanceNode = instanceOfRels.iterator().next().getStartNode();
-
-                    for (int i = 0; i < attributeNames.size(); i++) {
-                        //get Attribute type
-                        attributeType = Util.getTypeOfAttribute(classNode, attributeNames.get(i));
-
-                        Boolean result = Util.evalAttribute(instanceNode, conditions.get(i),attributeType, attributeNames.get(i),attributeValues.get(i));
-                        if(result != null)
-                            exist[i] = result;
-                        else
-                        {
-                            //joins
-                                List<ExtendedQuery> joinsList = query.getJoins();
-                                for (ExtendedQuery extendedQuery : joinsList) {
-
-                                    Node joinClassNode =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, extendedQuery.getClassName()).getSingle();
-                                    if(joinClassNode == null)
-                                        throw new MetadataObjectNotFoundException(Util.formatString(
-                                                    "Can not find the query with name %1s", query.getClassName()));
-
-                                    //get the list types
-                                    List<String> joinAttributeNames = extendedQuery.getAttributeNames();
-                                    String joinAttributeType = "";
-                                    boolean[] joinExist = new boolean[joinAttributeNames.size()];
-                                    List<Integer> joinConditions = extendedQuery.getConditions();
-                                    List<String> joinAttributeValues = extendedQuery.getAttributeValues();
-
-                                    for (int j = 0; j < joinAttributeNames.size(); j++) {
-                                        //get the Class of the instance
-                                        Iterable<Relationship> joinInstanceOfRels = joinClassNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
-                                        for (Relationship joinListTypeRel : joinInstanceOfRels) {
-                                            Node joinObjectNode = joinListTypeRel.getStartNode();
-
-                                            if(joinAttributeNames.get(j).equals("id")){
-                                                if(Long.valueOf(joinAttributeValues.get(j)) == joinObjectNode.getId()){
-                                                    Iterable<Relationship> realtedToRels = joinObjectNode.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING);
-
-                                                    for (Relationship relatedRel : realtedToRels) {
-                                                        Node fatherNode = relatedRel.getStartNode();
-                                                        if(fatherNode.getId() == instanceNode.getId()){
-                                                            joinExist[j] = true;
-                                                            break;
-                                                        }
-                                                    }
-
-                                                }
-                                            }
-                                            else{
-                                                joinAttributeType = Util.getTypeOfAttribute(joinClassNode, joinAttributeNames.get(j));
-                                                Boolean joinResult = Util.evalAttribute(joinObjectNode, joinConditions.get(j), joinAttributeType, joinAttributeNames.get(j), joinAttributeValues.get(j));
-                                                if(joinResult != null){
-                                                    Iterable<Relationship> realtedToRels = joinObjectNode.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING);
-                                                    for (Relationship relatedRel : realtedToRels) {
-                                                        Node fatherNode = relatedRel.getStartNode();
-                                                        if(fatherNode.getId() == instanceNode.getId()){
-                                                            joinExist[j] = true;
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }//end for rels
-                                    }
-
-                                    for (int j = 0; j < joinExist.length; j++) {
-                                        if(extendedQuery.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND){
-                                            if(!joinExist[j])
-                                                break;
-                                            else if(j == joinExist.length -1)
-                                            {
-                                                rsltrcrdList.add(Util.createResultRecordFromNode(instanceNode, vissibleAtributes));
-                                                break;
-                                            }
-                                        }
-                                        else if(extendedQuery.getLogicalConnector() == ExtendedQuery.CONNECTOR_OR){
-                                            if(joinExist[j]){
-                                                rsltrcrdList.add(Util.createResultRecordFromNode(instanceNode, vissibleAtributes));
-                                                break;
-                                            }
-                                        }
-                                    }//enfor join conditions
-                                }//end for joins
-                            }//if joins not null
-                    }//end for attribute names
-
-                    //Logical Connectors
-                    for (int i = 0; i < exist.length; i++) {
-                        if(logicalConnector == ExtendedQuery.CONNECTOR_AND){
-                            if(!exist[i])
-                                break;
-                            else if(i == exist.length -1)
-                            {
-                                rsltrcrdList.add(Util.createResultRecordFromNode(instanceNode, vissibleAtributes));
-                                break;
-                            }
-                        }
-                        else if(logicalConnector == ExtendedQuery.CONNECTOR_OR){
-                            if(exist[i]){
-                                rsltrcrdList.add(Util.createResultRecordFromNode(instanceNode, vissibleAtributes));
-                                break;
-                            }
-                        }
-                    }//enf for logiacal contiditions
-                }//end for instancesRelationships
-            }//en if limit > 0
-            return rsltrcrdList;
+            cypherQuery = "START classmetadata = node:classes(name = {className})";
+            match = "MATCH classmetadata<-[:" + RelTypes.INSTANCE_OF + "]-instance";
         }
-        
-    }
 
+        //if nothing has benn selected
+        if(query.getAttributeNames()== null && query.getAttributeValues() == null && query.getConditions() == null && query.getJoins() == null){
+            cypherQuery = cypherQuery.concat(match);
+            cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));
+        }
+        //Return statements
+        else{
+            //where statements
+            for (int i = 0; i < attributeNames.size(); i++) {
+                String condition = "";
+                String where = "";
+                String value = attributeValues.get(i);
+                Long longValue = null;
+
+                if(attributeValues.get(i) != null){
+                    switch (conditions.get(i)){
+                        case ExtendedQuery.EQUAL:
+                            condition = "=~";
+                            value = "(?i)".concat(value);
+                            break;
+                        case ExtendedQuery.EQUAL_OR_GREATER_THAN:
+                            condition = ">=";
+                            break;
+                        case ExtendedQuery.EQUAL_OR_LESS_THAN:
+                            condition = "<=";
+                            break;
+                        case ExtendedQuery.GREATER_THAN:
+                            condition = ">";
+                            break;
+                        case ExtendedQuery.LESS_THAN:
+                            condition = "<";
+                            break;
+                        case ExtendedQuery.LIKE:
+                            condition = "=~";
+                            value = "(?i).*".concat(value).concat(".*");
+                            break;
+                    }
+                    params.put(attributeNames.get(i),
+                                       Util.evalAttribute(Util.getTypeOfAttribute(classNode, attributeNames.get(i)),
+                                       attributeNames.get(i),
+                                       value));
+
+                    where = "instance.".concat(attributeNames.get(i)).concat(condition).concat(" {".concat(attributeNames.get(i)).concat("}"));
+                }//end if is not a join value
+
+                else
+                {
+                    List<ExtendedQuery> joins = query.getJoins();
+
+                    for (ExtendedQuery join : joins) {
+                        //List<String> joinVisibleAttributeNames = join.getVisibleAttributeNames();
+                        List<String> joinAttributeNames = join.getAttributeNames();
+                        List<String> joinAttributeValues = join.getAttributeValues();
+                        List<Integer> joinConditions = join.getConditions();
+
+                        for(int j=0; j<joinAttributeNames.size(); j++){
+                            String joinCondition = "";
+                            String joinValue = joinAttributeValues.get(j);
+                            if(joinAttributeValues.get(j) != null){
+                                switch (joinConditions.get(j)){
+                                    case ExtendedQuery.EQUAL:
+                                        joinCondition = "=~";
+                                        joinValue = "(?i)".concat(joinValue);
+                                        break;
+                                    case ExtendedQuery.EQUAL_OR_GREATER_THAN:
+                                        joinCondition = ">=";
+                                        break;
+                                    case ExtendedQuery.EQUAL_OR_LESS_THAN:
+                                        joinCondition = "<=";
+                                        break;
+                                    case ExtendedQuery.GREATER_THAN:
+                                        joinCondition = ">";
+                                        break;
+                                    case ExtendedQuery.LESS_THAN:
+                                        joinCondition = "<";
+                                        break;
+                                    case ExtendedQuery.LIKE:
+                                        joinCondition = "=~";
+                                        joinValue = "(?i).*".concat(joinValue).concat(".*");
+                                        break;
+                                }
+                                //if is small view 
+                                if(joinAttributeNames.get(j).equals("id")){
+                                    params.put(joinAttributeNames.get(j), Long.valueOf(joinAttributeValues.get(j)));
+                                    where = "ID(listype)".concat("=").concat(" {".concat(joinAttributeNames.get(j)).concat("}"));
+                                }
+                                else{
+                                    Node joinNode =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, join.getClassName()).getSingle();
+                                    params.put(joinAttributeNames.get(j),
+                                               Util.evalAttribute(Util.getTypeOfAttribute(joinNode, joinAttributeNames.get(j)),
+                                               joinAttributeNames.get(j),
+                                               joinValue));
+                                    where = "listype.".concat(joinAttributeNames.get(j)).concat(joinCondition).concat(" {".concat(joinAttributeNames.get(j)).concat("}"));
+                                }
+
+                                isJoin = true;
+
+                            }//end if
+
+                        }//end for
+
+                    }//fin for joins
+                }//end else join
+                if(i+1 < attributeNames.size())
+                    whereQuery = whereQuery.concat(where.concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND?" AND ":" OR "));
+                else
+                    whereQuery = whereQuery.concat(where);
+                
+            }//end for attributeNames
+            if(isJoin)
+                match = match.concat("-[:").concat(RelTypes.RELATED_TO.toString()).concat("]->listype");
+
+            cypherQuery = cypherQuery.concat(match);
+            cypherQuery = cypherQuery.concat(" WHERE ".concat(whereQuery));
+            cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));
+        }//end else
+
+        if(page == 0)
+            cypherQuery = cypherQuery.concat(" ORDER BY instance.name DESC");
+
+        else
+            cypherQuery = cypherQuery.concat(" ORDER BY instance.name DESC skip {s} limit {l}");
+
+        ExecutionEngine engine = new ExecutionEngine( graphDb );
+        ExecutionResult result = engine.execute(cypherQuery, params);
+
+        Iterator<Node> n_column = result.columnAs("instance");
+         //headers
+        ResultRecord resltRcrdHeader = new ResultRecord(null, null, null);
+        resltRcrdHeader.setExtraColumns(visibleAttributeNames);
+        rsltrcrdList.add(resltRcrdHeader);
+
+        for (Node node : IteratorUtil.asIterable(n_column))
+        {
+            if(isAbstract)
+                rsltrcrdList.add(Util.createResultRecordFromNode(node, Util.getClassName(node), visibleAttributeNames));
+            else
+                rsltrcrdList.add(Util.createResultRecordFromNode(node, query.getClassName(), visibleAttributeNames));
+        }
+        return rsltrcrdList;
+    }
 }
