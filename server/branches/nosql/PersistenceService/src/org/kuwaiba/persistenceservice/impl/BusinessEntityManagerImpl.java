@@ -574,12 +574,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 while(children.iterator().hasNext() && (counter < maxResults)){
                     counter++;
                     Node child = children.iterator().next().getStartNode();
-                    res.add(new RemoteBusinessObjectLight(child.getId(),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), getClassName(child)));
+                    res.add(new RemoteBusinessObjectLight(child.getId(),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), Util.getClassName(child)));
                 }
             }else{
                 while(children.iterator().hasNext()){
                     Node child = children.iterator().next().getStartNode();
-                    res.add(new RemoteBusinessObjectLight(child.getId(),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), getClassName(child)));
+                    res.add(new RemoteBusinessObjectLight(child.getId(),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), Util.getClassName(child)));
                 }
             }
             return res;
@@ -599,12 +599,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 while(children.iterator().hasNext() && (counter < maxResults)){
                     counter++;
                     Node child = children.iterator().next().getStartNode();
-                    res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),getClassName(child)));
+                    res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), Util.getClassName(child)));
                 }
             }else{
                 while(children.iterator().hasNext()){
                     Node child = children.iterator().next().getStartNode();
-                    res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),getClassName(child)));
+                    res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), Util.getClassName(child)));
                 }
             }
             return res;
@@ -677,7 +677,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
                 throw new MetadataObjectNotFoundException(Util.formatString("Class for object with oid %1s could not be found",child.getId()));
 
-            String className = getClassName(child);
+            String className = Util.getClassName(child);
             if (cm.isSubClass(classToFilter, className)){
                 res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),className));
                 if (maxResults > 0){
@@ -697,7 +697,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
                 throw new MetadataObjectNotFoundException(Util.formatString("Class for object with oid %1s could not be found",child.getId()));
 
-            String className = getClassName(child);
+            String className = Util.getClassName(child);
 
             if (cm.isSubClass(classToFilter, className)){
                 res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),className));
@@ -792,15 +792,5 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         throw new ObjectNotFoundException((String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), oid);
     }
 
-    /**
-     * Gets the class name of a given object given its respective node
-     * @param instance the node to be tested
-     * @return The object class name. Null if none
-     */
-    private String getClassName(Node instance){
-        Iterable<Relationship> aClass = instance.getRelationships(RelTypes.INSTANCE_OF, Direction.OUTGOING);
-        if (!aClass.iterator().hasNext())
-            return null;
-        return (String)aClass.iterator().next().getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME);
-    }
+
 }
