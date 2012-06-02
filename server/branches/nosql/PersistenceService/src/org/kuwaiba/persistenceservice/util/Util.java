@@ -582,21 +582,26 @@ public class Util {
                 Direction.INCOMING);
     }
 
-    public static ResultRecord createResultRecordFromNode(Node objectNode, List<String> visibleAttributes){
+    public static ResultRecord createResultRecordFromNode(Node objectNode,String className, List<String> visibleAttributes){
         List<String> extraColumns = new ArrayList<String>();
         ResultRecord rr = null;
+
+        if(visibleAttributes == null){
+            visibleAttributes = new ArrayList<String>();
+            visibleAttributes.add("name");
+        }
 
         for (String attrbtName : visibleAttributes) {
             if(objectNode.hasProperty(attrbtName)){
                 Object property = objectNode.getProperty(attrbtName);
                 if(attrbtName.equals(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE)){
                     Date creationDate = new Date((Long)property);
-                    SimpleDateFormat formatoDeFecha = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ");
+                    SimpleDateFormat formatoDeFecha = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         extraColumns.add(formatoDeFecha.format(creationDate));
                 }
                 else
                     extraColumns.add(property.toString());
-                rr = new ResultRecord(objectNode.getId(), (String)objectNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), property.toString());
+                rr = new ResultRecord(objectNode.getId(), (String)objectNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), className);
                 rr.setExtraColumns(extraColumns);
             }
         }
@@ -615,28 +620,12 @@ public class Util {
         return "";
     }
 
-    public static Boolean evalAttribute(Node instanceNode, Integer condition, String attributeType, String attributeName, String attributeValue){
+    public static Object evalAttribute(String attributeType, String attributeName, String attributeValue){
 
-            if(attributeType.equals("String")){
-            String attribute = (String)instanceNode.getProperty(attributeName);
-            if(condition == ExtendedQuery.LIKE)
-            {
-                if(attribute.toLowerCase().contains(attributeValue.toLowerCase()))
-                    return true;
-                else
-                    return false;
-            }//end like
-            else if(condition == ExtendedQuery.EQUAL)
-            {
-                if(attribute.equals(attributeValue))
-                    return true;
-                else
-                    return false;
-            }//end equal
-        }
+        if(attributeType.equals("String"))
+            return attributeValue;
+        
         else if(attributeType.equals("Date")){
-            //the date in bd
-            Long attributeDate = ((Long)instanceNode.getProperty(attributeName));
             //the date you are looking for into long
             Long attrbtDate = (long)0;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -645,86 +634,25 @@ public class Util {
             } catch (ParseException ex) {
                 System.out.println("wrong date format should be yyyy-MM-dd HH:mm:ss");
             }
-
-            if(condition == ExtendedQuery.EQUAL)
-            {
-                if(attributeDate == attrbtDate)
-                    return true;
-                else
-                    return false;
-            }//end like
-            else if(condition == ExtendedQuery.LESS_THAN)
-            {
-                if(attributeDate < attrbtDate)
-                    return true;
-                else
-                    return false;
-            }//end Less than
-            else if(condition == ExtendedQuery.EQUAL_OR_LESS_THAN)
-            {
-                if(attributeDate <= attrbtDate)
-                    return true;
-                else
-                    return false;
-            }//end equal
-            else if(condition == ExtendedQuery.EQUAL_OR_GREATER_THAN)
-            {
-                if(attributeDate >= attrbtDate)
-                    return true;
-                else
-                    return false;
-            }//end equal
-            else if(condition == ExtendedQuery.GREATER_THAN)
-            {
-                if(attributeDate > attrbtDate)
-                    return true;
-                else
-                    return false;
-            }//end equal
+            return attrbtDate;
         }//end if is date
         else if(attributeType.equals("Float")){
-            Float attribute = (Float)instanceNode.getProperty(attributeName);
-
-            if(condition == ExtendedQuery.EQUAL)
-            {
-                if(attribute == Float.valueOf(attributeValue))
-                    return true;
-                else
-                    return false;
-            }//end like
-            else if(condition == ExtendedQuery.LESS_THAN)
-            {
-                if(attribute < Float.valueOf(attributeValue))
-                    return true;
-                else
-                    return false;
-            }//end Less than
-            else if(condition == ExtendedQuery.EQUAL_OR_LESS_THAN)
-            {
-                if(attribute <= Float.valueOf(attributeValue))
-                    return true;
-                else
-                    return false;
-            }//end equal
-            else if(condition == ExtendedQuery.EQUAL_OR_GREATER_THAN)
-            {
-                if(attribute >= Float.valueOf(attributeValue))
-                    return true;
-                else
-                    return false;
-            }//end equal
-            else if(condition == ExtendedQuery.GREATER_THAN)
-            {
-                if(attribute > Float.valueOf(attributeValue))
-                    return true;
-                else
-                    return false;
-            }//end equal
+            Float attribute = Float.valueOf(attributeValue);
+            return attribute;
         }
         
         return null;
-        
     }
 
-
+    /**
+     * Gets the class name of a given object given its respective node
+     * @param instance the node to be tested
+     * @return The object class name. Null if none
+     */
+    public static String getClassName(Node instance){
+        Iterable<Relationship> aClass = instance.getRelationships(RelTypes.INSTANCE_OF, Direction.OUTGOING);
+        if (!aClass.iterator().hasNext())
+            return null;
+        return (String)aClass.iterator().next().getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME);
+    }
 }
