@@ -112,7 +112,7 @@ public class ExtendedQuery implements Serializable{
     }
 
     public ExtendedQuery(String className, int logicalConnector, List<String> attributeNames,
-            List<String> visibleAttributeNames, List<String> attributeValues, List<Integer> conditions, List<ExtendedQuery> joins) {
+            List<String> visibleAttributeNames, List<String> attributeValues, List<Integer> conditions, List<ExtendedQuery> joins, int page, int limit) {
         this.className = className;
         this.logicalConnector = logicalConnector;
         this.attributeNames = attributeNames;
@@ -120,6 +120,8 @@ public class ExtendedQuery implements Serializable{
         this.attributeValues = attributeValues;
         this.conditions = conditions;
         this.joins = joins;
+        this.page = page;
+        this.limit = limit;
     }
 
     public List<String> getAttributeNames() {
