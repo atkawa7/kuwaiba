@@ -16,10 +16,11 @@
 package org.kuwaiba.persistenceservice.impl;
 
 
+import java.io.FileInputStream;
 import java.util.List;
 import java.util.Properties;
+import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
-
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
@@ -30,6 +31,10 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
  */
 public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseService>{
 
+    /**
+     *
+     */
+    public static final String DEFAULT_DB_PATH = "target/kuwaiba_db";
     /**
      * Neo4J Database handler
      */
@@ -67,24 +72,16 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
     }
 
     @Override
-    public void openConnection() {
-        System.out.println("Staring bd ....");
+    public void openConnection() throws ConnectionException {
         Properties props = new Properties();
-//        try {
-//
-//            props.load(new FileInputStream("../connection.properties"));
-//
-//        }catch(IOException e){
-//            System.out.println(e.getMessage());
-//        }
-//
-//        graphDb = new EmbeddedGraphDatabase(props.getProperty("conection_DB_PATH") +
-//                                            props.getProperty("connection_database"));
-
-        //graphDb = new EmbeddedGraphDatabase("target/kuwaiba_db");
-        graphDb = new EmbeddedGraphDatabase("target/kuwaiba_db");
-        System.out.println(graphDb.toString());
-        registerShutdownHook( graphDb );
+        try {
+            props.load(new FileInputStream("persistence.properties"));
+            graphDb = new EmbeddedGraphDatabase(props.getProperty("db_path"));
+            registerShutdownHook( graphDb );
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            throw new ConnectionException(e.getMessage());
+        }
     }
 
     @Override
@@ -99,7 +96,7 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
 
     @Override
     public void startTransaction() {
-        tx = graphDb.beginTx();
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     @Override
@@ -107,20 +104,19 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
         return (EmbeddedGraphDatabase)graphDb;
     }
 
-    void shutDown()
+    public void shutDown()
     {
-        System.out.println();
-        System.out.println( "Shutting down database ..." );
-
+        System.out.println( "Shutting down db..." );
         graphDb.shutdown();
-        
+        System.out.println( "db shut down..." );
+    }
+    
+    public void printConnectionDetails(){
+        System.out.println(graphDb.toString());
     }
    
-    private static void registerShutdownHook( final GraphDatabaseService graphDb)
+    private void registerShutdownHook( final GraphDatabaseService graphDb)
     {
-        // Registers a shutdown hook for the Neo4j instance so that it
-        // shuts down nicely when the VM exits (even if you "Ctrl-C" the
-        // running example before it's completed)
         Runtime.getRuntime().addShutdownHook( new Thread()
         {
             @Override
