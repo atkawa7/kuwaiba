@@ -21,6 +21,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.persistenceservice.impl.ConnectionManagerImpl;
@@ -41,16 +42,16 @@ public class XMLBackupReader {
     ConnectionManagerImpl cm;
 
     public XMLBackupReader() {
-        cm = new ConnectionManagerImpl();
-        cm.openConnection();
-        mem = new MetadataEntityManagerImpl(cm);
+        try {
+            cm = new ConnectionManagerImpl();
+            cm.openConnection();
+            mem = new MetadataEntityManagerImpl(cm);
+        } catch (ConnectionException ex) {
+            Logger.getLogger(XMLBackupReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
-    String sub= "";
-
-    //default category to test
-    //CategoryMetadata dC = new CategoryMetadata();
-    
+    String sub= "";    
 
     public void read(byte[] xmlDocument) throws Exception{
         QName hierarchyTag = new QName("hierarchy"); //NOI18N

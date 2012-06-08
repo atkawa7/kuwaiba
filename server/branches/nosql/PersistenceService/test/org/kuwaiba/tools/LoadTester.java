@@ -16,6 +16,5 @@ public static void main(String argv[]) throws IOException, Exception {
         a.read(XMLBackupReader.getBytesFromFile(nombre));
         a.axu();
 
-    }//fin main
-
+    }
 }
