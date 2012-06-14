@@ -20,7 +20,7 @@ package org.kuwaiba.apis.persistence.application;
  * Represents an entry registering an event related to an object. It's usually related to updates
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class HistoricEntry {
+public class HistorycEntry {
     
     /**
      * An object's property has been changed
@@ -47,7 +47,7 @@ public class HistoricEntry {
      */
     private String customNotes;
 
-    public HistoricEntry(long creationDate, int eventType, String applicationNotes, String customNotes) {
+    public HistorycEntry(long creationDate, int eventType, String applicationNotes, String customNotes) {
         this.creationDate = creationDate;
         this.eventType = eventType;
         this.applicationNotes = applicationNotes;

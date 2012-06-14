@@ -42,9 +42,13 @@ public class Main {
             System.setSecurityManager(new SecurityManager());
         try{
 
+            System.out.println("Current working directory: " + System.getProperty("user.dir"));
             PersistenceLayerFactory plf = new PersistenceLayerFactory();
             final ConnectionManager cm = plf.createConnectionManager();
+            System.out.println("Establishing connection to the database...");
             cm.openConnection();
+            System.out.println("Connection established");
+            cm.printConnectionDetails();
             MetadataEntityManagerRemote meri = new MetadataEntityManagerImpl(cm);
             MetadataEntityManagerRemote memStub = (MetadataEntityManagerRemote)UnicastRemoteObject.exportObject(meri,0);
 
@@ -54,7 +58,7 @@ public class Main {
             ApplicationEntityManagerRemote aemri = new ApplicationEntityManagerImpl(cm);
             ApplicationEntityManagerRemote aemStub = (ApplicationEntityManagerRemote)UnicastRemoteObject.exportObject(aemri,0);
 
-            System.out.println("Starting...");
+            
 
             Registry registry = LocateRegistry.getRegistry();
             System.out.println("Registry obtained...");

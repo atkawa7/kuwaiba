@@ -17,13 +17,14 @@
 package org.kuwaiba.apis.persistence.interfaces;
 
 import java.util.List;
+import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 
 /**
  * Interface providing the general methods to manage the db/backend connection
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public interface ConnectionManager<T> {
-    public void openConnection();
+    public void openConnection() throws ConnectionException;
     public void closeConnection();
     public void startTransaction();
     public void commitTransaction();
@@ -32,4 +33,6 @@ public interface ConnectionManager<T> {
     public boolean isSpawned();
     public List<ConnectionManager> getConnectionPool();
     public T getConnectionHandler();
+    public void shutDown();
+    public void printConnectionDetails();
 }
