@@ -103,9 +103,9 @@ public class Kuwaiba {
     }
 
    /**
-     * An user list
-     * @param sessionId
-     * @return An user list
+     * Retrieves the user list
+     * @param sessionId session token
+     * @return The list of users
      * @throws Exception
      */
 
@@ -113,6 +113,7 @@ public class Kuwaiba {
     public UserInfo[] getUsers(@WebParam(name = "sessionId")String sessionId) throws Exception {
         try
         {
+            wsBean.validateCall("getUsers", getIPAddress(), sessionId);
             return wsBean.getUsers();
         } catch(Exception e){
             Level level = Level.SEVERE;
@@ -134,6 +135,7 @@ public class Kuwaiba {
     public UserGroupInfo[] getGroups(@WebParam(name = "sessionId")String sessionId) throws Exception {
         try
         {
+            wsBean.validateCall("getGroups", getIPAddress(), sessionId);
             return wsBean.getGroups();
         } catch(Exception e){
             Level level = Level.SEVERE;
@@ -145,6 +147,18 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Creates a user
+     * @param username
+     * @param password
+     * @param firstName
+     * @param lastName
+     * @param enabled
+     * @param priviliges
+     * @param groups
+     * @param sessionId
+     * @throws Exception
+     */
     @WebMethod(operationName = "createUser")
     public void createUser(
             @WebParam(name = "username")String username,
@@ -157,6 +171,7 @@ public class Kuwaiba {
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try
         {
+            wsBean.validateCall("createUser", getIPAddress(), sessionId);
             wsBean.createUser(username, password, firstName, lastName, enabled, priviliges, groups);
 
         } catch(Exception e){
@@ -169,7 +184,19 @@ public class Kuwaiba {
         }
     }
 
-
+    /**
+     * Set an existing user properties
+     * @param oid
+     * @param username
+     * @param firstName
+     * @param lastName
+     * @param password
+     * @param enabled
+     * @param priviliges
+     * @param groups
+     * @param sessionId
+     * @throws Exception
+     */
     @WebMethod(operationName = "setUserProperties")
     public void setUserProperties(
             @WebParam(name = "oid")Long oid,
@@ -183,6 +210,7 @@ public class Kuwaiba {
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try
         {
+            wsBean.validateCall("setUserProperties", getIPAddress(), sessionId);
             wsBean.setUserProperties(oid, username, password, firstName, lastName, enabled, priviliges, groups);
 
         } catch(Exception e){
@@ -195,6 +223,15 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Creates a group
+     * @param groupName
+     * @param description
+     * @param priviliges
+     * @param users
+     * @param sessionId
+     * @throws Exception
+     */
     @WebMethod(operationName = "createGroup")
     public void createGroup(
             @WebParam(name = "groupName")String groupName,
@@ -204,6 +241,7 @@ public class Kuwaiba {
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try
         {
+            wsBean.validateCall("createGroup", getIPAddress(), sessionId);
             wsBean.createGroup(groupName, description, priviliges, users);
 
         } catch(Exception e){
@@ -216,6 +254,16 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Sets the properties for an existing group
+     * @param oid
+     * @param groupName
+     * @param description
+     * @param privileges
+     * @param users
+     * @param sessionId
+     * @throws Exception
+     */
     @WebMethod(operationName = "setGroupProperties")
     public void setGroupProperties(@WebParam(name = "oid")Long oid,
             @WebParam(name = "groupName")String groupName,
@@ -225,6 +273,7 @@ public class Kuwaiba {
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try
         {
+            wsBean.validateCall("setGroupProperties", getIPAddress(), sessionId);
             wsBean.setGroupProperties(oid, groupName, description, privileges, users);
         } catch(Exception e){
             Level level = Level.SEVERE;
@@ -236,11 +285,18 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Deletes a list of users
+     * @param oids
+     * @param sessionId
+     * @throws Exception
+     */
     @WebMethod(operationName = "deleteUsers")
     public void deleteUsers(@WebParam(name = "oids")Long[] oids,
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try
         {
+            wsBean.validateCall("deleteUsers", getIPAddress(), sessionId);
             wsBean.deleteUsers(oids);
         } catch(Exception e){
             Level level = Level.SEVERE;
@@ -252,11 +308,18 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Deletes a list of groups
+     * @param oids
+     * @param sessionId
+     * @throws Exception
+     */
     @WebMethod(operationName = "deleteGroups")
     public void deleteGroups(@WebParam(name = "oids")Long[] oids,
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try
         {
+            wsBean.validateCall("deleteGroups", getIPAddress(), sessionId);
             wsBean.deleteGroups(oids);
         } catch(Exception e){
             Level level = Level.SEVERE;
@@ -283,8 +346,8 @@ public class Kuwaiba {
             @WebParam(name="viewType")Integer viewType,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
        try{
-           //sbr.validateCall("getView", getIPAddress(), sessionId);
-                return wsBean.getView(oid, objectClass,viewType);
+            wsBean.validateCall("getView", getIPAddress(), sessionId);
+            return wsBean.getView(oid, objectClass,viewType);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -313,7 +376,7 @@ public class Kuwaiba {
             @WebParam(name="background")byte[] background,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-           //sbr.validateCall("saveView", getIPAddress(), sessionId);
+           wsBean.validateCall("saveView", getIPAddress(), sessionId);
            wsBean.saveView(oid, objectClass,viewType, structure, background);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -343,6 +406,7 @@ public class Kuwaiba {
 
         try
         {
+            wsBean.validateCall("createListTypeItem", getIPAddress(), sessionId);
             return wsBean.createListTypeItem(className, name, displayName);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -355,6 +419,14 @@ public class Kuwaiba {
 
     }
 
+    /**
+     * Deletes a list type item
+     * @param className
+     * @param oid
+     * @param releaseRelationships
+     * @param sessionId
+     * @throws Exception If something goes wrong
+     */
     @WebMethod(operationName = "deleteListTypeItem")
     public void deleteListTypeItem(
             @WebParam(name = "className") String className,
@@ -362,8 +434,8 @@ public class Kuwaiba {
             @WebParam(name = "releaseRelationships") Boolean releaseRelationships,
             @WebParam(name = "sessionId") String sessionId) throws Exception{
 
-        try
-        {
+        try{
+            wsBean.validateCall("deleteListTypeItem", getIPAddress(), sessionId);
             wsBean.deleteListTypeItem(className, oid, releaseRelationships);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -377,18 +449,18 @@ public class Kuwaiba {
     }
 
     /**
-     *
-     * @param className
-     * @param sessionId
-     * @return
+     * Retrieves all items for a single list type
+     * @param className The list type class
+     * @param sessionId Session token
+     * @return a list of list type items
      * @throws Exception
      */
-    @WebMethod(operationName = "getMultipleChoice")
-    public RemoteObjectLight[] getMultipleChoice(
+    @WebMethod(operationName = "getListTypeItems")
+    public RemoteObjectLight[] getListTypeItems(
             @WebParam(name = "className") String className,
             @WebParam(name = "sessionId") String sessionId) throws Exception{
-        try
-        {
+        try{
+            wsBean.validateCall("getListTypeItems", getIPAddress(), sessionId);
             return wsBean.getListTypeItems(className);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -402,16 +474,17 @@ public class Kuwaiba {
     }
 
     /**
-     *
-     * @param sessionId
-     * @return
-     * @throws Exception
+     * Retrieves all possible list types
+     * @param sessionId Session token
+     * @return A list of light class metadata objects
+     * @throws Exception If something goes wrong
      */
     @WebMethod(operationName = "getInstanceableListTypes")
     public ClassInfoLight[] getInstanceableListTypes(
             @WebParam(name = "sessionId") String sessionId) throws Exception{
         try
         {
+            wsBean.validateCall("getInstanceableListTypes", getIPAddress(), sessionId);
             return wsBean.getInstanceableListTypes();
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -424,7 +497,7 @@ public class Kuwaiba {
     }
 
     /**
-     * Execute a complex query generated using the Graphical Query Builder.  Please note
+     * Executes a complex query generated using the Graphical Query Builder.  Please note
      * that the first record is reserved for the column headers, so and empty result set
      * will have at least one record.
      * @param query The TransientQuery object (a code friendly version of the graphical query designed at client side).
@@ -435,6 +508,7 @@ public class Kuwaiba {
     public ResultRecord[] executeQuery(@WebParam(name="query")TransientQuery query,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            wsBean.validateCall("executeQuery", getIPAddress(), sessionId);
             return wsBean.executeQuery(query);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -447,7 +521,7 @@ public class Kuwaiba {
     }
 
     /**
-     * Creates a query designed using the graphical query editor
+     * Creates a query
      * @param queryName Query name
      * @param ownerOid OwnerOid. Null if public
      * @param queryStructure XML document as a byte array
@@ -462,8 +536,7 @@ public class Kuwaiba {
             @WebParam(name="description")String description,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //sbr.validateCall("createQuery", getIPAddress(), sessionId);
-            //return new RemoteQueryLight(sbr.createQuery(queryName, ownerOid, queryStructure, description));
+            wsBean.validateCall("createQuery", getIPAddress(), sessionId);
             return wsBean.createQuery(queryName, ownerOid, queryStructure, description);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -476,7 +549,7 @@ public class Kuwaiba {
     }
 
     /**
-     *
+     * Saves a query
      * @param queryOid query oid to be updated
      * @param queryName query name (the same if unchanged)
      * @param ownerOid owneroid (if unchanged)
@@ -493,6 +566,7 @@ public class Kuwaiba {
             @WebParam(name = "description")String description,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
+            wsBean.validateCall("saveQuery", getIPAddress(), sessionId);
             wsBean.saveQuery(queryOid, queryName, ownerOid, queryStructure, description);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -515,7 +589,7 @@ public class Kuwaiba {
     public void deleteQuery(@WebParam(name="queryOid")Long queryOid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //sbr.validateCall("deleteQuery", getIPAddress(), sessionId);
+            wsBean.validateCall("deleteQuery", getIPAddress(), sessionId);
             wsBean.deleteQuery(queryOid);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -528,17 +602,17 @@ public class Kuwaiba {
     }
 
     /**
-     * Gets all queries
+     * Retrieves all queries
      * @param showPublic
      * @param sessionId
-     * @return
+     * @return A list with the available queries
      * @throws Exception
      */
     @WebMethod(operationName = "getQueries")
     public RemoteQueryLight[] getQueries(@WebParam(name="showPublic")boolean showPublic,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //sbr.validateCall("getQueries", getIPAddress(), sessionId);
+            wsBean.validateCall("getQueries", getIPAddress(), sessionId);
             return wsBean.getQueries(showPublic);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -551,17 +625,17 @@ public class Kuwaiba {
     }
 
     /**
-     * Gets a query
+     * Gets a single query
      * @param queryOid
      * @param sessionId
-     * @return
-     * @throws Exception
+     * @return The query
+     * @throws Exception If something goes wrong
      */
     @WebMethod(operationName = "getQuery")
     public RemoteQuery getQuery(@WebParam(name="queryOid")Long queryOid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //sbr.validateCall("getQuery", getIPAddress(), sessionId);
+            wsBean.validateCall("getQuery", getIPAddress(), sessionId);
             return wsBean.getQuery(queryOid);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -590,7 +664,7 @@ public class Kuwaiba {
             @WebParam(name = "maxResults") Integer maxResults,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //wsBean.validateCall("getObjectChildren", getIPAddress(), sessionId);
+            wsBean.validateCall("getObjectChildren", getIPAddress(), sessionId);
             RemoteObjectLight[] res = wsBean.getObjectChildren(oid,objectClassId, maxResults);
             return res;
         }catch(Exception e){
@@ -618,7 +692,7 @@ public class Kuwaiba {
             @WebParam(name = "maxResults") Integer maxResults,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //wsBean.validateCall("getObjectChildren", getIPAddress(), sessionId);
+            wsBean.validateCall("getObjectChildrenByClassName", getIPAddress(), sessionId);
             RemoteObjectLight[] res = wsBean.getObjectChildren(objectClassName, oid, maxResults);
             return res;
         }catch(Exception e){
@@ -647,7 +721,7 @@ public class Kuwaiba {
             @WebParam(name="maxResults")Integer maxResults,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //sbr.validateCall("getChildrenOfClass", getIPAddress(), sessionId);
+            wsBean.validateCall("getChildrenOfClass", getIPAddress(), sessionId);
             RemoteObject[] res = wsBean.getChildrenOfClass(parentOid,parentClass,childrenClass, maxResults);
             return res;
         }catch(Exception e){
@@ -676,7 +750,7 @@ public class Kuwaiba {
             @WebParam(name="maxResults")Integer maxResults,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //sbr.validateCall("getChildrenOfClass", getIPAddress(), sessionId);
+            wsBean.validateCall("getChildrenOfClassLight", getIPAddress(), sessionId);
             return wsBean.getChildrenOfClassLight(parentOid,parentClass,childrenClass,maxResults);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -703,9 +777,8 @@ public class Kuwaiba {
 
         if (oid == null)
             throw new ServerSideException(Level.WARNING, "Object id can't be null");
-
         try{
-            //sbr.validateCall("getObjectInfo", getIPAddress(), sessionId);
+            wsBean.validateCall("getObjectInfo", getIPAddress(), sessionId);
             return wsBean.getObjectInfo(objectClass, oid);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -732,7 +805,7 @@ public class Kuwaiba {
         assert oid == null : "Object id can't be null";
 
         try{
-            //sbr.validateCall("getObjectInfoLight", getIPAddress(), sessionId);
+            wsBean.validateCall("getObjectInfoLight", getIPAddress(), sessionId);
             return wsBean.getObjectInfoLight(objectClass, oid);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -744,13 +817,23 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Gets the value of a special attribute, this is, those related to a model, such as cables connected to ports
+     * @param objectClass Object's class
+     * @param oid object oid
+     * @param attributeName attribute's name
+     * @param sessionId Session token
+     * @return A list of the values related to the given object through attributeName.
+     * Note that this is a <strong>string</strong> array on purpose, so the values used not necessarily are not Longs
+     * @throws Exception
+     */
     @WebMethod(operationName = "getSpecialAttribute")
     public String[] getSpecialAttribute(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") Long oid,
             @WebParam(name = "attributename") String attributeName,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //sbr.validateCall("getSpecialAttribute", getIPAddress(), sessionId);
+            wsBean.validateCall("getSpecialAttribute", getIPAddress(), sessionId);
             return wsBean.getSpecialAttribute(objectClass, oid, attributeName);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -778,7 +861,7 @@ public class Kuwaiba {
             @WebParam(name = "attributeValues")String[][] attributeValues,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //sbr.validateCall("updateObject", getIPAddress(), sessionId);
+            wsBean.validateCall("updateObject", getIPAddress(), sessionId);
             wsBean.updateObject(className,oid,attributeNames, attributeValues);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -790,6 +873,18 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Creates a busines object
+     * @param className
+     * @param parentObjectClassName
+     * @param parentOid
+     * @param attributeNames
+     * @param attributeValues
+     * @param templateId
+     * @param sessionId
+     * @return
+     * @throws Exception
+     */
     @WebMethod(operationName = "createObject")
     public Long createObject(@WebParam(name = "className")String className,
             @WebParam(name = "parentObjectClassName")String parentObjectClassName,
@@ -799,7 +894,7 @@ public class Kuwaiba {
             @WebParam(name = "templateId")Long templateId,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //sbr.validateCall("createObject", getIPAddress(), sessionId);
+            wsBean.validateCall("createObject", getIPAddress(), sessionId);
             return wsBean.createObject(className,parentObjectClassName, parentOid,attributeNames,attributeValues, templateId);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -825,7 +920,7 @@ public class Kuwaiba {
             @WebParam(name = "releaseRelationships") Boolean releaseRelationships,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //sbr.validateCall("createObject", getIPAddress(), sessionId);
+            wsBean.validateCall("deleteObjects", getIPAddress(), sessionId);
             wsBean.deleteObjects(classNames,oids, releaseRelationships);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -853,8 +948,7 @@ public class Kuwaiba {
             @WebParam(name = "objectsOids")Long[] objectOids,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //sbr.validateCall("moveObjects", getIPAddress(), sessionId);
-
+            wsBean.validateCall("moveObjects", getIPAddress(), sessionId);
             wsBean.moveObjects(targetClass,targetOid, objectClasses, objectOids);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -887,7 +981,7 @@ public class Kuwaiba {
             @WebParam(name = "recursive")Boolean recursive,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //sbr.validateCall("copyObjects", getIPAddress(), sessionId);
+            wsBean.validateCall("copyObjects", getIPAddress(), sessionId);
            return wsBean.copyObjects(targetClass,targetOid, objectClasses, objectOids, recursive);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -928,7 +1022,7 @@ public class Kuwaiba {
             @WebParam(name = "connectionClass") String connectionClass,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //sbr.validateCall("createPhysicalConnection", getIPAddress(), sessionId);
+            wsBean.validateCall("createPhysicalConnection", getIPAddress(), sessionId);
            return wsBean.createPhysicalConnection(aObjectClass, aObjectId,bObjectClass, bObjectId,
                    parentClass, parentId, attributeNames, attributeValues, connectionClass);
         }catch(Exception e){
@@ -947,8 +1041,8 @@ public class Kuwaiba {
             @WebParam(name = "objectId")Long objectId,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            //sbr.validateCall("deletePhysicalConnection", getIPAddress(), sessionId);
-           wsBean.deletePhysicalConnection(objectClass, objectId);
+            wsBean.validateCall("deletePhysicalConnection", getIPAddress(), sessionId);
+            wsBean.deletePhysicalConnection(objectClass, objectId);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -986,8 +1080,8 @@ public class Kuwaiba {
         byte[] smallIcon, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
 
-            try
-            {
+            try{
+                wsBean.validateCall("createClassMetadata", getIPAddress(), sessionId);
                 ClassInfo ci = new ClassInfo();
                 ci.setClassName(name);
                 ci.setDisplayName(displayName);
@@ -1034,6 +1128,7 @@ public class Kuwaiba {
 
         try
         {
+            wsBean.validateCall("changeClassMetadataDefinition", getIPAddress(), sessionId);
             ClassInfo ci = new ClassInfo();
             ci.setClassName(name);
             ci.setDisplayName(displayName);
@@ -1076,8 +1171,8 @@ public class Kuwaiba {
             @WebParam(name = "propertyName")String propertyName,
             @WebParam(name = "propertyValue")String propertyValue,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
-        try
-        {
+        try {
+            wsBean.validateCall("setAttributePropertyValue", getIPAddress(), sessionId);
             wsBean.setAttributePropertyValue(classId, attributeName, propertyName, propertyValue);
             
         }catch(Exception e){
@@ -1104,8 +1199,8 @@ public class Kuwaiba {
             @WebParam(name = "attributeName")String attributeName,
             @WebParam(name = "attributeValue")String attributeValue,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
-        try
-        {
+        try {
+            wsBean.validateCall("setClassPlainAttribute", getIPAddress(), sessionId);
             wsBean.setClassPlainAttribute(classId, attributeName, attributeValue);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -1132,8 +1227,8 @@ public class Kuwaiba {
             @WebParam(name = "iconImage")byte[] iconImage,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
 
-        try
-        {
+        try {
+            wsBean.validateCall("setClassIcon", getIPAddress(), sessionId);
             wsBean.setClassIcon(classId, iconAttribute, iconImage);
         
         }catch(Exception e){
@@ -1175,8 +1270,8 @@ public class Kuwaiba {
         Boolean unique, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
 
-        try
-        {
+        try {
+            wsBean.validateCall("addAttributeByClassId", getIPAddress(), sessionId);
             AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
                                             visible, description, mapping);
 
@@ -1221,8 +1316,8 @@ public class Kuwaiba {
         Boolean unique, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
 
-        try
-        {
+        try {
+            wsBean.validateCall("addAttributeByClassName", getIPAddress(), sessionId);
             AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
                                                 visible, description, mapping);
 
@@ -1249,8 +1344,8 @@ public class Kuwaiba {
     String className, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
-        try
-        {
+        try {
+            wsBean.validateCall("getMetadataForClass", getIPAddress(), sessionId);
             return wsBean.getMetadataForClass(className);
         } catch(Exception e){
             Level level = Level.SEVERE;
@@ -1273,8 +1368,8 @@ public class Kuwaiba {
     Long classId, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
-        try
-        {
+        try {
+            wsBean.validateCall("getMetadataForClassById", getIPAddress(), sessionId);
             return wsBean.getMetadataForClass(classId);
 
         }catch(Exception e){
@@ -1302,6 +1397,7 @@ public class Kuwaiba {
 
         try
         {
+            wsBean.validateCall("getLightMetadata", getIPAddress(), sessionId);
             if (includeListTypes == null)
                 includeListTypes = false;
 
@@ -1333,6 +1429,8 @@ public class Kuwaiba {
 
         try
         {
+            wsBean.validateCall("getMetadata", getIPAddress(), sessionId);
+
             if (includeListTypes == null)
                 includeListTypes = false;
 
@@ -1352,13 +1450,13 @@ public class Kuwaiba {
      * @param className
      * @throws Exception
      */
-    @WebMethod(operationName = "deleteClassByName")
-    public void deleteClassByName(@WebParam(name = "className")
+    @WebMethod(operationName = "deleteClass")
+    public void deleteClass(@WebParam(name = "className")
     String className, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
-        try
-        {
+        try {
+            wsBean.validateCall("deleteClass", getIPAddress(), sessionId);
             wsBean.deleteClass(className);
 
         }catch(Exception e){
@@ -1383,8 +1481,8 @@ public class Kuwaiba {
     Long classId, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
-        try
-        {
+        try {
+            wsBean.validateCall("deleteClassById", getIPAddress(), sessionId);
             wsBean.deleteClass(classId);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -1398,11 +1496,11 @@ public class Kuwaiba {
 
     @WebMethod(operationName = "getPossibleChildren")
     public List<ClassInfoLight> getPossibleChildren(@WebParam(name = "parentClassName")
-    String parentClassName, @WebParam(name = "sessionId")
-    String sessionId) throws Exception {
+                    String parentClassName, @WebParam(name = "sessionId")
+                    String sessionId) throws Exception {
 
-        try
-        {
+        try {
+            wsBean.validateCall("getPossibleChildren", getIPAddress(), sessionId);
             return wsBean.getPossibleChildren(parentClassName);
 
         }catch(Exception e){
@@ -1420,8 +1518,8 @@ public class Kuwaiba {
     String parentClassName, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
-        try
-        {
+        try {
+            wsBean.validateCall("getPossibleChildrenNoRecursive", getIPAddress(), sessionId);
             return wsBean.getPossibleChildrenNoRecursive(parentClassName);
 
         }catch(Exception e){
@@ -1436,12 +1534,12 @@ public class Kuwaiba {
     
     @WebMethod(operationName = "addPossibleChildren")
     public void addPossibleChildren(@WebParam(name = "parentClassId")
-    Long parentClassId, @WebParam(name = "childrenToBeAdded")
-    Long[] newPossibleChildren, @WebParam(name = "sessionId")
-    String sessionId) throws Exception {
+            Long parentClassId, @WebParam(name = "childrenToBeAdded")
+            Long[] newPossibleChildren, @WebParam(name = "sessionId")
+            String sessionId) throws Exception {
 
-        try
-        {
+        try {
+            wsBean.validateCall("addPossibleChildren", getIPAddress(), sessionId);
             wsBean.addPossibleChildren(parentClassId, newPossibleChildren);
 
         }catch(Exception e){
@@ -1456,11 +1554,11 @@ public class Kuwaiba {
 
     @WebMethod(operationName = "addPossibleChildrenByClassName")
     public void addPossibleChildrenByClassName(@WebParam(name = "parentClassName")
-    String parentClassName, @WebParam(name = "childrenToBeAdded")
-    String[] childrenToBeAdded, @WebParam(name = "sessionId")
-    String sessionId) throws Exception {
-        try
-        {
+            String parentClassName, @WebParam(name = "childrenToBeAdded")
+            String[] childrenToBeAdded, @WebParam(name = "sessionId")
+            String sessionId) throws Exception {
+        try {
+            wsBean.validateCall("addPossibleChildrenByClassName", getIPAddress(), sessionId);
             wsBean.addPossibleChildren(parentClassName, childrenToBeAdded);
 
         }catch(Exception e){
@@ -1486,8 +1584,8 @@ public class Kuwaiba {
     Long[] childrenToBeRemoved, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
-        try
-        {
+        try{
+            wsBean.validateCall("removePossibleChildren", getIPAddress(), sessionId);
             wsBean.removePossibleChildren(parentClassId, childrenToBeRemoved);
             
         }catch(Exception e){

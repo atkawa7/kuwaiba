@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
-import javax.persistence.Transient;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
@@ -38,13 +37,14 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
-import org.kuwaiba.exceptions.InvalidSessionException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.beans.sessions.Session;
+import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
+import org.kuwaiba.util.Util;
 import org.kuwaiba.util.bre.TempBusinessRulesEngine;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
@@ -775,14 +775,18 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
         try {
 
-            for (Session aSession : sessions.values()){
-                if (aSession.getUser().getUserName().equals(user))
-                    throw new ServerSideException(Level.INFO,"There's already an active session associated to that user");
-            }
-
             UserProfile currentUser = aem.login(user, password);
             if (currentUser == null)
                 throw new ServerSideException(Level.INFO,"User or password incorrect");
+
+            for (Session aSession : sessions.values()){
+                if (aSession.getUser().getUserName().equals(user)){
+                    Logger.getLogger(WebServiceBean.class.getName()).log(Level.INFO, null, Util.formatString("An existing session for user %1s has been dropped", aSession.getUser().getUserName()));
+                    sessions.remove(aSession.getToken());
+                    break;
+                }
+            }
+
             Session newSession = new Session(currentUser, IPAddress);
             sessions.put(newSession.getToken(), newSession);
             return new RemoteSession(newSession.getToken(), currentUser);
@@ -794,12 +798,12 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     @Override
-    public void closeSession(String sessionId, String remoteAddress) throws InvalidSessionException {
+    public void closeSession(String sessionId, String remoteAddress) throws NotAuthorizedException {
         Session aSession = sessions.get(sessionId);
         if (aSession == null)
-            throw new InvalidSessionException("The provided session ID is not valid");
+            throw new NotAuthorizedException("The session token provided is not valid");
         if (!aSession.getIpAddress().equals(remoteAddress))
-            throw new InvalidSessionException("This IP is not allowed to close the current session");
+            throw new NotAuthorizedException("This IP is not allowed to close the current session");
         sessions.remove(sessionId);
     }// </editor-fold>
 
@@ -1011,6 +1015,10 @@ public class WebServiceBean implements WebServiceBeanRemote {
         }
     }
 
+    /**
+     * Models
+     */
+    //Physical connections
     @Override
     public Long createPhysicalConnection(String aObjectClass, Long aObjectId,
             String bObjectClass, Long bObjectId, String parentClass, Long parentId,
@@ -1059,12 +1067,6 @@ public class WebServiceBean implements WebServiceBeanRemote {
     public void deletePhysicalConnection(String objectClass, Long objectId) throws ServerSideException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    /**
-     * Models
-     */
-    //Physical connections
-
 
     // </editor-fold>
 
@@ -1347,7 +1349,23 @@ public class WebServiceBean implements WebServiceBeanRemote {
         }
     }
 
+    /**
+     * For now, everyone can do everything unless the credentials are invalid or the
+     * @param methodName
+     * @param ipAddress
+     * @param sessionId
+     */
+    @Override
+    public void validateCall(String methodName, String ipAddress, String sessionId) throws NotAuthorizedException{
+        Session aSession = sessions.get(sessionId);
+        if (aSession == null)
+            throw new NotAuthorizedException(Util.formatString("The session token provided to call %1s is not valid",methodName));
 
+        if (!aSession.getIpAddress().equals(ipAddress))
+            throw new NotAuthorizedException(Util.formatString("This IP is not allowed to perform this operation: %1s", methodName));
+
+        return;
+    }
 
     // </editor-fold>
 

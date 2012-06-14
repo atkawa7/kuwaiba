@@ -18,7 +18,6 @@ package org.kuwaiba.beans;
 
 import java.util.List;
 import javax.ejb.Remote;
-import org.kuwaiba.exceptions.InvalidSessionException;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
@@ -59,7 +58,7 @@ public interface WebServiceBeanRemote {
      * @param remoteAddress
      * @return
      */
-    public void closeSession(String sessionId, String remoteAddress) throws InvalidSessionException;
+    public void closeSession(String sessionId, String remoteAddress) throws NotAuthorizedException;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
@@ -444,7 +443,13 @@ public interface WebServiceBeanRemote {
 
     public RemoteQuery getQuery(Long queryOid) throws ServerSideException;
 
-    
+    /**
+     * Verifies if a given user is able to call a webservice method according to its privileges
+     * @param methodName method that is trying to be called
+     * @param ipAddress IP Address where th request is comming from
+     * @param sessionId Session token
+     */
+    public void validateCall(String methodName, String ipAddress, String sessionId) throws NotAuthorizedException;
     
     // </editor-fold>
 
