@@ -17,6 +17,7 @@ package org.inventory.communications.core;
 
 import java.awt.Image;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
+import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.utils.Utils;
 import org.kuwaiba.wsclient.ClassInfo;
 import org.openide.util.lookup.ServiceProvider;
@@ -170,5 +171,9 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
 
     public String getDescription() {
         return this.description;
+    }
+
+    public LocalClassMetadataLight asLocalClassMetadataLight(){
+        return new LocalClassMetadataLightImpl(className, id);
     }
 }

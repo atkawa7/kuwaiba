@@ -38,30 +38,36 @@ public class MainTest {
             KuwaibaService service = new KuwaibaService(serverURL);
             port = service.getKuwaibaPort();
             session = port.createSession("admin", "kuwaiba");
-            
+
+            System.out.println("Generating a containment hierarchy...");
             //Let's create the default containment hierarchy
-//            port.addPossibleChildrenByClassName(null, Arrays.asList(new String[]{"City"}), session.getSessionId());
-//            for (String parentClass : c.containmentHierarchy.keySet()){
-//                try{
-//                    port.addPossibleChildrenByClassName(parentClass, Arrays.asList(c.containmentHierarchy.get(parentClass)), session.getSessionId());
-//                }catch (Exception ex){
-//                    System.out.println("ERROR: "+ex.getMessage());
-//                }
-//            }
+            port.addPossibleChildrenByClassName(null, Arrays.asList(new String[]{"City"}), session.getSessionId());
+            for (String parentClass : c.containmentHierarchy.keySet()){
+                try{
+                    port.addPossibleChildrenByClassName(parentClass, Arrays.asList(c.containmentHierarchy.get(parentClass)), session.getSessionId());
+                }catch (Exception ex){
+                    System.out.println("ERROR: "+ex.getMessage());
+                }
+            }
+            System.out.println("Containment hierarchy generated successfully");
 
+            System.out.println("Generating a set of list types...");
             //We create the default list types here
-//            for (String listType : lt.listTypes.keySet()){
-//                try{
-//                    for (String listTypeItem : lt.listTypes.get(listType))
-//                        port.createListTypeItem(listType, listTypeItem, null, session.getSessionId());
-//                }catch (Exception ex){
-//                    System.out.println("ERROR: "+ex.getMessage());
-//                }
-//            }
+            for (String listType : lt.listTypes.keySet()){
+                try{
+                    for (String listTypeItem : lt.listTypes.get(listType))
+                        port.createListTypeItem(listType, listTypeItem, null, session.getSessionId());
+                }catch (Exception ex){
+                    System.out.println("ERROR: "+ex.getMessage());
+                }
+            }
+            System.out.println("List type set generated successfully");
 
+            System.out.println("Generating a sample data set");
             //We create a test dataset here
             createObjects("City", 2, null, null);
-            
+
+            System.out.println("Data set created successfully");
 
             port.closeSession(session.getSessionId());
             System.out.println("Number of objects created: "+objectCount);

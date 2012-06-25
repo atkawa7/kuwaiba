@@ -64,13 +64,13 @@
 
 <xs:element name="createUserResponse" type="tns:createUserResponse"/>
 
+<xs:element name="deleteClass" type="tns:deleteClass"/>
+
 <xs:element name="deleteClassById" type="tns:deleteClassById"/>
 
 <xs:element name="deleteClassByIdResponse" type="tns:deleteClassByIdResponse"/>
 
-<xs:element name="deleteClassByName" type="tns:deleteClassByName"/>
-
-<xs:element name="deleteClassByNameResponse" type="tns:deleteClassByNameResponse"/>
+<xs:element name="deleteClassResponse" type="tns:deleteClassResponse"/>
 
 <xs:element name="deleteGroups" type="tns:deleteGroups"/>
 
@@ -120,6 +120,10 @@
 
 <xs:element name="getLightMetadataResponse" type="tns:getLightMetadataResponse"/>
 
+<xs:element name="getListTypeItems" type="tns:getListTypeItems"/>
+
+<xs:element name="getListTypeItemsResponse" type="tns:getListTypeItemsResponse"/>
+
 <xs:element name="getMetadata" type="tns:getMetadata"/>
 
 <xs:element name="getMetadataForClass" type="tns:getMetadataForClass"/>
@@ -131,10 +135,6 @@
 <xs:element name="getMetadataForClassResponse" type="tns:getMetadataForClassResponse"/>
 
 <xs:element name="getMetadataResponse" type="tns:getMetadataResponse"/>
-
-<xs:element name="getMultipleChoice" type="tns:getMultipleChoice"/>
-
-<xs:element name="getMultipleChoiceResponse" type="tns:getMultipleChoiceResponse"/>
 
 <xs:element name="getObjectChildren" type="tns:getObjectChildren"/>
 
@@ -220,6 +220,41 @@
 
 <xs:element name="updateObjectResponse" type="tns:updateObjectResponse"/>
 
+<xs:complexType name="getListTypeItems">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getListTypeItemsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteObjectLight">
+<xs:sequence>
+<xs:element name="oid" type="xs:long" minOccurs="0"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="validators" type="tns:validator" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="validator">
+<xs:sequence>
+<xs:element name="label" type="xs:string" minOccurs="0"/>
+<xs:element name="value" type="xs:int" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Exception">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="addAttributeByClassName">
 <xs:sequence>
 <xs:element name="ClassId" type="xs:long" minOccurs="0"/>
@@ -238,12 +273,6 @@
 
 <xs:complexType name="addAttributeByClassNameResponse">
 <xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="Exception">
-<xs:sequence>
-<xs:element name="message" type="xs:string" minOccurs="0"/>
-</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="removePossibleChildren">
@@ -280,35 +309,6 @@
 <xs:element name="displayName" type="xs:string" minOccurs="0"/>
 <xs:element name="parentClassName" type="xs:string" minOccurs="0"/>
 <xs:element name="smallIcon" type="xs:base64Binary" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="validator">
-<xs:sequence>
-<xs:element name="label" type="xs:string" minOccurs="0"/>
-<xs:element name="value" type="xs:int" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getMultipleChoice">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getMultipleChoiceResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="remoteObjectLight">
-<xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0"/>
-<xs:element name="name" type="xs:string" minOccurs="0"/>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="validators" type="tns:validator" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -419,18 +419,15 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getObjectInfoLight">
+<xs:complexType name="deleteClass">
 <xs:sequence>
-<xs:element name="objectclass" type="xs:string" minOccurs="0"/>
-<xs:element name="oid" type="xs:long" minOccurs="0"/>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getObjectInfoLightResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteObjectLight" minOccurs="0"/>
-</xs:sequence>
+<xs:complexType name="deleteClassResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="addAttributeByClassId">
@@ -451,6 +448,20 @@
 
 <xs:complexType name="addAttributeByClassIdResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getObjectInfoLight">
+<xs:sequence>
+<xs:element name="objectclass" type="xs:string" minOccurs="0"/>
+<xs:element name="oid" type="xs:long" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getObjectInfoLightResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" minOccurs="0"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getMetadataForClassById">
@@ -850,6 +861,19 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="getLightMetadata">
+<xs:sequence>
+<xs:element name="includeListTypes" type="xs:boolean" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getLightMetadataResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="createGroup">
 <xs:sequence>
 <xs:element name="groupName" type="xs:string" minOccurs="0"/>
@@ -862,19 +886,6 @@
 
 <xs:complexType name="createGroupResponse">
 <xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="getLightMetadata">
-<xs:sequence>
-<xs:element name="includeListTypes" type="xs:boolean" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getLightMetadataResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="addPossibleChildrenByClassName">
@@ -980,17 +991,6 @@
 </xs:sequence>
 </xs:extension>
 </xs:complexContent>
-</xs:complexType>
-
-<xs:complexType name="deleteClassByName">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteClassByNameResponse">
-<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getView">

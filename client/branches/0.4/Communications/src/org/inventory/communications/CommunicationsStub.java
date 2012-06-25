@@ -482,7 +482,7 @@ public class CommunicationsStub {
                res = new ArrayList<LocalObjectListItem>();
                res.add(ObjectFactory.createNullItem());
 
-                List<RemoteObjectLight> remoteList = port.getMultipleChoice(className,this.session.getSessionId());
+                List<RemoteObjectLight> remoteList = port.getListTypeItems(className,this.session.getSessionId());
 
                 for(RemoteObjectLight entry : remoteList)
                     res.add(new LocalObjectListItemImpl(entry.getOid(),entry.getClassName(),entry.getName()));
