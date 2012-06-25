@@ -601,9 +601,12 @@ public class Util {
                 }
                 else
                     extraColumns.add(property.toString());
-                rr = new ResultRecord(objectNode.getId(), (String)objectNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), className);
-                rr.setExtraColumns(extraColumns);
-            }
+            }//end if node has no attribute yet
+            else
+                extraColumns.add("");
+
+            rr = new ResultRecord(objectNode.getId(), (String)objectNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), className);
+            rr.setExtraColumns(extraColumns);
         }
         return rr;
     }
