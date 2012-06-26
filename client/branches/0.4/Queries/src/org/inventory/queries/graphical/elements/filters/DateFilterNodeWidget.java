@@ -40,7 +40,7 @@ public class DateFilterNodeWidget extends SimpleCriteriaNodeWidget{
 
     @Override
     public void build(String id) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         insideText = new JTextField(dateFormat.format(Calendar.getInstance().getTime()), 10);
         setNodeProperties(null, "Date", "Filter", null);
         defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
