@@ -20,7 +20,10 @@ import org.kuwaiba.apis.persistence.interfaces.MetadataEntityManager;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -39,6 +42,9 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
+import org.neo4j.helpers.collection.IteratorUtil;
 
 /**
  * MetadataEntityManager implementation
@@ -486,24 +492,50 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 throw new MetadataObjectNotFoundException(Util.formatString(
                          "Can not find the Class with the name %1s", INVENTORY_OBJECT));
 
+            String cypherQuery = "START inventory = node:classes(name = {className}) ".concat(
+                                 "MATCH inventory <-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-classmetadata ").concat(
+                                 "RETURN classmetadata ").concat(
+                                 "ORDER BY classmetadata.name ASC");
+
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("className", INVENTORY_OBJECT);//NOI18N
+
+            ExecutionEngine engine = new ExecutionEngine( graphDb );
+            ExecutionResult result = engine.execute(cypherQuery, params);
+            Iterator<Node> n_column = result.columnAs("classmetadata");
+            for (Node node : IteratorUtil.asIterable(n_column))
+            {
+                 cml.add(Util.createClassMetadataLightFromNode(node));
+            }
+
+            /*
             Traverser classChildsTraverser = Util.getAllSubclasses(myClassNode);
             for (Node childClassNode : classChildsTraverser)
             {
                 cml.add(Util.createClassMetadataLightFromNode(childClassNode));
             }
-
+            */
             if(includeListTypes)
             {
-                myClassNode =  classIndex.get(PROPERTY_NAME, LIST_TYPE).getSingle();
-                 classChildsTraverser = Util.getAllSubclasses(myClassNode);
+                params.remove(INVENTORY_OBJECT);//NOI18N
+                params.put("className", LIST_TYPE);//NOI18N
+                result = engine.execute(cypherQuery, params);
+                n_column = result.columnAs("classmetadata");
+                for (Node node : IteratorUtil.asIterable(n_column))
+                {
+                    cml.add(Util.createClassMetadataLightFromNode(node));
+                }
+
+                /*myClassNode =  classIndex.get(PROPERTY_NAME, LIST_TYPE).getSingle();
+                classChildsTraverser = Util.getAllSubclasses(myClassNode);
 
                 for (Node childClassNode : classChildsTraverser)
                 {
                     cml.add(Util.createClassMetadataLightFromNode(childClassNode));
-                }
+                }*/
                 
             }
-
+        
         }catch(Exception ex){
             throw new RuntimeException(ex.getMessage());
         }
@@ -528,20 +560,46 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 throw new MetadataObjectNotFoundException(Util.formatString(
                          "Can not find the Class with the name %1s", INVENTORY_OBJECT));
 
+            String cypherQuery = "START inventory = node:classes(name = {className}) ".concat(
+                                 "MATCH inventory <-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-classmetadata ").concat(
+                                 "RETURN classmetadata ").concat(
+                                 "ORDER BY classmetadata.name ASC");
+
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("className", INVENTORY_OBJECT);//NOI18N
+
+            ExecutionEngine engine = new ExecutionEngine( graphDb );
+            ExecutionResult result = engine.execute(cypherQuery, params);
+            Iterator<Node> n_column = result.columnAs("classmetadata");
+            for (Node node : IteratorUtil.asIterable(n_column))
+            {
+                 cml.add(Util.createClassMetadataFromNode(node));
+            }
+
+            /*
             Traverser classChildsTraverser = Util.getAllSubclasses(myClassNode);
             for (Node childClassNode : classChildsTraverser)
             {
                 cml.add(Util.createClassMetadataFromNode(childClassNode));
-            }
+            }*/
 
             if(includeListTypes)
             {
+                params.remove(INVENTORY_OBJECT);//NOI18N
+                params.put("className", LIST_TYPE);//NOI18N
+                result = engine.execute(cypherQuery, params);
+                n_column = result.columnAs("classmetadata");
+                for (Node node : IteratorUtil.asIterable(n_column))
+                {
+                    cml.add(Util.createClassMetadataFromNode(node));
+                }
+                /*
                 myClassNode =  classIndex.get(PROPERTY_NAME, LIST_TYPE).getSingle();
                 classChildsTraverser = Util.getAllSubclasses(myClassNode);
 
                 for (Node childClassNode : classChildsTraverser) {
                     cml.add(Util.createClassMetadataFromNode(childClassNode));
-                    }
+                    }*/
             }
 
         }catch(Exception ex){
