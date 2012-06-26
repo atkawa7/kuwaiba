@@ -30,4 +30,5 @@ public interface LocalClassMetadata extends LocalClassMetadataLight{
     public Integer getMappingForAttribute(String att);
     public String getTypeForAttribute(String att);
     public Image getIcon();
+    public LocalClassMetadataLight asLocalClassMetadataLight();
 }

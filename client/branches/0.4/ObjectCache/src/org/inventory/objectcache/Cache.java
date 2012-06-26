@@ -96,9 +96,10 @@ public class Cache{
     public LocalClassMetadataLight getLightMetaForClass(String className) {
         if (className == null)
             return null;
+        //If the entry is already in the LocalClassMetadata cache, use it
         LocalClassMetadata possibleMetadata = metadataIndex.get(className);
         if (possibleMetadata != null)
-            return possibleMetadata;
+            return possibleMetadata.asLocalClassMetadataLight();
         return this.lightMetadataIndex.get(className);
     }
 
