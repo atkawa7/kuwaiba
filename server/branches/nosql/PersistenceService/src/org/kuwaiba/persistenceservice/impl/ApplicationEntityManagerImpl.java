@@ -86,6 +86,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
      */
     public static final String PROPERTY_STRUCTURE = "structure";
     /**
+     * Date format for queries
+     */
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
+    /**
      * Graph db service
      */
     private GraphDatabaseService graphDb;
@@ -799,7 +803,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
         if(classNode == null)
             throw new MetadataObjectNotFoundException(Util.formatString(
-                        "Can not find the query with name %1s", query.getClassName()));
+                        "Can not find the query with name %1s", query.getClassName()));//NOI18N
         //limits
         int page = query.getPage();
         int limit = query.getLimit();
@@ -808,10 +812,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
         //query Params
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("className", query.getClassName());
+        params.put("className", query.getClassName());//NOI18N
 
-        params.put( "s", min);
-        params.put( "l", max);
+        params.put( "s", min);//NOI18N
+        params.put( "l", max);//NOI18N
 
         List<String> visibleAttributeNames = query.getVisibleAttributeNames();
         List<String> attributeNames = query.getAttributeNames();
@@ -821,55 +825,59 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         List<ResultRecord> rsltrcrdList = new ArrayList<ResultRecord>();
 
         if(isAbstract){
-            cypherQuery = "START abstractClassmetadata = node:classes(name = {className})";
-            match = "MATCH abstractClassmetadata<-[:" + RelTypes.EXTENDS + "]-classmetadata<-[:"+RelTypes.INSTANCE_OF+"]-instance";
+            cypherQuery = "START abstractClassmetadata = node:classes(name = {className})";//NOI18N
+            match = "MATCH abstractClassmetadata<-[:" + RelTypes.EXTENDS + "]-classmetadata<-[:"+RelTypes.INSTANCE_OF+"]-instance";//NOI18N
         }
         else{
-            cypherQuery = "START classmetadata = node:classes(name = {className})";
-            match = "MATCH classmetadata<-[:" + RelTypes.INSTANCE_OF + "]-instance";
+            cypherQuery = "START classmetadata = node:classes(name = {className})";//NOI18N
+            match = "MATCH classmetadata<-[:" + RelTypes.INSTANCE_OF + "]-instance";//NOI18N
         }
 
         //if nothing has benn selected
         if(query.getAttributeNames()== null && query.getAttributeValues() == null && query.getConditions() == null && query.getJoins() == null){
             cypherQuery = cypherQuery.concat(match);
-            cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));
+            cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));//NOI18N
         }
         //Return statements
         else{
             //where statements
             for (int i = 0; i < attributeNames.size(); i++) {
-                String condition = "";
-                String where = "";
+                String condition = "";//NOI18N
+                String where = "";//NOI18N
                 String value = attributeValues.get(i);
-                Long longValue = null;
 
                 if(attributeValues.get(i) != null){
                     switch (conditions.get(i)){
                         case ExtendedQuery.EQUAL:
-                            condition = "=~";
-                            value = "(?i)".concat(value);
+                            condition = "! =~";//NOI18N
+                            value = "(?i)".concat(value);//NOI18N
                             break;
                         case ExtendedQuery.EQUAL_OR_GREATER_THAN:
-                            condition = ">=";
+                            condition = "! >=";//NOI18N
                             break;
                         case ExtendedQuery.EQUAL_OR_LESS_THAN:
-                            condition = "<=";
+                            condition = "! <=";//NOI18N
                             break;
                         case ExtendedQuery.GREATER_THAN:
-                            condition = ">";
+                            condition = "! >";//NOI18N
                             break;
                         case ExtendedQuery.LESS_THAN:
-                            condition = "<";
+                            condition = "! <";//NOI18N
                             break;
                         case ExtendedQuery.LIKE:
-                            condition = "=~";
-                            value = "(?i).*".concat(value).concat(".*");
+                            condition = "! =~";//NOI18N
+                            value = "(?i).*".concat(value).concat(".*");//NOI18N
                             break;
                     }
-                    params.put(attributeNames.get(i),
-                                       Util.evalAttribute(Util.getTypeOfAttribute(classNode, attributeNames.get(i)),
+                    Object newParam = Util.evalAttribute(Util.getTypeOfAttribute(classNode, attributeNames.get(i)),
                                        attributeNames.get(i),
-                                       value));
+                                       value);
+                    params.put(attributeNames.get(i),
+                                       newParam);
+
+                    if(Long.class.isInstance(newParam)){
+                        condition = condition.substring(0, condition.length()-1);
+                    }
 
                     where = "instance.".concat(attributeNames.get(i)).concat(condition).concat(" {".concat(attributeNames.get(i)).concat("}"));
                 }//end if is not a join value
@@ -890,38 +898,43 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                             if(joinAttributeValues.get(j) != null){
                                 switch (joinConditions.get(j)){
                                     case ExtendedQuery.EQUAL:
-                                        joinCondition = "=~";
-                                        joinValue = "(?i)".concat(joinValue);
+                                        joinCondition = "! =~";//NOI18N
+                                        joinValue = "(?i)".concat(joinValue);//NOI18N
                                         break;
                                     case ExtendedQuery.EQUAL_OR_GREATER_THAN:
-                                        joinCondition = ">=";
+                                        joinCondition = "! >=";//NOI18N
                                         break;
                                     case ExtendedQuery.EQUAL_OR_LESS_THAN:
-                                        joinCondition = "<=";
+                                        joinCondition = "! <=";//NOI18N
                                         break;
                                     case ExtendedQuery.GREATER_THAN:
-                                        joinCondition = ">";
+                                        joinCondition = "! >";//NOI18N
                                         break;
                                     case ExtendedQuery.LESS_THAN:
-                                        joinCondition = "<";
+                                        joinCondition = "! <";//NOI18N
                                         break;
                                     case ExtendedQuery.LIKE:
-                                        joinCondition = "=~";
-                                        joinValue = "(?i).*".concat(joinValue).concat(".*");
+                                        joinCondition = "! =~";//NOI18N
+                                        joinValue = "(?i).*".concat(joinValue).concat(".*");//NOI18N
                                         break;
                                 }
                                 //if is small view 
                                 if(joinAttributeNames.get(j).equals("id")){
                                     params.put(joinAttributeNames.get(j), Long.valueOf(joinAttributeValues.get(j)));
-                                    where = "ID(listype)".concat("=").concat(" {".concat(joinAttributeNames.get(j)).concat("}"));
+                                    where = "ID(listype)".concat("=").concat(" {".concat(joinAttributeNames.get(j)).concat("}"));//NOI18N
                                 }
                                 else{
                                     Node joinNode =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, join.getClassName()).getSingle();
-                                    params.put(joinAttributeNames.get(j),
-                                               Util.evalAttribute(Util.getTypeOfAttribute(joinNode, joinAttributeNames.get(j)),
+                                    Object newJoinParam = Util.evalAttribute(Util.getTypeOfAttribute(joinNode, joinAttributeNames.get(j)),
                                                joinAttributeNames.get(j),
-                                               joinValue));
-                                    where = "listype.".concat(joinAttributeNames.get(j)).concat(joinCondition).concat(" {".concat(joinAttributeNames.get(j)).concat("}"));
+                                               joinValue);
+                                    params.put(joinAttributeNames.get(j),
+                                               newJoinParam);
+
+                                    if(Long.class.isInstance(newJoinParam)){
+                                        joinCondition = joinCondition.substring(0, joinCondition.length()-1);
+                                    }
+                                    where = "listype.".concat(joinAttributeNames.get(j)).concat(joinCondition).concat(" {".concat(joinAttributeNames.get(j)).concat("}"));//NOI18N
                                 }
 
                                 isJoin = true;
@@ -933,24 +946,24 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     }//fin for joins
                 }//end else join
                 if(i+1 < attributeNames.size())
-                    whereQuery = whereQuery.concat(where.concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND?" AND ":" OR "));
+                    whereQuery = whereQuery.concat(where.concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND?" AND ":" OR "));//NOI18N
                 else
                     whereQuery = whereQuery.concat(where);
                 
             }//end for attributeNames
             if(isJoin)
-                match = match.concat("-[:").concat(RelTypes.RELATED_TO.toString()).concat("]->listype");
+                match = match.concat("-[:").concat(RelTypes.RELATED_TO.toString()).concat("]->listype");//NOI18N
 
             cypherQuery = cypherQuery.concat(match);
-            cypherQuery = cypherQuery.concat(" WHERE ".concat(whereQuery));
-            cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));
+            cypherQuery = cypherQuery.concat(" WHERE ".concat(whereQuery));//NOI18N
+            cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));//NOI18N
         }//end else
 
         if(page == 0)
-            cypherQuery = cypherQuery.concat(" ORDER BY instance.name DESC");
+            cypherQuery = cypherQuery.concat(" ORDER BY instance.name ASC");//NOI18N
 
         else
-            cypherQuery = cypherQuery.concat(" ORDER BY instance.name DESC skip {s} limit {l}");
+            cypherQuery = cypherQuery.concat(" ORDER BY instance.name ASC skip {s} limit {l}");//NOI18N
 
         ExecutionEngine engine = new ExecutionEngine( graphDb );
         ExecutionResult result = engine.execute(cypherQuery, params);
