@@ -424,7 +424,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
             update.setOid(object.getOid());
             if (com.saveObject(update)){
                 object.setName(newName);
-                fireDisplayNameChange(object.getName(), newName);
+                setDisplayName(getDisplayName());
                 
                 if (this instanceof ListTypeItemNode)
                     CommunicationsStub.getInstance().getList(object.getClassName(), true, true);

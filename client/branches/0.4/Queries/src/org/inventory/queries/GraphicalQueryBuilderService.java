@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import org.inventory.queries.graphical.elements.filters.ListTypeFilter;
 
 /**
  * This class will replace the old QueryBuilderService in next releases
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class GraphicalQueryBuilderService implements ActionListener{
 
@@ -192,15 +192,13 @@ public class GraphicalQueryBuilderService implements ActionListener{
                 qbtc.getQueryScene().setEdgeTarget(edgeName, newNode.getDefaultPinId());
 
                 newNode.setPreferredLocation(new Point(insideCheck.getParent().getLocation().x + 200, insideCheck.getParent().getLocation().y));
-                
-                qbtc.getQueryScene().validate();
                 break;
             case QueryEditorScene.SCENE_FILTERDISABLED:
                 ((QueryEditorScene)qbtc.getQueryScene()).removeAllRelatedNodes(insideCheck.getClientProperty("related-node"));
                 insideCheck.putClientProperty("related-node",null);
-                qbtc.getQueryScene().validate();
                 break;
         }
+        qbtc.getQueryScene().validate();
     }
 
     /**
