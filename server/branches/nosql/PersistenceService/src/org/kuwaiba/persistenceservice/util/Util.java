@@ -28,7 +28,6 @@ import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
-import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.application.UserProfile;
@@ -40,6 +39,7 @@ import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
+import org.kuwaiba.persistenceservice.impl.ApplicationEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.BusinessEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
@@ -588,7 +588,7 @@ public class Util {
 
         if(visibleAttributes == null){
             visibleAttributes = new ArrayList<String>();
-            visibleAttributes.add("name");
+            visibleAttributes.add("name");//NOI18N
         }
 
         for (String attrbtName : visibleAttributes) {
@@ -596,7 +596,7 @@ public class Util {
                 Object property = objectNode.getProperty(attrbtName);
                 if(attrbtName.equals(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE)){
                     Date creationDate = new Date((Long)property);
-                    SimpleDateFormat formatoDeFecha = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    SimpleDateFormat formatoDeFecha = new SimpleDateFormat(ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
                         extraColumns.add(formatoDeFecha.format(creationDate));
                 }
                 else
@@ -625,21 +625,22 @@ public class Util {
 
     public static Object evalAttribute(String attributeType, String attributeName, String attributeValue){
 
-        if(attributeType.equals("String"))
+        if(attributeType.equals("String"))//NOI18N
             return attributeValue;
         
-        else if(attributeType.equals("Date")){
+        else if(attributeType.equals("Date")){//NOI18N
             //the date you are looking for into long
             Long attrbtDate = (long)0;
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat(ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
             try {
+                attributeValue = attributeValue.substring(4, attributeValue.length());
                 attrbtDate = dateFormat.parse(attributeValue).getTime();
             } catch (ParseException ex) {
-                System.out.println("wrong date format should be yyyy-MM-dd HH:mm:ss");
+                System.out.println("wrong date format should be "+ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
             }
             return attrbtDate;
         }//end if is date
-        else if(attributeType.equals("Float")){
+        else if(attributeType.equals("Float")){//NOI18N
             Float attribute = Float.valueOf(attributeValue);
             return attribute;
         }
