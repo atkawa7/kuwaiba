@@ -8,7 +8,7 @@ import java.io.IOException;
  *
  * @author adrian
  */
-public class LoadTester {
+public class DataModelLoader {
 public static void main(String argv[]) throws IOException, Exception {
 
         XMLBackupReader a = new XMLBackupReader();
