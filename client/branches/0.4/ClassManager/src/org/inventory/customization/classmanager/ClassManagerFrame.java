@@ -251,7 +251,7 @@ public class ClassManagerFrame extends javax.swing.JFrame {
                         getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The width of the image exceeds 16 pixels");
                     else{
                         try {
-                            smallIcon = Utils.getByteArrayFromImageFile(fChooser.getSelectedFile(), cms.getExtension(fChooser.getSelectedFile()));
+                            smallIcon = Utils.getByteArrayFromFile(fChooser.getSelectedFile());
                             txtSmallIcon.setText(fChooser.getSelectedFile().getAbsolutePath());
                         } catch (IOException ex) {
                             smallIcon = null;
@@ -277,7 +277,7 @@ public class ClassManagerFrame extends javax.swing.JFrame {
                         getNotifier().showSimplePopup("Image Load", NotificationUtil.ERROR, "The widtth of the image exceeds 32 pixels");
                     else{
                         try {
-                            icon = Utils.getByteArrayFromImageFile(fChooser.getSelectedFile(), cms.getExtension(fChooser.getSelectedFile()));
+                            icon = Utils.getByteArrayFromFile(fChooser.getSelectedFile());
                             txtIcon.setText(fChooser.getSelectedFile().getAbsolutePath());
                         } catch (IOException ex) {
                             icon = null;
