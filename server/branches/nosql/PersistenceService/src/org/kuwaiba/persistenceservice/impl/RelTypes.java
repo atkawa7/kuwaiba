@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.persistenceservice.impl.enumerations;
+package org.kuwaiba.persistenceservice.impl;
 
 import org.neo4j.graphdb.RelationshipType;
 

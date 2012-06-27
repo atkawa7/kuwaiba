@@ -42,7 +42,7 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.persistenceservice.impl.ApplicationEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.BusinessEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
-import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
+import org.kuwaiba.persistenceservice.impl.RelTypes;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;

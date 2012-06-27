@@ -39,7 +39,6 @@ import org.kuwaiba.apis.persistence.interfaces.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.persistenceservice.caching.CacheManager;
-import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.kuwaiba.persistenceservice.util.Util;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -579,10 +578,16 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 viewNode.setProperty(MetadataEntityManagerImpl.PROPERTY_TYPE, viewType);
                 instance.createRelationshipTo(viewNode, RelTypes.HAS_VIEW);
             }
+
             if (structure != null)
                 viewNode.setProperty(PROPERTY_STRUCTURE, structure);
+
             if (backgroundPath != null)
                 viewNode.setProperty(PROPERTY_BACKGROUND_PATH, backgroundPath);
+            else{
+                if (viewNode.hasProperty(PROPERTY_BACKGROUND_PATH))
+                    viewNode.removeProperty(PROPERTY_BACKGROUND_PATH);
+            }
 
             tx.success();
         }catch (Exception ex){

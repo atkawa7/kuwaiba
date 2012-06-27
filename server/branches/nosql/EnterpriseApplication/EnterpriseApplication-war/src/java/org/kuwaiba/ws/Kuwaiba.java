@@ -28,6 +28,8 @@ import javax.xml.ws.WebServiceContext;
 import javax.servlet.http.HttpServletRequest;
 import org.kuwaiba.beans.WebServiceBeanRemote;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.util.Constants;
+import org.kuwaiba.util.Util;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
@@ -364,7 +366,7 @@ public class Kuwaiba {
      * @param objectClass object class
      * @param viewType View type. Search on the class View (Persistence Abstraction Layer) documentation for supported types
      * @param structure XML document containing the view structure. Null if you don't want to change the current structure
-     * @param background View background . Null if you don't want to change the current background
+     * @param background View background . If null, the background is removed. If a 0-sized array, it stays unmodified
      * @param sessionId Session token
      * @throws Exception If something -unexpected or not- goes wrong
      */
@@ -377,6 +379,15 @@ public class Kuwaiba {
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
            wsBean.validateCall("saveView", getIPAddress(), sessionId);
+
+           if (background != null )
+               if (background.length > Constants.MAX_BACKGROUND_SIZE)
+                   throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
+
+           if (structure != null)
+               if (structure.length > Constants.MAX_BINARY_FILE_SIZE)
+                   throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
+
            wsBean.saveView(oid, objectClass,viewType, structure, background);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -1082,6 +1093,15 @@ public class Kuwaiba {
 
             try{
                 wsBean.validateCall("createClassMetadata", getIPAddress(), sessionId);
+
+                if (icon != null)
+                    if (icon.length > Constants.MAX_ICON_SIZE)
+                        throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
+
+                if (smallIcon != null)
+                    if (smallIcon.length > Constants.MAX_ICON_SIZE)
+                        throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
+
                 ClassInfo ci = new ClassInfo();
                 ci.setClassName(name);
                 ci.setDisplayName(displayName);
@@ -1129,6 +1149,15 @@ public class Kuwaiba {
         try
         {
             wsBean.validateCall("changeClassMetadataDefinition", getIPAddress(), sessionId);
+
+            if (icon != null)
+                if (icon.length > Constants.MAX_ICON_SIZE)
+                    throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
+
+            if (smallIcon != null)
+                if (smallIcon.length > Constants.MAX_ICON_SIZE)
+                    throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
+
             ClassInfo ci = new ClassInfo();
             ci.setClassName(name);
             ci.setDisplayName(displayName);

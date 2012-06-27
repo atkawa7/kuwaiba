@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.persistenceservice.impl;
 
-import org.kuwaiba.persistenceservice.impl.enumerations.RelTypes;
 import org.kuwaiba.apis.persistence.interfaces.MetadataEntityManager;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
 import java.util.ArrayList;

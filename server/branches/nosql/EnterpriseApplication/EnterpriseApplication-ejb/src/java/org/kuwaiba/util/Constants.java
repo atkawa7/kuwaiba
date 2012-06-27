@@ -34,7 +34,7 @@ public class Constants {
     /**
      * Max background size in bytes
      */
-    public static final int MAX_BACKGROUND_SIZE = 2000000;
+    public static final int MAX_BACKGROUND_SIZE = 1000000;
     /**
      * Max binary file size in bytes
      */

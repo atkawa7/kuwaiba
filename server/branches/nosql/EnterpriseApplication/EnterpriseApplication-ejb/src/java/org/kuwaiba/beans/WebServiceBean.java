@@ -1241,6 +1241,15 @@ public class WebServiceBean implements WebServiceBeanRemote {
         }
     }
 
+    /**
+     * Saves a view
+     * @param oid
+     * @param objectClass
+     * @param viewType
+     * @param structure
+     * @param background If null, the background is removed. If a 0-sized array, it's unmodified
+     * @throws ServerSideException
+     */
     @Override
     public void saveView(Long oid, String objectClass, int viewType, byte[] structure, byte[] background) throws ServerSideException {
         if (aem == null)
@@ -1248,11 +1257,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
         String backgroundFileName = null;
         try{
             if (background != null){
-                File imgDir = new File(Constants.BASE_PATH_FOR_IMAGES);
-                imgDir.mkdirs();
-                FileOutputStream fos = new FileOutputStream(Constants.BASE_PATH_FOR_IMAGES + "view-" + oid + "-"+ viewType); //NOI18N
-                fos.write(background);
-                fos.close();
+                if (background.length != 0){
+                    File imgDir = new File(Constants.BASE_PATH_FOR_IMAGES);
+                    imgDir.mkdirs();
+                    FileOutputStream fos = new FileOutputStream(Constants.BASE_PATH_FOR_IMAGES + "view-" + oid + "-"+ viewType); //NOI18N
+                    fos.write(background);
+                    fos.close();
+                }
                 backgroundFileName = "view-" + oid + "-"+ viewType;
             }
             aem.saveView(oid, objectClass, viewType, structure, backgroundFileName);
