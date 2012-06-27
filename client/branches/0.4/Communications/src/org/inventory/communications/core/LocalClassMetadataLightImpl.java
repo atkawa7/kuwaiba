@@ -68,8 +68,8 @@ public class LocalClassMetadataLightImpl
      */
     public LocalClassMetadataLightImpl(ClassInfoLight cil){
         this.id = cil.getId();
-        this.isAbstract = cil.isAbstractClass();
-        this.isViewable = cil.isViewable();
+        this.isAbstract = cil.isAbstractClass() == null ? false : cil.isAbstractClass();
+        this.isViewable = cil.isViewable() == null ? false : cil.isViewable();
         this.className = cil.getClassName();
         this.displayName = cil.getDisplayName();
         this.smallIcon = cil.getSmallIcon()==null ? null : Utils.getImageFromByteArray(cil.getSmallIcon());
