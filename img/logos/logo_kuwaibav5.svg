@@ -102,27 +102,6 @@
          offset="1"
          id="stop3779-3-4-1" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3775-0-6-3-8"
-       id="linearGradient3781-1-2-0-0"
-       x1="532.98376"
-       y1="196.24191"
-       x2="402.85715"
-       y2="423.96353"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient3775-0-6-3-8">
-      <stop
-         style="stop-color:#ffffff;stop-opacity:1;"
-         offset="0"
-         id="stop3777-6-6-6-8" />
-      <stop
-         style="stop-color:#ffffff;stop-opacity:0;"
-         offset="1"
-         id="stop3779-3-4-1-5" />
-    </linearGradient>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -131,14 +110,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="335.90402"
-     inkscape:cy="287.36469"
+     inkscape:zoom="1.4"
+     inkscape:cx="425.01461"
+     inkscape:cy="149.7803"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="1278"
-     inkscape:window-height="748"
+     inkscape:window-width="1358"
+     inkscape:window-height="716"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1" />
@@ -150,7 +129,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -651,23 +630,10 @@
          style="font-size:16px;font-weight:bold"
          id="tspan3127">Open Network Inventory</tspan></text>
     <path
-       transform="matrix(0.41005929,0,0,0.41163969,274.88169,631.6889)"
+       transform="matrix(0.2062871,0,0,0.20628695,301.8361,787.57217)"
        sodipodi:type="arc"
        style="fill:#55d400;fill-opacity:1;stroke:#55d400;stroke-opacity:1"
        id="path3755-2-9-0-0"
-       sodipodi:cx="402.85715"
-       sodipodi:cy="409.50504"
-       sodipodi:rx="108.57143"
-       sodipodi:ry="108.57143"
-       d="m 511.42857,409.50504 a 108.57143,108.57143 0 1 1 -217.14285,0 108.57143,108.57143 0 1 1 217.14285,0 z"
-       inkscape:export-filename="/home/zim/logo_texto_al_lado.png"
-       inkscape:export-xdpi="165.75603"
-       inkscape:export-ydpi="165.75603" />
-    <path
-       transform="matrix(0.32412677,0,0,0.32537599,313.015,659.95766)"
-       sodipodi:type="arc"
-       style="fill:url(#linearGradient3781-1-2-0-0);fill-opacity:1;stroke:none"
-       id="path3755-4-0-5-6-9"
        sodipodi:cx="402.85715"
        sodipodi:cy="409.50504"
        sodipodi:rx="108.57143"
@@ -685,12 +651,12 @@
        sodipodi:rx="21.428572"
        sodipodi:ry="20"
        d="m 154.28572,718.07648 a 21.428572,20 0 1 1 -42.85714,0 21.428572,20 0 1 1 42.85714,0 z"
-       transform="matrix(0.41005929,0,0,0.41163969,366.26632,484.67472)"
+       transform="matrix(0.2062871,0,0,0.20628695,347.80865,713.89825)"
        inkscape:export-filename="/home/zim/logo_texto_al_lado.png"
        inkscape:export-xdpi="165.75603"
        inkscape:export-ydpi="165.75603" />
     <path
-       transform="matrix(0.41005929,0,0,0.41163969,380.0326,533.48343)"
+       transform="matrix(0.2062871,0,0,0.20628695,354.734,738.358)"
        sodipodi:type="arc"
        style="fill:#ffffff;fill-opacity:1;stroke:none"
        id="path3783-7-1-4-2-3"
@@ -703,7 +669,7 @@
        inkscape:export-xdpi="165.75603"
        inkscape:export-ydpi="165.75603" />
     <path
-       transform="matrix(0.41005929,0,0,0.41163969,359.8811,512.96024)"
+       transform="matrix(0.2062871,0,0,0.20628695,344.59646,728.07311)"
        sodipodi:type="arc"
        style="fill:#ffffff;fill-opacity:1;stroke:none"
        id="path3783-8-5-8-0-8"
@@ -716,7 +682,7 @@
        inkscape:export-xdpi="165.75603"
        inkscape:export-ydpi="165.75603" />
     <path
-       transform="matrix(0.41005929,0,0,0.41163969,406.39356,525.25062)"
+       transform="matrix(0.2062871,0,0,0.20628695,367.99532,734.23225)"
        sodipodi:type="arc"
        style="fill:#ffffff;fill-opacity:1;stroke:none"
        id="path3783-7-4-5-7-6-5"
@@ -729,7 +695,7 @@
        inkscape:export-xdpi="165.75603"
        inkscape:export-ydpi="165.75603" />
     <path
-       transform="matrix(0.41005929,0,0,0.41163969,410.49415,497.61196)"
+       transform="matrix(0.2062871,0,0,0.20628695,370.05819,720.38156)"
        sodipodi:type="arc"
        style="fill:#ffffff;fill-opacity:1;stroke:none"
        id="path3783-7-5-4-1-1-6"
@@ -742,7 +708,7 @@
        inkscape:export-xdpi="165.75603"
        inkscape:export-ydpi="165.75603" />
     <path
-       transform="matrix(0.41005929,0,0,0.41163969,393.50598,478.20609)"
+       transform="matrix(0.2062871,0,0,0.20628695,361.51201,710.6566)"
        sodipodi:type="arc"
        style="fill:#ffffff;fill-opacity:1;stroke:none"
        id="path3783-7-0-7-7-5-1"
@@ -755,8 +721,8 @@
        inkscape:export-xdpi="165.75603"
        inkscape:export-ydpi="165.75603" />
     <path
-       style="fill:none;stroke:#ffffff;stroke-width:5.38211918;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:0.94117647;stroke-dasharray:none"
-       d="m 414.00895,808.78428 6.15088,-29.1088 28.11836,-6.46863 17.28108,19.6999 -4.68639,28.52075 -26.06806,7.93876 z"
+       style="fill:none;stroke:#ffffff;stroke-width:2.70236039;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 371.82637,876.32082 3.0943,-14.58743 14.1454,-3.24166 8.69354,9.87231 -2.35757,14.29273 -13.11397,3.97839 z"
        id="path3844-6-2-5-1"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="165.75603"
@@ -765,32 +731,167 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="494.875"
-       y="803.33313"
+       x="414.42575"
+       y="874.9931"
        id="text3174-7-4-5"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/zim/logo_texto_al_lado.png"
        inkscape:export-xdpi="165.75603"
        inkscape:export-ydpi="165.75603"><tspan
          sodipodi:role="line"
-         x="494.875"
-         y="803.33313"
-         style="font-size:32px;font-weight:bold;fill:#55d400;fill-opacity:1"
-         id="tspan3190-2-6-9">Kuwaiba</tspan></text>
+         x="414.42575"
+         y="874.9931"
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#55d400;fill-opacity:1;font-family:Ubuntu;-inkscape-font-specification:Ubuntu Bold"
+         id="tspan3190-2-6-9">kuwaiba</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="493.16071"
-       y="822.76172"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#666666;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="414.73172"
+       y="892.36066"
        id="text3174-7-5-8"
        sodipodi:linespacing="125%"
        inkscape:export-filename="/home/zim/logo_texto_al_lado.png"
        inkscape:export-xdpi="165.75603"
        inkscape:export-ydpi="165.75603"><tspan
          sodipodi:role="line"
-         x="493.16071"
-         y="822.76172"
-         style="font-size:16px;font-weight:bold"
-         id="tspan3127-4">Open Network Inventory</tspan></text>
+         x="414.73172"
+         y="892.36066"
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#666666;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+         id="tspan3127-4">Network Inventory for the masses</tspan></text>
+    <g
+       id="g3665"
+       transform="matrix(0.23498748,0,0,0.23498772,309.61989,726.27784)">
+      <path
+         inkscape:export-ydpi="71.999985"
+         inkscape:export-xdpi="71.999985"
+         inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/marketing/Imagen Corporativa/pngs/logo_small.png"
+         transform="matrix(0.26719084,0,0,0.26719064,237.19718,851.33995)"
+         d="m 341.91177,204.16176 c 0,103.35034 -83.78201,187.13235 -187.13235,187.13235 -103.350347,0 -187.132356,-83.78201 -187.132356,-187.13235 0,-103.35035 83.782009,-187.132356 187.132356,-187.132356 103.35034,0 187.13235,83.782006 187.13235,187.132356 z"
+         sodipodi:ry="187.13235"
+         sodipodi:rx="187.13235"
+         sodipodi:cy="204.16176"
+         sodipodi:cx="154.77942"
+         id="path3807"
+         style="fill:#aad400;fill-opacity:1;stroke:none"
+         sodipodi:type="arc" />
+      <path
+         inkscape:export-ydpi="71.999985"
+         inkscape:export-xdpi="71.999985"
+         inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/marketing/Imagen Corporativa/pngs/logo_small.png"
+         sodipodi:nodetypes="scssssssszsccsssscssszzzss"
+         inkscape:connector-curvature="0"
+         id="path3795"
+         d="m 237.19618,906.15896 c 0.78259,0.28899 2.50239,0.0395 2.50239,0.0395 0,0 2.06369,-0.50315 2.10968,-2.41002 0.0667,-2.76281 -0.02,-2.88495 0.0335,-4.81678 0.0288,-1.04046 0.19611,-2.7477 1.06034,-3.69487 0.90656,-0.99355 1.74841,-2.14612 4.24112,-2.16118 6.23473,-0.0376 8.93001,-0.24567 15.98824,-0.0812 1.166,0.0272 3.45608,0.83509 4.31414,2.15143 1.05219,1.61416 1.34719,2.68925 1.33321,3.94973 -0.11239,10.13675 -0.26499,19.41311 -0.19749,21.76724 0.0675,2.35412 0.95708,3.1977 1.82576,3.60322 0.82833,0.38668 2.90475,0.21762 2.90475,0.21762 1.4209,-0.23814 2.08594,-1.28666 1.9776,-2.90631 0,0 1.83494,0.12577 3.59216,0.0477 1.34036,-0.0595 1.80455,-0.55657 2.32506,-1.73259 0.43776,-0.9891 0.27046,-2.1895 -0.0476,-3.0799 -0.50488,-1.41296 -1.46091,-1.64766 -2.40556,-1.6507 -1.54792,-0.005 -3.46443,-0.0469 -3.46443,-0.0469 0,0 0.0162,-9.21584 0.035,-17.19557 0.007,-2.92722 -1.32993,-5.49676 -2.75944,-7.26954 -1.53689,-1.90594 -4.7803,-4.43177 -8.8297,-4.49933 -7.74909,-0.12929 -15.243,-0.11657 -17.4418,0.0175 -2.19881,0.13414 -5.45475,1.31437 -7.78387,3.71196 -2.32911,2.3976 -3.33623,5.72603 -3.31396,7.63925 0.0222,1.91322 -0.0948,4.16092 0.10285,6.26175 0.0893,0.94892 1.00398,1.80788 1.89808,2.13805 z"
+         style="fill:#ffffff;fill-opacity:1;stroke:none" />
+      <path
+         inkscape:export-ydpi="71.999985"
+         inkscape:export-xdpi="71.999985"
+         inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/marketing/Imagen Corporativa/pngs/logo_small.png"
+         sodipodi:nodetypes="scssssssszsccsssscssszzzss"
+         inkscape:connector-curvature="0"
+         id="path3795-7"
+         d="m 320.76342,905.10402 c -0.7826,-0.28899 -2.5024,-0.0395 -2.5024,-0.0395 0,0 -2.0637,0.50315 -2.1097,2.41002 -0.067,2.76281 0.02,2.88496 -0.034,4.81677 -0.029,1.04047 -0.1961,2.74771 -1.0604,3.69487 -0.9065,0.99355 -1.7484,2.14613 -4.2411,2.16119 -6.2347,0.0376 -8.93,0.24567 -15.9882,0.0812 -1.166,-0.0272 -3.45607,-0.8351 -4.31415,-2.15144 -1.05221,-1.61415 -1.34717,-2.68924 -1.33321,-3.94972 0.11238,-10.13676 0.26499,-19.41311 0.19748,-21.76724 -0.0675,-2.35413 -0.95708,-3.1977 -1.82575,-3.60322 -0.82832,-0.38668 -2.90476,-0.21763 -2.90476,-0.21763 -1.4209,0.23815 -2.08591,1.28667 -1.97759,2.90631 0,0 -1.83495,-0.12576 -3.59217,-0.0477 -1.34036,0.0595 -1.80455,0.55656 -2.32505,1.73259 -0.43777,0.98909 -0.27047,2.1895 0.0477,3.07989 0.50489,1.41297 1.46095,1.64766 2.40556,1.65072 1.54796,0.005 3.46446,0.0469 3.46446,0.0469 0,0 -0.0162,9.21585 -0.035,17.19558 -0.007,2.92722 1.32993,5.49676 2.75945,7.26954 1.53689,1.90594 4.7803,4.43177 8.82973,4.49932 7.749,0.1293 15.243,0.11658 17.4418,-0.0175 2.1988,-0.13413 5.4547,-1.31436 7.7838,-3.71196 2.3292,-2.3976 3.3363,-5.72602 3.314,-7.63924 -0.022,-1.91322 0.095,-4.16092 -0.1029,-6.26175 -0.089,-0.94892 -1.0039,-1.80788 -1.898,-2.13805 z"
+         style="fill:#ffffff;fill-opacity:1;stroke:none" />
+      <path
+         inkscape:export-ydpi="71.999985"
+         inkscape:export-xdpi="71.999985"
+         inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/marketing/Imagen Corporativa/pngs/logo_small.png"
+         inkscape:connector-curvature="0"
+         id="path5858"
+         d="m 274.80597,955.54748 c -0.24713,-0.0331 -1.15702,-0.13545 -2.02196,-0.22751 -16.63431,-1.77051 -31.86857,-12.67226 -39.15909,-28.02256 -3.31224,-6.97398 -4.80792,-13.69627 -4.79225,-21.53871 0.0158,-7.91826 1.56467,-14.61518 5.00543,-21.64233 7.70452,-15.73512 22.56859,-26.04324 40.06924,-27.78773 1.7779,-0.17722 7.18383,-0.22346 8.57907,-0.0733 3.78137,0.40676 5.09166,0.61564 7.59649,1.211 4.37642,1.0402 9.04362,2.86641 12.85782,5.03115 17.9919,10.21121 27.82441,30.21448 24.8722,50.6002 -2.1141,14.599 -10.8468,27.72466 -23.5619,35.41496 -5.8031,3.50977 -12.17367,5.74355 -19.2671,6.75575 -1.54911,0.22104 -9.07048,0.42734 -10.17795,0.27915 z m 37.89285,-30.64429 c 1.2388,-0.18747 2.6267,-0.68372 3.9585,-1.41537 2.8117,-1.54466 4.6111,-3.70803 5.7651,-6.93104 l 0.461,-1.28743 0,-4.2181 0,-4.21811 -0.456,-0.64955 c -0.2508,-0.35725 -0.7562,-0.81804 -1.1233,-1.02398 -0.5711,-0.32046 -0.8431,-0.37175 -1.8863,-0.35583 -1.5059,0.023 -2.4476,0.43205 -3.0346,1.31814 -0.3846,0.58062 -0.3905,0.63232 -0.4809,4.19366 -0.1117,4.3996 -0.178,4.64885 -1.6186,6.08942 -1.5854,1.58549 -1.0608,1.50844 -10.8709,1.59665 -9.0482,0.0813 -9.3514,0.0622 -10.94326,-0.69183 -1.08311,-0.51306 -1.81903,-1.30139 -2.48318,-2.65998 l -0.50257,-1.02801 0,-12.43123 0,-12.43124 -0.44931,-0.82176 c -0.61029,-1.11612 -1.36043,-1.52831 -2.94869,-1.62026 -0.68986,-0.0399 -1.44293,0.008 -1.83193,0.11712 -1.04978,0.29393 -1.73442,1.20063 -1.73464,2.29721 l -1e-4,0.47702 -2.0593,0 c -2.36152,0 -2.8238,0.12959 -3.38799,0.94974 -0.55616,0.80848 -0.72271,1.34334 -0.73031,2.34528 -0.0127,1.6758 0.57817,2.87369 1.63531,3.31539 0.26892,0.11237 0.98672,0.2043 1.59509,0.2043 0.60838,0 1.52109,0.0433 2.02823,0.0964 l 0.92204,0.0964 -0.0388,9.15217 c -0.044,10.3721 -0.0697,10.09327 1.15453,12.59696 1.63577,3.34548 4.43065,5.66103 8.24233,6.82869 1.23525,0.37841 18.44325,0.46869 20.81855,0.10923 l 0,0 z m -38.32455,-0.35712 c 0.6603,-0.4935 0.98316,-1.02949 1.06675,-1.77092 l 0.0779,-0.69109 1.81526,-8.1e-4 c 2.08588,-8.1e-4 2.82447,-0.16047 3.34642,-0.72271 0.71619,-0.77141 0.86094,-1.21524 0.86315,-2.64636 0.003,-1.76121 -0.40224,-2.67196 -1.41509,-3.18271 -0.59271,-0.29887 -0.89265,-0.33698 -2.6523,-0.33698 l -1.98401,0 -0.0464,-9.62298 -0.0465,-9.62297 -0.34839,-0.9686 c -1.56663,-4.3555 -4.68187,-7.298 -9.00678,-8.50729 -0.68798,-0.19237 -2.34194,-0.24064 -10.03485,-0.29288 -10.01359,-0.068 -10.74177,-0.0273 -12.77357,0.71423 -3.99351,1.45745 -6.65058,4.28353 -7.81935,8.31674 -0.35566,1.22732 -0.3754,1.49 -0.37461,4.98573 5.4e-4,2.06955 0.0686,3.93409 0.1551,4.24561 0.16952,0.61035 0.81429,1.33338 1.54491,1.7324 0.34597,0.18894 0.82846,0.25731 1.81884,0.25772 1.20032,5.4e-4 1.42446,-0.0444 2.04636,-0.40997 0.38412,-0.22581 0.8559,-0.6639 1.0484,-0.97354 0.33361,-0.53659 0.35424,-0.73145 0.4401,-4.15755 0.10582,-4.22258 0.19116,-4.57612 1.42688,-5.91085 1.35852,-1.46736 1.60875,-1.53814 5.89688,-1.66807 5.40074,-0.16364 13.31906,-0.15634 14.24553,0.0131 0.44372,0.0811 1.31041,0.40131 1.92601,0.71143 0.91089,0.45888 1.22409,0.7143 1.68239,1.37207 0.30973,0.44452 0.71283,1.1859 0.89579,1.64751 l 0.33263,0.83928 0.007,12.35636 0.007,12.35634 0.32241,0.5991 c 0.73043,1.35723 1.56469,1.73994 3.67351,1.68517 1.19289,-0.031 1.52296,-0.0924 1.86292,-0.34646 l -3e-5,-10e-6 z"
+         style="fill:#bcc629;fill-opacity:0;stroke:#bcc629;stroke-width:0.1091852;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none" />
+      <path
+         inkscape:export-ydpi="71.999985"
+         inkscape:export-xdpi="71.999985"
+         inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/marketing/Imagen Corporativa/pngs/logo_small.png"
+         inkscape:connector-curvature="0"
+         id="path5860"
+         d="m 274.80597,955.54748 c -0.24713,-0.0331 -1.15702,-0.13545 -2.02196,-0.22751 -16.63431,-1.77051 -31.86857,-12.67226 -39.15909,-28.02256 -3.31224,-6.97398 -4.80792,-13.69627 -4.79225,-21.53871 0.0158,-7.91826 1.56467,-14.61518 5.00543,-21.64233 7.70452,-15.73512 22.56859,-26.04324 40.06924,-27.78773 1.7779,-0.17722 7.18383,-0.22346 8.57907,-0.0733 3.78137,0.40676 5.09166,0.61564 7.59649,1.211 4.37642,1.0402 9.04362,2.86641 12.85782,5.03115 17.9919,10.21121 27.82441,30.21448 24.8722,50.6002 -2.1141,14.599 -10.8468,27.72466 -23.5619,35.41496 -5.8031,3.50977 -12.17367,5.74355 -19.2671,6.75575 -1.54911,0.22104 -9.07048,0.42734 -10.17795,0.27915 z m 37.89285,-30.64429 c 1.2388,-0.18747 2.6267,-0.68372 3.9585,-1.41537 2.8117,-1.54466 4.6111,-3.70803 5.7651,-6.93104 l 0.461,-1.28743 0,-4.2181 0,-4.21811 -0.456,-0.64955 c -0.2508,-0.35725 -0.7562,-0.81804 -1.1233,-1.02398 -0.5711,-0.32046 -0.8431,-0.37175 -1.8863,-0.35583 -1.5059,0.023 -2.4476,0.43205 -3.0346,1.31814 -0.3846,0.58062 -0.3905,0.63232 -0.4809,4.19366 -0.1117,4.3996 -0.178,4.64885 -1.6186,6.08942 -1.5854,1.58549 -1.0608,1.50844 -10.8709,1.59665 -9.0482,0.0813 -9.3514,0.0622 -10.94326,-0.69183 -1.08311,-0.51306 -1.81903,-1.30139 -2.48318,-2.65998 l -0.50257,-1.02801 0,-12.43123 0,-12.43124 -0.44931,-0.82176 c -0.61029,-1.11612 -1.36043,-1.52831 -2.94869,-1.62026 -0.68986,-0.0399 -1.44293,0.008 -1.83193,0.11712 -1.04978,0.29393 -1.73442,1.20063 -1.73464,2.29721 l -1e-4,0.47702 -2.0593,0 c -2.36152,0 -2.8238,0.12959 -3.38799,0.94974 -0.55616,0.80848 -0.72271,1.34334 -0.73031,2.34528 -0.0127,1.6758 0.57817,2.87369 1.63531,3.31539 0.26892,0.11237 0.98672,0.2043 1.59509,0.2043 0.60838,0 1.52109,0.0433 2.02823,0.0964 l 0.92204,0.0964 -0.0388,9.15217 c -0.044,10.3721 -0.0697,10.09327 1.15453,12.59696 1.63577,3.34548 4.43065,5.66103 8.24233,6.82869 1.23525,0.37841 18.44325,0.46869 20.81855,0.10923 l 0,0 z m -38.32455,-0.35712 c 0.6603,-0.4935 0.98316,-1.02949 1.06675,-1.77092 l 0.0779,-0.69109 1.81526,-8.1e-4 c 2.08588,-8.1e-4 2.82447,-0.16047 3.34642,-0.72271 0.71619,-0.77141 0.86094,-1.21524 0.86315,-2.64636 0.003,-1.76121 -0.40224,-2.67196 -1.41509,-3.18271 -0.59271,-0.29887 -0.89265,-0.33698 -2.6523,-0.33698 l -1.98401,0 -0.0464,-9.62298 -0.0465,-9.62297 -0.34839,-0.9686 c -1.56663,-4.3555 -4.68187,-7.298 -9.00678,-8.50729 -0.68798,-0.19237 -2.34194,-0.24064 -10.03485,-0.29288 -10.01359,-0.068 -10.74177,-0.0273 -12.77357,0.71423 -3.99351,1.45745 -6.65058,4.28353 -7.81935,8.31674 -0.35566,1.22732 -0.3754,1.49 -0.37461,4.98573 5.4e-4,2.06955 0.0686,3.93409 0.1551,4.24561 0.16952,0.61035 0.81429,1.33338 1.54491,1.7324 0.34597,0.18894 0.82846,0.25731 1.81884,0.25772 1.20032,5.4e-4 1.42446,-0.0444 2.04636,-0.40997 0.38412,-0.22581 0.8559,-0.6639 1.0484,-0.97354 0.33361,-0.53659 0.35424,-0.73145 0.4401,-4.15755 0.10582,-4.22258 0.19116,-4.57612 1.42688,-5.91085 1.35852,-1.46736 1.60875,-1.53814 5.89688,-1.66807 5.40074,-0.16364 13.31906,-0.15634 14.24553,0.0131 0.44372,0.0811 1.31041,0.40131 1.92601,0.71143 0.91089,0.45888 1.22409,0.7143 1.68239,1.37207 0.30973,0.44452 0.71283,1.1859 0.89579,1.64751 l 0.33263,0.83928 0.007,12.35636 0.007,12.35634 0.32241,0.5991 c 0.73043,1.35723 1.56469,1.73994 3.67351,1.68517 1.19289,-0.031 1.52296,-0.0924 1.86292,-0.34646 l -3e-5,-10e-6 z"
+         style="fill:#bcc629;fill-opacity:0;stroke:#bcc629;stroke-width:0.1091852;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:23.24815941px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#59a734;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="389.25128"
+       y="945.77264"
+       id="text3893-4-0-5-8"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/marketing/Imagen Corporativa/pngs/logo_small.png"
+       inkscape:export-xdpi="71.999985"
+       inkscape:export-ydpi="71.999985"><tspan
+         sodipodi:role="line"
+         id="tspan3895-6-4-9-1"
+         x="389.25128"
+         y="945.77264"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#59a734;fill-opacity:1;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"><tspan
+           style="fill:#aad400;fill-opacity:1"
+           id="tspan4053-6-7-3">neo</tspan><tspan
+           style="fill:#88aa00"
+           id="tspan4267-7-3">tropic</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#666666;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="363.75623"
+       y="922.69562"
+       id="text3174-7-5-8-7"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/logo_texto_al_lado.png"
+       inkscape:export-xdpi="165.75603"
+       inkscape:export-ydpi="165.75603"><tspan
+         sodipodi:role="line"
+         x="363.75623"
+         y="922.69562"
+         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#666666;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+         id="tspan3127-4-1">This project is backed by</tspan></text>
+    <rect
+       style="fill:#ffcc00;fill-opacity:1;stroke:#ffffff;stroke-width:1.08291543;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect4470-1"
+       width="134.13277"
+       height="17.263018"
+       x="361.32077"
+       y="962.7193"
+       ry="2.7079248" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="393.34744"
+       y="974.81873"
+       id="text3174-7-5-8-7-0-6"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/logo_texto_al_lado.png"
+       inkscape:export-xdpi="165.75603"
+       inkscape:export-ydpi="165.75603"><tspan
+         sodipodi:role="line"
+         x="393.34744"
+         y="974.81873"
+         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+         id="tspan3127-4-1-6-2">join us on <tspan
+   style="font-weight:bold"
+   id="tspan4553">IRC</tspan></tspan></text>
+    <rect
+       style="fill:#00aad4;fill-opacity:1;stroke:#ffffff;stroke-width:1.07996666;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect4470-1-3"
+       width="133.40329"
+       height="17.263018"
+       x="361.47748"
+       y="981.58783"
+       ry="2.7079248" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="372.03986"
+       y="994.43732"
+       id="text3174-7-5-8-7-0-6-5"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/logo_texto_al_lado.png"
+       inkscape:export-xdpi="165.75603"
+       inkscape:export-ydpi="165.75603"><tspan
+         sodipodi:role="line"
+         x="372.03986"
+         y="994.43732"
+         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+         id="tspan3127-4-1-6-2-6">follow us on <tspan
+   style="font-weight:bold"
+   id="tspan4582">Twitter</tspan></tspan></text>
   </g>
 </svg>
