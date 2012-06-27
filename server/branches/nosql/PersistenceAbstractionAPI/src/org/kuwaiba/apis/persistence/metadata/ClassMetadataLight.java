@@ -63,6 +63,8 @@ public class ClassMetadataLight implements Serializable{
         this.id = id;
         this.name = name;
         this.displayName = displayName;
+        this.abstractClass = false;
+        this.viewable =false;
     }
 
     
