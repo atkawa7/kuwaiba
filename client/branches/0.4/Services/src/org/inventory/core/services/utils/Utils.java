@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  * 
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -38,7 +39,7 @@ import org.inventory.core.services.api.LocalObjectLight;
 
 /**
  * Class with utility methods
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class Utils {
     /**
@@ -59,22 +60,40 @@ public class Utils {
     }
 
     /**
-     * Converts an image from a
+     * Gets the bytes from a file
      * @param f File object
      * @param format format to be read
      * @return The byte array
      */
-    public static byte[] getByteArrayFromImageFile(File f,String format)throws IOException{
-        BufferedImage img = ImageIO.read(f);
-        ByteArrayOutputStream bas = new ByteArrayOutputStream();
-        ImageIO.write(img, format, bas);
-        return bas.toByteArray();
+    public static byte[] getByteArrayFromFile(File f) throws IOException{
+        InputStream is = new FileInputStream(f);
+        long length = f.length();
+        byte[] bytes;
+        if (length < Integer.MAX_VALUE) { //checks if the file is too big
+            bytes = new byte[(int)length];
+            // Read in the bytes
+            int offset = 0;
+            int numRead = 0;
+            while (offset < bytes.length
+                   && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+                offset += numRead;
+            }
+
+            // Ensure all the bytes have been read in
+            if (offset < bytes.length) {
+                throw new IOException("Could not completely read file "+f.getName());
+            }
+        }else{
+            throw new IOException("File too big "+f.getName());
+        }
+        is.close();
+        return bytes;
     }
 
     /**
     *  Converts a java.awt.Image into a byte array
     *  @param im Image to be converted
-    *  @param format format used to save ("png","jpg", etc)
+    *  @param format format used to save ("png","jpg", etc). Read more about the constraints <a href="http://docs.oracle.com/javase/6/docs/api/javax/imageio/ImageIO.html#write%28java.awt.image.RenderedImage,%20java.lang.String,%20java.io.File%29">here</a>
     *  @return An byte array o null if the image passed is null
     *  @throws IOException If it's not possible to create an image using the given format
     **/
@@ -86,7 +105,7 @@ public class Utils {
         //PNG by default
         String myFormat = format ==null?"png":format;
 
-        BufferedImage bu = new BufferedImage(im.getWidth(null), im.getHeight(null), BufferedImage.TYPE_INT_RGB);
+        BufferedImage bu = new BufferedImage(im.getWidth(null), im.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         bu.getGraphics().drawImage(im, 0, 0, null);
         ByteArrayOutputStream bas = new ByteArrayOutputStream();
         ImageIO.write(bu, myFormat, bas);

@@ -55,10 +55,6 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         this.attributesDescription = cm.getAttributesDescription().toArray(new String[0]);
     }
 
-    public LocalClassMetadataImpl(String className, Long oid){
-        super (className,oid);
-    }
-
     public Integer[] getAttributeMappings() {
         return attributeMappings;
     }
@@ -174,6 +170,6 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
     }
 
     public LocalClassMetadataLight asLocalClassMetadataLight(){
-        return new LocalClassMetadataLightImpl(className, id);
+        return new LocalClassMetadataLightImpl(id, className, displayName, smallIcon,isAbstract, isViewable);
     }
 }

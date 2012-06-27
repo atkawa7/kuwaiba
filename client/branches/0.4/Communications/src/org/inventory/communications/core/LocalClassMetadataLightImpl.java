@@ -39,20 +39,14 @@ public class LocalClassMetadataLightImpl
         implements LocalClassMetadataLight,Transferable{
 
     protected Long id;
-    protected Boolean isAbstract;
-    protected Boolean isViewable;
+    protected boolean isAbstract;
+    protected boolean isViewable;
     protected String className;
     protected String displayName;
     protected Image smallIcon;
     protected HashMap<String, Integer> validators;
 
     public LocalClassMetadataLightImpl() {    }
-
-    public LocalClassMetadataLightImpl(String name, Long id) {
-        this.id = id;
-        this.className = name;
-    }
-
 
     public LocalClassMetadataLightImpl(ClassInfo ci){
         this.id = ci.getId();
@@ -86,15 +80,25 @@ public class LocalClassMetadataLightImpl
 
     }
 
-//    public LocalClassMetadataLightImpl(Long _id, String _className, String _displayName,
-//            byte[] _smallIcon,Boolean _isAbstract, Boolean _isViewable){
-//        this.id = _id;
-//        this.isAbstract = _isAbstract;
-//        this.isViewable = _isViewable;
-//        this.className = _className;
-//        this.displayName = _displayName;
-//        this.smallIcon = _smallIcon==null ? null : Utils.getImageFromByteArray(_smallIcon);
-//    }
+    public LocalClassMetadataLightImpl(Long id, String className, String displayName,
+            byte[] smallIcon, boolean isAbstract, boolean isViewable){
+        this.id = id;
+        this.isAbstract = isAbstract;
+        this.isViewable = isViewable;
+        this.className = className;
+        this.displayName = displayName;
+        this.smallIcon = smallIcon==null ? null : Utils.getImageFromByteArray(smallIcon);
+    }
+
+    public LocalClassMetadataLightImpl(Long id, String className, String displayName,
+            Image smallIcon, boolean isAbstract, boolean isViewable){
+        this.id = id;
+        this.isAbstract = isAbstract;
+        this.isViewable = isViewable;
+        this.className = className;
+        this.displayName = displayName;
+        this.smallIcon = smallIcon;
+    }
 
     public String getClassName() {
         return className;
