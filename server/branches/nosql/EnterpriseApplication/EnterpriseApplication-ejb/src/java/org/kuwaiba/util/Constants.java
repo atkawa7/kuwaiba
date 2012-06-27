@@ -16,6 +16,8 @@
 
 package org.kuwaiba.util;
 
+import java.io.File;
+
 /**
  * Misc constants
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -26,9 +28,21 @@ public class Constants {
      */
     public static final String SERVER_VERSION = "0.4";
     /**
+     * Max icon size in bytes
+     */
+    public static final int MAX_ICON_SIZE = 5000;
+    /**
+     * Max background size in bytes
+     */
+    public static final int MAX_BACKGROUND_SIZE = 2000000;
+    /**
+     * Max binary file size in bytes
+     */
+    public static final int MAX_BINARY_FILE_SIZE = 10000000;
+    /**
      * Base URL to retrieve images (mostly view backgrounds)
      */
-    public static final String BASE_URL_FOR_IMAGES = "http://localhost:80/kuwaiba/images/";
+    public static final String BASE_PATH_FOR_IMAGES = "files"+File.separator+"images"+File.separator+"views"+File.separator;
     /**
      * Name of the validator to indicate if a given class is a connection
      */

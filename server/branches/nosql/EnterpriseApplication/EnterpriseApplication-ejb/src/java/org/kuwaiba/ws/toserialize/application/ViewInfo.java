@@ -47,24 +47,7 @@ public class ViewInfo{
     public ViewInfo(View myView) {
         this.id = myView.getId();
         this.type = myView.getViewType();
-        this.structure = myView.getStructure();
-
-        if (myView.getBackgroundPath() != null){
-            try {
-                URL location = new URL(Constants.BASE_URL_FOR_IMAGES+myView.getBackgroundPath());
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                InputStream is = location.openStream();
-                byte[] buf = new byte[4 * 1024]; // 4K buffer
-                int bytesRead;
-                while ((bytesRead = is.read(buf)) != -1)
-                    baos.write(buf, 0, bytesRead);
-
-                this.background = baos.toByteArray();
-                is.close();
-            } catch (MalformedURLException e) {
-            } catch (IOException e) {
-            }
-        }
+        this.structure = myView.getStructure();       
     }
 
     public int getType() {

@@ -23,7 +23,6 @@ import java.util.Formatter;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class Util {
-    private static Formatter formatter;
     /**
      * Formats a String. It's basically a wrapper for Formatter.format() method
      * @param stringToFormat String to be formatted
@@ -31,8 +30,7 @@ public class Util {
      * @return The resulting string of merging @stringToFormat with @args
      */
     public static String formatString(String stringToFormat,Object ... args){
-        if (formatter == null)
-            formatter = new Formatter();
+        Formatter formatter = new Formatter();
         return formatter.format(stringToFormat, args).toString();
     }
 }
