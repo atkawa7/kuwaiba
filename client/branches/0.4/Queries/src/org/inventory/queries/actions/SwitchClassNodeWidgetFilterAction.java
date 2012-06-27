@@ -61,7 +61,7 @@ public class SwitchClassNodeWidgetFilterAction extends AbstractAction{
                 ((QueryEditorScene)node.getScene()).removeAllRelatedNodes(node.getWrappedClass(), false);
 
                 ListTypeFilter newNode = (ListTypeFilter) ((QueryEditorScene)node.getScene()).
-                        addNode(node.getWrappedClass());
+                        addNode(node.getWrappedClass().asLocalClassMetadataLight());
                 List<LocalObjectListItem> items = CommunicationsStub.getInstance().getList(node.getWrappedClass().getClassName(), true, false);
                 if (items == null)
                     newNode.build(new ArrayList<LocalObjectListItem>());
