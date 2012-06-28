@@ -532,7 +532,7 @@ public class Kuwaiba {
     }
 
     /**
-     * Creates a query
+     * Creates a query using the Graphical Query Builder
      * @param queryName Query name
      * @param ownerOid OwnerOid. Null if public
      * @param queryStructure XML document as a byte array
@@ -560,7 +560,7 @@ public class Kuwaiba {
     }
 
     /**
-     * Saves a query
+     * Save the query made in the graphical Query builder
      * @param queryOid query oid to be updated
      * @param queryName query name (the same if unchanged)
      * @param ownerOid owneroid (if unchanged)
@@ -590,7 +590,7 @@ public class Kuwaiba {
     }
 
     /**
-     * Deletes a query
+     * Deletes the query load in the graphical query builder
      * @param queryOid query oid to be deleted
      * @param sessionId session id to check permissions
      * @return success or failure
@@ -613,7 +613,7 @@ public class Kuwaiba {
     }
 
     /**
-     * Retrieves all queries
+     * Retrieves all queries made in the graphical Query builder
      * @param showPublic
      * @param sessionId
      * @return A list with the available queries
@@ -636,7 +636,7 @@ public class Kuwaiba {
     }
 
     /**
-     * Gets a single query
+     * Load a query from all saved queries
      * @param queryOid
      * @param sessionId
      * @return The query
