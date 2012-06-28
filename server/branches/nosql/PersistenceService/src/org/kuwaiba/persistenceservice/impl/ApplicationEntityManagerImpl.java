@@ -288,7 +288,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             List<Integer> privileges, List<Long> users) throws InvalidArgumentException, ObjectNotFoundException
     {
         if (groupName == null)
-            throw new InvalidArgumentException("Group name can't be null", Level.INFO);
+            throw new InvalidArgumentException("Group name can not be null", Level.INFO);
 
         if (groupName.trim().equals("")) //NOI18N
             throw new InvalidArgumentException("User name can't be an empty string", Level.INFO);
@@ -361,7 +361,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
             if(groupName != null){
                 if (groupName.trim().equals("")) //NOI18N
-                    throw new InvalidArgumentException("User name can't be an empty string", Level.INFO);
+                    throw new InvalidArgumentException("User name can not be an empty string", Level.INFO);
 
                 if (cm.getUser(groupName) == null)
                 {
@@ -461,7 +461,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
        
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, className).getSingle();
         if (classNode ==  null)
-            throw new MetadataObjectNotFoundException(Util.formatString("Class for object with oid %1s could not be found",className));
+            throw new MetadataObjectNotFoundException(Util.formatString("Can not find a class with name %1s",className));
         if (!cm.isSubClass("GenericObjectList", className))
             throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", className), Level.SEVERE);
 
@@ -512,7 +512,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     public List<RemoteBusinessObjectLight> getListTypeItems(String className) throws MetadataObjectNotFoundException, InvalidArgumentException{
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, className).getSingle();
         if (classNode ==  null)
-            throw new MetadataObjectNotFoundException(Util.formatString("Class for object with oid %1s could not be found",className));
+            throw new MetadataObjectNotFoundException(Util.formatString("Can not find a class with name %1s",className));
 
         if (!Util.isSubClass("GenericObjectList", classNode))
             throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", className), Level.SEVERE);

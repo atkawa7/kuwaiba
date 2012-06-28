@@ -58,11 +58,7 @@ import org.neo4j.graphdb.Traverser.Order;
  */
 public class Util {
 
-    /**
-     * General purpose Formatter
-     */
-    private static Formatter formatter;
-    
+     
      /**
      * Gets an attribute type by traversing through the "HAS" relationship of a given class metadata node
      * @param classNode
@@ -563,9 +559,7 @@ public class Util {
      * @return The resulting string of merging @stringToFormat with @args
      */
     public static String formatString(String stringToFormat,Object ... args){
-        if (formatter == null)
-            formatter = new Formatter();
-        return formatter.format(stringToFormat, args).toString();
+        return new Formatter().format(stringToFormat, args).toString();
     }
 
     /**

@@ -69,7 +69,7 @@ import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
 import org.kuwaiba.ws.toserialize.application.ResultRecord;
 
 /**
- * Session bean to implement the logic for webservice calls
+ * Session bean to give primary support to the wen service calls
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @Stateless
