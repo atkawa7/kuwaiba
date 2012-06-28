@@ -995,6 +995,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         Iterator<Node> n_column = result.columnAs("instance");
          //headers
         ResultRecord resltRcrdHeader = new ResultRecord(null, null, null);
+        
+        if(visibleAttributeNames == null){
+            visibleAttributeNames = new ArrayList<String>();
+            visibleAttributeNames.add(query.getClassName());
+        }
+
         resltRcrdHeader.setExtraColumns(visibleAttributeNames);
         rsltrcrdList.add(resltRcrdHeader);
 
