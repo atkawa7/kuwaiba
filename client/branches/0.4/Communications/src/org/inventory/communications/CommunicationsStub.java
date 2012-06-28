@@ -597,36 +597,6 @@ public class CommunicationsStub {
      */
 
     /**
-     * Performs a simple object search where all conditions use an "and" operator
-     * and barely support joins
-     * @param className
-     * @param atts
-     * @param types
-     * @param values
-     * @return
-     */
-    public LocalObjectLight[] searchForObjects(String className, List<String> atts,
-            List<String> types, List<String> values) {
-//        try{
-//            List<RemoteObjectLight> found = port.searchForObjects(className,atts, types, values,this.session.getSessionId());
-//
-//            LocalObjectLight[] res = new LocalObjectLight[found.size()];
-//
-//            int i = 0;
-//            for (RemoteObjectLight rol : found){
-//                res[i] = new LocalObjectLightImpl(rol);
-//                i++;
-//            }
-//
-//            return res;
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return null;
-    }
-
-    /**
      * Call to remote executeQuery method
      * @param query Query to be executed in an execution (code)-friendly format
      * @return an array with results
@@ -646,7 +616,6 @@ public class CommunicationsStub {
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return null;
         }
-        //return null;
     }
 
     /**
@@ -658,14 +627,12 @@ public class CommunicationsStub {
      */
     public Long createQuery(String queryName, byte[] queryStructure, String description, boolean isPublic){
         try{
-//            return new LocalQueryLightImpl(port.createQuery(queryName, isPublic ? null : session.getUserId(), queryStructure, description, session.getSessionId());
             return port.createQuery(queryName, isPublic ? null : session.getUserId(), queryStructure, description, session.getSessionId());
             
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return null;
         }
-        //return null;
     }
 
     /**
