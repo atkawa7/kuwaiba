@@ -567,20 +567,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("className", INVENTORY_OBJECT);//NOI18N
 
-            ExecutionEngine engine = new ExecutionEngine( graphDb );
+            ExecutionEngine engine = new ExecutionEngine(graphDb);
             ExecutionResult result = engine.execute(cypherQuery, params);
             Iterator<Node> n_column = result.columnAs("classmetadata");
             for (Node node : IteratorUtil.asIterable(n_column))
             {
                  cml.add(Util.createClassMetadataFromNode(node));
             }
-
-            /*
-            Traverser classChildsTraverser = Util.getAllSubclasses(myClassNode);
-            for (Node childClassNode : classChildsTraverser)
-            {
-                cml.add(Util.createClassMetadataFromNode(childClassNode));
-            }*/
 
             if(includeListTypes)
             {
@@ -592,13 +585,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 {
                     cml.add(Util.createClassMetadataFromNode(node));
                 }
-                /*
-                myClassNode =  classIndex.get(PROPERTY_NAME, LIST_TYPE).getSingle();
-                classChildsTraverser = Util.getAllSubclasses(myClassNode);
-
-                for (Node childClassNode : classChildsTraverser) {
-                    cml.add(Util.createClassMetadataFromNode(childClassNode));
-                    }*/
             }
 
         }catch(Exception ex){
