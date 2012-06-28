@@ -423,24 +423,82 @@ public interface WebServiceBeanRemote {
     public void deleteGroups(Long[] oids)
             throws ServerSideException;
 
+    /**
+     *
+     * @param oid
+     * @param objectClass
+     * @param viewType
+     * @return
+     * @throws ServerSideException
+     */
     public ViewInfo getView(Long oid, String objectClass, Integer viewType) throws ServerSideException;
 
+    /**
+     *
+     * @param oid
+     * @param objectClass
+     * @param viewType
+     * @param structure
+     * @param background
+     * @throws ServerSideException
+     */
     public void saveView(Long oid, String objectClass, int viewType, byte[] structure, byte[] background) throws ServerSideException;
 
-    //__________________________________________________________________________
-
+    /**
+     * Executes a complex query generated using the Graphical Query Builder.  Please note
+     * that the first record is reserved for the column headers, so and empty result set
+     * will have at least one record.
+     * @param query
+     * @return
+     * @throws ServerSideException
+     */
     public ResultRecord[] executeQuery(TransientQuery query) throws ServerSideException;
 
+    /**
+     * Creates a query using the Graphical Query Builder
+     * @param queryName
+     * @param ownerOid
+     * @param queryStructure
+     * @param description
+     * @return
+     * @throws ServerSideException
+     */
     public Long createQuery(String queryName, Long ownerOid, byte[] queryStructure,
             String description) throws ServerSideException;
 
+    /**
+     * Save the query made in the graphical Query builder
+     * @param queryOid
+     * @param queryName
+     * @param ownerOid
+     * @param queryStructure
+     * @param description
+     * @throws ServerSideException
+     */
     public void saveQuery(Long queryOid, String queryName,
             Long ownerOid, byte[] queryStructure, String description) throws ServerSideException;
 
+    /**
+     * Deletes the query load in the graphical query builder
+     * @param queryOid
+     * @throws ServerSideException
+     */
     public void deleteQuery(Long queryOid) throws ServerSideException;
 
+    /**
+     * Retrieves all queries made in the graphical Query builder
+     * @param showPublic
+     * @return
+     * @throws ServerSideException
+     */
     public RemoteQueryLight[] getQueries(boolean showPublic) throws ServerSideException;
 
+    /**
+     * Load a query from all saved queries
+     * @param queryOid
+     * @return
+     * @throws ServerSideException
+     */
     public RemoteQuery getQuery(Long queryOid) throws ServerSideException;
 
     /**
