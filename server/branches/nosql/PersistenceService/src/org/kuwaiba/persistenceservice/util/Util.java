@@ -26,7 +26,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
@@ -51,6 +53,9 @@ import org.neo4j.graphdb.ReturnableEvaluator;
 import org.neo4j.graphdb.StopEvaluator;
 import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.Traverser.Order;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
+import org.neo4j.helpers.collection.IteratorUtil;
 
 /**
  * Utility class containing misc methods to perform common tasks
@@ -332,11 +337,22 @@ public class Util {
         else
             myClass.setParentClassName(null);
         //Attributes
-        Iterable<Relationship> attributes = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE);
-        while (attributes.iterator().hasNext()){
-            Node attributeNode = attributes.iterator().next().getEndNode();
-            listAttributes.add(createAttributeMetadataFromNode(attributeNode));
+        String cypherQuery = "START metadataclass = node({classid}) ".concat(
+                             "MATCH metadataclass -[:").concat(RelTypes.HAS_ATTRIBUTE.toString()).concat("]->attribute ").concat(
+                             "RETURN attribute ").concat(
+                             "ORDER BY attribute.name ASC");
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("classid", classNode.getId());//NOI18N
+
+        ExecutionEngine engine = new ExecutionEngine(classNode.getGraphDatabase());
+        ExecutionResult result = engine.execute(cypherQuery, params);
+        Iterator<Node> n_column = result.columnAs("attribute");
+        for (Node attributeNode : IteratorUtil.asIterable(n_column))
+        {
+             listAttributes.add(createAttributeMetadataFromNode(attributeNode));
         }
+
         myClass.setAttributes(listAttributes);
 
         //Category
