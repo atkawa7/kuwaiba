@@ -529,13 +529,26 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
     public List<ClassMetadataLight> getInstanceableListTypes() throws MetadataObjectNotFoundException {
         Node genericObjectListNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, "GenericObjectList").getSingle();
+
         if (genericObjectListNode == null)
             throw new MetadataObjectNotFoundException(Util.formatString("Class %1s is not a list type", "GenericObjectList"));
-        Traverser traverserMetadata = Util.getAllSubclasses(genericObjectListNode);
+
+        String cypherQuery = "START classmetadata = node:classes(name = {className}) ".concat(
+                             "MATCH classmetadata <-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-listType ").concat(
+                             "RETURN listType ").concat(
+                             "ORDER BY listType.name ASC");
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("className", MetadataEntityManagerImpl.LIST_TYPE);//NOI18N
+
+        ExecutionEngine engine = new ExecutionEngine(graphDb);
+        ExecutionResult result = engine.execute(cypherQuery, params);
+        Iterator<Node> n_column = result.columnAs("listType");
         List<ClassMetadataLight> res = new ArrayList<ClassMetadataLight>();
-        for (Node child : traverserMetadata){
-            if (!(Boolean)child.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT))
-                res.add(new ClassMetadataLight(child.getId(),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME)));
+        for (Node node : IteratorUtil.asIterable(n_column))
+        {
+            if (!(Boolean)node.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT))
+                res.add(Util.createClassMetadataLightFromNode(node));
         }
 
         return res;
