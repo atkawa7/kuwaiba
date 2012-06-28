@@ -809,18 +809,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         if(classNode == null)
             throw new MetadataObjectNotFoundException(Util.formatString(
                         "Can not find the query with name %1s", query.getClassName()));//NOI18N
-        //limits
-        int page = query.getPage();
-        int limit = query.getLimit();
-        int max = limit*page;
-        int min = max-limit;
-
+        
         //query Params
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("className", query.getClassName());//NOI18N
 
-        params.put( "s", min);//NOI18N
-        params.put( "l", max);//NOI18N
+        //limits
+        params.put( "s", (query.getLimit()*(query.getPage()-1)));//NOI18N
+        params.put( "l", query.getLimit());//NOI18N
 
         List<String> visibleAttributeNames = query.getVisibleAttributeNames();
         List<String> attributeNames = query.getAttributeNames();
@@ -874,13 +870,15 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                             value = "(?i).*".concat(value).concat(".*");//NOI18N
                             break;
                     }
+                    //the value to looking for
                     Object newParam = Util.evalAttribute(Util.getTypeOfAttribute(classNode, attributeNames.get(i)),
                                        attributeNames.get(i),
                                        value);
+
                     params.put(attributeNames.get(i),
                                        newParam);
 
-                    if(Long.class.isInstance(newParam)){
+                    if(Long.class.isInstance(newParam) || Boolean.class.isInstance(newParam) || Float.class.isInstance(newParam) || Integer.class.isInstance(newParam)){
                         condition = condition.substring(0, condition.length()-1);
                     }
 
@@ -892,60 +890,65 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     List<ExtendedQuery> joins = query.getJoins();
 
                     for (ExtendedQuery join : joins) {
-                        //List<String> joinVisibleAttributeNames = join.getVisibleAttributeNames();
-                        List<String> joinAttributeNames = join.getAttributeNames();
-                        List<String> joinAttributeValues = join.getAttributeValues();
-                        List<Integer> joinConditions = join.getConditions();
+                        //if there are no filter in a listTypes, but there is at least a atrribute set a s visible
+                        if(join.getAttributeNames()!= null && join.getAttributeValues() != null)
+                        {
+                            List<String> joinAttributeNames = join.getAttributeNames();
+                            List<String> joinAttributeValues = join.getAttributeValues();
+                            List<Integer> joinConditions = join.getConditions();
 
-                        for(int j=0; j<joinAttributeNames.size(); j++){
-                            String joinCondition = "";
-                            String joinValue = joinAttributeValues.get(j);
-                            if(joinAttributeValues.get(j) != null){
-                                switch (joinConditions.get(j)){
-                                    case ExtendedQuery.EQUAL:
-                                        joinCondition = "! =~";//NOI18N
-                                        joinValue = "(?i)".concat(joinValue);//NOI18N
-                                        break;
-                                    case ExtendedQuery.EQUAL_OR_GREATER_THAN:
-                                        joinCondition = "! >=";//NOI18N
-                                        break;
-                                    case ExtendedQuery.EQUAL_OR_LESS_THAN:
-                                        joinCondition = "! <=";//NOI18N
-                                        break;
-                                    case ExtendedQuery.GREATER_THAN:
-                                        joinCondition = "! >";//NOI18N
-                                        break;
-                                    case ExtendedQuery.LESS_THAN:
-                                        joinCondition = "! <";//NOI18N
-                                        break;
-                                    case ExtendedQuery.LIKE:
-                                        joinCondition = "! =~";//NOI18N
-                                        joinValue = "(?i).*".concat(joinValue).concat(".*");//NOI18N
-                                        break;
-                                }
-                                //if is small view 
-                                if(joinAttributeNames.get(j).equals("id")){
-                                    params.put(joinAttributeNames.get(j), Long.valueOf(joinAttributeValues.get(j)));
-                                    where = "ID(listype)".concat("=").concat(" {".concat(joinAttributeNames.get(j)).concat("}"));//NOI18N
-                                }
-                                else{
-                                    Node joinNode =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, join.getClassName()).getSingle();
-                                    Object newJoinParam = Util.evalAttribute(Util.getTypeOfAttribute(joinNode, joinAttributeNames.get(j)),
-                                               joinAttributeNames.get(j),
-                                               joinValue);
-                                    params.put(joinAttributeNames.get(j),
-                                               newJoinParam);
-
-                                    if(Long.class.isInstance(newJoinParam)){
-                                        joinCondition = joinCondition.substring(0, joinCondition.length()-1);
+                            for(int j=0; j<joinAttributeNames.size(); j++){
+                                String joinCondition = "";
+                                String joinValue = joinAttributeValues.get(j);
+                                
+                                if(joinAttributeValues.get(j) != null){
+                                    switch (joinConditions.get(j)){
+                                        case ExtendedQuery.EQUAL:
+                                            joinCondition = "! =~";//NOI18N
+                                            joinValue = "(?i)".concat(joinValue);//NOI18N
+                                            break;
+                                        case ExtendedQuery.EQUAL_OR_GREATER_THAN:
+                                            joinCondition = "! >=";//NOI18N
+                                            break;
+                                        case ExtendedQuery.EQUAL_OR_LESS_THAN:
+                                            joinCondition = "! <=";//NOI18N
+                                            break;
+                                        case ExtendedQuery.GREATER_THAN:
+                                            joinCondition = "! >";//NOI18N
+                                            break;
+                                        case ExtendedQuery.LESS_THAN:
+                                            joinCondition = "! <";//NOI18N
+                                            break;
+                                        case ExtendedQuery.LIKE:
+                                            joinCondition = "! =~";//NOI18N
+                                            joinValue = "(?i).*".concat(joinValue).concat(".*");//NOI18N
+                                            break;
                                     }
-                                    where = "listype.".concat(joinAttributeNames.get(j)).concat(joinCondition).concat(" {".concat(joinAttributeNames.get(j)).concat("}"));//NOI18N
-                                }
+                                    //if is small view
+                                    if(joinAttributeNames.get(j).equals("id")){
+                                        params.put(joinAttributeNames.get(j), Long.valueOf(joinAttributeValues.get(j)));
+                                        where = "ID(listype)".concat("=").concat(" {".concat(joinAttributeNames.get(j)).concat("}"));//NOI18N
+                                    }
+                                    else{
+                                        Node joinNode =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, join.getClassName()).getSingle();
 
-                                isJoin = true;
+                                        Object newJoinParam = Util.evalAttribute(Util.getTypeOfAttribute(joinNode, joinAttributeNames.get(j)),
+                                                   joinAttributeNames.get(j),
+                                                   joinValue);
+                                        
+                                        params.put("join".concat(joinAttributeNames.get(j)),
+                                                   newJoinParam);
 
-                            }//end if
+                                        if(Long.class.isInstance(newJoinParam) || Boolean.class.isInstance(newJoinParam) || Float.class.isInstance(newJoinParam) || Integer.class.isInstance(newJoinParam)){
+                                            joinCondition = joinCondition.substring(0, joinCondition.length()-1);
+                                        }
+                                        where = "listype.".concat(joinAttributeNames.get(j)).concat(joinCondition).concat(" {".concat("join".concat(joinAttributeNames.get(j))).concat("}"));//NOI18N
+                                    }
 
+                                    isJoin = true;
+
+                                }//end if
+                            }//end else there ara a filter
                         }//end for
 
                     }//fin for joins
@@ -960,11 +963,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 match = match.concat("-[:").concat(RelTypes.RELATED_TO.toString()).concat("]->listype");//NOI18N
 
             cypherQuery = cypherQuery.concat(match);
-            cypherQuery = cypherQuery.concat(" WHERE ".concat(whereQuery));//NOI18N
+            //it probably occurs if a listtype atribute is set as visible and a class attributes is visible too
+            if(!whereQuery.isEmpty())
+                cypherQuery = cypherQuery.concat(" WHERE ".concat(whereQuery));//NOI18N
+
             cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));//NOI18N
         }//end else
 
-        if(page == 0)
+        if(query.getPage() == 0)
             cypherQuery = cypherQuery.concat(" ORDER BY instance.name ASC");//NOI18N
 
         else
