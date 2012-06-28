@@ -641,10 +641,18 @@ public class Util {
             return attrbtDate;
         }//end if is date
         else if(attributeType.equals("Float")){//NOI18N
+            attributeValue = attributeValue.substring(4, attributeValue.length());
             Float attribute = Float.valueOf(attributeValue);
             return attribute;
+        }else if(attributeType.equals("Integer")){
+            attributeValue = attributeValue.substring(4, attributeValue.length());
+            Integer attribute = Integer.valueOf(attributeValue);
+            return attribute;
+        }else if(attributeType.equals("Boolean")){
+            attributeValue = attributeValue.substring(4, attributeValue.length());
+            Boolean attribute = Boolean.valueOf(attributeValue);
+            return attribute;
         }
-        
         return null;
     }
 
