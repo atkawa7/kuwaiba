@@ -246,8 +246,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     if (storedUser != null)
                         throw new InvalidArgumentException(Util.formatString("The username %1s is already in use", userName), Level.WARNING);
                 }
-
+                //refresh the userindex
+                userIndex.remove(userNode, UserProfile.PROPERTY_USERNAME, (String)userNode.getProperty(UserProfile.PROPERTY_USERNAME));
                 userNode.setProperty(UserProfile.PROPERTY_USERNAME, userName);
+                userIndex.putIfAbsent(userNode, UserProfile.PROPERTY_USERNAME, userName);
             }
 
             if(password != null){
@@ -274,7 +276,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                         userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
                 }
             }
-
             tx.success();
         } catch (Exception ex) {
             throw new RuntimeException(ex.getMessage());
@@ -295,9 +296,16 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
         if (cm.getGroup(groupName) == null)
         {
-            Node storedUser = groupIndex.get(GroupProfile.PROPERTY_GROUPNAME,groupName).getSingle();
-            if (storedUser != null)
-                throw new InvalidArgumentException(Util.formatString("The group name %1s is already in use", groupName), Level.WARNING);
+            Node storedGroup = groupIndex.get(GroupProfile.PROPERTY_GROUPNAME,groupName).getSingle();
+            if (storedGroup != null){
+                //When the admins acounts need to be restored
+
+                if(((String)storedGroup.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME)).equals("admins") ||
+                   ((String)storedGroup.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME)).equals("users"))
+                    return storedGroup.getId();
+                else
+                    throw new InvalidArgumentException(Util.formatString("The group name %1s is already in use", groupName), Level.WARNING);
+            }
         }
         Transaction tx = null;
         try{
@@ -369,8 +377,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     if (storedGroup != null)
                         throw new InvalidArgumentException(Util.formatString("The group name %1s is already in use", groupName), Level.WARNING);
                 }
-
+                groupIndex.remove(groupNode, GroupProfile.PROPERTY_GROUPNAME, (String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME));
                 groupNode.setProperty(GroupProfile.PROPERTY_GROUPNAME, groupName);
+                groupIndex.putIfAbsent(groupNode, GroupProfile.PROPERTY_GROUPNAME, groupName);
             }
             
             if(description != null)
@@ -413,6 +422,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     for (Relationship relationship : relationships) {
                         relationship.delete();
                     }
+                    userIndex.remove(userNode);
                     userNode.delete();
                 }
             }
@@ -441,6 +451,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     for (Relationship relationship : relationships) {
                         relationship.delete();
                     }
+                    groupIndex.remove(groupNode);
                     groupNode.delete();
                 }
                 tx.success();
