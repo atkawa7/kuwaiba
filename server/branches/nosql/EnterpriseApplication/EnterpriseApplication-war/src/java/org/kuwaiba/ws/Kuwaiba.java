@@ -162,7 +162,7 @@ public class Kuwaiba {
      * @throws Exception
      */
     @WebMethod(operationName = "createUser")
-    public void createUser(
+    public Long createUser(
             @WebParam(name = "username")String username,
             @WebParam(name = "password")String password,
             @WebParam(name = "firstName")String firstName,
@@ -174,7 +174,7 @@ public class Kuwaiba {
         try
         {
             wsBean.validateCall("createUser", getIPAddress(), sessionId);
-            wsBean.createUser(username, password, firstName, lastName, enabled, priviliges, groups);
+            return wsBean.createUser(username, password, firstName, lastName, enabled, priviliges, groups);
 
         } catch(Exception e){
             Level level = Level.SEVERE;
@@ -235,7 +235,7 @@ public class Kuwaiba {
      * @throws Exception
      */
     @WebMethod(operationName = "createGroup")
-    public void createGroup(
+    public Long createGroup(
             @WebParam(name = "groupName")String groupName,
             @WebParam(name = "description")String description,
             @WebParam(name = "priviliges")Integer[] priviliges,
@@ -244,7 +244,7 @@ public class Kuwaiba {
         try
         {
             wsBean.validateCall("createGroup", getIPAddress(), sessionId);
-            wsBean.createGroup(groupName, description, priviliges, users);
+            return wsBean.createGroup(groupName, description, priviliges, users);
 
         } catch(Exception e){
             Level level = Level.SEVERE;
