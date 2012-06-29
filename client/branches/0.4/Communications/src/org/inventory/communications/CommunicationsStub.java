@@ -885,7 +885,7 @@ public class CommunicationsStub {
             Random random = new Random();
             UserInfo newUser = new UserInfo();
             newUser.setUserName("user"+random.nextInt(10000));
-            port.createUser(newUser.getUserName(), "kuwaiba", null, null, null, null, null, this.session.getSessionId());
+            newUser.setOid(port.createUser(newUser.getUserName(), "kuwaiba", null, null, null, null, null, this.session.getSessionId()));
             return new LocalUserObjectImpl(newUser);
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -934,7 +934,7 @@ public class CommunicationsStub {
             Random random = new Random();
             UserGroupInfo newGroup = new UserGroupInfo();
             newGroup.setName("group"+random.nextInt(10000));
-            port.createGroup(newGroup.getName(), null, null, null, this.session.getSessionId());
+            newGroup.setOid(port.createGroup(newGroup.getName(), null, null, null, this.session.getSessionId()));
             return new LocalUserGroupObjectImpl(newGroup);
         }catch(Exception ex){
             this.error = ex.getMessage();
