@@ -77,11 +77,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     /**
      *
      */
-    public static final String INVENTORY_OBJECT = "InventoryObject"; //NOI18N
+    public static final String INVENTORY_OBJECT = "InventoryObject"; //NOI18N ID 286
     /**
      *
      */
-    public static final String LIST_TYPE = "GenericObjectList"; //NOI18N
+    public static final String LIST_TYPE = "GenericObjectList"; //NOI18N ID 27
     /**
      *
      */
@@ -491,50 +491,24 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 throw new MetadataObjectNotFoundException(Util.formatString(
                          "Can not find the Class with the name %1s", INVENTORY_OBJECT));
 
-            String cypherQuery = "START inventory = node:classes(name = {className}) ".concat(
+            String cypherQuery = "START inventory = node:classes({className}) ".concat(
                                  "MATCH inventory <-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-classmetadata ").concat(
                                  "RETURN classmetadata ").concat(
                                  "ORDER BY classmetadata.name ASC");
 
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put("className", INVENTORY_OBJECT);//NOI18N
+            if(includeListTypes)
+                params.put("className", "name:"+INVENTORY_OBJECT+" name:"+LIST_TYPE);//NOI18N
+            else
+                params.put("className", "name:"+INVENTORY_OBJECT);//NOI18N
 
-            ExecutionEngine engine = new ExecutionEngine( graphDb );
+            ExecutionEngine engine = new ExecutionEngine(graphDb);
             ExecutionResult result = engine.execute(cypherQuery, params);
             Iterator<Node> n_column = result.columnAs("classmetadata");
             for (Node node : IteratorUtil.asIterable(n_column))
             {
                  cml.add(Util.createClassMetadataLightFromNode(node));
             }
-
-            /*
-            Traverser classChildsTraverser = Util.getAllSubclasses(myClassNode);
-            for (Node childClassNode : classChildsTraverser)
-            {
-                cml.add(Util.createClassMetadataLightFromNode(childClassNode));
-            }
-            */
-            if(includeListTypes)
-            {
-                params.remove(INVENTORY_OBJECT);//NOI18N
-                params.put("className", LIST_TYPE);//NOI18N
-                result = engine.execute(cypherQuery, params);
-                n_column = result.columnAs("classmetadata");
-                for (Node node : IteratorUtil.asIterable(n_column))
-                {
-                    cml.add(Util.createClassMetadataLightFromNode(node));
-                }
-
-                /*myClassNode =  classIndex.get(PROPERTY_NAME, LIST_TYPE).getSingle();
-                classChildsTraverser = Util.getAllSubclasses(myClassNode);
-
-                for (Node childClassNode : classChildsTraverser)
-                {
-                    cml.add(Util.createClassMetadataLightFromNode(childClassNode));
-                }*/
-                
-            }
-        
         }catch(Exception ex){
             throw new RuntimeException(ex.getMessage());
         }
@@ -559,13 +533,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 throw new MetadataObjectNotFoundException(Util.formatString(
                          "Can not find the Class with the name %1s", INVENTORY_OBJECT));
 
-            String cypherQuery = "START inventory = node:classes(name = {className}) ".concat(
+            String cypherQuery = "START inventory = node:classes({className}) ".concat(
                                  "MATCH inventory <-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-classmetadata ").concat(
                                  "RETURN classmetadata ").concat(
                                  "ORDER BY classmetadata.name ASC");
 
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put("className", INVENTORY_OBJECT);//NOI18N
+           if(includeListTypes)
+                params.put("className", "name:"+INVENTORY_OBJECT+" name:"+LIST_TYPE);//NOI18N
+            else
+                params.put("className", "name:"+INVENTORY_OBJECT);//NOI18N
 
             ExecutionEngine engine = new ExecutionEngine(graphDb);
             ExecutionResult result = engine.execute(cypherQuery, params);
@@ -574,19 +551,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             {
                  cml.add(Util.createClassMetadataFromNode(node));
             }
-
-            if(includeListTypes)
-            {
-                params.remove(INVENTORY_OBJECT);//NOI18N
-                params.put("className", LIST_TYPE);//NOI18N
-                result = engine.execute(cypherQuery, params);
-                n_column = result.columnAs("classmetadata");
-                for (Node node : IteratorUtil.asIterable(n_column))
-                {
-                    cml.add(Util.createClassMetadataFromNode(node));
-                }
-            }
-
         }catch(Exception ex){
             throw new RuntimeException(ex.getMessage());
         }
@@ -1338,7 +1302,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             }
             else
             {
-
                 Node referenceNode = graphDb.getReferenceNode();
                 Relationship rel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
                 parentNode = rel.getEndNode();
@@ -1376,18 +1339,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
                 ClassMetadataLight possibleChild =  Util.createClassMetadataLightFromNode(childNode);
 
-                for (ClassMetadataLight existingPossibleChild : currentPossibleChildren)
+                if (Util.isPossibleChild((String)parentNode.getProperty(PROPERTY_NAME), classIndex.get(PROPERTY_ID, possibleChild.getId()).getSingle()))
                 {
-                    if (Util.isSubClass(possibleChild.getName(), classIndex.get(PROPERTY_ID, existingPossibleChild.getId()).getSingle()))
-                    {
-                        getPossibleChildren((String) parentNode.getProperty(PROPERTY_NAME)).remove(existingPossibleChild);
-                    }
-                    else if (Util.isSubClass(existingPossibleChild.getName(), classIndex.get(PROPERTY_ID, possibleChild.getId()).getSingle()))
-                    {
+                    alreadyAdded = true;
+                }
+                for (ClassMetadataLight existingPossibleChild : currentPossibleChildren){
+                    if (existingPossibleChild.getId().equals(possibleChild.getId()))
                         alreadyAdded = true;
-                    }
-                }//end for currentPossibleChildren
-                if (!currentPossibleChildren.contains(possibleChild) && !alreadyAdded)
+                }
+               
+                if (!alreadyAdded)
                 {   // If the class is already a possible child, it won't add it
                     parentNode.createRelationshipTo(childNode, RelTypes.POSSIBLE_CHILD);
                     String parentClassName = (String)parentNode.getProperty(PROPERTY_NAME);
@@ -1401,7 +1362,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 else
                 {
                     throw new InvalidArgumentException(
-                            Util.formatString("Class %1s had already been added to the containment hierarchy", possibleChild.getName()), Level.INFO);
+                            Util.formatString("Class %1s had already been added to the containment hierarchy, maybe in a Generic type", possibleChild.getName()), Level.INFO);
                 }
             }//end for _PossibleChildren.
             tx.success();
@@ -1415,7 +1376,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
     }
 
-    public void addPossibleChildren(String parentClassName, String[] possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException {
+    public void addPossibleChildren(String parentClassName, String[] _possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException {
         Transaction tx = null;
         Node parentNode;
         Boolean isDummyRoot = false;
@@ -1440,7 +1401,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                             "Class %1s can not be found", parentClassName));
                 else{
                     isDummyRoot = true;
-                    for (String name : possibleChildren) {
+                    for (String name : _possibleChildren) {
                         if(name.equals(parentNode.getProperty(PROPERTY_NAME)))
                             throw new InvalidArgumentException("Can't perform this operation "
                                 + "for Dummyroot, DummyRoot can no be child of other classes ", Level.WARNING);
@@ -1459,27 +1420,25 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
             List<ClassMetadataLight> currentPossibleChildren = getPossibleChildren(isDummyRoot ? null : (String)parentNode.getProperty(PROPERTY_NAME));
 
-            for (String name : possibleChildren) {
+            for (String name : _possibleChildren) {
                 Node childNode = classIndex.get(PROPERTY_NAME, name).getSingle();
 
                 if (childNode == null)
                     throw new MetadataObjectNotFoundException(Util.formatString(
-                            "Class %1s can not be found", name));
+                            "Can not find the Class with the id %1s", parentClassName));
 
                 ClassMetadataLight possibleChild =  Util.createClassMetadataLightFromNode(childNode);
 
-                for (ClassMetadataLight existingPossibleChild : currentPossibleChildren)
+                if (Util.isPossibleChild((String)parentNode.getProperty(PROPERTY_NAME), classIndex.get(PROPERTY_ID, possibleChild.getId()).getSingle()))
                 {
-                    if (Util.isSubClass(possibleChild.getName(), classIndex.get(PROPERTY_ID, existingPossibleChild.getId()).getSingle()))
-                    {
-                        getPossibleChildren((String) parentNode.getProperty(PROPERTY_NAME)).remove(existingPossibleChild);
-                    }
-                    else if (Util.isSubClass(existingPossibleChild.getName(), classIndex.get(PROPERTY_ID, possibleChild.getId()).getSingle()))
-                    {
+                    alreadyAdded = true;
+                }
+                for (ClassMetadataLight existingPossibleChild : currentPossibleChildren){
+                    if (existingPossibleChild.getId().equals(possibleChild.getId()))
                         alreadyAdded = true;
-                    }
-                }//end for currentPossibleChildren
-                if (!currentPossibleChildren.contains(possibleChild) && !alreadyAdded)
+                }
+
+                if (!alreadyAdded)
                 {   // If the class is already a possible child, it won't add it
                     parentNode.createRelationshipTo(childNode, RelTypes.POSSIBLE_CHILD);
                     if (cm.getClass(possibleChild.getName()).isAbstractClass()){
@@ -1487,12 +1446,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                             cm.putPossibleChild(parentClassName,(String)subClass.getProperty(PROPERTY_NAME));
                     }
                     else
-                        cm.putPossibleChild(parentClassName, name);
+                        cm.putPossibleChild(parentClassName, (String)childNode.getProperty(PROPERTY_NAME));
                 }
                 else
                 {
                     throw new InvalidArgumentException(
-                            Util.formatString("Class %1s had already been added to the containment hierarchy", possibleChild.getName()), Level.INFO);
+                            Util.formatString("Class %1s had already been added to the containment hierarchy, maybe in a Generic type", possibleChild.getName()), Level.INFO);
                 }
             }//end for _PossibleChildren.
             tx.success();
