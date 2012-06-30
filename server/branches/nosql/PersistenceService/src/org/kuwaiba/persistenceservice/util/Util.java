@@ -550,6 +550,24 @@ public class Util {
         return isSubClass(allegedParentClass, parentNode);
     }
 
+   /**
+     * Traverses the graph up into the class hierarchy trying to find out if a given class
+     * is the possiblechild of another
+     * @param allegedParentClass The alleged parent class name
+     * @param startNode Class metadata node corresponding to the child class
+     * @return
+     */
+    public static boolean isPossibleChild(String allegedParentClass, Node currentNode){
+        Iterable<Relationship> parents = currentNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.INCOMING);
+        for(Relationship parent : parents){
+            Node parentNode = parent.getStartNode();
+
+            if (parentNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals(allegedParentClass))
+                return true;
+        }
+        return false;
+    }
+
     /**
      * Given a plain string, it calculate the MD5 hash. This method is used when authenticating users
      * Thanks to cholland for the code snippet at http://snippets.dzone.com/posts/show/3686
@@ -619,6 +637,22 @@ public class Util {
             rr.setExtraColumns(extraColumns);
         }
         return rr;
+    }
+
+    public static List<ResultRecord> addExtracolumns(List<ResultRecord> listQuery, List<ResultRecord> listJoinQuery){
+        ResultRecord rr, joinRr;
+        for(int i=0; i<listQuery.size(); i++){
+            rr = listQuery.get(i);
+            joinRr = listJoinQuery.get(i);
+            List<String> extraColumns = rr.getExtraColumns();
+            List<String> joinExtraColumns = joinRr.getExtraColumns();
+
+            for (String string : joinExtraColumns) {
+                extraColumns.add(string);
+            }
+            rr.setExtraColumns(extraColumns);
+        }
+        return listQuery;
     }
 
     public static String getTypeOfAttribute(Node classNode, String attributeName){
