@@ -18,7 +18,7 @@ package org.inventory.navigation.applicationnodes.listmanagernodes;
 
 import javax.swing.Action;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
-import org.inventory.navigation.applicationnodes.listmanagernodes.actions.Create;
+import org.inventory.navigation.applicationnodes.listmanagernodes.actions.CreateListTypeAction;
 import org.openide.nodes.AbstractNode;
 
 /**
@@ -47,6 +47,6 @@ public class ListTypeNode extends AbstractNode{
 
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{new Create(this)};
+        return new Action[]{new CreateListTypeAction(this)};
     }
 }

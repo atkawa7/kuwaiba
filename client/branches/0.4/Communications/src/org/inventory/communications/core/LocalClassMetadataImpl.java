@@ -170,6 +170,6 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
     }
 
     public LocalClassMetadataLight asLocalClassMetadataLight(){
-        return new LocalClassMetadataLightImpl(id, className, displayName, smallIcon,isAbstract, isViewable);
+        return new LocalClassMetadataLightImpl(id, className, displayName, smallIcon, abstractClass, viewable, listType, validators);
     }
 }

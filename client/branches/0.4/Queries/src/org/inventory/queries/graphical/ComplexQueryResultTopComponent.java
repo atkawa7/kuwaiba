@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.table.TableModel;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.api.queries.LocalResultRecord;
@@ -46,7 +47,7 @@ import org.openide.windows.WindowManager;
 
 /**
  * Query results for the new Graphical Query builder
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ComplexQueryResultTopComponent extends TopComponent{
     private JToolBar barMain ;
@@ -229,7 +230,10 @@ public class ComplexQueryResultTopComponent extends TopComponent{
             JPopupMenu  menu = new JPopupMenu();
             try{
                 menu.add(ObjectActionFactory.createEditAction(singleRecord));
-                menu.add(ObjectActionFactory.createDeleteAction(singleRecord));
+                if (CommunicationsStub.getInstance().getLightMetaForClass(singleRecord.getClassName(),false).isListType())
+                    menu.add(ObjectActionFactory.createDeleteListTypeAction(singleRecord));
+                else
+                    menu.add(ObjectActionFactory.createDeleteBusinessObjectAction(singleRecord));
                 menu.show(e.getComponent(), e.getX(), e.getY());
             }catch(ObjectActionException ex){
                 getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, ex.getMessage());

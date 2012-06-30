@@ -28,7 +28,7 @@ public interface LocalClassMetadataLight extends Transferable{
             new DataFlavor(LocalClassMetadataLight.class,"Object/LocalClassMetadataLight");
     public String getClassName();
     public String getDisplayName();
-    public Boolean isAbstract();
+    public boolean isAbstract();
     public Long getOid();
     public Image getSmallIcon();
     public void setSmallIcon(Image newIcon);
@@ -38,5 +38,6 @@ public interface LocalClassMetadataLight extends Transferable{
      * @return value for the given validator. false if the validator is not present
      */
     public int getValidator(String validatorName);
-    public Boolean isViewable();
+    public boolean isViewable();
+    public boolean isListType();
 }

@@ -29,16 +29,16 @@ import org.openide.util.Lookup;
  * Action to create a new list type item
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class Create extends AbstractAction{
+public final class CreateListTypeAction extends AbstractAction{
     private ListTypeNode node;
     private CommunicationsStub com;
 
-    public Create(){
+    public CreateListTypeAction(){
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
         com = CommunicationsStub.getInstance();
     }
 
-    public Create(ListTypeNode _node) {
+    public CreateListTypeAction(ListTypeNode _node) {
         this();
         this.node = _node;
     }

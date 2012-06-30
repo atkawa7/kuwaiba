@@ -137,10 +137,10 @@ public class ObjectViewService implements LookupListener{
        else{
            viewBuilder = new ViewBuilder(defaultView, vrtc.getScene());
            viewBuilder.buildView();
-           if (viewBuilder.getMyView().getIsDirty()){
+           if (defaultView.isDirty()){
                vrtc.getNotifier().showSimplePopup("View changes", NotificationUtil.WARNING, "Some elements in the view has been deleted since the last time it was opened. They were removed");
                vrtc.getScene().fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGETOSAVE, "Removing old objects"));
-               viewBuilder.getMyView().setIsDirty(false);
+               defaultView.setDirty(false);
            }
        }
        for (Widget node : vrtc.getScene().getNodesLayer().getChildren()){

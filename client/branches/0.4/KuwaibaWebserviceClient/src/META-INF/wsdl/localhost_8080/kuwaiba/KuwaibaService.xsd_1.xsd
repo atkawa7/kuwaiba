@@ -303,8 +303,9 @@
 <xs:sequence>
 <xs:element name="id" type="xs:long" minOccurs="0"/>
 <xs:element name="abstractClass" type="xs:boolean" minOccurs="0"/>
-<xs:element name="validators" type="tns:validator" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="viewable" type="xs:boolean" minOccurs="0"/>
+<xs:element name="listType" type="xs:boolean" minOccurs="0"/>
+<xs:element name="validators" type="tns:validator" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
 <xs:element name="displayName" type="xs:string" minOccurs="0"/>
 <xs:element name="parentClassName" type="xs:string" minOccurs="0"/>
@@ -885,7 +886,9 @@
 </xs:complexType>
 
 <xs:complexType name="createGroupResponse">
-<xs:sequence/>
+<xs:sequence>
+<xs:element name="return" type="xs:long" minOccurs="0"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="addPossibleChildrenByClassName">
@@ -1044,7 +1047,9 @@
 </xs:complexType>
 
 <xs:complexType name="createUserResponse">
-<xs:sequence/>
+<xs:sequence>
+<xs:element name="return" type="xs:long" minOccurs="0"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="deleteGroups">

@@ -50,7 +50,7 @@ public interface LocalObjectView {
 
     public void parseXML(byte[] structure) throws XMLStreamException;
 
-    public boolean getIsDirty();
+    public boolean isDirty();
 
-    public void setIsDirty(boolean value);
+    public void setDirty(boolean value);
 }

@@ -33,22 +33,22 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Action to delete an object
+ * Action to delete a business object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=ObjectAction.class)
-public final class DeleteObjectAction extends AbstractAction implements ObjectAction {
+public final class DeleteBusinessObjectAction extends AbstractAction implements ObjectAction {
 
     private ObjectNode node;
 
-    public DeleteObjectAction() {
+    public DeleteBusinessObjectAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE"));
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
         putValue(MNEMONIC_KEY,KeyEvent.VK_D);
     }
 
 
-    public DeleteObjectAction(ObjectNode _node) {
+    public DeleteBusinessObjectAction(ObjectNode _node) {
         this();
         this.node = _node;
     }
@@ -80,6 +80,6 @@ public final class DeleteObjectAction extends AbstractAction implements ObjectAc
 
     @Override
     public int getType() {
-        return ObjectAction.DELETE;
+        return ObjectAction.DELETE_BUSINESS_OBJECT;
     }
 }

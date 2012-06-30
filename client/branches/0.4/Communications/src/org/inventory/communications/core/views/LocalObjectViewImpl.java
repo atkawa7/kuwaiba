@@ -69,7 +69,7 @@ public class LocalObjectViewImpl  implements LocalObjectView {
     /**
      * Mark the current view as outdated
      */
-    private boolean isDirty = false;
+    private boolean dirty = false;
 
     public LocalObjectViewImpl() {    }
 
@@ -159,7 +159,7 @@ public class LocalObjectViewImpl  implements LocalObjectView {
                     if (lol != null)
                         nodes.add(new LocalNodeImpl(lol, xCoordinate, yCoordinate));
                     else
-                        isDirty = true;
+                        dirty = true;
                 }else{
                     if (reader.getName().equals(qEdge)){
                         Long objectId = Long.valueOf(reader.getAttributeValue(null,"id"));
@@ -168,35 +168,42 @@ public class LocalObjectViewImpl  implements LocalObjectView {
 
                         String className = reader.getAttributeValue(null,"class");
                         LocalObject container = CommunicationsStub.getInstance().getObjectInfo(className, objectId);
-                        LocalEdgeImpl myLocalEdge = new LocalEdgeImpl(container,null);
+                        if (container != null){
+                            LocalEdgeImpl myLocalEdge = new LocalEdgeImpl(container,null);
 
-                        for (LocalNode myNode : nodes){
+                            for (LocalNode myNode : nodes){
 
-                            if (aSide.equals(myNode.getObject().getOid())) //NOI18N
-                                myLocalEdge.setaSide(myNode);
-                            else{
-                                if (bSide.equals(myNode.getObject().getOid())) //NOI18N
-                                   myLocalEdge.setbSide(myNode);
+                                if (aSide.equals(myNode.getObject().getOid())) //NOI18N
+                                    myLocalEdge.setaSide(myNode);
+                                else{
+                                    if (bSide.equals(myNode.getObject().getOid())) //NOI18N
+                                       myLocalEdge.setbSide(myNode);
+                                }
+
+                                if (myLocalEdge.getaSide() != null && myLocalEdge.getbSide() != null)
+                                    break;
                             }
-
-                            if (myLocalEdge.getaSide() != null && myLocalEdge.getbSide() != null)
-                                break;
-                        }
-                        if (myLocalEdge.getaSide() == null || myLocalEdge.getbSide() == null)
-                            isDirty = true;
-                        else{
-                            edges.add(myLocalEdge);
-                        }
+                            if (myLocalEdge.getaSide() == null || myLocalEdge.getbSide() == null)
+                                dirty = true;
+                            else{
+                                edges.add(myLocalEdge);
+                                while(true){
+                                    reader.nextTag();
+                                    if (reader.getName().equals(qControlPoint)){
+                                        edges.get(edges.size() -1).getControlPoints().
+                                                add(new Point(Double.valueOf(reader.getAttributeValue(null,"x")).intValue(), //NOI18N
+                                                Double.valueOf(reader.getAttributeValue(null,"y")).intValue()));             //NOI18N
+                                    }else break;
+                                }
+                            }
+                        }else
+                            dirty = true;
                     }else{
                         if (reader.getName().equals(qLabel)){
-                            //Unavailable by now
+                            //Unavailable for now
                         }
                         else{
-                            if (reader.getName().equals(qControlPoint)){
-                                edges.get(edges.size() -1).getControlPoints().
-                                        add(new Point(Double.valueOf(reader.getAttributeValue(null,"x")).intValue(), //NOI18N
-                                        Double.valueOf(reader.getAttributeValue(null,"y")).intValue()));             //NOI18N
-                            }
+                            //An unknown discardable tag
                         }
                     }
                 }
@@ -205,11 +212,11 @@ public class LocalObjectViewImpl  implements LocalObjectView {
         reader.close();
     }
 
-    public boolean getIsDirty(){
-        return this.isDirty;
+    public boolean isDirty(){
+        return this.dirty;
     }
 
-    public void setIsDirty(boolean value) {
-        this.isDirty = value;
+    public void setDirty(boolean value) {
+        this.dirty = value;
     }
 }

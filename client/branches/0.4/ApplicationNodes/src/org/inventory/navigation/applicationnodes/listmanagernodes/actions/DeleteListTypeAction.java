@@ -37,18 +37,18 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=ObjectAction.class)
-public final class Delete extends AbstractAction implements ObjectAction {
+public final class DeleteListTypeAction extends AbstractAction implements ObjectAction {
 
     private ListTypeItemNode node;
 
-    public Delete() {
+    public DeleteListTypeAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE"));
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
         putValue(MNEMONIC_KEY,KeyEvent.VK_D);
     }
 
 
-    public Delete(ListTypeItemNode node) {
+    public DeleteListTypeAction(ListTypeItemNode node) {
         this();
         this.node = node;
     }
@@ -62,7 +62,7 @@ public final class Delete extends AbstractAction implements ObjectAction {
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             if (CommunicationsStub.getInstance().deleteListTypeItem(node.getObject().getClassName(),
                     node.getObject().getOid(),false)){
-                if (node.getParentNode() != null) //Delete can be called for nodes outside the tree structure
+                if (node.getParentNode() != null) //DeleteListTypeAction can be called for nodes outside the tree structure
                                                   //e.g. In a search result list
                     ((ObjectChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
                 nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
@@ -82,6 +82,6 @@ public final class Delete extends AbstractAction implements ObjectAction {
 
     @Override
     public int getType() {
-        return ObjectAction.DELETE;
+        return ObjectAction.DELETE_LIST_TYPE;
     }
 }

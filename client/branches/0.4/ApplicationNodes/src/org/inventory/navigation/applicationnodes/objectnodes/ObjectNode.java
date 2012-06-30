@@ -36,8 +36,8 @@ import org.inventory.core.services.api.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.Constants;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateObjectAction;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteObjectAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateBusinessObjectAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RelateToServiceAction;
@@ -72,8 +72,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
     protected CommunicationsStub com;
 
-    protected CreateObjectAction createAction;
-    protected DeleteObjectAction deleteAction;
+    protected CreateBusinessObjectAction createAction;
+    protected DeleteBusinessObjectAction deleteAction;
     protected RefreshObjectAction refreshAction;
     protected EditObjectAction editAction;
     private RelateToServiceAction relateToServiceAction;
@@ -95,7 +95,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
         editAction = new EditObjectAction(this);
-        deleteAction = new DeleteObjectAction(this);
+        deleteAction = new DeleteBusinessObjectAction(this);
         refreshAction = new RefreshObjectAction(this);
     }
     
@@ -109,8 +109,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         icon = (com.getMetaForClass(_lol.getClassName(),false)).getSmallIcon();
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
 
-        createAction = new CreateObjectAction(this);
-        deleteAction = new DeleteObjectAction(this);
+        createAction = new CreateBusinessObjectAction(this);
+        deleteAction = new DeleteBusinessObjectAction(this);
         editAction = new EditObjectAction(this);
         refreshAction = new RefreshObjectAction(this);
         if (object.getValidator("isRelatableToService") == 1){
