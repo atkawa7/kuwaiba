@@ -16,7 +16,6 @@
 
 package org.kuwaiba.apis.persistence.exceptions;
 
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 /**
@@ -26,8 +25,7 @@ import java.util.logging.Level;
 public class OperationNotPermittedException extends InventoryException{
 
     public OperationNotPermittedException(String operationName, String reason) {
-        super(ResourceBundle.getBundle("org/kuwaiba/Bundle").
-                getString("LBL_OPERATIONNOTPERMITTED")+operationName+", "+reason, Level.WARNING);
+        super(reason, Level.WARNING);
     }
 
 }

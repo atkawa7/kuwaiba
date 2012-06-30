@@ -48,12 +48,7 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
 
     @Override
     public void closeConnection() {
-        System.out.println();
-        System.out.println( "Shutting down database ..." );
-        // START SNIPPET: shutdownServer
         graphDb.shutdown();
-        
-        // END SNIPPET: shutdownServer
     }
 
     @Override

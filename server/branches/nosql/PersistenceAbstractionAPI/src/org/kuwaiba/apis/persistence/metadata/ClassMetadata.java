@@ -51,10 +51,6 @@ public class ClassMetadata extends ClassMetadataLight{
      */
     private byte[] icon;
     /**
-     *  Is this class a list type (Vendor, LocationOwner, OpticalLinkType, etc)
-     */
-    private boolean listType;
-    /**
      *  Classmetada's attributes
      */
     private List<AttributeMetadata> attributes;
@@ -112,14 +108,6 @@ public class ClassMetadata extends ClassMetadataLight{
 
     public void setInterfaces(List<InterfaceMetadata> interfaces) {
         this.interfaces = interfaces;
-    }
-
-    public boolean isListType() {
-        return listType;
-    }
-
-    public void setListType(boolean listType) {
-        this.listType = listType;
     }
 
     public byte[] getIcon() {

@@ -39,13 +39,17 @@ public class ClassMetadataLight implements Serializable{
     /**
      * Instances of this class can have views associated (this going to be "true" for all subclasses of ViewableObject)
      */
-    private Boolean viewable;
+    private boolean viewable;
 
     /**
      * Indicates if a class can have instances by itself (All GenericXXX classes
      * and others in package entity.core are used to take advantage of OOP)
      */
-    protected Boolean abstractClass;
+    private boolean abstractClass;
+    /**
+     *  Is this class a list type (Vendor, LocationOwner, OpticalLinkType, etc)
+     */
+    private boolean listType;
     /**
      *  The parent ClassMetada name
      */
@@ -78,8 +82,12 @@ public class ClassMetadataLight implements Serializable{
         this.id = id;
     }
 
-    public Boolean getAbstractClass() {
-        return abstractClass;
+    public boolean isListType() {
+        return listType;
+    }
+
+    public void setListType(boolean listType) {
+        this.listType = listType;
     }
 
     public void setAbstractClass(Boolean abstractClass) {
@@ -90,16 +98,12 @@ public class ClassMetadataLight implements Serializable{
         return abstractClass;
     }
 
-    public Boolean getViewable() {
+    public boolean isViewable() {
         return viewable;
     }
 
     public void setViewable(Boolean viewable) {
         this.viewable = viewable;
-    }
-
-    public Boolean isViewable() {
-        return viewable;
     }
 
     public String getName() {
