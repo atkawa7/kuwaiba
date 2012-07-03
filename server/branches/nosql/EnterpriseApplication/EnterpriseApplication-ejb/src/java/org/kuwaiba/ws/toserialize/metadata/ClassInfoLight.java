@@ -29,8 +29,9 @@ import org.kuwaiba.ws.toserialize.application.Validator;
 public class ClassInfoLight {
     protected Long id;
     protected Boolean abstractClass;
-    protected Validator[] validators;
     protected Boolean viewable;
+    protected Boolean listType;
+    protected Validator[] validators;
     protected String className;
     protected String displayName;
     protected String parentClassName;
@@ -50,10 +51,11 @@ public class ClassInfoLight {
         this.displayName = myClassLight.getDisplayName();
         this.validators = validators;
         this.viewable = myClassLight.isViewable();
+        this.listType = myClassLight.isListType();
     }
 
     public ClassInfoLight(Long id, String name, String displayName,Validator[] validators, boolean isViewable,
-            boolean isAbstract, byte[] smallIcon) {
+            boolean isAbstract, boolean isListType, byte[] smallIcon) {
         this.id = id;
         this.abstractClass = isAbstract;
         this.validators = validators;
@@ -61,6 +63,7 @@ public class ClassInfoLight {
         this.className = name;
         this.displayName = displayName;
         this.smallIcon = smallIcon;
+        this.listType = isListType;
     }
 
     public String getClassName() {
@@ -133,6 +136,14 @@ public class ClassInfoLight {
 
     public void setValidators(Validator[] validators) {
         this.validators = validators;
+    }
+
+    public Boolean getListType() {
+        return listType;
+    }
+
+    public void setListType(Boolean listType) {
+        this.listType = listType;
     }
 
     @Override
