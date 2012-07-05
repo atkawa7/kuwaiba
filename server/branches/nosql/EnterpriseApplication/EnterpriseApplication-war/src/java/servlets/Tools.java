@@ -62,9 +62,11 @@ public class Tools extends HttpServlet {
         out.println("<html>");
         out.println("<head>");
         out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"css/main.css\" />");
+        out.println("<link rel=\"shortcut icon\" href=\"images/favicon.ico\" />");
         out.println("<title>Kuwaiba Management Tools</title>");
         out.println("</head>");
         out.println("<body>");
+        out.println("<br/>");
         out.println("<div style=\"text-align:center\"><a href=\"http://www.kuwaiba.org\"><img alt=\"http://www.kuwaiba.org\" src=\"images/kuwaiba_logo.png\"/></a></div>");
         try {
             if (request.getParameter("tool") != null){
@@ -79,13 +81,17 @@ public class Tools extends HttpServlet {
                         out.println("<div class= \"error\">Unknown tool</div>");
                 }
             } else {
+                out.println("<br/>");
+                out.println("<div id=\"content\">");
                 out.println("<ul>");
 //                out.println("<li><a href=\"?tool=backup_metadata\">Backup class metadata and containment information</a></li>");
 //                out.println("<li><a href=\"?tool=rebuild_metadata\">Refresh Cache</a></li>");
 //                out.println("<li><a href=\"?tool=restore_metadata\">Restore class metadata from file</a></li>");
                 out.println("<li><a href=\"?tool=default_groups\">Create default groups</a>: Create the default groups (Administrators and Users). You must create them BEFORE creating the default admin user</li>");
+                out.println("<br/>");
                 out.println("<li><a href=\"?tool=resetadmin\">Create/Reset admin account</a>: Creates a default account with administrator privileges (<strong>user:</strong>admin, <strong>password:</strong>kuwaiba). The default groups MUST exist prior to call this action</li>");
                 out.println("</ul>");
+                out.println("</div>");
            }
 
 
