@@ -16,6 +16,7 @@
 
 package org.kuwaiba.persistenceservice.impl;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -48,7 +49,6 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.helpers.collection.IteratorUtil;
@@ -227,62 +227,18 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         return new Long(newUser.getId());
     }
 
-     public void setUserProperties(Long oid, String userName, String password, String firstName,
+    public void setUserProperties(Long oid, String userName, String password, String firstName,
             String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
-            throws InvalidArgumentException, ObjectNotFoundException
-    {
-        Transaction tx = null;
-        try{
-            tx =  graphDb.beginTx();
-            Node userNode = userIndex.get(UserProfile.PROPERTY_ID, oid).getSingle();
+            throws InvalidArgumentException, ObjectNotFoundException {
+        Node userNode = userIndex.get(UserProfile.PROPERTY_ID, oid).getSingle();
+        setUserProperties(userNode, userName, password, firstName, lastName, enabled, privileges, groups);
+    }
 
-            if(userName != null){
-                if (userName.trim().equals("")) //NOI18N
-                    throw new InvalidArgumentException("User name can't be an empty string", Level.INFO);
-
-                if (cm.getUser(userName) == null)
-                {
-                    Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,userName).getSingle();
-                    if (storedUser != null)
-                        throw new InvalidArgumentException(Util.formatString("The username %1s is already in use", userName), Level.WARNING);
-                }
-                //refresh the userindex
-                userIndex.remove(userNode, UserProfile.PROPERTY_USERNAME, (String)userNode.getProperty(UserProfile.PROPERTY_USERNAME));
-                userNode.setProperty(UserProfile.PROPERTY_USERNAME, userName);
-                userIndex.putIfAbsent(userNode, UserProfile.PROPERTY_USERNAME, userName);
-            }
-
-            if(password != null){
-                if (password.trim().equals("")) //NOI18N
-                    throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
-
-                userNode.setProperty(UserProfile.PROPERTY_PASSWORD, Util.getMD5Hash(password));
-            }
-
-            if(firstName != null)
-                userNode.setProperty(UserProfile.PROPERTY_FIRST_NAME, firstName);
-
-            if(lastName != null)
-                userNode.setProperty(UserProfile.PROPERTY_LAST_NAME, lastName);
-            
-            if(groups != null){
-                Iterable<Relationship> relationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP);
-                for (Relationship relationship : relationships) {
-                    relationship.delete();
-                }
-
-                for (Long id : groups) {
-                    Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
-                        userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
-                }
-            }
-            tx.success();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex.getMessage());
-        } finally {
-            if(tx != null)
-                tx.finish();
-        }
+    public void setUserProperties(String formerUsername, String userName, String password, 
+            String firstName, String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
+            throws InvalidArgumentException, ObjectNotFoundException {
+        Node userNode = userIndex.get(UserProfile.PROPERTY_USERNAME, formerUsername).getSingle();
+        setUserProperties(userNode, userName, password, firstName, lastName, enabled, privileges, groups);
     }
 
     public Long createGroup(String groupName, String description, 
@@ -1023,5 +979,64 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 rsltrcrdList.add(Util.createResultRecordFromNode(node, query.getClassName(), visibleAttributeNames));
         }
         return rsltrcrdList;
+    }
+
+    /**
+     * Actual methods to support polyphormism
+     */
+    public void setUserProperties(Node userNode, String userName, String password, String firstName,
+            String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
+            throws InvalidArgumentException, ObjectNotFoundException    {
+        Transaction tx = null;
+        try{
+            tx =  graphDb.beginTx();
+
+            if(userName != null){
+                if (userName.trim().equals("")) //NOI18N
+                    throw new InvalidArgumentException("Username can not be an empty string", Level.INFO);
+
+                if (cm.getUser(userName) == null)
+                {
+                    Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,userName).getSingle();
+                    if (storedUser != null)
+                        throw new InvalidArgumentException(Util.formatString("The username %1s is already in use", userName), Level.WARNING);
+                }
+                //refresh the userindex
+                userIndex.remove(userNode, UserProfile.PROPERTY_USERNAME, (String)userNode.getProperty(UserProfile.PROPERTY_USERNAME));
+                userNode.setProperty(UserProfile.PROPERTY_USERNAME, userName);
+                userIndex.putIfAbsent(userNode, UserProfile.PROPERTY_USERNAME, userName);
+            }
+
+            if(password != null){
+                if (password.trim().equals("")) //NOI18N
+                    throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
+
+                userNode.setProperty(UserProfile.PROPERTY_PASSWORD, Util.getMD5Hash(password));
+            }
+
+            if(firstName != null)
+                userNode.setProperty(UserProfile.PROPERTY_FIRST_NAME, firstName);
+
+            if(lastName != null)
+                userNode.setProperty(UserProfile.PROPERTY_LAST_NAME, lastName);
+
+            if(groups != null){
+                Iterable<Relationship> relationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP);
+                for (Relationship relationship : relationships) {
+                    relationship.delete();
+                }
+
+                for (Long id : groups) {
+                    Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
+                        userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
+                }
+            }
+            tx.success();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex.getMessage());
+        } finally {
+            if(tx != null)
+                tx.finish();
+        }
     }
 }

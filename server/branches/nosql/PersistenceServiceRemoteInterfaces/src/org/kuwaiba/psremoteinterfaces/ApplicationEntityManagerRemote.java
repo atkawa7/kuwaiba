@@ -63,8 +63,9 @@ public interface ApplicationEntityManagerRemote extends Remote{
             throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
     /**
-     * Creates a user
-     * @param userName New user's name. Mandatory.
+     * Updates the information of a given user using the id to search for it
+     * @param oid user's oid. Mandatory
+     * @param userName New user's name.
      * @param password New user's password. Use null to leave it unchanged
      * @param firstName New user's first name. Use null to leave it unchanged
      * @param lastName New user's last name. Use null to leave it unchanged
@@ -78,6 +79,22 @@ public interface ApplicationEntityManagerRemote extends Remote{
             String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
             throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
+    /**
+     * Updates the information of a given user using the id to search for it
+     * @param formerUsername Former username. Mandatory
+     * @param userName New user's name. Mandatory.
+     * @param password New user's password. Use null to leave it unchanged
+     * @param firstName New user's first name. Use null to leave it unchanged
+     * @param lastName New user's last name. Use null to leave it unchanged
+     * @param privileges New user's privileges. See Privileges class documentation for a list of available permissions. Use null to leave it unchanged
+     * @param groups A list with the ids of the groups this user will belong to. Use null to leave it unchanged
+     * @return The id of the newly created user
+     * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
+     * @throws ObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
+     */
+    public void setUserProperties(String formerUsername, String userName, String password, String firstName,
+            String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
+            throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
 
     /**
      * Creates a group
