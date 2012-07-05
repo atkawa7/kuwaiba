@@ -988,8 +988,10 @@ public class CommunicationsStub {
             List<StringArray> values = new ArrayList<StringArray>();
             StringArray valueName = new StringArray();
             valueName.getItem().add(name);
+
             StringArray valueType = new StringArray();
-            valueName.getItem().add(name);
+            valueType.getItem().add(type);
+
             values.add(valueName);
             values.add(valueType);
 

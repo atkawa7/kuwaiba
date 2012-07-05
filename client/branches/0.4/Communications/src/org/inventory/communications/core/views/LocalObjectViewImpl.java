@@ -19,7 +19,7 @@ package org.inventory.communications.core.views;
 import java.awt.Image;
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
-/*import java.io.FileOutputStream;*/
+//import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -71,23 +71,26 @@ public class LocalObjectViewImpl  implements LocalObjectView {
      */
     private boolean dirty = false;
 
-    public LocalObjectViewImpl() {    }
-
-
-    public LocalObjectViewImpl(byte[] viewStructure, byte[] _background, int viewType) {
-        this.background = Utils.getImageFromByteArray(_background);
-        this.viewType = viewType;
+    public LocalObjectViewImpl() {    
         nodes = new ArrayList<LocalNode>();
         edges = new ArrayList<LocalEdge>();
         labels = new ArrayList<LocalLabel>();
+    }
+
+
+    public LocalObjectViewImpl(byte[] viewStructure, byte[] _background, int viewType) {
+        this();
+        this.background = Utils.getImageFromByteArray(_background);
+        this.viewType = viewType;
+        
         if (viewStructure != null){
             /* Comment this out for debugging purposes
             try{
                 FileOutputStream fos = new FileOutputStream("/home/zim/out.xml");
                 fos.write(viewStructure);
                 fos.close();
-            }catch(Exception e){}
-             */
+            }catch(Exception e){}*/
+             
             try {
                 parseXML(viewStructure);
             } catch (XMLStreamException ex) {
@@ -140,9 +143,9 @@ public class LocalObjectViewImpl  implements LocalObjectView {
         ByteArrayInputStream bais = new ByteArrayInputStream(structure);
         XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
 
-        nodes.removeAll(nodes);
-        edges.removeAll(edges);
-        labels.removeAll(labels);
+        nodes.clear();
+        edges.clear();
+        labels.clear();
 
         while (reader.hasNext()){
             int event = reader.next();
@@ -190,9 +193,10 @@ public class LocalObjectViewImpl  implements LocalObjectView {
                                 while(true){
                                     reader.nextTag();
                                     if (reader.getName().equals(qControlPoint)){
-                                        edges.get(edges.size() -1).getControlPoints().
-                                                add(new Point(Double.valueOf(reader.getAttributeValue(null,"x")).intValue(), //NOI18N
-                                                Double.valueOf(reader.getAttributeValue(null,"y")).intValue()));             //NOI18N
+                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                            edges.get(edges.size() -1).getControlPoints().
+                                                    add(new Point(Double.valueOf(reader.getAttributeValue(null,"x")).intValue(), //NOI18N
+                                                    Double.valueOf(reader.getAttributeValue(null,"y")).intValue()));             //NOI18N
                                     }else break;
                                 }
                             }
