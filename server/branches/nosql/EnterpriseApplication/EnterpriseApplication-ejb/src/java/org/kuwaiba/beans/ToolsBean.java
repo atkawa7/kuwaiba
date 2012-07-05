@@ -36,26 +36,19 @@ import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 public class ToolsBean implements ToolsBeanRemote {
     private static ApplicationEntityManagerRemote aem;
     @Override
-    public boolean resetAdmin() {
-        try {
-            List<Long> listGroups = new ArrayList<Long>();
-            listGroups.add(getAEMInstance().createGroup("admins", "admins group", null, null));
-            listGroups.add(getAEMInstance().createGroup("users", "users group", null, null));
-            
-            if (getAEMInstance().createUser("admin", "kuwaiba", "Administrator", "Dummy", true, null, listGroups) == null)
-                return false;
-
-            return true;
-        } catch (InvalidArgumentException ex) {
-            Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        } catch (ObjectNotFoundException ex) {
-            Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        } catch (RemoteException ex) {
-            Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+    public void resetAdmin() throws Exception {
+        try{
+            getAEMInstance().setUserProperties("admin",null, "kuwaiba", "Tyler", "Durden", true, null, null);
+        }catch(ObjectNotFoundException ex){
+            getAEMInstance().createUser("admin", "kuwaiba", "Tyler", "Durden", true, null, null);
         }
+        
+    }
+
+    @Override
+    public void createDefaultGroups() throws Exception{
+            getAEMInstance().createGroup("Administrators", "Administrators Group", null, null);
+            getAEMInstance().createGroup("Users", "Standard Users Group", null, null);
     }
     
     private static ApplicationEntityManagerRemote getAEMInstance(){

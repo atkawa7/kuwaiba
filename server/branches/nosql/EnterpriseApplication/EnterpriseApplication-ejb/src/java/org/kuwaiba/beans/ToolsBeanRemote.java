@@ -27,5 +27,7 @@ public interface ToolsBeanRemote {
     /**
      * Resets/create admin account (sets it to user <b>admin</b> password <b>kuwaiba</b>)
      */
-    public boolean resetAdmin();
+    public void resetAdmin() throws Exception;
+
+    public void createDefaultGroups() throws Exception;
 }

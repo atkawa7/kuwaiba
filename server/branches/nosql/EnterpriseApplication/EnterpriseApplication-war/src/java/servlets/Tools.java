@@ -65,29 +65,39 @@ public class Tools extends HttpServlet {
         out.println("<title>Kuwaiba Management Tools</title>");
         out.println("</head>");
         out.println("<body>");
+        out.println("<div style=\"text-align:center\"><a href=\"http://www.kuwaiba.org\"><img alt=\"http://www.kuwaiba.org\" src=\"images/kuwaiba_logo.png\"/></a></div>");
         try {
             if (request.getParameter("tool") != null){
                 if (request.getParameter("tool").equals("resetadmin")){
-                    out.println("<h1>Admin account reset successfully</h1>");
                     tbr.resetAdmin();
-                }else
-                    out.println("<h1>Unknown tool</h1>");
+                    out.println("<div>Admin account reset successfully</div>");
+                }else{
+                    if (request.getParameter("tool").equals("default_groups")){
+                        tbr.createDefaultGroups();
+                        out.println("<div>Default groups created successfully</div>");
+                    }else
+                        out.println("<div class= \"error\">Unknown tool</div>");
+                }
             } else {
-                out.println("<h1>Kuwaiba Management Tools Portal</h1>");
                 out.println("<ul>");
-                out.println("<li><a href=\"?tool=backup_metadata\">Backup class metadata and containment information</a></li>");
-                out.println("<li><a href=\"?tool=rebuild_metadata\">Refresh Cache</a></li>");
-                out.println("<li><a href=\"?tool=restore_metadata\">Restore class metadata from file</a></li>");
-                out.println("<li><a href=\"?tool=resetadmin\">Create/Reset admin account </a></li>");
+//                out.println("<li><a href=\"?tool=backup_metadata\">Backup class metadata and containment information</a></li>");
+//                out.println("<li><a href=\"?tool=rebuild_metadata\">Refresh Cache</a></li>");
+//                out.println("<li><a href=\"?tool=restore_metadata\">Restore class metadata from file</a></li>");
+                out.println("<li><a href=\"?tool=default_groups\">Create default groups</a>: Create the default groups (Administrators and Users). You must create them BEFORE creating the default admin user</li>");
+                out.println("<li><a href=\"?tool=resetadmin\">Create/Reset admin account</a>: Creates a default account with administrator privileges (<strong>user:</strong>admin, <strong>password:</strong>kuwaiba). The default groups MUST exist prior to call this action</li>");
                 out.println("</ul>");
            }
-            out.println("<a href=\"/kuwaiba/Tools\">Back</a>");
+
 
         } catch (Exception e){
-            out.println("<h1>Oops! Houston, we have a problem</h1>");
+            out.println("<div style=\"error\">Oops! Houston, we have a problem. Check your server logs for details</div>");
             e.printStackTrace();
         }
         finally {
+            out.println("<div style=\"padding-top:300px;\">");
+            out.println("<div style=\"text-align:center; padding: 5px 5px 5px 5px\"><a href=\"/kuwaiba/\">Home</a></div>");
+            out.println("<div style=\"text-align:center;\"><a href=\"http://www.neotropic.co\"><img alt=\"http://www.neotropic.co\" src=\"images/neotropic_logo.png\"/></a></div>");
+            out.println("</div>");
             out.println("</body>");
             out.println("</html>");
             out.close();
