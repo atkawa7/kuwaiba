@@ -1,0 +1,39 @@
+@font-face {
+	  font-family: Ubuntu;
+	  src: url('resources/ubuntu_R.eot?') format('eot'),
+               url('/resources/ubuntu_R.ttf'),
+               url('/resources/ubuntu_R.ttf') format('truetype');
+}
+
+body{
+    font-family: Ubuntu,verdana,helvetica,arial,sans-serif;
+    font-size: 0.95em;
+    color:#777777;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+}
+a{
+    color: #55d400;
+    text-decoration:none;
+}
+
+a:hover{
+    text-decoration:underline;
+}
+
+#content{
+    padding: 0 15% 0 5%;
+    text-align: justify;
+    height: 50%;
+    width: 80%;
+    float: left;
+}
+
+#footer{
+    width: 100%;
+    text-align: center;
+    height: 20%;
+    float: left;
+}
