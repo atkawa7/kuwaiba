@@ -16,7 +16,6 @@
 
 package org.kuwaiba.persistenceservice.impl;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -36,6 +35,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.apis.persistence.exceptions.UserGroupNotFoundException;
 import org.kuwaiba.apis.persistence.interfaces.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
@@ -154,7 +154,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
     public Long createUser(String userName, String password, String firstName, 
             String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups) 
-            throws InvalidArgumentException, ObjectNotFoundException
+            throws InvalidArgumentException
     {
         if (userName == null)
             throw new InvalidArgumentException("User name can't be null", Level.INFO);
@@ -229,20 +229,127 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
     public void setUserProperties(Long oid, String userName, String password, String firstName,
             String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
-            throws InvalidArgumentException, ObjectNotFoundException {
-        Node userNode = userIndex.get(UserProfile.PROPERTY_ID, oid).getSingle();
-        setUserProperties(userNode, userName, password, firstName, lastName, enabled, privileges, groups);
+            throws InvalidArgumentException, UserGroupNotFoundException {
+        Transaction tx = null;
+        try{
+            tx =  graphDb.beginTx();
+
+            Node userNode = userIndex.get(UserProfile.PROPERTY_ID, oid).getSingle();
+            if(userNode == null)
+                throw new UserGroupNotFoundException(Util.formatString("Can not find the user with id %1s",oid));
+
+            if(userName != null){
+                if (userName.trim().equals("")) //NOI18N
+                    throw new InvalidArgumentException("Username can not be an empty string", Level.INFO);
+
+                Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,userName).getSingle();
+                if (storedUser != null)
+                    throw new InvalidArgumentException(Util.formatString("The username %1s is already in use", userName), Level.WARNING);
+                
+                //refresh the userindex
+                userIndex.remove(userNode, UserProfile.PROPERTY_USERNAME, (String)userNode.getProperty(UserProfile.PROPERTY_USERNAME));
+                userNode.setProperty(UserProfile.PROPERTY_USERNAME, userName);
+                userIndex.putIfAbsent(userNode, UserProfile.PROPERTY_USERNAME, userName);
+            }
+
+            if(password != null){
+                if (password.trim().equals("")) //NOI18N
+                    throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
+
+                userNode.setProperty(UserProfile.PROPERTY_PASSWORD, Util.getMD5Hash(password));
+            }
+
+            if(firstName != null)
+                userNode.setProperty(UserProfile.PROPERTY_FIRST_NAME, firstName);
+
+            if(lastName != null)
+                userNode.setProperty(UserProfile.PROPERTY_LAST_NAME, lastName);
+
+            if(groups != null){
+                Iterable<Relationship> relationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP);
+                for (Relationship relationship : relationships) {
+                    relationship.delete();
+                }
+
+                for (Long id : groups) {
+                    Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
+                        userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
+                }
+            }
+            tx.success();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex.getMessage());
+        } finally {
+            if(tx != null)
+                tx.finish();
+        }
     }
 
-    public void setUserProperties(String formerUsername, String userName, String password, 
+    public void setUserProperties(String oldUserName, String newUserName, String password,
             String firstName, String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
-            throws InvalidArgumentException, ObjectNotFoundException {
-        Node userNode = userIndex.get(UserProfile.PROPERTY_USERNAME, formerUsername).getSingle();
-        setUserProperties(userNode, userName, password, firstName, lastName, enabled, privileges, groups);
+            throws InvalidArgumentException, UserGroupNotFoundException {
+        Transaction tx = null;
+        try{
+            tx =  graphDb.beginTx();
+
+            Node userNode = userIndex.get(UserProfile.PROPERTY_USERNAME, oldUserName).getSingle();
+            if(userNode == null)
+                throw new UserGroupNotFoundException(Util.formatString("Can not find the user with username %1s",oldUserName));
+
+            if(newUserName != null){
+                if (newUserName.trim().equals("")) //NOI18N
+                    throw new InvalidArgumentException("Username can not be an empty string", Level.INFO);
+
+                Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,oldUserName).getSingle();
+                if (storedUser != null && !newUserName.equals("admin"))
+                    throw new InvalidArgumentException(Util.formatString("The username %1s is already in use", oldUserName), Level.WARNING);
+
+                //refresh the userindex
+                userIndex.remove(userNode, UserProfile.PROPERTY_USERNAME, (String)userNode.getProperty(UserProfile.PROPERTY_USERNAME));
+                cm.removeUser((String)userNode.getProperty(UserProfile.PROPERTY_USERNAME));
+
+                userNode.setProperty(UserProfile.PROPERTY_USERNAME, newUserName);
+                
+                userIndex.putIfAbsent(userNode, UserProfile.PROPERTY_USERNAME, newUserName);
+                cm.putUser(new UserProfile(userNode.getId(), newUserName,
+                    firstName, lastName, true, (Long)userNode.getProperty(UserProfile.PROPERTY_CREATION_DATE), privileges));
+            }
+
+            if(password != null){
+                if (password.trim().equals("")) //NOI18N
+                    throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
+
+                userNode.setProperty(UserProfile.PROPERTY_PASSWORD, Util.getMD5Hash(password));
+            }
+
+            if(firstName != null)
+                userNode.setProperty(UserProfile.PROPERTY_FIRST_NAME, firstName);
+
+            if(lastName != null)
+                userNode.setProperty(UserProfile.PROPERTY_LAST_NAME, lastName);
+
+            if(groups != null){
+                Iterable<Relationship> relationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP);
+                for (Relationship relationship : relationships) {
+                    relationship.delete();
+                }
+
+                for (Long id : groups) {
+                    Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
+                        userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
+                }
+            }
+            tx.success();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex.getMessage());
+        } finally {
+            if(tx != null)
+                tx.finish();
+        }
     }
 
     public Long createGroup(String groupName, String description, 
-            List<Integer> privileges, List<Long> users) throws InvalidArgumentException, ObjectNotFoundException
+            List<Integer> privileges, List<Long> users) throws InvalidArgumentException
     {
         if (groupName == null)
             throw new InvalidArgumentException("Group name can not be null", Level.INFO);
@@ -293,8 +400,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
-    public List<UserProfile> getUsers() throws InvalidArgumentException, ObjectNotFoundException {
+    public List<UserProfile> getUsers() throws UserGroupNotFoundException
+    {
         IndexHits<Node> usersNodes = userIndex.query(UserProfile.PROPERTY_USERNAME, "*");
+        if(usersNodes == null)
+                throw new UserGroupNotFoundException(Util.formatString("Can not find users"));
+
         List<UserProfile> users = new ArrayList<UserProfile>();
         
         for (Node node : usersNodes)
@@ -305,8 +416,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         return users;
     }
 
-    public List<GroupProfile> getGroups() throws InvalidArgumentException, ObjectNotFoundException {
+    public List<GroupProfile> getGroups() throws UserGroupNotFoundException
+    {
         IndexHits<Node> groupsNodes = groupIndex.query(GroupProfile.PROPERTY_GROUPNAME, "*");
+        if(groupsNodes == null)
+                throw new UserGroupNotFoundException(Util.formatString("Can not find the groups"));
+
         List<GroupProfile> groups =  new ArrayList<GroupProfile>();
         for (Node node : groupsNodes)
         {
@@ -315,13 +430,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         return groups;
     }
 
-    public void setGroupProperties(Long id, String groupName, String description, List<Integer> privileges, List<Long> users) throws InvalidArgumentException, ObjectNotFoundException {
-
+    public void setGroupProperties(Long id, String groupName, String description,
+            List<Integer> privileges, List<Long> users)
+            throws InvalidArgumentException, UserGroupNotFoundException
+    {
         Transaction tx = null;
         try{
             tx = graphDb.beginTx();
 
             Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
+            if(groupNode == null)
+                throw new UserGroupNotFoundException(Util.formatString("Can not find the group with id %1s",id));
 
             if(groupName != null){
                 if (groupName.trim().equals("")) //NOI18N
@@ -334,8 +453,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                         throw new InvalidArgumentException(Util.formatString("The group name %1s is already in use", groupName), Level.WARNING);
                 }
                 groupIndex.remove(groupNode, GroupProfile.PROPERTY_GROUPNAME, (String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME));
+                cm.removeGroup((String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME));
+
                 groupNode.setProperty(GroupProfile.PROPERTY_GROUPNAME, groupName);
                 groupIndex.putIfAbsent(groupNode, GroupProfile.PROPERTY_GROUPNAME, groupName);
+                cm.putGroup(new GroupProfile(groupNode.getId(), groupName,
+                description, (Long)groupNode.getProperty(UserProfile.PROPERTY_CREATION_DATE)));
             }
             
             if(description != null)
@@ -362,7 +485,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
-    public void deleteUsers(List<Long> oids) throws InvalidArgumentException, ObjectNotFoundException {
+    public void deleteUsers(List<Long> oids) throws UserGroupNotFoundException {
         Transaction tx = null;
         try{
             tx = graphDb.beginTx();
@@ -371,7 +494,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 for (Long id : oids)
                 {
                     Node userNode = userIndex.get(UserProfile.PROPERTY_ID, id).getSingle();
-
+                    if(userNode == null)
+                        throw new UserGroupNotFoundException(Util.formatString("Can not find the user with id %1s",id));
                     cm.removeUser((String)userNode.getProperty(UserProfile.PROPERTY_USERNAME));
 
                     Iterable<Relationship> relationships = userNode.getRelationships();
@@ -393,13 +517,16 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
-    public void deleteGroups(List<Long> oids) throws InvalidArgumentException, ObjectNotFoundException {
+    public void deleteGroups(List<Long> oids) throws UserGroupNotFoundException {
         Transaction tx = null;
         try{
             if(oids != null){
                 tx = graphDb.beginTx();
                 for (Long id : oids) {
                     Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
+
+                    if(groupNode == null)
+                        throw new UserGroupNotFoundException(Util.formatString("Can not find the group with id %1s",id));
 
                     cm.removeGroup((String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME));
 
@@ -776,59 +903,48 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     @Override
     public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException {
 
-        Node classNode =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, query.getClassName()).getSingle();
-        Boolean isAbstract = (Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT);
-
+        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, query.getClassName()).getSingle();
+        Boolean isAbstract = (Boolean) classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT);
         String cypherQuery = "";
         String match = "";
         String returnQuery = "instance";
         String whereQuery = "";
-
         Boolean isJoin = false;
-
-        if(classNode == null)
+        if (classNode == null) {
             throw new MetadataObjectNotFoundException(Util.formatString(
-                        "Can not find the query with name %1s", query.getClassName()));//NOI18N
-        
-        //query Params
+                    "Can not find the query with name %1s", query.getClassName()));//NOI18N
+        }//query Params
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("className", query.getClassName());//NOI18N
-
         //limits
-        params.put( "s", (query.getLimit()*(query.getPage()-1)));//NOI18N
-        params.put( "l", query.getLimit());//NOI18N
-
+        params.put("s", (query.getLimit() * (query.getPage() - 1)));//NOI18N
+        params.put("l", query.getLimit());//NOI18N
         List<String> visibleAttributeNames = query.getVisibleAttributeNames();
         List<String> attributeNames = query.getAttributeNames();
         List<String> attributeValues = query.getAttributeValues();
         List<Integer> conditions = query.getConditions();
         //result Records
         List<ResultRecord> rsltrcrdList = new ArrayList<ResultRecord>();
-
-        if(isAbstract){
+        if (isAbstract) {
             cypherQuery = "START abstractClassmetadata = node:classes(name = {className})";//NOI18N
-            match = "MATCH abstractClassmetadata<-[:" + RelTypes.EXTENDS + "]-classmetadata<-[:"+RelTypes.INSTANCE_OF+"]-instance";//NOI18N
-        }
-        else{
+            match = "MATCH abstractClassmetadata<-[:" + RelTypes.EXTENDS + "]-classmetadata<-[:" + RelTypes.INSTANCE_OF + "]-instance";//NOI18N
+        } else {
             cypherQuery = "START classmetadata = node:classes(name = {className})";//NOI18N
             match = "MATCH classmetadata<-[:" + RelTypes.INSTANCE_OF + "]-instance";//NOI18N
         }
-
-        //if nothing has benn selected
-        if(query.getAttributeNames()== null && query.getAttributeValues() == null && query.getConditions() == null && query.getJoins() == null){
+//if nothing has benn selected
+        if (query.getAttributeNames() == null && query.getAttributeValues() == null && query.getConditions() == null && query.getJoins() == null) {
             cypherQuery = cypherQuery.concat(match);
             cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));//NOI18N
-        }
-        //Return statements
-        else{
-            //where statements
+        } //Return statements
+        else {
+//where statements
             for (int i = 0; i < attributeNames.size(); i++) {
                 String condition = "";//NOI18N
                 String where = "";//NOI18N
                 String value = attributeValues.get(i);
-
-                if(attributeValues.get(i) != null){
-                    switch (conditions.get(i)){
+                if (attributeValues.get(i) != null) {
+                    switch (conditions.get(i)) {
                         case ExtendedQuery.EQUAL:
                             condition = "! =~";//NOI18N
                             value = "(?i)".concat(value);//NOI18N
@@ -851,38 +967,29 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                             break;
                     }
                     //the value to looking for
-                    Object newParam = Util.evalAttribute(Util.getTypeOfAttribute(classNode, attributeNames.get(i)),
-                                       attributeNames.get(i),
-                                       value);
-
+                    Object newParam = Util.evalAttributeType(Util.getTypeOfAttribute(classNode, attributeNames.get(i)),
+                            attributeNames.get(i),
+                            value);
                     params.put(attributeNames.get(i),
-                                       newParam);
-
-                    if(Long.class.isInstance(newParam) || Boolean.class.isInstance(newParam) || Float.class.isInstance(newParam) || Integer.class.isInstance(newParam)){
-                        condition = condition.substring(0, condition.length()-1);
+                            newParam);
+                    if (Long.class.isInstance(newParam) || Boolean.class.isInstance(newParam) || Float.class.isInstance(newParam) || Integer.class.isInstance(newParam)) {
+                        condition = condition.substring(0, condition.length() - 1);
                     }
-
                     where = "instance.".concat(attributeNames.get(i)).concat(condition).concat(" {".concat(attributeNames.get(i)).concat("}"));
                 }//end if is not a join value
-
-                else
-                {
+                else {
                     List<ExtendedQuery> joins = query.getJoins();
-
                     for (ExtendedQuery join : joins) {
-                        //if there are no filter in a listTypes, but there is at least a atrribute set a s visible
-                        if(join.getAttributeNames()!= null && join.getAttributeValues() != null)
-                        {
+                    //if there are no filter in a listTypes, but there is at least a atrribute set a s visible
+                        if (join.getAttributeNames() != null && join.getAttributeValues() != null) {
                             List<String> joinAttributeNames = join.getAttributeNames();
                             List<String> joinAttributeValues = join.getAttributeValues();
                             List<Integer> joinConditions = join.getConditions();
-
-                            for(int j=0; j<joinAttributeNames.size(); j++){
+                            for (int j = 0; j < joinAttributeNames.size(); j++) {
                                 String joinCondition = "";
                                 String joinValue = joinAttributeValues.get(j);
-                                
-                                if(joinAttributeValues.get(j) != null){
-                                    switch (joinConditions.get(j)){
+                                if (joinAttributeValues.get(j) != null) {
+                                    switch (joinConditions.get(j)) {
                                         case ExtendedQuery.EQUAL:
                                             joinCondition = "! =~";//NOI18N
                                             joinValue = "(?i)".concat(joinValue);//NOI18N
@@ -905,138 +1012,104 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                                             break;
                                     }
                                     //if is small view
-                                    if(joinAttributeNames.get(j).equals("id")){
+                                    if (joinAttributeNames.get(j).equals("id")) {
                                         params.put(joinAttributeNames.get(j), Long.valueOf(joinAttributeValues.get(j)));
                                         where = "ID(listype)".concat("=").concat(" {".concat(joinAttributeNames.get(j)).concat("}"));//NOI18N
-                                    }
-                                    else{
-                                        Node joinNode =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, join.getClassName()).getSingle();
-
-                                        Object newJoinParam = Util.evalAttribute(Util.getTypeOfAttribute(joinNode, joinAttributeNames.get(j)),
-                                                   joinAttributeNames.get(j),
-                                                   joinValue);
-                                        
+                                    } else {
+                                        Node joinNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, join.getClassName()).getSingle();
+                                        Object newJoinParam = Util.evalAttributeType(Util.getTypeOfAttribute(joinNode, joinAttributeNames.get(j)),
+                                                joinAttributeNames.get(j),
+                                                joinValue);
                                         params.put("join".concat(joinAttributeNames.get(j)),
-                                                   newJoinParam);
-
-                                        if(Long.class.isInstance(newJoinParam) || Boolean.class.isInstance(newJoinParam) || Float.class.isInstance(newJoinParam) || Integer.class.isInstance(newJoinParam)){
-                                            joinCondition = joinCondition.substring(0, joinCondition.length()-1);
+                                                newJoinParam);
+                                        if (Long.class.isInstance(newJoinParam) || Boolean.class.isInstance(newJoinParam) || Float.class.isInstance(newJoinParam) || Integer.class.isInstance(newJoinParam)) {
+                                            joinCondition = joinCondition.substring(0, joinCondition.length() - 1);
                                         }
                                         where = "listype.".concat(joinAttributeNames.get(j)).concat(joinCondition).concat(" {".concat("join".concat(joinAttributeNames.get(j))).concat("}"));//NOI18N
                                     }
-
                                     isJoin = true;
-
                                 }//end if
                             }//end else there ara a filter
                         }//end for
-
                     }//fin for joins
                 }//end else join
-                if(i+1 < attributeNames.size())
-                    whereQuery = whereQuery.concat(where.concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND?" AND ":" OR "));//NOI18N
-                else
+                if (i + 1 < attributeNames.size()) {
+                    whereQuery = whereQuery.concat(where.concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : " OR "));//NOI18N
+                } else {
                     whereQuery = whereQuery.concat(where);
-                
+                }
             }//end for attributeNames
-            if(isJoin)
+            if (isJoin) {
                 match = match.concat("-[:").concat(RelTypes.RELATED_TO.toString()).concat("]->listype");//NOI18N
-
+            }
             cypherQuery = cypherQuery.concat(match);
             //it probably occurs if a listtype atribute is set as visible and a class attributes is visible too
-            if(!whereQuery.isEmpty())
+            if (!whereQuery.isEmpty()) {
                 cypherQuery = cypherQuery.concat(" WHERE ".concat(whereQuery));//NOI18N
-
+            }
             cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));//NOI18N
         }//end else
-
-        if(query.getPage() == 0)
+        if (query.getPage() == 0) {
             cypherQuery = cypherQuery.concat(" ORDER BY instance.name ASC");//NOI18N
-
-        else
+        } else {
             cypherQuery = cypherQuery.concat(" ORDER BY instance.name ASC skip {s} limit {l}");//NOI18N
-
-        ExecutionEngine engine = new ExecutionEngine( graphDb );
+        }
+        ExecutionEngine engine = new ExecutionEngine(graphDb);
         ExecutionResult result = engine.execute(cypherQuery, params);
-
         Iterator<Node> n_column = result.columnAs("instance");
-         //headers
+        //headers
         ResultRecord resltRcrdHeader = new ResultRecord(null, null, null);
-        
-        if(visibleAttributeNames == null){
+        if (visibleAttributeNames == null) {
             visibleAttributeNames = new ArrayList<String>();
             visibleAttributeNames.add(query.getClassName());
         }
-
         resltRcrdHeader.setExtraColumns(visibleAttributeNames);
         rsltrcrdList.add(resltRcrdHeader);
-
-        for (Node node : IteratorUtil.asIterable(n_column))
-        {
-            if(isAbstract)
+        for (Node node : IteratorUtil.asIterable(n_column)) {
+            if (isAbstract) {
                 rsltrcrdList.add(Util.createResultRecordFromNode(node, Util.getClassName(node), visibleAttributeNames));
-            else
+            } else {
                 rsltrcrdList.add(Util.createResultRecordFromNode(node, query.getClassName(), visibleAttributeNames));
+            }
         }
         return rsltrcrdList;
     }
 
-    /**
-     * Actual methods to support polyphormism
-     */
-    public void setUserProperties(Node userNode, String userName, String password, String firstName,
-            String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
-            throws InvalidArgumentException, ObjectNotFoundException    {
-        Transaction tx = null;
-        try{
-            tx =  graphDb.beginTx();
 
-            if(userName != null){
-                if (userName.trim().equals("")) //NOI18N
-                    throw new InvalidArgumentException("Username can not be an empty string", Level.INFO);
+    public void resetAdmin(String oldUserName, String newUserName, String password, String firstName,
+            String lastName, Boolean enabled, List<Integer> privileges) throws InvalidArgumentException{
 
-                if (cm.getUser(userName) == null)
-                {
-                    Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,userName).getSingle();
-                    if (storedUser != null)
-                        throw new InvalidArgumentException(Util.formatString("The username %1s is already in use", userName), Level.WARNING);
-                }
-                //refresh the userindex
-                userIndex.remove(userNode, UserProfile.PROPERTY_USERNAME, (String)userNode.getProperty(UserProfile.PROPERTY_USERNAME));
-                userNode.setProperty(UserProfile.PROPERTY_USERNAME, userName);
-                userIndex.putIfAbsent(userNode, UserProfile.PROPERTY_USERNAME, userName);
-            }
-
-            if(password != null){
+        if(oldUserName != null){
+                if (oldUserName.trim().equals("")) //NOI18N
+                    throw new InvalidArgumentException("OldUsername can not be an empty string", Level.INFO);
+        }
+        if(newUserName != null){
+                if (newUserName.trim().equals("")) //NOI18N
+                    throw new InvalidArgumentException("NewUsername can not be an empty string", Level.INFO);
+        }
+        if(password != null){
                 if (password.trim().equals("")) //NOI18N
-                    throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
+                    throw new InvalidArgumentException("Password can not be an empty string", Level.INFO);
+        }
 
-                userNode.setProperty(UserProfile.PROPERTY_PASSWORD, Util.getMD5Hash(password));
+        Node adminUserNode = userIndex.get(UserProfile.PROPERTY_USERNAME, oldUserName).getSingle();
+
+        Node adminsGroupNode = groupIndex.get(GroupProfile.PROPERTY_GROUPNAME, "Administrators").getSingle();
+        Node usersGroupNode = groupIndex.get(GroupProfile.PROPERTY_GROUPNAME, "Users").getSingle();
+
+        List<Long> listGroups = new ArrayList<Long>();
+        listGroups.add(adminsGroupNode.getId());
+        listGroups.add(usersGroupNode.getId());
+
+        if(adminUserNode == null){
+            createUser(newUserName, password, firstName, lastName, enabled, privileges, listGroups);
+        }
+        else{
+            try {
+                setUserProperties(oldUserName, newUserName, password, firstName, lastName, enabled, privileges, listGroups);
+            } catch (UserGroupNotFoundException ex) {
+                Logger.getLogger(ApplicationEntityManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-            if(firstName != null)
-                userNode.setProperty(UserProfile.PROPERTY_FIRST_NAME, firstName);
-
-            if(lastName != null)
-                userNode.setProperty(UserProfile.PROPERTY_LAST_NAME, lastName);
-
-            if(groups != null){
-                Iterable<Relationship> relationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP);
-                for (Relationship relationship : relationships) {
-                    relationship.delete();
-                }
-
-                for (Long id : groups) {
-                    Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
-                        userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
-                }
-            }
-            tx.success();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex.getMessage());
-        } finally {
-            if(tx != null)
-                tx.finish();
         }
     }
 }
