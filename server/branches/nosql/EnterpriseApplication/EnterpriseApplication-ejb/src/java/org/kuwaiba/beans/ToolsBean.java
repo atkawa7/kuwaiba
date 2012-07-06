@@ -37,12 +37,7 @@ public class ToolsBean implements ToolsBeanRemote {
     private static ApplicationEntityManagerRemote aem;
     @Override
     public void resetAdmin() throws Exception {
-        try{
-            getAEMInstance().setUserProperties("admin",null, "kuwaiba", "Tyler", "Durden", true, null, null);
-        }catch(ObjectNotFoundException ex){
-            getAEMInstance().createUser("admin", "kuwaiba", "Tyler", "Durden", true, null, null);
-        }
-        
+        getAEMInstance().resetAdmin("admin","admin", "kuwaiba", "Tyler", "Durden", true, null);
     }
 
     @Override
