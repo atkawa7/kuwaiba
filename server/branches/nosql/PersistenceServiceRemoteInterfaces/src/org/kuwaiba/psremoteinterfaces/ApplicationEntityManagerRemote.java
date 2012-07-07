@@ -254,9 +254,12 @@ public interface ApplicationEntityManagerRemote extends Remote{
     public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
     /**
-     * Creates the admint user if not exists, if exists it reset the admin user and admin password
-     * @throws UserGroupNotFoundException
+     * Get the data model class hierarchy as an XML document
+     * @param showAll
+     * @return
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException
+     * @throws RemoteException
      */
-    public void resetAdmin(String oldUserName, String newUserName, String password, String firstName,
-            String lastName, Boolean enabled, List<Integer> privileges) throws InvalidArgumentException, RemoteException;
+    public byte[] getClassHierachy(boolean showAll) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 }

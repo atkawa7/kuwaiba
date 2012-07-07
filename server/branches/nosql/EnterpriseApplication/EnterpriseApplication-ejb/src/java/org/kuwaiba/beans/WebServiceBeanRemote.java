@@ -500,6 +500,14 @@ public interface WebServiceBeanRemote {
      * @throws ServerSideException
      */
     public RemoteQuery getQuery(Long queryOid) throws ServerSideException;
+    
+    /**
+     * 
+     * @param showAll
+     * @return a byte representing an XML document with the class hierarchy
+     * @throws ServerSideException If something goes wrong
+     */
+    public byte[] getClassHierarchy(boolean showAll) throws ServerSideException;
 
     /**
      * Verifies if a given user is able to call a webservice method according to its privileges
@@ -508,7 +516,7 @@ public interface WebServiceBeanRemote {
      * @param sessionId Session token
      */
     public void validateCall(String methodName, String ipAddress, String sessionId) throws NotAuthorizedException;
-    
+
     // </editor-fold>
 
 }

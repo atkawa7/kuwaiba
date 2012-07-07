@@ -1403,6 +1403,23 @@ public class WebServiceBean implements WebServiceBeanRemote {
     }
 
     /**
+     * 
+     * @param showAll
+     * @return
+     * @throws ServerSideException
+     */
+    @Override
+    public byte[] getClassHierarchy(boolean showAll) throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            return aem.getClassHierachy(showAll);
+        }catch (Exception ex){
+            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    /**
      * For now, everyone can do everything unless the credentials are invalid or the
      * @param methodName
      * @param ipAddress

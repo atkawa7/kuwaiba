@@ -16,6 +16,10 @@
 
 package org.kuwaiba.persistenceservice.impl;
 
+import com.ociweb.xml.StartTagWAX;
+import com.ociweb.xml.WAX;
+import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -40,6 +44,7 @@ import org.kuwaiba.apis.persistence.interfaces.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.persistenceservice.caching.CacheManager;
+import org.kuwaiba.persistenceservice.util.Constants;
 import org.kuwaiba.persistenceservice.util.Util;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -966,10 +971,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                             value = "(?i).*".concat(value).concat(".*");//NOI18N
                             break;
                     }
-                    //the value to looking for
-                    Object newParam = Util.evalAttributeType(Util.getTypeOfAttribute(classNode, attributeNames.get(i)),
+                    //the value to search for
+                    Object newParam = null;/*Util.evalAttributeType(Util.getTypeOfAttribute(classNode, attributeNames.get(i)),
                             attributeNames.get(i),
-                            value);
+                            value);*/
                     params.put(attributeNames.get(i),
                             newParam);
                     if (Long.class.isInstance(newParam) || Boolean.class.isInstance(newParam) || Float.class.isInstance(newParam) || Integer.class.isInstance(newParam)) {
@@ -1017,9 +1022,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                                         where = "ID(listype)".concat("=").concat(" {".concat(joinAttributeNames.get(j)).concat("}"));//NOI18N
                                     } else {
                                         Node joinNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, join.getClassName()).getSingle();
-                                        Object newJoinParam = Util.evalAttributeType(Util.getTypeOfAttribute(joinNode, joinAttributeNames.get(j)),
+                                        Object newJoinParam = null;/*Util.evalAttributeType(Util.getTypeOfAttribute(joinNode, joinAttributeNames.get(j)),
                                                 joinAttributeNames.get(j),
-                                                joinValue);
+                                                joinValue);*/
                                         params.put("join".concat(joinAttributeNames.get(j)),
                                                 newJoinParam);
                                         if (Long.class.isInstance(newJoinParam) || Boolean.class.isInstance(newJoinParam) || Float.class.isInstance(newJoinParam) || Integer.class.isInstance(newJoinParam)) {
@@ -1074,42 +1079,104 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
         return rsltrcrdList;
     }
+    
+    public byte[] getClassHierachy(boolean showAll) throws MetadataObjectNotFoundException, InvalidArgumentException{
+        ByteArrayOutputStream bas = new ByteArrayOutputStream();
+        WAX xmlWriter = new WAX(bas);
+        StartTagWAX rootTag = xmlWriter.start("hierarchy");
+        rootTag.attr("documentVersion", Constants.CLASS_HIERARCHY_DOCUMENT_VERSION);
+        rootTag.attr("serverVersion", Constants.PERSISTENCE_SERVICE_VERSION);
+        rootTag.attr("date", Calendar.getInstance().getTimeInMillis());
+        StartTagWAX inventoryTag = rootTag.start("inventory");
+        StartTagWAX classesTag = inventoryTag.start("classes");
+        Node rootObjectNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, "RootObject").getSingle(); //NOI18N
+        if (rootObjectNode == null)
+            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", "RootObject"));
+        getXMLNodeForClass(rootObjectNode, rootTag);
+        classesTag.end();
+        inventoryTag.end();
+        rootTag.end().close();
+        return bas.toByteArray();
+    }
 
+    /**
+     * Helpers
+     */
+        /**
+     * recursive method used to generate a single "class" node (see the <a href="http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_describe_the_data_model">wiki</a> for details)
+     * @param classNode Node representing the class to be added
+     * @param paretTag Parent to attach the new class node
+     */
+    private void getXMLNodeForClass(Node classNode, StartTagWAX parentTag) {
+        int applicationModifiers = 0;
+        int javaModifiers = 0;
+        StartTagWAX currentTag = parentTag.start("class"); //NOI18N
+        currentTag.attr("name", classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
+        
+        currentTag.attr("classPackage", "");
+        
+        //Application modifiers
+        if ((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_COUNTABLE))
+            applicationModifiers |= Constants.CLASS_MODIFIER_COUNTABLE;
 
-    public void resetAdmin(String oldUserName, String newUserName, String password, String firstName,
-            String lastName, Boolean enabled, List<Integer> privileges) throws InvalidArgumentException{
+        if ((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_CUSTOM))
+            applicationModifiers |= Constants.CLASS_MODIFIER_CUSTOM;
 
-        if(oldUserName != null){
-                if (oldUserName.trim().equals("")) //NOI18N
-                    throw new InvalidArgumentException("OldUsername can not be an empty string", Level.INFO);
-        }
-        if(newUserName != null){
-                if (newUserName.trim().equals("")) //NOI18N
-                    throw new InvalidArgumentException("NewUsername can not be an empty string", Level.INFO);
-        }
-        if(password != null){
-                if (password.trim().equals("")) //NOI18N
-                    throw new InvalidArgumentException("Password can not be an empty string", Level.INFO);
-        }
+        currentTag.attr("applicationModifiers",applicationModifiers);
 
-        Node adminUserNode = userIndex.get(UserProfile.PROPERTY_USERNAME, oldUserName).getSingle();
-
-        Node adminsGroupNode = groupIndex.get(GroupProfile.PROPERTY_GROUPNAME, "Administrators").getSingle();
-        Node usersGroupNode = groupIndex.get(GroupProfile.PROPERTY_GROUPNAME, "Users").getSingle();
-
-        List<Long> listGroups = new ArrayList<Long>();
-        listGroups.add(adminsGroupNode.getId());
-        listGroups.add(usersGroupNode.getId());
-
-        if(adminUserNode == null){
-            createUser(newUserName, password, firstName, lastName, enabled, privileges, listGroups);
-        }
-        else{
-            try {
-                setUserProperties(oldUserName, newUserName, password, firstName, lastName, enabled, privileges, listGroups);
-            } catch (UserGroupNotFoundException ex) {
-                Logger.getLogger(ApplicationEntityManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+        //Language modifiers
+        if ((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT))
+            applicationModifiers |= Modifier.ABSTRACT;
+        
+        currentTag.attr("javaModifiers",javaModifiers);
+        
+        //Class type
+        if (classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals("RootObject")){
+            currentTag.attr("classType",Constants.CLASS_TYPE_ROOT);
+        }else{
+            if (Util.isSubClass("InventoryObject", classNode))
+                currentTag.attr("classType",Constants.CLASS_TYPE_INVENTORY);
+            else{
+                if (Util.isSubClass("MetadataObject", classNode))
+                    currentTag.attr("classType",Constants.CLASS_TYPE_METADATA);
+                else{
+                    if (Util.isSubClass("ApplicationObject", classNode))
+                        currentTag.attr("classType",Constants.CLASS_TYPE_APPLICATION);
+                    else
+                        currentTag.attr("classType",Constants.CLASS_TYPE_OTHER);
+                }
             }
         }
+
+        StartTagWAX attributesTag = currentTag.start("attributes");
+        for (Relationship relWithAttributes : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING)){
+            StartTagWAX attributeTag = attributesTag.start("attribute");
+            Node attributeNode = relWithAttributes.getEndNode();
+            int attributeApplicationModifiers = 0;
+            attributeTag.attr("name", attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
+            attributeTag.attr("type", attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
+            attributeTag.attr("javaModifiers", 0); //Not used
+            //Application modifiers
+            if ((Boolean)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NO_COPY))
+                attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_NOCOPY;
+            if ((Boolean)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_VISIBLE))
+                attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_VISIBLE;
+            if ((Boolean)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ADMINISTRATIVE))
+                attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_ADMINISTRATIVE;
+            if ((Boolean)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NO_SERIALIZE))
+                attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_NOSERIALIZE;
+            if ((Boolean)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_READONLY))
+                attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_READONLY;
+            attributeTag.attr("applicationModifiers", attributeApplicationModifiers);
+            attributeTag.end();
+        }
+        attributesTag.end();
+
+        StartTagWAX subclassesTag = currentTag.start("subclasses");
+        for (Relationship relWithSubclasses : classNode.getRelationships(RelTypes.EXTENDS, Direction.INCOMING))
+            getXMLNodeForClass(relWithSubclasses.getStartNode(), currentTag);
+
+        subclassesTag.end();
+        currentTag.end();
     }
 }

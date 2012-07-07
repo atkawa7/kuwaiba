@@ -16,16 +16,12 @@
 
 package org.kuwaiba.beans;
 
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 
 /**
@@ -37,13 +33,18 @@ public class ToolsBean implements ToolsBeanRemote {
     private static ApplicationEntityManagerRemote aem;
     @Override
     public void resetAdmin() throws Exception {
-        getAEMInstance().resetAdmin("admin","admin", "kuwaiba", "Tyler", "Durden", true, null);
+        try{
+            getAEMInstance().setUserProperties("admin","admin", "kuwaiba", "Tyler", "Durden", true, null, null);
+        }catch(InvalidArgumentException ex){
+            getAEMInstance().createUser("admin", "kuwaiba", "Tyler", "Durden", true, null, null);
+        }
+        
     }
 
     @Override
     public void createDefaultGroups() throws Exception{
-            getAEMInstance().createGroup("Administrators", "Administrators Group", null, null);
-            getAEMInstance().createGroup("Users", "Standard Users Group", null, null);
+        getAEMInstance().createGroup("Administrators", "Administrators Group", null, null);
+        getAEMInstance().createGroup("Users", "Standard Users Group", null, null);
     }
     
     private static ApplicationEntityManagerRemote getAEMInstance(){

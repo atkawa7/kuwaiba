@@ -657,6 +657,30 @@ public class Kuwaiba {
             throw e;
         }
     }
+
+        /**
+     * Creates an XML document describing the class hierarchy
+     * @param should this method return all entity classes or only InventoryObject subclasses
+     * @param sessionId session identifier
+     * @return A byte array containing the class hierarchy as an XML document
+     * @throws Exception
+     */
+    @WebMethod(operationName = "getClassHierarchy")
+    public byte[] getClassHierarchy(@WebParam(name = "showAll")Boolean showAll,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("getClassHierarchy", getIPAddress(), sessionId); //NOI18N
+            return wsBean.getClassHierarchy(showAll);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Business Methods. Click on the + sign on the left to edit the code.">
