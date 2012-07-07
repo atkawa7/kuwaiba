@@ -445,13 +445,12 @@ public class CommunicationsStub {
     }
 
     public byte[] getClassHierarchy(boolean showAll) {
-//        try{
-//            return port.getClassHierarchy(showAll, session.getSessionId());
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return null;
-//        }
-        return null;
+        try{
+            return port.getClassHierarchy(showAll, session.getSessionId());
+        }catch(Exception ex){
+            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            return null;
+        }
     }
 
     public LocalObjectLight createListTypeItem(String className){
