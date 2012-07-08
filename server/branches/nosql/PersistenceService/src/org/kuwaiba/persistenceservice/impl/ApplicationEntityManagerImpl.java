@@ -977,9 +977,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                             break;
                     }
                     //the value to search for
-                    Object newParam = null;/*Util.evalAttributeType(Util.getTypeOfAttribute(classNode, attributeNames.get(i)),
+                    Object newParam = Util.evalAttributeType(Util.getTypeOfAttribute(classNode, attributeNames.get(i)),
                             attributeNames.get(i),
-                            value);*/
+                            value);
                     params.put(attributeNames.get(i),
                             newParam);
                     if (Long.class.isInstance(newParam) || Boolean.class.isInstance(newParam) || Float.class.isInstance(newParam) || Integer.class.isInstance(newParam)) {
