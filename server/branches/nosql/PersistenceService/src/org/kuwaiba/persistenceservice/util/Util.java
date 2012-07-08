@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.application.UserProfile;
@@ -671,7 +672,7 @@ public class Util {
         return "";
     }
 
-    public static Object evalAttribute(String attributeType, String attributeName, String attributeValue){
+    public static Object evalAttributeType(String attributeType, String attributeName, String attributeValue){
 
         if(attributeType.equals("String"))//NOI18N
             return attributeValue;
