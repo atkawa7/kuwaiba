@@ -909,46 +909,60 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException {
 
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, query.getClassName()).getSingle();
+
+        if (classNode == null) {
+            throw new MetadataObjectNotFoundException(Util.formatString(
+                    "Can not find the query with name %1s", query.getClassName()));//NOI18N
+        }
+
         Boolean isAbstract = (Boolean) classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT);
         String cypherQuery = "";
         String match = "";
         String returnQuery = "instance";
         String whereQuery = "";
         //a Match is created by each join.
-        String joinMatch="";
+        String joinMatch = "";
+        //a listType create in return by each join
+        String joinReturn = "";
         //to iterate in joins
         int k=0;
-
+        //to  know if there are joins
         Boolean isJoin = false;
-        if (classNode == null) {
-            throw new MetadataObjectNotFoundException(Util.formatString(
-                    "Can not find the query with name %1s", query.getClassName()));//NOI18N
-        }//query Params
+        Boolean isInstance = false;
+        //Cypher query paramas
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("className", query.getClassName());//NOI18N
         //limits
         params.put("s", (query.getLimit() * (query.getPage() - 1)));//NOI18N
         params.put("l", query.getLimit());//NOI18N
+        //query attributes
         List<String> visibleAttributeNames = query.getVisibleAttributeNames();
         List<String> attributeNames = query.getAttributeNames();
         List<String> attributeValues = query.getAttributeValues();
         List<Integer> conditions = query.getConditions();
+        List<List<String>> joinVisibleAttributeNames = new ArrayList<List<String>>();
+        List<List<String>> joinHeaderVisibleAttributeNames = new ArrayList<List<String>>();
         //result Records
         List<ResultRecord> rsltrcrdList = new ArrayList<ResultRecord>();
-        if (isAbstract) {
+        //if the class we are looking for is abstract
+        if (isAbstract)
+        {
             cypherQuery = "START abstractClassmetadata = node:classes(name = {className})";//NOI18N
             match = "MATCH abstractClassmetadata<-[:" + RelTypes.EXTENDS + "*]-classmetadata<-[:" + RelTypes.INSTANCE_OF + "]-";//NOI18N
-        } else {
+        }
+        else
+        {
             cypherQuery = "START classmetadata = node:classes(name = {className})";//NOI18N
             match = "MATCH classmetadata<-[:" + RelTypes.INSTANCE_OF + "]-";//NOI18N
         }
-        //if nothing has benn selected
-        if (query.getAttributeNames() == null && query.getAttributeValues() == null && query.getConditions() == null && query.getJoins() == null) {
+        //if nothing has been selected as visibleattribute, Return statements
+        if (query.getAttributeNames() == null && query.getAttributeValues() == null && query.getConditions() == null && query.getJoins() == null)
+        {
             cypherQuery = cypherQuery.concat(match).concat("instance");
             cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));//NOI18N
-        } //Return statements
-        else {
-        //where statements
+        }
+        else//where statements
+        {
             for (int i = 0; i < attributeNames.size(); i++) {
                 String condition = "";//NOI18N
                 String where = "";//NOI18N
@@ -986,14 +1000,35 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                         condition = condition.substring(0, condition.length() - 1);
                     }
                     where = "instance.".concat(attributeNames.get(i)).concat(condition).concat(" {".concat(attributeNames.get(i)).concat("}"));
+                    isInstance = true;
                 }//end if is not a join value
-                else {
-
+                else
+                {
                     List<ExtendedQuery> joins = query.getJoins();
                     joinMatch="";
                     ExtendedQuery join = joins.get(k);
                     //if there are no filter in a listTypes, but there is at least a atrribute set a s visible
-                    if (join.getAttributeNames() != null && join.getAttributeValues() != null) {
+                    if (join.getAttributeNames() != null && join.getAttributeValues() != null) 
+                    {
+                        //format the join Visible attributes
+                        if(join.getVisibleAttributeNames() != null)
+                        {
+                            List<String> formatVisibleattributes = new ArrayList<String>();
+                            for(String joinHeader: join.getVisibleAttributeNames()){
+                                formatVisibleattributes.add(join.getClassName().concat(".").concat(joinHeader));
+                            }
+                            joinHeaderVisibleAttributeNames.add(formatVisibleattributes);
+                            joinVisibleAttributeNames.add(join.getVisibleAttributeNames());
+                        }
+                        else{
+                            List<String> formatVisibleattributes = new ArrayList<String>();
+                            formatVisibleattributes.add(join.getClassName().concat(".").concat("name"));
+                            joinHeaderVisibleAttributeNames.add(formatVisibleattributes);
+                            List emptyJoinVisibleAttributes = new ArrayList<String>();
+                            emptyJoinVisibleAttributes.add("name");
+                            joinVisibleAttributeNames.add(emptyJoinVisibleAttributes);
+                        }
+
                         List<String> joinAttributeNames = join.getAttributeNames();
                         List<String> joinAttributeValues = join.getAttributeValues();
                         List<Integer> joinConditions = join.getConditions();
@@ -1024,14 +1059,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                                         joinValue = "(?i).*".concat(joinValue).concat(".*");//NOI18N
                                         break;
                                 }
-                                //if is small view
-                                if (joinAttributeNames.get(j).equals("id"))
+                                if (joinAttributeNames.get(j).equals("id"))//if is small view
                                 {
                                     params.put("join".concat(Integer.toString(i)).concat(joinAttributeNames.get(j)), Long.valueOf(joinAttributeValues.get(j)));
                                     params.put("rel".concat(Integer.toString(i)), attributeNames.get(i));
                                     where = "r".concat(Integer.toString(i)).concat(".name={rel").concat(Integer.toString(i)).concat("} AND ID(listype".concat(Integer.toString(i)).concat(")").concat("=").concat(" {join".concat(Integer.toString(i)).concat(joinAttributeNames.get(j)).concat("}")));//NOI18N
                                 }
-                                else
+                                else//Detail view
                                 {
                                     Node joinNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, join.getClassName()).getSingle();
                                     Object newJoinParam = Util.evalAttributeType(Util.getTypeOfAttribute(joinNode, joinAttributeNames.get(j)),
@@ -1045,8 +1079,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                                     if (Long.class.isInstance(newJoinParam) || Boolean.class.isInstance(newJoinParam) || Float.class.isInstance(newJoinParam) || Integer.class.isInstance(newJoinParam)) {
                                         joinCondition = joinCondition.substring(0, joinCondition.length() - 1);
                                     }
-                                    //where = "listype.".concat(joinAttributeNames.get(j)).concat(joinCondition).concat(" {".concat("join".concat(joinAttributeNames.get(j))).concat("}"));//NOI18N
-                                    //r1.name="type" AND c.name="bad" AND r2.name="state" and d.name="plate"
+                                    //by every join it necesary to compare the relationship.name and the join attibutes in the listtype.property
                                     joinWhere = "r".concat(Integer.toString(i)).concat(".name={rel").concat(Integer.toString(i)).concat("} AND listype".concat(Integer.toString(i)).concat(".").concat(joinAttributeNames.get(j)).concat(joinCondition).concat(" {".concat("join".concat(Integer.toString(i)).concat(joinAttributeNames.get(j))).concat("}")));
                                 }
                                 isJoin = true;
@@ -1055,7 +1088,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                                 whereQuery = whereQuery.concat(joinWhere.concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : " OR "));//NOI18N
                         }//end for attibutteNames
                     }//end if there no filtter
+                    //Match
                     joinMatch = "instance-[r".concat(Integer.toString(i)).concat(":").concat(RelTypes.RELATED_TO.toString()).concat("]->listype".concat(Integer.toString(i))).concat(", ");//NOI18N
+                    //return
+                    joinReturn = joinReturn.concat(" listype").concat(Integer.toString(i)).concat(",");
                     match = match.concat(joinMatch);
                     k++;
                 }//end else join
@@ -1076,34 +1112,90 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             if (!whereQuery.isEmpty()) {
                 cypherQuery = cypherQuery.concat(" WHERE ".concat(whereQuery));//NOI18N
             }
-            cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));//NOI18N
+            if(!isJoin)
+                cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));//NOI18N
+            else if(isJoin && joinReturn.length()>1){
+                joinReturn = joinReturn.substring(0, joinReturn.length()-1);
+                cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery).concat(", ").concat(joinReturn));
 
-        }//end else
+            }
+
+        }//end else there are values to look for
+
         if (query.getPage() == 0) {
             cypherQuery = cypherQuery.concat(" ORDER BY instance.name ASC");//NOI18N
         } else {
             cypherQuery = cypherQuery.concat(" ORDER BY instance.name ASC skip {s} limit {l}");//NOI18N
         }
 
+        //excecute the query
         ExecutionEngine engine = new ExecutionEngine(graphDb);
         ExecutionResult result = engine.execute(cypherQuery, params);
-        Iterator<Node> n_column = result.columnAs("instance");
-        //headers
-        ResultRecord resltRcrdHeader = new ResultRecord(null, null, null);
+
+        //headers of result
         if (visibleAttributeNames == null) {
             visibleAttributeNames = new ArrayList<String>();
             visibleAttributeNames.add(query.getClassName());
         }
-        resltRcrdHeader.setExtraColumns(visibleAttributeNames);
-        rsltrcrdList.add(resltRcrdHeader);
-        for (Node node : IteratorUtil.asIterable(n_column)) {
+
+        //Query Results
+        Iterator<Map<String, Object>> columnsIterator = result.iterator();
+        
+        List<String> extraColumns = new ArrayList<String>();
+        List<ResultRecord> onlyResults =  new ArrayList<ResultRecord>();
+        ResultRecord rr= null;
+
+        while(columnsIterator.hasNext()){
+            Map<String, Object> column = columnsIterator.next();
+            
+            Node instanceNode = (Node)column.get("instance");
             if (isAbstract) {
-                rsltrcrdList.add(Util.createResultRecordFromNode(node, Util.getClassName(node), visibleAttributeNames));
-            } else {
-                rsltrcrdList.add(Util.createResultRecordFromNode(node, query.getClassName(), visibleAttributeNames));
+                for(String van: visibleAttributeNames){
+                    extraColumns.add(Util.createExtraColumnFromNode(instanceNode, Util.getClassName(instanceNode), van));
+                }
+            }
+            else {
+                for(String van: visibleAttributeNames){
+                    extraColumns.add(Util.createExtraColumnFromNode(instanceNode, query.getClassName(), van));
+                }
+            }
+            rr = new ResultRecord(instanceNode.getId(), (String)instanceNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), query.getClassName());
+            
+            if(joinVisibleAttributeNames!=null && isJoin){
+                int t = 0;
+                String [] joinReturns = joinReturn.split(",");
+                for(String joinColumn: joinReturns){
+                    //get the column
+                    Node joinNode = (Node)column.get(joinColumn.trim());
+                    for( String jvan : joinVisibleAttributeNames.get(t)){
+                        extraColumns.add(Util.createExtraColumnFromNode((Node)joinNode, Util.getClassName((Node)joinNode), jvan));
+                    }
+                    t++;
+                }
+            }
+            rr.setExtraColumns(extraColumns);
+            onlyResults.add(rr);
+        }
+
+        //headers of result
+        if(isJoin){
+        for(List<String> visibleAttributes: joinHeaderVisibleAttributeNames){
+            for(String joinVisibleAttribute: visibleAttributes)
+                visibleAttributeNames.add(joinVisibleAttribute);
             }
         }
+
+        ResultRecord resltRcrdHeader = new ResultRecord(null, null, null);
+        resltRcrdHeader.setExtraColumns(visibleAttributeNames);
+        rsltrcrdList.add(resltRcrdHeader);
+
+        if(onlyResults.size()>0){
+            for(ResultRecord orr: onlyResults)
+                rsltrcrdList.add(orr);
+        }
+
         return rsltrcrdList;
+
     }
     
     public byte[] getClassHierachy(boolean showAll) throws MetadataObjectNotFoundException, InvalidArgumentException{
@@ -1128,7 +1220,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     /**
      * Helpers
      */
-        /**
+    /**
      * recursive method used to generate a single "class" node (see the <a href="http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_describe_the_data_model">wiki</a> for details)
      * @param classNode Node representing the class to be added
      * @param paretTag Parent to attach the new class node
