@@ -956,7 +956,25 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             match = "MATCH classmetadata<-[:" + RelTypes.INSTANCE_OF + "]-";//NOI18N
         }
         //if nothing has been selected as visibleattribute, Return statements
-        if (query.getAttributeNames() == null && query.getAttributeValues() == null && query.getConditions() == null && query.getJoins() == null)
+
+        Boolean isVisibleAttributeinJoins = false;
+        Boolean isVisibleAttributes = false;
+        if(query.getJoins() != null){
+            for(ExtendedQuery join : query.getJoins()){
+                if(join.getVisibleAttributeNames()!= null || join.getAttributeNames()!= null)
+                    isVisibleAttributeinJoins = true;
+            }
+        }
+        
+        if(query.getAttributeValues() != null){
+            for(Object value: query.getAttributeValues())
+                if (value != null)
+                    isVisibleAttributes=true;
+        }
+        
+
+        //if nothing is select or if a join is selected but nothing is selected neither in the join
+        if (!isVisibleAttributes && !isVisibleAttributeinJoins )
         {
             cypherQuery = cypherQuery.concat(match).concat("instance");
             cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));//NOI18N
@@ -1007,28 +1025,27 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     List<ExtendedQuery> joins = query.getJoins();
                     joinMatch="";
                     ExtendedQuery join = joins.get(k);
-                    //if there are no filter in a listTypes, but there is at least a atrribute set a s visible
+                    //format the join Visible attributes
+                    if(join.getVisibleAttributeNames() != null)
+                    {
+                        List<String> formatVisibleattributes = new ArrayList<String>();
+                        for(String joinHeader: join.getVisibleAttributeNames()){
+                            formatVisibleattributes.add(join.getClassName().concat(".").concat(joinHeader));
+                        }
+                        joinHeaderVisibleAttributeNames.add(formatVisibleattributes);
+                        joinVisibleAttributeNames.add(join.getVisibleAttributeNames());
+                    }
+                    else{
+                        List<String> formatVisibleattributes = new ArrayList<String>();
+                        formatVisibleattributes.add(join.getClassName().concat(".").concat("name"));
+                        joinHeaderVisibleAttributeNames.add(formatVisibleattributes);
+                        List emptyJoinVisibleAttributes = new ArrayList<String>();
+                        emptyJoinVisibleAttributes.add("name");
+                        joinVisibleAttributeNames.add(emptyJoinVisibleAttributes);
+                    }
+                    //if there are no filter in a listTypes, but there is at least a atrribute set as visible
                     if (join.getAttributeNames() != null && join.getAttributeValues() != null) 
                     {
-                        //format the join Visible attributes
-                        if(join.getVisibleAttributeNames() != null)
-                        {
-                            List<String> formatVisibleattributes = new ArrayList<String>();
-                            for(String joinHeader: join.getVisibleAttributeNames()){
-                                formatVisibleattributes.add(join.getClassName().concat(".").concat(joinHeader));
-                            }
-                            joinHeaderVisibleAttributeNames.add(formatVisibleattributes);
-                            joinVisibleAttributeNames.add(join.getVisibleAttributeNames());
-                        }
-                        else{
-                            List<String> formatVisibleattributes = new ArrayList<String>();
-                            formatVisibleattributes.add(join.getClassName().concat(".").concat("name"));
-                            joinHeaderVisibleAttributeNames.add(formatVisibleattributes);
-                            List emptyJoinVisibleAttributes = new ArrayList<String>();
-                            emptyJoinVisibleAttributes.add("name");
-                            joinVisibleAttributeNames.add(emptyJoinVisibleAttributes);
-                        }
-
                         List<String> joinAttributeNames = join.getAttributeNames();
                         List<String> joinAttributeValues = join.getAttributeValues();
                         List<Integer> joinConditions = join.getConditions();
@@ -1083,11 +1100,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                                     joinWhere = "r".concat(Integer.toString(i)).concat(".name={rel").concat(Integer.toString(i)).concat("} AND listype".concat(Integer.toString(i)).concat(".").concat(joinAttributeNames.get(j)).concat(joinCondition).concat(" {".concat("join".concat(Integer.toString(i)).concat(joinAttributeNames.get(j))).concat("}")));
                                 }
                                 isJoin = true;
-                            }//end if
+                            }//end if join values are not null
+                            
                             if(joinWhere.length()>1)
                                 whereQuery = whereQuery.concat(joinWhere.concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : " OR "));//NOI18N
                         }//end for attibutteNames
                     }//end if there no filtter
+                    else{//if join values are null but some name are selected the relationship should be put in the where
+                        isJoin = true;
+                        params.put("rel".concat(Integer.toString(i)),  attributeNames.get(i));
+                        String joinWhere = "r".concat(Integer.toString(i)).concat(".name={rel").concat(Integer.toString(i)).concat("}");
+                        if(joinWhere.length()>1)
+                                whereQuery = whereQuery.concat(joinWhere.concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : " OR "));//NOI18N
+                    }
                     //Match
                     joinMatch = "instance-[r".concat(Integer.toString(i)).concat(":").concat(RelTypes.RELATED_TO.toString()).concat("]->listype".concat(Integer.toString(i))).concat(", ");//NOI18N
                     //return
@@ -1135,19 +1160,20 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         //headers of result
         if (visibleAttributeNames == null) {
             visibleAttributeNames = new ArrayList<String>();
-            visibleAttributeNames.add(query.getClassName());
+            visibleAttributeNames.add("name");
         }
 
         //Query Results
         Iterator<Map<String, Object>> columnsIterator = result.iterator();
         
-        List<String> extraColumns = new ArrayList<String>();
+        
         List<ResultRecord> onlyResults =  new ArrayList<ResultRecord>();
         ResultRecord rr= null;
 
+        
         while(columnsIterator.hasNext()){
             Map<String, Object> column = columnsIterator.next();
-            
+            List<String> extraColumns = new ArrayList<String>();
             Node instanceNode = (Node)column.get("instance");
             if (isAbstract) {
                 for(String van: visibleAttributeNames){
