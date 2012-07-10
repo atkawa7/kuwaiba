@@ -38,7 +38,6 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -75,25 +74,26 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      */
     public static final String PROPERTY_MAPPING = "mapping"; //NOI18N
     /**
-     *
+     * Root for all business classes
      */
-    public static final String INVENTORY_OBJECT = "InventoryObject"; //NOI18N ID 286
+    public static final String CLASS_INVENTORYOBJECT = "InventoryObject"; //NOI18N ID 286
     /**
-     *
+     * Root for all list types class name
      */
-    public static final String LIST_TYPE = "GenericObjectList"; //NOI18N ID 27
+    public static final String CLASS_GENERICOBJECTLIST = "GenericObjectList"; //NOI18N ID 27
     /**
-     *
+     * Root for all classes that can have a view attached
      */
-    public static final String VIEWABLE_OBJECT = "ViewableObject"; //NOI18N
+    public static final String CLASS_VIEWABLEOBJECT = "ViewableObject"; //NOI18N
     /**
-     *
+     * Class hierarchy root
+     */
+    public static final String CLASS_ROOTOBJECT = "RootObject"; //NOI18N
+    /**
+     * Dummy root node name
      */
     public static final String DUMMYROOT = "DummyRoot"; //NOI18N
-    /**
-     *
-     */
-    public static final String ROOTOBJECT = "RootObject"; //NOI18N
+    
     /**
      * Label used for the class index
      */
@@ -169,7 +169,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Relationship rootRel = referenceNode.getSingleRelationship(
                     RelTypes.ROOT, Direction.BOTH);
 
-            if (rootRel == null && classDefinition.getName().equals(ROOTOBJECT)) {
+            if (rootRel == null && classDefinition.getName().equals(CLASS_ROOTOBJECT)) {
                 Node rootNode = graphDb.createNode();
                 Node dummyRootNode = graphDb.createNode();
 
@@ -485,28 +485,32 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public List<ClassMetadataLight> getLightMetadata(Boolean includeListTypes) throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> cml = new ArrayList<ClassMetadataLight>();
         try {
-            Node myClassNode =  classIndex.get(PROPERTY_NAME, INVENTORY_OBJECT).getSingle();
+            Node myClassNode =  classIndex.get(PROPERTY_NAME, CLASS_INVENTORYOBJECT).getSingle();
 
             if(myClassNode == null)
                 throw new MetadataObjectNotFoundException(Util.formatString(
-                         "Can not find the Class with the name %1s", INVENTORY_OBJECT));
+                         "Can not find the Class with the name %1s", CLASS_INVENTORYOBJECT));
 
             String cypherQuery = "START inventory = node:classes({className}) ".concat(
                                  "MATCH inventory <-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-classmetadata ").concat(
-                                 "RETURN classmetadata ").concat(
+                                 "RETURN classmetadata,inventory ").concat(
                                  "ORDER BY classmetadata.name ASC");
 
             Map<String, Object> params = new HashMap<String, Object>();
             if(includeListTypes)
-                params.put("className", "name:"+INVENTORY_OBJECT+" name:"+LIST_TYPE);//NOI18N
+                params.put("className", "name:"+CLASS_INVENTORYOBJECT+" name:"+CLASS_GENERICOBJECTLIST);//NOI18N
             else
-                params.put("className", "name:"+INVENTORY_OBJECT);//NOI18N
+                params.put("className", "name:"+CLASS_INVENTORYOBJECT);//NOI18N
 
             ExecutionEngine engine = new ExecutionEngine(graphDb);
             ExecutionResult result = engine.execute(cypherQuery, params);
             Iterator<Node> n_column = result.columnAs("classmetadata");
-            for (Node node : IteratorUtil.asIterable(n_column))
-            {
+            
+            //First, we inject the InventoryObject class (for some reason, the start node can't be retrieved as part of the path, so it can be sorted)
+            Iterator<Node> roots = result.columnAs("inventory");
+            cml.add(Util.createClassMetadataLightFromNode(roots.next()));
+
+            for (Node node : IteratorUtil.asIterable(n_column)){
                  cml.add(Util.createClassMetadataLightFromNode(node));
             }
         }catch(Exception ex){
@@ -527,28 +531,26 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         List<ClassMetadata> cml = new ArrayList<ClassMetadata>();
         try {
 
-            Node myClassNode =  classIndex.get(PROPERTY_NAME, INVENTORY_OBJECT).getSingle();
-
-            if(myClassNode == null)
-                throw new MetadataObjectNotFoundException(Util.formatString(
-                         "Can not find the Class with the name %1s", INVENTORY_OBJECT));
-
             String cypherQuery = "START inventory = node:classes({className}) ".concat(
                                  "MATCH inventory <-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-classmetadata ").concat(
-                                 "RETURN classmetadata ").concat(
+                                 "RETURN classmetadata,inventory ").concat(
                                  "ORDER BY classmetadata.name ASC");
 
             Map<String, Object> params = new HashMap<String, Object>();
            if(includeListTypes)
-                params.put("className", "name:"+INVENTORY_OBJECT+" name:"+LIST_TYPE);//NOI18N
+                params.put("className", "name:"+CLASS_INVENTORYOBJECT+" name:" + CLASS_GENERICOBJECTLIST);//NOI18N
             else
-                params.put("className", "name:"+INVENTORY_OBJECT);//NOI18N
+                params.put("className", "name:"+ CLASS_INVENTORYOBJECT);//NOI18N
 
             ExecutionEngine engine = new ExecutionEngine(graphDb);
             ExecutionResult result = engine.execute(cypherQuery, params);
             Iterator<Node> n_column = result.columnAs("classmetadata");
-            for (Node node : IteratorUtil.asIterable(n_column))
-            {
+
+            //First, we inject the InventoryObject class (for some reason, the start node can't be retrieved as part of the path, so it can be sorted)
+            Iterator<Node> roots = result.columnAs("inventory");
+            cml.add(Util.createClassMetadataFromNode(roots.next()));
+
+            for (Node node : IteratorUtil.asIterable(n_column)){
                  cml.add(Util.createClassMetadataFromNode(node));
             }
         }catch(Exception ex){
@@ -1197,45 +1199,39 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     @Override
     public List<ClassMetadataLight> getPossibleChildren(String parentClassName) throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> cml = new ArrayList<ClassMetadataLight>();
-        try
-        {
-            Node myClassNode;
-            if (parentClassName == null)
-            {
-                Node referenceNode = graphDb.getReferenceNode();
-                Relationship rel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
-                myClassNode = rel.getEndNode();
-
-                if (myClassNode == null)
-                    throw new MetadataObjectNotFoundException(Util.formatString(
-                            "Can not find the Class with the name %1s", DUMMYROOT));
-            }//End if is dummy
+        try {
+            String cypherQuery;
+            if (parentClassName == null) //The Dummy Rooot
+                cypherQuery = "START rootNode = node(0) ".concat(
+                                 "MATCH rootNode -[:DUMMY_ROOT]->dummyRootNode-[:POSSIBLE_CHILD]->directChild<-[?:EXTENDS*]-subClass ").concat(
+                                 "WHERE subClass.abstract=false OR subClass IS NULL ").concat(
+                                 "RETURN directChild, subClass ").concat(
+                                 "ORDER BY directChild.name,subClass.name ASC");
             else
-            {
-                myClassNode = classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
+                cypherQuery = "START parentClassNode = node:classes({className}) ".concat(
+                                 "MATCH parentClassNode -[:POSSIBLE_CHILD]->directChild<-[?:EXTENDS*]-subClass ").concat(
+                                 "WHERE subClass.abstract=false OR subClass IS NULL ").concat(
+                                 "RETURN directChild, subClass ").concat(
+                                 "ORDER BY directChild.name,subClass.name ASC");
 
-                if (myClassNode == null) {
-                    throw new MetadataObjectNotFoundException(Util.formatString(
-                            "Can not find the Class with the name %1s", parentClassName));
-                }
-            }//End else is dummy
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("className", "name:" + parentClassName);//NOI18N
 
-            Iterable<Relationship> relationships = myClassNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.OUTGOING);
-            for (Relationship rel : relationships)
-            {
-                
-                if((Boolean)rel.getEndNode().getProperty(PROPERTY_ABSTRACT)){
-                    Traverser traverserMetadata = Util.getAllSubclasses(rel.getEndNode());
-                    for (Node childNode : traverserMetadata) {
-                        if(!(Boolean)childNode.getProperty(PROPERTY_ABSTRACT))
-                            cml.add(Util.createClassMetadataLightFromNode(childNode));
-                    }//end for
-                }//end if
-                else
-                    cml.add(Util.createClassMetadataLightFromNode(rel.getEndNode()));
-            }//end for
-           
-        }catch (Exception ex) {
+
+            ExecutionEngine engine = new ExecutionEngine(graphDb);
+            ExecutionResult result = engine.execute(cypherQuery, params);
+
+            Iterator<Map<String,Object>> entries = result.iterator();
+            while (entries.hasNext()){
+                Map<String,Object> entry = entries.next();
+                Node directChildNode =  (Node)entry.get("directChild");
+                Node indirectChildNode =  (Node)entry.get("subClass");
+                if (!(Boolean)directChildNode.getProperty(PROPERTY_ABSTRACT))
+                    cml.add(Util.createClassMetadataFromNode(directChildNode));
+                if (indirectChildNode != null)
+                    cml.add(Util.createClassMetadataFromNode(indirectChildNode));
+            }
+        }catch(Exception ex){
             throw new RuntimeException(ex.getMessage());
         }
         return cml;
@@ -1244,41 +1240,32 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     @Override
     public List<ClassMetadataLight> getPossibleChildrenNoRecursive(String parentClassName) throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> cml = new ArrayList<ClassMetadataLight>();
-        Node myClassNode;
-        try
-        {
-            if (parentClassName == null)
-            {
-                Node referenceNode = graphDb.getReferenceNode();
-                Relationship rootRel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
-                myClassNode = rootRel.getEndNode();
-
-                if (myClassNode == null)
-                    throw new MetadataObjectNotFoundException(Util.formatString(
-                            "Can not find the Class with the name %1s", DUMMYROOT));
-
-            } //end if is dummyRoot
+        try {
+            String cypherQuery;
+            if (parentClassName == null) //The Dummy Rooot
+                cypherQuery = "START rootNode = node(0) ".concat(
+                                 "MATCH rootNode -[:DUMMY_ROOT]->dummyRootNode-[:POSSIBLE_CHILD]->directChild ").concat(
+                                 "RETURN directChild ").concat(
+                                 "ORDER BY directChild.name ASC");
             else
-            {
-                myClassNode = classIndex.get(PROPERTY_NAME, parentClassName).getSingle();
+                cypherQuery = "START parentClassNode = node:classes({className}) ".concat(
+                                 "MATCH parentClassNode -[:POSSIBLE_CHILD]->directChild ").concat(
+                                 "RETURN directChild ").concat(
+                                 "ORDER BY directChild.name ASC");
 
-                if (myClassNode == null) {
-                    throw new MetadataObjectNotFoundException(Util.formatString(
-                            "Can not find the Class with the name %1s", parentClassName));
-                }
-            }//end else dummyRoot
-            Iterable<Relationship> rels = myClassNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.OUTGOING);
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("className", "name:" + parentClassName);//NOI18N
 
-            for (Relationship rel : rels) {
-                Node childClassNode = rel.getEndNode();
-                ClassMetadataLight clmdl = Util.createClassMetadataLightFromNode(childClassNode);
-                cml.add(clmdl);
-            }//end for
-            
-        } catch (Exception ex) {
+            ExecutionEngine engine = new ExecutionEngine(graphDb);
+            ExecutionResult result = engine.execute(cypherQuery, params);
+
+            Iterator<Node> directPossibleChildren = result.columnAs("directChild");
+            for (Node node : IteratorUtil.asIterable(directPossibleChildren))
+                cml.add(Util.createClassMetadataFromNode(node));
+
+        }catch(Exception ex){
             throw new RuntimeException(ex.getMessage());
         }
-
         return cml;
     }
 
@@ -1319,7 +1306,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     }
             }
 
-            Node inventoryObjectNode = classIndex.get(PROPERTY_NAME, INVENTORY_OBJECT).getSingle();
+            Node inventoryObjectNode = classIndex.get(PROPERTY_NAME, CLASS_INVENTORYOBJECT).getSingle();
             boolean alreadyAdded = false;
 
             if (!Util.isSubClass((String) inventoryObjectNode.getProperty(PROPERTY_NAME), parentNode) && !isDummyRoot)
@@ -1409,7 +1396,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 }
             }
 
-            Node inventoryObjectNode = classIndex.get(PROPERTY_NAME, INVENTORY_OBJECT).getSingle();
+            Node inventoryObjectNode = classIndex.get(PROPERTY_NAME, CLASS_INVENTORYOBJECT).getSingle();
             boolean alreadyAdded = false;
 
             if (!Util.isSubClass((String) inventoryObjectNode.getProperty(PROPERTY_NAME), parentNode) && !isDummyRoot)

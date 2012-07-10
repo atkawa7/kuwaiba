@@ -638,7 +638,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                              "ORDER BY listType.name ASC");
 
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("className", MetadataEntityManagerImpl.LIST_TYPE);//NOI18N
+        params.put("className", MetadataEntityManagerImpl.CLASS_GENERICOBJECTLIST);//NOI18N
 
         ExecutionEngine engine = new ExecutionEngine(graphDb);
         ExecutionResult result = engine.execute(cypherQuery, params);

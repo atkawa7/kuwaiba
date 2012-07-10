@@ -30,7 +30,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.application.UserProfile;
@@ -293,7 +292,7 @@ public class Util {
         
         myClass.setAbstractClass((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT));
         myClass.setSmallIcon((byte[])classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_SMALL_ICON));
-        myClass.setViewable((Boolean)isSubClass(MetadataEntityManagerImpl.VIEWABLE_OBJECT, classNode));
+        myClass.setViewable((Boolean)isSubClass(MetadataEntityManagerImpl.CLASS_VIEWABLEOBJECT, classNode));
         myClass.setId(classNode.getId());
         
         //Parent
@@ -330,9 +329,9 @@ public class Util {
         myClass.setIcon((byte[])classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ICON));
         myClass.setSmallIcon((byte[])classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_SMALL_ICON));
         myClass.setId(classNode.getId());
-        myClass.setListType(isSubClass(MetadataEntityManagerImpl.LIST_TYPE, classNode));
+        myClass.setListType(isSubClass(MetadataEntityManagerImpl.CLASS_GENERICOBJECTLIST, classNode));
         //Is Viewable if is subclass of
-        myClass.setViewable((Boolean)isSubClass(MetadataEntityManagerImpl.VIEWABLE_OBJECT, classNode));
+        myClass.setViewable((Boolean)isSubClass(MetadataEntityManagerImpl.CLASS_VIEWABLEOBJECT, classNode));
         //Parent
         if (classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING) != null)
             myClass.setParentClassName(
