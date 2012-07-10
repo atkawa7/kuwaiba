@@ -644,6 +644,25 @@ public class Util {
         return rr;
     }
 
+    public static String createExtraColumnFromNode(Node objectNode,String className, String visibleAttribute){
+
+        if(visibleAttribute == null)
+            visibleAttribute = "name";//NOI18N
+        
+        if(objectNode.hasProperty(visibleAttribute)){
+            Object property = objectNode.getProperty(visibleAttribute);
+            if(visibleAttribute.equals(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE)){
+                Date creationDate = new Date((Long)property);
+                SimpleDateFormat formatoDeFecha = new SimpleDateFormat(ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
+                    return formatoDeFecha.format(creationDate);
+            }
+            else
+                return property.toString();
+        }//end if node has no attribute yet
+        else
+           return "";
+    }
+
     public static List<ResultRecord> addExtracolumns(List<ResultRecord> listQuery, List<ResultRecord> listJoinQuery){
         ResultRecord rr, joinRr;
         for(int i=0; i<listQuery.size(); i++){
