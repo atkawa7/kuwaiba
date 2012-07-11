@@ -614,43 +614,20 @@ public class Util {
                 Direction.INCOMING);
     }
 
-    public static ResultRecord createResultRecordFromNode(Node objectNode,String className, List<String> visibleAttributes){
-        List<String> extraColumns = new ArrayList<String>();
-        ResultRecord rr = null;
+    /**
+     * Retrieves a String with the property value of the attribute if exists as
+     * attribute of the node, if the property is a date it is formating into
+     * yyyy-MM-DD, if does not exists it return an empty string.
+     * @param objectNode
+     * @param className
+     * @param visibleAttribute
+     * @return
+     */
+    public static String getAttributeFromNode(Node objectNode, String attribute){
 
-        if(visibleAttributes == null){
-            visibleAttributes = new ArrayList<String>();
-            visibleAttributes.add("name");//NOI18N
-        }
-
-        for (String attrbtName : visibleAttributes) {
-            if(objectNode.hasProperty(attrbtName)){
-                Object property = objectNode.getProperty(attrbtName);
-                if(attrbtName.equals(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE)){
-                    Date creationDate = new Date((Long)property);
-                    SimpleDateFormat formatoDeFecha = new SimpleDateFormat(ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
-                        extraColumns.add(formatoDeFecha.format(creationDate));
-                }
-                else
-                    extraColumns.add(property.toString());
-            }//end if node has no attribute yet
-            else
-                extraColumns.add("");
-
-            rr = new ResultRecord(objectNode.getId(), (String)objectNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), className);
-            rr.setExtraColumns(extraColumns);
-        }
-        return rr;
-    }
-
-    public static String createExtraColumnFromNode(Node objectNode,String className, String visibleAttribute){
-
-        if(visibleAttribute == null)
-            visibleAttribute = MetadataEntityManagerImpl.PROPERTY_NAME;//NOI18N
-        
-        if(objectNode.hasProperty(visibleAttribute)){
-            Object property = objectNode.getProperty(visibleAttribute);
-            if(visibleAttribute.equals(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE)){
+        if(objectNode.hasProperty(attribute)){
+            Object property = objectNode.getProperty(attribute);
+            if(attribute.equals(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE)){
                 Date creationDate = new Date((Long)property);
                 SimpleDateFormat formatoDeFecha = new SimpleDateFormat(ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
                     return formatoDeFecha.format(creationDate);
@@ -662,22 +639,12 @@ public class Util {
            return "";
     }
 
-    public static List<ResultRecord> addExtracolumns(List<ResultRecord> listQuery, List<ResultRecord> listJoinQuery){
-        ResultRecord rr, joinRr;
-        for(int i=0; i<listQuery.size(); i++){
-            rr = listQuery.get(i);
-            joinRr = listJoinQuery.get(i);
-            List<String> extraColumns = rr.getExtraColumns();
-            List<String> joinExtraColumns = joinRr.getExtraColumns();
-
-            for (String string : joinExtraColumns) {
-                extraColumns.add(string);
-            }
-            rr.setExtraColumns(extraColumns);
-        }
-        return listQuery;
-    }
-
+    /**
+     * Gets the type(String, Integer, Float, Boolean) of an attribute
+     * @param classNode
+     * @param attributeName
+     * @return
+     */
     public static String getTypeOfAttribute(Node classNode, String attributeName){
         //get attribute type
         Iterable<Relationship> attributeRels = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING);
@@ -690,6 +657,13 @@ public class Util {
         return "";
     }
 
+    /**
+     * Evals a
+     * @param attributeType
+     * @param attributeName
+     * @param attributeValue
+     * @return
+     */
     public static Object evalAttributeType(String attributeType, String attributeName, String attributeValue){
 
         if(attributeType.equals("String"))//NOI18N
@@ -700,6 +674,7 @@ public class Util {
             Long attrbtDate = (long)0;
             SimpleDateFormat dateFormat = new SimpleDateFormat(ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
             try {
+                if(attributeValue.contains("(?i)"))
                 attributeValue = attributeValue.substring(4, attributeValue.length());
                 attrbtDate = dateFormat.parse(attributeValue).getTime();
             } catch (ParseException ex) {
