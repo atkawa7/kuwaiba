@@ -235,6 +235,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         if(userName != null){
             if (userName.trim().equals("")) //NOI18N
                 throw new InvalidArgumentException("Username can not be an empty string", Level.INFO);
+
+            Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,userName).getSingle();
+            if (storedUser != null)
+                throw new InvalidArgumentException(Util.formatString("The username %1s is already in use", userName), Level.WARNING);
         }
 
         if(password != null){
@@ -245,10 +249,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         Node userNode = userIndex.get(UserProfile.PROPERTY_ID, oid).getSingle();
         if(userNode == null)
             throw new ApplicationObjectNotFoundException(Util.formatString("Can not find a user with id %1s",oid));
-
-        Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,userName).getSingle();
-        if (storedUser != null)
-            throw new InvalidArgumentException(Util.formatString("The username %1s is already in use", userName), Level.WARNING);
 
         Transaction tx =  graphDb.beginTx();
         if (userName != null){
@@ -291,6 +291,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         if(newUserName != null){
             if (newUserName.trim().equals("")) //NOI18N
                 throw new InvalidArgumentException("Username can not be an empty string", Level.INFO);
+
+            Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,newUserName).getSingle();
+            if (storedUser != null)
+                throw new InvalidArgumentException(Util.formatString("The username %1s is already in use", newUserName), Level.WARNING);
         }
 
         if(password != null){
@@ -301,10 +305,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         Node userNode = userIndex.get(UserProfile.PROPERTY_USERNAME, oldUserName).getSingle();
         if(userNode == null)
             throw new ApplicationObjectNotFoundException(Util.formatString("Can not find a user with name %1s",oldUserName));
-
-        Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,newUserName).getSingle();
-        if (storedUser != null)
-            throw new InvalidArgumentException(Util.formatString("The username %1s is already in use", newUserName), Level.WARNING);
 
         Transaction tx =  graphDb.beginTx();
         if (newUserName != null){
