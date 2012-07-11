@@ -16,12 +16,15 @@
 
 package org.kuwaiba.beans;
 
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
+import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 
 /**
@@ -32,19 +35,34 @@ import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 public class ToolsBean implements ToolsBeanRemote {
     private static ApplicationEntityManagerRemote aem;
     @Override
-    public void resetAdmin() throws Exception {
+    public void resetAdmin()  throws ServerSideException{
         try{
             getAEMInstance().setUserProperties("admin","admin", "kuwaiba", "Tyler", "Durden", true, null, null);
+        }catch(ApplicationObjectNotFoundException ex){ //If the user does not exist, create it
+            try{
+                getAEMInstance().createUser("admin", "kuwaiba", "Tyler", "Durden", true, null, null);
+            }catch(RemoteException re){
+                throw new ServerSideException(Level.SEVERE, re.getMessage());
+            }catch(InvalidArgumentException ie){
+                throw new ServerSideException(Level.SEVERE, ie.getMessage());
+            }
+        }catch(RemoteException ex){
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }catch(InvalidArgumentException ex){
-            getAEMInstance().createUser("admin", "kuwaiba", "Tyler", "Durden", true, null, null);
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
         
     }
 
     @Override
-    public void createDefaultGroups() throws Exception{
-        getAEMInstance().createGroup("Administrators", "Administrators Group", null, null);
-        getAEMInstance().createGroup("Users", "Standard Users Group", null, null);
+    public void createDefaultGroups() throws ServerSideException{
+        try {
+            getAEMInstance().createGroup("Administrators", "Administrators Group", null, null);
+            getAEMInstance().createGroup("Users", "Standard Users Group", null, null);
+        } catch (Exception ex) {
+            Logger.getLogger(ToolsBean.class.getName()).log(Level.INFO, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
     }
     
     private static ApplicationEntityManagerRemote getAEMInstance(){

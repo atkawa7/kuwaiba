@@ -17,6 +17,8 @@
 package org.kuwaiba.beans;
 
 import javax.ejb.Remote;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.exceptions.ServerSideException;
 
 /**
  * Misc management tools
@@ -29,5 +31,5 @@ public interface ToolsBeanRemote {
      */
     public void resetAdmin() throws Exception;
 
-    public void createDefaultGroups() throws Exception;
+    public void createDefaultGroups() throws ServerSideException;
 }

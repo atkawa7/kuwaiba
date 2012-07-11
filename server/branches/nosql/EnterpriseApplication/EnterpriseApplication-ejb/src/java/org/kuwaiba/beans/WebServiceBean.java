@@ -1433,7 +1433,6 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
         if (!aSession.getIpAddress().equals(ipAddress))
             throw new NotAuthorizedException(Util.formatString("This IP is not allowed to perform this operation: %1s", methodName));
-
         return;
     }
 
