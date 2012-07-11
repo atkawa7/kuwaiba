@@ -37,7 +37,7 @@ public class ToolsBean implements ToolsBeanRemote {
     @Override
     public void resetAdmin()  throws ServerSideException{
         try{
-            getAEMInstance().setUserProperties("admin","admin", "kuwaiba", "Tyler", "Durden", true, null, null);
+            getAEMInstance().setUserProperties("admin",null, "kuwaiba", "Tyler", "Durden", true, null, null);
         }catch(ApplicationObjectNotFoundException ex){ //If the user does not exist, create it
             try{
                 getAEMInstance().createUser("admin", "kuwaiba", "Tyler", "Durden", true, null, null);
