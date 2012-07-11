@@ -35,7 +35,7 @@ import org.netbeans.api.visual.widget.ComponentWidget;
  * Represents a filter for numeric values (integers, floats and longs)
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
-public class DateFilterNodeWidget extends SimpleCriteriaNodeWidget implements PropertyChangeListener{
+public class DateFilterNodeWidget extends SimpleCriteriaNodeWidget{
 
     protected JTextField insideText;
     protected JTextField insideText2;
@@ -52,46 +52,20 @@ public class DateFilterNodeWidget extends SimpleCriteriaNodeWidget implements Pr
         setNodeProperties(null, "Date", "Filter", null);
         defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
         QueryEditorScene scene = ((QueryEditorScene)getScene());
-        dummyPin = (VMDPinWidget)scene.addPin(id, defaultPinId);
+        VMDPinWidget dummyPin = (VMDPinWidget)scene.addPin(id, defaultPinId);
         condition = new JComboBox(new Object[]{
                                                 LocalTransientQuery.Criteria.EQUAL,
                                                 LocalTransientQuery.Criteria.BETWEEN,
                                                 LocalTransientQuery.Criteria.GREATER_THAN,
                                                 LocalTransientQuery.Criteria.LESS_THAN
                           });
-        condition.addPropertyChangeListener(this);
-        Action action = condition.getAction();
         dummyPin.addChild(new ComponentWidget(scene, condition));
         dummyPin.addChild(new ComponentWidget(scene, insideText));
     }
 
     @Override
-    public Long[] getValue() {
-
-        Long dateStartLong = (long)0;
-        Long dateEndLong = (long)0;
-        try {
-                dateStartLong = dateFormat.parse(insideText.getText()).getTime();
-                dateEndLong = dateFormat.parse(insideText2.getText()).getTime();
-        } catch (ParseException ex) {
-            System.out.println("wrong date format should be yyyy-MM-dd");//NOI18N
-        }
-        Long[] dates = null;
-
-        dates[0] = dateStartLong;
-        dates[1] = dateEndLong;
-
-        return dates;
+    public String getValue() {
+        return insideText.getText();
     }
-
-    public void propertyChange(PropertyChangeEvent evt) {
-
-        QueryEditorScene scene = ((QueryEditorScene)getScene());
-
-        if (evt.getNewValue() == LocalTransientQuery.Criteria.BETWEEN){
-            insideText2 = new JTextField(dateFormat.format(Calendar.getInstance().getTime()), 10);
-            dummyPin.addChild(new ComponentWidget(scene, insideText2));
-            this.getScene().validate();
-        }
-    }
+    
 }
