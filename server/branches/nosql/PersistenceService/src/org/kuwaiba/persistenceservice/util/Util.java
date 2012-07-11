@@ -668,14 +668,15 @@ public class Util {
 
         if(attributeType.equals("String"))//NOI18N
             return attributeValue;
-        
+
+        if(attributeValue.contains("(?i)"))
+                    attributeValue = attributeValue.substring(4, attributeValue.length());
+
         else if(attributeType.equals("Date")){//NOI18N
             //the date you are looking for into long
             Long attrbtDate = (long)0;
             SimpleDateFormat dateFormat = new SimpleDateFormat(ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
             try {
-                if(attributeValue.contains("(?i)"))
-                attributeValue = attributeValue.substring(4, attributeValue.length());
                 attrbtDate = dateFormat.parse(attributeValue).getTime();
             } catch (ParseException ex) {
                 System.out.println("wrong date format should be "+ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
@@ -683,15 +684,12 @@ public class Util {
             return attrbtDate;
         }//end if is date
         else if(attributeType.equals("Float")){//NOI18N
-            attributeValue = attributeValue.substring(4, attributeValue.length());
             Float attribute = Float.valueOf(attributeValue);
             return attribute;
         }else if(attributeType.equals("Integer")){
-            attributeValue = attributeValue.substring(4, attributeValue.length());
             Integer attribute = Integer.valueOf(attributeValue);
             return attribute;
         }else if(attributeType.equals("Boolean")){
-            attributeValue = attributeValue.substring(4, attributeValue.length());
             Boolean attribute = Boolean.valueOf(attributeValue);
             return attribute;
         }
