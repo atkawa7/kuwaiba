@@ -672,7 +672,7 @@ public class Util {
         if(attributeValue.contains("(?i)"))
                     attributeValue = attributeValue.substring(4, attributeValue.length());
 
-        else if(attributeType.equals("Date")){//NOI18N
+        if(attributeType.equals("Date")){//NOI18N
             //the date you are looking for into long
             Long attrbtDate = (long)0;
             SimpleDateFormat dateFormat = new SimpleDateFormat(ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
