@@ -16,6 +16,7 @@
  */
 package org.inventory.navigation.navigationtree;
 
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -33,9 +34,9 @@ public class NavigationTreeService {
         this.component = _component;
     }
     public LocalObjectLight[] getRootChildren(){
-        LocalObjectLight[] rootChildren = com.getObjectChildren(null, null).toArray(new LocalObjectLight[0]);
+        List<LocalObjectLight> rootChildren = com.getObjectChildren(null, null);
         if(rootChildren != null)
-            return rootChildren;
+            return rootChildren.toArray(new LocalObjectLight[0]);
         else{
             NotificationUtil nu = Lookup.getDefault().
                 lookup(NotificationUtil.class);
