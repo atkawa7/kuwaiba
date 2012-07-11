@@ -19,11 +19,11 @@ package org.kuwaiba.apis.persistence.exceptions;
 import java.util.logging.Level;
 
 /**
- * Thrown if a user or group cannot be found
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * Thrown if an application object cannot be found (an instance of User, Group or View)
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class UserGroupNotFoundException  extends InventoryException{
-    public UserGroupNotFoundException(String msg) {
+public class ApplicationObjectNotFoundException extends InventoryException{
+    public ApplicationObjectNotFoundException(String msg) {
         super(msg, Level.WARNING);
     }
 }

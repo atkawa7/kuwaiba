@@ -26,11 +26,11 @@ import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.View;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
-import org.kuwaiba.apis.persistence.exceptions.UserGroupNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 
 /**
@@ -57,9 +57,8 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @param groups A list with the ids of the groups this user will belong to. Use null for none
      * @return The id of the newly created user
      * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
-     * @throws ObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
      */
-    public Long createUser(String userName, String password, String firstName,
+    public long createUser(String userName, String password, String firstName,
             String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
             throws InvalidArgumentException, RemoteException;
 
@@ -74,11 +73,11 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @param groups A list with the ids of the groups this user will belong to. Use null to leave it unchanged
      * @return The id of the newly created user
      * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
-     * @throws ObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
+     * @throws ApplicationObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
      */
-    public void setUserProperties(Long oid, String userName, String password, String firstName,
+    public void setUserProperties(long oid, String userName, String password, String firstName,
             String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
-            throws InvalidArgumentException, UserGroupNotFoundException, RemoteException;
+            throws InvalidArgumentException, ApplicationObjectNotFoundException, RemoteException;
 
     /**
      * Updates the information of a given user using the id to search for it
@@ -91,11 +90,11 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @param groups A list with the ids of the groups this user will belong to. Use null to leave it unchanged
      * @return The id of the newly created user
      * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
-     * @throws ObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
+     * @throws ApplicationObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
      */
     public void setUserProperties(String formerUsername, String userName, String password, String firstName,
             String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
-            throws InvalidArgumentException, UserGroupNotFoundException, RemoteException;
+            throws InvalidArgumentException, ApplicationObjectNotFoundException, RemoteException;
 
     /**
      * Creates a group
@@ -103,26 +102,21 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @param description
      * @param creationDate
      * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
      */
-    public Long createGroup(String groupName, String description, List<Integer> privileges, List<Long> users)
+    public long createGroup(String groupName, String description, List<Integer> privileges, List<Long> users)
             throws InvalidArgumentException, RemoteException;
 
     /**
      * Retrieves the user list
      * @return An array of UserProfile
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
      */
-    public List<UserProfile> getUsers()throws UserGroupNotFoundException, RemoteException;
+    public List<UserProfile> getUsers()throws RemoteException;
 
     /**
      * Retrieves the group list
      * @return An array of GroupProfile
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
      */
-    public List<GroupProfile> getGroups()throws UserGroupNotFoundException, RemoteException;
+    public List<GroupProfile> getGroups()throws RemoteException;
 
    /**
      * Set user attributes (group membership is managed using other methods)
@@ -132,10 +126,10 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @param privileges
      * @return
      * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
+     * @throws ApplicationObjectNotFoundException
      */
-    public void setGroupProperties(Long oid, String groupName, String description,
-            List<Integer> privileges,  List<Long> users)throws InvalidArgumentException, UserGroupNotFoundException, RemoteException;
+    public void setGroupProperties(long oid, String groupName, String description,
+            List<Integer> privileges,  List<Long> users)throws InvalidArgumentException, ApplicationObjectNotFoundException, RemoteException;
 
    /**
      * Removes a list of users
@@ -143,16 +137,16 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public void deleteUsers(List<Long> oids)throws UserGroupNotFoundException, RemoteException;
+    public void deleteUsers(List<Long> oids)throws ApplicationObjectNotFoundException, RemoteException;
 
     /**
      * Removes a list of groups
      * @param oids
      * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
+     * @throws ApplicationObjectNotFoundException
      */
     public void deleteGroups(List<Long> oids)
-            throws UserGroupNotFoundException, RemoteException;
+            throws ApplicationObjectNotFoundException, RemoteException;
 
    /**
      * Creates a list type item

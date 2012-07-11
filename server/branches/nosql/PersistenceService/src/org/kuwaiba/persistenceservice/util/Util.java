@@ -646,7 +646,7 @@ public class Util {
     public static String createExtraColumnFromNode(Node objectNode,String className, String visibleAttribute){
 
         if(visibleAttribute == null)
-            visibleAttribute = "name";//NOI18N
+            visibleAttribute = MetadataEntityManagerImpl.PROPERTY_NAME;//NOI18N
         
         if(objectNode.hasProperty(visibleAttribute)){
             Object property = objectNode.getProperty(visibleAttribute);
