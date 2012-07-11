@@ -76,23 +76,31 @@ public class Tools extends HttpServlet {
             if (request.getParameter("tool").equals("resetadmin")){
                 try {
                     tbr.resetAdmin();
+                    out.println("<div id=\"content\">");
                     out.println("<h1>Success</h1>");
                     out.println("<div>Admin account reset successfully</div>");
+                    out.println("</div>");
                 } catch (Exception ex) {
                     Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, ex.getMessage());
+                    out.println("<div id=\"content\">");
                     out.println("<h1>Error</h1>");
                     out.println(ex.getMessage());
+                    out.println("</div>");
                 }
             }else{
                 if (request.getParameter("tool").equals("default_groups")){
                     try {
                         tbr.createDefaultGroups();
+                        out.println("<div id=\"content\">");
                         out.println("<h1>Success</h1>");
                         out.println("<div>Default groups created successfully</div>");
+                        out.println("</div>");
                     } catch (ServerSideException ex) {
                         Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, ex.getMessage());
+                        out.println("<div id=\"content\">");
                         out.println("<h1>Error</h1>");
                         out.println(ex.getMessage());
+                        out.println("</div>");
                     }
                 }else{
                     out.println("<h1>Error</h1>");
