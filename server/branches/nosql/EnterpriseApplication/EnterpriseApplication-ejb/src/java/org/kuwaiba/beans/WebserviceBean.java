@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
@@ -72,8 +72,8 @@ import org.kuwaiba.ws.toserialize.application.ResultRecord;
  * Session bean to give primary support to the wen service calls
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@Stateless
-public class WebServiceBean implements WebServiceBeanRemote {
+@Singleton
+public class WebserviceBean implements WebserviceBeanRemote {
 
     /**
      * Reference to the Metadata Entity Manager
@@ -96,7 +96,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
      */
     private TempBusinessRulesEngine bre;
 
-    public WebServiceBean() {
+    public WebserviceBean() {
         super();
         sessions = new HashMap<String, Session>();
         bre = new TempBusinessRulesEngine();
@@ -107,7 +107,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             bem = (BusinessEntityManagerRemote) registry.lookup(BusinessEntityManagerRemote.REFERENCE_BEM);
             aem = (ApplicationEntityManagerRemote) registry.lookup(ApplicationEntityManagerRemote.REFERENCE_AEM);
         }catch(Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE,
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE,
                     ex.getClass().getSimpleName()+": {0}",ex.getMessage()); //NOI18N
             mem = null;
             bem = null;
@@ -118,7 +118,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
     @Override
-    public Long createClass(ClassInfo classDefinition) 
+    public Long createClass(ClassInfo classDefinition)
             throws ServerSideException
     {
         if (mem == null)
@@ -144,7 +144,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return mem.createClass(cm);
 
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -160,7 +160,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             mem.setAttributePropertyValue(classId, attributeName, propertyName, propertyValue);
 
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -174,9 +174,9 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try
         {
             mem.setClassPlainAttribute(classId, attributeName, attributeValue);
-            
+
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -191,7 +191,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         {
             mem.setClassIcon(classId, attributeName, iconImage);
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -206,7 +206,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         {
             mem.deleteClass(className);
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -221,13 +221,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
         {
             mem.deleteClass(classId);
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
-    public ClassInfo getMetadataForClass(String className) 
+    public ClassInfo getMetadataForClass(String className)
             throws ServerSideException
     {
         if (mem == null)
@@ -242,13 +242,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
             }
             return new ClassInfo(myClass, validators.toArray(new Validator[0]));
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
-    public ClassInfo getMetadataForClass(Long classId) 
+    public ClassInfo getMetadataForClass(Long classId)
             throws ServerSideException
     {
         if (mem == null)
@@ -264,13 +264,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return new ClassInfo(myClass, validators.toArray(new Validator[0]));
 
          } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
-    public List<ClassInfoLight> getLightMetadata(Boolean includeListTypes) 
+    public List<ClassInfoLight> getLightMetadata(Boolean includeListTypes)
             throws ServerSideException
     {
         if (mem == null)
@@ -290,13 +290,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
             }
             return cml;
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
-    public List<ClassInfo> getMetadata(Boolean includeListTypes) 
+    public List<ClassInfo> getMetadata(Boolean includeListTypes)
             throws ServerSideException
     {
         if (mem == null)
@@ -316,7 +316,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             }
             return cml;
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -331,7 +331,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         {
             mem.moveClass(classToMoveName, targetParentName);
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -345,9 +345,9 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try
         {
             mem.moveClass(classToMoveId, targetParentId);
-            
+
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -375,7 +375,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             mem.addAttribute(className, atm);
 
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -402,7 +402,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             mem.addAttribute(classId, atm);
 
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -433,13 +433,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
             mem.changeClassDefinition(cm);
 
          } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
-    public AttributeInfo getAttribute(String className, String attributeName) 
+    public AttributeInfo getAttribute(String className, String attributeName)
             throws ServerSideException
     {
         if (mem == null)
@@ -457,13 +457,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
                                                        atrbMtdt.getMapping());
             return atrbInfo;
          } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
-    public AttributeInfo getAttribute(Long classId, String attributeName) 
+    public AttributeInfo getAttribute(Long classId, String attributeName)
             throws ServerSideException
     {
         if (mem == null)
@@ -482,7 +482,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return atrbInfo;
 
          } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -508,9 +508,9 @@ public class WebServiceBean implements WebServiceBeanRemote {
             attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
 
             mem.changeAttributeDefinition(ClassId, attrMtdt);
-            
+
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -525,7 +525,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         {
             mem.deleteAttribute(className, attributeName);
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -541,13 +541,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
             mem.deleteAttribute(classId, attributeName);
 
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
-    public Long createCategory(CategoryInfo categoryDefinition) 
+    public Long createCategory(CategoryInfo categoryDefinition)
             throws ServerSideException
     {
         if (mem == null)
@@ -563,13 +563,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
             return mem.createCategory(ctgrMtdt);
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
-    public CategoryInfo getCategory(String categoryName) 
+    public CategoryInfo getCategory(String categoryName)
             throws ServerSideException
     {
         if (mem == null)
@@ -585,13 +585,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
                                                      ctgrMtdt.getCreationDate());
             return ctgrInfo;
          } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     @Override
-    public CategoryInfo getCategory(Integer categoryId) 
+    public CategoryInfo getCategory(Integer categoryId)
             throws ServerSideException
     {
         if (mem == null)
@@ -610,7 +610,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
             return ctgrInfo;
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -633,7 +633,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             mem.changeCategoryDefinition(ctgrMtdt);
 
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -655,7 +655,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return cml;
 
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
 
@@ -677,7 +677,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return cml;
 
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -691,7 +691,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             mem.addPossibleChildren(parentClassId, possibleChildren);
 
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -705,7 +705,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             mem.addPossibleChildren(parentClassName, possibleChildren);
 
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -719,7 +719,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             mem.removePossibleChildren(parentClassId, childrenToBeRemoved);
 
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -733,7 +733,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return aem.createListTypeItem(className, name, displayName);
 
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -747,7 +747,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             aem.deleteListTypeItem(className, oid, realeaseRelationships);
 
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -766,7 +766,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
             return res;
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -787,7 +787,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
             for (Session aSession : sessions.values()){
                 if (aSession.getUser().getUserName().equals(user)){
-                    Logger.getLogger(WebServiceBean.class.getName()).log(Level.INFO, Util.formatString("An existing session for user %1s has been dropped", aSession.getUser().getUserName()));
+                    Logger.getLogger(WebserviceBean.class.getName()).log(Level.INFO, Util.formatString("An existing session for user %1s has been dropped", aSession.getUser().getUserName()));
                     sessions.remove(aSession.getToken());
                     break;
                 }
@@ -798,7 +798,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             return new RemoteSession(newSession.getToken(), currentUser);
 
         } catch (RemoteException ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             return null;
         }
     }
@@ -821,7 +821,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try {
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(oid, objectClassId, maxResults));
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -834,7 +834,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try {
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectChildren(className, oid, maxResults));
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -847,7 +847,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try {
             return RemoteObject.toRemoteObjectArray(bem.getChildrenOfClass(parentOid, parentClass,classToFilter, maxResults));
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -860,7 +860,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try {
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getChildrenOfClassLight(parentOid, parentClass,classToFilter, maxResults));
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -873,7 +873,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             RemoteObject res = new RemoteObject(bem.getObjectInfo(objectClass, oid));
             return res;
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -885,7 +885,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try {
             return new RemoteObjectLight(bem.getObjectInfoLight(objectClass, oid));
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -897,7 +897,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try {
             return bem.getSpecialAttribute(objectClass, objectId, attributeName).toArray(new String[0]);
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -917,7 +917,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
             return bem.createObject(className, parentClassName, parentOid,attributes, template);
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -938,7 +938,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
             bem.deleteObjects(objects, releaseRelationships);
         }catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -959,7 +959,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
             bem.moveObjects(targetClass, targetOid, objects);
         }catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -980,7 +980,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
             return bem.copyObjects(targetClass, targetOid, objects, recursive).toArray(new Long[0]);
         }catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -999,7 +999,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
 
             bem.updateObject(className, oid,attributes);
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1016,7 +1016,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
                 res[i] = new ClassInfoLight(instanceableListTypes.get(i), new Validator[0]);
             return res;
         } catch (Exception ex) {
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1045,6 +1045,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
                 throw new ServerSideException(Level.SEVERE, "Class %1s is not subclass of GenericPhysicalConnection");
 
             String aSideString, bSideString;
+            boolean isLink = false;
 
             if (mem.isSubClass("GenericPhysicalContainer", connectionClass)){
                 aSideString = "nodeA";
@@ -1052,6 +1053,16 @@ public class WebServiceBean implements WebServiceBeanRemote {
             }else{
                 aSideString = "endpointA";
                 bSideString = "endpointB";
+                isLink = true;
+            }
+
+            //Check if the endpoints are already connected, but only if the connection is a link (the endpoints are ports)
+            if (isLink){
+                if (!bem.getSpecialAttribute(aObjectClass, aObjectId, aSideString).isEmpty())
+                    throw new ServerSideException(Level.INFO, Util.formatString("The selected endpoint (%1s, %2s) is already connected", aObjectClass, aObjectId));
+
+                if (!bem.getSpecialAttribute(bObjectClass, bObjectId, bSideString).isEmpty())
+                    throw new ServerSideException(Level.INFO, Util.formatString("The selected endpoint (%1s, %2s) is already connected", bObjectClass, bObjectId));
             }
 
             newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, null);
@@ -1059,12 +1070,12 @@ public class WebServiceBean implements WebServiceBeanRemote {
             bem.createSpecialRelationship(bObjectClass, bObjectId, connectionClass, newConnectionId, bSideString);
             return newConnectionId;
         } catch (Exception ex) {
-            //If the new connection was successfully created, but there's a problem creating the relationships, 
+            //If the new connection was successfully created, but there's a problem creating the relationships,
             //delete the connection and throw an exception
             if (newConnectionId != null)
                 deleteObjects(new String[]{connectionClass}, new Long[]{newConnectionId}, true);
-            
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1093,7 +1104,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             }
             return usersInfo;
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1113,9 +1124,9 @@ public class WebServiceBean implements WebServiceBeanRemote {
                i++;
             }
             return userGroupInfo;
-            
+
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1129,7 +1140,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try{
             aem.setUserProperties(oid, userName, password, firstName, lastName, enabled, Arrays.asList(privileges), Arrays.asList(groups));
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1143,7 +1154,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try{
             return aem.createGroup(groupName, description, Arrays.asList(privileges), Arrays.asList(users));
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1155,7 +1166,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try{
             return aem.createUser(userName, password, firstName, lastName, enabled,  Arrays.asList(privileges), Arrays.asList(groups));
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1167,7 +1178,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try{
             aem.setGroupProperties(oid, groupName, description, Arrays.asList(privileges), Arrays.asList(users));
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1179,7 +1190,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try{
             aem.deleteUsers(Arrays.asList(oids));
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1191,7 +1202,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try{
             aem.deleteGroups(Arrays.asList(oids));
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1230,13 +1241,13 @@ public class WebServiceBean implements WebServiceBeanRemote {
                     is.close();
                     res.setBackground(bytes);
                 } catch (IOException e) {
-                    Logger.getLogger(WebServiceBean.class.getName()).
+                    Logger.getLogger(WebserviceBean.class.getName()).
                             log(Level.SEVERE, Util.formatString("Background image for view type %1s in object with id %2s can not be found", viewType,oid));
                 }
             }
             return res;
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1269,9 +1280,9 @@ public class WebServiceBean implements WebServiceBeanRemote {
             aem.saveView(oid, objectClass, viewType, structure, backgroundFileName);
         }catch(InventoryException ie){
             new File(Constants.BASE_PATH_FOR_IMAGES + backgroundFileName).delete();
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ie.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ie.getMessage());
         }catch(IOException ioe){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ioe.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ioe.getMessage());
             throw new ServerSideException(Level.SEVERE, ioe.getMessage());
         }
 
@@ -1285,7 +1296,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try{
             return aem.createQuery(queryName, ownerOid, queryStructure, description);
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1298,7 +1309,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try{
             aem.saveQuery(queryOid, queryName, ownerOid, queryStructure, description);
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
 
@@ -1311,7 +1322,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try{
             aem.deleteQuery(queryOid);
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1333,7 +1344,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
             }
             return rql;
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1345,7 +1356,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try{
             return new RemoteQuery(aem.getQuery(queryOid));
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
@@ -1374,7 +1385,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
                     }
                 }
             }
-            
+
             ExtendedQuery eq = new ExtendedQuery(query.getClassName(),
                                     query.getLogicalConnector(),
                                     query.getAttributeNames(),
@@ -1383,7 +1394,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
                                     query.getConditions(), joinsList, query.getPage(), query.getLimit());
 
             rrList = aem.executeQuery(eq);
-            
+
             ResultRecord[] rrArray = new ResultRecord[rrList.size()];
 
             int i = 0;
@@ -1393,17 +1404,17 @@ public class WebServiceBean implements WebServiceBeanRemote {
                 rrArray[i] = new ResultRecord(rol, (ArrayList<String>) rrApi.getExtraColumns());
                 i++;
             }
-            
+
             return rrArray;
 
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
     /**
-     * 
+     *
      * @param showAll
      * @return
      * @throws ServerSideException
@@ -1415,7 +1426,7 @@ public class WebServiceBean implements WebServiceBeanRemote {
         try{
             return aem.getClassHierachy(showAll);
         }catch (Exception ex){
-            Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }

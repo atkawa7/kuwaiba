@@ -26,7 +26,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.servlet.http.HttpServletRequest;
-import org.kuwaiba.beans.WebServiceBeanRemote;
+import org.kuwaiba.beans.WebserviceBeanRemote;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
 import org.kuwaiba.util.Util;
@@ -54,7 +54,7 @@ public class Kuwaiba {
      * The main session bean in charge of providing the business logic
      */
     @EJB
-    private WebServiceBeanRemote wsBean;
+    private WebserviceBeanRemote wsBean;
    /**
      * The context to get information about each request
      */

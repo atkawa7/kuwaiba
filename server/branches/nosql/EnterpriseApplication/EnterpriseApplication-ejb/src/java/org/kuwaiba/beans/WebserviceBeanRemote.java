@@ -34,13 +34,9 @@ import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.ws.toserialize.metadata.CategoryInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
-
-/**
- * Main session bean backing the webservice
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
- */
 @Remote
-public interface WebServiceBeanRemote {
+public interface WebserviceBeanRemote {
+
 
     // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
     /**
@@ -53,7 +49,7 @@ public interface WebServiceBeanRemote {
      */
     public RemoteSession createSession(String user, String password, String IPAddress) throws ServerSideException;
     /**
-     * 
+     *
      * @param sessionId
      * @param remoteAddress
      * @return
@@ -124,7 +120,7 @@ public interface WebServiceBeanRemote {
      * @return true if success
      * @throws ClassNotFoundException if there is not a class with de ClassId
      */
-    
+
     public void deleteClass(String className) throws ServerSideException;
 
     /**
@@ -174,7 +170,7 @@ public interface WebServiceBeanRemote {
      * @throws Exception
      */
     public void moveClass(String classToMoveName, String targetParentName) throws ServerSideException;
-    
+
     /**
      * Moves a class from one parentClass to an other parentClass
      * @param classToMoveId
@@ -195,7 +191,7 @@ public interface WebServiceBeanRemote {
      * @param attributeDefinition
      */
     public void addAttribute(Long classId, AttributeInfo attributeDefinition) throws ServerSideException;
-    
+
     /**
      * Gets an attribute belonging to a class
      * @param className
@@ -345,7 +341,7 @@ public interface WebServiceBeanRemote {
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
     /**
-     * 
+     *
      * @param userName
      * @param password
      * @param firstName
@@ -500,9 +496,9 @@ public interface WebServiceBeanRemote {
      * @throws ServerSideException
      */
     public RemoteQuery getQuery(Long queryOid) throws ServerSideException;
-    
+
     /**
-     * 
+     *
      * @param showAll
      * @return a byte representing an XML document with the class hierarchy
      * @throws ServerSideException If something goes wrong

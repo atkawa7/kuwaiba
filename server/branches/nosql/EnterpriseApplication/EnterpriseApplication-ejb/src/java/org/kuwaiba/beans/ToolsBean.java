@@ -71,7 +71,7 @@ public class ToolsBean implements ToolsBeanRemote {
                 Registry registry = LocateRegistry.getRegistry("localhost", 1099);
                 aem = (ApplicationEntityManagerRemote) registry.lookup(ApplicationEntityManagerRemote.REFERENCE_AEM);
             }catch(Exception ex){
-                Logger.getLogger(WebServiceBean.class.getName()).log(Level.SEVERE,
+                Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE,
                         ex.getClass().getSimpleName()+": {0}",ex.getMessage()); //NOI18N
                 aem = null;
             }
