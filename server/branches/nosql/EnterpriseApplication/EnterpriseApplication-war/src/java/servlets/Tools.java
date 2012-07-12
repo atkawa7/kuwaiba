@@ -30,7 +30,7 @@ import org.kuwaiba.beans.ToolsBeanRemote;
 import org.kuwaiba.exceptions.ServerSideException;
 
 /**
- *
+ * Servlet to serve the main requests from the Tools Portal
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @WebServlet(name="Tools", urlPatterns={"/Tools"})
@@ -60,76 +60,42 @@ public class Tools extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        out.println("<html>");
-        out.println("<head>");
-        out.println("<link rel=\"stylesheet\" type=\"text/css\" href=\"css/main.css\" />");
-        out.println("<link rel=\"shortcut icon\" href=\"images/favicon.ico\" />");
-        out.println("<title>Kuwaiba Management Tools</title>");
-        out.println("</head>");
-        out.println("<body>");
-        out.println("<br/>");
-        out.println("<div style=\"text-align:center\"><a href=\"http://www.kuwaiba.org\"><img alt=\"http://www.kuwaiba.org\" src=\"images/kuwaiba_logo.png\"/></a></div>");
+        if (!request.getRemoteAddr().equals("127.0.0.1")){ //This servlet can only be called/included from the local server
+            out.println("<h1>Error</h1>");
+            out.println("You can't access this servlet directly");
+            return;
+        }
 
-        if (request.getParameter("tool") != null){
-            if (request.getParameter("tool").equals("resetadmin")){
+        switch (Integer.parseInt(request.getParameter("tool"))){
+            case 1:
                 try {
+                    out.println("<h1>Create default groups</h1>");
+                    tbr.createDefaultGroups();
+                    out.println("<h2>Success</h2>");
+                    out.println("<div id=\"content\">Default groups created successfully</div>");
+                } catch (ServerSideException ex) {
+                    Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, ex.getMessage());
+                    out.println("<h2 class=\"error\">Error</h2>");
+                    out.println("<div id=\"content\">"+ex.getMessage()+"</div>");
+                }
+                break;
+            case 2:
+                try {
+                    out.println("<h1>Create/Reset Admin Account</h1>");
                     tbr.resetAdmin();
-                    out.println("<div id=\"content\">");
-                    out.println("<h1>Success</h1>");
-                    out.println("<div>Admin account reset successfully</div>");
-                    out.println("</div>");
+                    out.println("<h2>Success</h2>");
+                    out.println("<div id=\"content\">Admin account reset successfully</div>");
                 } catch (Exception ex) {
                     Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, ex.getMessage());
-                    out.println("<div id=\"content\">");
-                    out.println("<h1>Error</h1>");
-                    out.println(ex.getMessage());
-                    out.println("</div>");
+                    out.println("<h2 class=\"error\">Error</h2>");
+                    out.println("<div id=\"content\">"+ex.getMessage()+"</div>");
                 }
-            }else{
-                if (request.getParameter("tool").equals("default_groups")){
-                    try {
-                        tbr.createDefaultGroups();
-                        out.println("<div id=\"content\">");
-                        out.println("<h1>Success</h1>");
-                        out.println("<div>Default groups created successfully</div>");
-                        out.println("</div>");
-                    } catch (ServerSideException ex) {
-                        Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, ex.getMessage());
-                        out.println("<div id=\"content\">");
-                        out.println("<h1>Error</h1>");
-                        out.println(ex.getMessage());
-                        out.println("</div>");
-                    }
-                }else{
-                    out.println("<h1>Error</h1>");
-                    out.println("<div>Unknown tool</div>");
-                }
-            }
-        } else {
-            out.println("<br/>");
-            out.println("<div id=\"content\">");
-            out.println("<ul>");
-//                out.println("<li><a href=\"?tool=backup_metadata\">Backup class metadata and containment information</a></li>");
-//                out.println("<li><a href=\"?tool=rebuild_metadata\">Refresh Cache</a></li>");
-//                out.println("<li><a href=\"?tool=restore_metadata\">Restore class metadata from file</a></li>");
-            out.println("<li><a href=\"?tool=default_groups\">Create default groups</a>: Create the default groups (Administrators and Users). You must create them BEFORE creating the default admin user</li>");
-            out.println("<br/>");
-            out.println("<li><a href=\"?tool=resetadmin\">Create/Reset admin account</a>: Creates a default account with administrator privileges (<strong>user:</strong>admin, <strong>password:</strong>kuwaiba). The default groups MUST exist prior to call this action</li>");
-            out.println("</ul>");
-            out.println("</div>");
-       }
-
-
-        out.println("<div style=\"padding-top:300px;\">");
-        out.println("<div style=\"text-align:center; padding: 5px 5px 5px 5px\"><a href=\"/kuwaiba/\">Home</a></div>");
-        out.println("<div style=\"text-align:center;\"><a href=\"http://www.neotropic.co\"><img alt=\"http://www.neotropic.co\" src=\"images/neotropic_logo.png\"/></a></div>");
-        out.println("</div>");
-        out.println("</body>");
-        out.println("</html>");
-        out.close();
-
+                break;
+            default:
+                out.println("<h2 class=\"error\">Error</h2>");
+                out.println("<div id=\"content\">Unknown tool</div>");
+        }
     }
 
     /**
