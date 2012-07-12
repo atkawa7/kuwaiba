@@ -477,8 +477,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
 
-
-
     public void moveObjects(String targetClassName, Long targetOid, HashMap<String, List<Long>> objects)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
         
