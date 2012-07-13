@@ -452,6 +452,48 @@
        inkscape:vp_y="0 : 1000 : 0"
        inkscape:vp_x="0 : 0.5 : 1"
        sodipodi:type="inkscape:persp3d" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3622-0"
+       id="linearGradient3628-9"
+       x1="352.66507"
+       y1="156.21675"
+       x2="278.57144"
+       y2="230.93361"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3622-0">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop3624-9" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="1"
+         id="stop3626-17" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3622-1-5-7-28"
+       id="linearGradient3628-7-5-1-7"
+       x1="352.66507"
+       y1="156.21675"
+       x2="278.57144"
+       y2="230.93361"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3622-1-5-7-28">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop3624-3-8-5-2" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="1"
+         id="stop3626-1-7-7-9" />
+    </linearGradient>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -460,13 +502,13 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.12"
-     inkscape:cx="70.34481"
-     inkscape:cy="463.71267"
+     inkscape:zoom="1.8101934"
+     inkscape:cx="479.50283"
+     inkscape:cy="903.51919"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1364"
+     inkscape:window-width="1358"
      inkscape:window-height="716"
      inkscape:window-x="0"
      inkscape:window-y="0"
@@ -737,7 +779,7 @@
        sodipodi:ry="32.857143"
        d="m 308.57144,230.93361 a 30,32.857143 0 1 1 -60,0 30,32.857143 0 1 1 60,0 z"
        transform="matrix(0.96632825,0,0,0.86165302,240.93558,12.930619)"
-       inkscape:export-filename="/home/zim/img/work/elementIcons/city.png"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/radio.png"
        inkscape:export-xdpi="24.836277"
        inkscape:export-ydpi="24.836277" />
     <path
@@ -750,7 +792,7 @@
        sodipodi:ry="32.857143"
        d="m 308.57144,230.93361 a 30,32.857143 0 1 1 -60,0 30,32.857143 0 1 1 60,0 z"
        transform="matrix(0.83164124,0,0,0.72330604,280.7065,43.033829)"
-       inkscape:export-filename="/home/zim/img/work/elementIcons/city.png"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/radio.png"
        inkscape:export-xdpi="24.836277"
        inkscape:export-ydpi="24.836277" />
     <text
@@ -759,7 +801,7 @@
        x="488.15466"
        y="222.71674"
        id="text3630-6-0-8"
-       inkscape:export-filename="/home/zim/img/work/elementIcons/city.png"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/radio.png"
        inkscape:export-xdpi="24.836277"
        inkscape:export-ydpi="24.836277"><tspan
          sodipodi:role="line"
@@ -879,9 +921,9 @@
        sodipodi:ry="32.857143"
        d="m 308.57144,230.93361 a 30,32.857143 0 1 1 -60,0 30,32.857143 0 1 1 60,0 z"
        transform="matrix(0.96632825,0,0,0.86165302,-118.67872,91.722519)"
-       inkscape:export-filename="/home/zim/img/work/elementIcons/state.png"
-       inkscape:export-xdpi="24.836277"
-       inkscape:export-ydpi="24.836277" />
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/pole_32.png"
+       inkscape:export-xdpi="49.273331"
+       inkscape:export-ydpi="49.273331" />
     <path
        sodipodi:type="arc"
        style="fill:url(#linearGradient3628-7-2);fill-opacity:1;stroke:none"
@@ -892,18 +934,18 @@
        sodipodi:ry="32.857143"
        d="m 308.57144,230.93361 a 30,32.857143 0 1 1 -60,0 30,32.857143 0 1 1 60,0 z"
        transform="matrix(0.83164124,0,0,0.72330604,-78.907804,121.82573)"
-       inkscape:export-filename="/home/zim/img/work/elementIcons/state.png"
-       inkscape:export-xdpi="24.836277"
-       inkscape:export-ydpi="24.836277" />
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/pole_32.png"
+       inkscape:export-xdpi="49.273331"
+       inkscape:export-ydpi="49.273331" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
        x="136.58095"
        y="304.51877"
        id="text3630-6-1"
-       inkscape:export-filename="/home/zim/img/work/elementIcons/state.png"
-       inkscape:export-xdpi="24.836277"
-       inkscape:export-ydpi="24.836277"><tspan
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/pole_32.png"
+       inkscape:export-xdpi="49.273331"
+       inkscape:export-ydpi="49.273331"><tspan
          sodipodi:role="line"
          id="tspan3632-8-3"
          x="136.58095"
@@ -1154,9 +1196,9 @@
        sodipodi:ry="32.857143"
        d="m 308.57144,230.93361 a 30,32.857143 0 1 1 -60,0 30,32.857143 0 1 1 60,0 z"
        transform="matrix(0.96632825,0,0,0.86165302,354.07267,145.2606)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/tower.png"
-       inkscape:export-xdpi="24.836277"
-       inkscape:export-ydpi="24.836277" />
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/tower_32.png"
+       inkscape:export-xdpi="49.273331"
+       inkscape:export-ydpi="49.273331" />
     <path
        sodipodi:type="arc"
        style="fill:url(#linearGradient3628-7-1);fill-opacity:1;stroke:none"
@@ -1167,18 +1209,18 @@
        sodipodi:ry="32.857143"
        d="m 308.57144,230.93361 a 30,32.857143 0 1 1 -60,0 30,32.857143 0 1 1 60,0 z"
        transform="matrix(0.83164124,0,0,0.72330604,393.84359,175.36381)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/tower.png"
-       inkscape:export-xdpi="24.836277"
-       inkscape:export-ydpi="24.836277" />
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/tower_32.png"
+       inkscape:export-xdpi="49.273331"
+       inkscape:export-ydpi="49.273331" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
        x="610.36279"
        y="358.05685"
        id="text3630-6-9"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/tower.png"
-       inkscape:export-xdpi="24.836277"
-       inkscape:export-ydpi="24.836277"><tspan
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/tower_32.png"
+       inkscape:export-xdpi="49.273331"
+       inkscape:export-ydpi="49.273331"><tspan
          sodipodi:role="line"
          id="tspan3632-8-1"
          x="610.36279"
@@ -1217,9 +1259,9 @@
        x="158.41342"
        y="516.48987"
        ry="0"
-       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/default_32.png"
-       inkscape:export-xdpi="82.506714"
-       inkscape:export-ydpi="82.506714" />
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/virtualport.png"
+       inkscape:export-xdpi="41.106155"
+       inkscape:export-ydpi="41.106155" />
     <text
        xml:space="preserve"
        style="font-size:38.78787613px;font-style:normal;font-weight:normal;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -1258,5 +1300,85 @@
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/default_32.png"
        inkscape:export-xdpi="91.669876"
        inkscape:export-ydpi="91.669876" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#80b3ff;fill-opacity:1;stroke:none"
+       id="path2816-71"
+       sodipodi:cx="278.57144"
+       sodipodi:cy="230.93361"
+       sodipodi:rx="30"
+       sodipodi:ry="32.857143"
+       d="m 308.57144,230.93361 a 30,32.857143 0 1 1 -60,0 30,32.857143 0 1 1 60,0 z"
+       transform="matrix(0.96632825,0,0,0.86165302,335.49605,-112.24746)"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/airconditioning.png"
+       inkscape:export-xdpi="24.836264"
+       inkscape:export-ydpi="24.836264" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#linearGradient3628-9);fill-opacity:1;stroke:none"
+       id="path2816-7-1"
+       sodipodi:cx="278.57144"
+       sodipodi:cy="230.93361"
+       sodipodi:rx="30"
+       sodipodi:ry="32.857143"
+       d="m 308.57144,230.93361 a 30,32.857143 0 1 1 -60,0 30,32.857143 0 1 1 60,0 z"
+       transform="matrix(0.83164124,0,0,0.72330604,375.26697,-82.144247)"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/airconditioning.png"
+       inkscape:export-xdpi="24.836264"
+       inkscape:export-ydpi="24.836264" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="582.71429"
+       y="97.308937"
+       id="text3630-5"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/airconditioning.png"
+       inkscape:export-xdpi="24.836264"
+       inkscape:export-ydpi="24.836264"><tspan
+         sodipodi:role="line"
+         id="tspan3632-9"
+         x="582.71429"
+         y="97.308937"
+         style="font-size:28px;font-weight:bold;fill:#ffffff">Air</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#66ff00;fill-opacity:1;stroke:none"
+       id="path2816-2-1-1-9"
+       sodipodi:cx="278.57144"
+       sodipodi:cy="230.93361"
+       sodipodi:rx="30"
+       sodipodi:ry="32.857143"
+       d="m 308.57144,230.93361 a 30,32.857143 0 1 1 -60,0 30,32.857143 0 1 1 60,0 z"
+       transform="matrix(0.96632825,0,0,0.86165302,90.183546,-126.30996)"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/parabolicantenna_32.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#linearGradient3628-7-5-1-7);fill-opacity:1;stroke:none"
+       id="path2816-7-0-7-69-6"
+       sodipodi:cx="278.57144"
+       sodipodi:cy="230.93361"
+       sodipodi:rx="30"
+       sodipodi:ry="32.857143"
+       d="m 308.57144,230.93361 a 30,32.857143 0 1 1 -60,0 30,32.857143 0 1 1 60,0 z"
+       transform="matrix(0.83164124,0,0,0.72330604,129.95447,-96.206747)"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/parabolicantenna_32.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="337.40262"
+       y="83.476151"
+       id="text3630-6-0-8-0"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Neotropic/productos/kuwaiba/img/icons/elementIcons/parabolicantenna_32.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277"><tspan
+         sodipodi:role="line"
+         id="tspan3632-8-6-1-2"
+         x="337.40262"
+         y="83.476151"
+         style="font-size:32px;font-weight:bold;fill:#ffffff">Pa</tspan></text>
   </g>
 </svg>
