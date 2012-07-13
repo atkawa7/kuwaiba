@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
-import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;

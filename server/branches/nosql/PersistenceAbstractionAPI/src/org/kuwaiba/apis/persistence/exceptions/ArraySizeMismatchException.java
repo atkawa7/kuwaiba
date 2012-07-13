@@ -17,7 +17,6 @@
 package org.kuwaiba.apis.persistence.exceptions;
 
 import java.util.logging.Level;
-import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 
 /**
  * Thrown when the size of two (or more arrays) does not match, but should

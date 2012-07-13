@@ -24,6 +24,6 @@ import java.util.logging.Level;
  */
 public class MetadataObjectNotFoundException extends InventoryException{
     public MetadataObjectNotFoundException(String msg) {
-        super(msg, Level.WARNING);
+        super(msg, Level.SEVERE);
     }
 }

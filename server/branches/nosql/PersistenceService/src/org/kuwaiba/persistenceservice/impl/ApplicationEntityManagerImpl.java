@@ -520,7 +520,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         if (classNode ==  null)
             throw new MetadataObjectNotFoundException(Util.formatString("Can not find a class with name %1s",className));
         if (!cm.isSubClass("GenericObjectList", className))
-            throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", className), Level.SEVERE);
+            throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", className), Level.WARNING);
 
         Transaction tx = null;
         try{
@@ -549,7 +549,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         try{
             tx = graphDb.beginTx();
             if (!cm.isSubClass("GenericObjectList", className))
-                throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", className), Level.SEVERE);
+                throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", className), Level.WARNING);
 
             Node instance = getInstanceOfClass(className, oid);
             Util.deleteObject(instance, realeaseRelationships);
@@ -572,7 +572,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             throw new MetadataObjectNotFoundException(Util.formatString("Can not find a class with name %1s",className));
 
         if (!Util.isSubClass("GenericObjectList", classNode))
-            throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", className), Level.SEVERE);
+            throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", className), Level.WARNING);
 
         Iterable<Relationship> childrenAsRelationships = classNode.getRelationships(RelTypes.INSTANCE_OF);
         List<RemoteBusinessObjectLight> children = new ArrayList<RemoteBusinessObjectLight>();

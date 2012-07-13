@@ -29,7 +29,7 @@ public class WrongMappingException extends InventoryException{
     public WrongMappingException(String className, String attributeName,
             String attributeType, String attributeValue) {
         super (new Formatter().format("The value %1s can't mapped to a type %2s for the attribute %3s in class %4s",
-                attributeValue, attributeType,attributeName,className).toString(), Level.WARNING);
+                attributeValue, attributeType,attributeName,className).toString(), Level.SEVERE);
     }
 
 }
