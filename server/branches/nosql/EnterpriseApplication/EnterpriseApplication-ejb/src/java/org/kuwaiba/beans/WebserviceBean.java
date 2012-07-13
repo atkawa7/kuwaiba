@@ -1361,7 +1361,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
 
-    @Override
+@Override
     public ResultRecord[] executeQuery(TransientQuery query) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
@@ -1383,6 +1383,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
                                     joinQuery.getConditions(), null, 1, 1);
                         joinsList.add(jeq);
                     }
+                    else//if is compact view
+                        joinsList.add(null);
                 }
             }
 

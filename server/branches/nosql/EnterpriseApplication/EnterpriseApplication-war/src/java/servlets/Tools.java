@@ -67,7 +67,12 @@ public class Tools extends HttpServlet {
             return;
         }
 
-        switch (Integer.parseInt(request.getParameter("tool"))){
+        int tool = 0;
+        try{
+                tool = request.getParameter("tool") == null ? 0 : Integer.parseInt(request.getParameter("tool"));
+        }catch(NumberFormatException mfe){ }
+        
+        switch (tool){
             case 1:
                 try {
                     out.println("<h1>Create default groups</h1>");
