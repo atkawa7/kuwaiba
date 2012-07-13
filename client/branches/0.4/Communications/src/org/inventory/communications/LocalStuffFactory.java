@@ -70,7 +70,7 @@ public class LocalStuffFactory {
         //return null;
     }
 
-    public static LocalEdge createLocalEdge(LocalObject toAdd, LocalNode nodeA, LocalNode nodeB, Point[] controlPoints) {
+    public static LocalEdge createLocalEdge(LocalObjectLight toAdd, LocalNode nodeA, LocalNode nodeB, Point[] controlPoints) {
         return new LocalEdgeImpl(toAdd, nodeB, nodeB, controlPoints);
     }
 
