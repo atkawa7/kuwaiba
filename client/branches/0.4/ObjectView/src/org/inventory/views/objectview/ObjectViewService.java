@@ -219,8 +219,8 @@ public class ObjectViewService implements LookupListener{
         Object[] nodesIntersection = Utils.inverseIntersection(childrenNodes, currentNodes);
         Object[] edgesIntersection = Utils.inverseIntersection(childrenEdges, currentEdges);
         
-        viewBuilder.refreshView((List<LocalObjectLight>)nodesIntersection[0], (List<LocalObject>)edgesIntersection[0],
-                (List<LocalObjectLight>)nodesIntersection[1], (List<LocalObject>)edgesIntersection[1]);
+        viewBuilder.refreshView((List<LocalObjectLight>)nodesIntersection[0], (List<LocalObjectLight>)edgesIntersection[0],
+                (List<LocalObjectLight>)nodesIntersection[1], (List<LocalObjectLight>)edgesIntersection[1]);
         vrtc.getScene().validate();
         vrtc.getScene().repaint();
         if (!((List)nodesIntersection[0]).isEmpty() || !((List)nodesIntersection[1]).isEmpty()

@@ -163,8 +163,8 @@ public class ViewBuilder {
      * @param myNodes
      * @param myPhysicalConnections
      */
-    public void refreshView(List<LocalObjectLight> newNodes, List<LocalObject> newPhysicalConnections,
-            List<LocalObjectLight> nodesToDelete, List<LocalObject> physicalConnectionsToDelete){
+    public void refreshView(List<LocalObjectLight> newNodes, List<LocalObjectLight> newPhysicalConnections,
+            List<LocalObjectLight> nodesToDelete, List<LocalObjectLight> physicalConnectionsToDelete){
 
         scene.getNodesLayer().removeChildren();
         scene.getEdgesLayer().removeChildren();
@@ -190,7 +190,7 @@ public class ViewBuilder {
         }
 
         if (newPhysicalConnections != null)
-            for (LocalObject toAdd : newPhysicalConnections){
+            for (LocalObjectLight toAdd : newPhysicalConnections){
                 String aSideString, bSideString;
                 //Hardcoded for now
                 if (toAdd.getClassName().equals("WireContainer") || toAdd.getClassName().equals("WirelessContainer")){ //NOI18N
