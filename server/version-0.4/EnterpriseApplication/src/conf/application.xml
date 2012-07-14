@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application id="Application_ID" version="6" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:application="http://java.sun.com/xml/ns/javaee/application_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd">
+  <display-name>Kuwaiba Open Inventory System Webservice</display-name>
+  <module>
+    <web>
+      <web-uri>EnterpriseApplication-war.war</web-uri>
+      <context-root>kuwaiba</context-root>
+    </web>
+  </module>
+  <module>
+    <ejb>EnterpriseApplication-ejb.jar</ejb>
+  </module>
+</application>
