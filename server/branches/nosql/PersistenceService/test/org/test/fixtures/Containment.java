@@ -22,7 +22,7 @@ public class Containment {
         containmentHierarchy.put("Building", new String[]{"Room", "Floor", "Tower"});
         containmentHierarchy.put("Floor", new String[]{"Room"});
         containmentHierarchy.put("Facility", new String[]{"Building", "Warehouse", "Shelter", "Tower"});
-        containmentHierarchy.put("Room", new String[]{"GenericContainer","Workstation","Server","Printer", "AirConditioning"});
+        containmentHierarchy.put("Room", new String[]{"GenericBox","Workstation","Server","Printer", "AirConditioning"});
         containmentHierarchy.put("Lot", new String[]{"Shelter","Tower","OutdoorsCabinet"});
         containmentHierarchy.put("Rack", new String[]{"GenericNetworkElement", 
                                     "GenericPhysicalElement","Server", "TimeSource",
