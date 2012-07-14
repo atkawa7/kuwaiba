@@ -54,7 +54,7 @@
                 </div>
                 <div id="infocontent">
                     <p><a href="http://kuwaiba.org/wiki" target="_blank">Wiki</a></p>
-                    <p><a href="http://kuwaiba.org/blogs" target="_blank">Blog</a></p>
+                    <p><a href="http://neotropic.co/blogs" target="_blank">Blog</a></p>
                     <p><a href="http://sourceforge.net/projects/kuwaiba/files/Docs/" target="_blank">Documentation</a></p>
                     <p><a href="http://www.twitter.com/kuwaiba" target="_blank">Twitter</a></p>
                     <p><a href="http://webchat.freenode.net/?channels=kuwaiba" target="_blank">Live chat</a></p>
