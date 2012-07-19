@@ -64,10 +64,10 @@ public class Kuwaiba {
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
     /**
      * Authenticates the user
-     * @param username user login
+     * @param username user login name
      * @param password user password
-     * @return the SessionID
-     * @throws Exception
+     * @return A session object
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createSession")
     public RemoteSession createSession(@WebParam(name = "username") String username,
@@ -86,8 +86,8 @@ public class Kuwaiba {
     }
     /**
      * Closes a session
-     * @param sessionId The session to be closed
-     * @return true if it could close the session, false otherwise.
+     * @param sessionId The session token to be closed
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "closeSession")
     public void closeSession(@WebParam(name = "sessionId")String sessionId) throws Exception{
@@ -108,7 +108,7 @@ public class Kuwaiba {
      * Retrieves the user list
      * @param sessionId session token
      * @return The list of users
-     * @throws Exception
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
 
     @WebMethod(operationName = "getUsers")
@@ -128,10 +128,10 @@ public class Kuwaiba {
     }
 
     /**
-     * Retrieves all groups
+     * Retrieves the group list
      * @param sessionId
-     * @return A group list
-     * @throws Exception
+     * @return A group object list
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getGroups")
     public UserGroupInfo[] getGroups(@WebParam(name = "sessionId")String sessionId) throws Exception {
@@ -151,15 +151,15 @@ public class Kuwaiba {
 
     /**
      * Creates a user
-     * @param username
-     * @param password
-     * @param firstName
-     * @param lastName
-     * @param enabled
-     * @param priviliges
-     * @param groups
-     * @param sessionId
-     * @throws Exception
+     * @param username User name. Can't be null
+     * @param password A password (in plain text, it'll be encrypted later). Can't be null nor an empty string
+     * @param firstName User's first name
+     * @param lastName User's last name
+     * @param enabled Is this user enable by default?
+     * @param privileges A list of integers specifying the privileges for this user. Does nothing for now
+     * @param groups List of the ids of the groups to relate to this user
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createUser")
     public Long createUser(
@@ -168,13 +168,13 @@ public class Kuwaiba {
             @WebParam(name = "firstName")String firstName,
             @WebParam(name = "LastName")String lastName,
             @WebParam(name = "enabled")Boolean enabled,
-            @WebParam(name = "priviliges")Integer[] priviliges,
+            @WebParam(name = "privileges")Integer[] privileges,
             @WebParam(name = "groups")Long[] groups,
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try
         {
             wsBean.validateCall("createUser", getIPAddress(), sessionId);
-            return wsBean.createUser(username, password, firstName, lastName, enabled, priviliges, groups);
+            return wsBean.createUser(username, password, firstName, lastName, enabled, privileges, groups);
 
         } catch(Exception e){
             Level level = Level.SEVERE;
@@ -188,32 +188,32 @@ public class Kuwaiba {
 
     /**
      * Set an existing user properties
-     * @param oid
-     * @param username
-     * @param firstName
-     * @param lastName
-     * @param password
-     * @param enabled
-     * @param priviliges
-     * @param groups
-     * @param sessionId
-     * @throws Exception
+     * @param oid User id
+     * @param username New username (null if unchanged)
+     * @param firstName New user's first name (null if unchanged)
+     * @param lastName (null if unchanged)
+     * @param password (null if unchanged)
+     * @param enabled (null if unchanged)
+     * @param priviliges (null if unchanged). Does nothing for now
+     * @param groups List of ids of the groups to be related to this user(null if unchanged)
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "setUserProperties")
     public void setUserProperties(
             @WebParam(name = "oid")Long oid,
             @WebParam(name = "username")String username,
             @WebParam(name = "firstName")String firstName,
-            @WebParam(name = "LastName")String lastName,
+            @WebParam(name = "lastName")String lastName,
             @WebParam(name = "password")String password,
             @WebParam(name = "enabled")Boolean enabled,
-            @WebParam(name = "priviliges")Integer[] priviliges,
+            @WebParam(name = "privileges")Integer[] privileges,
             @WebParam(name = "groups")Long[] groups,
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try
         {
             wsBean.validateCall("setUserProperties", getIPAddress(), sessionId);
-            wsBean.setUserProperties(oid, username, password, firstName, lastName, enabled, priviliges, groups);
+            wsBean.setUserProperties(oid, username, password, firstName, lastName, enabled, privileges, groups);
 
         } catch(Exception e){
             Level level = Level.SEVERE;
@@ -227,24 +227,24 @@ public class Kuwaiba {
 
     /**
      * Creates a group
-     * @param groupName
-     * @param description
-     * @param priviliges
-     * @param users
-     * @param sessionId
-     * @throws Exception
+     * @param groupName Group name
+     * @param description Group description
+     * @param privileges Group privileges. Does nothing for now
+     * @param users List of user ids to be related to this group
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createGroup")
     public Long createGroup(
             @WebParam(name = "groupName")String groupName,
             @WebParam(name = "description")String description,
-            @WebParam(name = "priviliges")Integer[] priviliges,
+            @WebParam(name = "privileges")Integer[] privileges,
             @WebParam(name = "users")Long[] users,
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try
         {
             wsBean.validateCall("createGroup", getIPAddress(), sessionId);
-            return wsBean.createGroup(groupName, description, priviliges, users);
+            return wsBean.createGroup(groupName, description, privileges, users);
 
         } catch(Exception e){
             Level level = Level.SEVERE;
@@ -258,13 +258,13 @@ public class Kuwaiba {
 
     /**
      * Sets the properties for an existing group
-     * @param oid
-     * @param groupName
-     * @param description
-     * @param privileges
-     * @param users
-     * @param sessionId
-     * @throws Exception
+     * @param oid Group id
+     * @param groupName New group name (null if unchanged)
+     * @param description New group description (null if unchanged)
+     * @param privileges New group privileges (null if unchanged)
+     * @param users New group users (null if unchanged)
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "setGroupProperties")
     public void setGroupProperties(@WebParam(name = "oid")Long oid,
@@ -289,9 +289,9 @@ public class Kuwaiba {
 
     /**
      * Deletes a list of users
-     * @param oids
-     * @param sessionId
-     * @throws Exception
+     * @param oids List of user ids to be deleted
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteUsers")
     public void deleteUsers(@WebParam(name = "oids")Long[] oids,
@@ -312,9 +312,9 @@ public class Kuwaiba {
 
     /**
      * Deletes a list of groups
-     * @param oids
-     * @param sessionId
-     * @throws Exception
+     * @param oids list of group ids to be deleted
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteGroups")
     public void deleteGroups(@WebParam(name = "oids")Long[] oids,
@@ -335,12 +335,12 @@ public class Kuwaiba {
 
     /**
      * This method generates/retrieves the default view for a given object
-     * @param oid Object id for the object
-     * @param objectClass
-     * @param viewType
-     * @param sessionId
-     * @return a view object associated to the given object. If there's no default view, an empty one (all field set to null) is returned
-     * @throws Exception
+     * @param oid Object id the view belongs to
+     * @param objectClass Object id the view belongs to
+     * @param viewType View type. 0 for default, 1 for rack views and 2 for equipment-type views. So far only default views are working, this is, the direct children of an object organized and connected using physical connections
+     * @param sessionId Session token
+     * @return a view object associated to the given object. Null is there's no a saved one
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getView")
     public ViewInfo getView(@WebParam(name="oid")Long oid,
@@ -362,13 +362,13 @@ public class Kuwaiba {
 
     /**
      * Saves/create a view
-     * @param oid Object id
-     * @param objectClass object class
-     * @param viewType View type. Search on the class View (Persistence Abstraction Layer) documentation for supported types
+     * @param oid Object id this view belongs to
+     * @param objectClass object class this view belongs to
+     * @param viewType 0 for default, 1 for rack views and 2 for equipment-type views. So far only default views are working, this is, the direct children of an object organized and connected using physical connections
      * @param structure XML document containing the view structure. Null if you don't want to change the current structure
      * @param background View background . If null, the background is removed. If a 0-sized array, it stays unmodified
      * @param sessionId Session token
-     * @throws Exception If something -unexpected or not- goes wrong
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "saveView")
     public void saveView(@WebParam(name="oid")Long oid,
@@ -401,12 +401,12 @@ public class Kuwaiba {
 
     /**
      * Creates a list type item
-     * @param className
-     * @param name
-     * @param displayName
-     * @param sessionId
-     * @return
-     * @throws Exception
+     * @param className List type item class name
+     * @param name List type item name
+     * @param displayName List type item display name
+     * @param sessionId Session token
+     * @return the id of the new object
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createListTypeItem")
     public Long createListTypeItem(
@@ -432,11 +432,11 @@ public class Kuwaiba {
 
     /**
      * Deletes a list type item
-     * @param className
-     * @param oid
-     * @param releaseRelationships
-     * @param sessionId
-     * @throws Exception If something goes wrong
+     * @param className list type item class name
+     * @param oid list type item id
+     * @param releaseRelationships should the deletion process release the relationships attached to this object
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteListTypeItem")
     public void deleteListTypeItem(
@@ -464,7 +464,7 @@ public class Kuwaiba {
      * @param className The list type class
      * @param sessionId Session token
      * @return a list of list type items
-     * @throws Exception
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getListTypeItems")
     public RemoteObjectLight[] getListTypeItems(
@@ -487,8 +487,8 @@ public class Kuwaiba {
     /**
      * Retrieves all possible list types
      * @param sessionId Session token
-     * @return A list of light class metadata objects
-     * @throws Exception If something goes wrong
+     * @return A list of list types as ClassInfoLight instances
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getInstanceableListTypes")
     public ClassInfoLight[] getInstanceableListTypes(
@@ -512,8 +512,8 @@ public class Kuwaiba {
      * that the first record is reserved for the column headers, so and empty result set
      * will have at least one record.
      * @param query The TransientQuery object (a code friendly version of the graphical query designed at client side).
-     * @return An array of records
-     * @throws Exception
+     * @return An array of records (the first raw is used to put the headers)
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "executeQuery")
     public ResultRecord[] executeQuery(@WebParam(name="query")TransientQuery query,
@@ -538,7 +538,7 @@ public class Kuwaiba {
      * @param queryStructure XML document as a byte array
      * @param sessionId session id to check permissions
      * @return a RemoteObjectLight wrapping the newly created query
-     * @throws Exception in case something goes wrong
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createQuery")
     public Long createQuery(@WebParam(name="queryName")String queryName,
@@ -564,10 +564,10 @@ public class Kuwaiba {
      * @param queryOid query oid to be updated
      * @param queryName query name (the same if unchanged)
      * @param ownerOid owneroid (if unchanged)
-     * @param queryStructure XML document if unchanged
-     * @param sessionId session id to check permissions
-     * @return success or failure
-     * @throws Exception
+     * @param queryStructure XML document if unchanged. Null otherwise
+     * @param description Query description. Null if unchanged
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "saveQuery")
     public void saveQuery(@WebParam(name="queryOid")Long queryOid,
@@ -590,11 +590,10 @@ public class Kuwaiba {
     }
 
     /**
-     * Deletes the query load in the graphical query builder
-     * @param queryOid query oid to be deleted
-     * @param sessionId session id to check permissions
-     * @return success or failure
-     * @throws Exception
+     * Deletes a query
+     * @param queryOid Query id
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteQuery")
     public void deleteQuery(@WebParam(name="queryOid")Long queryOid,
@@ -613,11 +612,11 @@ public class Kuwaiba {
     }
 
     /**
-     * Retrieves all queries made in the graphical Query builder
-     * @param showPublic
-     * @param sessionId
+     * Retrieves all saved queries
+     * @param showPublic should this method return the public queries along with the private to this user?
+     * @param sessionId Session token
      * @return A list with the available queries
-     * @throws Exception
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getQueries")
     public RemoteQueryLight[] getQueries(@WebParam(name="showPublic")boolean showPublic,
@@ -636,11 +635,11 @@ public class Kuwaiba {
     }
 
     /**
-     * Load a query from all saved queries
-     * @param queryOid
-     * @param sessionId
+     * Retrieves a saved query
+     * @param queryOid Query id
+     * @param sessionId Session token
      * @return The query
-     * @throws Exception If something goes wrong
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getQuery")
     public RemoteQuery getQuery(@WebParam(name="queryOid")Long queryOid,
@@ -658,12 +657,12 @@ public class Kuwaiba {
         }
     }
 
-        /**
+    /**
      * Creates an XML document describing the class hierarchy
      * @param should this method return all entity classes or only InventoryObject subclasses
      * @param sessionId session identifier
-     * @return A byte array containing the class hierarchy as an XML document
-     * @throws Exception
+     * @return A byte array containing the class hierarchy as an XML document. See the <a href="http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Queries">wiki entry</a> for details on the document structure
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getClassHierarchy")
     public byte[] getClassHierarchy(@WebParam(name = "showAll")Boolean showAll,
@@ -747,7 +746,7 @@ public class Kuwaiba {
      * @param maxResults Max number of children to be returned. O for all
      * @param sessionId Session token
      * @return An array with children
-     * @throws An general exception in case of error. Consumer of this method must check the message for details
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName="getChildrenOfClass")
     public RemoteObject[] getChildrenOfClass(@WebParam(name="parentOid")Long parentOid,
@@ -776,7 +775,7 @@ public class Kuwaiba {
      * @param maxResults Max number of children to be returned. O for all
      * @param sessionId Session token
      * @return An array with children
-     * @throws An general exception in case of error. Consumer of this method must check the message for details
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName="getChildrenOfClassLight")
     public RemoteObjectLight[] getChildrenOfClassLight(@WebParam(name="parentOid")Long parentOid,
@@ -799,11 +798,11 @@ public class Kuwaiba {
 
      /**
       * Gets the complete information about a given object (all its attributes)
-      * @param objectClass
-      * @param oid
-      * @param sessionId
+      * @param objectClass Object class
+      * @param oid Object id
+      * @param sessionId Session token
       * @return a representation of the entity as a RemoteObject
-      * @throws Exception
+      * @throws Exception Generic exception encapsulating any possible error raised at runtime
       */
     @WebMethod(operationName = "getObjectInfo")
     public RemoteObject getObjectInfo(@WebParam(name = "objectClass") String objectClass,
@@ -826,12 +825,12 @@ public class Kuwaiba {
     }
 
     /**
-     * Gets the basic information about a given object (oid, classname, etc)
-     * @param objectClass className object class. No need to use the package
-     * @param oid oid object oid
-     * @param sessionId
+     * Gets the basic information about a given object (oid, classname, name)
+     * @param objectClass Object class name
+     * @param oid Object oid
+     * @param sessionId Session token
      * @return a representation of the entity as a RemoteObjectLight
-     * @throws Exception
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getObjectInfoLight")
     public RemoteObjectLight getObjectInfoLight(@WebParam(name = "objectclass") String objectClass,
@@ -860,7 +859,7 @@ public class Kuwaiba {
      * @param sessionId Session token
      * @return A list of the values related to the given object through attributeName.
      * Note that this is a <strong>string</strong> array on purpose, so the values used not necessarily are not Longs
-     * @throws Exception
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getSpecialAttribute")
     public String[] getSpecialAttribute(@WebParam(name = "objectclass") String objectClass,
@@ -886,8 +885,8 @@ public class Kuwaiba {
      * @param oid Object's oid
      * @param  attributeNames attribute names to be changed
      * @param  attributeValues attribute values for the attributes above
-     * @param sessionId
-     * @throws Exception
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "updateObject")
     public void updateObject(@WebParam(name = "className")String className,
@@ -909,16 +908,16 @@ public class Kuwaiba {
     }
 
     /**
-     * Creates a busines object
-     * @param className
-     * @param parentObjectClassName
-     * @param parentOid
-     * @param attributeNames
-     * @param attributeValues
-     * @param templateId
-     * @param sessionId
-     * @return
-     * @throws Exception
+     * Creates a business object
+     * @param className New object class name
+     * @param parentObjectClassName New object parent's class name
+     * @param parentOid New object parent's id
+     * @param attributeNames Names of the attributes to be set at creation time
+     * @param attributeValues Values for those attributes
+     * @param templateId Template id. Does nothing for now
+     * @param sessionId Session token
+     * @return the id of the new object
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createObject")
     public Long createObject(@WebParam(name = "className")String className,
@@ -943,11 +942,11 @@ public class Kuwaiba {
     
     /**
      * Delete a set of objects. Note that this method must be used only for business objects (not metadata or application ones)
-     * @param className Objects class names
-     * @param oid objects oid
-     * @param releaseRelationships should the deletion be forced, deleting all the relationships?
+     * @param classNames Objects class names
+     * @param oids object id from the objects to be deleted
+     * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
      * @param sessionId Session token
-     * @throws Exception If something goes wrong
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteObjects")
     public void deleteObjects(@WebParam(name = "classNames")String[] classNames,
@@ -968,13 +967,13 @@ public class Kuwaiba {
     }
 
     /**
-     * Moves objects from its current parent to a target.
+     * Moves objects from their current parent to a target object.
+     * @param  targetClass New parent object id
      * @param targetOid The new parent's oid
      * @param objectClasses Class names of the objects to be moved
      * @param objectOids Oids of the objects to be moved
-     * @param sessionId
-     * @return Success or failure
-     * @throws Exception
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "moveObjects")
     public void moveObjects(@WebParam(name = "targetClass")String targetClass,
@@ -997,15 +996,14 @@ public class Kuwaiba {
 
      /**
      * Copy objects from its current parent to a target. This is <b>not</b> a deep copy. Only the selected object will be copied, not the children
-     * Note: This method does *not* check if the parent change is possible according to the container hierarchy
-     * the developer must check it on his side!
      * @param targetClass  The new parent class name
      * @param targetOid The new parent oid
      * @param objectClasses Class names of the objects to be copied
-     * @param templateObjects Oids of the objects to be copied
+     * @param objectOids Oids of the objects to be copied
+     * @param recursive should the objects be copied recursively? (themselves plus their children)
      * @param sessionId Session token
      * @return An array with the ids of the new objects
-     * @throws Exception If something goes wrong
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "copyObjects")
     public Long[] copyObjects(
@@ -1070,6 +1068,13 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Deletes a physical connection
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
     @WebMethod(operationName = "deletePhysicalConnection")
     public void deletePhysicalConnection(
             @WebParam(name = "objectClass")String objectClass,
@@ -1092,17 +1097,17 @@ public class Kuwaiba {
     // <editor-fold defaultstate="collapsed" desc="Metadata Methods. Click on the + sign on the left to edit the code.">
 
     /**
-     * Creates a Class Metadata entry
-     * @param name
-     * @param displayName
-     * @param description
-     * @param flags
-     * @param abstractClass
-     * @param parentClassName
-     * @param icon
-     * @param smallIcon
-     * @return
-     * @throws Exception
+     * Creates a class metadata object. This method is still under testing and might be buggy
+     * @param name Class name
+     * @param displayName Class display name
+     * @param description Class description
+     * @param abstractClass is this class abstract?
+     * @param parentClassName Parent class name
+     * @param icon Icon fro view. The size is limited by the value in Constants.MAX_ICON_SIZE
+     * @param smallIcon Icon for trees. The size is limited by the value in Constants.MAX_ICON_SIZE
+     * @param sessionId Session token
+     * @return the id of the new class metadata object
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createClassMetadata")
     public Long createClassMetadata(@WebParam(name = "name")
@@ -1148,19 +1153,19 @@ public class Kuwaiba {
     }
 
      /**
-     * Changes a Class Metadata definition
-     * @param name
-     * @param displayName
-     * @param description
-     * @param flags
-     * @param abstractClass
-     * @param parentClassName
-     * @param icon
-     * @param smallIcon
-     * @throws Exception
+     * Updates a metadata object properties
+     * @param name New class metadata object name. Null if unchanged
+     * @param displayName New class metadata object display name. Null if unchanged
+     * @param description New class metadata object description. Null if unchanged
+     * @param abstractClass is this class abstract?
+     * @param parentClassName New class metadata object parent class name. Null if unchanged
+     * @param icon New icon for views. Null if unchanged. The size is limited by the value in Constants.MAX_ICON_SIZE
+     * @param smallIcon New icon for trees. Null if unchanged. The size is limited by the value in Constants.MAX_ICON_SIZE
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "changeClassMetadataDefinition")
-    public void changeClassMetadataDefinition(@WebParam(name = "name")
+    @WebMethod(operationName = "setClassMetadataDefinition")
+    public void setClassMetadataProperties(@WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "description")
         String description, @WebParam(name = "abstractClass")
@@ -1204,6 +1209,7 @@ public class Kuwaiba {
     }
     
     /**
+     * <strong>Marked to be changed, don't use it!</strong>
      * Sets the value of a property associated to an attribute. So far there are only
      * 4 possible properties:
      * -displayName
@@ -1214,12 +1220,11 @@ public class Kuwaiba {
      * @param attributeName The name of the attribute
      * @param propertyName The name of the property
      * @param propertyValue The value of the property
-     * @param sessionId
-     * @return Success or failure
-     * @throws Exception
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "setAttributePropertyValue")
-    public void setAttributePropertyValue(@WebParam(name = "classId")Long classId,
+    public void setAttributeProperties(@WebParam(name = "classId")Long classId,
             @WebParam(name = "attributeName")String attributeName,
             @WebParam(name = "propertyName")String propertyName,
             @WebParam(name = "propertyValue")String propertyValue,
@@ -1239,6 +1244,7 @@ public class Kuwaiba {
     }
 
     /**
+     * <strong>Marked to be changed, don't use it!</strong>
      * Sets the string attributes in a class meta data (by now only the display name and description)
      * @param classId Class to be modified
      * @param attributeName attribute to be modified
@@ -1266,6 +1272,7 @@ public class Kuwaiba {
     }
 
     /**
+     * <strong>Marked to be changed, don't use it!</strong>
       * Sets the image (icons) attributes in a class meta data (smallIcon and Icon)
       * @param classId Class to be modified
       * @param iconAttribute icon attribute to be modified
@@ -1296,8 +1303,9 @@ public class Kuwaiba {
      }
 
     /**
+     * <strong>Marked to be changed, don't use it!</strong>
      * Adds an attribute to a classMeatdatada by its ClassId
-     * @param ClassName
+     * @param ClassName Class name where the attribute will be attached
      * @param name
      * @param displayName
      * @param type
@@ -1341,6 +1349,7 @@ public class Kuwaiba {
     }
 
     /*
+     * <strong>Marked to be changed, don't use it!</strong>
      * Adds an attribute to a classMeatdatada by its ClassName
      * @param ClassName
      * @param name
@@ -1388,9 +1397,10 @@ public class Kuwaiba {
 
     /**
      * Gets the metadata for a given class using its name as argument
-     * @param className
-     * @return
-     * @throws Exception
+     * @param className Class name
+     * @param sessionId Session token
+     * @return The metadata as a ClassInfo instance
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getMetadataForClass")
     public ClassInfo getMetadataForClass(@WebParam(name = "className")
@@ -1412,9 +1422,9 @@ public class Kuwaiba {
 
     /**
      * Gets the metadata for a given class using its id as argument
-     * @param classId
-     * @return
-     * @throws Exception
+     * @param classId Class metadata object id
+     * @return The metadata as a ClassInfo instance
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getMetadataForClassById")
     public ClassInfo getMetadataForClassById(@WebParam(name = "classId")
@@ -1436,12 +1446,12 @@ public class Kuwaiba {
     }
 
      /**
-     * Provides metadata for all classes, but the light version
-     * @param sessionId
+     * Retrieves the metadata for the entire class hierarchy as ClassInfoLight instances
+     * @param sessionId Session token
      * @param includeListTypes boolean to indicate if the list should include the subclasses of
      * GenericObjectList
-     * @return An array with the basic class metadata
-     * @throws Exception
+     * @return An array with the metadata for the entire class hierarchy as ClassInfoLight instances
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getLightMetadata")
     public List<ClassInfoLight> getLightMetadata(
@@ -1468,12 +1478,12 @@ public class Kuwaiba {
     }
 
      /**
-     * Retrieves all class metadata
-     * @param sessionId
+     * Retrieves the metadata for the entire class hierarchy as ClassInfo instances
+     * @param sessionId Session token
      * @param includeListTypes boolean to indicate if the list should include the subclasses of
      * GenericObjectList
-     * @return An array with the complete metadata for each class
-     * @throws Exception
+     * @return An array with the metadata for the entire class hierarchy as ClassInfo instances
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getMetadata")
     public List<ClassInfo> getMetadata(
@@ -1500,8 +1510,10 @@ public class Kuwaiba {
 
     /**
      * Deletes a class metadata entry for a given class using its name as argument
-     * @param className
-     * @throws Exception
+     * @param className Class name
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     *
      */
     @WebMethod(operationName = "deleteClass")
     public void deleteClass(@WebParam(name = "className")
@@ -1524,9 +1536,9 @@ public class Kuwaiba {
 
     /**
      * Deletes a class metadata entry for a given class using its id as argument
-     * @param className
-     * @return
-     * @throws Exception
+     * @param classId Class id
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
 
     @WebMethod(operationName = "deleteClassById")
@@ -1547,6 +1559,14 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Get the possible children of a class according to the containment hierarchy. This method is recursive, and if a possible child is an abstract class, it gets its non-abstract subclasses
+     * @param parentClassName Class to retrieve its possible children
+     * @param sessionId Session token
+     * @return A list of possible children as ClassInfoLight instances
+     * @return An array with the metadata for the entire class hierarchy as ClassInfoLight instances
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
     @WebMethod(operationName = "getPossibleChildren")
     public List<ClassInfoLight> getPossibleChildren(@WebParam(name = "parentClassName")
                     String parentClassName, @WebParam(name = "sessionId")
@@ -1566,6 +1586,15 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Get the possible children of a class according to the containment hierarchy.
+     * This method is not recursive, and only returns the direct possible children,
+     * even if they're abstract
+     * @param parentClassName Class to retrieve its possible children
+     * @param sessionId Session token
+     * @return An array with the metadata for the entire class hierarchy as ClassInfoLight instances
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
     @WebMethod(operationName = "getPossibleChildrenNoRecursive")
     public List<ClassInfoLight> getPossibleChildrenNoRecursive(@WebParam(name = "parentClassName")
     String parentClassName, @WebParam(name = "sessionId")
@@ -1584,7 +1613,15 @@ public class Kuwaiba {
             throw e;
         }
     }
-    
+
+    /**
+     * Adds possible children to a given class using its id as argument. If any of the arguments provided are already added,
+     * it will abort the operation and rise an exception
+     * @param parentClassId Class to attach the new possible children
+     * @param newPossibleChildren List of nre possible children. Abstract classes are de-aggregated
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
     @WebMethod(operationName = "addPossibleChildren")
     public void addPossibleChildren(@WebParam(name = "parentClassId")
             Long parentClassId, @WebParam(name = "childrenToBeAdded")
@@ -1605,6 +1642,14 @@ public class Kuwaiba {
         }
     }
 
+     /**
+     * Adds possible children to a given class using its name as argument. If any of the arguments provided are already added,
+     * it will abort the operation and rise an exception
+     * @param parentClassId Class to attach the new possible children
+     * @param newPossibleChildren List of nre possible children. Abstract classes are de-aggregated
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
     @WebMethod(operationName = "addPossibleChildrenByClassName")
     public void addPossibleChildrenByClassName(@WebParam(name = "parentClassName")
             String parentClassName, @WebParam(name = "childrenToBeAdded")
@@ -1626,10 +1671,10 @@ public class Kuwaiba {
 
     /**
      * Removes a set of possible children for a given class
-     * @param parentClassId
-     * @param childrenToBeRemoved
-     * @param sessionId
-     * @throws Exception
+     * @param parentClassId Class the possible children are going to be removed from
+     * @param childrenToBeRemoved List of ids of classes to be removed as possible children
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "removePossibleChildren")
     public void removePossibleChildren(@WebParam(name = "parentClassId")
@@ -1664,5 +1709,4 @@ public class Kuwaiba {
         return ((HttpServletRequest)context.getMessageContext().
                     get("javax.xml.ws.servlet.request")).getRemoteAddr().toString(); //NOI18N
     }
-
 }
