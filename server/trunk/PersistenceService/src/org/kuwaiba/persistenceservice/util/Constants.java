@@ -24,7 +24,7 @@ public class Constants {
     /**
      * Class hierarchy XML document version
      */
-    public static final String CLASS_HIERARCHY_DOCUMENT_VERSION = "1.0";
+    public static final String CLASS_HIERARCHY_DOCUMENT_VERSION = "1.1";
     /**
      * Persistence Service version
      */
