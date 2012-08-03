@@ -44,11 +44,13 @@ import org.kuwaiba.apis.persistence.interfaces.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.persistenceservice.caching.CacheManager;
+import org.kuwaiba.persistenceservice.queries.CypherQueryBuilder;
 import org.kuwaiba.persistenceservice.util.Constants;
 import org.kuwaiba.persistenceservice.util.Util;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
+
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -866,298 +868,49 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     @Override
     public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException {
 
+        Map<String, Node> classNodes = new HashMap<String, Node>();
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, query.getClassName()).getSingle();
-
+               
         if (classNode == null) 
             throw new MetadataObjectNotFoundException(Util.formatString(
-                    "Can not find the query with name %1s", query.getClassName()));//NOI18N
+                    "Can not find the Class with name %1s", query.getClassName()));//NOI18N
 
         Boolean isAbstract = (Boolean) classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT);
-        String cypherQuery = "";
-        String match = "";
-        String returnQuery = "instance";
-        String whereQuery = "";
-        //a Match is created by each join.
-        String joinMatch = "";
-        //a listType create in return by each join
-        String joinReturn = "";
-        //to iterate in joins
-        int k=0;
-        //to  know if there are joins
-        Boolean isJoin = false;
-        //Cypher query paramas
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("className", query.getClassName());//NOI18N
-        //limits
-        params.put("s", (query.getLimit() * (query.getPage() - 1)));//NOI18N
-        params.put("l", query.getLimit());//NOI18N
-        //query attributes
-        List<String> visibleAttributeNames = query.getVisibleAttributeNames();
-        List<String> attributeNames = query.getAttributeNames();
-        List<String> attributeValues = query.getAttributeValues();
-        List<Integer> conditions = query.getConditions();
-        List<List<String>> joinVisibleAttributeNames = new ArrayList<List<String>>();
-        List<List<String>> joinHeaderVisibleAttributeNames = new ArrayList<List<String>>();
-        //result Records
-        List<ResultRecord> rsltrcrdList = new ArrayList<ResultRecord>();
-        //if the class we are looking for is abstract
-        if (isAbstract)
-        {
-            cypherQuery = "START abstractClassmetadata = node:classes(name = {className})";//NOI18N
-            match = "MATCH abstractClassmetadata<-[:" + RelTypes.EXTENDS + "*]-classmetadata<-[:" + RelTypes.INSTANCE_OF + "]-";//NOI18N
-        }
-        else
-        {
-            cypherQuery = "START classmetadata = node:classes(name = {className})";//NOI18N
-            match = "MATCH classmetadata<-[:" + RelTypes.INSTANCE_OF + "]-";//NOI18N
-        }
-        
-        //if nothing is select Return statements
-        if (query.getAttributeNames()== null )
-            cypherQuery = cypherQuery.concat(match).concat("instance").concat(" RETURN ".concat(returnQuery));//NOI18N
-            //cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));//NOI18N
-        
-        else{//where statements
-            for (int i = 0; i < attributeNames.size(); i++) {
-                String condition = "";//NOI18N
-                String where = "";//NOI18N
-                String value = attributeValues.get(i);
-                if (attributeValues.get(i) != null) {
-                    switch (conditions.get(i)) {
-                        case ExtendedQuery.EQUAL:
-                            condition = "! =~";//NOI18N
-                            value = "(?i)".concat(value);//NOI18N
-                            break;
-                        case ExtendedQuery.EQUAL_OR_GREATER_THAN:
-                            condition = "! >=";//NOI18N
-                            break;
-                        case ExtendedQuery.EQUAL_OR_LESS_THAN:
-                            condition = "! <=";//NOI18N
-                            break;
-                        case ExtendedQuery.GREATER_THAN:
-                            condition = "! >";//NOI18N
-                            break;
-                        case ExtendedQuery.LESS_THAN:
-                            condition = "! <";//NOI18N
-                            break;
-                        case ExtendedQuery.LIKE:
-                            condition = "! =~";//NOI18N
-                            value = "(?i).*".concat(value).concat(".*");//NOI18N
-                            break;
-                    }
-                    //the value to search for
-                    Object newParam = Util.evalAttributeType(Util.getTypeOfAttribute(classNode, attributeNames.get(i)),
-                            attributeNames.get(i),
-                            value);
-                    params.put(attributeNames.get(i),
-                            newParam);
-                    if (Long.class.isInstance(newParam) || Boolean.class.isInstance(newParam) || Float.class.isInstance(newParam) || Integer.class.isInstance(newParam)){
-                        if(conditions.get(i) == ExtendedQuery.EQUAL)
-                            condition = condition.substring(0, condition.length() - 1);
-                    }
-                    where = "instance.".concat(attributeNames.get(i)).concat(condition).concat(" {".concat(attributeNames.get(i)).concat("}"));
-                }//end if is not a join value
-                else
-                {
-                    List<ExtendedQuery> joins = query.getJoins();
-                    joinMatch="";
-                    //&& joins.size() > k
-                    if(joins.get(i) != null ){
-                        ExtendedQuery join = joins.get(i);
-                        //format the join Visible attributes
-                        if(join.getVisibleAttributeNames() != null)
-                        {
-                            List<String> formatVisibleattributes = new ArrayList<String>();
-                            for(String joinHeader: join.getVisibleAttributeNames()){
-                                formatVisibleattributes.add(join.getClassName().concat(".").concat(joinHeader));
-                            }
-                            joinHeaderVisibleAttributeNames.add(formatVisibleattributes);
-                            joinVisibleAttributeNames.add(join.getVisibleAttributeNames());
-                        }
-                        else{
-                            List<String> formatVisibleattributes = new ArrayList<String>();
-                            formatVisibleattributes.add(join.getClassName().concat(".").concat("name"));
-                            joinHeaderVisibleAttributeNames.add(formatVisibleattributes);
-                            List emptyJoinVisibleAttributes = new ArrayList<String>();
-                            emptyJoinVisibleAttributes.add("name");
-                            joinVisibleAttributeNames.add(emptyJoinVisibleAttributes);
-                        }
-                        //if there are no filter in a listTypes, but there is at least a atrribute set as visible
-                        if (join.getAttributeNames() != null && join.getAttributeValues() != null){
-                            List<String> joinAttributeNames = join.getAttributeNames();
-                            List<String> joinAttributeValues = join.getAttributeValues();
-                            List<Integer> joinConditions = join.getConditions();
-                            String joinWhere = "";//NOI18N
-                            for (int j = 0; j < joinAttributeNames.size(); j++){
-                                String joinCondition = "";
-                                String joinValue = joinAttributeValues.get(j);
-                                if (joinAttributeValues.get(j) != null){
-                                    switch (joinConditions.get(j)) {
-                                        case ExtendedQuery.EQUAL:
-                                            joinCondition = "! =~";//NOI18N
-                                            joinValue = "(?i)".concat(joinValue);//NOI18N
-                                            break;
-                                        case ExtendedQuery.EQUAL_OR_GREATER_THAN:
-                                            joinCondition = "! >=";//NOI18N
-                                            break;
-                                        case ExtendedQuery.EQUAL_OR_LESS_THAN:
-                                            joinCondition = "! <=";//NOI18N
-                                            break;
-                                        case ExtendedQuery.GREATER_THAN:
-                                            joinCondition = "! >";//NOI18N
-                                            break;
-                                        case ExtendedQuery.LESS_THAN:
-                                            joinCondition = "! <";//NOI18N
-                                            break;
-                                        case ExtendedQuery.LIKE:
-                                            joinCondition = "! =~";//NOI18N
-                                            joinValue = "(?i).*".concat(joinValue).concat(".*");//NOI18N
-                                            break;
-                                    }
-                                    if (joinAttributeNames.get(j).equals("id")){//if is small view
-                                        params.put("join".concat(Integer.toString(i)).concat(joinAttributeNames.get(j)), Long.valueOf(joinAttributeValues.get(j)));
-                                        params.put("rel".concat(Integer.toString(i)), attributeNames.get(i));
-                                        where = "r".concat(Integer.toString(i)).concat(".name={rel").concat(Integer.toString(i)).concat("} AND ID(listype".concat(Integer.toString(i)).concat(")").concat("=").concat(" {join".concat(Integer.toString(i)).concat(joinAttributeNames.get(j)).concat("}")));//NOI18N
-                                    }
-                                    else{//Detail view
-                                        Node joinNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, join.getClassName()).getSingle();
-                                        Object newJoinParam = Util.evalAttributeType(Util.getTypeOfAttribute(joinNode, joinAttributeNames.get(j)),
-                                                joinAttributeNames.get(j),
-                                                joinValue);
-                                        params.put("join".concat(Integer.toString(i)).concat(joinAttributeNames.get(j)),
-                                                newJoinParam);
-
-                                        params.put("rel".concat(Integer.toString(i)),  attributeNames.get(i));
-
-                                        if (Long.class.isInstance(newJoinParam) || Boolean.class.isInstance(newJoinParam) || Float.class.isInstance(newJoinParam) || Integer.class.isInstance(newJoinParam)) {
-                                            joinCondition = joinCondition.substring(0, joinCondition.length() - 1);
-                                        }
-                                        //by every join it necesary to compare the relationship.name and the join attibutes in the listtype.property
-                                        joinWhere = "r".concat(Integer.toString(i)).concat(".name={rel").concat(Integer.toString(i)).concat("} AND listype".concat(Integer.toString(i)).concat(".").concat(joinAttributeNames.get(j)).concat(joinCondition).concat(" {".concat("join".concat(Integer.toString(i)).concat(joinAttributeNames.get(j))).concat("}")));
-                                    }
-                                }//end if join values are not null
-                                if(joinWhere.length()>1)
-                                    whereQuery = whereQuery.concat(joinWhere.concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : " OR "));//NOI18N
-                            }//end for attibutteNames
-                            joinReturn = joinReturn.concat(" listype").concat(Integer.toString(i)).concat(",");
-                            //k++;
-                        }//end if there no filtter
-                        else{//if is detail view and something is checked asl vissible attribute
-                            joinReturn = joinReturn.concat(" listype").concat(Integer.toString(i)).concat(",");
-                            params.put("rel".concat(Integer.toString(i)),  attributeNames.get(i));
-                            String joinWhere = "r".concat(Integer.toString(i)).concat(".name! ={rel").concat(Integer.toString(i)).concat("}");
-                            if(joinWhere.length()>1)
-                                whereQuery = whereQuery.concat(joinWhere.concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : " OR "));//NOI18N
-                            //k++;
-                        }
-                    }//end if the join list is not empty
-                    else{//if in compact view none is selected
-                        params.put("rel".concat(Integer.toString(i)),  attributeNames.get(i));
-                        String joinWhere = "r".concat(Integer.toString(i)).concat(".name? ={rel").concat(Integer.toString(i)).concat("} AND listype").concat(Integer.toString(i)).concat(" ").concat("is null").concat("");
-                        //params.put("listypeisnull", "is null");
-                        if(joinWhere.length()>1)
-                            whereQuery = whereQuery.concat(joinWhere.concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : " OR "));//NOI18N
-                    }
-                    //Match
-                    joinMatch = "instance-[r".concat(Integer.toString(i)).concat("?:").concat(RelTypes.RELATED_TO.toString()).concat("]->listype".concat(Integer.toString(i))).concat(", ");//NOI18N
-                    match = match.concat(joinMatch);
-                    isJoin = true;
-                }//end else join
-
-                if(where.length()>1)
-                    whereQuery = whereQuery.concat(where.concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : " OR "));//NOI18N
-            }//end for attributeNames
-            //match = match.concat(joinMatch);
-            match = match.substring(0, match.length()-2);//remove the last ", "
-            //whereQuery = where;
-            whereQuery = whereQuery.substring(0, whereQuery.length()-4);
-
-            if (!isJoin)
-                match = match.concat("]-instance");//NOI18N
-            
-            cypherQuery = cypherQuery.concat(match);
-            //it probably occurs if a listtype atribute is set as visible and a class attributes is visible too
-            if (!whereQuery.isEmpty()) 
-                cypherQuery = cypherQuery.concat(" WHERE ".concat(whereQuery));//NOI18N
-            
-            if(!isJoin)
-                cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));//NOI18N
-            else if(isJoin){
-                if(joinReturn.length()>1){
-                    joinReturn = ", ".concat(joinReturn.substring(0, joinReturn.length()-1));
-                    cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery).concat(joinReturn));
-                    joinReturn = joinReturn.substring(2);
-                }
-                else
-                    cypherQuery = cypherQuery.concat(" RETURN ".concat(returnQuery));
-            }
-        }//end else there are values to look for
-
-        if (query.getPage() == 0) 
-            cypherQuery = cypherQuery.concat(" ORDER BY instance.name ASC");//NOI18N
-        else 
-            cypherQuery = cypherQuery.concat(" ORDER BY instance.name ASC skip {s} limit {l}");//NOI18N
-
-        //excecute the query
-        ExecutionEngine engine = new ExecutionEngine(graphDb);
-        ExecutionResult result = engine.execute(cypherQuery, params);
-
-        //headers of result
-        if (visibleAttributeNames == null) {
-            visibleAttributeNames = new ArrayList<String>();
-            visibleAttributeNames.add("name");
-        }
-
-        //Query Results
-        Iterator<Map<String, Object>> columnsIterator = result.iterator();
-                
-        List<ResultRecord> onlyResults =  new ArrayList<ResultRecord>();
-        ResultRecord rr= null;
-        
-        while(columnsIterator.hasNext()){
-            Map<String, Object> column = columnsIterator.next();
-            List<String> extraColumns = new ArrayList<String>();
-            Node instanceNode = (Node)column.get("instance");
-
-            String obecjtName = "";
-            for(String van: visibleAttributeNames){
-                extraColumns.add(Util.getAttributeFromNode(instanceNode, van));
-                if (van.equals("name"))
-                    obecjtName = extraColumns.get(extraColumns.size()-1);
-            }
-            //if(isAbstract)
-                rr = new ResultRecord(instanceNode.getId(), obecjtName ,Util.getClassName(instanceNode));
-            //else//rr = new ResultRecord(instanceNode.getId(), (String)instanceNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), query.getClassName());
-            
-            if(joinVisibleAttributeNames!=null && isJoin && joinVisibleAttributeNames.size()>0){
-                int t = 0;
-                String [] joinReturns = joinReturn.split(",");
-                for(String joinColumn: joinReturns){
-                    Node joinNode = (Node)column.get(joinColumn.trim());//get the column
-                    for( String jvan : joinVisibleAttributeNames.get(t))
-                        extraColumns.add(Util.getAttributeFromNode((Node)joinNode, jvan));
-                    t++;
+        classNodes.put("className", classNode);
+        //joins
+        if(query.getJoins()!= null){
+            for(int i = 0; i<query.getJoins().size(); i++){
+                if(query.getJoins().get(i) != null){
+                    Node joinClassNode  =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, query.getJoins().get(i).getClassName()).getSingle();
+                    classNodes.put("join"+i, joinClassNode);
                 }
             }
-            rr.setExtraColumns(extraColumns);
-            onlyResults.add(rr);
         }
-        //headers of result
-        if(isJoin){
-            for(List<String> visibleAttributes: joinHeaderVisibleAttributeNames){
-                for(String joinVisibleAttribute: visibleAttributes)
-                    visibleAttributeNames.add(joinVisibleAttribute);
-                }
-        }
-        ResultRecord resltRcrdHeader = new ResultRecord(null, null, null);
-        resltRcrdHeader.setExtraColumns(visibleAttributeNames);
-        rsltrcrdList.add(resltRcrdHeader);
+        //Parent
+        Boolean isParentAbstract = false;
+        Boolean hasParent = false;
+        if(query.getParent() != null){
+            Node parentClassNode =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, query.getParent().getClassName()).getSingle();
 
-        if(onlyResults.size()>0){
-            for(ResultRecord orr: onlyResults)
-                rsltrcrdList.add(orr);
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                        "Can not find the Parent Class with name %1s", query.getClassName()));//NOI18N
+            //parent joins
+            if(query.getParent().getJoins()!= null){
+                for(int i = 0; i>query.getParent().getJoins().size(); i++){
+                    Node joinClassNode  =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, query.getParent().getJoins().get(i).getClassName()).getSingle();
+                    classNodes.put("parentJoin"+i, joinClassNode);
+                }
+            }
+            classNodes.put(query.getParent().getClassName(), parentClassNode);
+            hasParent = true;
+            isParentAbstract = (Boolean) parentClassNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT);
         }
-        return rsltrcrdList;
+        
+        CypherQueryBuilder cqb = new CypherQueryBuilder();
+        cqb.createQuery(classNodes, isAbstract, query, hasParent,isParentAbstract);
+
+        return cqb.getResultList();
     }
     
     public byte[] getClassHierachy(boolean showAll) throws MetadataObjectNotFoundException, InvalidArgumentException{
