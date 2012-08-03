@@ -106,6 +106,10 @@ public class TransientQuery {
      */
     private ArrayList<TransientQuery> joins;
     /**
+     * As stated before, parent will be treated like simple subqueries
+     */
+    private TransientQuery parent;
+    /**
      * Indicates if the current LocalQuery object is a join or the master query. It will
      * be used later to determine if
      */
@@ -190,6 +194,14 @@ public class TransientQuery {
 
     public void setJoins(ArrayList<TransientQuery> joins) {
         this.joins = joins;
+    }
+
+    public TransientQuery getParent() {
+        return parent;
+    }
+
+    public void setParent(TransientQuery parent) {
+        this.parent = parent;
     }
 
     public void setLimit(int limit) {
