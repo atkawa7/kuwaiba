@@ -1368,32 +1368,70 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try{
             List<ExtendedQuery> joinsList =  null;
             List<org.kuwaiba.apis.persistence.application.ResultRecord> rrList = new ArrayList<org.kuwaiba.apis.persistence.application.ResultRecord>();
-
-            //joins
-            if(query.getJoins() != null){
-                joinsList =  new ArrayList<ExtendedQuery>();
+            ExtendedQuery pa = null;
+            //parent
+            if(query.getParent() != null){
+                if(query.getParent().getJoins() != null){//joins
+                    joinsList =  new ArrayList<ExtendedQuery>();
+                    for (TransientQuery joinQuery : query.getParent().getJoins()) {
+                        if(joinQuery !=null){
+                            ExtendedQuery jeq = new ExtendedQuery(joinQuery.getClassName(),
+                                        joinQuery.getLogicalConnector(),
+                                        joinQuery.getAttributeNames(),
+                                        joinQuery.getVisibleAttributeNames(),
+                                        joinQuery.getAttributeValues(),
+                                        joinQuery.getConditions(), null,null, 1, 1);
+                            joinsList.add(jeq);
+                        }
+                        else//if is compact view
+                            joinsList.add(null);
+                    }//end for
+                }//end if joins
+                pa = new ExtendedQuery(query.getParent().getClassName(),
+                                    query.getParent().getLogicalConnector(),
+                                    query.getParent().getAttributeNames(),
+                                    query.getParent().getVisibleAttributeNames(),
+                                    query.getParent().getAttributeValues(),
+                                    query.getParent().getConditions(), joinsList, null, query.getPage(), query.getLimit());
+            }//end if parent
+            joinsList =  new ArrayList<ExtendedQuery>();
+            if(query.getJoins() != null){//joins
+//                for(int i = 0; i<query.getAttributeValues().size(); i++){
+//                    if(query.getAttributeValues().get(i) == null){
+//                        if(query.getJoins().get(i) != null){
+//                            ExtendedQuery jeq = new ExtendedQuery(query.getJoins().get(i).getClassName(),
+//                                        query.getJoins().get(i).getLogicalConnector(),
+//                                        query.getJoins().get(i).getAttributeNames(),
+//                                        query.getJoins().get(i).getVisibleAttributeNames(),
+//                                        query.getJoins().get(i).getAttributeValues(),
+//                                        query.getJoins().get(i).getConditions(), null,null, 1, 1);
+//                            joinsList.add(jeq);
+//                        }
+//                        else
+//                            joinsList.add(null);
+//                    }
+//                }
+                
                 for (TransientQuery joinQuery : query.getJoins()) {
-                    //TODO it always come a extra null
-                    if(joinQuery !=null){
+                    if(joinQuery != null){
                         ExtendedQuery jeq = new ExtendedQuery(joinQuery.getClassName(),
                                     joinQuery.getLogicalConnector(),
                                     joinQuery.getAttributeNames(),
                                     joinQuery.getVisibleAttributeNames(),
                                     joinQuery.getAttributeValues(),
-                                    joinQuery.getConditions(), null, 1, 1);
+                                    joinQuery.getConditions(), null,null, 1, 1);
                         joinsList.add(jeq);
                     }
                     else//if is compact view
                         joinsList.add(null);
-                }
-            }
-
+                }//end for
+            }//end if there are joins
             ExtendedQuery eq = new ExtendedQuery(query.getClassName(),
                                     query.getLogicalConnector(),
                                     query.getAttributeNames(),
                                     query.getVisibleAttributeNames(),
                                     query.getAttributeValues(),
-                                    query.getConditions(), joinsList, query.getPage(), query.getLimit());
+                                    query.getConditions(), joinsList, pa, query.getPage(), query.getLimit());
 
             rrList = aem.executeQuery(eq);
 
