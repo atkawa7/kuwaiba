@@ -94,6 +94,10 @@ public class ExtendedQuery implements Serializable{
      */
     private List<ExtendedQuery> joins;
     /**
+     * As stated before, joins will be treated like simple subqueries
+     */
+    private ExtendedQuery parent;
+    /**
      * Indicates if the current LocalQuery object is a join or the master query. It will
      * be used later to determine if
      */
@@ -112,7 +116,7 @@ public class ExtendedQuery implements Serializable{
     }
 
     public ExtendedQuery(String className, int logicalConnector, List<String> attributeNames,
-            List<String> visibleAttributeNames, List<String> attributeValues, List<Integer> conditions, List<ExtendedQuery> joins, int page, int limit) {
+            List<String> visibleAttributeNames, List<String> attributeValues, List<Integer> conditions, List<ExtendedQuery> joins, ExtendedQuery parent, int page, int limit) {
         this.className = className;
         this.logicalConnector = logicalConnector;
         this.attributeNames = attributeNames;
@@ -120,10 +124,11 @@ public class ExtendedQuery implements Serializable{
         this.attributeValues = attributeValues;
         this.conditions = conditions;
         this.joins = joins;
+        this.parent = parent;
         this.page = page;
         this.limit = limit;
     }
-
+ 
     public List<String> getAttributeNames() {
         return attributeNames;
     }
@@ -150,6 +155,14 @@ public class ExtendedQuery implements Serializable{
 
     public List<String> getVisibleAttributeNames() {
         return visibleAttributeNames;
+    }
+
+    public ExtendedQuery getParent() {
+        return parent;
+    }
+
+    public void setParent(ExtendedQuery parent) {
+        this.parent = parent;
     }
 
     public String getClassName() {
