@@ -40,8 +40,7 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateBusin
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.RelateToServiceAction;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowRelatedServicesAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.inventory.navigation.applicationnodes.objectnodes.properties.ObjectNodeProperty;
 import org.openide.actions.CopyAction;
 import org.openide.actions.CutAction;
@@ -76,12 +75,11 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     protected DeleteBusinessObjectAction deleteAction;
     protected RefreshObjectAction refreshAction;
     protected EditObjectAction editAction;
-    private RelateToServiceAction relateToServiceAction;
-    private ShowRelatedServicesAction showRelatedServicesAction;
+    protected ShowObjectIdAction showObjectIdAction;
 
     protected Sheet sheet;
     protected Image icon;
-    private Image defaultIcon = ImageUtilities.loadImage(GENERIC_ICON_PATH);;
+    private Image defaultIcon = ImageUtilities.loadImage(GENERIC_ICON_PATH);
     private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
 
     public ObjectNode(LocalObjectLight _lol, boolean isLeaf){
@@ -97,6 +95,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         editAction = new EditObjectAction(this);
         deleteAction = new DeleteBusinessObjectAction(this);
         refreshAction = new RefreshObjectAction(this);
+        showObjectIdAction = new ShowObjectIdAction(this);
     }
     
     public ObjectNode(LocalObjectLight _lol){
@@ -113,10 +112,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         deleteAction = new DeleteBusinessObjectAction(this);
         editAction = new EditObjectAction(this);
         refreshAction = new RefreshObjectAction(this);
-        if (object.getValidator("isRelatableToService") == 1){
-            relateToServiceAction = new RelateToServiceAction(object);
-            showRelatedServicesAction = new ShowRelatedServicesAction(object);
-        }
+        showObjectIdAction = new ShowObjectIdAction(this);
     }
 
     /*
@@ -159,7 +155,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
         for(LocalAttributeMetadata lam:meta.getAttributes()){
             if(lam.isVisible()){
-
                 ObjectNodeProperty property = null;
                 int mapping = lam.getMapping();
                 switch (mapping){
@@ -293,10 +288,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                             SystemAction.get(CutAction.class),
                             SystemAction.get(PasteAction.class),
                             null, //Separator
-                            relateToServiceAction,
-                            showRelatedServicesAction,
-                            null, //Separator
-                            explorerAction};
+                            explorerAction,
+                            showObjectIdAction
+                            };
 
     }
 

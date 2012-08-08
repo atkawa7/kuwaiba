@@ -12,33 +12,43 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  under the License.
  */
 package org.inventory.navigation.applicationnodes.objectnodes.actions;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
-import javax.swing.KeyStroke;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 
 /**
- * Refreshes the node
+ * Gets the selected object oid
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class RefreshObjectAction extends AbstractAction {
+public final class ShowObjectIdAction extends AbstractAction{
     private ObjectNode node;
 
-    public RefreshObjectAction(ObjectNode _node) {
+    public ShowObjectIdAction(ObjectNode _node) {
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SHOW_OBJECT_ID_ACTION"));
         this.node = _node;
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_REFRESH"));
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_R,InputEvent.CTRL_MASK));
-        putValue(MNEMONIC_KEY,KeyEvent.VK_R);
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        node.refresh();
+        JOptionPane.showMessageDialog(null, 
+                new SelectableLabel(node.getObject().getOid() + " ["+node.getObject().getClassName()+"]"), //NOI18N
+                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SHOW_OBJECT_ID_ACTION_TITLE"),
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private class SelectableLabel extends JTextField{
+
+        public SelectableLabel(String text) {
+            super(text);
+            setOpaque(true);
+            setEditable(false);
+            setBorder(null);
+        }
+
     }
 }
