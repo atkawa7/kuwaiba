@@ -62,7 +62,8 @@ public class Tools extends HttpServlet {
     throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         out.println("<a href=\"/kuwaiba/\">&laquo;Back</a>");
-        if (!request.getRemoteAddr().equals("127.0.0.1")){ //This servlet can only be called/included from the local server
+        System.out.println("Request from: "+request.getRemoteAddr());
+        if (!(request.getRemoteAddr().equals("127.0.0.1") || request.getRemoteAddr().equals("::1") || request.getRemoteAddr().equals("0:0:0:0:0:0:0:1"))){ //This servlet can only be called/included from the local server
             out.println("<h1>Error</h1>");
             out.println("You can't access this servlet directly");
             return;
