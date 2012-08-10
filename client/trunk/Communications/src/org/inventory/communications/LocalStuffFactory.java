@@ -18,6 +18,7 @@ package org.inventory.communications;
 
 import java.awt.Point;
 import javax.xml.stream.XMLStreamException;
+import org.inventory.communications.core.LocalAttributeMetadataImpl;
 import org.inventory.communications.core.LocalAttributeWrapperImpl;
 import org.inventory.communications.core.LocalClassMetadataImpl;
 import org.inventory.communications.core.LocalClassWrapperImpl;
@@ -29,6 +30,7 @@ import org.inventory.communications.core.views.LocalNodeImpl;
 import org.inventory.communications.core.views.LocalObjectViewImpl;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.api.metadata.LocalAttributeWrapper;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassWrapper;
@@ -54,6 +56,10 @@ public class LocalStuffFactory {
 
     public static LocalAttributeWrapper createLocalAttributeWrapper() {
         return new LocalAttributeWrapperImpl();
+    }
+
+    public static LocalAttributeMetadata createLocalAttributeMetadata() {
+        return new LocalAttributeMetadataImpl();
     }
 
     public static LocalClassWrapper createLocalClassWrapper() {

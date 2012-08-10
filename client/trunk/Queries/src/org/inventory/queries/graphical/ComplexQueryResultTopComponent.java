@@ -35,7 +35,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.api.queries.LocalResultRecord;
 import org.inventory.core.services.factories.ObjectActionFactory;
 import org.inventory.core.services.exceptions.ObjectActionException;
-import org.inventory.queries.GraphicalQueryBuilderService;
+import org.inventory.queries.QueryManagerService;
 import org.inventory.queries.graphical.dialogs.ExportSettingsPanel;
 import org.netbeans.swing.etable.ETable;
 import org.openide.DialogDescriptor;
@@ -62,11 +62,11 @@ public class ComplexQueryResultTopComponent extends TopComponent{
     /**
      * Reference to the controller
      */
-    private GraphicalQueryBuilderService qbs;
+    private QueryManagerService qbs;
     private NotificationUtil nu;
 
     public ComplexQueryResultTopComponent(LocalResultRecord[] res, int pageSize,
-            GraphicalQueryBuilderService qbs) {
+            QueryManagerService qbs) {
         this.qbs = qbs;
         this.pageSize = pageSize;
         TableModel model = new QueryResultTableModel(res);

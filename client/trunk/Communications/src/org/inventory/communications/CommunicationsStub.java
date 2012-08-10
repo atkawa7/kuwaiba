@@ -330,6 +330,20 @@ public class CommunicationsStub {
         }
     }
 
+
+   public List<LocalClassMetadataLight> getUpstreamContainmentHierarchy(String className, boolean recursive){
+        try{
+            List<LocalClassMetadataLight> res = new ArrayList<LocalClassMetadataLight>();
+            for (ClassInfoLight cil : port.getUpstreamContainmentHierarchy(className, recursive, this.session.getSessionId()))
+                res.add(new LocalClassMetadataLightImpl(cil));
+            
+            return res;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+   }
+
     public LocalObjectLight createObject(String objectClass, String parentClass, Long parentOid, Long template){
         try{
             Long objectId  = port.createObject(objectClass,parentClass, parentOid, new ArrayList<String>(),new ArrayList<StringArray>(),template,this.session.getSessionId());

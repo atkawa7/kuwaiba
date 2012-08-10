@@ -19,12 +19,16 @@ package org.inventory.queries;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Random;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.LocalStuffFactory;
 import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -32,18 +36,21 @@ import org.inventory.core.services.api.queries.LocalQuery;
 import org.inventory.core.services.api.queries.LocalQueryLight;
 import org.inventory.core.services.api.queries.LocalResultRecord;
 import org.inventory.core.services.api.queries.LocalTransientQuery;
+import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.inventory.queries.graphical.elements.ClassNodeWidget;
 import org.inventory.queries.graphical.elements.filters.ListTypeFilter;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 
 /**
  * This class will replace the old QueryBuilderService in next releases
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class GraphicalQueryBuilderService implements ActionListener{
+public class QueryManagerService implements ActionListener{
 
-    private QueryBuilderTopComponent qbtc;
+    private QueryManagerTopComponent qbtc;
     private CommunicationsStub com = CommunicationsStub.getInstance();
     /**
      * This one has the execution details
@@ -59,7 +66,7 @@ public class GraphicalQueryBuilderService implements ActionListener{
      */
     private Object[] queryProperties;
 
-    public GraphicalQueryBuilderService(QueryBuilderTopComponent qbtc) {
+    public QueryManagerService(QueryManagerTopComponent qbtc) {
         this.qbtc = qbtc;
         queryProperties = new Object[3];
         resetProperties();
@@ -165,22 +172,55 @@ public class GraphicalQueryBuilderService implements ActionListener{
 
     public void actionPerformed(ActionEvent e) {
         JCheckBox insideCheck = (JCheckBox)e.getSource();
+        LocalAttributeMetadata lam = (LocalAttributeMetadata)insideCheck.getClientProperty("attribute");
         switch (e.getID()){
             case QueryEditorScene.SCENE_FILTERENABLED:
                 QueryEditorNodeWidget newNode;
-                if (insideCheck.getClientProperty("filterType").equals(LocalObjectLight.class)){
-                    LocalClassMetadataLight myMetadata = com.getLightMetaForClass((String)insideCheck.getClientProperty("className"),false);
+                if (lam.getType().equals(LocalObjectLight.class)){
+                    LocalClassMetadataLight myMetadata;
+                    if (lam.getName().equals("parent")){ //NOI18N
+                        List<LocalClassMetadataLight> los = com.getUpstreamContainmentHierarchy(qbtc.getQueryScene().getCurrentSearchedClass().getClassName(), true);
+                        if (los == null){
+                            qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+                            return;
+                        }
+                        JComboBox possibleParentClassesLst = new JComboBox(los.toArray());
+                        possibleParentClassesLst.setName("possibleParentClasses");
+                        JComplexDialogPanel myDialog = new JComplexDialogPanel(qbtc.getLayout(), possibleParentClassesLst);
+                        insideCheck.setEnabled(false);
+
+                        if (JOptionPane.showConfirmDialog(
+                                null,
+                                myDialog,
+                                "Select the possible parent class",
+                                JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.QUESTION_MESSAGE) == JOptionPane.CANCEL_OPTION){
+                            insideCheck.setSelected(false);
+                            return;
+                        }
+                        insideCheck.setEnabled(true);
+                        LocalClassMetadataLight selectedValue = (LocalClassMetadataLight)((JComboBox)myDialog.getComponent("possibleParentClasses")).getSelectedItem();
+                        if (selectedValue == null){
+                            JOptionPane.showMessageDialog(null, "Searching for objects with a null parent is not supported yet");
+                            insideCheck.setSelected(false);
+                            return;
+                        }
+                        myMetadata = com.getMetaForClass(selectedValue.getClassName(),false);
+                    }else
+                        myMetadata = com.getLightMetaForClass((String)insideCheck.getClientProperty("className"),false);
+                        
                     newNode = (ClassNodeWidget)qbtc.getQueryScene().findWidget(myMetadata);
                     if (newNode == null){
                         newNode = (QueryEditorNodeWidget) qbtc.getQueryScene().addNode(myMetadata);
                         if (newNode instanceof ListTypeFilter)
                             ((ListTypeFilter)newNode).build(com.getList(((ListTypeFilter)newNode).getWrappedClass().getClassName(), true, false));
+                        else
+                            newNode.build(null);
                         qbtc.getQueryScene().validate();
                     }
                     insideCheck.putClientProperty("related-node", myMetadata);
                 }else{
-                    String newNodeId = ((Class)insideCheck.getClientProperty("filterType")).
-                            getSimpleName()+"_"+new Random().nextInt(10000);
+                    String newNodeId = lam.getType().getSimpleName()+"_"+new Random().nextInt(10000);
                     newNode = (QueryEditorNodeWidget)qbtc.getQueryScene().addNode(newNodeId);
                     newNode.build(newNodeId);
                     insideCheck.putClientProperty("related-node", newNodeId);
@@ -188,15 +228,16 @@ public class GraphicalQueryBuilderService implements ActionListener{
 
                 String edgeName = "Edge_"+new Random().nextInt(1000);
                 qbtc.getQueryScene().addEdge(edgeName);
-                qbtc.getQueryScene().setEdgeSource(edgeName, insideCheck.getClientProperty("attribute"));
+                qbtc.getQueryScene().setEdgeSource(edgeName, lam);
                 qbtc.getQueryScene().setEdgeTarget(edgeName, newNode.getDefaultPinId());
 
                 newNode.setPreferredLocation(new Point(insideCheck.getParent().getLocation().x + 200, insideCheck.getParent().getLocation().y));
                 break;
             case QueryEditorScene.SCENE_FILTERDISABLED:
+                if (insideCheck.getClientProperty("related-node") == null)
+                    return;
                 ((QueryEditorScene)qbtc.getQueryScene()).removeAllRelatedNodes(insideCheck.getClientProperty("related-node"));
                 insideCheck.putClientProperty("related-node",null);
-                break;
         }
         qbtc.getQueryScene().validate();
     }

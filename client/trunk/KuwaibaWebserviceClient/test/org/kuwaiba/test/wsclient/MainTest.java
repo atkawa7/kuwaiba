@@ -20,7 +20,7 @@ import org.kuwaiba.wsclient.RemoteSession;
 import org.kuwaiba.wsclient.StringArray;
 
 /**
- * Uploads initial, test information
+ * Uploads initial, sample information
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class MainTest {

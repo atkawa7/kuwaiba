@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import org.netbeans.api.visual.widget.ComponentWidget;
 
 /**
  * A pin representing an attribute. Has a checkbox and a label
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class AttributePinWidget extends VMDPinWidget{
     /**
@@ -50,21 +50,11 @@ public class AttributePinWidget extends VMDPinWidget{
     private static Icon isVisibleIconDeselected =
             new ImageIcon(AttributePinWidget.class.getResource("/org/inventory/queries/res/no-eye.png"));
 
-    public AttributePinWidget(QueryEditorScene scene, LocalAttributeMetadata lam,
-            String attributeClassName,VMDColorScheme scheme) {
-        super(scene,scheme);
-        myAttribute = lam;
+    protected AttributePinWidget(QueryEditorScene scene, String label, VMDColorScheme scheme){
+        super(scene, scheme);
         insideCheck = new JCheckBox();
         insideCheck.addItemListener((QueryEditorScene)getScene());
-        //We set the type of attribute associated to the check so the filter can be created
-        insideCheck.putClientProperty("filterType", lam.getType()); //NOI18N
-        insideCheck.putClientProperty("attribute", lam); //NOI18N
-
         insideCheck.setOpaque(false);
-
-        //If this attribute is a list type, we save the class name to create
-        if (lam.getMapping() == Constants.MAPPING_MANYTOONE)
-            insideCheck.putClientProperty("className", attributeClassName); //NOI18N
         addChild(new ComponentWidget(getScene(), insideCheck));
 
         isVisible = new JToggleButton(isVisibleIcon);
@@ -73,14 +63,26 @@ public class AttributePinWidget extends VMDPinWidget{
         isVisible.setRolloverEnabled(false);
         isVisible.setToolTipText("Show/hide this attribute in the query results");
         addChild(new ComponentWidget(scene, isVisible));
+        
+        insideLabel = new JLabel(label);
+        addChild(new ComponentWidget(getScene(), insideLabel));
+    }
+
+    public AttributePinWidget(QueryEditorScene scene, LocalAttributeMetadata lam,
+            String attributeClassName, VMDColorScheme scheme) {
+        this(scene, lam.getDisplayName(), scheme);
+        myAttribute = lam;
+
+        //We set the type of attribute associated to the check so the filter can be created
+        insideCheck.putClientProperty("attribute", lam); //NOI18N     
 
         if (lam.getMapping() == Constants.MAPPING_MANYTOONE){ //If this is a list type attribute, force to select the columns
                                   //to be shown manually
+            //If this attribute is a list type, we save the class name to create the related extended filter node
+            insideCheck.putClientProperty("className", attributeClassName);
             isVisible.setEnabled(false);
             isVisible.setToolTipText("Select the columns for this list type attribute manually (select the checkbox)");
         }
-        insideLabel = new JLabel(lam.getDisplayName());
-        addChild(new ComponentWidget(getScene(), insideLabel));
     }
 
     public JCheckBox getInsideCheck() {

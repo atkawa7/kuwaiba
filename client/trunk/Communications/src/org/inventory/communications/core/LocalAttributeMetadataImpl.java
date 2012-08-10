@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,13 +22,13 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Represents the metadata associated to a single attribute
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=LocalAttributeMetadata.class)
 public class LocalAttributeMetadataImpl
         implements LocalAttributeMetadata{
     private String name;
-    private Long id;
+    private long id;
     private Class type;
     private String displayName;
     private Boolean isVisible;
@@ -37,7 +37,9 @@ public class LocalAttributeMetadataImpl
 
     private String listAttributeClassName = null;
 
-    public LocalAttributeMetadataImpl(){}
+    public LocalAttributeMetadataImpl(){
+        this.displayName = "";
+    }
     public LocalAttributeMetadataImpl(Long oid, String _name, String _type, String _displayName,
             Boolean _isVisible, Integer mapping, String _description){
         this.id = oid;
@@ -99,16 +101,20 @@ public class LocalAttributeMetadataImpl
         return listAttributeClassName;
     }
 
-    public Long getId(){
+    public long getId(){
         return id;
     }
 
-    public void setId(Long _id){
+    public void setId(long _id){
         this.id =_id;
     }
 
-    public Integer getMapping() {
+    public int getMapping() {
         return mapping;
+    }
+
+    public void setMapping(int mapping){
+        this.mapping = mapping;
     }
 
     @Override
@@ -117,13 +123,14 @@ public class LocalAttributeMetadataImpl
             return false;
         if (!(obj instanceof LocalAttributeMetadata))
             return false;
-        return this.getId().longValue() == ((LocalAttributeMetadata)obj).getId().longValue();
+        return this.getId() == ((LocalAttributeMetadata)obj).getId();
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 13 * hash + (this.id != null ? this.id.hashCode() : 0);
+        int hash = 3;
+        hash = 83 * hash + (int) (this.id ^ (this.id >>> 32));
         return hash;
     }
+
 }

@@ -26,7 +26,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.inventory.core.services.api.queries.LocalResultRecord;
-import org.inventory.queries.GraphicalQueryBuilderService;
+import org.inventory.queries.QueryManagerService;
 import org.inventory.queries.graphical.ComplexQueryResultTopComponent;
 import org.inventory.queries.graphical.exportfilters.CSVFilter;
 import org.inventory.queries.graphical.exportfilters.DOCFilter;
@@ -48,7 +48,7 @@ public class ExportSettingsPanel extends javax.swing.JPanel implements ActionLis
      * separator is selected, this array is set to contain such separator
      */
     private Object[] settings;
-    private GraphicalQueryBuilderService qbs;
+    private QueryManagerService qbs;
     private ComplexQueryResultTopComponent qrtc;
 
     private enum Range{
@@ -71,7 +71,7 @@ public class ExportSettingsPanel extends javax.swing.JPanel implements ActionLis
     };
 
     /** Creates new form ExportSettingsPanel */
-    public ExportSettingsPanel(GraphicalQueryBuilderService qbs, ComplexQueryResultTopComponent qrtc) {
+    public ExportSettingsPanel(QueryManagerService qbs, ComplexQueryResultTopComponent qrtc) {
         initComponents();
         initCustomComponents();
         this.qbs = qbs;

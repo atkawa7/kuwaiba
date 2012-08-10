@@ -41,7 +41,7 @@
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
  *
- * Modified By Charles Edward Bedon Cortazar <charles.bedon@zoho.com> for project Kuwaiba
+ * Modified By Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org> for project Kuwaiba
  */
 
 package org.inventory.queries.graphical;
@@ -98,7 +98,7 @@ import org.netbeans.api.visual.widget.Widget;
  * keys as Strings, it's not suitable for our purposes, so we rather inherit from GraphPinScene and use
  * the same base code
  * @author David Kaspar
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         implements ItemListener{
@@ -157,10 +157,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
 
         router = RouterFactory.createOrthogonalSearchRouter (mainLayer, connectionLayer);
 
-        getActions ().addAction (ActionFactory.createZoomAction ());
         getActions ().addAction (ActionFactory.createPanAction ());
-        getActions ().addAction (ActionFactory.createRectangularSelectAction (this, backgroundLayer));
-
         sceneLayout = LayoutFactory.createSceneGraphLayout(this, new GridGraphLayout<Object, String> ().setChecker (true));
     }
 
@@ -173,10 +170,10 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         QueryEditorNodeWidget widget = null;
         if (node instanceof LocalClassMetadata){ //A complex class filter node
             if(getNodes().isEmpty()) //It's the first node, this is, the root one. In this case we use a different scheme
-                widget = new ClassNodeWidget(this, (LocalClassMetadata)node, 
+                widget = new ClassNodeWidget(this, (LocalClassMetadata)node, true, true,
                         ColorSchemeFactory.getGreenScheme());
             else{
-                widget = new ClassNodeWidget(this, (LocalClassMetadata)node,
+                widget = new ClassNodeWidget(this, (LocalClassMetadata)node, false, false,
                         ColorSchemeFactory.getYellowScheme());
                 widget.getActions().addAction(ActionFactory.createPopupMenuAction(new PopupMenuProvider() {
 
@@ -220,7 +217,6 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
 
 
         mainLayer.addChild (widget);
-        widget.getActions ().addAction (createSelectAction ());
         widget.getActions ().addAction (moveAction);            
         return widget;
     }

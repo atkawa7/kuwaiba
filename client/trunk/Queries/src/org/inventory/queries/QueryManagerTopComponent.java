@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -49,29 +49,29 @@ import org.openide.util.Lookup;
  */
 @ConvertAsProperties(dtd = "-//org.inventory.queries//QueryBuilder//EN",
 autostore = false)
-public final class QueryBuilderTopComponent extends TopComponent implements ActionListener{
+public final class QueryManagerTopComponent extends TopComponent implements ActionListener{
 
-    private static QueryBuilderTopComponent instance;
+    private static QueryManagerTopComponent instance;
     /** path to the icon used by the component and its open action */
     static final String ICON_PATH = "org/inventory/queries/res/icon2.png";
     private static final String PREFERRED_ID = "QueryBuilderTopComponent";
     private QueryEditorScene queryScene;
     private NotificationUtil nu;
-    private GraphicalQueryBuilderService qbs;
+    private QueryManagerService qbs;
     private ButtonGroup grpLogicalConnector;
     private boolean isSaved = true;
 
-    public QueryBuilderTopComponent() {
+    public QueryManagerTopComponent() {
         initComponents();
         initCustomComponents();
-        setName(NbBundle.getMessage(QueryBuilderTopComponent.class, "CTL_QueryBuilderTopComponent"));
-        setToolTipText(NbBundle.getMessage(QueryBuilderTopComponent.class, "HINT_QueryBuilderTopComponent"));
+        setName(NbBundle.getMessage(QueryManagerTopComponent.class, "CTL_QueryBuilderTopComponent"));
+        setToolTipText(NbBundle.getMessage(QueryManagerTopComponent.class, "HINT_QueryBuilderTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
     }
 
     private void initCustomComponents(){
         queryScene = new QueryEditorScene();
-        qbs = new GraphicalQueryBuilderService(this);
+        qbs = new QueryManagerService(this);
         grpLogicalConnector = new ButtonGroup();
         cmbClassList.addItem(null);
         lblResultLimit.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
@@ -115,7 +115,7 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         barMain.setRollover(true);
         barMain.setPreferredSize(new java.awt.Dimension(326, 33));
 
-        org.openide.awt.Mnemonics.setLocalizedText(lblSearch, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.lblSearch.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(lblSearch, org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.lblSearch.text")); // NOI18N
         lblSearch.setPreferredSize(new java.awt.Dimension(70, 15));
         barMain.add(lblSearch);
 
@@ -123,8 +123,8 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         barMain.add(sptOne);
 
         btnOpen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/open.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnOpen, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnOpen.text")); // NOI18N
-        btnOpen.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnOpen.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnOpen, org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.btnOpen.text")); // NOI18N
+        btnOpen.setToolTipText(org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.btnOpen.toolTipText")); // NOI18N
         btnOpen.setFocusable(false);
         btnOpen.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnOpen.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -136,8 +136,8 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         barMain.add(btnOpen);
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/save.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSave.text")); // NOI18N
-        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSave.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.btnSave.text")); // NOI18N
+        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.btnSave.toolTipText")); // NOI18N
         btnSave.setFocusable(false);
         btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -149,8 +149,8 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         barMain.add(btnSave);
 
         btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/delete.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnDelete, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnDelete.text")); // NOI18N
-        btnDelete.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnDelete.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnDelete, org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.btnDelete.text")); // NOI18N
+        btnDelete.setToolTipText(org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.btnDelete.toolTipText")); // NOI18N
         btnDelete.setEnabled(false);
         btnDelete.setFocusable(false);
         btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -163,8 +163,8 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         barMain.add(btnDelete);
 
         btnClear.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/clear.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnClear, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnClear.text")); // NOI18N
-        btnClear.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnClear.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnClear, org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.btnClear.text")); // NOI18N
+        btnClear.setToolTipText(org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.btnClear.toolTipText")); // NOI18N
         btnClear.setFocusable(false);
         btnClear.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnClear.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -176,8 +176,8 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         barMain.add(btnClear);
 
         btnConfigure.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/configure-22.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnConfigure, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnConfigure.text")); // NOI18N
-        btnConfigure.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnConfigure.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnConfigure, org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.btnConfigure.text")); // NOI18N
+        btnConfigure.setToolTipText(org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.btnConfigure.toolTipText")); // NOI18N
         btnConfigure.setFocusable(false);
         btnConfigure.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnConfigure.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -189,8 +189,8 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         barMain.add(btnConfigure);
 
         btnOrganize.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/organize.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnOrganize, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnOrganize.text")); // NOI18N
-        btnOrganize.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnOrganize.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnOrganize, org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.btnOrganize.text")); // NOI18N
+        btnOrganize.setToolTipText(org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.btnOrganize.toolTipText")); // NOI18N
         btnOrganize.setFocusable(false);
         btnOrganize.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnOrganize.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -202,8 +202,8 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         barMain.add(btnOrganize);
 
         btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/queries/res/run-search.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnSearch, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSearch.text")); // NOI18N
-        btnSearch.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.btnSearch.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnSearch, org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.btnSearch.text")); // NOI18N
+        btnSearch.setToolTipText(org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.btnSearch.toolTipText")); // NOI18N
         btnSearch.setFocusable(false);
         btnSearch.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSearch.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -215,17 +215,17 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         barMain.add(btnSearch);
         barMain.add(sptTwo);
 
-        org.openide.awt.Mnemonics.setLocalizedText(lblConnector, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.lblConnector.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(lblConnector, org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.lblConnector.text")); // NOI18N
         barMain.add(lblConnector);
 
         chkAnd.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(chkAnd, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.chkAnd.text")); // NOI18N
-        chkAnd.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.chkAnd.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(chkAnd, org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.chkAnd.text")); // NOI18N
+        chkAnd.setToolTipText(org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.chkAnd.toolTipText")); // NOI18N
         chkAnd.setFocusable(false);
         barMain.add(chkAnd);
 
-        org.openide.awt.Mnemonics.setLocalizedText(chkOr, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.chkOr.text")); // NOI18N
-        chkOr.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.chkOr.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(chkOr, org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.chkOr.text")); // NOI18N
+        chkOr.setToolTipText(org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.chkOr.toolTipText")); // NOI18N
         chkOr.setFocusable(false);
         chkOr.setMaximumSize(new java.awt.Dimension(50, 27));
         chkOr.setMinimumSize(new java.awt.Dimension(50, 27));
@@ -233,12 +233,12 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
         barMain.add(chkOr);
         barMain.add(sptThree);
 
-        org.openide.awt.Mnemonics.setLocalizedText(lblResultLimit, org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.lblResultLimit.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(lblResultLimit, org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.lblResultLimit.text")); // NOI18N
         barMain.add(lblResultLimit);
 
         txtResultLimit.setColumns(4);
-        txtResultLimit.setText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.txtResultLimit.text")); // NOI18N
-        txtResultLimit.setToolTipText(org.openide.util.NbBundle.getMessage(QueryBuilderTopComponent.class, "QueryBuilderTopComponent.txtResultLimit.toolTipText")); // NOI18N
+        txtResultLimit.setText(org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.txtResultLimit.text")); // NOI18N
+        txtResultLimit.setToolTipText(org.openide.util.NbBundle.getMessage(QueryManagerTopComponent.class, "QueryManagerTopComponent.txtResultLimit.toolTipText")); // NOI18N
         barMain.add(txtResultLimit);
 
         add(barMain, java.awt.BorderLayout.PAGE_START);
@@ -407,27 +407,27 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
      * i.e. deserialization routines; otherwise you could get a non-deserialized instance.
      * To obtain the singleton instance, use {@link #findInstance}.
      */
-    public static synchronized QueryBuilderTopComponent getDefault() {
+    public static synchronized QueryManagerTopComponent getDefault() {
         if (instance == null) {
-            instance = new QueryBuilderTopComponent();
+            instance = new QueryManagerTopComponent();
         }
         return instance;
     }
 
     /**
-     * Obtain the QueryBuilderTopComponent instance. Never call {@link #getDefault} directly!
+     * Obtain the QueryManagerTopComponent instance. Never call {@link #getDefault} directly!
      */
-    public static synchronized QueryBuilderTopComponent findInstance() {
+    public static synchronized QueryManagerTopComponent findInstance() {
         TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
         if (win == null) {
-            Logger.getLogger(QueryBuilderTopComponent.class.getName()).warning(
+            Logger.getLogger(QueryManagerTopComponent.class.getName()).warning(
                     "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
             return getDefault();
         }
-        if (win instanceof QueryBuilderTopComponent) {
-            return (QueryBuilderTopComponent) win;
+        if (win instanceof QueryManagerTopComponent) {
+            return (QueryManagerTopComponent) win;
         }
-        Logger.getLogger(QueryBuilderTopComponent.class.getName()).warning(
+        Logger.getLogger(QueryManagerTopComponent.class.getName()).warning(
                 "There seem to be multiple components with the '" + PREFERRED_ID
                 + "' ID. That is a potential source of errors and unexpected behavior.");
         return getDefault();
@@ -502,6 +502,10 @@ public final class QueryBuilderTopComponent extends TopComponent implements Acti
     }
     
 
+    /**
+     * Called when a different item within the class list is selected
+     * @param e
+     */
     public void actionPerformed(ActionEvent e) {
         if (!checkForUnsavedQuery(true))
             return;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import org.netbeans.api.visual.widget.ComponentWidget;
  * to choose a value for a list type attribute. Example: if you're searching for Router whose vendor is Cisco,
  * you have 2 options: The simplest is using this filter, which present a list of all available vendors (Cisco, Juniper, Huawei) or
  * a class filter, which will let you choose advanced options (i.e. you will be able to filter for all those vendor whose score is greater that 3)
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ListTypeFilter extends SimpleCriteriaNodeWidget{
 

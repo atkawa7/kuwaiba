@@ -4,7 +4,7 @@
     <folder name="Actions">
         <folder name="Edit">
             <file name="org-inventory-queries-QueryBuilderAction.instance">
-                <attr name="component" methodvalue="org.inventory.queries.QueryBuilderTopComponent.findInstance"/>
+                <attr name="component" methodvalue="org.inventory.queries.QueryManagerTopComponent.findInstance"/>
                 <attr name="displayName" bundlevalue="org.inventory.queries.Bundle#CTL_QueryBuilderAction"/>
                 <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
                 <attr name="iconBase" stringvalue="org/inventory/queries/res/icon2.png"/>
