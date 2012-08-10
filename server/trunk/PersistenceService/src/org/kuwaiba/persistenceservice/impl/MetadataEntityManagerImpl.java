@@ -1423,8 +1423,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
     }
     
-
-
     @Override
     public void removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws MetadataObjectNotFoundException {
         Transaction tx = null;
@@ -1476,6 +1474,38 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             if(tx != null)
                 tx.finish();
         }
+    }
+
+    /**
+     * Get the upstream containment hierarchy for a given class, unlike getPossibleChildren (which will give you the
+     * downstream hierarchy).
+     * @param className Class name
+     * @param recursive Get only the direct possible parents, or go up into the <strong>containment</strong> hierarchy. Beware: don't mistake the class hierarchy for the containment one
+     * @return An ordered list with the . Repeated elements are omitted
+     * @throws MetadataObjectNotFoundException if className does not correspond to any existing class
+     */
+    public List<ClassMetadataLight> getUpstreamContainmentHierarchy(String className, boolean recursive) throws MetadataObjectNotFoundException {
+        Node classNode = classIndex.get(PROPERTY_NAME, className).getSingle();
+        if (classNode == null)
+           throw new MetadataObjectNotFoundException(Util.formatString(
+                        "Can not find class %1s", className));
+
+        List<ClassMetadataLight> res = new ArrayList<ClassMetadataLight>();
+        
+        String cypherQuery = "START classNode=node:classes(name=\""+className+"\") "+
+                             "MATCH possibleParentClassNode-[:POSSIBLE_CHILD"+(recursive ? "*" : "")+ "]->classNode "+
+                             "WHERE possibleParentClassNode.name <> \""+ DUMMYROOT +
+                             "\" RETURN distinct possibleParentClassNode "+
+                             "ORDER BY possibleParentClassNode.name ASC";
+
+        ExecutionEngine engine = new ExecutionEngine(graphDb);
+        ExecutionResult result = engine.execute(cypherQuery);
+
+        Iterator<Node> directPossibleChildren = result.columnAs("possibleParentClassNode"); //NOI18N
+        for (Node node : IteratorUtil.asIterable(directPossibleChildren))
+            res.add(Util.createClassMetadataLightFromNode(node));
+        
+        return res;
     }
 
     public boolean isSubClass(String allegedParent, String classToBeEvaluated) {

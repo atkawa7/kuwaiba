@@ -285,13 +285,23 @@ public interface MetadataEntityManager {
      * "children to be deleted" with parentClass as their parent
      * @param parentClassId Id of the class whos instances can contain the instances of the next param
      * @param childrenTBeRemoved ids of the candidates to be deleted
+     * @throws MetadataObjectNotFoundException If any of the ids provided can't be found
      */
     public void removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws MetadataObjectNotFoundException;
     /**
      * Assess if a given class is subclass of another
-     * @param allegedParent Alleget super class
+     * @param allegedParent Alleged super class
      * @param classToBeEvaluated class to be evaluated
      * @return True if classToBeEvaluated is subclass of allegedParent
      */
     public boolean isSubClass(String allegedParent, String classToBeEvaluated);
+    /**
+     * Get the upstream containment hierarchy for a given class, unlike getPossibleChildren (which will give you the 
+     * downstream hierarchy).
+     * @param className
+     * @param recursive Get only the direct possible parents, or go up into the <strong>containment</strong> hierarchy. Beware: don't mistake the class hierarchy for the containment one
+     * @return An ordered list with the . Repeated elements are omitted
+     * @throws MetadataObjectNotFoundException if className does not correspond to any existing class
+     */
+    public List<ClassMetadataLight> getUpstreamContainmentHierarchy(String className, boolean recursive) throws MetadataObjectNotFoundException;
 }

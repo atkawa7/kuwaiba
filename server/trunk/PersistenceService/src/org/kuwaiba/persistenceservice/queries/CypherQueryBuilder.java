@@ -249,7 +249,7 @@ public class CypherQueryBuilder {
     }
 
     public void executeQuery(Node classNode, String cypherQuery, ExtendedQuery query){
-        //excecute the cypher query
+        //execute the cypher query
         ExecutionEngine engine = new ExecutionEngine(classNode.getGraphDatabase());
         ExecutionResult result = engine.execute(cypherQuery, params);
 

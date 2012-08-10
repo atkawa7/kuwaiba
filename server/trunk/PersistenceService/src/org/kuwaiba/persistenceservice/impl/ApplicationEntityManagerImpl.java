@@ -873,7 +873,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                
         if (classNode == null) 
             throw new MetadataObjectNotFoundException(Util.formatString(
-                    "Can not find the Class with name %1s", query.getClassName()));//NOI18N
+                    "Can not find class %1s", query.getClassName()));//NOI18N
 
         Boolean isAbstract = (Boolean) classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT);
         classNodes.put("className", classNode);
