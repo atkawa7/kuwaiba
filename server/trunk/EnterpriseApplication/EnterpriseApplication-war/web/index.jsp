@@ -39,7 +39,7 @@
                                 <%@include file="html/index.html" %>
                     <%
                                 break;
-                            case 1: //Call the Tools bean
+                            case 1: //Redirect to the Tools servlet
                     %>
                                 <jsp:include page="Tools?tools=<%=tool%>" flush="true" />
                     <%

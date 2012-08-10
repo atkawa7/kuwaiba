@@ -78,4 +78,14 @@ public class ToolsBean implements ToolsBeanRemote {
         }
         return aem;
     }
+
+    @Override
+    public void connect() throws ServerSideException {
+        try {
+            //
+        } catch (Exception ex) {
+            Logger.getLogger(ToolsBean.class.getName()).log(Level.INFO, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
 }

@@ -60,7 +60,7 @@ public interface WebserviceBeanRemote {
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
 
     /**
-     * Creates's a classMetada
+     * Creates a new class metadata entry
      * @param classDefinition
      * @return
      * @throws ServerSideException
@@ -273,6 +273,14 @@ public interface WebserviceBeanRemote {
      * @return The list of possible children
      */
     public List<ClassInfoLight> getPossibleChildrenNoRecursive(String parentClassName) throws ServerSideException;
+
+    /**
+     * Get the upstream containment hierarchy for a given class, unlike getPossibleChildren (which will give you the
+     * downstream hierarchy).
+     * @param className Class name
+     * @throws ServerSideException
+     */
+    public List<ClassInfoLight> getUpstreamContainmentHierarchy(String className, boolean recursive) throws ServerSideException;
     /**
      * Adds to a given class a list of possible children classes whose instances can be contained
      *

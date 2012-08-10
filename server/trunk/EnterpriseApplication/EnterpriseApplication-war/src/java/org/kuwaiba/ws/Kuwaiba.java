@@ -1695,6 +1695,32 @@ public class Kuwaiba {
             throw e;
         }
     }
+
+    /**
+     *
+     * @param className
+     * @param sessionId
+     * @return Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getUpstreamContainmentHierarchy")
+    public List<ClassInfoLight> getUpstreamContainmentHierarchy(@WebParam(name = "className")
+            String className, @WebParam(name = "recursive")
+            Boolean recursive, @WebParam(name = "sessionId")
+            String sessionId) throws Exception {
+        try{
+            wsBean.validateCall("getUpstreamContainmentHierarchy", getIPAddress(), sessionId);
+            return wsBean.getUpstreamContainmentHierarchy(className, recursive);
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
     // </editor-fold>
 
     /**

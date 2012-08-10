@@ -17,7 +17,6 @@
 package org.kuwaiba.beans;
 
 import javax.ejb.Remote;
-import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.exceptions.ServerSideException;
 
 /**
@@ -31,5 +30,15 @@ public interface ToolsBeanRemote {
      */
     public void resetAdmin() throws Exception;
 
+    /**
+     * Created the default groups
+     * @throws ServerSideException
+     */
     public void createDefaultGroups() throws ServerSideException;
+    
+    /**
+     * Tries to retrieve the references to the remote objects exposed by the Persistence Service
+     * @throws ServerSideException
+     */
+    public void connect() throws ServerSideException;
 }

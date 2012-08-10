@@ -99,6 +99,18 @@ public class Tools extends HttpServlet {
                     out.println("<div id=\"content\">"+ex.getMessage()+"</div>");
                 }
                 break;
+            case 3:
+                try {
+                    out.println("<h1>Create/Reset Admin Account</h1>");
+                    tbr.connect();
+                    out.println("<h2>Success</h2>");
+                    out.println("<div id=\"content\">Admin account reset successfully</div>");
+                } catch (Exception ex) {
+                    Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, ex.getMessage());
+                    out.println("<h2 class=\"error\">Error</h2>");
+                    out.println("<div id=\"content\">"+ex.getMessage()+"</div>");
+                }
+                break;
             default:
                 out.println("<h2 class=\"error\">Error</h2>");
                 out.println("<div id=\"content\">Unknown tool</div>");

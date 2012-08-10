@@ -100,19 +100,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         super();
         sessions = new HashMap<String, Session>();
         bre = new TempBusinessRulesEngine();
-
-        try{
-            Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-            mem = (MetadataEntityManagerRemote) registry.lookup(MetadataEntityManagerRemote.REFERENCE_MEM);
-            bem = (BusinessEntityManagerRemote) registry.lookup(BusinessEntityManagerRemote.REFERENCE_BEM);
-            aem = (ApplicationEntityManagerRemote) registry.lookup(ApplicationEntityManagerRemote.REFERENCE_AEM);
-        }catch(Exception ex){
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE,
-                    ex.getClass().getSimpleName()+": {0}",ex.getMessage()); //NOI18N
-            mem = null;
-            bem = null;
-            aem = null;
-        }
+        connect();
     }
 
 
@@ -675,6 +663,23 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 cml.add(ci);
             }
             return cml;
+
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<ClassInfoLight> getUpstreamContainmentHierarchy(String className, boolean recursive) throws ServerSideException{
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            List<ClassInfoLight> res = new ArrayList<ClassInfoLight>();
+            for (ClassMetadataLight cil : mem.getUpstreamContainmentHierarchy(className, recursive))
+                res.add(new ClassInfoLight(cil, new Validator[]{}));
+
+            return res;
 
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
@@ -1490,6 +1495,19 @@ public class WebserviceBean implements WebserviceBeanRemote {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
-
+    protected void connect(){
+        try{
+            Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+            mem = (MetadataEntityManagerRemote) registry.lookup(MetadataEntityManagerRemote.REFERENCE_MEM);
+            bem = (BusinessEntityManagerRemote) registry.lookup(BusinessEntityManagerRemote.REFERENCE_BEM);
+            aem = (ApplicationEntityManagerRemote) registry.lookup(ApplicationEntityManagerRemote.REFERENCE_AEM);
+        }catch(Exception ex){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE,
+                    ex.getClass().getSimpleName()+": {0}",ex.getMessage()); //NOI18N
+            mem = null;
+            bem = null;
+            aem = null;
+        }
+    }
     // </editor-fold>
 }
