@@ -29,9 +29,8 @@ public class JComplexDialogPanel extends JPanel{
 
     private HashMap<String, JComponent> components;
 
-    public JComplexDialogPanel(LayoutManager layout, JComponent ... components) {
+    public JComplexDialogPanel(JComponent ... components) {
         this.components = new HashMap<String, JComponent>();
-        setLayout(layout);
         int i = 0;
         for (JComponent component : components){
             this.components.put(component.getName() == null ? String.valueOf(i) : component.getName(), component);

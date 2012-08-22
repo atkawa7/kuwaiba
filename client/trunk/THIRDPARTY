@@ -1,7 +1,7 @@
 This client makes use of the following third-party components:
 Netbeans Platform (CDDL) http://www.netbeans.org/
-Oxygen Icons (LGPL) http://www.oxygen-icons.org/
 WAX, a simple API for XML (BSD) http://code.google.com/p/waxy/
 Nimrod LaF (LGPL) http://personales.ya.com/nimrod/index-en.html
+SwingX-core and SwingX-ws (LGPL)
 
-I want to thank all people that made possible this software to be available.
+We want to thank all people that made possible this software to be available.

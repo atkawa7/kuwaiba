@@ -21,8 +21,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Random;
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 import org.inventory.communications.CommunicationsStub;
@@ -41,8 +43,6 @@ import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.inventory.queries.graphical.elements.ClassNodeWidget;
 import org.inventory.queries.graphical.elements.filters.ListTypeFilter;
-import org.openide.DialogDescriptor;
-import org.openide.DialogDisplayer;
 
 /**
  * This class will replace the old QueryBuilderService in next releases
@@ -184,22 +184,25 @@ public class QueryManagerService implements ActionListener{
                             qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
                             return;
                         }
-                        JComboBox possibleParentClassesLst = new JComboBox(los.toArray());
-                        possibleParentClassesLst.setName("possibleParentClasses");
-                        JComplexDialogPanel myDialog = new JComplexDialogPanel(qbtc.getLayout(), possibleParentClassesLst);
+                        JComboBox lstPossibleParentClasses = new JComboBox(los.toArray());
+                        lstPossibleParentClasses.setName("possibleParentClasses");
+                        JLabel lblPossibleParentClasses = new JLabel("Select the possible parent class");
+                        JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(lblPossibleParentClasses, lstPossibleParentClasses);
+                        pnlMyDialog.setLayout(new BoxLayout(pnlMyDialog, BoxLayout.PAGE_AXIS));
                         insideCheck.setEnabled(false);
 
                         if (JOptionPane.showConfirmDialog(
                                 null,
-                                myDialog,
-                                "Select the possible parent class",
+                                pnlMyDialog,
+                                "Possible parent filter",
                                 JOptionPane.OK_CANCEL_OPTION,
                                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.CANCEL_OPTION){
                             insideCheck.setSelected(false);
+                            insideCheck.setEnabled(true);
                             return;
                         }
                         insideCheck.setEnabled(true);
-                        LocalClassMetadataLight selectedValue = (LocalClassMetadataLight)((JComboBox)myDialog.getComponent("possibleParentClasses")).getSelectedItem();
+                        LocalClassMetadataLight selectedValue = (LocalClassMetadataLight)((JComboBox)pnlMyDialog.getComponent("possibleParentClasses")).getSelectedItem();
                         if (selectedValue == null){
                             JOptionPane.showMessageDialog(null, "Searching for objects with a null parent is not supported yet");
                             insideCheck.setSelected(false);

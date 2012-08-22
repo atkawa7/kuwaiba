@@ -79,7 +79,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
     protected Sheet sheet;
     protected Image icon;
-    private Image defaultIcon = ImageUtilities.loadImage(GENERIC_ICON_PATH);
+    private final Image defaultIcon = ImageUtilities.loadImage(GENERIC_ICON_PATH);
     private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
 
     public ObjectNode(LocalObjectLight _lol, boolean isLeaf){
@@ -305,6 +305,11 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         if( paste != null )
             s.add( paste );
 
+    }
+
+    @Override
+    public Transferable drag() throws IOException {
+        return object;
     }
 
     @Override
