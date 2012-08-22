@@ -170,7 +170,7 @@ public final class GISViewTopComponent extends TopComponent {
 
     @Override
     public void paint(Graphics g) {
-        scene.activateMap();
+        scene.updateMapBounds();
         super.paint(g);
     }
 

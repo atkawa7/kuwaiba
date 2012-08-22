@@ -17,10 +17,14 @@
 package org.inventory.views.gis.scene;
 
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.views.gis.scene.providers.AcceptActionProvider;
+import org.jdesktop.swingx.JXMapViewer;
 import org.jdesktop.swingx.mapviewer.GeoPosition;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.graph.GraphScene;
@@ -28,7 +32,6 @@ import org.netbeans.api.visual.widget.ComponentWidget;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
-import org.netbeans.api.visual.widget.general.IconNodeWidget;
 import org.openide.util.ImageUtilities;
 
 /**
@@ -41,14 +44,16 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      * Default node icon path
      */
     public static final String GENERIC_ICON_PATH="org/inventory/views/gis/res/default.png";
+
+    private static final int ICON_RADIUS = 8;
     /**
      * Default coordinates to center the map
      */
-    private final GeoPosition DEFAULT_CENTER_POSITION = new GeoPosition(2.451627, -76.624424);
+    private static final GeoPosition DEFAULT_CENTER_POSITION = new GeoPosition(2.451627, -76.624424);
     /**
      * Default zoom
      */
-    private final int DEFAULT_ZOOM = 2;
+    private static final int DEFAULT_ZOOM = 2;
     /**
      * Default icon
      */
@@ -89,7 +94,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
 
         MapPanel myMap = new MapPanel();
         myMap.setProvider(MapPanel.Providers.OSM);
-        myMap.setCenterPosition(DEFAULT_CENTER_POSITION);
+        myMap.getMainMap().setAddressLocation(DEFAULT_CENTER_POSITION);
         myMap.addPropertyChangeListener("painted", this);
         mapWidget = new ComponentWidget(this, myMap);
         mapLayer.addChild(mapWidget);
@@ -97,7 +102,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
 
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
-        IconNodeWidget myWidget =  new IconNodeWidget(this);
+        GeoPositionedNodeWidget myWidget =  new GeoPositionedNodeWidget(this,node, 0, 0);
         nodesLayer.addChild(myWidget);
         myWidget.setImage(defaultIcon);
         return myWidget;
@@ -125,12 +130,52 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      * when the component is painted. If there are network problems, you could get some nasty exceptions.
      */
     public void activateMap(){
+        
+    }
+
+    /**
+     * Updates the map widget bounds to fit the container's ones
+     */
+    public void updateMapBounds() {
         mapWidget.setPreferredSize(this.getBounds().getSize());
     }
 
+    /**
+     * Called when the map is repainted and the nodes must be updated depending on the zoom
+     * @param evt
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        JXMapViewer map = ((MapPanel)mapWidget.getComponent()).getMainMap();
+        Rectangle realViewport = map.getViewportBounds();
+
+        for (Widget node : nodesLayer.getChildren()){
+            Point2D point2D = map.getTileFactory().geoToPixel(
+                    new GeoPosition(((GeoPositionedNodeWidget)node).getLatitude(), ((GeoPositionedNodeWidget)node).getLongitude()),
+                    map.getZoom());
+            node.setPreferredLocation(new Point((int)point2D.getX() - realViewport.x - ICON_RADIUS, (int)point2D.getY() - realViewport.y - ICON_RADIUS));
+        }
         validate();
         repaint();
+    }
+
+    /**
+     * Translate a point (Cartesian coordinates) within the map viewport into a GeoPosition object
+     * @param point Point to be translated
+     * @return the resulting geopositioned object
+     */
+    public GeoPosition pixelToCoordinate(Point point){
+        JXMapViewer map = ((MapPanel)mapWidget.getComponent()).getMainMap();
+        Rectangle realViewport = map.getViewportBounds();
+        return map.getTileFactory().pixelToGeo(new Point(point.x + realViewport.x, point.y + realViewport.y), map.getZoom());
+    }
+
+    /**
+     * Translate a point (Polar coordinates) into a Point object (Cartesian coordinates)  within the map viewport
+     * @param point Point to be translated
+     * @return the resulting Point object
+     */
+    public Point coordinateToPixel(GeoPosition point){
+        return null;
     }
 }

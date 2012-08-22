@@ -17,14 +17,14 @@
 package org.inventory.views.gis.scene.providers;
 
 import java.awt.Point;
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 import org.inventory.core.services.api.LocalObjectLight;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.views.gis.scene.GISViewScene;
+import org.inventory.views.gis.scene.GeoPositionedNodeWidget;
+import org.jdesktop.swingx.mapviewer.GeoPosition;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.Widget;
@@ -58,10 +58,12 @@ public class AcceptActionProvider implements AcceptProvider{
             LocalObjectLight droppedObject = (LocalObjectLight) transferable.getTransferData(LocalObjectLight.DATA_FLAVOR);
             if (!scene.isNode(droppedObject)){
                 Widget newNode = scene.addNode(droppedObject);
+                GeoPosition position = scene.pixelToCoordinate(point);
+                ((GeoPositionedNodeWidget)newNode).setCoordinates(position.getLongitude(), position.getLatitude());
                 newNode.setPreferredLocation(point);
                 scene.repaint();
             }else
-                JOptionPane.showMessageDialog(null, "This view already contains this object","Error",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "The view already contains this object","Error",JOptionPane.ERROR_MESSAGE);
         } catch (UnsupportedFlavorException ex) {
             Exceptions.printStackTrace(ex);
         } catch (IOException ex) {

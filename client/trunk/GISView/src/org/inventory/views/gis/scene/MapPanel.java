@@ -81,7 +81,7 @@ public class MapPanel extends JXPanel{
      */
     public void setProvider(Providers provider){
         if (provider == Providers.OSM){
-            TileFactoryInfo info = new TileFactoryInfo(DEFAULT_MINIMUM_ZOOM_LEVEL,DEFAULT_MAXIMUM_ZOOM_LEVEL,DEFAULT_MAXIMUM_ZOOM_LEVEL,
+            TileFactoryInfo info = new TileFactoryInfo(DEFAULT_MINIMUM_ZOOM_LEVEL,DEFAULT_MAXIMUM_ZOOM_LEVEL,DEFAULT_MAXIMUM_ZOOM_LEVEL + 2,
                     DEFAULT_TILE_SIZE, true, true, // tile size is 256 and x/y orientation is normal
                     OSM_BASE_URL,
                     "x","y","z") {
@@ -96,13 +96,17 @@ public class MapPanel extends JXPanel{
             TileFactory tf = new DefaultTileFactory(info);
             map.setTileFactory(tf);
             map.setZoom(10);
-            //map.setAddressLocation(new GeoPosition(0,0));
-            map.setCenterPosition(new GeoPosition(37.392137,-121.950431));
+            map.setCenterPosition(new GeoPosition(0,0));
         }
     }
+
 
     @Override
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener){
         map.addPropertyChangeListener(propertyName, listener);
+    }
+
+    public JXMapViewer getMainMap(){
+        return map;
     }
 }
