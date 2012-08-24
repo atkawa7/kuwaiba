@@ -59,3 +59,10 @@
 0.3 Stable (16052011)
 * New Menu scroller for the possible children menu
 * Multiple bugfixes (see tracker for details)
+
+0.4 Stable
+* Multiple bug fixes
+
+0.5 Alpha (23092012)
+* Support for GIS views
+* Support for topology views

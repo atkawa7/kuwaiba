@@ -70,6 +70,12 @@ public class MapPanel extends JXPanel{
                 map.firePropertyChange("painted", 1, 2);
             }
         });
+        
+        //Hack! By disabling mouse events, we enable the widget selection events.
+        //If this is not done, the JXMapViewer mouse events will override the scene ones
+        map.removeMouseListener(map.getMouseListeners()[0]);
+        map.removeMouseMotionListener(map.getMouseMotionListeners()[0]);
+        map.removeMouseWheelListener(map.getMouseWheelListeners()[0]);
     }
 
     public void setCenterPosition(GeoPosition coordinates){

@@ -19,12 +19,14 @@ package org.inventory.views.gis.scene;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Set;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.views.gis.scene.actions.MapWidgetPanAction;
 import org.inventory.views.gis.scene.providers.AcceptActionProvider;
 import org.jdesktop.swingx.JXMapViewer;
 import org.jdesktop.swingx.mapviewer.GeoPosition;
@@ -61,7 +63,9 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      * Default node icon path
      */
     private final String GENERIC_ICON_PATH="org/inventory/views/gis/res/default.png"; //NOI18
-
+    /**
+     * Icon radius
+     */
     private final int ICON_RADIUS = 8;
     /**
      * Default coordinates to center the map
@@ -120,7 +124,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         mapWidget = new ComponentWidget(this, myMap);
         mapLayer.addChild(mapWidget);
 
-        //mapWidget.getActions().addAction(new MapWidgetPanAction(myMap, MouseEvent.BUTTON1));
+        mapWidget.getActions().addAction(new MapWidgetPanAction(myMap, MouseEvent.BUTTON1));
 
         addObjectSceneListener(new ObjectSceneListener() {
             @Override

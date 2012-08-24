@@ -19,6 +19,8 @@ package org.inventory.views.gis.scene;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.general.IconNodeWidget;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.Lookups;
 
 /**
  * A remake of the original ObjectNodeWidget class formerly coded for the ObjectView module. This one
@@ -26,12 +28,16 @@ import org.netbeans.api.visual.widget.general.IconNodeWidget;
  * ways
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectNodeWidget extends IconNodeWidget{
+public class ObjectNodeWidget extends IconNodeWidget implements Lookup.Provider{
 
     /**
      * The business object behind the widget
      */
     private LocalObjectLight object;
+    /**
+     * Widget's lookup
+     */
+    private Lookup lookup;
 
     /**
      *
@@ -41,6 +47,7 @@ public class ObjectNodeWidget extends IconNodeWidget{
     public ObjectNodeWidget(GraphScene scene, LocalObjectLight object) {
         super(scene);
         this.object = object;
+        this.lookup = Lookups.singleton(object);
     }
 
     public LocalObjectLight getObject() {
@@ -49,5 +56,10 @@ public class ObjectNodeWidget extends IconNodeWidget{
 
     public void setObject(LocalObjectLight object) {
         this.object = object;
+    }
+
+    @Override
+    public Lookup getLookup(){
+        return lookup;
     }
 }
