@@ -80,6 +80,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
         btnNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/add.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnNew, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnNew.text")); // NOI18N
+        btnNew.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnNew.toolTipText")); // NOI18N
         btnNew.setFocusable(false);
         btnNew.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnNew.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -87,6 +88,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
         btnOpen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/open.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnOpen, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnOpen.text")); // NOI18N
+        btnOpen.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnOpen.toolTipText")); // NOI18N
         btnOpen.setFocusable(false);
         btnOpen.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnOpen.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -94,6 +96,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/save.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnSave.text")); // NOI18N
+        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnSave.toolTipText")); // NOI18N
         btnSave.setFocusable(false);
         btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -101,6 +104,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
         btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/export.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnExport.text")); // NOI18N
+        btnExport.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnExport.toolTipText")); // NOI18N
         btnExport.setFocusable(false);
         btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -108,6 +112,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
         btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/select.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSelect, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnSelect.text")); // NOI18N
+        btnSelect.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnSelect.toolTipText")); // NOI18N
         btnSelect.setFocusable(false);
         btnSelect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSelect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -115,6 +120,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
         btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/connect.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnConnect, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnConnect.text")); // NOI18N
+        btnConnect.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnConnect.toolTipText")); // NOI18N
         btnConnect.setFocusable(false);
         btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnConnect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -122,6 +128,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
         btnZommIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/zoom-in.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnZommIn, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnZommIn.text")); // NOI18N
+        btnZommIn.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnZommIn.toolTipText")); // NOI18N
         btnZommIn.setFocusable(false);
         btnZommIn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnZommIn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -134,6 +141,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
         btnZoomOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/zoom-out.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnZoomOut, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnZoomOut.text")); // NOI18N
+        btnZoomOut.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnZoomOut.toolTipText")); // NOI18N
         btnZoomOut.setFocusable(false);
         btnZoomOut.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnZoomOut.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);

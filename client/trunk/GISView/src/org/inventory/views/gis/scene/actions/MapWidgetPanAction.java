@@ -48,7 +48,7 @@ public class MapWidgetPanAction extends WidgetAction.LockedAdapter{
 
     /**
      * Main constructor
-     * @param mapComponent The map component to be handled
+     * @param mapComponent The map component to be manipulated
      * @param mouseButton What mouse button should be used to activate the pan action? Use MouseEvent.BUTTONX constants
      */
     public MapWidgetPanAction(MapPanel mapComponent, int mouseButton) {
