@@ -68,6 +68,11 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnNew = new javax.swing.JButton();
         btnOpen = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
+        btnExport = new javax.swing.JButton();
+        btnSelect = new javax.swing.JButton();
+        btnConnect = new javax.swing.JButton();
+        btnZommIn = new javax.swing.JButton();
+        btnZoomOut = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -94,14 +99,72 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         barToolMain.add(btnSave);
 
+        btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/export.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnExport.text")); // NOI18N
+        btnExport.setFocusable(false);
+        btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barToolMain.add(btnExport);
+
+        btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/select.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnSelect, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnSelect.text")); // NOI18N
+        btnSelect.setFocusable(false);
+        btnSelect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSelect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barToolMain.add(btnSelect);
+
+        btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/connect.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnConnect, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnConnect.text")); // NOI18N
+        btnConnect.setFocusable(false);
+        btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnConnect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        barToolMain.add(btnConnect);
+
+        btnZommIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/zoom-in.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnZommIn, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnZommIn.text")); // NOI18N
+        btnZommIn.setFocusable(false);
+        btnZommIn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnZommIn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnZommIn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnZommInActionPerformed(evt);
+            }
+        });
+        barToolMain.add(btnZommIn);
+
+        btnZoomOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/zoom-out.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnZoomOut, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnZoomOut.text")); // NOI18N
+        btnZoomOut.setFocusable(false);
+        btnZoomOut.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnZoomOut.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnZoomOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnZoomOutActionPerformed(evt);
+            }
+        });
+        barToolMain.add(btnZoomOut);
+
         add(barToolMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnZommInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZommInActionPerformed
+        scene.zoomIn();
+    }//GEN-LAST:event_btnZommInActionPerformed
+
+    private void btnZoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomOutActionPerformed
+        scene.zoomOut();
+    }//GEN-LAST:event_btnZoomOutActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barToolMain;
+    private javax.swing.JButton btnConnect;
+    private javax.swing.JButton btnExport;
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnOpen;
     private javax.swing.JButton btnSave;
+    private javax.swing.JButton btnSelect;
+    private javax.swing.JButton btnZommIn;
+    private javax.swing.JButton btnZoomOut;
     // End of variables declaration//GEN-END:variables
     /**
      * Gets default instance. Do not use directly: reserved for *.settings files only,

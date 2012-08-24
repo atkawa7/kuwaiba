@@ -232,6 +232,26 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
     public Lookup getLookup(){
         return this.lookup;
     }
+
+    /**
+     * Zooms in the inner map
+     */
+    public void zoomIn() {
+        MapPanel mapComponent = (MapPanel)mapWidget.getComponent();
+        int currentZoom = mapComponent.getMainMap().getZoom();
+        if (currentZoom > mapComponent.getMinZoom())
+            mapComponent.getMainMap().setZoom(currentZoom - 1);
+    }
+
+    /**
+     * Zooms out the inner map
+     */
+    public void zoomOut() {
+        MapPanel mapComponent = (MapPanel)mapWidget.getComponent();
+        int currentZoom = mapComponent.getMainMap().getZoom();
+        if (currentZoom < mapComponent.getMaxZoom())
+            mapComponent.getMainMap().setZoom(currentZoom + 1);
+    }
     /**
      * Helper class to let us launch a lookup event every time a widget is selected
      */

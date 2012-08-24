@@ -18,8 +18,6 @@ package org.inventory.views.gis.scene;
 
 import java.awt.BorderLayout;
 import java.awt.Graphics2D;
-import java.awt.event.ComponentListener;
-import java.awt.event.ContainerListener;
 import java.beans.PropertyChangeListener;
 import org.jdesktop.swingx.JXMapViewer;
 import org.jdesktop.swingx.JXPanel;
@@ -37,19 +35,19 @@ public class MapPanel extends JXPanel{
     /**
      * Default tile size (in pixels)
      */
-    public final int DEFAULT_TILE_SIZE = 256;
+    private final int DEFAULT_TILE_SIZE = 256;
     /**
      * Default minimum zoom level
      */
-    public final int DEFAULT_MINIMUM_ZOOM_LEVEL = 1;
+    private final int DEFAULT_MINIMUM_ZOOM_LEVEL = 1;
     /**
      * Default maximum zoom level
      */
-    public final int DEFAULT_MAXIMUM_ZOOM_LEVEL = 15;
+    private final int DEFAULT_MAXIMUM_ZOOM_LEVEL = 15;
     /**
      * Open Street Maps tile server base URL
      */
-    public final String OSM_BASE_URL = "http://tile.openstreetmap.org";
+    private final String OSM_BASE_URL = "http://tile.openstreetmap.org";
     /**
      * Default providers available. Use <strong>OSM</strong> is Open Street maps and <strong>Custom</strong> if you would like to set your own parameters
      */
@@ -58,6 +56,14 @@ public class MapPanel extends JXPanel{
      * The actual map viewer component
      */
     private JXMapViewer map;
+    /**
+     * Maximum zoom allowed by the tile provider
+     */
+    private int maxZoom;
+    /**
+     * Maximum zoom allowed by the tile provider
+     */
+    private int minZoom;
 
     public MapPanel() {
         map = new JXMapViewer();
@@ -103,6 +109,8 @@ public class MapPanel extends JXPanel{
             map.setTileFactory(tf);
             map.setZoom(10);
             map.setCenterPosition(new GeoPosition(0,0));
+            maxZoom = DEFAULT_MAXIMUM_ZOOM_LEVEL;
+            minZoom = DEFAULT_MINIMUM_ZOOM_LEVEL;
         }
     }
 
@@ -114,5 +122,13 @@ public class MapPanel extends JXPanel{
 
     public JXMapViewer getMainMap(){
         return map;
+    }
+
+    public int getMaxZoom() {
+        return maxZoom;
+    }
+
+    public int getMinZoom() {
+        return minZoom;
     }
 }
