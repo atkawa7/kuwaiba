@@ -15,36 +15,45 @@
  */
 package org.inventory.views.gis;
 
+import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.util.logging.Logger;
 import org.inventory.views.gis.scene.GISViewScene;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
-//import org.openide.util.ImageUtilities;
+import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.explorer.ExplorerManager;
 
 /**
  * Top component which displays something.
  */
 @ConvertAsProperties(dtd = "-//org.inventory.views.gis//GISView//EN",
 autostore = false)
-public final class GISViewTopComponent extends TopComponent {
+public final class GISViewTopComponent extends TopComponent implements ExplorerManager.Provider{
 
     private static GISViewTopComponent instance;
     /** path to the icon used by the component and its open action */
-//    static final String ICON_PATH = "SET/PATH/TO/ICON/HERE";
+    static final String ICON_PATH = "org/inventory/views/gis/res/icon.png";
     private static final String PREFERRED_ID = "GISViewTopComponent";
+    /**
+     * Main scene
+     */
     private GISViewScene scene;
+    /**
+     * TC Explorer Manager
+     */
+    private ExplorerManager em = new ExplorerManager();
 
     public GISViewTopComponent() {
         initComponents();
         setName(NbBundle.getMessage(GISViewTopComponent.class, "CTL_GISViewTopComponent"));
         setToolTipText(NbBundle.getMessage(GISViewTopComponent.class, "HINT_GISViewTopComponent"));
         scene = new GISViewScene();
-        pnlScrollMain.setViewportView(scene.createView());
-//        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
-
+        add(scene.createView(),BorderLayout.CENTER);
+        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
+        associateLookup(scene.getLookup());
     }
 
     /** This method is called from within the constructor to
@@ -55,14 +64,12 @@ public final class GISViewTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pnlScrollMain = new javax.swing.JScrollPane();
         barToolMain = new javax.swing.JToolBar();
         btnNew = new javax.swing.JButton();
         btnOpen = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
-        add(pnlScrollMain, java.awt.BorderLayout.CENTER);
 
         barToolMain.setRollover(true);
 
@@ -95,7 +102,6 @@ public final class GISViewTopComponent extends TopComponent {
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnOpen;
     private javax.swing.JButton btnSave;
-    private javax.swing.JScrollPane pnlScrollMain;
     // End of variables declaration//GEN-END:variables
     /**
      * Gets default instance. Do not use directly: reserved for *.settings files only,
@@ -172,6 +178,11 @@ public final class GISViewTopComponent extends TopComponent {
     public void paint(Graphics g) {
         scene.updateMapBounds();
         super.paint(g);
+    }
+
+    @Override
+    public ExplorerManager getExplorerManager() {
+        return em;
     }
 
 }

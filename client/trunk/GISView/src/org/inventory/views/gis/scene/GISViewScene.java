@@ -22,38 +22,51 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Set;
 import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.views.gis.scene.providers.AcceptActionProvider;
 import org.jdesktop.swingx.JXMapViewer;
 import org.jdesktop.swingx.mapviewer.GeoPosition;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.graph.GraphScene;
+import org.netbeans.api.visual.model.ObjectSceneEvent;
+import org.netbeans.api.visual.model.ObjectSceneEventType;
+import org.netbeans.api.visual.model.ObjectSceneListener;
+import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.ComponentWidget;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.ImageUtilities;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.Lookups;
+import org.openide.util.lookup.ProxyLookup;
 
 /**
  * Scene used by the GISView component
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight> implements PropertyChangeListener{
+public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight> implements PropertyChangeListener, Lookup.Provider{
 
+    /**
+     * String for Selection tool
+     */
+    public final static String ACTION_SELECT = "selection"; //NOI18
+    /**
+     * String for Connect tool
+     */
+    public final static String ACTION_CONNECT = "connect"; //NOI18
     /**
      * Default node icon path
      */
-    public static final String GENERIC_ICON_PATH="org/inventory/views/gis/res/default.png";
+    private final String GENERIC_ICON_PATH="org/inventory/views/gis/res/default.png"; //NOI18
 
-    private static final int ICON_RADIUS = 8;
+    private final int ICON_RADIUS = 8;
     /**
      * Default coordinates to center the map
      */
-    private static final GeoPosition DEFAULT_CENTER_POSITION = new GeoPosition(2.451627, -76.624424);
-    /**
-     * Default zoom
-     */
-    private static final int DEFAULT_ZOOM = 2;
+    private final GeoPosition DEFAULT_CENTER_POSITION = new GeoPosition(2.451627, -76.624424);
     /**
      * Default icon
      */
@@ -82,22 +95,52 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      * The widget to contain the map component
      */
     private ComponentWidget mapWidget;
+    /**
+     * Scene lookup
+     */
+    private SceneLookup lookup;
 
     public GISViewScene() {
         getActions().addAction(ActionFactory.createAcceptAction(new AcceptActionProvider(this)));
+
         mapLayer = new LayerWidget(this);
         nodesLayer = new LayerWidget(this);
         connectionsLayer = new LayerWidget(this);
+
         addChild(mapLayer);
         addChild(nodesLayer);
         addChild(connectionsLayer);
 
+        this.lookup = new SceneLookup(Lookup.EMPTY);
+        
         MapPanel myMap = new MapPanel();
         myMap.setProvider(MapPanel.Providers.OSM);
         myMap.getMainMap().setAddressLocation(DEFAULT_CENTER_POSITION);
         myMap.addPropertyChangeListener("painted", this);
         mapWidget = new ComponentWidget(this, myMap);
         mapLayer.addChild(mapWidget);
+
+        //mapWidget.getActions().addAction(new MapWidgetPanAction(myMap, MouseEvent.BUTTON1));
+
+        addObjectSceneListener(new ObjectSceneListener() {
+            @Override
+            public void objectAdded(ObjectSceneEvent event, Object addedObject) { }
+            @Override
+            public void objectRemoved(ObjectSceneEvent event, Object removedObject) {}
+            @Override
+            public void objectStateChanged(ObjectSceneEvent event, Object changedObject, ObjectState previousState, ObjectState newState) {}
+            @Override
+            public void selectionChanged(ObjectSceneEvent event, Set<Object> previousSelection, Set<Object> newSelection) {
+                if (newSelection.size() == 1)
+                    lookup.updateLookup(((ObjectNodeWidget)findWidget(newSelection.iterator().next())).getObject());
+            }
+            @Override
+            public void highlightingChanged(ObjectSceneEvent event, Set<Object> previousHighlighting, Set<Object> newHighlighting) {}
+            @Override
+            public void hoverChanged(ObjectSceneEvent event, Object previousHoveredObject, Object newHoveredObject) {}
+            @Override
+            public void focusChanged(ObjectSceneEvent event, Object previousFocusedObject, Object newFocusedObject) {}
+        }, ObjectSceneEventType.OBJECT_SELECTION_CHANGED);
     }
 
     @Override
@@ -105,6 +148,8 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         GeoPositionedNodeWidget myWidget =  new GeoPositionedNodeWidget(this,node, 0, 0);
         nodesLayer.addChild(myWidget);
         myWidget.setImage(defaultIcon);
+        myWidget.getActions().addAction(createSelectAction());
+        myWidget.getActions().addAction(ActionFactory.createMoveAction());
         return myWidget;
     }
 
@@ -177,5 +222,27 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      */
     public Point coordinateToPixel(GeoPosition point){
         return null;
+    }
+
+    @Override
+    public Lookup getLookup(){
+        return this.lookup;
+    }
+    /**
+     * Helper class to let us launch a lookup event every time a widget is selected
+     */
+    private class SceneLookup extends ProxyLookup{
+
+        public SceneLookup(Lookup initialLookup) {
+            super(initialLookup);
+        }
+
+        public void updateLookup(Lookup newLookup){
+            setLookups(newLookup);
+        }
+
+        public void updateLookup(LocalObjectLight newElement){
+            setLookups(Lookups.singleton(new ObjectNode(newElement)));
+        }
     }
 }
