@@ -17,6 +17,7 @@
 package org.inventory.views.gis.scene;
 
 import org.inventory.core.services.api.LocalObjectLight;
+import org.jdesktop.swingx.mapviewer.GeoPosition;
 import org.netbeans.api.visual.graph.GraphScene;
 
 /**
@@ -63,5 +64,14 @@ public class GeoPositionedNodeWidget extends ObjectNodeWidget{
     public void setCoordinates(double longitude, double latitude){
         this.longitude = longitude;
         this.latitude = latitude;
+    }
+
+    /**
+     * This method updates the widget geo-coordinates from the scene coordinates
+     */
+    public void updateCoordinates() {
+        GeoPosition coordinate = ((GISViewScene)getScene()).pixelToCoordinate(getPreferredLocation());
+        this.latitude = coordinate.getLatitude();
+        this.longitude = coordinate.getLongitude();
     }
 }

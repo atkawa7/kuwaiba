@@ -27,6 +27,7 @@ import java.util.Set;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.views.gis.scene.actions.MapWidgetPanAction;
+import org.inventory.views.gis.scene.actions.MoveAction;
 import org.inventory.views.gis.scene.actions.ZoomAction;
 import org.inventory.views.gis.scene.providers.AcceptActionProvider;
 import org.jdesktop.swingx.JXMapViewer;
@@ -155,7 +156,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         nodesLayer.addChild(myWidget);
         myWidget.setImage(defaultIcon);
         myWidget.getActions().addAction(createSelectAction());
-        myWidget.getActions().addAction(ActionFactory.createMoveAction());
+        myWidget.getActions().addAction(new MoveAction());
         return myWidget;
     }
 
