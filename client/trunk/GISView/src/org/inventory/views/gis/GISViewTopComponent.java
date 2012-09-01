@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.util.logging.Logger;
 import org.inventory.views.gis.scene.GISViewScene;
+import org.inventory.views.gis.scene.ObjectNodeWidget;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -69,8 +70,8 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnOpen = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
         btnExport = new javax.swing.JButton();
-        btnSelect = new javax.swing.JButton();
-        btnConnect = new javax.swing.JButton();
+        btnSelect = new javax.swing.JToggleButton();
+        btnConnect = new javax.swing.JToggleButton();
         btnZommIn = new javax.swing.JButton();
         btnZoomOut = new javax.swing.JButton();
 
@@ -111,11 +112,17 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         barToolMain.add(btnExport);
 
         btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/select.png"))); // NOI18N
+        btnSelect.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(btnSelect, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnSelect.text")); // NOI18N
         btnSelect.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnSelect.toolTipText")); // NOI18N
         btnSelect.setFocusable(false);
         btnSelect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSelect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSelect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSelectActionPerformed(evt);
+            }
+        });
         barToolMain.add(btnSelect);
 
         btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/connect.png"))); // NOI18N
@@ -124,6 +131,11 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnConnect.setFocusable(false);
         btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnConnect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnConnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConnectActionPerformed(evt);
+            }
+        });
         barToolMain.add(btnConnect);
 
         btnZommIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/zoom-in.png"))); // NOI18N
@@ -163,14 +175,24 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         scene.zoomOut();
     }//GEN-LAST:event_btnZoomOutActionPerformed
 
+    private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
+        scene.setActiveTool(ObjectNodeWidget.ACTION_SELECT);
+        btnConnect.setSelected(false);
+    }//GEN-LAST:event_btnSelectActionPerformed
+
+    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
+        scene.setActiveTool(ObjectNodeWidget.ACTION_CONNECT);
+        btnSelect.setSelected(false);
+    }//GEN-LAST:event_btnConnectActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barToolMain;
-    private javax.swing.JButton btnConnect;
+    private javax.swing.JToggleButton btnConnect;
     private javax.swing.JButton btnExport;
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnOpen;
     private javax.swing.JButton btnSave;
-    private javax.swing.JButton btnSelect;
+    private javax.swing.JToggleButton btnSelect;
     private javax.swing.JButton btnZommIn;
     private javax.swing.JButton btnZoomOut;
     // End of variables declaration//GEN-END:variables

@@ -58,8 +58,8 @@ public class AcceptActionProvider implements AcceptProvider{
             LocalObjectLight droppedObject = (LocalObjectLight) transferable.getTransferData(LocalObjectLight.DATA_FLAVOR);
             if (!scene.isNode(droppedObject)){
                 Widget newNode = scene.addNode(droppedObject);
-                GeoPosition position = scene.pixelToCoordinate(point);
-                ((GeoPositionedNodeWidget)newNode).setCoordinates(position.getLongitude(), position.getLatitude());
+                double[] coordinates = scene.pixelToCoordinate(point);
+                ((GeoPositionedNodeWidget)newNode).setCoordinates(coordinates[0], coordinates[1]);
                 newNode.setPreferredLocation(point);
                 scene.repaint();
             }else
