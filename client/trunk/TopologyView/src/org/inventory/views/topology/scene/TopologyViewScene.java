@@ -26,6 +26,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Set;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.views.topology.scene.provider.AcceptActionProvider;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.model.ObjectSceneEvent;
@@ -67,6 +68,7 @@ public class TopologyViewScene extends GraphScene<LocalObjectLight, LocalObjectL
     
 
     public TopologyViewScene() {
+        getActions().addAction(ActionFactory.createAcceptAction(new AcceptActionProvider(this)));
         nodesLayer = new LayerWidget(this);
         //connectionsLayer = new LayerWidget(this);
         //labelsLayer = new LayerWidget(this);
