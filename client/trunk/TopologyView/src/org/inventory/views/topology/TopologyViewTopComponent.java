@@ -16,14 +16,14 @@
 
 package org.inventory.views.topology;
 
-import java.awt.BorderLayout;
 import java.util.logging.Logger;
-import javax.swing.JScrollPane;
+import org.inventory.views.topology.scene.ObjectNodeWidget;
 import org.inventory.views.topology.scene.TopologyViewScene;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.explorer.ExplorerManager;
 import org.openide.util.ImageUtilities;
 
 /**
@@ -33,7 +33,7 @@ import org.openide.util.ImageUtilities;
     dtd="-//org.inventory.views.topology//TopologyView//EN",
     autostore=false
 )
-public final class TopologyViewTopComponent extends TopComponent {
+public final class TopologyViewTopComponent extends TopComponent implements ExplorerManager.Provider{
 
     private static TopologyViewTopComponent instance;
     /** path to the icon used by the component and its open action */
@@ -44,6 +44,10 @@ public final class TopologyViewTopComponent extends TopComponent {
      * Main scene
      */
     private TopologyViewScene scene;
+    /**
+     * TC Explorer Manager
+     */
+    private ExplorerManager em = new ExplorerManager();
 
     public TopologyViewTopComponent() {
         initComponents();
@@ -52,7 +56,7 @@ public final class TopologyViewTopComponent extends TopComponent {
         scene = new TopologyViewScene();
         pnlMainScrollPanel.setViewportView(scene.createView());
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
-
+        associateLookup(scene.getLookup());
     }
 
     /** This method is called from within the constructor to
@@ -64,98 +68,39 @@ public final class TopologyViewTopComponent extends TopComponent {
     private void initComponents() {
 
         barToolMain = new javax.swing.JToolBar();
-        btnNew = new javax.swing.JButton();
-        btnOpen = new javax.swing.JButton();
-        btnSave = new javax.swing.JButton();
-        btnExport = new javax.swing.JButton();
-        btnSelect = new javax.swing.JButton();
-        btnConnect = new javax.swing.JButton();
-        btnZommIn = new javax.swing.JButton();
-        btnZoomOut = new javax.swing.JButton();
+        btnConnect = new javax.swing.JToggleButton();
+        btnSelect = new javax.swing.JToggleButton();
         pnlMainScrollPanel = new javax.swing.JScrollPane();
 
         barToolMain.setRollover(true);
 
-        btnNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/add.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnNew, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnNew.text")); // NOI18N
-        btnNew.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnNew.toolTipText")); // NOI18N
-        btnNew.setFocusable(false);
-        btnNew.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnNew.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        barToolMain.add(btnNew);
-        btnNew.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnNew.AccessibleContext.accessibleDescription")); // NOI18N
+        btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/select.png"))); // NOI18N
+        btnConnect.setSelected(true);
+        org.openide.awt.Mnemonics.setLocalizedText(btnConnect, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnConnect.text")); // NOI18N
+        btnConnect.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnConnect.toolTipText")); // NOI18N
+        btnConnect.setFocusable(false);
+        btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnConnect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnConnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConnectActionPerformed(evt);
+            }
+        });
+        barToolMain.add(btnConnect);
 
-        btnOpen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/open.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnOpen, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnOpen.text")); // NOI18N
-        btnOpen.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnOpen.toolTipText")); // NOI18N
-        btnOpen.setFocusable(false);
-        btnOpen.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnOpen.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        barToolMain.add(btnOpen);
-        btnOpen.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnOpen.AccessibleContext.accessibleDescription")); // NOI18N
-
-        btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/save.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnSave.text")); // NOI18N
-        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnSave.toolTipText")); // NOI18N
-        btnSave.setFocusable(false);
-        btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        barToolMain.add(btnSave);
-        btnSave.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnSave.AccessibleContext.accessibleDescription")); // NOI18N
-
-        btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/export.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnExport.text")); // NOI18N
-        btnExport.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnExport.toolTipText")); // NOI18N
-        btnExport.setFocusable(false);
-        btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        barToolMain.add(btnExport);
-
-        btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/select.png"))); // NOI18N
+        btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/connect.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSelect, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnSelect.text")); // NOI18N
         btnSelect.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnSelect.toolTipText")); // NOI18N
         btnSelect.setFocusable(false);
         btnSelect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSelect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSelect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSelectActionPerformed(evt);
+            }
+        });
         barToolMain.add(btnSelect);
-
-        btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/connect.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnConnect, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnConnect.text")); // NOI18N
-        btnConnect.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnConnect.toolTipText")); // NOI18N
-        btnConnect.setFocusable(false);
-        btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnConnect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        barToolMain.add(btnConnect);
-
-        btnZommIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/zoom-in.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnZommIn, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnZommIn.text")); // NOI18N
-        btnZommIn.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnZommIn.toolTipText")); // NOI18N
-        btnZommIn.setFocusable(false);
-        btnZommIn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnZommIn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnZommIn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnZommInActionPerformed(evt);
-            }
-        });
-        barToolMain.add(btnZommIn);
-
-        btnZoomOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/zoom-out.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnZoomOut, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnZoomOut.text")); // NOI18N
-        btnZoomOut.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnZoomOut.toolTipText")); // NOI18N
-        btnZoomOut.setFocusable(false);
-        btnZoomOut.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnZoomOut.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnZoomOut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnZoomOutActionPerformed(evt);
-            }
-        });
-        barToolMain.add(btnZoomOut);
-
-        pnlMainScrollPanel.setMinimumSize(new java.awt.Dimension(23, 23));
+        btnSelect.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.jToggleButton2.AccessibleContext.accessibleDescription")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -175,24 +120,20 @@ public final class TopologyViewTopComponent extends TopComponent {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnZommInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZommInActionPerformed
-        //scene.zoomIn();
-}//GEN-LAST:event_btnZommInActionPerformed
+    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
+        scene.setActiveTool(ObjectNodeWidget.ACTION_SELECT);
+        btnSelect.setSelected(false);
+    }//GEN-LAST:event_btnConnectActionPerformed
 
-    private void btnZoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomOutActionPerformed
-        //scene.zoomOut();
-}//GEN-LAST:event_btnZoomOutActionPerformed
+    private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
+        scene.setActiveTool(ObjectNodeWidget.ACTION_CONNECT);
+        btnConnect.setSelected(false);
+    }//GEN-LAST:event_btnSelectActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barToolMain;
-    private javax.swing.JButton btnConnect;
-    private javax.swing.JButton btnExport;
-    private javax.swing.JButton btnNew;
-    private javax.swing.JButton btnOpen;
-    private javax.swing.JButton btnSave;
-    private javax.swing.JButton btnSelect;
-    private javax.swing.JButton btnZommIn;
-    private javax.swing.JButton btnZoomOut;
+    private javax.swing.JToggleButton btnConnect;
+    private javax.swing.JToggleButton btnSelect;
     private javax.swing.JScrollPane pnlMainScrollPanel;
     // End of variables declaration//GEN-END:variables
     /**
@@ -264,5 +205,10 @@ public final class TopologyViewTopComponent extends TopComponent {
     @Override
     protected String preferredID() {
         return PREFERRED_ID;
+    }
+
+    @Override
+    public ExplorerManager getExplorerManager() {
+        return em;
     }
 }

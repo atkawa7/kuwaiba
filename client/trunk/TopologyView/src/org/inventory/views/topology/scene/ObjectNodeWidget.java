@@ -31,6 +31,14 @@ import org.openide.util.lookup.Lookups;
 public class ObjectNodeWidget extends IconNodeWidget implements Lookup.Provider{
 
     /**
+     * String for Selection tool
+     */
+    public final static String ACTION_SELECT = "selection"; //NOI18
+    /**
+     * String for Connect tool
+     */
+    public final static String ACTION_CONNECT = "connect"; //NOI18
+    /**
      * The business object behind the widget
      */
     private LocalObjectLight object;
@@ -48,6 +56,8 @@ public class ObjectNodeWidget extends IconNodeWidget implements Lookup.Provider{
         super(scene);
         this.object = object;
         this.lookup = Lookups.singleton(object);
+        createActions(ACTION_SELECT);
+        createActions(ACTION_CONNECT);
     }
 
     public LocalObjectLight getObject() {

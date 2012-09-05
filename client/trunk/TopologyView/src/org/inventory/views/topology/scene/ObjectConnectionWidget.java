@@ -17,18 +17,32 @@
 package org.inventory.views.topology.scene;
 
 import org.inventory.core.services.api.LocalObjectLight;
+import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.graph.GraphScene;
+import org.netbeans.api.visual.widget.ConnectionWidget;
 
 /**
- * An ObjectNodeWidget with
+ * A connection widget representing a link or a container
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class NetNodeWidget extends ObjectNodeWidget{
-   
-    public NetNodeWidget(GraphScene scene, LocalObjectLight object) {
-        super(scene, object);
-        setLabel(object.getName());
+public class ObjectConnectionWidget extends ConnectionWidget{
+    /**
+     * Business object represented by this widget
+     */
+    private LocalObjectLight object;
+
+    public ObjectConnectionWidget(GraphScene<LocalObjectLight, LocalObjectLight> scene, LocalObjectLight object) {
+        super(scene);
+        this.object = object;
+        createActions(ObjectNodeWidget.ACTION_SELECT);
+        setControlPointShape (PointShape.SQUARE_FILLED_BIG);
     }
 
-   
+    public LocalObjectLight getObject() {
+        return object;
+    }
+
+    public void setObject(LocalObjectLight object) {
+        this.object = object;
+    }
 }
