@@ -85,8 +85,8 @@ public class TopologyViewScene extends GraphScene<LocalObjectLight, LocalObjectL
         connectionsLayer = new LayerWidget(this);
         labelsLayer = new LayerWidget(this);
 
-        addChild(nodesLayer);
         addChild(connectionsLayer);
+        addChild(nodesLayer);
         addChild(labelsLayer);
 
         this.lookup = new SceneLookup(Lookup.EMPTY);
@@ -155,7 +155,7 @@ public class TopologyViewScene extends GraphScene<LocalObjectLight, LocalObjectL
                 ObjectConnectionWidget newEdge = (ObjectConnectionWidget)addEdge(LocalStuffFactory.createLocalObjectLight());
                 newEdge.setSourceAnchor(AnchorFactory.createCircularAnchor(sourceWidget, 3));
                 newEdge.setTargetAnchor(AnchorFactory.createCircularAnchor(targetWidget, 3));
-                validate();
+                
             }
         }));
         return myWidget;

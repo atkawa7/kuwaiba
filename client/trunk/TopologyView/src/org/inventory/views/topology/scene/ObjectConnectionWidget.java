@@ -35,7 +35,7 @@ public class ObjectConnectionWidget extends ConnectionWidget{
         super(scene);
         this.object = object;
         createActions(ObjectNodeWidget.ACTION_SELECT);
-        setControlPointShape (PointShape.SQUARE_FILLED_BIG);
+        
     }
 
     public LocalObjectLight getObject() {
