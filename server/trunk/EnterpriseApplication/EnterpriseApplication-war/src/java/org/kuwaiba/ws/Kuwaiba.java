@@ -159,6 +159,7 @@ public class Kuwaiba {
      * @param privileges A list of integers specifying the privileges for this user. Does nothing for now
      * @param groups List of the ids of the groups to relate to this user
      * @param sessionId Session token
+     * @return The new user Id
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createUser")
@@ -194,7 +195,7 @@ public class Kuwaiba {
      * @param lastName (null if unchanged)
      * @param password (null if unchanged)
      * @param enabled (null if unchanged)
-     * @param priviliges (null if unchanged). Does nothing for now
+     * @param privileges (null if unchanged). Does nothing for now
      * @param groups List of ids of the groups to be related to this user(null if unchanged)
      * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
@@ -232,6 +233,7 @@ public class Kuwaiba {
      * @param privileges Group privileges. Does nothing for now
      * @param users List of user ids to be related to this group
      * @param sessionId Session token
+     * @return The group id
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createGroup")
@@ -512,6 +514,7 @@ public class Kuwaiba {
      * that the first record is reserved for the column headers, so and empty result set
      * will have at least one record.
      * @param query The TransientQuery object (a code friendly version of the graphical query designed at client side).
+     * @param sessionId session id to check permissions
      * @return An array of records (the first raw is used to put the headers)
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
@@ -536,6 +539,7 @@ public class Kuwaiba {
      * @param queryName Query name
      * @param ownerOid OwnerOid. Null if public
      * @param queryStructure XML document as a byte array
+     * @param description a short descriptions for the query
      * @param sessionId session id to check permissions
      * @return a RemoteObjectLight wrapping the newly created query
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
@@ -659,7 +663,7 @@ public class Kuwaiba {
 
     /**
      * Creates an XML document describing the class hierarchy
-     * @param should this method return all entity classes or only InventoryObject subclasses
+     * @param showAll should this method return all entity classes or only InventoryObject subclasses
      * @param sessionId session identifier
      * @return A byte array containing the class hierarchy as an XML document. See the <a href="http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Queries">wiki entry</a> for details on the document structure
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
@@ -742,6 +746,7 @@ public class Kuwaiba {
     /**
      * Gets all children of an object of a given class
      * @param parentOid Parent whose children are requested
+     * @param parentClass
      * @param childrenClass
      * @param maxResults Max number of children to be returned. O for all
      * @param sessionId Session token
@@ -771,6 +776,7 @@ public class Kuwaiba {
      /**
      * Gets all children of an object of a given class
      * @param parentOid Object oid whose children will be returned
+     * @param parentClass
      * @param childrenClass
      * @param maxResults Max number of children to be returned. O for all
      * @param sessionId Session token
@@ -939,7 +945,7 @@ public class Kuwaiba {
             throw e;
         }
     }
-    
+
     /**
      * Delete a set of objects. Note that this method must be used only for business objects (not metadata or application ones)
      * @param classNames Objects class names
@@ -963,7 +969,7 @@ public class Kuwaiba {
             Logger.getLogger(Kuwaiba.class.getName()).log(level,
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
-        }        
+        }
     }
 
     /**
@@ -1037,6 +1043,10 @@ public class Kuwaiba {
      * @param aObjectId "a" endpoint object id
      * @param bObjectClass "b" endpoint object class
      * @param bObjectId "b" endpoint object id
+     * @param parentClass
+     * @param parentId
+     * @param attributeNames
+     * @param attributeValues
      * @param connectionClass Class used to create the connection. See Constants class for supported values
      * @param sessionId Session token
      * @return The new connection id
@@ -1153,7 +1163,7 @@ public class Kuwaiba {
     }
 
      /**
-     * Updates a metadata object properties
+     * Updates a class metadata properties
      * @param name New class metadata object name. Null if unchanged
      * @param displayName New class metadata object display name. Null if unchanged
      * @param description New class metadata object description. Null if unchanged
@@ -1164,15 +1174,16 @@ public class Kuwaiba {
      * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "setClassMetadataDefinition")
-    public void setClassMetadataProperties(@WebParam(name = "name")
+    @WebMethod(operationName = "setClassMetadataProperties")
+    public void setClassMetadataProperties(@WebParam(name = "classId")
+        Long ClassId, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "description")
         String description, @WebParam(name = "abstractClass")
         Boolean abstractClass, @WebParam(name = "parentClassName")
-        String parentClassName, @WebParam(name = "icon")
-        byte[] icon, @WebParam(name = "smallIcon")
-        byte[] smallIcon, @WebParam(name = "sessionId")
+        String parentClassName, @WebParam(name = "smallIcon")
+        byte[] smallIcon,  @WebParam(name = "icon")
+        byte[] icon, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
 
         try
@@ -1188,6 +1199,7 @@ public class Kuwaiba {
                     throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
 
             ClassInfo ci = new ClassInfo();
+            ci.setId(ClassId);
             ci.setClassName(name);
             ci.setDisplayName(displayName);
             ci.setDescription(description);
@@ -1196,7 +1208,7 @@ public class Kuwaiba {
             ci.setParentClassName(parentClassName);
             ci.setIsAbstract(abstractClass);
 
-            wsBean.updateClassDefinition(ci);
+            wsBean.changeClassDefinition(ci);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -1207,126 +1219,34 @@ public class Kuwaiba {
             throw e;
         }
     }
-    
-    /**
-     * <strong>Marked to be changed, don't use it!</strong>
-     * Sets the value of a property associated to an attribute. So far there are only
-     * 4 possible properties:
-     * -displayName
-     * -isVisible
-     * -isAdministrative
-     * -description
-     * @param classId The id of the class associated to the attribute
-     * @param attributeName The name of the attribute
-     * @param propertyName The name of the property
-     * @param propertyValue The value of the property
-     * @param sessionId Session token
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
-     */
-    @WebMethod(operationName = "setAttributePropertyValue")
-    public void setAttributeProperties(@WebParam(name = "classId")Long classId,
-            @WebParam(name = "attributeName")String attributeName,
-            @WebParam(name = "propertyName")String propertyName,
-            @WebParam(name = "propertyValue")String propertyValue,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
-        try {
-            wsBean.validateCall("setAttributePropertyValue", getIPAddress(), sessionId);
-            wsBean.setAttributePropertyValue(classId, attributeName, propertyName, propertyValue);
-            
-        }catch(Exception e){
-            Level level = Level.SEVERE;
-            if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(Kuwaiba.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-            throw e;
-        }
-    }
 
     /**
-     * <strong>Marked to be changed, don't use it!</strong>
-     * Sets the string attributes in a class meta data (by now only the display name and description)
-     * @param classId Class to be modified
-     * @param attributeName attribute to be modified
-     * @param attributeValue value for such attribute
-     * @param sessionId
-     * @return Success or failure
-     * @throws Exception
-     */
-    @WebMethod(operationName = "setClassPlainAttribute")
-    public void setClassPlainAttribute(@WebParam(name = "classId")Long classId,
-            @WebParam(name = "attributeName")String attributeName,
-            @WebParam(name = "attributeValue")String attributeValue,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
-        try {
-            wsBean.validateCall("setClassPlainAttribute", getIPAddress(), sessionId);
-            wsBean.setClassPlainAttribute(classId, attributeName, attributeValue);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
-            if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(Kuwaiba.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-            throw e;
-        }
-    }
-
-    /**
-     * <strong>Marked to be changed, don't use it!</strong>
-      * Sets the image (icons) attributes in a class meta data (smallIcon and Icon)
-      * @param classId Class to be modified
-      * @param iconAttribute icon attribute to be modified
-      * @param iconImage image as a byte array
-      * @param sessionId
-      * @return success or failure
-      * @throws Exception
-      */
-    @WebMethod(operationName = "setClassIcon")
-    public void setClassIcon(@WebParam(name = "classId")Long classId,
-            @WebParam(name = "iconAttribute")String iconAttribute,
-            @WebParam(name = "iconImage")byte[] iconImage,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
-
-        try {
-            wsBean.validateCall("setClassIcon", getIPAddress(), sessionId);
-            wsBean.setClassIcon(classId, iconAttribute, iconImage);
-        
-        }catch(Exception e){
-            Level level = Level.SEVERE;
-            if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(Kuwaiba.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-            throw e;
-        }
-
-     }
-
-    /**
-     * <strong>Marked to be changed, don't use it!</strong>
-     * Adds an attribute to a classMeatdatada by its ClassId
+     * Adds an attribute to a classMetadata
+     * @param ClassId Class id where the attribute will be attached
      * @param ClassName Class name where the attribute will be attached
-     * @param name
-     * @param displayName
-     * @param type
-     * @param description
-     * @param administrative
-     * @param visible
+     * @param name attribute name
+     * @param displayName attribute display name
+     * @param type attribute type
+     * @param description attribute description
+     * @param administrative is the attribute administrative?
+     * @param visible is the attribute visible?
      * @param mapping
-     * @param readOnly
+     * @param readOnly is the attribute read only?
      * @param unique should this attribute be unique?
+     * @param sessionId session token
      * @throws Exception
      */
-    @WebMethod(operationName = "addAttributeByClassId")
-    public void addAttributeByClassId(@WebParam(name = "className")
-        String ClassName, @WebParam(name = "name")
+    @WebMethod(operationName = "addAttributeClass")
+    public void addClassAttribute(@WebParam(name = "classId")
+        Long ClassId, @WebParam(name = "className")
+        String ClassName,  @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "type")
         String type, @WebParam(name = "description")
         String description, @WebParam(name = "administrative")
         Boolean administrative, @WebParam(name = "visible")
         Boolean visible, @WebParam(name = "mapping")
-        int mapping, @WebParam(name = "readOnly")
+        Integer mapping, @WebParam(name = "readOnly")
         Boolean readOnly, @WebParam(name = "unique")
         Boolean unique, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
@@ -1335,53 +1255,6 @@ public class Kuwaiba {
             wsBean.validateCall("addAttributeByClassId", getIPAddress(), sessionId);
             AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
                                             visible, description, mapping);
-
-            wsBean.addAttribute(ClassName, ai);
-
-        }catch(Exception e){
-            Level level = Level.SEVERE;
-            if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(Kuwaiba.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-            throw e;
-        }
-    }
-
-    /*
-     * <strong>Marked to be changed, don't use it!</strong>
-     * Adds an attribute to a classMeatdatada by its ClassName
-     * @param ClassName
-     * @param name
-     * @param displayName
-     * @param type
-     * @param description
-     * @param administrative
-     * @param visible
-     * @param mapping
-     * @param readOnly
-     * @param unique
-     * @return
-     * @throws Exception
-     */
-    @WebMethod(operationName = "addAttributeByClassName")
-    public void addAttributeByClassName(@WebParam(name = "ClassId")
-        Long ClassId, @WebParam(name = "name")
-        String name, @WebParam(name = "displayName")
-        String displayName, @WebParam(name = "type")
-        String type, @WebParam(name = "description")
-        String description, @WebParam(name = "administrative")
-        Boolean administrative, @WebParam(name = "visible")
-        Boolean visible, @WebParam(name = "mapping")
-        int mapping, @WebParam(name = "readOnly")
-        Boolean readOnly, @WebParam(name = "unique")
-        Boolean unique, @WebParam(name = "sessionId")
-        String sessionId) throws Exception {
-
-        try {
-            wsBean.validateCall("addAttributeByClassName", getIPAddress(), sessionId);
-            AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
-                                                visible, description, mapping);
 
             wsBean.addAttribute(ClassId, ai);
 
@@ -1394,6 +1267,55 @@ public class Kuwaiba {
             throw e;
         }
     }
+
+    /**
+     * Update an attribute belonging to a classMetadata
+     * @param ClassId Class id where the attribute will be attached
+     * @param ClassName Class name where the attribute will be attached
+     * @param name attribute name
+     * @param displayName attribute display name
+     * @param type attribute type
+     * @param description attribute description
+     * @param administrative is the attribute administrative?
+     * @param visible is the attribute visible?
+     * @param mapping
+     * @param readOnly is the attribute read only?
+     * @param unique should this attribute be unique?
+     * @param sessionId session token
+     * @throws Exception
+     */
+    @WebMethod(operationName = "setClassAttributeProperties")
+    public void setClassAttributeProperties(@WebParam(name = "classId")
+        Long ClassId, @WebParam(name = "className")
+        String ClassName,  @WebParam(name = "name")
+        String name, @WebParam(name = "displayName")
+        String displayName, @WebParam(name = "type")
+        String type, @WebParam(name = "description")
+        String description, @WebParam(name = "administrative")
+        Boolean administrative, @WebParam(name = "visible")
+        Boolean visible, @WebParam(name = "mapping")
+        Integer mapping, @WebParam(name = "readOnly")
+        Boolean readOnly, @WebParam(name = "unique")
+        Boolean unique, @WebParam(name = "sessionId")
+        String sessionId) throws Exception {
+
+        try {
+            wsBean.validateCall("addAttributeByClassId", getIPAddress(), sessionId);
+            AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
+                                            visible, description, mapping);
+
+            wsBean.changeAttributeDefinition(ClassId, ai);
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
 
     /**
      * Gets the metadata for a given class using its name as argument
@@ -1423,6 +1345,7 @@ public class Kuwaiba {
     /**
      * Gets the metadata for a given class using its id as argument
      * @param classId Class metadata object id
+     * @param sessionId session token
      * @return The metadata as a ClassInfo instance
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
@@ -1477,7 +1400,7 @@ public class Kuwaiba {
 
     }
 
-     /**
+    /**
      * Retrieves the metadata for the entire class hierarchy as ClassInfo instances
      * @param sessionId Session token
      * @param includeListTypes boolean to indicate if the list should include the subclasses of
@@ -1564,7 +1487,7 @@ public class Kuwaiba {
      * @param parentClassName Class to retrieve its possible children
      * @param sessionId Session token
      * @return A list of possible children as ClassInfoLight instances
-     * @return An array with the metadata for the entire class hierarchy as ClassInfoLight instances
+     * An array with the metadata for the entire class hierarchy as ClassInfoLight instances
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getPossibleChildren")
@@ -1643,10 +1566,11 @@ public class Kuwaiba {
     }
 
      /**
-     * Adds possible children to a given class using its name as argument. If any of the arguments provided are already added,
+     * Adds possible children to a given class using its name as argument.
+     * If any of the arguments provided are already added,
      * it will abort the operation and rise an exception
-     * @param parentClassId Class to attach the new possible children
-     * @param newPossibleChildren List of nre possible children. Abstract classes are de-aggregated
+     * @param parentClassName Class to attach the new possible children
+     * @param childrenToBeAdded List of nre possible children. Abstract classes are de-aggregated
      * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
@@ -1685,7 +1609,7 @@ public class Kuwaiba {
         try{
             wsBean.validateCall("removePossibleChildren", getIPAddress(), sessionId);
             wsBean.removePossibleChildren(parentClassId, childrenToBeRemoved);
-            
+
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
