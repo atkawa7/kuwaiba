@@ -773,10 +773,11 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean setAttributePropertyValue(Long classId, String attributeName,
-        String propertyName, String propertyType) {
+    public boolean setAttributePropertyValue(Long classId, String name, String displayName,
+            String type, String description, Boolean administrative, Boolean visible, Integer mapping, Boolean readOnly, Boolean unique)  {
         try{
-            port.setAttributePropertyValue(classId, attributeName, propertyName, propertyType,this.session.getSessionId());
+            //port.setAttributePropertyValue(classId, attributeName, propertyName, propertyType,this.session.getSessionId());
+            port.setClassAttributeProperties(classId, null, name, displayName, type, description, administrative, visible, mapping, readOnly, unique, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -784,9 +785,10 @@ public class CommunicationsStub {
         return true;
     }
 
-    public boolean setClassPlainAttribute(Long classId, String attributeName, String attributeValue){
+    public boolean setClassMetadataProperties(Long classId, String displayName, String description, byte[] smallIcon, byte[] icon){
         try{
-            port.setClassPlainAttribute(classId, attributeName, attributeValue,this.session.getSessionId());
+            //port.setClassPlainAttribute(classId, attributeName, attributeValue,this.session.getSessionId());
+            port.setClassMetadataProperties(classId, null, displayName, description, null, null, smallIcon, icon, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -794,15 +796,15 @@ public class CommunicationsStub {
         return true;
     }
 
-    public boolean setClassIcon(Long classId, String attributeName, byte[] attributeValue){
-        try{
-            port.setClassIcon(classId, attributeName, attributeValue,this.session.getSessionId());
-        }catch(Exception ex){
-            this.error = ex.getMessage();
-            return false;
-        }
-        return true;
-    }
+//    public boolean setClassIcon(Long classId, String attributeName, byte[] attributeValue){
+//        try{
+//            //port.setClassIcon(classId, attributeName, attributeValue,this.session.getSessionId());
+//        }catch(Exception ex){
+//            this.error = ex.getMessage();
+//            return false;
+//        }
+//        return true;
+//    }
 
     /**
      * Retrieves the list types
