@@ -39,17 +39,17 @@ public class ClassMetadataLight implements Serializable{
     /**
      * Instances of this class can have views associated (this going to be "true" for all subclasses of ViewableObject)
      */
-    private boolean viewable;
+    private Boolean viewable;
 
     /**
      * Indicates if a class can have instances by itself (All GenericXXX classes
      * and others in package entity.core are used to take advantage of OOP)
      */
-    private boolean abstractClass;
+    private Boolean abstractClass;
     /**
      *  Is this class a list type (Vendor, LocationOwner, OpticalLinkType, etc)
      */
-    private boolean listType;
+    private Boolean listType;
     /**
      *  The parent ClassMetada name
      */
@@ -61,7 +61,6 @@ public class ClassMetadataLight implements Serializable{
 
     public ClassMetadataLight() {
     }
-
     
     public ClassMetadataLight(Long id, String name, String displayName) {
         this.id = id;
@@ -70,8 +69,6 @@ public class ClassMetadataLight implements Serializable{
         this.abstractClass = false;
         this.viewable =false;
     }
-
-    
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public Long getId() {
@@ -82,11 +79,11 @@ public class ClassMetadataLight implements Serializable{
         this.id = id;
     }
 
-    public boolean isListType() {
+    public Boolean isListType() {
         return listType;
     }
 
-    public void setListType(boolean listType) {
+    public void setListType(Boolean listType) {
         this.listType = listType;
     }
 
@@ -98,7 +95,7 @@ public class ClassMetadataLight implements Serializable{
         return abstractClass;
     }
 
-    public boolean isViewable() {
+    public Boolean isViewable() {
         return viewable;
     }
 
@@ -120,10 +117,6 @@ public class ClassMetadataLight implements Serializable{
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }
-
-    public void setAbstractClass(boolean abstractClass) {
-        this.abstractClass = abstractClass;
     }
     
     public String getParentClassName() {
