@@ -115,31 +115,6 @@ public interface MetadataEntityManager {
     public void moveClass(Long classToMoveId, Long targetParentId) throws Exception;
 
     /**
-     * Sets the value of a property associated to an attribute. So far there are only
-     * 4 possible properties:
-     * -displayName
-     * -isVisible
-     * -isAdministrative
-     * -description
-     * @param classId The id of the class associated to the attribute
-     * @param attributeName The name of the attribute
-     * @param propertyName The name of the property
-     * @param propertyValue The value of the property
-     * @param sessionId
-     * @return Success or failure
-     * @throws Exception
-     */
-    public void setAttributePropertyValue(Long classId, String attributeName,
-            String propertyName, String propertyValue) throws MetadataObjectNotFoundException;
-    /**
-     * Set a class icon (big or small)
-     * @param classId
-     * @param attributeName
-     * @param iconImage
-     */
-    public void setClassIcon(Long classId, String attributeName, byte[] iconImage) throws Exception;
-
-    /**
      * Adds an attribute to the class
      * @param className
      * @param attributeDefinition
@@ -181,15 +156,6 @@ public interface MetadataEntityManager {
      * @param newAttributeDefinition
      */
     public void changeAttributeDefinition(Long ClassId, AttributeMetadata newAttributeDefinition) throws Exception;
-
-    /**
-     * Set plain like name, displayname anda description attributes in a class attibute.
-     * @param classId
-     * @param attributeName
-     * @param attributeValue
-     * @throws MetadataObjectNotFoundException
-     */
-    public void setClassPlainAttribute(Long classId, String attributeName, String attributeValue) throws MetadataObjectNotFoundException;
 
     /**
      * Deletes an attribute belonging to a classMetadata
