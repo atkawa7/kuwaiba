@@ -35,8 +35,18 @@ public class AttributeCustomizerNodeProperty extends PropertySupport.ReadWrite{
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         CommunicationsStub com = CommunicationsStub.getInstance();
         LocalClassMetadataLight myClass = ((ClassMetadataNode)node.getParentNode()).getObject();
-        if(com.setAttributePropertyValue(myClass.getOid(),
-                node.getObject().getName(),getName(),t.toString())){
+        Boolean r = false;
+
+        if(getName().equals("displayName"))
+            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), t.toString(), null, null, null, null, null, null, null);
+        if(getName().equals("isVisible"))
+            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, null, null, Boolean.valueOf(t.toString()), null, null, null);
+        if(getName().equals("administrative"))
+            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, null, Boolean.valueOf(t.toString()), null, null, null, null);
+        if(getName().equals("description"))
+            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, t.toString(), null, null, null, null, null);
+
+        if(r){
             this.value = t;
             //Refresh the cache
             com.getMetaForClass(myClass.getClassName(), true);
