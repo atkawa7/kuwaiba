@@ -54,8 +54,8 @@ public class ClassInfoLight {
         this.listType = myClassLight.isListType();
     }
 
-    public ClassInfoLight(Long id, String name, String displayName,Validator[] validators, boolean isViewable,
-            boolean isAbstract, boolean isListType, byte[] smallIcon) {
+    public ClassInfoLight(Long id, String name, String displayName,Validator[] validators, Boolean isViewable,
+            Boolean isAbstract, Boolean isListType, byte[] smallIcon) {
         this.id = id;
         this.abstractClass = isAbstract;
         this.validators = validators;
