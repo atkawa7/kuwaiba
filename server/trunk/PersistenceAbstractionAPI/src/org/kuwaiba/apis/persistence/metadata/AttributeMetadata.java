@@ -67,11 +67,11 @@ public class AttributeMetadata implements Serializable{
     /**
      * Flag to mark an attribute to be used for administrative purposes (beyond the operational inventory)
      */
-    private boolean administrative;
+    private Boolean administrative;
     /**
      * Should this be shown or hidden
      */
-    private boolean visible;
+    private Boolean visible;
     /**
      * Attribute's short description
      */
@@ -83,11 +83,11 @@ public class AttributeMetadata implements Serializable{
     /**
      * Marks the attribute as read only
      */
-    private boolean readOnly;
+    private Boolean readOnly;
     /**
      * Marks the attribute as unique
      */
-    private boolean unique;
+    private Boolean unique;
     /**
      * Attribute's creation Date
      */
@@ -95,18 +95,18 @@ public class AttributeMetadata implements Serializable{
     /**
      *
      */
-    private boolean noCopy;
+    private Boolean noCopy;
     /**
      *
      */
-    private boolean noSerialize;
+    private Boolean noSerialize;
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
-    public boolean isAdministrative() {
+    public Boolean isAdministrative() {
         return administrative;
     }
 
-    public void setAdministrative(boolean administrative) {
+    public void setAdministrative(Boolean administrative) {
         this.administrative = administrative;
     }
 
@@ -134,16 +134,12 @@ public class AttributeMetadata implements Serializable{
         this.name = name;
     }
 
-    public boolean isReadOnly() {
+    public Boolean isReadOnly() {
         return readOnly;
     }
 
-    public void setReadOnly(boolean readOnly) {
+    public void setReadOnly(Boolean readOnly) {
         this.readOnly = readOnly;
-    }
-
-    public void setMapping(int mapping) {
-        this.mapping = mapping;
     }
 
     public String getType() {
@@ -154,19 +150,19 @@ public class AttributeMetadata implements Serializable{
         this.type = type;
     }
 
-    public boolean isVisible() {
+    public Boolean isVisible() {
         return visible;
     }
 
-    public void setVisible(boolean visible) {
+    public void setVisible(Boolean visible) {
         this.visible = visible;
     }
 
-    public boolean isUnique() {
+    public Boolean isUnique() {
         return unique;
     }
 
-    public void setUnique(boolean unique) {
+    public void setUnique(Boolean unique) {
         this.unique = unique;
     }
 
@@ -194,19 +190,19 @@ public class AttributeMetadata implements Serializable{
         this.mapping = mapping;
     }
 
-    public boolean isNoCopy() {
+    public Boolean isNoCopy() {
         return noCopy;
     }
 
-    public void setNoCopy(boolean noCopy) {
+    public void setNoCopy(Boolean noCopy) {
         this.noCopy = noCopy;
     }
 
-    public boolean isNoSerialize() {
+    public Boolean isNoSerialize() {
         return noSerialize;
     }
 
-    public void setNoSerialize(boolean noSerialize) {
+    public void setNoSerialize(Boolean noSerialize) {
         this.noSerialize = noSerialize;
     }// </editor-fold>
     
