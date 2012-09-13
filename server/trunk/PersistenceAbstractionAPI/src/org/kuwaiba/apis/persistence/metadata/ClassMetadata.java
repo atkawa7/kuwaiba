@@ -30,14 +30,14 @@ public class ClassMetadata extends ClassMetadataLight{
     /**
      *  Shows if this is a core class (the ones provided in the official release) or a custom one
      */
-    private boolean custom;
+    private Boolean custom;
     /**
      *  Indicates if the instances of this class are physical assets
      *  (in other words, if it's meaningful to have a count on them)
      *  Classes marked with the annotation NoCount (Slot, Port and the like)
      *  have this attribute set as false
      */
-    private boolean countable;
+    private Boolean countable;
     /**
      * List of interfaces this class implements
      */
@@ -86,19 +86,19 @@ public class ClassMetadata extends ClassMetadataLight{
         this.color = color;
     }
 
-    public boolean isCountable() {
+    public Boolean isCountable() {
         return countable;
     }
 
-    public void setCountable(boolean countable) {
+    public void setCountable(Boolean countable) {
         this.countable = countable;
     }
 
-    public boolean isCustom() {
+    public Boolean isCustom() {
         return custom;
     }
 
-    public void setCustom(boolean custom) {
+    public void setCustom(Boolean custom) {
         this.custom = custom;
     }
 
@@ -159,7 +159,7 @@ public class ClassMetadata extends ClassMetadataLight{
     }
     // </editor-fold>
 
-    public boolean implementsInterface(String interfaceName){
+    public Boolean implementsInterface(String interfaceName){
         if (interfaces == null)
             return false;
         for (InterfaceMetadata im : interfaces){
@@ -174,7 +174,7 @@ public class ClassMetadata extends ClassMetadataLight{
      * @param attribute attribute's name
      * @return if the class has or not such attribute
      */
-    public boolean hasAttribute(String attribute){
+    public Boolean hasAttribute(String attribute){
         for (AttributeMetadata eachAttribute : attributes){
             if (eachAttribute.getName().equals(attribute))
                 return true;
@@ -188,7 +188,7 @@ public class ClassMetadata extends ClassMetadataLight{
      * @return
      * @throws InvalidArgumentException
      */
-    public int getAttributeMapping(String attributeName) throws InvalidArgumentException{
+    public Integer getAttributeMapping(String attributeName) throws InvalidArgumentException{
         for (AttributeMetadata eachAttribute : attributes){
             if (eachAttribute.getName().equals(attributeName))
                 return eachAttribute.getMapping();
