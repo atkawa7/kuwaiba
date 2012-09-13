@@ -43,19 +43,19 @@ public class AttributeInfo {
     /**
      * Flag to mark an attribute to be used for administrative purposes (beyond the operational inventory)
      */
-    private boolean administrative;
+    private Boolean administrative;
     /**
      * Attribute's visibility
      */
-    private boolean visible;
+    private Boolean visible;
      /**
      * Marks the attribute as read only
      */
-    private boolean readOnly;
+    private Boolean readOnly;
     /**
      * Marks the attribute as unique
      */
-    private boolean unique;
+    private Boolean unique;
     /**
      * Attribute's short description
      */
@@ -63,11 +63,11 @@ public class AttributeInfo {
     /**
      * Indicates how this attribute should be mapped (into a primitive type, a relationship, etc)
      */
-    private int mapping;
+    private Integer mapping;
 
     public AttributeInfo(String name, String displayName, String type, 
-                         boolean administrative, boolean visible,
-                         String description, int mapping) {
+                         Boolean administrative, Boolean visible,
+                         String description, Integer mapping) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
@@ -77,11 +77,11 @@ public class AttributeInfo {
         this.mapping = mapping;
     }
 
-    public boolean isAdministrative() {
+    public Boolean isAdministrative() {
         return administrative;
     }
 
-    public void setAdministrative(boolean administrative) {
+    public void setAdministrative(Boolean administrative) {
         this.administrative = administrative;
     }
 
@@ -109,11 +109,11 @@ public class AttributeInfo {
         this.id = id;
     }
 
-    public int getMapping() {
+    public Integer getMapping() {
         return mapping;
     }
 
-    public void setMapping(int mapping) {
+    public void setMapping(Integer mapping) {
         this.mapping = mapping;
     }
 
@@ -133,27 +133,27 @@ public class AttributeInfo {
         this.type = type;
     }
 
-    public boolean isVisible() {
+    public Boolean isVisible() {
         return visible;
     }
 
-    public void setVisible(boolean visible) {
+    public void setVisible(Boolean visible) {
         this.visible = visible;
     }
 
-    public boolean isReadOnly() {
+    public Boolean isReadOnly() {
         return readOnly;
     }
 
-    public void setReadOnly(boolean readOnly) {
+    public void setReadOnly(Boolean readOnly) {
         this.readOnly = readOnly;
     }
 
-    public boolean isUnique() {
+    public Boolean isUnique() {
         return unique;
     }
 
-    public void setUnique(boolean unique) {
+    public void setUnique(Boolean unique) {
         this.unique = unique;
     }
     
