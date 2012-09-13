@@ -83,14 +83,14 @@ public class ClassManagerService extends FileFilter implements ActionListener{
             String description, byte[] smallIcon, byte[] icon) {
         boolean res =true;
         CommunicationsStub com = CommunicationsStub.getInstance();
-        if (!displayName.equals(""))
-            res = res&&com.setClassPlainAttribute(modifiedClass.getOid(), "displayName", displayName);
+         if (!displayName.equals(""))
+            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), displayName, null, null, null);
         if (!description.equals(""))
-            res = res&&com.setClassPlainAttribute(modifiedClass.getOid(), "description", description);
+            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), null, description, null, null);
         if (smallIcon != null)
-            res = res&&com.setClassIcon(modifiedClass.getOid(), "smallIcon", smallIcon);
+            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), null, null, smallIcon, null);
         if (icon != null)
-            res = res&&com.setClassIcon(modifiedClass.getOid(), "icon", icon);
+            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), null, null, null, icon);
         return res;
     }
 
