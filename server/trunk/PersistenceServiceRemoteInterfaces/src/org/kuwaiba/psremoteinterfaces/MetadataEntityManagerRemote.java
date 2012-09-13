@@ -107,16 +107,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @throws RemoteException, Exception
      */
     public void moveClass(Long classToMoveId, Long targetParentId) throws RemoteException, MetadataObjectNotFoundException;
-    
-    /**
-     * Set a class icon (big or small)
-     * @param classId
-     * @param attributeName
-     * @param iconImage
-     * @return
-     */
-    public void setClassIcon(Long classId, String attributeName, byte[] iconImage) throws RemoteException, MetadataObjectNotFoundException;
-    
+  
     /**
      * See Persistence Abstraction API documentation
      * @param className
@@ -154,29 +145,12 @@ public interface MetadataEntityManagerRemote extends Remote{
 
     /**
      * See Persistence Abstraction API documentation
-     * @param ClassId
-     * @param newAttributeDefinition
-     * @throws RemoteException, Exception
-     */
-    public void setAttributePropertyValue(Long classId, String attributeName,
-            String propertyName, String propertyValue) throws RemoteException, MetadataObjectNotFoundException;
-    /**
-     * See Persistence Abstraction API documentation
      * @param classId
      * @param attributeName
      * @return
      * @throws RemoteException, Exception
      */
     public void changeAttributeDefinition(Long ClassId, AttributeMetadata newAttributeDefinition) throws RemoteException, MetadataObjectNotFoundException;
-
-    /**
-     * See Persistence Abstraction API documentation
-     * @param classId
-     * @param attributeName
-     * @return
-     * @throws RemoteException, Exception
-     */
-    public void setClassPlainAttribute(Long classId, String attributeName, String attributeValue) throws RemoteException, MetadataObjectNotFoundException;
 
     /**
      * See Persistence Abstraction API documentation
