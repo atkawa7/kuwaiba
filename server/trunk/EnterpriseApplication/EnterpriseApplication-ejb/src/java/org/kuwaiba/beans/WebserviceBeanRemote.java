@@ -74,45 +74,7 @@ public interface WebserviceBeanRemote {
      * @throws ClassNotFoundException if there is no class with such classId
      */
 
-    public void updateClassDefinition(ClassInfo newClassDefinition) throws ServerSideException;
-
-    /**
-     * Sets the value of a property associated to an attribute. So far there are only
-     * 4 possible properties:
-     * -displayName
-     * -isVisible
-     * -isAdministrative
-     * -description
-     * @param classId
-     * @param attributeName
-     * @param propertyName
-     * @param propertyValue
-     * @return
-     * @throws ServerSideException
-     */
-
-    public void setAttributePropertyValue(Long classId, String attributeName,
-            String propertyName, String propertyValue) throws ServerSideException;
-
-    /**
-     * Sets a given attribute for a class metadata
-     * @param classId
-     * @param attributeName
-     * @param attributeValue
-     * @return
-     * @throws Exception
-     * @throws ServerSideException
-     */
-    public void setClassPlainAttribute(Long classId, String attributeName,
-            String attributeValue)throws ServerSideException;
-
-    /**
-     * Set a class icon (big or small)
-     * @param classId
-     * @param attributeName
-     * @param iconImage
-     */
-    public void setClassIcon(Long classId, String attributeName, byte[] iconImage) throws ServerSideException;
+    public void changeClassDefinition(ClassInfo newClassDefinition) throws ServerSideException;
 
     /**
      * Deletes a classmetadata, its attributes and category relationships
