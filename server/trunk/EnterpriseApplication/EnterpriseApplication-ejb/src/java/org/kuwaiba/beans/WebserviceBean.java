@@ -138,53 +138,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void setAttributePropertyValue(Long classId, String attributeName,
-            String propertyName, String propertyValue) throws ServerSideException
-    {
-        if (mem == null)
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
-            mem.setAttributePropertyValue(classId, attributeName, propertyName, propertyValue);
-
-        } catch (Exception ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
-            throw new ServerSideException(Level.SEVERE, ex.getMessage());
-        }
-    }
-
-    @Override
-    public void setClassPlainAttribute(Long classId, String attributeName,
-            String attributeValue) throws ServerSideException
-    {
-        if (mem == null)
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
-            mem.setClassPlainAttribute(classId, attributeName, attributeValue);
-
-        } catch (Exception ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
-            throw new ServerSideException(Level.SEVERE, ex.getMessage());
-        }
-    }
-
-    @Override
-    public void setClassIcon(Long classId, String attributeName, byte[] iconImage)
-            throws ServerSideException
-    {
-        if (aem == null)
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
-            mem.setClassIcon(classId, attributeName, iconImage);
-        } catch (Exception ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
-            throw new ServerSideException(Level.SEVERE, ex.getMessage());
-        }
-    }
-
-    @Override
     public void deleteClass(String className)
             throws ServerSideException
     {
@@ -396,7 +349,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void updateClassDefinition(ClassInfo newClassDefinition)
+    public void changeClassDefinition(ClassInfo newClassDefinition)
             throws ServerSideException
     {
         if (mem == null)
@@ -405,18 +358,19 @@ public class WebserviceBean implements WebserviceBeanRemote {
         {
             ClassMetadata cm = new ClassMetadata();
 
+            cm.setId(newClassDefinition.getId());
             cm.setName(newClassDefinition.getClassName());
             cm.setDisplayName(newClassDefinition.getDisplayName());
             cm.setDescription(newClassDefinition.getDescription());
             cm.setParentClassName(newClassDefinition.getParentClassName());
             cm.setAbstractClass(newClassDefinition.getAbstractClass());
             //TODO decode flags, set category
+            //cm.setColor(0);
+            //cm.setCustom(false);
+            //cm.setCountable(false);
             //cm.setCategory(classDefinition.getCategory());
-            cm.setColor(0);
-            cm.setCountable(false);
             cm.setIcon(newClassDefinition.getIcon());
             cm.setSmallIcon(newClassDefinition.getSmallIcon());
-            cm.setCustom(false);
 
             mem.changeClassDefinition(cm);
 
