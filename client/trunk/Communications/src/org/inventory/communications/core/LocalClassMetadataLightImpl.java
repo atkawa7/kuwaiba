@@ -45,15 +45,15 @@ public class LocalClassMetadataLightImpl
     /**
      * Is this class abstract?
      */
-    protected boolean abstractClass;
+    protected Boolean abstractClass;
     /**
      * Is this class subclass of viewable? (this is, can have views attached)
      */
-    protected boolean viewable;
+    protected Boolean viewable;
     /**
      * Is this class subclass of GenericObject list? (this is, a list type)
      */
-    protected boolean listType;
+    protected Boolean listType;
     /**
      * Class name
      */
@@ -107,7 +107,7 @@ public class LocalClassMetadataLightImpl
     }
 
     public LocalClassMetadataLightImpl(Long id, String className, String displayName,
-            byte[] smallIcon, boolean isAbstract, boolean isViewable, boolean isListType, HashMap<String, Integer> validators){
+            byte[] smallIcon, Boolean isAbstract, Boolean isViewable, Boolean isListType, HashMap<String, Integer> validators){
         this.id = id;
         this.abstractClass = isAbstract;
         this.viewable = isViewable;
@@ -119,7 +119,7 @@ public class LocalClassMetadataLightImpl
     }
 
     public LocalClassMetadataLightImpl(Long id, String className, String displayName,
-            Image smallIcon, boolean isAbstract, boolean isViewable, boolean isListType, HashMap<String, Integer> validators){
+            Image smallIcon, Boolean isAbstract, Boolean isViewable, Boolean isListType, HashMap<String, Integer> validators){
         this.id = id;
         this.abstractClass = isAbstract;
         this.viewable = isViewable;
@@ -143,15 +143,15 @@ public class LocalClassMetadataLightImpl
         return className;
     }
 
-    public boolean isAbstract() {
+    public Boolean isAbstract() {
         return abstractClass;
     }
 
-    public boolean isViewable(){
+    public Boolean isViewable(){
         return this.viewable;
     }
 
-    public boolean isListType(){
+    public Boolean isListType(){
         return this.listType;
     }
 
