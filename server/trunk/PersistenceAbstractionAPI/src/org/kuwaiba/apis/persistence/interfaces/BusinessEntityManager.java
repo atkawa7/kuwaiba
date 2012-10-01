@@ -48,8 +48,8 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If the update can't be performed due to a format issue
      * @throws InvalidArgumentException If the parent node is malformed.
      */
-    public Long createObject(String className, String parentClassName, Long parentOid,
-            HashMap<String,List<String>> attributes,Long template)
+    public long createObject(String className, String parentClassName, long parentOid,
+            HashMap<String,List<String>> attributes,long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException;
     /**
      * Creates a new inventory object for a domain specific model (where the standard containment rules don't apply)
@@ -66,8 +66,8 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If the update can't be performed due to a format issue
      * @throws InvalidArgumentException If the parent node is malformed.
      */
-    public Long createSpecialObject(String className, String parentClassName, Long parentOid,
-            HashMap<String,List<String>> attributes,Long template)
+    public long createSpecialObject(String className, String parentClassName, long parentOid,
+            HashMap<String,List<String>> attributes,long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException;
     /**
      * Gets the detailed information about an object
@@ -79,7 +79,7 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
-    public RemoteBusinessObject getObjectInfo(String className, Long oid)
+    public RemoteBusinessObject getObjectInfo(String className, long oid)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException;
 
     /**
@@ -91,12 +91,12 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the requested object can't be found
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
-    public RemoteBusinessObjectLight getObjectInfoLight(String className, Long oid)
+    public RemoteBusinessObjectLight getObjectInfoLight(String className, long oid)
             throws MetadataObjectNotFoundException, ObjectNotFoundException;
 
     /**
      * Deletes a set of objects
-     * @param  objects a hashmap where the class name is the key and the value is a list of Long containing the ids of the objects to be deleted that are instance of the key class
+     * @param  objects a hashmap where the class name is the key and the value is a list of long containing the ids of the objects to be deleted that are instance of the key class
      * @param  should all relationships be released, forcing the deletion?
      * @throws ObjectNotFoundException If the requested object can't be found
      * @throws MetadataObjectNotFoundException If the requested object class can't be found
@@ -104,7 +104,7 @@ public interface BusinessEntityManager {
      * or it is blocked or if the requested object or one of it's children have
      * relationships that should be released manually before to delete them
      */
-    public void deleteObjects(HashMap<String, List<Long>> oids, boolean releaseRelationships)
+    public void deleteObjects(HashMap<String, long[]> oids, boolean releaseRelationships)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException;
 
 
@@ -120,7 +120,7 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws InvalidArgumentException If any of the names provided does not exist or can't be set using this method
      */
-    public void updateObject(String className, Long oid, HashMap<String,List<String>> attributes)
+    public void updateObject(String className, long oid, HashMap<String,List<String>> attributes)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
                 WrongMappingException, InvalidArgumentException;
 
@@ -136,7 +136,7 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws ArraySizeMismatchException If the arrays attributeNames and attributeValues have different lengths
      */
-    public boolean setBinaryAttributes(String className, Long oid, List<String> attributeNames, List<byte[]> attributeValues)
+    public boolean setBinaryAttributes(String className, long oid, List<String> attributeNames, List<byte[]> attributeValues)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
                 ArraySizeMismatchException;
 
@@ -152,7 +152,7 @@ public interface BusinessEntityManager {
      * @throws ArraySizeMismatchException If the oids and classNames array sizes do not match
      */
 
-    public void moveObjects(String targetClassName, Long targetOid, HashMap<String,List<Long>> objects)
+    public void moveObjects(String targetClassName, long targetOid, HashMap<String,long[]> objects)
             throws MetadataObjectNotFoundException, ObjectNotFoundException,
                  OperationNotPermittedException;
 
@@ -167,7 +167,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If any of the template objects couldn't be found
      * @throws OperationNotPermittedException If the target parent can't contain any of the new instances
      */
-    public List<Long> copyObjects(String targetClassName, Long targetOid, HashMap<String, List<Long>> objects, boolean recursive)
+    public long[] copyObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
 
     /**
@@ -180,7 +180,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the object or its new parent can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
      */
-    public boolean setObjectLockState(String className, Long oid, Boolean value)
+    public boolean setObjectLockState(String className, long oid, Boolean value)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
 
     /**
@@ -193,7 +193,7 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the object or its new parent can't be found
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
      */
-    public List<RemoteBusinessObjectLight> getObjectChildren(String className, Long oid, int maxResults)
+    public List<RemoteBusinessObjectLight> getObjectChildren(String className, long oid, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException;
     
     /**
@@ -215,7 +215,7 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException if any of the objects involved can't be connected (i.e. if it's not an inventory object)
      * @throws MetadataObjectNotFoundException if any of the classes provided can not be found
      */
-    public void createSpecialRelationship(String aObjectClass, Long aObjectId, String bObjectClass, Long bObjectId, String name)
+    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException;
 
     /**
@@ -228,6 +228,6 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException if the object can not be found
      * @throws MetadataObjectNotFoundException if either the object class or the attribute can not be found
      */
-    public List<String> getSpecialAttribute(String objectClass, Long objectId, String specialAttributeName)
+    public List<String> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName)
             throws ObjectNotFoundException, MetadataObjectNotFoundException;
 }

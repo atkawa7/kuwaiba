@@ -22,12 +22,14 @@ import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.application.UserProfile;
-import org.kuwaiba.apis.persistence.application.View;
+import org.kuwaiba.apis.persistence.application.ViewObject;
+import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 
 /**
@@ -55,7 +57,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
      */
     public long createUser(String userName, String password, String firstName,
-            String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
+            String lastName, boolean enabled, int[] privileges, long[] groups)
             throws InvalidArgumentException;
     
     /**
@@ -71,7 +73,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
      */
     public void setUserProperties(long oid, String userName, String password, String firstName,
-            String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups) throws InvalidArgumentException, ApplicationObjectNotFoundException;
+            String lastName, boolean enabled, int[] privileges, long[] groups) throws InvalidArgumentException, ApplicationObjectNotFoundException;
 
     /**
      * Updates the information of a given user using the id to search for it
@@ -87,7 +89,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
      */
     public void setUserProperties(String formerUsername, String userName, String password, String firstName,
-            String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
+            String lastName, boolean enabled, int[] privileges, long[] groups)
             throws InvalidArgumentException, ApplicationObjectNotFoundException;
 
     /**
@@ -97,8 +99,8 @@ public interface ApplicationEntityManager {
      * @param creationDate
      * @throws InvalidArgumentException if there's already a group with that name
      */
-    public long createGroup(String groupName, String description, List<Integer>
-            privileges, List<Long> users)throws InvalidArgumentException;
+    public long createGroup(String groupName, String description, int[]
+            privileges, long[] users)throws InvalidArgumentException;
 
     /**
      * Retrieves the user list
@@ -125,7 +127,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException
      */
     public void setGroupProperties(long oid, String groupName, String description,
-            List<Integer> privileges, List<Long> users)throws InvalidArgumentException, ApplicationObjectNotFoundException;
+            int[] privileges, long[] users)throws InvalidArgumentException, ApplicationObjectNotFoundException;
 
    /**
      * Removes a list of users
@@ -133,7 +135,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException
      * @throws ApplicationObjectNotFoundException
      */
-    public void deleteUsers(List<Long> oids)throws ApplicationObjectNotFoundException;
+    public void deleteUsers(long[] oids)throws ApplicationObjectNotFoundException;
 
     /**
      * Removes a list of groups
@@ -141,7 +143,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException
      * @throws ApplicationObjectNotFoundException
      */
-    public void deleteGroups(List<Long> oids) throws ApplicationObjectNotFoundException;
+    public void deleteGroups(long[] oids) throws ApplicationObjectNotFoundException;
 
    /**
      * Creates a list type item
@@ -152,7 +154,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException if className is not an existing class
      * @throws InvalidArgumentException if the class provided is not a list type
      */
-    public Long createListTypeItem(String className, String name, String displayName)
+    public long createListTypeItem(String className, String name, String displayName)
             throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
@@ -165,6 +167,19 @@ public interface ApplicationEntityManager {
     public List<RemoteBusinessObjectLight> getListTypeItems(String className)
             throws MetadataObjectNotFoundException, InvalidArgumentException;
 
+
+    /**
+     * Deletes a list type item
+     * @param className List type item class
+     * @param oid list type item oid
+     * @param realeaseRelationships Should the relationships be released
+     * @throws MetadataObjectNotFoundException if the class name is not valid
+     * @throws ObjectNotFoundException if the list type item can't be found
+     * @throws OperationNotPermittedException if the object has relationships
+     */
+    public void deleteListTypeItem(String className, long oid, boolean realeaseRelationships)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
+
     /**
      * Get the possible list types
      * @return A list of ClassMetadataLight instances representing the possible list types
@@ -174,31 +189,114 @@ public interface ApplicationEntityManager {
             throws MetadataObjectNotFoundException;
 
     /**
-     * Get a simple view such as the default, rack or equipment
+     * Get a view related to an object, such as the default, rack or equipment views
      * @param oid object's id
      * @param objectClass object's class
-     * @param viewType type (see class View in the API for all supported types)
+     * @param viewId view id
+     * @return The associated view (there should be only one of each type). Null if there's none yet
+     * @throws ObjectNotFoundException if the object or the view can not be found
+     * @throws MetadataObjectNotFoundException if the corresponding class metadata can not be found
+     * @throws InvalidArgumentException if the provided view type is not supported
+     */
+    public ViewObject getObjectRelatedView(long oid, String objectClass, long viewId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+
+    /**
+     * Get a view related to an object, such as the default, rack or equipment views
+     * @param oid object's id
+     * @param objectClass object's class
      * @return The associated view (there should be only one of each type). Null if there's none yet
      * @throws ObjectNotFoundException if the object can not be found
      * @throws MetadataObjectNotFoundException if the corresponding class metadata can not be found
      * @throws InvalidArgumentException if the provided view type is not supported
      */
-    public View getView(Long oid, String objectClass, int viewType)
+    public ViewObject getObjectRelatedViews(long oid, String objectClass)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
-     * Saves/create a view for a given object. If there's already a view of the provided view type, it will be overwritten
+     * Retrieves the list of views not related to a given object like GIS, topological views
+     * @param viewType Type of view to be retrieved. The implementor must defined what are the possible admitted values
+     * @param limit maximum
+     * @return a list of object with the minimum information about the view (id, class and name)
+     * @throws InvalidArgumentException if the viewType is not a valid value
+     */
+    public List<ViewObjectLight> getGeneralViews(int viewType, int limit)
+            throws InvalidArgumentException;
+
+    /**
+     * Returns a view of those that are not related to a particular object (i.e.: GIS views)
+     * @param viewId view id
+     * @return An object representing the view
+     * @throws ObjectNotFoundException if the requested view
+     */
+    public ViewObject getGeneralView(long viewId) throws ObjectNotFoundException;
+
+    /**
+     * Creates a view for a given object. If there's already a view of the provided view type, it will be overwritten
      * @param oid object's oid
-     * @param objectClass object's class
-     * @param viewType view type (See class View for details about the supported types)
+     * @param objectClass object class
+     * @param name view name
+     * @param description view description
+     * @param viewType view type (See class ViewObject for details about the supported types)
      * @param structure XML document with the view structure (see http://sourceforge.net/apps/mediawiki/kuwaiba/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
-     * @param background background image path/file name
+     * @param background background image
      * @throws ObjectNotFoundException if the object can not be found
      * @throws MetadataObjectNotFoundException if the object class can not be found
      * @throws InvalidArgumentException if the view type is not supported
      */
-    public void saveView(Long oid, String objectClass, int viewType, byte[] structure, String backgroundPath)
+    public long createObjectRelatedView(long oid, String objectClass, String name, String description, int viewType, byte[] structure, byte[] background)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+
+    /**
+     * Creates a view not related to a particular object
+     * @param view id
+     * @param viewType
+     * @param name view name
+     * @param description view description
+     * @param structure XML document specifying the view structure (nodes, edges, control points)
+     * @param background Background image
+     * @throws InvalidArgumentException if the view type is invalid
+     */
+    public long createGeneralView(int viewType, String name, String description, byte[] structure, byte[] background)
+            throws InvalidArgumentException;
+
+    /**
+     * Create a view for a given object. If there's already a view of the provided view type, it will be overwritten
+     * @param oid object's oid
+     * @param objectClass object class
+     * @param view id
+     * @param name view name
+     * @param description view description
+     * @param viewType view type (See class ViewObject for details about the supported types)
+     * @param structure XML document with the view structure (see http://sourceforge.net/apps/mediawiki/kuwaiba/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
+     * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
+     * @throws ObjectNotFoundException if the object can not be found
+     * @throws MetadataObjectNotFoundException if the object class can not be found
+     * @throws InvalidArgumentException if the view type is not supported
+     */
+    public void updateObjectRelatedView(long oid, String objectClass, long viewId, String name, String description, int viewType, byte[] structure, byte[] background)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+
+    /**
+     * Saves a view not related to a particular object. The view type can not be changed
+     * @param view id
+     * @param name view name. Null to leave unchanged
+     * @param description view description. Null to leave unchanged
+     * @param structure XML document specifying the view structure (nodes, edges, control points). Null to leave unchanged
+     * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
+     * @throws InvalidArgumentException if the view type is invalid
+     * @throws ObjectNotFoundException if the view couldn't be found
+     */
+    public void updateGeneralView(long oid, String name, String description, byte[] structure, byte[] background)
+            throws InvalidArgumentException, ObjectNotFoundException;
+
+
+    /**
+     * Deletes a list of general views
+     * @param ids view ids
+     * @throws ObjectNotFoundException if the view can't be found
+     */
+    public void deleteGeneralViews(long[] ids) throws ObjectNotFoundException;
 
     /**
      * Creates a Query
@@ -210,7 +308,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
-    public Long createQuery(String queryName, Long ownerOid, byte[] queryStructure,
+    public long createQuery(String queryName, long ownerOid, byte[] queryStructure,
             String description) throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
@@ -222,7 +320,7 @@ public interface ApplicationEntityManager {
      * @param description
      * @throws MetadataObjectNotFoundException
      */
-    public void saveQuery(Long queryOid, String queryName, Long ownerOid, byte[] queryStructure, String description) throws MetadataObjectNotFoundException;
+    public void saveQuery(long queryOid, String queryName, long ownerOid, byte[] queryStructure, String description) throws MetadataObjectNotFoundException;
 
     /**
      * Deletes a Query
@@ -230,7 +328,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
-    public void deleteQuery(Long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    public void deleteQuery(long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Gets all queries
@@ -248,7 +346,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
-    public CompactQuery getQuery(Long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    public CompactQuery getQuery(long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Used to perform complex queries. Please note

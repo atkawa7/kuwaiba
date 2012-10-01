@@ -39,7 +39,7 @@ public interface MetadataEntityManager {
      * @return the Id of the newClassMetadata
      * @throws ClassNotFoundException if there's no Parent Class whit the ParentId
      */
-    public Long createClass(ClassMetadata classDefinition) throws Exception;
+    public long createClass(ClassMetadata classDefinition) throws Exception;
 
     /**
      * Changes a classmetadata definiton
@@ -60,7 +60,7 @@ public interface MetadataEntityManager {
      * @param classId
      * @throws ClassNotFoundException if there is not a class with de ClassName
      */
-    public void deleteClass(Long classId) throws Exception;
+    public void deleteClass(long classId) throws Exception;
     
     /**
      * Retrieves the simplified list of classes. This list won't include either
@@ -94,7 +94,7 @@ public interface MetadataEntityManager {
      * @return A ClassMetadata with the classId
      * @throws ClassNotFoundException there is no class with such classId
      */
-    public ClassMetadata getClass(Long classId) throws Exception;
+    public ClassMetadata getClass(long classId) throws Exception;
 
     /**
      * Moves a class from one parentClass to an other parentClass
@@ -112,7 +112,7 @@ public interface MetadataEntityManager {
      * @throws ClassNotFoundException if there is no a classToMove with such classId
      * or if there is no a targetParentClass with such classId
      */
-    public void moveClass(Long classToMoveId, Long targetParentId) throws Exception;
+    public void moveClass(long classToMoveId, long targetParentId) throws Exception;
 
     /**
      * Adds an attribute to the class
@@ -128,7 +128,7 @@ public interface MetadataEntityManager {
      * @param attributeDefinition
      * @throws ClassNotFoundException if there is no a class with such classId
      */
-    public void addAttribute(Long classId, AttributeMetadata attributeDefinition) throws Exception;
+    public void addAttribute(long classId, AttributeMetadata attributeDefinition) throws Exception;
 
     /**
      * Gets an attribute belonging to a class
@@ -148,14 +148,14 @@ public interface MetadataEntityManager {
      * @throws ClassNotFoundException if there is no a class with such classId
      * @throws MiscException if the attributeName does not exist
      */
-    public AttributeMetadata getAttribute(Long classId, String attributeName) throws Exception;
+    public AttributeMetadata getAttribute(long classId, String attributeName) throws Exception;
 
     /**
      * Changes an attribute definition belonging to a classMetadata
      * @param ClassId
      * @param newAttributeDefinition
      */
-    public void changeAttributeDefinition(Long ClassId, AttributeMetadata newAttributeDefinition) throws Exception;
+    public void changeAttributeDefinition(long ClassId, AttributeMetadata newAttributeDefinition) throws Exception;
 
     /**
      * Deletes an attribute belonging to a classMetadata
@@ -169,14 +169,14 @@ public interface MetadataEntityManager {
      * @param classId
      * @param attributeName
      */
-    public void deleteAttribute(Long classId,String attributeName) throws Exception;
+    public void deleteAttribute(long classId,String attributeName) throws Exception;
 
     /**
      * Creates a new category
      * @param categoryDefinition
      * @return CategoryId
      */
-    public Long createCategory(CategoryMetadata categoryDefinition) throws Exception;
+    public long createCategory(CategoryMetadata categoryDefinition) throws Exception;
 
     /**
      * Gets a Category with it's name
@@ -235,7 +235,7 @@ public interface MetadataEntityManager {
      * @param parentClassId Id of the class whose instances can contain the instances of the next param
      * @param _possibleChildren ids of the candidates to be contained
      */
-    public void addPossibleChildren(Long parentClassId, Long[] possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    public void addPossibleChildren(long parentClassId, long[] possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException;
     /**
      * Adds to a given class a list of possible children classes whose instances can be contained using the class name to find the parent class
      * @param parentClassName parent class name
@@ -253,7 +253,7 @@ public interface MetadataEntityManager {
      * @param childrenTBeRemoved ids of the candidates to be deleted
      * @throws MetadataObjectNotFoundException If any of the ids provided can't be found
      */
-    public void removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws MetadataObjectNotFoundException;
+    public void removePossibleChildren(long parentClassId, long[] childrenToBeRemoved) throws MetadataObjectNotFoundException;
     /**
      * Assess if a given class is subclass of another
      * @param allegedParent Alleged super class

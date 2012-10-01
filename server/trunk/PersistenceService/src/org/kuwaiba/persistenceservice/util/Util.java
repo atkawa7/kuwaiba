@@ -16,6 +16,12 @@
 
 package org.kuwaiba.persistenceservice.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -189,6 +195,53 @@ public class Util {
                 copyObject(rel.getStartNode(), newInstance, true, graphDb);
         }
         return newInstance;
+    }
+
+    /**
+     * Read and returns the bytes of a given file
+     * @param fileName file to be opened
+     * @return bytes on that file
+     */
+    public static byte[] readBytesFromFile(String fileName) throws FileNotFoundException, IOException{
+        byte[] bytes = null;
+        File f = new File(fileName);
+        InputStream is = new FileInputStream(f);
+        long length = f.length();
+
+        if (length < Integer.MAX_VALUE) { //checks if the file is too big
+            bytes = new byte[(int)length];
+            // Read in the bytes
+            int offset = 0;
+            int numRead = 0;
+            while (offset < bytes.length
+                   && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+                offset += numRead;
+            }
+
+            // Ensure all the bytes have been read in
+            if (offset < bytes.length) {
+                throw new IOException("Could not completely read file "+f.getName());
+            }
+        }
+        is.close();
+        return bytes;
+    }
+
+
+    /**
+     * Saves a file, receiving the file name and the contents as parameters. If the directory structure doesn't exist, it's created
+     * @param directory
+     * @param fileName
+     * @param content
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static void saveFile(String directory, String fileName, byte[] content) throws FileNotFoundException, IOException {
+        File imgDir = new File(directory);
+        imgDir.mkdirs();
+        FileOutputStream fos = new FileOutputStream(directory + "/" + fileName); //NOI18N
+        fos.write(content);
+        fos.close();
     }
 
     /**

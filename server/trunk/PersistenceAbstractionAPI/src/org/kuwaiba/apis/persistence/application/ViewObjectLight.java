@@ -19,42 +19,38 @@ package org.kuwaiba.apis.persistence.application;
 import java.io.Serializable;
 
 /**
- * Represents a view. A view is a graphical representation of a context. Examples are: a view describing
- * how buildings are connected in a city or the equipment inside a rack
+ * The light version of a ViewObject
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class View implements Serializable{
-    //NOTE: GIS views are not handled here
+public class ViewObjectLight implements Serializable {
     /**
-     * Id for a default view
+     * View id
      */
-    public static final int TYPE_DEFAULT = 0;
-    /**
-     * Id for a view used for racks
-     */
-    public static final int TYPE_RACK = 1;
-    /**
-     * Id for a view used in equipment with slots and boards
-     */
-    public static final int TYPE_EQUIPMENT = 2;
-
     private Long id;
     /**
-     * Relative path pointing to the background image
+     * View name
      */
-    private String backgroundPath;
+    private String name;
     /**
-     * Structure as an XML document
+     * View description
      */
-    private byte[] structure;
+    private String description;
     /**
-     * View type (see supported types above)
+     * ViewObject type (Supported types are documented at the business domain level)
      */
     private int viewType;
 
-    public View(Long id, int viewType) {
+    public ViewObjectLight(Long id, int viewType) {
         this.id = id;
         this.viewType = viewType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Long getId() {
@@ -65,12 +61,12 @@ public class View implements Serializable{
         this.id = id;
     }
 
-    public String getBackgroundPath() {
-        return backgroundPath;
+    public String getName() {
+        return name;
     }
 
-    public void setBackgroundPath(String backgroundPath) {
-        this.backgroundPath = backgroundPath;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getViewType() {
@@ -79,13 +75,5 @@ public class View implements Serializable{
 
     public void setViewType(int viewType) {
         this.viewType = viewType;
-    }
-
-    public byte[] getStructure() {
-        return structure;
-    }
-
-    public void setStructure(byte[] structure) {
-        this.structure = structure;
     }
 }

@@ -24,7 +24,8 @@ import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.application.UserProfile;
-import org.kuwaiba.apis.persistence.application.View;
+import org.kuwaiba.apis.persistence.application.ViewObject;
+import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -59,13 +60,12 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws InvalidArgumentException Thrown if the username is null or empty or the username already exists
      */
     public long createUser(String userName, String password, String firstName,
-            String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
+            String lastName, boolean enabled, int[] privileges, long[] groups)
             throws InvalidArgumentException, RemoteException;
 
     /**
-     * Updates the information of a given user using the id to search for it
-     * @param oid user's oid. Mandatory
-     * @param userName New user's name.
+     * Set the properties of a given user using the id to search for it
+     * @param userName New user's name. Mandatory.
      * @param password New user's password. Use null to leave it unchanged
      * @param firstName New user's first name. Use null to leave it unchanged
      * @param lastName New user's last name. Use null to leave it unchanged
@@ -76,7 +76,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws ApplicationObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
      */
     public void setUserProperties(long oid, String userName, String password, String firstName,
-            String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
+            String lastName, boolean enabled, int[] privileges, long[] groups)
             throws InvalidArgumentException, ApplicationObjectNotFoundException, RemoteException;
 
     /**
@@ -93,7 +93,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws ApplicationObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
      */
     public void setUserProperties(String formerUsername, String userName, String password, String firstName,
-            String lastName, Boolean enabled, List<Integer> privileges, List<Long> groups)
+            String lastName, boolean enabled, int[] privileges, long[] groups)
             throws InvalidArgumentException, ApplicationObjectNotFoundException, RemoteException;
 
     /**
@@ -101,24 +101,26 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @param name
      * @param description
      * @param creationDate
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException if there's already a group with that name
      */
-    public long createGroup(String groupName, String description, List<Integer> privileges, List<Long> users)
-            throws InvalidArgumentException, RemoteException;
+    public long createGroup(String groupName, String description, int[]
+            privileges, long[] users)throws InvalidArgumentException, RemoteException;
 
     /**
      * Retrieves the user list
      * @return An array of UserProfile
+     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException
      */
-    public List<UserProfile> getUsers()throws RemoteException;
+    public List<UserProfile> getUsers() throws RemoteException;
 
     /**
      * Retrieves the group list
      * @return An array of GroupProfile
      */
-    public List<GroupProfile> getGroups()throws RemoteException;
+    public List<GroupProfile> getGroups() throws RemoteException;
 
-   /**
+    /**
      * Set user attributes (group membership is managed using other methods)
      * @param groupName
      * @param description
@@ -129,15 +131,16 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws ApplicationObjectNotFoundException
      */
     public void setGroupProperties(long oid, String groupName, String description,
-            List<Integer> privileges,  List<Long> users)throws InvalidArgumentException, ApplicationObjectNotFoundException, RemoteException;
+            int[] privileges, long[] users)
+            throws InvalidArgumentException, ApplicationObjectNotFoundException, RemoteException;
 
    /**
      * Removes a list of users
      * @param oids
      * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
+     * @throws ApplicationObjectNotFoundException
      */
-    public void deleteUsers(List<Long> oids)throws ApplicationObjectNotFoundException, RemoteException;
+    public void deleteUsers(long[] oids)throws ApplicationObjectNotFoundException, RemoteException;
 
     /**
      * Removes a list of groups
@@ -145,8 +148,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws InvalidArgumentException
      * @throws ApplicationObjectNotFoundException
      */
-    public void deleteGroups(List<Long> oids)
-            throws ApplicationObjectNotFoundException, RemoteException;
+    public void deleteGroups(long[] oids) throws ApplicationObjectNotFoundException, RemoteException;
 
    /**
      * Creates a list type item
@@ -157,7 +159,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws MetadataObjectNotFoundException if className is not an existing class
      * @throws InvalidArgumentException if the class provided is not a list type
      */
-    public Long createListTypeItem(String className, String name, String displayName)
+    public long createListTypeItem(String className, String name, String displayName)
             throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
     /**
@@ -170,6 +172,17 @@ public interface ApplicationEntityManagerRemote extends Remote{
     public List<RemoteBusinessObjectLight> getListTypeItems(String className)
             throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
+     /**
+     * Deletes a list type item
+     * @param className List type item class
+     * @param oid list type item oid
+     * @param realeaseRelationships Should the relationships be released
+     * @throws MetadataObjectNotFoundException if the class name is not valid
+     * @throws ObjectNotFoundException if the list type item can't be found
+     * @throws OperationNotPermittedException if the object has relationships
+     */
+    public void deleteListTypeItem(String className, long oid, boolean realeaseRelationships)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
     /**
      * Get the possible list types
      * @return A list of ClassMetadataLight instances representing the possible list types
@@ -178,14 +191,104 @@ public interface ApplicationEntityManagerRemote extends Remote{
     public List<ClassMetadataLight> getInstanceableListTypes()
             throws MetadataObjectNotFoundException, RemoteException;
 
-    public void deleteListTypeItem(String className, Long oid, boolean realeaseRelationships)
-            throws MetadataObjectNotFoundException, OperationNotPermittedException, ObjectNotFoundException, RemoteException;
-
-    public View getView(Long oid, String objectClass, int viewType)
+    /**
+     * Get a view related to an object, such as the default, rack or equipment views
+     * @param oid object's id
+     * @param objectClass object's class
+     * @param viewId view id
+     * @return The associated view (there should be only one of each type). Null if there's none yet
+     * @throws ObjectNotFoundException if the object can not be found
+     * @throws MetadataObjectNotFoundException if the corresponding class metadata can not be found
+     * @throws InvalidArgumentException if the provided view type is not supported
+     */
+    public ViewObject getObjectRelatedView(long oid, String objectClass, long viewId)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
-    public void saveView(Long oid, String objectClass, int viewType, byte[] structure, String backgroundPath)
+    /**
+     * Retrieves the list of views not related to a given object like GIS, topological views
+     * @param viewType Type of view to be retrieved. The implementor must defined what are the possible admitted values
+     * @param limit maximum
+     * @return a list of object with the minimum information about the view (id, class and name)
+     * @throws InvalidArgumentException if the viewType is not a valid value
+     */
+    public List<ViewObjectLight> getGeneralViews(int viewType, int limit)
+            throws InvalidArgumentException, RemoteException;
+
+    /**
+     * Returns a view of those that are not related to a particular object (i.e.: GIS views)
+     * @param viewId view id
+     * @return An object representing the view
+     * @throws ObjectNotFoundException if the requested view
+     */
+    public ViewObject getGeneralView(long viewId) throws ObjectNotFoundException, RemoteException;
+
+    /**
+     * Creates a view for a given object. If there's already a view of the provided view type, it will be overwritten
+     * @param oid object's oid
+     * @param objectClass object class
+     * @param name view name
+     * @param description view description
+     * @param viewType view type (See class ViewObject for details about the supported types)
+     * @param structure XML document with the view structure (see http://sourceforge.net/apps/mediawiki/kuwaiba/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
+     * @param background background image
+     * @throws ObjectNotFoundException if the object can not be found
+     * @throws MetadataObjectNotFoundException if the object class can not be found
+     * @throws InvalidArgumentException if the view type is not supported
+     */
+    public long createObjectRelatedView(long oid, String objectClass, String name, String description, int viewType, byte[] structure, byte[] background)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    /**
+     * Creates a view not related to a particular object
+     * @param view id
+     * @param viewType
+     * @param name view name
+     * @param description view description
+     * @param structure XML document specifying the view structure (nodes, edges, control points)
+     * @param background Background image. Null for none
+     * @throws InvalidArgumentException if the view type is invalid
+     */
+    public long createGeneralView(int viewType, String name, String description, byte[] structure, byte[] background)
+            throws InvalidArgumentException, RemoteException;
+
+    /**
+     * Create a view for a given object. If there's already a view of the provided view type, it will be overwritten
+     * @param oid object's oid
+     * @param objectClass object class
+     * @param view id
+     * @param name view name
+     * @param description view description
+     * @param viewType view type (See class ViewObject for details about the supported types)
+     * @param structure XML document with the view structure (see http://sourceforge.net/apps/mediawiki/kuwaiba/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
+     * @param background background image
+     * @throws ObjectNotFoundException if the object can not be found
+     * @throws MetadataObjectNotFoundException if the object class can not be found
+     * @throws InvalidArgumentException if the view type is not supported
+     */
+    public void updateObjectRelatedView(long oid, String objectClass, long viewId, String name, String description, int viewType, byte[] structure, byte[] background)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    /**
+     * Saves a view not related to a particular object. The view type can not be changed
+     * @param view id
+     * @param name view name. Null to leave unchanged
+     * @param description view description. Null to leave unchanged
+     * @param structure XML document specifying the view structure (nodes, edges, control points). Null to leave unchanged
+     * @param background background image, if applicable. Null to remove it, 0-sized array to leave unchanged
+     * @throws InvalidArgumentException if the view type is invalid
+     * @throws ObjectNotFoundException if the view couldn't be found
+     */
+    public void updateGeneralView(long oid, String name, String description, byte[] structure, byte[] background)
+            throws InvalidArgumentException, ObjectNotFoundException, RemoteException;
+
+
+    /**
+     * Deletes a list of general views
+     * @param ids view ids
+     * @throws ObjectNotFoundException if the view can't be found
+     */
+    public void deleteGeneralViews(long[] ids)
+            throws ObjectNotFoundException, RemoteException;
 
     /**
      * Creates a Query
@@ -197,7 +300,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
-    public Long createQuery(String queryName, Long ownerOid, byte[] queryStructure,
+    public long createQuery(String queryName, long ownerOid, byte[] queryStructure,
             String description) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
     /**
@@ -209,7 +312,8 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @param description
      * @throws MetadataObjectNotFoundException
      */
-    public void saveQuery(Long queryOid, String queryName, Long ownerOid, byte[] queryStructure, String description) throws MetadataObjectNotFoundException, RemoteException;
+    public void saveQuery(long queryOid, String queryName, long ownerOid, byte[] queryStructure, String description)
+            throws MetadataObjectNotFoundException, RemoteException;
 
     /**
      * Deletes a Query
@@ -217,7 +321,8 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
-    public void deleteQuery(Long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+    public void deleteQuery(long queryOid)
+            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
     /**
      * Gets all queries
@@ -226,7 +331,8 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
-    public List<CompactQuery> getQueries(boolean showPublic) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+    public List<CompactQuery> getQueries(boolean showPublic)
+            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
     /**
      * Gets a single query
@@ -235,7 +341,8 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
-    public CompactQuery getQuery(Long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+    public CompactQuery getQuery(long queryOid)
+            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
     /**
      * Used to perform complex queries. Please note
@@ -245,7 +352,8 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @return a set of objects matching the specified criteria as ResultRecord array
      * @throws Exception
      */
-    public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+    public List<ResultRecord> executeQuery(ExtendedQuery query)
+            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
     /**
      * Get the data model class hierarchy as an XML document
@@ -253,7 +361,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @return
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
-     * @throws RemoteException
      */
-    public byte[] getClassHierachy(boolean showAll) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+    public byte[] getClassHierachy(boolean showAll)
+            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 }

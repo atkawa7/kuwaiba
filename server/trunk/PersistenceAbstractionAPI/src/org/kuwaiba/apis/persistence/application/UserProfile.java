@@ -66,13 +66,13 @@ public class UserProfile implements Serializable{
     /**
      * User's privileges. See class Privileges for the complete list of supported privileges
      */
-    private List<Integer> privileges;
+    private int[] privileges;
 
     public UserProfile() {
     }
 
     public UserProfile(Long id, String userName, String firstName, String lastName, Boolean enabled, Long creationDate,
-            List<Integer> privileges) {
+            int[] privileges) {
         this.id = id;
         this.userName = userName;
         this.firstName = firstName;
@@ -98,11 +98,11 @@ public class UserProfile implements Serializable{
         this.groups = groups;
     }
 
-    public List<Integer> getPrivileges() {
+    public int[] getPrivileges() {
         return privileges;
     }
 
-    public void setPrivileges(List<Integer> privileges) {
+    public void setPrivileges(int[] privileges) {
         this.privileges = privileges;
     }
 

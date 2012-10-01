@@ -156,9 +156,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws ClassNotFoundException if there's no Parent Class whit the ParentId
      */
     @Override
-    public Long createClass(ClassMetadata classDefinition) throws MetadataObjectNotFoundException {
+    public long createClass(ClassMetadata classDefinition) throws MetadataObjectNotFoundException {
         Transaction tx = null;
-        Long id;
+        long id;
 
         classDefinition = Util.createDefaultClassMetadata(classDefinition);
 
@@ -230,7 +230,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 if (classDefinition.getCategory() != null) {
                     Node ctgrNode = categoryIndex.get(PROPERTY_NAME, classDefinition.getCategory().getName()).getSingle();
                     if (ctgrNode == null) {
-                        Long ctgrId = createCategory(classDefinition.getCategory());
+                        long ctgrId = createCategory(classDefinition.getCategory());
                         ctgrNode = categoryIndex.get(PROPERTY_ID, ctgrId).getSingle();
                     }
                     classNode.createRelationshipTo(ctgrNode, RelTypes.BELONGS_TO_GROUP);
@@ -347,7 +347,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws ClassNotFoundException if there is not a class with de ClassId
      */
     @Override
-    public void deleteClass(Long classId) throws MetadataObjectNotFoundException {
+    public void deleteClass(long classId) throws MetadataObjectNotFoundException {
         Transaction tx = null;
         try {
             tx = graphDb.beginTx();
@@ -511,7 +511,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws ClassNotFoundException there is no class with such classId
      */
     @Override
-    public ClassMetadata getClass(Long classId) throws MetadataObjectNotFoundException {
+    public ClassMetadata getClass(long classId) throws MetadataObjectNotFoundException {
         ClassMetadata clmt = new ClassMetadata();
         try {
 
@@ -599,7 +599,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * or if there is no a targetParentClass with such classId
      */
     @Override
-    public void moveClass(Long classToMoveId, Long targetParentClassId) throws MetadataObjectNotFoundException {
+    public void moveClass(long classToMoveId, long targetParentClassId) throws MetadataObjectNotFoundException {
         Transaction tx = null;
         try {
             tx = graphDb.beginTx();
@@ -680,7 +680,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws MetadataObjectNotFoundException if there is no a class with such classId
      */
     @Override
-    public void addAttribute(Long classId, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException {
+    public void addAttribute(long classId, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException {
         attributeDefinition = Util.createDefaultAttributeMetadata(attributeDefinition);
 
         Transaction tx = null;
@@ -761,7 +761,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws MetadataObjectNotFoundException if there is no a class with such classId
      */
     @Override
-    public AttributeMetadata getAttribute(Long classId, String attributeName) throws MetadataObjectNotFoundException {
+    public AttributeMetadata getAttribute(long classId, String attributeName) throws MetadataObjectNotFoundException {
         AttributeMetadata attribute = null;
         try {
             Node node = classIndex.get(PROPERTY_ID, classId).getSingle();
@@ -792,7 +792,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @param newAttributeDefinition
      */
     @Override
-    public void changeAttributeDefinition(Long classId, AttributeMetadata newAttributeDefinition) {
+    public void changeAttributeDefinition(long classId, AttributeMetadata newAttributeDefinition) {
         Transaction tx = null;
         boolean couldDelAtt = false;
         try {
@@ -897,7 +897,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws MetadataObjectNotFoundException if there is no a class with such classId
      */
     @Override //TODO ponerlo en el modelo
-    public void deleteAttribute(Long classId, String attributeName) throws MetadataObjectNotFoundException {
+    public void deleteAttribute(long classId, String attributeName) throws MetadataObjectNotFoundException {
         Transaction tx = null;
         boolean couldDelAtt = false;
 
@@ -939,8 +939,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @return CategoryId
      */
     @Override
-    public Long createCategory(CategoryMetadata categoryDefinition) {
-        Long id = null;
+    public long createCategory(CategoryMetadata categoryDefinition) {
+        
         Transaction tx = null;
         
         try {
@@ -951,19 +951,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             category.setProperty(PROPERTY_DESCRIPTION, categoryDefinition.getDescription());
             category.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
 
-            id = category.getId();
-
-            categoryIndex.add(category, PROPERTY_ID, id);
+            categoryIndex.add(category, PROPERTY_ID, category.getId());
             categoryIndex.add(category, PROPERTY_NAME, categoryDefinition.getName());
 
             tx.success();
+            return category.getId();
         }catch(Exception ex){
             throw new RuntimeException(ex.getMessage());
         } finally {
             tx.finish();
         }
-
-        return id;
     }
 
     /**
@@ -1164,13 +1161,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     @Override
-    public void addPossibleChildren(Long parentClassId, Long[] _possibleChildren)
+    public void addPossibleChildren(long parentClassId, long[] _possibleChildren)
             throws MetadataObjectNotFoundException, InvalidArgumentException {
         Transaction tx = null;
         Node parentNode;
         boolean isDummyRoot = false;
 
-        if(parentClassId != null) {
+        if(parentClassId != -1) {
             parentNode = classIndex.get(PROPERTY_ID, parentClassId).getSingle();
 
             if (parentNode == null)
@@ -1194,7 +1191,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         tx = graphDb.beginTx();
 
         try{
-            for (Long id : _possibleChildren) {
+            for (long id : _possibleChildren) {
                 Node childNode = classIndex.get(PROPERTY_ID, id).getSingle();
 
                 if (childNode == null)
@@ -1318,12 +1315,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
     
     @Override
-    public void removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws MetadataObjectNotFoundException {
+    public void removePossibleChildren(long parentClassId, long[] childrenToBeRemoved) throws MetadataObjectNotFoundException {
         Transaction tx = null;
 
         Node parentNode;
 
-        if (parentClassId == null){
+        if (parentClassId == -1){
             parentNode = graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING).getEndNode();
             if (parentNode == null)
                 throw new MetadataObjectNotFoundException("DummyRoot is corrupted");
@@ -1337,7 +1334,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         try
         {
             tx = graphDb.beginTx();
-            for (Long id : childrenToBeRemoved)
+            for (long id : childrenToBeRemoved)
             {
                 Node childNode = classIndex.get(PROPERTY_ID, id).getSingle();
                 Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.OUTGOING);

@@ -35,45 +35,45 @@ import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 public interface BusinessEntityManagerRemote extends Remote{
     public static final String REFERENCE_BEM = "bem";
 
-    public List<RemoteBusinessObjectLight> getObjectChildren(String className, Long oid, int maxResults)
+    public List<RemoteBusinessObjectLight> getObjectChildren(String className, long oid, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
 
-    public List<RemoteBusinessObjectLight> getObjectChildren(Long oid, Long classId, int maxResults)
+    public List<RemoteBusinessObjectLight> getObjectChildren(long oid, long classId, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
 
-    public List<RemoteBusinessObject> getChildrenOfClass(Long parentOid, String parentClass, String myClass, int maxResults)
+    public List<RemoteBusinessObject> getChildrenOfClass(long parentOid, String parentClass, String myClass, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, RemoteException;
 
-    public List<RemoteBusinessObjectLight> getChildrenOfClassLight(Long parentOid, String parentClass, String myClass, int maxResults)
+    public List<RemoteBusinessObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String myClass, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
 
-    public RemoteBusinessObject getObjectInfo(String objectClass, Long oid)
+    public RemoteBusinessObject getObjectInfo(String objectClass, long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
-    public RemoteBusinessObjectLight getObjectInfoLight(String objectClass, Long oid)
+    public RemoteBusinessObjectLight getObjectInfoLight(String objectClass, long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
 
-    public void updateObject(String className, Long oid, HashMap<String,List<String>> attributes)
+    public void updateObject(String className, long oid, HashMap<String,List<String>> attributes)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
                 WrongMappingException, InvalidArgumentException, RemoteException;
-    public Long createObject(String className, String parentClassName, Long parentOid,
-            HashMap<String,List<String>> attributes, Long template)
+    public long createObject(String className, String parentClassName, long parentOid,
+            HashMap<String,List<String>> attributes, long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException, RemoteException;
-   public Long createSpecialObject(String className, String parentClassName, Long parentOid,
-            HashMap<String,List<String>> attributes,Long template)
+   public long createSpecialObject(String className, String parentClassName, long parentOid,
+            HashMap<String,List<String>> attributes,long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, RemoteException;
 
-    public void deleteObjects(HashMap<String, List<Long>> objects, boolean releaseRelationships)
+    public void deleteObjects(HashMap<String, long[]> objects, boolean releaseRelationships)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
 
-    public void moveObjects(String targetClass, Long targetOid, HashMap<String, List<Long>> objects)
+    public void moveObjects(String targetClass, long targetOid, HashMap<String, long[]> objects)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
 
-    public List<Long> copyObjects(String targetClass, Long targetOid, HashMap<String, List<Long>> objects, boolean recursive)
+    public long[] copyObjects(String targetClass, long targetOid, HashMap<String, long[]> objects, boolean recursive)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
 
-    public void createSpecialRelationship(String aObjectClass, Long aObjectId, String bObjectClass, Long bObjectId, String name)
+    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
-    public List<String> getSpecialAttribute(String objectClass, Long objectId, String specialAttributeName)
+    public List<String> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
 }

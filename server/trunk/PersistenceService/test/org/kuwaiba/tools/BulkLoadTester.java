@@ -82,7 +82,7 @@ public class BulkLoadTester {
             attributes.put("name",Arrays.asList(new String[]{className + " " + i}));
 
             try{
-                long newObjectId = bem.createObject(className, parentClass, parentId, attributes, null);
+                long newObjectId = bem.createObject(className, parentClass, parentId, attributes, 0);
                 objectCount++;
                 if (c.containmentHierarchy.get(className) != null){
                     for (String anotherClass : c.containmentHierarchy.get(className)){
