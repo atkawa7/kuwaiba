@@ -709,7 +709,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
-    public void updateObjectRelatedView(long oid, String objectClass, long viewId, String name, String description, int viewType, byte[] structure, byte[] background) throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+    public void updateObjectRelatedView(long oid, String objectClass, long viewId, String name, String description, byte[] structure, byte[] background) throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         if (objectClass == null)
             throw new InvalidArgumentException("The root object does not have any view", Level.INFO);
         Node instance = getInstanceOfClass(objectClass, oid);
@@ -717,7 +717,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         try{
             Node viewNode = null;
             for (Relationship rel : instance.getRelationships(RelTypes.HAS_VIEW, Direction.OUTGOING)){
-                if (((Integer)rel.getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE)).intValue() == viewType && rel.getEndNode().getId() == viewId){
+                if (rel.getEndNode().getId() == viewId){
                     viewNode = rel.getEndNode();
                     break;
                 }
@@ -840,7 +840,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         for (Relationship rel : instance.getRelationships(RelTypes.HAS_VIEW, Direction.OUTGOING)){
             Node viewNode = rel.getEndNode();
             if (viewNode.getId() == viewId){
-                ViewObject res = new ViewObject(viewId, (Integer)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
+                ViewObject res = new ViewObject(viewId, (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),
+                        (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION), (Integer)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
                 if (viewNode.hasProperty(PROPERTY_BACKGROUND_FILE_NAME)){
                     String fileName = (String)viewNode.getProperty(PROPERTY_BACKGROUND_FILE_NAME);
                     Properties props = new Properties();
@@ -861,14 +862,33 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         throw new ObjectNotFoundException("View", viewId);
     }
 
-    public ViewObject getObjectRelatedViews(long oid, String objectClass) throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List<ViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int limit) throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+        Node instance = getInstanceOfClass(objectClass, oid);
+        List<ViewObjectLight> res = new ArrayList<ViewObjectLight>();
+        int i = 0;
+        for (Relationship rel : instance.getRelationships(RelTypes.HAS_VIEW, Direction.OUTGOING)){
+            if (limit != -1){
+                if (i < limit)
+                    i++;
+                else break;
+            }
+            Node viewNode = rel.getEndNode();
+            res.add(new ViewObjectLight(viewNode.getId(), (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),
+                    (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION),(Integer)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE)));
+        }
+        return res;
     }
 
 
 
     public List<ViewObjectLight> getGeneralViews(int viewType, int limit) throws InvalidArgumentException {
-        String cypherQuery = "START gView=node:"+ INDEX_GENERAL_VIEWS +"(name=*) MATCH gView."+MetadataEntityManagerImpl.PROPERTY_TYPE+"="+viewType+" LIMIT "+limit + " RETURN gView";
+        String cypherQuery = "START gView=node:"+ INDEX_GENERAL_VIEWS +"(name=*)";
+        if (viewType != -1)
+            cypherQuery += " MATCH gView."+MetadataEntityManagerImpl.PROPERTY_TYPE+"="+viewType;
+        if (limit != -1)
+            cypherQuery += " LIMIT "+limit;
+
+        cypherQuery += " RETURN gView";
 
         ExecutionEngine engine = new ExecutionEngine(graphDb);
         ExecutionResult result = engine.execute(cypherQuery);
@@ -876,7 +896,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         List<ViewObjectLight> myRes = new ArrayList<ViewObjectLight>();
         while (gViews.hasNext()){
             Node gView = gViews.next();
-            ViewObjectLight aView = new ViewObjectLight(gView.getId(), (Integer)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
+            ViewObjectLight aView = new ViewObjectLight(gView.getId(), (String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),
+                    (String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION), (Integer)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
             if (gView.hasProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
                 aView.setName((String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
             if (gView.hasProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION));
@@ -891,7 +912,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         if (gView == null)
             throw new ObjectNotFoundException("View", viewId);
 
-        ViewObject aView = new ViewObject(gView.getId(), (Integer)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
+        ViewObject aView = new ViewObject(gView.getId(), (String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),
+                    (String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION), (Integer)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
         if (gView.hasProperty(MetadataEntityManagerImpl.PROPERTY_NAME))
             aView.setName((String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
         if (gView.hasProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION))

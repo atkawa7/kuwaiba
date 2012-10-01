@@ -182,7 +182,7 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws OperationNotPermittedException if the object has relationships
      */
     public void deleteListTypeItem(String className, long oid, boolean realeaseRelationships)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, RemoteException;
     /**
      * Get the possible list types
      * @return A list of ClassMetadataLight instances representing the possible list types
@@ -202,6 +202,19 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @throws InvalidArgumentException if the provided view type is not supported
      */
     public ViewObject getObjectRelatedView(long oid, String objectClass, long viewId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    /**
+     * Get a view related to an object, such as the default, rack or equipment views
+     * @param oid object's id
+     * @param objectClass object's class
+     * @param limit max number of results
+     * @return The associated views
+     * @throws ObjectNotFoundException if the object can not be found
+     * @throws MetadataObjectNotFoundException if the corresponding class metadata can not be found
+     * @throws InvalidArgumentException if the provided view type is not supported
+     */
+    public List<ViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int limit)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
     /**
@@ -258,14 +271,13 @@ public interface ApplicationEntityManagerRemote extends Remote{
      * @param view id
      * @param name view name
      * @param description view description
-     * @param viewType view type (See class ViewObject for details about the supported types)
      * @param structure XML document with the view structure (see http://sourceforge.net/apps/mediawiki/kuwaiba/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
      * @param background background image
      * @throws ObjectNotFoundException if the object can not be found
      * @throws MetadataObjectNotFoundException if the object class can not be found
      * @throws InvalidArgumentException if the view type is not supported
      */
-    public void updateObjectRelatedView(long oid, String objectClass, long viewId, String name, String description, int viewType, byte[] structure, byte[] background)
+    public void updateObjectRelatedView(long oid, String objectClass, long viewId, String name, String description, byte[] structure, byte[] background)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
     /**

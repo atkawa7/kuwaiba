@@ -40,8 +40,10 @@ public class ViewObjectLight implements Serializable {
      */
     private int viewType;
 
-    public ViewObjectLight(Long id, int viewType) {
+    public ViewObjectLight(long id, String name, String description, int viewType) {
         this.id = id;
+        this.name = name;
+        this.description = description;
         this.viewType = viewType;
     }
 

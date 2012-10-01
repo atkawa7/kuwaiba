@@ -23,8 +23,8 @@ package org.kuwaiba.apis.persistence.application;
  */
 public class ViewObject extends ViewObjectLight {
 
-    public ViewObject(long id, int viewType) {
-        super (id, viewType);
+    public ViewObject(long id, String name, String description, int viewType) {
+        super (id, name, description, viewType);
     }
 
     /**

@@ -205,12 +205,13 @@ public interface ApplicationEntityManager {
      * Get a view related to an object, such as the default, rack or equipment views
      * @param oid object's id
      * @param objectClass object's class
-     * @return The associated view (there should be only one of each type). Null if there's none yet
+     * @param limit max number of results
+     * @return The associated views
      * @throws ObjectNotFoundException if the object can not be found
      * @throws MetadataObjectNotFoundException if the corresponding class metadata can not be found
      * @throws InvalidArgumentException if the provided view type is not supported
      */
-    public ViewObject getObjectRelatedViews(long oid, String objectClass)
+    public List<ViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int limit)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
@@ -267,14 +268,13 @@ public interface ApplicationEntityManager {
      * @param view id
      * @param name view name
      * @param description view description
-     * @param viewType view type (See class ViewObject for details about the supported types)
-     * @param structure XML document with the view structure (see http://sourceforge.net/apps/mediawiki/kuwaiba/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
+     * @param structure XML document with the view structure (see http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
      * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
      * @throws ObjectNotFoundException if the object can not be found
      * @throws MetadataObjectNotFoundException if the object class can not be found
      * @throws InvalidArgumentException if the view type is not supported
      */
-    public void updateObjectRelatedView(long oid, String objectClass, long viewId, String name, String description, int viewType, byte[] structure, byte[] background)
+    public void updateObjectRelatedView(long oid, String objectClass, long viewId, String name, String description, byte[] structure, byte[] background)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
