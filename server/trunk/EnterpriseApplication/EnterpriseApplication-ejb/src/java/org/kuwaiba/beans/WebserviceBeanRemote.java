@@ -18,7 +18,6 @@ package org.kuwaiba.beans;
 
 import java.util.List;
 import javax.ejb.Remote;
-import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
@@ -403,15 +402,17 @@ public interface WebserviceBeanRemote {
 
     public ViewInfoLight[] getObjectRelatedViews(long oid, String objectClass, int viewType, int limit) throws ServerSideException;
 
+    public ViewInfo getGeneralView(long viewId) throws ServerSideException;
+
     public ViewInfoLight[] getGeneralViews(int viewType, int limit) throws ServerSideException;
 
     public long createObjectRelatedView(long objectId, String objectClass, String name, String description, int viewType, byte[] structure, byte[] background) throws ServerSideException;
 
     public long createGeneralView(int viewType, String name, String description, byte[] structure, byte[] background) throws ServerSideException;
 
-    public void updateObjectRelatedView(long objectOid, String objectClass, long viewId, String viewName, String viewDescription, int viewType, byte[] structure, byte[] background) throws ServerSideException;
+    public void updateObjectRelatedView(long objectOid, String objectClass, long viewId, String viewName, String viewDescription, byte[] structure, byte[] background) throws ServerSideException;
 
-    public void updateGeneralView(long objectOid, String objectClass, long viewId, String viewName, String viewDescription, int viewType, byte[] structure, byte[] background) throws ServerSideException;
+    public void updateGeneralView(long viewId, String viewName, String viewDescription, byte[] structure, byte[] background) throws ServerSideException;
 
     /**
      * Executes a complex query generated using the Graphical Query Builder.  Please note

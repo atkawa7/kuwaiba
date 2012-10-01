@@ -1175,7 +1175,33 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     @Override
     public ViewInfoLight[] getObjectRelatedViews(long oid, String objectClass, int viewType, int limit) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            List<ViewObjectLight> views = aem.getObjectRelatedViews(oid, objectClass, limit);
+            ViewInfoLight[] res = new ViewInfoLight[views.size()];
+            int i = 0;
+            for (ViewObjectLight view : views){
+                res[i] = new ViewInfoLight(view);
+                i++;
+            }
+            return res;
+        }catch(Exception e){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, e.getMessage());
+            throw new ServerSideException(Level.SEVERE, e.getMessage());
+        }
+    }
+
+    @Override
+    public ViewInfo getGeneralView(long viewId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            return new ViewInfo(aem.getGeneralView(viewId));
+        }catch(Exception e){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, e.getMessage());
+            throw new ServerSideException(Level.SEVERE, e.getMessage());
+        }
     }
 
     @Override
@@ -1204,11 +1230,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
      * @throws ServerSideException
      */
     @Override
-    public void updateObjectRelatedView(long objectOid, String objectClass, long viewId, String viewName, String viewDescription, int viewType, byte[] structure, byte[] background) throws ServerSideException {
+    public void updateObjectRelatedView(long objectOid, String objectClass, long viewId, String viewName, String viewDescription, byte[] structure, byte[] background) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            aem.updateObjectRelatedView(objectOid, objectClass, viewId, viewName, viewDescription, viewType, structure, background);
+            aem.updateObjectRelatedView(objectOid, objectClass, viewId, viewName, viewDescription, structure, background);
         }catch(InventoryException ie){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ie.getMessage());
         }catch(IOException ioe){
@@ -1218,7 +1244,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void updateGeneralView(long objectOid, String objectClass, long viewId, String viewName, String viewDescription, int viewType, byte[] structure, byte[] background) throws ServerSideException {
+    public void updateGeneralView(long viewId, String viewName, String viewDescription, byte[] structure, byte[] background) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{

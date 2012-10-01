@@ -354,6 +354,16 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     *
+     * @param oid
+     * @param objectClass
+     * @param viewType
+     * @param limit
+     * @param sessionId
+     * @return
+     * @throws Exception
+     */
     @WebMethod(operationName = "getObjectRelatedViews")
     public ViewInfoLight[] getObjectRelatedViews(@WebParam(name = "oid")long oid,
             @WebParam(name = "objectClass")String objectClass,
@@ -380,6 +390,22 @@ public class Kuwaiba {
         try{
             wsBean.validateCall("getGeneralViews", getIPAddress(), sessionId);
             return wsBean.getGeneralViews(viewType, limit);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    @WebMethod(operationName = "getGeneralView")
+    public ViewInfo getGeneralView(@WebParam(name = "viewId")long viewId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("getGeneralView", getIPAddress(), sessionId);
+            return wsBean.getGeneralView(viewId);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -436,11 +462,11 @@ public class Kuwaiba {
     public void updateObjectRelatedView(@WebParam(name = "objectOid")long objectOid,
             @WebParam(name = "objectClass")String objectClass, @WebParam(name = "viewId")long viewId,
             @WebParam(name = "viewName")String viewName, @WebParam(name = "viewDescription")String viewDescription,
-            @WebParam(name = "viewType")int viewType, @WebParam(name = "structure")byte[] structure,
+            @WebParam(name = "structure")byte[] structure,
             @WebParam(name = "background")byte[] background, @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.validateCall("updateObjectRelatedView", getIPAddress(), sessionId);
-            wsBean.updateObjectRelatedView(objectOid, objectClass, viewId, viewName, viewDescription, viewType, structure, background);
+            wsBean.updateObjectRelatedView(objectOid, objectClass, viewId, viewName, viewDescription, structure, background);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -452,14 +478,12 @@ public class Kuwaiba {
     }
 
     @WebMethod(operationName = "updateGeneralView")
-    public void updateGeneralView(@WebParam(name = "objectOid")long objectOid,
-            @WebParam(name = "objectClass")String objectClass, @WebParam(name = "viewId")long viewId,
+    public void updateGeneralView(@WebParam(name = "viewId")long viewId,
             @WebParam(name = "viewName")String viewName, @WebParam(name = "viewDescription")String viewDescription,
-            @WebParam(name = "viewType")int viewType, @WebParam(name = "structure")byte[] structure,
-            @WebParam(name = "background")byte[] background, @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "structure")byte[] structure, @WebParam(name = "background")byte[] background, @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.validateCall("updateGeneralView", getIPAddress(), sessionId);
-            wsBean.updateGeneralView(objectOid, objectClass, viewId, viewName, viewDescription, viewType, structure, background);
+            wsBean.updateGeneralView(viewId, viewName, viewDescription, structure, background);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
