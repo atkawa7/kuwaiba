@@ -76,18 +76,6 @@
 <message name="createUserResponse">
 <part name="parameters" element="tns:createUserResponse"/>
 </message>
-<message name="setClassPlainAttribute">
-<part name="parameters" element="tns:setClassPlainAttribute"/>
-</message>
-<message name="setClassPlainAttributeResponse">
-<part name="parameters" element="tns:setClassPlainAttributeResponse"/>
-</message>
-<message name="setClassIcon">
-<part name="parameters" element="tns:setClassIcon"/>
-</message>
-<message name="setClassIconResponse">
-<part name="parameters" element="tns:setClassIconResponse"/>
-</message>
 <message name="deleteClass">
 <part name="parameters" element="tns:deleteClass"/>
 </message>
@@ -256,17 +244,53 @@
 <message name="deleteGroupsResponse">
 <part name="parameters" element="tns:deleteGroupsResponse"/>
 </message>
-<message name="getView">
-<part name="parameters" element="tns:getView"/>
+<message name="createObjectRelatedView">
+<part name="parameters" element="tns:createObjectRelatedView"/>
 </message>
-<message name="getViewResponse">
-<part name="parameters" element="tns:getViewResponse"/>
+<message name="createObjectRelatedViewResponse">
+<part name="parameters" element="tns:createObjectRelatedViewResponse"/>
 </message>
-<message name="saveView">
-<part name="parameters" element="tns:saveView"/>
+<message name="createGeneralView">
+<part name="parameters" element="tns:createGeneralView"/>
 </message>
-<message name="saveViewResponse">
-<part name="parameters" element="tns:saveViewResponse"/>
+<message name="createGeneralViewResponse">
+<part name="parameters" element="tns:createGeneralViewResponse"/>
+</message>
+<message name="getObjectRelatedView">
+<part name="parameters" element="tns:getObjectRelatedView"/>
+</message>
+<message name="getObjectRelatedViewResponse">
+<part name="parameters" element="tns:getObjectRelatedViewResponse"/>
+</message>
+<message name="getObjectRelatedViews">
+<part name="parameters" element="tns:getObjectRelatedViews"/>
+</message>
+<message name="getObjectRelatedViewsResponse">
+<part name="parameters" element="tns:getObjectRelatedViewsResponse"/>
+</message>
+<message name="getGeneralView">
+<part name="parameters" element="tns:getGeneralView"/>
+</message>
+<message name="getGeneralViewResponse">
+<part name="parameters" element="tns:getGeneralViewResponse"/>
+</message>
+<message name="getGeneralViews">
+<part name="parameters" element="tns:getGeneralViews"/>
+</message>
+<message name="getGeneralViewsResponse">
+<part name="parameters" element="tns:getGeneralViewsResponse"/>
+</message>
+<message name="updateObjectRelatedView">
+<part name="parameters" element="tns:updateObjectRelatedView"/>
+</message>
+<message name="updateObjectRelatedViewResponse">
+<part name="parameters" element="tns:updateObjectRelatedViewResponse"/>
+</message>
+<message name="updateGeneralView">
+<part name="parameters" element="tns:updateGeneralView"/>
+</message>
+<message name="updateGeneralViewResponse">
+<part name="parameters" element="tns:updateGeneralViewResponse"/>
 </message>
 <message name="createQuery">
 <part name="parameters" element="tns:createQuery"/>
@@ -304,29 +328,23 @@
 <message name="createClassMetadataResponse">
 <part name="parameters" element="tns:createClassMetadataResponse"/>
 </message>
-<message name="setClassMetadataDefinition">
-<part name="parameters" element="tns:setClassMetadataDefinition"/>
+<message name="setClassMetadataProperties">
+<part name="parameters" element="tns:setClassMetadataProperties"/>
 </message>
-<message name="setClassMetadataDefinitionResponse">
-<part name="parameters" element="tns:setClassMetadataDefinitionResponse"/>
+<message name="setClassMetadataPropertiesResponse">
+<part name="parameters" element="tns:setClassMetadataPropertiesResponse"/>
 </message>
-<message name="setAttributePropertyValue">
-<part name="parameters" element="tns:setAttributePropertyValue"/>
+<message name="addAttributeClass">
+<part name="parameters" element="tns:addAttributeClass"/>
 </message>
-<message name="setAttributePropertyValueResponse">
-<part name="parameters" element="tns:setAttributePropertyValueResponse"/>
+<message name="addAttributeClassResponse">
+<part name="parameters" element="tns:addAttributeClassResponse"/>
 </message>
-<message name="addAttributeByClassId">
-<part name="parameters" element="tns:addAttributeByClassId"/>
+<message name="setClassAttributeProperties">
+<part name="parameters" element="tns:setClassAttributeProperties"/>
 </message>
-<message name="addAttributeByClassIdResponse">
-<part name="parameters" element="tns:addAttributeByClassIdResponse"/>
-</message>
-<message name="addAttributeByClassName">
-<part name="parameters" element="tns:addAttributeByClassName"/>
-</message>
-<message name="addAttributeByClassNameResponse">
-<part name="parameters" element="tns:addAttributeByClassNameResponse"/>
+<message name="setClassAttributePropertiesResponse">
+<part name="parameters" element="tns:setClassAttributePropertiesResponse"/>
 </message>
 <message name="getMetadataForClassById">
 <part name="parameters" element="tns:getMetadataForClassById"/>
@@ -401,16 +419,6 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createUserRequest" message="tns:createUser"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createUserResponse" message="tns:createUserResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createUser/Fault/Exception"/>
-</operation>
-<operation name="setClassPlainAttribute">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassPlainAttributeRequest" message="tns:setClassPlainAttribute"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassPlainAttributeResponse" message="tns:setClassPlainAttributeResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassPlainAttribute/Fault/Exception"/>
-</operation>
-<operation name="setClassIcon">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassIconRequest" message="tns:setClassIcon"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassIconResponse" message="tns:setClassIconResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassIcon/Fault/Exception"/>
 </operation>
 <operation name="deleteClass">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteClassRequest" message="tns:deleteClass"/>
@@ -552,15 +560,45 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteGroupsResponse" message="tns:deleteGroupsResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteGroups/Fault/Exception"/>
 </operation>
-<operation name="getView">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getViewRequest" message="tns:getView"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getViewResponse" message="tns:getViewResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getView/Fault/Exception"/>
+<operation name="createObjectRelatedView">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectRelatedViewRequest" message="tns:createObjectRelatedView"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectRelatedViewResponse" message="tns:createObjectRelatedViewResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectRelatedView/Fault/Exception"/>
 </operation>
-<operation name="saveView">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/saveViewRequest" message="tns:saveView"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/saveViewResponse" message="tns:saveViewResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/saveView/Fault/Exception"/>
+<operation name="createGeneralView">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createGeneralViewRequest" message="tns:createGeneralView"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createGeneralViewResponse" message="tns:createGeneralViewResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createGeneralView/Fault/Exception"/>
+</operation>
+<operation name="getObjectRelatedView">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectRelatedViewRequest" message="tns:getObjectRelatedView"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectRelatedViewResponse" message="tns:getObjectRelatedViewResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectRelatedView/Fault/Exception"/>
+</operation>
+<operation name="getObjectRelatedViews">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectRelatedViewsRequest" message="tns:getObjectRelatedViews"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectRelatedViewsResponse" message="tns:getObjectRelatedViewsResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectRelatedViews/Fault/Exception"/>
+</operation>
+<operation name="getGeneralView">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGeneralViewRequest" message="tns:getGeneralView"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGeneralViewResponse" message="tns:getGeneralViewResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGeneralView/Fault/Exception"/>
+</operation>
+<operation name="getGeneralViews">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGeneralViewsRequest" message="tns:getGeneralViews"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGeneralViewsResponse" message="tns:getGeneralViewsResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGeneralViews/Fault/Exception"/>
+</operation>
+<operation name="updateObjectRelatedView">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/updateObjectRelatedViewRequest" message="tns:updateObjectRelatedView"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/updateObjectRelatedViewResponse" message="tns:updateObjectRelatedViewResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/updateObjectRelatedView/Fault/Exception"/>
+</operation>
+<operation name="updateGeneralView">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/updateGeneralViewRequest" message="tns:updateGeneralView"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/updateGeneralViewResponse" message="tns:updateGeneralViewResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/updateGeneralView/Fault/Exception"/>
 </operation>
 <operation name="createQuery">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createQueryRequest" message="tns:createQuery"/>
@@ -592,25 +630,20 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createClassMetadataResponse" message="tns:createClassMetadataResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createClassMetadata/Fault/Exception"/>
 </operation>
-<operation name="setClassMetadataDefinition">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassMetadataDefinitionRequest" message="tns:setClassMetadataDefinition"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassMetadataDefinitionResponse" message="tns:setClassMetadataDefinitionResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassMetadataDefinition/Fault/Exception"/>
+<operation name="setClassMetadataProperties">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassMetadataPropertiesRequest" message="tns:setClassMetadataProperties"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassMetadataPropertiesResponse" message="tns:setClassMetadataPropertiesResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassMetadataProperties/Fault/Exception"/>
 </operation>
-<operation name="setAttributePropertyValue">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setAttributePropertyValueRequest" message="tns:setAttributePropertyValue"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setAttributePropertyValueResponse" message="tns:setAttributePropertyValueResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setAttributePropertyValue/Fault/Exception"/>
+<operation name="addAttributeClass">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeClassRequest" message="tns:addAttributeClass"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeClassResponse" message="tns:addAttributeClassResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeClass/Fault/Exception"/>
 </operation>
-<operation name="addAttributeByClassId">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeByClassIdRequest" message="tns:addAttributeByClassId"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeByClassIdResponse" message="tns:addAttributeByClassIdResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeByClassId/Fault/Exception"/>
-</operation>
-<operation name="addAttributeByClassName">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeByClassNameRequest" message="tns:addAttributeByClassName"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeByClassNameResponse" message="tns:addAttributeByClassNameResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeByClassName/Fault/Exception"/>
+<operation name="setClassAttributeProperties">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassAttributePropertiesRequest" message="tns:setClassAttributeProperties"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassAttributePropertiesResponse" message="tns:setClassAttributePropertiesResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassAttributeProperties/Fault/Exception"/>
 </operation>
 <operation name="getMetadataForClassById">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadataForClassByIdRequest" message="tns:getMetadataForClassById"/>
@@ -762,30 +795,6 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="setClassPlainAttribute">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
-<operation name="setClassIcon">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
 <operation name="deleteClass">
 <soap:operation soapAction=""/>
 <input>
@@ -1122,7 +1131,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="getView">
+<operation name="createObjectRelatedView">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -1134,7 +1143,79 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="saveView">
+<operation name="createGeneralView">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getObjectRelatedView">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getObjectRelatedViews">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getGeneralView">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getGeneralViews">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="updateObjectRelatedView">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="updateGeneralView">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -1218,7 +1299,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="setClassMetadataDefinition">
+<operation name="setClassMetadataProperties">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -1230,7 +1311,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="setAttributePropertyValue">
+<operation name="addAttributeClass">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -1242,19 +1323,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="addAttributeByClassId">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
-<operation name="addAttributeByClassName">
+<operation name="setClassAttributeProperties">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

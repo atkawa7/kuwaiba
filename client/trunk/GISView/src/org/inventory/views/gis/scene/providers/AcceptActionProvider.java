@@ -24,7 +24,6 @@ import javax.swing.JOptionPane;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.views.gis.scene.GISViewScene;
 import org.inventory.views.gis.scene.GeoPositionedNodeWidget;
-import org.jdesktop.swingx.mapviewer.GeoPosition;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.Widget;

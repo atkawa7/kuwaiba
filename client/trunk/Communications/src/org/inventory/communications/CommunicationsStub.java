@@ -36,6 +36,7 @@ import org.inventory.communications.core.queries.LocalQueryLightImpl;
 import org.inventory.communications.core.LocalUserGroupObjectImpl;
 import org.inventory.communications.core.LocalUserObjectImpl;
 import org.inventory.communications.core.views.LocalObjectViewImpl;
+import org.inventory.communications.core.views.LocalObjectViewLightImpl;
 import org.inventory.core.services.factories.ObjectFactory;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
@@ -49,6 +50,7 @@ import org.inventory.core.services.api.queries.LocalTransientQuery;
 import org.inventory.core.services.api.session.LocalUserGroupObject;
 import org.inventory.core.services.api.session.LocalUserObject;
 import org.inventory.core.services.api.visual.LocalObjectView;
+import org.inventory.core.services.api.visual.LocalObjectViewLight;
 import org.inventory.objectcache.Cache;
 import org.kuwaiba.wsclient.ClassInfo;
 import org.kuwaiba.wsclient.ClassInfoLight;
@@ -63,6 +65,7 @@ import org.kuwaiba.wsclient.TransientQuery;
 import org.kuwaiba.wsclient.UserGroupInfo;
 import org.kuwaiba.wsclient.UserInfo;
 import org.kuwaiba.wsclient.ViewInfo;
+import org.kuwaiba.wsclient.ViewInfoLight;
 
 /**
  * Singleton class that provides communication and caching services to the rest of the modules
@@ -147,7 +150,7 @@ public class CommunicationsStub {
      * Retrieves a given object's children
      * @return an array of local objects representing the object's children
      */
-    public List<LocalObjectLight> getObjectChildren(Long oid, Long objectClassId){
+    public List<LocalObjectLight> getObjectChildren(long oid, long objectClassId){
         try{
             List <RemoteObjectLight> children = port.getObjectChildren(oid, objectClassId, 0,this.session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
@@ -162,7 +165,7 @@ public class CommunicationsStub {
         }
     }
 
-    public List<LocalObject> getChildrenOfClass(Long oid, String parentClassName, String childrenClassName){
+    public List<LocalObject> getChildrenOfClass(long oid, String parentClassName, String childrenClassName){
         try{
             List <RemoteObject> children = port.getChildrenOfClass(oid, parentClassName, childrenClassName, 0, this.session.getSessionId());
             List <LocalObject> res = new ArrayList<LocalObject>();
@@ -193,8 +196,8 @@ public class CommunicationsStub {
                 StringArray value = new StringArray();
                 attributeNames.add(key);
                 if (obj.getAttribute(key) instanceof List){
-                    for (Long itemId : (List<Long>)obj.getAttribute(key))
-                        value.getItem().add(itemId.toString());
+                    for (long itemId : (List<Long>)obj.getAttribute(key))
+                        value.getItem().add(String.valueOf(itemId));
                 }else
                     value.getItem().add(obj.getAttribute(key).toString());
                 attributeValues.add(value);
@@ -215,7 +218,7 @@ public class CommunicationsStub {
      * @param value Lock value. By now is a boolean, but I expect in the future a three level lock can be implemented (r,w,nothing)
      * @return success or failure
      */
-    public boolean setObjectLock(Long oid, String objectClass,Boolean value){
+    public boolean setObjectLock(long oid, String objectClass,Boolean value){
         return true;
     }
 
@@ -225,7 +228,7 @@ public class CommunicationsStub {
      * @param oid object id
      * @return The local representation of the object
      */
-    public LocalObject getObjectInfo(String objectClass, Long oid){
+    public LocalObject getObjectInfo(String objectClass, long oid){
         try{
             LocalClassMetadata lcmd = getMetaForClass(objectClass, false);
             RemoteObject myObject = port.getObjectInfo(objectClass, oid,this.session.getSessionId());
@@ -236,7 +239,7 @@ public class CommunicationsStub {
         }
     }
 
-    public List<Long> getSpecialAttribute(String objectClass, Long objectId, String attributeName){
+    public List<Long> getSpecialAttribute(String objectClass, long objectId, String attributeName){
         try{
             //This is only temporal, since the result may not be a long in  the future, but it is right now
             List<Long> res = new ArrayList<Long>();
@@ -256,7 +259,7 @@ public class CommunicationsStub {
      * @param oid object id
      * @return The local representation of the object
      */
-    public LocalObjectLight getObjectInfoLight(String objectClass, Long oid){
+    public LocalObjectLight getObjectInfoLight(String objectClass, long oid){
         try{
             RemoteObjectLight myLocalObject = port.getObjectInfoLight(objectClass, oid,this.session.getSessionId());
             return new LocalObjectLightImpl(myLocalObject);
@@ -344,9 +347,9 @@ public class CommunicationsStub {
         }
    }
 
-    public LocalObjectLight createObject(String objectClass, String parentClass, Long parentOid, Long template){
+    public LocalObjectLight createObject(String objectClass, String parentClass, long parentOid, long template){
         try{
-            Long objectId  = port.createObject(objectClass,parentClass, parentOid, new ArrayList<String>(),new ArrayList<StringArray>(),template,this.session.getSessionId());
+            long objectId  = port.createObject(objectClass,parentClass, parentOid, new ArrayList<String>(),new ArrayList<StringArray>(),template,this.session.getSessionId());
             return new LocalObjectLightImpl(objectId, null, objectClass);
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -469,7 +472,7 @@ public class CommunicationsStub {
 
     public LocalObjectLight createListTypeItem(String className){
         try{
-            Long myObjectId = port.createListTypeItem(className, "","",this.session.getSessionId());
+            long myObjectId = port.createListTypeItem(className, "","",this.session.getSessionId());
             return new LocalObjectLightImpl(myObjectId,null,className);
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -515,9 +518,12 @@ public class CommunicationsStub {
         }
     }
 
-    public boolean addPossibleChildren(Long parentClassId, List<Long> possibleChildren){
+    public boolean addPossibleChildren(long parentClassId, long[] possibleChildren){
         try{
-            port.addPossibleChildren(parentClassId, possibleChildren,this.session.getSessionId());
+            List<Long> pChildren = new ArrayList<Long>();
+            for (long pChild : possibleChildren)
+                pChildren.add(pChild);
+            port.addPossibleChildren(parentClassId, pChildren,this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -531,7 +537,7 @@ public class CommunicationsStub {
      * @param childrenToBeDeleted List if ids of the classes to be removed as possible children
      * @return Success or failure
      */
-    public boolean removePossibleChildren(Long parentClassId, List<Long> childrenToBeDeleted){
+    public boolean removePossibleChildren(long parentClassId, List<Long> childrenToBeDeleted){
         try{
             port.removePossibleChildren(parentClassId, childrenToBeDeleted,this.session.getSessionId());
             return true;
@@ -547,7 +553,7 @@ public class CommunicationsStub {
      * @param oid object id
      * @return Success or failure
      */
-    public boolean deleteObject(String className, Long oid){
+    public boolean deleteObject(String className, long oid){
         try{
             List classes = new ArrayList();
             classes.add(className);
@@ -561,7 +567,7 @@ public class CommunicationsStub {
         }
     }
 
-    public boolean moveObjects(String targetClass, Long targetOid, LocalObjectLight[] _objects) {
+    public boolean moveObjects(String targetClass, long targetOid, LocalObjectLight[] _objects) {
 
         try{
             List<Long> objectOids = new ArrayList<Long>();
@@ -579,7 +585,7 @@ public class CommunicationsStub {
         }
     }
 
-    public LocalObjectLight[] copyObjects(String targetClass, Long targetOid, LocalObjectLight[] objects){
+    public LocalObjectLight[] copyObjects(String targetClass, long targetOid, LocalObjectLight[] objects){
         try{
             List<Long> objectOids = new ArrayList<Long>();
             List<String> objectClasses = new ArrayList<String>();
@@ -638,13 +644,13 @@ public class CommunicationsStub {
      * @param description
      * @return success or failure
      */
-    public Long createQuery(String queryName, byte[] queryStructure, String description, boolean isPublic){
+    public long createQuery(String queryName, byte[] queryStructure, String description, boolean isPublic){
         try{
-            return port.createQuery(queryName, isPublic ? null : session.getUserId(), queryStructure, description, session.getSessionId());
+            return port.createQuery(queryName, isPublic ? -1 : session.getUserId(), queryStructure, description, session.getSessionId());
             
         }catch(Exception ex){
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return null;
+            return -1;
         }
     }
 
@@ -656,7 +662,7 @@ public class CommunicationsStub {
     public boolean saveQuery(LocalQuery query){
         try{
             port.saveQuery(query.getId(),query.getName(),
-                    query.isPublic() ? null : session.getUserId(),
+                    query.isPublic() ? -1 : session.getUserId(),
                     query.getStructure(),
                     query.getDescription(),
                     session.getSessionId());
@@ -672,7 +678,7 @@ public class CommunicationsStub {
      * @param queryId query to be deleted
      * @return success or failure
      */
-    public boolean deleteQuery(Long queryId){
+    public boolean deleteQuery(long queryId){
         try{
             port.deleteQuery(queryId, session.getSessionId());
             return true;
@@ -709,7 +715,7 @@ public class CommunicationsStub {
      * @param queryId query to be retrieved
      * @return The query
      */
-    public LocalQuery getQuery(Long queryId){
+    public LocalQuery getQuery(long queryId){
         try{
             return new LocalQueryImpl(port.getQuery(queryId, session.getSessionId()));
         }catch(Exception ex){
@@ -788,7 +794,7 @@ public class CommunicationsStub {
     public boolean setClassMetadataProperties(Long classId, String displayName, String description, byte[] smallIcon, byte[] icon){
         try{
             //port.setClassPlainAttribute(classId, attributeName, attributeValue,this.session.getSessionId());
-            port.setClassMetadataProperties(classId, null, displayName, description, null, null, smallIcon, icon, this.session.getSessionId());
+            port.setClassMetadataProperties(classId, null, displayName, description, false, null, smallIcon, icon, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -836,7 +842,7 @@ public class CommunicationsStub {
      * @param force should it release all relationships to (or from) this object?
      * @return success or failure
      */
-    public boolean deleteListTypeItem(String className, Long oid, boolean force){
+    public boolean deleteListTypeItem(String className, long oid, boolean force){
         try{
             port.deleteListTypeItem(className, oid, force, session.getSessionId());
             return true;
@@ -900,7 +906,7 @@ public class CommunicationsStub {
             Random random = new Random();
             UserInfo newUser = new UserInfo();
             newUser.setUserName("user"+random.nextInt(10000));
-            newUser.setOid(port.createUser(newUser.getUserName(), "kuwaiba", null, null, null, null, null, this.session.getSessionId()));
+            newUser.setOid(port.createUser(newUser.getUserName(), "kuwaiba", null, null, true, null, null, this.session.getSessionId()));
             return new LocalUserObjectImpl(newUser);
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -913,10 +919,10 @@ public class CommunicationsStub {
      * @param update
      * @return success or failure
      */
-    public boolean setUserProperties(Long oid, String userName, String password, String firstName,
+    public boolean setUserProperties(long oid, String userName, String password, String firstName,
             String lastName, List<Long> groups) {
         try{
-            port.setUserProperties(oid, userName, firstName, lastName, password, null, null, groups, this.session.getSessionId());
+            port.setUserProperties(oid, userName, firstName, lastName, password, true, null, groups, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -929,7 +935,7 @@ public class CommunicationsStub {
      * @param update
      * @return success or failure
      */
-    public boolean setGroupProperties(Long oid, String groupName, String description) {
+    public boolean setGroupProperties(long oid, String groupName, String description) {
         try{
             port.setGroupProperties(oid, groupName, description, null, null, this.session.getSessionId());
             return true;
@@ -962,9 +968,12 @@ public class CommunicationsStub {
      * @param oids oids for the users to be deleted
      * @return success or failure
      */
-    public boolean deleteUsers(Long[] oids){
+    public boolean deleteUsers(long[] oids){
         try{
-            port.deleteUsers(Arrays.asList(oids), session.getSessionId());
+            ArrayList<Long> objects = new ArrayList<Long>();
+            for (long oid : oids)
+                objects.add(oid);
+            port.deleteUsers(objects,session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
         }
@@ -977,9 +986,12 @@ public class CommunicationsStub {
      * @param oids oids for the users to be deleted
      * @return success or failure
      */
-    public boolean deleteGroups(Long[] oids){
+    public boolean deleteGroups(long[] oids){
         try{
-            port.deleteGroups(Arrays.asList(oids),session.getSessionId());
+            ArrayList<Long> objects = new ArrayList<Long>();
+            for (long oid : oids)
+                objects.add(oid);
+            port.deleteGroups(objects,session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
         }
@@ -997,8 +1009,8 @@ public class CommunicationsStub {
      * @param connectionClass Class for the corresponding connection to be created
      * @return A local object light representing the new connection
      */
-    public LocalObjectLight createPhysicalConnection(String endpointAClass, Long endpointAId,
-            String endpointBClass, Long endpointBId, String parentClass, Long parentId, String name, String type, String connectionClass) {
+    public LocalObjectLight createPhysicalConnection(String endpointAClass, long endpointAId,
+            String endpointBClass, long endpointBId, String parentClass, long parentId, String name, String type, String connectionClass) {
         try{
             List<StringArray> values = new ArrayList<StringArray>();
             StringArray valueName = new StringArray();
@@ -1010,7 +1022,7 @@ public class CommunicationsStub {
             values.add(valueName);
             values.add(valueType);
 
-            Long myObjectId = port.createPhysicalConnection(endpointAClass, endpointAId,
+            long myObjectId = port.createPhysicalConnection(endpointAClass, endpointAId,
                     endpointBClass, endpointBId, parentClass, parentId, Arrays.asList(new String[]{"name","type"}), values, connectionClass, this.session.getSessionId());
             return new LocalObjectLightImpl(myObjectId, "", connectionClass);
         }catch(Exception ex){
@@ -1024,32 +1036,166 @@ public class CommunicationsStub {
      */
 
     /**
-     * Gets the default view for an object
-     * @param oid object oid
-     * @param string object class name, including the package
-     * @return a view or null, if not such default view is being set
+     * Get a view related to an object, such as the default, rack or equipment views
+     * @param oid object's id
+     * @param objectClass object's class
+     * @param viewId view id
+     * @return The associated view (there should be only one of each type). Null if there's none yet
      */
-    public LocalObjectView getObjectDefaultView(Long oid, String objectClass) {
+    public LocalObjectView getObjectRelatedView(long oid, String objectClass, long viewId){
         try{
-            ViewInfo myView = port.getView(oid, objectClass,LocalObjectView.TYPE_DEFAULT, this.session.getSessionId());
-            if (myView == null) //There's no default view yet
-                return null;
-            return new LocalObjectViewImpl(myView.getStructure(),myView.getBackground(),myView.getType());
+            ViewInfo view = port.getObjectRelatedView(oid, objectClass, viewId, session.getSessionId());
+            return new LocalObjectViewImpl(view.getId(), view.getName(), view.getDescription(), view.getType(), view.getStructure(), view.getBackground());
         }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
+            this.error =  ex.getMessage();
             return null;
         }
     }
 
-    public boolean saveView(Long oid, String objectClass, String viewClass, byte[] background, byte[] viewStructure){
+    /**
+     * Get a view related to an object, such as the default, rack or equipment views
+     * @param oid object's id
+     * @param objectClass object's class
+     * @return The associated view (there should be only one of each type). Null if there's none yet
+     */
+    public List<LocalObjectViewLight> getObjectRelatedViews(long oid, String objectClass){
         try{
-            port.saveView(oid, objectClass, LocalObjectView.TYPE_DEFAULT,viewStructure, background,this.session.getSessionId());
-            return true;
+            List<ViewInfoLight> views = port.getObjectRelatedViews(oid, objectClass, -1, 10, session.getSessionId());
+            List<LocalObjectViewLight> res = new ArrayList<LocalObjectViewLight>();
+            for (ViewInfoLight view : views)
+                res.add(new LocalObjectViewLightImpl(view.getId(), view.getName(), view.getDescription(), view.getType()));
+            return res;
         }catch(Exception ex){
-            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-            return false;
+            this.error =  ex.getMessage();
+            return null;
         }
     }
+
+    /**
+     * Retrieves the list of views not related to a given object like GIS, topological views
+     * @param viewType Type of view to be retrieved. The implementor must defined what are the possible admitted values
+     * @return a list of object with the minimum information about the view (id, class and name)
+     * @throws InvalidArgumentException if the viewType is not a valid value
+     */
+    public List<LocalObjectViewLight> getGeneralViews(int viewType){
+        try{
+            List<ViewInfoLight> views = port.getGeneralViews(viewType, -1, session.getSessionId());
+            List<LocalObjectViewLight> res = new ArrayList<LocalObjectViewLight>();
+            for (ViewInfoLight view : views)
+                res.add(new LocalObjectViewLightImpl(view.getId(), view.getName(), view.getDescription(), view.getType()));
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+
+    /**
+     * Returns a view of those that are not related to a particular object (i.e.: GIS views)
+     * @param viewId view id
+     * @return An object representing the view
+     */
+    public LocalObjectView getGeneralView(long viewId) {
+        try{
+            ViewInfo view = port.getGeneralView(viewId, session.getSessionId());
+            return new LocalObjectViewImpl(view.getId(), view.getName(), view.getDescription(), view.getType(), view.getStructure(), view.getBackground());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+
+    /**
+     * Creates a view for a given object. If there's already a view of the provided view type, it will be overwritten
+     * @param oid object's oid
+     * @param objectClass object class
+     * @param name view name
+     * @param description view description
+     * @param viewType view type (See class ViewObject for details about the supported types)
+     * @param structure XML document with the view structure (see http://sourceforge.net/apps/mediawiki/kuwaiba/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
+     * @param background background image
+     * @return the new object id
+     */
+    public long createObjectRelatedView(long oid, String objectClass, String name, String description, int viewType, byte[] structure, byte[] background){
+        try{
+            return port.createObjectRelatedView(oid, objectClass, name, description, viewType, structure, background, session.getSessionId());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return -1;
+        }
+    }
+
+    /**
+     * Creates a view not related to a particular object
+     * @param view id
+     * @param viewType
+     * @param name view name
+     * @param description view description
+     * @param structure XML document specifying the view structure (nodes, edges, control points)
+     * @param background Background image
+     * @return the new object id
+     */
+    public long createGeneralView(int viewType, String name, String description, byte[] structure, byte[] background){
+        try{
+            return port.createGeneralView(viewType, name, description, structure, background, session.getSessionId());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return -1;
+        }
+    }
+
+    /**
+     * Create a view for a given object. If there's already a view of the provided view type, it will be overwritten
+     * @param oid object's oid
+     * @param objectClass object class
+     * @param view id
+     * @param name view name
+     * @param description view description
+     * @param structure XML document with the view structure (see http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
+     * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
+     */
+    public void updateObjectRelatedView(long oid, String objectClass, long viewId, String name, String description, byte[] structure, byte[] background){
+        try{
+            port.updateObjectRelatedView(oid, objectClass, viewId, name, description, structure, background, session.getSessionId());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+        }
+    }
+
+    /**
+     * Saves a view not related to a particular object. The view type can not be changed
+     * @param view id
+     * @param name view name. Null to leave unchanged
+     * @param description view description. Null to leave unchanged
+     * @param structure XML document specifying the view structure (nodes, edges, control points). Null to leave unchanged
+     * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
+     */
+    public void updateGeneralView(long oid, String name, String description, byte[] structure, byte[] background){
+        try{
+            port.updateGeneralView(oid, name, description, structure, background, session.getSessionId());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+        }
+    }
+
+
+    /**
+     * Deletes a list of general views
+     * @param ids view ids
+     * @throws ObjectNotFoundException if the view can't be found
+     */
+    public void deleteGeneralViews(long[] ids) {
+//         try{
+//            port.deleupdateGeneralView(oid, name, description, structure, background, session.getSessionId());
+//        }catch(Exception ex){
+//            this.error =  ex.getMessage();
+//        }
+    }
+
+    /**
+     * Services
+     */
+
 
     /**
      * Relates a resource to a service
@@ -1059,7 +1205,7 @@ public class CommunicationsStub {
      * @param serviceId
      * @return
      */
-    public boolean relateResourceToService(String resourceClassName, Long resourceId, String serviceClassName, Long serviceId){
+    public boolean relateResourceToService(String resourceClassName, long resourceId, String serviceClassName, long serviceId){
 //        try{
 //            return port.relateResourceToService(resourceClassName, resourceId,
 //                    serviceClassName,serviceId,this.session.getSessionId());

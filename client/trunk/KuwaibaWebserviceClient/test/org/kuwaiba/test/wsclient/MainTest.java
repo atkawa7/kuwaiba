@@ -93,7 +93,7 @@ public class MainTest {
             entry.getItem().add(className + " " + i);
             values.add(entry);
             try{
-                long newObjectId = port.createObject(className, parentClass, parentId, attributes, values, null, session.getSessionId());
+                long newObjectId = port.createObject(className, parentClass, parentId, attributes, values, 0, session.getSessionId());
                 objectCount++;
                 if (c.containmentHierarchy.get(className) != null){
                     for (String anotherClass : c.containmentHierarchy.get(className)){

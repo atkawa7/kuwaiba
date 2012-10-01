@@ -24,19 +24,7 @@ import javax.xml.stream.XMLStreamException;
  * Interface representing an object view
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface LocalObjectView {
-        /**
-     * Id for a default view
-     */
-    public static final int TYPE_DEFAULT = 0;
-    /**
-     * Id for a view used for racks
-     */
-    public static final int TYPE_RACK = 1;
-    /**
-     * Id for a view used in equipment with slots and boards
-     */
-    public static final int TYPE_EQUIPMENT = 2;
+public interface LocalObjectView extends LocalObjectViewLight {
     
     public List<LocalEdge> getEdges();
 
@@ -45,8 +33,6 @@ public interface LocalObjectView {
     public List<LocalNode> getNodes();
 
     public Image getBackground();
-
-    public int getViewType();
 
     public void parseXML(byte[] structure) throws XMLStreamException;
 

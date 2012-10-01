@@ -41,10 +41,10 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This class represents the elements inside a view as recorded in the database
- * @author Charles Edward Bedon Cortazar <charles.bedon@@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=LocalObjectView.class)
-public class LocalObjectViewImpl  implements LocalObjectView {
+public class LocalObjectViewImpl  extends LocalObjectViewLightImpl implements LocalObjectView {
     /**
      * Every possible node in the view
      */
@@ -63,25 +63,23 @@ public class LocalObjectViewImpl  implements LocalObjectView {
      */
     private Image background;
     /**
-     * Type of view 
-     */
-    private int viewType;
-    /**
      * Mark the current view as outdated
      */
     private boolean dirty = false;
 
-    public LocalObjectViewImpl() {    
+    public LocalObjectViewImpl() {
         nodes = new ArrayList<LocalNode>();
         edges = new ArrayList<LocalEdge>();
         labels = new ArrayList<LocalLabel>();
     }
 
-
-    public LocalObjectViewImpl(byte[] viewStructure, byte[] _background, int viewType) {
+    public LocalObjectViewImpl(long id, String name, String description, int viewType, byte[] viewStructure, byte[] _background) {
         this();
+        this.setId(id);
+        this.setName(name);
+        this.setDescription(description);
         this.background = Utils.getImageFromByteArray(_background);
-        this.viewType = viewType;
+        this.setViewType(viewType);
         
         if (viewStructure != null){
             /* Comment this out for debugging purposes
@@ -119,10 +117,6 @@ public class LocalObjectViewImpl  implements LocalObjectView {
 
     public Image getBackground() {
         return background;
-    }
-
-    public int getViewType() {
-        return viewType;
     }
 
     /**
