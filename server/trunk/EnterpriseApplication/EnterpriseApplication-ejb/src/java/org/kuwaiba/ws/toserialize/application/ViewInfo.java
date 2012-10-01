@@ -16,46 +16,24 @@
 
 package org.kuwaiba.ws.toserialize.application;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import org.kuwaiba.apis.persistence.application.View;
-import org.kuwaiba.util.Constants;
+import org.kuwaiba.apis.persistence.application.ViewObject;
 
 /**
- * This is a wrapper class for the entity class View (see Persistence Abstraction Layer API docs for details). It's the object returned
+ * This is a wrapper class for the entity class ViewObject (see Persistence Abstraction Layer API docs for details). It's the object returned
  * when a view is requested
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ViewInfo{
+public class ViewInfo extends ViewInfoLight {
     
-    private Long id;
-    private int type;
     private byte[] background;
     private byte[] structure;
 
-    /**
-     * Required by the serializer.
-     */
-    public ViewInfo(){}
-
-    public ViewInfo(View myView) {
-        this.id = myView.getId();
-        this.type = myView.getViewType();
-        this.structure = myView.getStructure();       
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
+    public ViewInfo(ViewObject myView) {
+        super(myView);
+        this.structure = myView.getStructure();
     }
 
     public byte[] getBackground() {
@@ -64,14 +42,6 @@ public class ViewInfo{
 
     public void setBackground(byte[] background) {
         this.background = background;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public byte[] getStructure() {

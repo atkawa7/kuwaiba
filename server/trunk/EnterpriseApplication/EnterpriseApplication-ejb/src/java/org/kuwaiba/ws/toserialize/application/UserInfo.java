@@ -51,7 +51,7 @@ public class UserInfo {
    /**
     * Indicates if this account is enabled
     */
-    protected Boolean enabled;
+    protected boolean enabled;
 
     private UserGroupInfoLight[] groups;
 
@@ -72,11 +72,9 @@ public class UserInfo {
             this.creationDate = user.getCreationDate();
         if (user.getPrivileges() == null)
             this.privileges = new int[0];
-        else{
-            this.privileges = new int[user.getPrivileges().size()];
-            for (int i = 0; i <user.getPrivileges().size(); i++)
-                this.privileges[i] = user.getPrivileges().get(i);
-        }
+        else
+            this.privileges = user.getPrivileges();
+
         List<GroupProfile> entityGroups = user.getGroups();
         if (entityGroups == null)
             this.groups = null;

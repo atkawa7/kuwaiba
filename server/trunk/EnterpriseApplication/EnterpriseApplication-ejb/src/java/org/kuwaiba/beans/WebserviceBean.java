@@ -16,11 +16,7 @@
 
 package org.kuwaiba.beans;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -36,7 +32,8 @@ import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
-import org.kuwaiba.apis.persistence.application.View;
+import org.kuwaiba.apis.persistence.application.ViewObject;
+import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
@@ -49,7 +46,6 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
-import org.kuwaiba.util.Constants;
 import org.kuwaiba.util.Util;
 import org.kuwaiba.util.bre.TempBusinessRulesEngine;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
@@ -67,6 +63,7 @@ import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
 import org.kuwaiba.ws.toserialize.application.ResultRecord;
+import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
 
 /**
  * Session bean to give primary support to the web service calls
@@ -106,7 +103,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
     @Override
-    public Long createClass(ClassInfo classDefinition)
+    public long createClass(ClassInfo classDefinition)
             throws ServerSideException
     {
         if (mem == null)
@@ -143,8 +140,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             mem.deleteClass(className);
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
@@ -153,13 +149,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void deleteClass(Long classId)
+    public void deleteClass(long classId)
             throws ServerSideException
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             mem.deleteClass(classId);
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
@@ -173,8 +168,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             ClassMetadata myClass = mem.getClass(className);
             List<Validator> validators = new ArrayList<Validator>();
             for (String mapping : bre.getSubclassOfValidators().keySet()){
@@ -189,13 +183,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public ClassInfo getMetadataForClass(Long classId)
+    public ClassInfo getMetadataForClass(long classId)
             throws ServerSideException
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             ClassMetadata myClass = mem.getClass(classId);
             List<Validator> validators = new ArrayList<Validator>();
             for (String mapping : bre.getSubclassOfValidators().keySet()){
@@ -211,13 +204,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public List<ClassInfoLight> getLightMetadata(Boolean includeListTypes)
+    public List<ClassInfoLight> getLightMetadata(boolean includeListTypes)
             throws ServerSideException
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
             List<ClassMetadataLight> classLightMetadata = mem.getLightMetadata(includeListTypes);
 
@@ -237,13 +229,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public List<ClassInfo> getMetadata(Boolean includeListTypes)
+    public List<ClassInfo> getMetadata(boolean includeListTypes)
             throws ServerSideException
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             List<ClassInfo> cml = new ArrayList<ClassInfo>();
             List<ClassMetadata> classMetadataList = mem.getMetadata(includeListTypes);
 
@@ -268,8 +259,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             mem.moveClass(classToMoveName, targetParentName);
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
@@ -278,13 +268,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void moveClass(Long classToMoveId, Long targetParentId)
+    public void moveClass(long classToMoveId, long targetParentId)
             throws ServerSideException
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             mem.moveClass(classToMoveId, targetParentId);
 
         } catch (Exception ex) {
@@ -300,8 +289,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             AttributeMetadata atm = new AttributeMetadata();
 
             atm.setName(attributeDefinition.getName());
@@ -322,13 +310,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void addAttribute(Long classId, AttributeInfo attributeDefinition)
+    public void addAttribute(long classId, AttributeInfo attributeDefinition)
             throws ServerSideException
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             AttributeMetadata atm = new AttributeMetadata();
 
             atm.setName(attributeDefinition.getName());
@@ -354,8 +341,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             ClassMetadata cm = new ClassMetadata();
 
             cm.setId(newClassDefinition.getId());
@@ -386,8 +372,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             AttributeMetadata atrbMtdt = mem.getAttribute(className, attributeName);
 
             AttributeInfo atrbInfo = new AttributeInfo(atrbMtdt.getName(),
@@ -405,13 +390,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public AttributeInfo getAttribute(Long classId, String attributeName)
+    public AttributeInfo getAttribute(long classId, String attributeName)
             throws ServerSideException
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             AttributeMetadata atrbMtdt = mem.getAttribute(classId, attributeName);
 
             AttributeInfo atrbInfo = new AttributeInfo(atrbMtdt.getName(),
@@ -430,13 +414,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void changeAttributeDefinition(Long ClassId, AttributeInfo newAttributeDefinition)
+    public void changeAttributeDefinition(long ClassId, AttributeInfo newAttributeDefinition)
             throws ServerSideException
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             AttributeMetadata attrMtdt = new AttributeMetadata();
 
             attrMtdt.setName(newAttributeDefinition.getName());
@@ -463,8 +446,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             mem.deleteAttribute(className, attributeName);
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
@@ -473,13 +455,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void deleteAttribute(Long classId, String attributeName)
+    public void deleteAttribute(long classId, String attributeName)
             throws ServerSideException
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             mem.deleteAttribute(classId, attributeName);
 
         } catch (Exception ex) {
@@ -489,13 +470,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public Long createCategory(CategoryInfo categoryDefinition)
+    public long createCategory(CategoryInfo categoryDefinition)
             throws ServerSideException
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             CategoryMetadata ctgrMtdt = new CategoryMetadata();
 
             ctgrMtdt.setName(categoryDefinition.getName());
@@ -516,8 +496,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             CategoryMetadata ctgrMtdt = new CategoryMetadata();
             ctgrMtdt = mem.getCategory(categoryName);
 
@@ -538,8 +517,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             CategoryMetadata ctgrMtdt = new CategoryMetadata();
             ctgrMtdt = mem.getCategory(categoryId);
 
@@ -561,7 +539,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     public void changeCategoryDefinition(CategoryInfo categoryDefinition)
             throws ServerSideException
     {
-        try{
+        try {
          if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
 
@@ -585,8 +563,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
             List<ClassMetadataLight> classMetadataList = mem.getPossibleChildren(parentClassName);
 
@@ -607,8 +584,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     public List<ClassInfoLight> getPossibleChildrenNoRecursive(String parentClassName) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
             List<ClassMetadataLight> classMetadataList = mem.getPossibleChildrenNoRecursive(parentClassName);
 
@@ -628,7 +604,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     public List<ClassInfoLight> getUpstreamContainmentHierarchy(String className, boolean recursive) throws ServerSideException{
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try{
+        try {
             List<ClassInfoLight> res = new ArrayList<ClassInfoLight>();
             for (ClassMetadataLight cil : mem.getUpstreamContainmentHierarchy(className, recursive))
                 res.add(new ClassInfoLight(cil, new Validator[]{}));
@@ -642,11 +618,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void addPossibleChildren(Long parentClassId, Long[] possibleChildren) throws ServerSideException {
+    public void addPossibleChildren(long parentClassId, long[] possibleChildren) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             mem.addPossibleChildren(parentClassId, possibleChildren);
 
         } catch (Exception ex) {
@@ -659,8 +634,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     public void addPossibleChildren(String parentClassName, String[] possibleChildren) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             mem.addPossibleChildren(parentClassName, possibleChildren);
 
         } catch (Exception ex) {
@@ -670,11 +644,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws ServerSideException {
+    public void removePossibleChildren(long parentClassId, long[] childrenToBeRemoved) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             mem.removePossibleChildren(parentClassId, childrenToBeRemoved);
 
         } catch (Exception ex) {
@@ -684,11 +657,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public Long createListTypeItem(String className, String name, String displayName) throws ServerSideException{
+    public long createListTypeItem(String className, String name, String displayName) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             return aem.createListTypeItem(className, name, displayName);
 
         } catch (Exception ex) {
@@ -698,11 +670,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void deleteListTypeItem(String className, Long oid, boolean realeaseRelationships) throws ServerSideException {
+    public void deleteListTypeItem(String className, long oid, boolean realeaseRelationships) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             aem.deleteListTypeItem(className, oid, realeaseRelationships);
 
         } catch (Exception ex) {
@@ -715,8 +686,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     public RemoteObjectLight[] getListTypeItems(String className) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try
-        {
+        try {
             List<RemoteBusinessObjectLight> listTypeItems = aem.getListTypeItems(className);
             RemoteObjectLight[] res = new RemoteObjectLight[listTypeItems.size()];
 
@@ -774,7 +744,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
     @Override
-    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId, int maxResults) throws ServerSideException {
+    public RemoteObjectLight[] getObjectChildren(long oid, long objectClassId, int maxResults) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
@@ -786,7 +756,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public RemoteObjectLight[] getObjectChildren(String className, Long oid, int maxResults)
+    public RemoteObjectLight[] getObjectChildren(String className, long oid, int maxResults)
             throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
@@ -799,7 +769,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass, String classToFilter, int maxResults)
+    public RemoteObject[] getChildrenOfClass(long parentOid, String parentClass, String classToFilter, int maxResults)
             throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
@@ -812,7 +782,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public RemoteObjectLight[] getChildrenOfClassLight(Long parentOid, String parentClass, String classToFilter, int maxResults)
+    public RemoteObjectLight[] getChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults)
             throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
@@ -825,7 +795,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public RemoteObject getObjectInfo(String objectClass, Long oid) throws ServerSideException{
+    public RemoteObject getObjectInfo(String objectClass, long oid) throws ServerSideException{
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
@@ -838,7 +808,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid) throws ServerSideException{
+    public RemoteObjectLight getObjectInfoLight(String objectClass, long oid) throws ServerSideException{
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
@@ -850,7 +820,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public String[] getSpecialAttribute(String objectClass, Long objectId, String attributeName) throws ServerSideException{
+    public String[] getSpecialAttribute(String objectClass, long objectId, String attributeName) throws ServerSideException{
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
@@ -862,8 +832,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public Long createObject(String className, String parentClassName, Long parentOid, String[] attributeNames,
-            String[][] attributeValues, Long template) throws ServerSideException{
+    public long createObject(String className, String parentClassName, long parentOid, String[] attributeNames,
+            String[][] attributeValues, long template) throws ServerSideException{
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         if (attributeNames.length != attributeValues.length)
@@ -882,17 +852,16 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void deleteObjects(String[] classNames, Long[] oids, boolean releaseRelationships) throws ServerSideException{
+    public void deleteObjects(String[] classNames, long[] oids, boolean releaseRelationships) throws ServerSideException{
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         if (classNames.length != oids.length)
             throw new ServerSideException(Level.SEVERE, "Array sizes do not match");
-        try{
-            HashMap<String,List<Long>> objects = new HashMap<String, List<Long>>();
+        try {
+            HashMap<String,long[]> objects = new HashMap<String, long[]>();
             for (int i = 0; i< classNames.length;i++){
                 if (objects.get(classNames[i]) == null)
-                    objects.put(classNames[i], new ArrayList<Long>());
-                objects.get(classNames[i]).add(oids[i]);
+                    objects.put(classNames[i], new long[]{oids[i]});
             }
 
             bem.deleteObjects(objects, releaseRelationships);
@@ -903,17 +872,16 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void moveObjects(String targetClass, Long targetOid, String[] objectClasses, Long[] objectOids) throws ServerSideException {
+    public void moveObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         if (objectClasses.length != objectOids.length)
             throw new ServerSideException(Level.SEVERE, "Array sizes do not match");
-        try{
-            HashMap<String,List<Long>> objects = new HashMap<String, List<Long>>();
+        try {
+            HashMap<String,long[]> objects = new HashMap<String, long[]>();
             for (int i = 0; i< objectClasses.length;i++){
                 if (objects.get(objectClasses[i]) == null)
-                    objects.put(objectClasses[i], new ArrayList<Long>());
-                objects.get(objectClasses[i]).add(objectOids[i]);
+                    objects.put(objectClasses[i], new long[]{objectOids[i]});
             }
 
             bem.moveObjects(targetClass, targetOid, objects);
@@ -924,20 +892,19 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public Long[] copyObjects(String targetClass, Long targetOid, String[] objectClasses, Long[] objectOids, boolean recursive) throws ServerSideException {
+    public long[] copyObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, boolean recursive) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         if (objectClasses.length != objectOids.length)
             throw new ServerSideException(Level.SEVERE, "Array sizes do not match");
-        try{
-            HashMap<String,List<Long>> objects = new HashMap<String, List<Long>>();
+        try {
+            HashMap<String,long[]> objects = new HashMap<String, long[]>();
             for (int i = 0; i< objectClasses.length;i++){
                 if (objects.get(objectClasses[i]) == null)
-                    objects.put(objectClasses[i], new ArrayList<Long>());
-                objects.get(objectClasses[i]).add(objectOids[i]);
+                    objects.put(objectClasses[i], new long[]{objectOids[i]});
             }
 
-            return bem.copyObjects(targetClass, targetOid, objects, recursive).toArray(new Long[0]);
+            return bem.copyObjects(targetClass, targetOid, objects, recursive);
         }catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -945,7 +912,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void updateObject(String className, Long oid, String[] attributeNames, String[][] attributeValues) throws ServerSideException{
+    public void updateObject(String className, long oid, String[] attributeNames, String[][] attributeValues) throws ServerSideException{
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         if (attributeNames.length != attributeValues.length)
@@ -985,8 +952,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
      */
     //Physical connections
     @Override
-    public Long createPhysicalConnection(String aObjectClass, Long aObjectId,
-            String bObjectClass, Long bObjectId, String parentClass, Long parentId,
+    public long createPhysicalConnection(String aObjectClass, long aObjectId,
+            String bObjectClass, long bObjectId, String parentClass, long parentId,
             String[] attributeNames, String[][] attributeValues, String connectionClass) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
@@ -998,7 +965,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         for (int i = 0; i < attributeValues.length; i++)
             attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
 
-        Long newConnectionId = null;
+        long newConnectionId = -1;
         try {
             if (!mem.isSubClass("GenericPhysicalConnection", connectionClass))
                 throw new ServerSideException(Level.SEVERE, "Class %1s is not subclass of GenericPhysicalConnection");
@@ -1024,15 +991,15 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     throw new ServerSideException(Level.INFO, Util.formatString("The selected endpoint (%1s, %2s) is already connected", bObjectClass, bObjectId));
             }
 
-            newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, null);
+            newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, 0);
             bem.createSpecialRelationship(aObjectClass, aObjectId, connectionClass, newConnectionId, aSideString);
             bem.createSpecialRelationship(bObjectClass, bObjectId, connectionClass, newConnectionId, bSideString);
             return newConnectionId;
         } catch (Exception ex) {
             //If the new connection was successfully created, but there's a problem creating the relationships,
             //delete the connection and throw an exception
-            if (newConnectionId != null)
-                deleteObjects(new String[]{connectionClass}, new Long[]{newConnectionId}, true);
+            if (newConnectionId != -1)
+                deleteObjects(new String[]{connectionClass}, new long[]{newConnectionId}, true);
 
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -1040,7 +1007,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void deletePhysicalConnection(String objectClass, Long objectId) throws ServerSideException {
+    public void deletePhysicalConnection(String objectClass, long objectId) throws ServerSideException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -1091,13 +1058,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void setUserProperties(Long oid, String userName, String password, String firstName,
-            String lastName, Boolean enabled, Integer[] privileges, Long[] groups) throws ServerSideException
+    public void setUserProperties(long oid, String userName, String password, String firstName, String lastName, boolean enabled, int[] privileges, long[] groups) throws ServerSideException
     {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            aem.setUserProperties(oid, userName, password, firstName, lastName, enabled, Arrays.asList(privileges), Arrays.asList(groups));
+            aem.setUserProperties(oid, userName, password, firstName, lastName, enabled, privileges, groups);
         }catch (Exception ex){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -1107,11 +1073,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
 
     @Override
-    public Long createGroup(String groupName, String description, Integer[] privileges, Long[] users) throws ServerSideException {
+    public long createGroup(String groupName, String description, int[] privileges, long[] users) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            return aem.createGroup(groupName, description, Arrays.asList(privileges), Arrays.asList(users));
+            return aem.createGroup(groupName, description, privileges, users);
         }catch (Exception ex){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -1119,11 +1085,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public Long createUser(String userName, String password, String firstName, String lastName, Boolean enabled, Integer[] privileges, Long[] groups) throws ServerSideException {
+    public long createUser(String userName, String password, String firstName, String lastName, boolean enabled, int[] privileges, long[] groups) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            return aem.createUser(userName, password, firstName, lastName, enabled,  Arrays.asList(privileges), Arrays.asList(groups));
+            return aem.createUser(userName, password, firstName, lastName, enabled,  privileges, groups);
         }catch (Exception ex){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -1131,11 +1097,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void setGroupProperties(Long oid, String groupName, String description, Integer[] privileges, Long[] users) throws ServerSideException {
+    public void setGroupProperties(long oid, String groupName, String description, int[] privileges, long[] users) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            aem.setGroupProperties(oid, groupName, description, Arrays.asList(privileges), Arrays.asList(users));
+            aem.setGroupProperties(oid, groupName, description, privileges, users);
         }catch (Exception ex){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -1143,11 +1109,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void deleteUsers(Long[] oids) throws ServerSideException {
+    public void deleteUsers(long[] oids) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            aem.deleteUsers(Arrays.asList(oids));
+            aem.deleteUsers(oids);
         }catch (Exception ex){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -1155,11 +1121,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void deleteGroups(Long[] oids) throws ServerSideException {
+    public void deleteGroups(long[] oids) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            aem.deleteGroups(Arrays.asList(oids));
+            aem.deleteGroups(oids);
         }catch (Exception ex){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -1167,47 +1133,64 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public ViewInfo getView(Long oid, String objectClass, Integer viewType) throws ServerSideException {
+    public long createObjectRelatedView(long objectId, String objectClass, String name, String description, int viewType, byte[] structure, byte[] background) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            View myView =  aem.getView(oid, objectClass, viewType);
+            return aem.createObjectRelatedView(objectId, objectClass, name, description, viewType, structure, background);
+        }catch (Exception ex){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public long createGeneralView(int viewType, String name, String description, byte[] structure, byte[] background) throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            return aem.createGeneralView(viewType, name, description, structure, background);
+        }catch (Exception ex){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public ViewInfo getObjectRelatedView(long oid, String objectClass, long viewId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            ViewObject myView =  aem.getObjectRelatedView(oid, objectClass, viewId);
             if (myView == null)
                 return null;
             ViewInfo res = new ViewInfo(myView);
-            byte[] bytes = null;
-            if (myView.getBackgroundPath() != null){
-                try {
-                    File f = new File(Constants.BASE_PATH_FOR_IMAGES + myView.getBackgroundPath());
-                    InputStream is = new FileInputStream(f);
-                    long length = f.length();
-
-                    if (length < Integer.MAX_VALUE) { //checks if the file is too big
-                        bytes = new byte[(int)length];
-                        // Read in the bytes
-                        int offset = 0;
-                        int numRead = 0;
-                        while (offset < bytes.length
-                               && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
-                            offset += numRead;
-                        }
-
-                        // Ensure all the bytes have been read in
-                        if (offset < bytes.length) {
-                            throw new IOException("Could not completely read file "+f.getName());
-                        }
-                    }
-                    is.close();
-                    res.setBackground(bytes);
-                } catch (IOException e) {
-                    Logger.getLogger(WebserviceBean.class.getName()).
-                            log(Level.SEVERE, Util.formatString("Background image for view type %1s in object with id %2s can not be found", viewType,oid));
-                }
-            }
+            res.setBackground(myView.getBackground());
             return res;
         }catch (Exception ex){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public ViewInfoLight[] getObjectRelatedViews(long oid, String objectClass, int viewType, int limit) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public ViewInfoLight[] getGeneralViews(int viewType, int limit) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            List<ViewObjectLight> views = aem.getGeneralViews(viewType, limit);
+            ViewInfoLight[] res = new ViewInfoLight[views.size()];
+            for (int i = 0; i < views.size(); i++)
+                res[i] = new ViewInfoLight(views.get(i));
+           return res;
+        }catch(Exception e){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, e.getMessage());
+            throw new ServerSideException(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -1221,34 +1204,35 @@ public class WebserviceBean implements WebserviceBeanRemote {
      * @throws ServerSideException
      */
     @Override
-    public void saveView(Long oid, String objectClass, int viewType, byte[] structure, byte[] background) throws ServerSideException {
+    public void updateObjectRelatedView(long objectOid, String objectClass, long viewId, String viewName, String viewDescription, int viewType, byte[] structure, byte[] background) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        String backgroundFileName = null;
         try{
-            if (background != null){
-                if (background.length != 0){
-                    File imgDir = new File(Constants.BASE_PATH_FOR_IMAGES);
-                    imgDir.mkdirs();
-                    FileOutputStream fos = new FileOutputStream(Constants.BASE_PATH_FOR_IMAGES + "view-" + oid + "-"+ viewType); //NOI18N
-                    fos.write(background);
-                    fos.close();
-                }
-                backgroundFileName = "view-" + oid + "-"+ viewType;
-            }
-            aem.saveView(oid, objectClass, viewType, structure, backgroundFileName);
+            aem.updateObjectRelatedView(objectOid, objectClass, viewId, viewName, viewDescription, viewType, structure, background);
         }catch(InventoryException ie){
-            new File(Constants.BASE_PATH_FOR_IMAGES + backgroundFileName).delete();
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ie.getMessage());
         }catch(IOException ioe){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ioe.getMessage());
             throw new ServerSideException(Level.SEVERE, ioe.getMessage());
         }
-
     }
 
     @Override
-    public Long createQuery(String queryName, Long ownerOid, byte[] queryStructure,
+    public void updateGeneralView(long objectOid, String objectClass, long viewId, String viewName, String viewDescription, int viewType, byte[] structure, byte[] background) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            aem.updateGeneralView(viewId, viewName, viewDescription, structure, background);
+        }catch(InventoryException ie){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ie.getMessage());
+        }catch(IOException ioe){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ioe.getMessage());
+            throw new ServerSideException(Level.SEVERE, ioe.getMessage());
+        }
+    }
+
+    @Override
+    public long createQuery(String queryName, long ownerOid, byte[] queryStructure,
             String description) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
@@ -1261,8 +1245,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void saveQuery(Long queryOid, String queryName,
-            Long ownerOid, byte[] queryStructure, String description) throws ServerSideException{
+    public void saveQuery(long queryOid, String queryName,
+            long ownerOid, byte[] queryStructure, String description) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
@@ -1275,7 +1259,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void deleteQuery(Long queryOid) throws ServerSideException {
+    public void deleteQuery(long queryOid) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
@@ -1309,7 +1293,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public RemoteQuery getQuery(Long queryOid) throws ServerSideException {
+    public RemoteQuery getQuery(long queryOid) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{

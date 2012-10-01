@@ -18,6 +18,7 @@ package org.kuwaiba.beans;
 
 import java.util.List;
 import javax.ejb.Remote;
+import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
@@ -28,6 +29,7 @@ import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.UserGroupInfo;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfo;
+import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
@@ -65,7 +67,7 @@ public interface WebserviceBeanRemote {
      * @return
      * @throws ServerSideException
      */
-    public Long createClass(ClassInfo classDefinition) throws ServerSideException;
+    public long createClass(ClassInfo classDefinition) throws ServerSideException;
 
     /**
      * Changes a classmetadata definition
@@ -89,7 +91,7 @@ public interface WebserviceBeanRemote {
      * Deletes a classmetadata, its attributes and category relationships
      * @param classId
      */
-    public void deleteClass(Long classId) throws ServerSideException;
+    public void deleteClass(long classId) throws ServerSideException;
 
     /**
      * Retrieves the simplified list of classes. This list won't include either
@@ -99,7 +101,7 @@ public interface WebserviceBeanRemote {
      * @return the list of classes
      * @throws Exception EntityManagerNotAvailableException or something unexpected
      */
-    public List<ClassInfoLight> getLightMetadata(Boolean includeListTypes) throws ServerSideException;
+    public List<ClassInfoLight> getLightMetadata(boolean includeListTypes) throws ServerSideException;
 
     /**
      * Retrieves all the class metadata except for classes marked as dummy
@@ -107,7 +109,7 @@ public interface WebserviceBeanRemote {
      * the subclasses of GenericObjectList
      * @return An array of classes
      */
-    public List<ClassInfo> getMetadata(Boolean includeListTypes) throws ServerSideException;
+    public List<ClassInfo> getMetadata(boolean includeListTypes) throws ServerSideException;
 
     /**
      * Gets Metadata For Class id its attributes and Category
@@ -123,7 +125,7 @@ public interface WebserviceBeanRemote {
      * @return
      * @throws Exception
      */
-    public ClassInfo getMetadataForClass(Long classId) throws ServerSideException;
+    public ClassInfo getMetadataForClass(long classId) throws ServerSideException;
 
     /**
      * Moves a class from one parentClass to an other parentClass
@@ -138,7 +140,7 @@ public interface WebserviceBeanRemote {
      * @param classToMoveId
      * @param targetParentClassId
      */
-    public void moveClass(Long classToMoveId, Long targetParentId) throws ServerSideException;
+    public void moveClass(long classToMoveId, long targetParentId) throws ServerSideException;
 
     /**
      * Adds an attribute to the class
@@ -152,7 +154,7 @@ public interface WebserviceBeanRemote {
      * @param classId
      * @param attributeDefinition
      */
-    public void addAttribute(Long classId, AttributeInfo attributeDefinition) throws ServerSideException;
+    public void addAttribute(long classId, AttributeInfo attributeDefinition) throws ServerSideException;
 
     /**
      * Gets an attribute belonging to a class
@@ -168,14 +170,14 @@ public interface WebserviceBeanRemote {
      * @param attributeName
      * @return AttributeMetada, null if there is no attribute with such name
      */
-    public AttributeInfo getAttribute(Long classId, String attributeName) throws ServerSideException;
+    public AttributeInfo getAttribute(long classId, String attributeName) throws ServerSideException;
 
     /**
      * Changes an attribute definition belonging to a classMetadata
      * @param ClassId
      * @param newAttributeDefinition
      */
-    public void changeAttributeDefinition(Long ClassId, AttributeInfo newAttributeDefinition) throws ServerSideException;
+    public void changeAttributeDefinition(long ClassId, AttributeInfo newAttributeDefinition) throws ServerSideException;
 
     /**
      * Deletes an attribute belonging to a classMetadata
@@ -189,14 +191,14 @@ public interface WebserviceBeanRemote {
      * @param classId
      * @param attributeName
      */
-    public void deleteAttribute(Long classId,String attributeName) throws ServerSideException;
+    public void deleteAttribute(long classId,String attributeName) throws ServerSideException;
 
     /**
      * Creates a new category
      * @param categoryDefinition
      * @return CategoryId
      */
-    public Long createCategory(CategoryInfo categoryDefinition) throws ServerSideException;
+    public long createCategory(CategoryInfo categoryDefinition) throws ServerSideException;
 
     /**
      * Gets a Category with it's name
@@ -249,7 +251,7 @@ public interface WebserviceBeanRemote {
      * @param parentClassId Id of the class whose instances can contain the instances of the next param
      * @param _possibleChildren ids of the candidates to be contained
      */
-    public void addPossibleChildren(Long parentClassId, Long[] possibleChildren) throws ServerSideException;
+    public void addPossibleChildren(long parentClassId, long[] possibleChildren) throws ServerSideException;
     /**
      * Adds to a given class a list of possible children classes whose instances can be contained using the class name to find the parent class
      * @param parentClassName parent class name
@@ -265,48 +267,48 @@ public interface WebserviceBeanRemote {
      * @param parentClassId Id of the class whos instances can contain the instances of the next param
      * @param childrenTBeRemoved ids of the candidates to be deleted
      */
-    public void removePossibleChildren(Long parentClassId, Long[] childrenToBeRemoved) throws ServerSideException;
+    public void removePossibleChildren(long parentClassId, long[] childrenToBeRemoved) throws ServerSideException;
 
 
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
-    public RemoteObjectLight[] getObjectChildren(Long oid, Long objectClassId, int maxResults) throws ServerSideException;
-    public RemoteObjectLight[] getObjectChildren(String objectClassName, Long oid, int maxResults) throws ServerSideException;
+    public RemoteObjectLight[] getObjectChildren(long oid, long objectClassId, int maxResults) throws ServerSideException;
+    public RemoteObjectLight[] getObjectChildren(String objectClassName, long oid, int maxResults) throws ServerSideException;
 
-    public RemoteObject[] getChildrenOfClass(Long parentOid, String parentClass,String classToFilter, int maxResults) throws ServerSideException;
-    public RemoteObjectLight[] getChildrenOfClassLight(Long parentOid, String parentClass,String classToFilter, int maxResults) throws ServerSideException;
+    public RemoteObject[] getChildrenOfClass(long parentOid, String parentClass,String classToFilter, int maxResults) throws ServerSideException;
+    public RemoteObjectLight[] getChildrenOfClassLight(long parentOid, String parentClass,String classToFilter, int maxResults) throws ServerSideException;
 
-    public RemoteObject getObjectInfo(String objectClass, Long oid) throws ServerSideException;
+    public RemoteObject getObjectInfo(String objectClass, long oid) throws ServerSideException;
 
-    public RemoteObjectLight getObjectInfoLight(String objectClass, Long oid) throws ServerSideException;
+    public RemoteObjectLight getObjectInfoLight(String objectClass, long oid) throws ServerSideException;
 
-    public String[] getSpecialAttribute(String objectClass, Long objectId, String attributeName) throws ServerSideException;
+    public String[] getSpecialAttribute(String objectClass, long objectId, String attributeName) throws ServerSideException;
 
-    public void updateObject(String className, Long oid, String[] attributeNames, String[][] attributeValues) throws ServerSideException;
+    public void updateObject(String className, long oid, String[] attributeNames, String[][] attributeValues) throws ServerSideException;
 
-    public Long createObject(String className, String parentClassName, Long parentOid, String[] attributeNames, String[][] attributeValues, Long templateId) throws ServerSideException;
+    public long createObject(String className, String parentClassName, long parentOid, String[] attributeNames, String[][] attributeValues, long templateId) throws ServerSideException;
 
-    public Long createListTypeItem(String className, String name, String displayName) throws ServerSideException;
+    public long createListTypeItem(String className, String name, String displayName) throws ServerSideException;
 
-    public void deleteListTypeItem(String className, Long oid, boolean releaseRelationships) throws ServerSideException;
+    public void deleteListTypeItem(String className, long oid, boolean releaseRelationships) throws ServerSideException;
 
     public RemoteObjectLight[] getListTypeItems(String className) throws ServerSideException;
 
     public ClassInfoLight[] getInstanceableListTypes() throws ServerSideException;
 
-    public void deleteObjects(String classNames[], Long[] oids, boolean releaseRelationships) throws ServerSideException;
+    public void deleteObjects(String classNames[], long[] oids, boolean releaseRelationships) throws ServerSideException;
 
-    public void moveObjects(String targetClass, Long targetOid, String[] objectClasses, Long[] objectOids) throws ServerSideException;
+    public void moveObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids) throws ServerSideException;
 
-    public Long[] copyObjects(String targetClass, Long targetOid, String[] templateClasses, Long[] templateOids, boolean recursive) throws ServerSideException;
+    public long[] copyObjects(String targetClass, long targetOid, String[] templateClasses, long[] templateOids, boolean recursive) throws ServerSideException;
 
     /**
      * Models
      */
     //Physical connections
-    public Long createPhysicalConnection(String aObjectClass, Long aObjectId, String bObjectClass, Long bObjectId, String parentClass, Long parentId, String[] attributeNames, String[][] attributeValues, String connectionClass) throws ServerSideException;
-    public void deletePhysicalConnection(String objectClass, Long objectId) throws ServerSideException;
+    public long createPhysicalConnection(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String parentClass, long parentId, String[] attributeNames, String[][] attributeValues, String connectionClass) throws ServerSideException;
+    public void deletePhysicalConnection(String objectClass, long objectId) throws ServerSideException;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
@@ -320,8 +322,8 @@ public interface WebserviceBeanRemote {
      * @param groups
      * @throws ServerSideException
      */
-    public void setUserProperties(Long oid, String userName, String password, String firstName,
-            String lastName, Boolean enabled, Integer[] privileges, Long[] groups)
+    public void setUserProperties(long oid, String userName, String password, String firstName,
+            String lastName, boolean enabled, int[] privileges, long[] groups)
             throws ServerSideException;
 
 
@@ -333,8 +335,8 @@ public interface WebserviceBeanRemote {
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public Long createGroup(String groupName, String description,
-            Integer[] privileges, Long[] users) throws ServerSideException;
+    public long createGroup(String groupName, String description,
+            int[] privileges, long[] users) throws ServerSideException;
 
     /**
      * Get all users
@@ -356,8 +358,8 @@ public interface WebserviceBeanRemote {
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public Long createUser(String userName, String password, String firstName,
-            String lastName, Boolean enabled, Integer[] privileges, Long[] groups)
+    public long createUser(String userName, String password, String firstName,
+            String lastName, boolean enabled, int[] privileges, long[] groups)
             throws ServerSideException;;
 
     /**
@@ -369,8 +371,8 @@ public interface WebserviceBeanRemote {
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public void setGroupProperties(Long oid, String groupName, String description,
-            Integer[] privileges, Long[] users)throws ServerSideException;
+    public void setGroupProperties(long oid, String groupName, String description,
+            int[] privileges, long[] users)throws ServerSideException;
 
      /**
      * Removes a list of users
@@ -378,7 +380,7 @@ public interface WebserviceBeanRemote {
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public void deleteUsers(Long[] oids)throws ServerSideException;
+    public void deleteUsers(long[] oids)throws ServerSideException;
 
     /**
      * Removes a list of groups
@@ -386,7 +388,7 @@ public interface WebserviceBeanRemote {
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
-    public void deleteGroups(Long[] oids)
+    public void deleteGroups(long[] oids)
             throws ServerSideException;
 
     /**
@@ -397,18 +399,19 @@ public interface WebserviceBeanRemote {
      * @return
      * @throws ServerSideException
      */
-    public ViewInfo getView(Long oid, String objectClass, Integer viewType) throws ServerSideException;
+    public ViewInfo getObjectRelatedView(long oid, String objectClass, long viewId) throws ServerSideException;
 
-    /**
-     *
-     * @param oid
-     * @param objectClass
-     * @param viewType
-     * @param structure
-     * @param background
-     * @throws ServerSideException
-     */
-    public void saveView(Long oid, String objectClass, int viewType, byte[] structure, byte[] background) throws ServerSideException;
+    public ViewInfoLight[] getObjectRelatedViews(long oid, String objectClass, int viewType, int limit) throws ServerSideException;
+
+    public ViewInfoLight[] getGeneralViews(int viewType, int limit) throws ServerSideException;
+
+    public long createObjectRelatedView(long objectId, String objectClass, String name, String description, int viewType, byte[] structure, byte[] background) throws ServerSideException;
+
+    public long createGeneralView(int viewType, String name, String description, byte[] structure, byte[] background) throws ServerSideException;
+
+    public void updateObjectRelatedView(long objectOid, String objectClass, long viewId, String viewName, String viewDescription, int viewType, byte[] structure, byte[] background) throws ServerSideException;
+
+    public void updateGeneralView(long objectOid, String objectClass, long viewId, String viewName, String viewDescription, int viewType, byte[] structure, byte[] background) throws ServerSideException;
 
     /**
      * Executes a complex query generated using the Graphical Query Builder.  Please note
@@ -429,7 +432,7 @@ public interface WebserviceBeanRemote {
      * @return
      * @throws ServerSideException
      */
-    public Long createQuery(String queryName, Long ownerOid, byte[] queryStructure,
+    public long createQuery(String queryName, long ownerOid, byte[] queryStructure,
             String description) throws ServerSideException;
 
     /**
@@ -441,15 +444,15 @@ public interface WebserviceBeanRemote {
      * @param description
      * @throws ServerSideException
      */
-    public void saveQuery(Long queryOid, String queryName,
-            Long ownerOid, byte[] queryStructure, String description) throws ServerSideException;
+    public void saveQuery(long queryOid, String queryName,
+            long ownerOid, byte[] queryStructure, String description) throws ServerSideException;
 
     /**
      * Deletes the query load in the graphical query builder
      * @param queryOid
      * @throws ServerSideException
      */
-    public void deleteQuery(Long queryOid) throws ServerSideException;
+    public void deleteQuery(long queryOid) throws ServerSideException;
 
     /**
      * Retrieves all queries made in the graphical Query builder
@@ -465,7 +468,7 @@ public interface WebserviceBeanRemote {
      * @return
      * @throws ServerSideException
      */
-    public RemoteQuery getQuery(Long queryOid) throws ServerSideException;
+    public RemoteQuery getQuery(long queryOid) throws ServerSideException;
 
     /**
      *

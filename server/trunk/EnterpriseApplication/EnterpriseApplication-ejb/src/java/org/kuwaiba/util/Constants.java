@@ -55,5 +55,22 @@ public class Constants {
      * Name of the validator to indicate if a given class is the endpoint to a link
      */
     public static String IS_PHYSICAL_ENDPOINT_VALIDATOR = "physicalEndpoint";
+    
+    /**
+     * Constant to identify when a requests refers to all views, no matter the type
+     */
+    public static int VIEWS_ALL = 0;
+    /**
+     * Constant to identify when a requests refers to the default object view
+     */
+    public static int VIEWS_DEFAULT = 1;
+    /**
+     * Constant to identify when a requests refers to an equipment view
+     */
+    public static int VIEWS_EQUIPMENT = 2;
+    /**
+     * Constant to identify when a requests refers to a GIS view
+     */
+    public static int VIEWS_GIS = 3;
 
 }
