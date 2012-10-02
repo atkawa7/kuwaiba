@@ -30,6 +30,7 @@ import java.util.Set;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.api.visual.LocalObjectViewLight;
 import org.inventory.core.services.utils.Utils;
 import org.inventory.views.objectview.scene.actions.CustomAddRemoveControlPointAction;
 import org.inventory.views.objectview.scene.actions.CustomMoveAction;
@@ -109,6 +110,10 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
      * Object owning the current view
      */
     private LocalObjectLight currentObject;
+    /**
+     * Current view (if any, null if the current view does is just about to be created)
+     */
+    private LocalObjectViewLight currentView;
     /**
      * Action listeners
      */
@@ -233,6 +238,14 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
         this.currentObject = currentObject;
     }
 
+    public LocalObjectViewLight getCurrentView() {
+        return currentView;
+    }
+
+    public void setCurrentView(LocalObjectViewLight currentView) {
+        this.currentView = currentView;
+    }
+
     public CustomMoveControlPointAction getMoveControlPointAction() {
         return moveControlPointAction;
     }
@@ -354,7 +367,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
             nodesTag.start("node").attr("x", nodeWidget.getPreferredLocation().getX()).
             attr("y", nodeWidget.getPreferredLocation().getY()).
             attr("class", ((ObjectNodeWidget)nodeWidget).getObject().getClassName()).
-            text(((ObjectNodeWidget)nodeWidget).getObject().getOid().toString()).end();
+            text(String.valueOf(((ObjectNodeWidget)nodeWidget).getObject().getOid()) ).end();
         nodesTag.end();
 
         StartTagWAX edgesTag = mainTag.start("edges");

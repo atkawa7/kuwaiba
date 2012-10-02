@@ -224,7 +224,7 @@ public class ViewBuilder {
      */
     private LocalNode getNodeMatching(List<LocalNode> list, Long id){
         for (LocalNode node : list){
-            if (node.getObject().getOid().equals(id))
+            if (node.getObject().getOid() == id)
                 return node;
         }
         return null;

@@ -23,11 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.LocalStuffFactory;
 import org.inventory.communications.SharedInformation;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.api.visual.LocalObjectView;
+import org.inventory.core.services.api.visual.LocalObjectViewLight;
 import org.inventory.core.services.utils.Utils;
 import org.inventory.views.objectview.scene.ObjectConnectionWidget;
 import org.inventory.views.objectview.scene.ObjectNodeWidget;
@@ -99,7 +101,7 @@ public class ObjectViewService implements LookupListener{
            vrtc.getScene().getInteractionLayer().removeChildren();
            vrtc.getScene().getLabelsLayer().removeChildren();
 
-           if (myObject.getOid() != null){ //Other nodes than the root one
+           if (myObject.getOid() != -1){ //Other nodes than the root one
                if(!com.getLightMetaForClass(myObject.getClassName(), false).isViewable()){
                    vrtc.getNotifier().showStatusMessage("This object doesn't have any view", false);
                    disableView();
@@ -117,7 +119,7 @@ public class ObjectViewService implements LookupListener{
 
     private void loadView(LocalObjectLight myObject){
        //If the selected node is the root
-       if (myObject.getOid() == null){
+       if (myObject.getOid() == -1){
            disableView();
            return;
        }
@@ -126,15 +128,19 @@ public class ObjectViewService implements LookupListener{
 
        vrtc.getScene().setCurrentObject(myObject);
 
-       LocalObjectView defaultView = com.getObjectDefaultView(myObject.getOid(),myObject.getClassName());
-       if(defaultView == null){
+       List<LocalObjectViewLight> views = com.getObjectRelatedViews(myObject.getOid(),myObject.getClassName());
+       
+       if(views.isEmpty()){ //There are no saved views
            List<LocalObjectLight> myChildren = com.getObjectChildren(myObject.getOid(), com.getMetaForClass(myObject.getClassName(),false).getOid());
            List<LocalObject> myConnections = com.getChildrenOfClass(myObject.getOid(),myObject.getClassName(), SharedInformation.CLASS_GENERICCONNECTION);
            //TODO: Change for a ViewFactory
            viewBuilder = new ViewBuilder(null, vrtc.getScene());
            viewBuilder.buildDefaultView(myChildren, myConnections);
+           vrtc.getScene().setCurrentView(null);
        }
        else{
+           LocalObjectView defaultView = com.getObjectRelatedView(myObject.getOid(),myObject.getClassName(), views.get(0).getId());
+           vrtc.getScene().setCurrentView(defaultView);
            viewBuilder = new ViewBuilder(defaultView, vrtc.getScene());
            viewBuilder.buildView();
            if (defaultView.isDirty()){
@@ -193,12 +199,24 @@ public class ObjectViewService implements LookupListener{
      */
     public void saveView() {
         byte[] viewStructure = vrtc.getScene().getAsXML();
-        if (!com.saveView(vrtc.getScene().getCurrentObject().getOid(),
-                 vrtc.getScene().getCurrentObject().getClassName(), 
-                "DefaultView", vrtc.getScene().getBackgroundImage(), viewStructure)) //NOI18N
-            vrtc.getNotifier().showSimplePopup("Object View", NotificationUtil.ERROR, com.getError());
-        else
-            vrtc.setHtmlDisplayName(vrtc.getDisplayName());
+        if (vrtc.getScene().getCurrentView() == null){
+            long viewId = com.createObjectRelatedView(vrtc.getScene().getCurrentObject().getOid(),
+                    vrtc.getScene().getCurrentObject().getClassName(), null, null,0, viewStructure, vrtc.getScene().getBackgroundImage());
+            if (viewId != -1){ //NOI18N
+                vrtc.getScene().setCurrentView(LocalStuffFactory.createLocalObjectViewLight(viewId, null, null,0));
+                vrtc.setHtmlDisplayName(vrtc.getDisplayName());
+            }
+            else{
+                vrtc.getNotifier().showSimplePopup("Object View", NotificationUtil.ERROR, com.getError());
+            }
+        }else{
+            if (!com.updateObjectRelatedView(vrtc.getScene().getCurrentObject().getOid(),
+                     vrtc.getScene().getCurrentObject().getClassName(), 1,
+                    "", "",viewStructure, vrtc.getScene().getBackgroundImage())) //NOI18N
+                vrtc.getNotifier().showSimplePopup("Object View", NotificationUtil.ERROR, com.getError());
+            else
+                vrtc.setHtmlDisplayName(vrtc.getDisplayName());
+        }
     }
 
     public void refreshView() {
