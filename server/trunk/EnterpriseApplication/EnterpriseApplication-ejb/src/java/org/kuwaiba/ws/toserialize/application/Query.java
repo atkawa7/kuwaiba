@@ -27,7 +27,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Query implements Serializable{
 
-    private Long id;
+    private long id;
     private String displayname;
     private String description;
     private String name;
@@ -50,11 +50,11 @@ public class Query implements Serializable{
         this.displayname = displayname;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

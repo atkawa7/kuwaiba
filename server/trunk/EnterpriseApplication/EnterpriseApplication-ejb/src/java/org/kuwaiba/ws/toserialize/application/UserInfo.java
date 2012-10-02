@@ -31,7 +31,7 @@ public class UserInfo {
     /**
      * User's oid
      */
-    private Long oid;
+    private long oid;
    /**
     * User's login name
     */
@@ -47,7 +47,7 @@ public class UserInfo {
    /**
     * User's creation date
     */
-    private Long creationDate;
+    private long creationDate;
    /**
     * Indicates if this account is enabled
     */
@@ -67,7 +67,7 @@ public class UserInfo {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         if (user.getCreationDate() == null)
-            this.creationDate = null;
+            this.creationDate = 0;
         else
             this.creationDate = user.getCreationDate();
         if (user.getPrivileges() == null)
@@ -120,11 +120,11 @@ public class UserInfo {
         this.userName = userName;
     }
 
-    public Long getOid() {
+    public long getOid() {
         return oid;
     }
 
-    public void setOid(Long oid) {
+    public void setOid(long oid) {
         this.oid = oid;
     }
 
@@ -136,11 +136,11 @@ public class UserInfo {
         this.enabled = isEnabled;
     }
 
-    public Long getCreationDate() {
+    public long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Long creationDate) {
+    public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
     }
 }

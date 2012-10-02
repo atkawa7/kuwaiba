@@ -33,7 +33,7 @@ public class ClassInfo extends ClassInfoLight{
     /**
      * Attribute ids
      */
-    private Long [] attributeIds;
+    private long [] attributeIds;
     /**
      * Attribute names
      */
@@ -49,11 +49,11 @@ public class ClassInfo extends ClassInfoLight{
     /**
      * Attributes visibility
      */
-    private Boolean [] attributesIsVisible;
+    private boolean [] attributesIsVisible;
     /**
      * How the attribute should be rendered. Check AttributeMetadata documentation in the Persistence Abstraction API
      */
-    private Integer [] attributesMapping;
+    private int [] attributesMapping;
     /**
      * Attributes descriptions
      */
@@ -73,12 +73,12 @@ public class ClassInfo extends ClassInfoLight{
         this.abstractClass = myClass.isAbstractClass();
         this.icon = myClass.getIcon();
         List<AttributeMetadata> ar = myClass.getAttributes();
-        this.attributeIds = new Long[ar.size()];
+        this.attributeIds = new long[ar.size()];
         this.attributeNames = new String[ar.size()];
         this.attributeTypes = new String[this.attributeNames.length];
         this.attributeDisplayNames = new String[this.attributeNames.length];
-        this.attributesIsVisible = new Boolean[this.attributeNames.length];
-        this.attributesMapping = new Integer[this.attributeNames.length];
+        this.attributesIsVisible = new boolean[this.attributeNames.length];
+        this.attributesMapping = new int[this.attributeNames.length];
         this.attributesDescription = new String[this.attributeNames.length];
         this.description = myClass.getDescription();
         int i = 0;
@@ -129,27 +129,27 @@ public class ClassInfo extends ClassInfoLight{
         this.attributesDescription = attributesDescription;
     }
 
-    public Boolean[] getAttributesIsVisible() {
+    public boolean[] getAttributesIsVisible() {
         return attributesIsVisible;
     }
 
-    public void setAttributesIsVisible(Boolean[] attributesIsVisible) {
+    public void setAttributesIsVisible(boolean[] attributesIsVisible) {
         this.attributesIsVisible = attributesIsVisible;
     }
 
-    public Integer[] getAttributesMapping() {
+    public int[] getAttributesMapping() {
         return attributesMapping;
     }
 
-    public void setAttributesMapping(Integer[] attributesMapping) {
+    public void setAttributesMapping(int[] attributesMapping) {
         this.attributesMapping = attributesMapping;
     }
 
-    public Long[] getAttributeIds() {
+    public long[] getAttributeIds() {
         return attributeIds;
     }
 
-    public void setAttributeIds(Long[] attributeIds) {
+    public void setAttributeIds(long[] attributeIds) {
         this.attributeIds = attributeIds;
     }
 

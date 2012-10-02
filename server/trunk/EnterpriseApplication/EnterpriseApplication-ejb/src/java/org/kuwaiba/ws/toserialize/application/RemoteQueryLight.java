@@ -27,7 +27,7 @@ public class RemoteQueryLight{
     /**
      * Object id
      */
-    protected Long oid;
+    protected long oid;
     private String name;
     private String description;
     private boolean isPublic;
@@ -36,7 +36,7 @@ public class RemoteQueryLight{
     }
 
 
-    public RemoteQueryLight(Long id, String name, String description, boolean isPublic) {
+    public RemoteQueryLight(long id, String name, String description, boolean isPublic) {
         this.oid = id;
         this.name = name;
         this.description = description;
@@ -49,11 +49,11 @@ public class RemoteQueryLight{
         this.isPublic = (query.getOwner() == null);
     }
 
-    public Long getOid() {
+    public long getOid() {
         return oid;
     }
 
-    public void setOid(Long oid) {
+    public void setOid(long oid) {
         this.oid = oid;
     }
 

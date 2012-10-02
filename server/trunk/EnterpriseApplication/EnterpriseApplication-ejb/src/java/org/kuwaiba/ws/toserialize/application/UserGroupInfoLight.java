@@ -30,7 +30,7 @@ public class UserGroupInfoLight {
     /**
      * Object id
      */
-    protected Long oid;
+    protected long oid;
     /**
      * UserGroup's name
      */
@@ -43,11 +43,11 @@ public class UserGroupInfoLight {
         this.name = group.getName();
     }
 
-    public Long getOid() {
+    public long getOid() {
         return oid;
     }
 
-    public void setId(Long _oid) {
+    public void setId(long _oid) {
         this.oid = _oid;
     }
 

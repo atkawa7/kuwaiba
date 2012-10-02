@@ -27,7 +27,7 @@ import org.kuwaiba.ws.toserialize.application.Validator;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ClassInfoLight {
-    protected Long id;
+    protected long id;
     protected Boolean abstractClass;
     protected Boolean viewable;
     protected Boolean listType;
@@ -54,7 +54,7 @@ public class ClassInfoLight {
         this.listType = myClassLight.isListType();
     }
 
-    public ClassInfoLight(Long id, String name, String displayName,Validator[] validators, Boolean isViewable,
+    public ClassInfoLight(long id, String name, String displayName,Validator[] validators, Boolean isViewable,
             Boolean isAbstract, Boolean isListType, byte[] smallIcon) {
         this.id = id;
         this.abstractClass = isAbstract;
@@ -74,11 +74,11 @@ public class ClassInfoLight {
         this.className = className;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -152,15 +152,16 @@ public class ClassInfoLight {
             return false;
         if (!(obj instanceof ClassInfoLight))
             return false;
-        if (((ClassInfoLight)obj).getId().longValue() == getId().longValue())
+        if (((ClassInfoLight)obj).getId() == getId())
             return true;
         return false;
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 43 * hash + (this.id != null ? this.id.hashCode() : 0);
+        int hash = 7;
+        hash = 47 * hash + (int) (this.id ^ (this.id >>> 32));
+        hash = 47 * hash + (this.className != null ? this.className.hashCode() : 0);
         return hash;
     }
 }

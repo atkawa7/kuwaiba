@@ -27,7 +27,7 @@ public class AttributeInfo {
     /**
      * Attribute's id
      */
-    private Long id;
+    private long id;
     /**
      * Attribute's name
      */
@@ -43,19 +43,19 @@ public class AttributeInfo {
     /**
      * Flag to mark an attribute to be used for administrative purposes (beyond the operational inventory)
      */
-    private Boolean administrative;
+    private boolean administrative;
     /**
      * Attribute's visibility
      */
-    private Boolean visible;
+    private boolean visible;
      /**
      * Marks the attribute as read only
      */
-    private Boolean readOnly;
+    private boolean readOnly;
     /**
      * Marks the attribute as unique
      */
-    private Boolean unique;
+    private boolean unique;
     /**
      * Attribute's short description
      */
@@ -63,11 +63,11 @@ public class AttributeInfo {
     /**
      * Indicates how this attribute should be mapped (into a primitive type, a relationship, etc)
      */
-    private Integer mapping;
+    private int mapping;
 
     public AttributeInfo(String name, String displayName, String type, 
-                         Boolean administrative, Boolean visible,
-                         String description, Integer mapping) {
+                         boolean administrative, boolean visible,
+                         String description, int mapping) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
@@ -77,11 +77,11 @@ public class AttributeInfo {
         this.mapping = mapping;
     }
 
-    public Boolean isAdministrative() {
+    public boolean isAdministrative() {
         return administrative;
     }
 
-    public void setAdministrative(Boolean administrative) {
+    public void setAdministrative(boolean administrative) {
         this.administrative = administrative;
     }
 
@@ -101,19 +101,19 @@ public class AttributeInfo {
         this.displayName = displayName;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public Integer getMapping() {
+    public int getMapping() {
         return mapping;
     }
 
-    public void setMapping(Integer mapping) {
+    public void setMapping(int mapping) {
         this.mapping = mapping;
     }
 
@@ -133,27 +133,27 @@ public class AttributeInfo {
         this.type = type;
     }
 
-    public Boolean isVisible() {
+    public boolean isVisible() {
         return visible;
     }
 
-    public void setVisible(Boolean visible) {
+    public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
-    public Boolean isReadOnly() {
+    public boolean isReadOnly() {
         return readOnly;
     }
 
-    public void setReadOnly(Boolean readOnly) {
+    public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
     }
 
-    public Boolean isUnique() {
+    public boolean isUnique() {
         return unique;
     }
 
-    public void setUnique(Boolean unique) {
+    public void setUnique(boolean unique) {
         this.unique = unique;
     }
     

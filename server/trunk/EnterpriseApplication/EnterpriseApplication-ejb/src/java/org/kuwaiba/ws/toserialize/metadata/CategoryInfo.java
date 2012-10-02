@@ -29,7 +29,7 @@ public class CategoryInfo {
      */
     private String name;
     /**
-     * Category Displayname
+     * Category display name
      */
     private String displayName;
     /**
@@ -39,24 +39,24 @@ public class CategoryInfo {
     /**
      * category creation date
      */
-    private Long creationDate;
+    private long creationDate;
 
     public CategoryInfo() {
     }
 
     public CategoryInfo(String name, String displayName, String description,
-                        Long creationDate) {
+                        long creationDate) {
         this.name = name;
         this.displayName = displayName;
         this.description = description;
         this.creationDate = creationDate;
     }
 
-    public Long getCreationDate() {
+    public long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Long creationDate) {
+    public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
     }
 

@@ -31,7 +31,7 @@ public class RemoteObjectLight {
     /**
      * Object's oid
      */
-    private Long oid;
+    private long oid;
     /**
      * Object's name
      */
@@ -52,7 +52,7 @@ public class RemoteObjectLight {
      */
     protected RemoteObjectLight(){}
 
-    public RemoteObjectLight(Long oid, String name, String className) {
+    public RemoteObjectLight(long oid, String name, String className) {
         this.oid = oid;
         this.name = name;
         this.className = className;
@@ -69,7 +69,7 @@ public class RemoteObjectLight {
         return className;
     }
 
-    public Long getOid() {
+    public long getOid() {
         return oid;
     }
 

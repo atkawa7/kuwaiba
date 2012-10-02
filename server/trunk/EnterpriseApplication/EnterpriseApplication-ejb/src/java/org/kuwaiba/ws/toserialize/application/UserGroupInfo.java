@@ -30,9 +30,9 @@ public class UserGroupInfo extends UserGroupInfoLight{
     protected UserInfo[] members;
     /**
      * Object's creation date. Since there's no a seamless map for java.util.Date
-     * (xsd:date has less information than Date, so it's mapped into Calendar), we use a Long instead (a timestamp)
+     * (xsd:date has less information than Date, so it's mapped into Calendar), we use a long instead (a timestamp)
      */
-    protected Long creationDate;
+    protected long creationDate;
     /**
      * UserGroup's description
      */
@@ -46,7 +46,7 @@ public class UserGroupInfo extends UserGroupInfoLight{
         if (group.getCreationDate() != null)
             this.creationDate = group.getCreationDate();
         else
-            this.creationDate = null;
+            this.creationDate = 0;
         int i = 0;
         for (UserProfile member : group.getUsers())
             this.members[i] = new UserInfo(member);
@@ -60,11 +60,11 @@ public class UserGroupInfo extends UserGroupInfoLight{
         return members;
     }
 
-    public Long getCreationDate() {
+    public long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Long creationDate) {
+    public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
     }
 }

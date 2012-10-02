@@ -30,7 +30,7 @@ public class RemoteObject {
     /**
      * Object's id
      */
-    private Long oid;
+    private long oid;
     /**
      * Object's class
      */
@@ -91,11 +91,11 @@ public class RemoteObject {
         this.className = className;
     }
 
-    public Long getOid() {
+    public long getOid() {
         return oid;
     }
 
-    public void setOid(Long oid) {
+    public void setOid(long oid) {
         this.oid = oid;
     }
 

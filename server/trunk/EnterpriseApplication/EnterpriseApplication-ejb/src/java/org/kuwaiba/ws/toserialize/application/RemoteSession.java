@@ -29,7 +29,7 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
 public class RemoteSession {
     private String sessionId;
     private String username;
-    private Long userId;
+    private long userId;
     private String firstName;
     private String lastName;
 
@@ -61,11 +61,11 @@ public class RemoteSession {
         this.username = username;
     }
 
-    public Long getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 

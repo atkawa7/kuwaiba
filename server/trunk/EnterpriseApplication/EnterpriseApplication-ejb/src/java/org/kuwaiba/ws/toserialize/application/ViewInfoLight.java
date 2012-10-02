@@ -30,7 +30,7 @@ public class ViewInfoLight{
     /**
      * View id
      */
-    private Long id;
+    private long id;
     /**
      * View type
      */
@@ -64,11 +64,11 @@ public class ViewInfoLight{
         this.description = description;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
