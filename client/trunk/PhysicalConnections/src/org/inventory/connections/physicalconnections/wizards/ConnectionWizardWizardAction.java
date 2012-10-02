@@ -70,7 +70,7 @@ public final class ConnectionWizardWizardAction implements ActionListener {
                 myWizard.getConnectionParent().getClassName(),
                 myWizard.getConnectionParent().getOid(),
                 name,
-                type.getOid().toString(),
+                String.valueOf(type.getOid()),
                 myWizard.getConnectionClass());
 
             if (newConnection != null)

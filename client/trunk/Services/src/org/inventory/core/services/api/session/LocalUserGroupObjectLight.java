@@ -21,6 +21,6 @@ package org.inventory.core.services.api.session;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 public interface LocalUserGroupObjectLight {
-    public Long getOid();
+    public long getOid();
     public String getName();
 }

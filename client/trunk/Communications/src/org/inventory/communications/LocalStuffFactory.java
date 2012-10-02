@@ -28,6 +28,7 @@ import org.inventory.communications.core.queries.LocalTransientQueryImpl;
 import org.inventory.communications.core.views.LocalEdgeImpl;
 import org.inventory.communications.core.views.LocalNodeImpl;
 import org.inventory.communications.core.views.LocalObjectViewImpl;
+import org.inventory.communications.core.views.LocalObjectViewLightImpl;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
@@ -40,6 +41,7 @@ import org.inventory.core.services.api.visual.LocalEdge;
 import org.inventory.core.services.api.visual.LocalLabel;
 import org.inventory.core.services.api.visual.LocalNode;
 import org.inventory.core.services.api.visual.LocalObjectView;
+import org.inventory.core.services.api.visual.LocalObjectViewLight;
 
 /**
  * This is a factory used to provide implementations for all the interfaces implemented in this module
@@ -90,6 +92,10 @@ public class LocalStuffFactory {
 
     public static LocalNode createLocalNode(LocalObjectLight node, int lastX, int i) {
         return new LocalNodeImpl(node, lastX, i);
+    }
+
+    public static LocalObjectViewLight createLocalObjectViewLight (long id, String name, String description, int type) {
+        return new LocalObjectViewLightImpl(id, name, description, type);
     }
 
     public static LocalObjectView createLocalObjectView(LocalNode[] myNodes, LocalEdge[] myEdges, LocalLabel[] myLabels) {

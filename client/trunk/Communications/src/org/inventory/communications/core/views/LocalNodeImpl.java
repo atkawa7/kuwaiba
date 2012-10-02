@@ -58,7 +58,7 @@ public class LocalNodeImpl implements LocalNode{
             return false;
         if (!(obj instanceof LocalNodeImpl))
             return false;
-        return ((LocalNodeImpl)obj).getObject().getOid().equals(this.object.getOid());
+        return ((LocalNodeImpl)obj).getObject().getOid() == this.object.getOid();
     }
 
     @Override

@@ -26,10 +26,10 @@ public interface LocalAttributeMetadata {
     public void setDescription(String description);
     public String getDisplayName();
     public void setDisplayName(String displayName);
-    public Boolean isVisible();
+    public boolean isVisible();
     public int getMapping();
     public void setMapping(int mapping);
-    public void setVisible(Boolean isVisible);
+    public void setVisible(boolean isVisible);
     public String getName();
     public void setName(String name);
     public Class getType();

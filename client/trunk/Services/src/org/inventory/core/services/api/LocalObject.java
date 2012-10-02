@@ -26,10 +26,10 @@ import java.util.HashMap;
 public interface LocalObject extends LocalObjectLight{
     public HashMap<String,Object> getAttributes();
     public String getClassName();
-    public Long getOid();
+    public long getOid();
     public Object getAttribute(String name);
     public LocalClassMetadata getObjectMetadata();
     public void setLocalObject(String className, String[] attributes, Object[] values);
     public void setObjectMetadata(LocalClassMetadata metaForClass);
-    public void setOid(Long oid);
+    public void setOid(long oid);
 }

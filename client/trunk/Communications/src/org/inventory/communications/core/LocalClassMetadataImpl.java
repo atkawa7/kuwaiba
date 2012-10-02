@@ -32,34 +32,45 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
 
     private Image icon;
     private String description;
-    private Long [] attributeIds;
+    private long [] attributeIds;
     private String [] attributeNames; 
     private String [] attributeTypes;
     private String [] attributeDisplayNames;
-    private Boolean [] attributesIsVisible;
-    private Integer [] attributeMappings;
+    private boolean [] attributesIsVisible;
+    private int [] attributeMappings;
     private String [] attributesDescription;
 
-    public LocalClassMetadataImpl() {    }
+     /**
+     * This constructor is called to create dummy class metadata objects, such as that used to represent the Navigation Tree root
+     */
+    public LocalClassMetadataImpl() { super();   }
 
     public LocalClassMetadataImpl(ClassInfo cm){
         super(cm);
         this.icon = (cm.getIcon()==null) ? null : Utils.getImageFromByteArray(cm.getIcon());
         this.description = cm.getDescription();
-        this.attributeIds = cm.getAttributeIds().toArray(new Long[0]);
+        this.attributeIds = new long[cm.getAttributeIds().size()];
+        for (int i = 0; i < cm.getAttributeIds().size(); i++)
+            attributeIds[i] = cm.getAttributeIds().get(i).longValue();
+
         this.attributeNames = cm.getAttributeNames().toArray(new String[0]);
         this.attributeTypes = cm.getAttributeTypes().toArray(new String[0]);
         this.attributeDisplayNames = cm.getAttributeDisplayNames().toArray(new String[0]);
-        this.attributesIsVisible = cm.getAttributesIsVisible().toArray(new Boolean[0]);
-        this.attributeMappings = cm.getAttributesMapping().toArray(new Integer[0]);
+        this.attributesIsVisible = new boolean[cm.getAttributesIsVisible().size()];
+        for (int i = 0; i < cm.getAttributesIsVisible().size(); i++)
+            attributesIsVisible[i] = cm.getAttributesIsVisible().get(i).booleanValue();
+        this.attributeMappings = new int[cm.getAttributesMapping().size()];
+        for (int i = 0; i < cm.getAttributesMapping().size(); i++)
+            attributeMappings[i] = cm.getAttributesMapping().get(i).intValue();
+
         this.attributesDescription = cm.getAttributesDescription().toArray(new String[0]);
     }
 
-    public Integer[] getAttributeMappings() {
+    public int[] getAttributeMappings() {
         return attributeMappings;
     }
 
-    public void setAttributeMappings(Integer[] attributeMappings) {
+    public void setAttributeMappings(int[] attributeMappings) {
         this.attributeMappings = attributeMappings;
     }
 
@@ -95,11 +106,11 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         this.attributesDescription = attributesDescription;
     }
 
-    public Boolean[] getAttributesIsVisible() {
+    public boolean[] getAttributesIsVisible() {
         return attributesIsVisible;
     }
 
-    public void setAttributesIsVisible(Boolean[] attributesIsVisible) {
+    public void setAttributesIsVisible(boolean[] attributesIsVisible) {
         this.attributesIsVisible = attributesIsVisible;
     }
 
@@ -110,14 +121,14 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         return att;
     }
 
-    public Integer getMappingForAttribute(String att){
+    public int getMappingForAttribute(String att){
         for (int i=0; i< this.attributeNames.length;i++)
             if(this.attributeNames[i].equals(att))
                 return this.attributeMappings[i];
         return 0;
     }
     
-    public Boolean isVisible(String att){
+    public boolean isVisible(String att){
         for (int i=0; i< this.attributeNames.length;i++)
             if(this.attributeNames[i].equals(att))
                 return this.attributesIsVisible[i];
@@ -157,11 +168,11 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         return icon;
     }
 
-    public Long[] getAttributeIds() {
+    public long[] getAttributeIds() {
         return attributeIds;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 

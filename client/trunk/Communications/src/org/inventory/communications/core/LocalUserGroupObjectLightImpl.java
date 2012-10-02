@@ -26,7 +26,7 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ServiceProvider(service=LocalUserGroupObjectLight.class)
 public class LocalUserGroupObjectLightImpl implements LocalUserGroupObjectLight{
-    protected  Long oid;
+    protected  long oid;
     protected  String name;
 
     public LocalUserGroupObjectLightImpl(){
@@ -37,12 +37,12 @@ public class LocalUserGroupObjectLightImpl implements LocalUserGroupObjectLight{
         this.name = user.getName();
     }
 
-    public LocalUserGroupObjectLightImpl(Long _oid, String _name){
+    public LocalUserGroupObjectLightImpl(long _oid, String _name){
         this.oid = _oid;
         this.name = _name;
     }
 
-    public Long getOid() {
+    public long getOid() {
         return oid;
     }
 

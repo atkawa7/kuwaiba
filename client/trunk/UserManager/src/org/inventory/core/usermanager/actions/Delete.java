@@ -66,7 +66,7 @@ public class Delete extends AbstractAction {
             if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this user?", "Confirmation",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
                 return;
 
-            if(com.deleteUsers(new Long[]{((UserNode)this.node).getObject().getOid()})){
+            if(com.deleteUsers(new long[]{((UserNode)this.node).getObject().getOid()})){
                 nu.showSimplePopup("User removal", NotificationUtil.INFO, "The user was deleted successfully");
                 node.getParentNode().getChildren().remove(new Node[]{node});
                 ums.refreshUserList();
@@ -76,7 +76,7 @@ public class Delete extends AbstractAction {
         }else{ //We're gonna delete a group
             if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this group? The associated users won't be deleted if you choose OK","Confirmation",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
                     return;
-            if(com.deleteGroups(new Long[]{((GroupNode)this.node).getObject().getOid()})){       
+            if(com.deleteGroups(new long[]{((GroupNode)this.node).getObject().getOid()})){
                 nu.showSimplePopup("Group removal", NotificationUtil.INFO, "The group was deleted successfully");
                 node.getParentNode().getChildren().remove(new Node[]{node});
                 ums.refreshGroupsList();

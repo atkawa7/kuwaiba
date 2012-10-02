@@ -18,7 +18,6 @@ package org.inventory.customization.hierarchycustomizer.nodes;
 
 import java.awt.datatransfer.Transferable;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
@@ -50,8 +49,6 @@ public class ClassMetadataNode extends AbstractNode {
       this.object = _lcm;
    }
 
-   // TODO: I hate this!! please find the right way to create the node as a LEAF
-   // withouth duplicate the code, using that joker parameter (isMain)
    public ClassMetadataNode(LocalClassMetadataLight _lcm){
       super (Children.LEAF,Lookups.singleton(_lcm));
       setIconBaseWithExtension(CHILDREN_ICON_PATH);
@@ -99,11 +96,10 @@ public class ClassMetadataNode extends AbstractNode {
                     LocalClassMetadataLight data = (LocalClassMetadataLight)obj.getTransferData(
                             LocalClassMetadataLight.DATA_FLAVOR);
 
-                    ArrayList<Long> tokens = new ArrayList<Long>();
-                    tokens.add(data.getOid());
+                    long[] tokens = new long[]{data.getOid()};
 
                     //This is supposed to support multiple object drags,
-                    //but as long as I can't make it work, It'll be commented out
+                    //but since I can't make it work, It'll be commented out
 //                        if (CommunicationsStub.getInstance().addPossibleChildren(object.getId(),
 //                                data)){
 //                            for (Object obj : data)

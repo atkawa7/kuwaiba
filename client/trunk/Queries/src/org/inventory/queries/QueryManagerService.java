@@ -114,7 +114,7 @@ public class QueryManagerService implements ActionListener{
 
         if (localQuery == null){ //It's a new query
             
-            if (com.createQuery((String)queryProperties[0], currentTransientQuery.toXML(), (String)queryProperties[1], (Boolean)queryProperties[2]) != null)
+            if (com.createQuery((String)queryProperties[0], currentTransientQuery.toXML(), (String)queryProperties[1], (Boolean)queryProperties[2]) != -1)
                 qbtc.getNotifier().showSimplePopup("Sucess", NotificationUtil.INFO, "Query created successfully");
             else
                 qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.INFO, com.getError());

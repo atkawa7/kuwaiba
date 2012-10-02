@@ -76,7 +76,7 @@ public class LocalEdgeImpl implements LocalEdge {
             return false;
         if (!(obj instanceof LocalEdgeImpl))
             return false;
-        return ((LocalEdgeImpl)obj).getObject().getOid().equals(this.object.getOid());
+        return ((LocalEdgeImpl)obj).getObject().getOid() == this.object.getOid();
     }
 
     @Override

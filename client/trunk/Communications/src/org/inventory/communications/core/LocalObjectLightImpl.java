@@ -36,7 +36,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class LocalObjectLightImpl implements LocalObjectLight{ //This class does not implement Transferable because of
                                                                //LocalObjectLight interface extends from it
 
-    protected Long oid;
+    protected long oid;
     protected String name;
     protected String className;
     /**
@@ -48,10 +48,14 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class does
      */
     protected HashMap<String, Integer> validators;
 
+    /**
+     * This constructor is called to create dummy objects where the id is not important
+     */
     public LocalObjectLightImpl(){
+        this.oid = -1;
     }
 
-    public LocalObjectLightImpl(Long oid, String name, String className) {
+    public LocalObjectLightImpl(long oid, String name, String className) {
         this.oid = oid;
         this.name = name;
         this.className = className;
@@ -75,7 +79,7 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class does
         return className;
     }
 
-    public Long getOid() {
+    public long getOid() {
         return oid;
     }
 
@@ -123,22 +127,14 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class does
            return false;
        if (!(obj instanceof LocalObjectLight))
            return false;
-       if (this.getOid() == null || ((LocalObjectLightImpl)obj).getOid() == null)
-           return false;
-       return (this.getOid().longValue() == ((LocalObjectLightImpl)obj).getOid().longValue());
+       return (this.getOid() == ((LocalObjectLightImpl)obj).getOid());
    }
 
-   /**
-    * Return the hashcode necessary for comparing objects. ATTENTION: In prior versions the attribute
-    * <b>displayName</b> was used, but since it was no longer used by the subclass @LocalObjectImpl
-    * (The attribute is private here and it's not inherited), the <code>equals</code> method failed, so
-    * I changed it to <code>oid</code>
-    * @return
-    */
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 31 * hash + (this.oid != null ? this.oid.hashCode() : 0);
+        int hash = 5;
+        hash = 47 * hash + (int) (this.oid ^ (this.oid >>> 32));
+        hash = 47 * hash + (this.className != null ? this.className.hashCode() : 0);
         return hash;
     }
 

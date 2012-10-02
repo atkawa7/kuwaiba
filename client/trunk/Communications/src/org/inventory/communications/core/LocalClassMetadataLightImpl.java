@@ -41,19 +41,19 @@ public class LocalClassMetadataLightImpl
     /**
      * Class id
      */
-    protected Long id;
+    protected long id;
     /**
      * Is this class abstract?
      */
-    protected Boolean abstractClass;
+    protected boolean abstractClass;
     /**
      * Is this class subclass of viewable? (this is, can have views attached)
      */
-    protected Boolean viewable;
+    protected boolean viewable;
     /**
      * Is this class subclass of GenericObject list? (this is, a list type)
      */
-    protected Boolean listType;
+    protected boolean listType;
     /**
      * Class name
      */
@@ -71,7 +71,10 @@ public class LocalClassMetadataLightImpl
      */
     protected HashMap<String, Integer> validators;
 
-    public LocalClassMetadataLightImpl() {    }
+    /**
+     * This constructor is called to create dummy class metadata objects, such as that used to represent the Navigation Tree root
+     */
+    public LocalClassMetadataLightImpl() {  this.id = -1;  }
 
     public LocalClassMetadataLightImpl(ClassInfo ci){
         this.id = ci.getId();
@@ -106,8 +109,8 @@ public class LocalClassMetadataLightImpl
 
     }
 
-    public LocalClassMetadataLightImpl(Long id, String className, String displayName,
-            byte[] smallIcon, Boolean isAbstract, Boolean isViewable, Boolean isListType, HashMap<String, Integer> validators){
+    public LocalClassMetadataLightImpl(long id, String className, String displayName,
+            byte[] smallIcon, boolean isAbstract, boolean isViewable, boolean isListType, HashMap<String, Integer> validators){
         this.id = id;
         this.abstractClass = isAbstract;
         this.viewable = isViewable;
@@ -118,8 +121,8 @@ public class LocalClassMetadataLightImpl
         this.validators = validators;
     }
 
-    public LocalClassMetadataLightImpl(Long id, String className, String displayName,
-            Image smallIcon, Boolean isAbstract, Boolean isViewable, Boolean isListType, HashMap<String, Integer> validators){
+    public LocalClassMetadataLightImpl(long id, String className, String displayName,
+            Image smallIcon, boolean isAbstract, boolean isViewable, boolean isListType, HashMap<String, Integer> validators){
         this.id = id;
         this.abstractClass = isAbstract;
         this.viewable = isViewable;
@@ -134,7 +137,7 @@ public class LocalClassMetadataLightImpl
         return className;
     }
 
-    public Long getOid() {
+    public long getOid() {
         return id;
     }
 
@@ -143,15 +146,15 @@ public class LocalClassMetadataLightImpl
         return className;
     }
 
-    public Boolean isAbstract() {
+    public boolean isAbstract() {
         return abstractClass;
     }
 
-    public Boolean isViewable(){
+    public boolean isViewable(){
         return this.viewable;
     }
 
-    public Boolean isListType(){
+    public boolean isListType(){
         return this.listType;
     }
 
@@ -165,18 +168,17 @@ public class LocalClassMetadataLightImpl
            return false;
        if (!(obj instanceof LocalClassMetadataLight))
            return false;
-       if (this.getOid() == null || ((LocalClassMetadataLight)obj).getOid() == null)
-           return false;
-       return (this.getOid().longValue() == ((LocalClassMetadataLight)obj).getOid().longValue());
+       return (this.getOid() == ((LocalClassMetadataLight)obj).getOid());
    }
 
     @Override
     public int hashCode() {
-        int hash = 9;
-        hash = 81 * hash + (this.id != null ? this.id.hashCode() : 0);
+        int hash = 7;
+        hash = 97 * hash + (int) (this.id ^ (this.id >>> 32));
+        hash = 97 * hash + (this.className != null ? this.className.hashCode() : 0);
         return hash;
     }
-    
+   
     public String getDisplayName(){
         if (displayName == null)
             return className;

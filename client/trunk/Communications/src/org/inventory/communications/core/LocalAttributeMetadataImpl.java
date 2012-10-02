@@ -31,8 +31,8 @@ public class LocalAttributeMetadataImpl
     private long id;
     private Class type;
     private String displayName;
-    private Boolean isVisible;
-    private Integer mapping;
+    private boolean isVisible;
+    private int mapping;
     private String description;
 
     private String listAttributeClassName = null;
@@ -40,8 +40,8 @@ public class LocalAttributeMetadataImpl
     public LocalAttributeMetadataImpl(){
         this.displayName = "";
     }
-    public LocalAttributeMetadataImpl(Long oid, String _name, String _type, String _displayName,
-            Boolean _isVisible, Integer mapping, String _description){
+    public LocalAttributeMetadataImpl(long oid, String _name, String _type, String _displayName,
+            boolean _isVisible, Integer mapping, String _description){
         this.id = oid;
         this.name = _name;
         this.type = Utils.getRealType(_type);
@@ -70,11 +70,11 @@ public class LocalAttributeMetadataImpl
         this.displayName = displayName;
     }
 
-    public Boolean isVisible() {
+    public boolean isVisible() {
         return isVisible;
     }
 
-    public void setVisible(Boolean isVisible) {
+    public void setVisible(boolean isVisible) {
         this.isVisible = isVisible;
     }
 

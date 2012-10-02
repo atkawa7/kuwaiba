@@ -21,7 +21,7 @@ package org.inventory.core.services.api;
  */
 public interface LocalObjectListItem extends LocalObjectLight{
     //Represents the null ID
-    public static final Long NULL_ID = new Long(0);
+    public static final long NULL_ID = 0;
     
     public String getName();
 }

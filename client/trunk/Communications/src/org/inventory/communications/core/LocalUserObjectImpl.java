@@ -29,7 +29,7 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service=LocalUserObject.class)
 public class LocalUserObjectImpl implements LocalUserObject {
 
-    private Long oid;
+    private long oid;
     private String userName;
     private String firstName;
     private String lastName;
@@ -68,7 +68,7 @@ public class LocalUserObjectImpl implements LocalUserObject {
         return lastName;
     }
 
-    public Long getOid() {
+    public long getOid() {
         return oid;
     }
 

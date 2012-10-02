@@ -20,7 +20,6 @@ import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.utils.Utils;
 import org.kuwaiba.wsclient.RemoteObject;
-import org.kuwaiba.wsclient.StringArray;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -34,10 +33,14 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
     //Reference to the metadata associated to this object's class
     private LocalClassMetadata myMetadata;
 
+    /**
+     * This constructor is called to create dummy objects where the id is not important
+     */
+    public LocalObjectImpl() {
+        super();
+    }
 
-    public LocalObjectImpl(){}
-
-    public LocalObjectImpl(String className, Long _oid, String[] atts, Object[] vals){
+    public LocalObjectImpl(String className, long _oid, String[] atts, Object[] vals){
         HashMap<String,Object> dict = new HashMap<String, Object>();
         this.className = className;
         this.oid = _oid;
@@ -91,10 +94,10 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
 
 
     @Override
-    public Long getOid(){
+    public long getOid(){
         return this.oid;
     }
-    public void setOid(Long id){
+    public void setOid(long id){
         this.oid = id;
     }
 

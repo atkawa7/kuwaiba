@@ -16,7 +16,6 @@
 
 package org.inventory.core.usermanager.nodes.customeditor;
 
-import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +91,7 @@ public final class SetGroupsPanel extends JPanel{
         for(LocalUserGroupObjectLight group : allGroups){
             JCheckBox checkbox = new JCheckBox(group.getName());
             for(LocalUserGroupObjectLight myGroup : myGroups){
-                if(myGroup.getOid().equals(group.getOid())){
+                if(myGroup.getOid() == group.getOid()){
                     checkbox.setSelected(true);
                     break;
                 }
@@ -119,7 +118,7 @@ public final class SetGroupsPanel extends JPanel{
             if (checkbox.isSelected()){
                 boolean isPresent = false;
                 for (LocalUserGroupObjectLight group : myGroups){
-                    if (group.getOid().equals(oid)){
+                    if (group.getOid() == oid){
                         isPresent = true;
                         break;
                     }
@@ -142,7 +141,7 @@ public final class SetGroupsPanel extends JPanel{
             if (!checkbox.isSelected()){
                 boolean isPresent = false;
                 for (LocalUserGroupObjectLight group : myGroups){
-                    if (group.getOid().equals(oid)){
+                    if (group.getOid() == oid){
                         isPresent = true;
                         break;
                     }

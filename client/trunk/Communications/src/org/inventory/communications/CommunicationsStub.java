@@ -1154,11 +1154,13 @@ public class CommunicationsStub {
      * @param structure XML document with the view structure (see http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
      * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
      */
-    public void updateObjectRelatedView(long oid, String objectClass, long viewId, String name, String description, byte[] structure, byte[] background){
+    public boolean updateObjectRelatedView(long oid, String objectClass, long viewId, String name, String description, byte[] structure, byte[] background){
         try{
             port.updateObjectRelatedView(oid, objectClass, viewId, name, description, structure, background, session.getSessionId());
+            return true;
         }catch(Exception ex){
             this.error =  ex.getMessage();
+            return false;
         }
     }
 
@@ -1170,11 +1172,13 @@ public class CommunicationsStub {
      * @param structure XML document specifying the view structure (nodes, edges, control points). Null to leave unchanged
      * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
      */
-    public void updateGeneralView(long oid, String name, String description, byte[] structure, byte[] background){
+    public boolean updateGeneralView(long oid, String name, String description, byte[] structure, byte[] background){
         try{
             port.updateGeneralView(oid, name, description, structure, background, session.getSessionId());
+            return true;
         }catch(Exception ex){
             this.error =  ex.getMessage();
+            return false;
         }
     }
 
@@ -1184,7 +1188,8 @@ public class CommunicationsStub {
      * @param ids view ids
      * @throws ObjectNotFoundException if the view can't be found
      */
-    public void deleteGeneralViews(long[] ids) {
+    public boolean deleteGeneralViews(long[] ids) {
+        return true;
 //         try{
 //            port.deleupdateGeneralView(oid, name, description, structure, background, session.getSessionId());
 //        }catch(Exception ex){

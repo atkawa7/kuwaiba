@@ -24,7 +24,7 @@ public interface LocalUserObject {
     public String getFirstName() ;
     public LocalUserGroupObjectLight[] getGroups();
     public String getLastName();
-    public Long getOid();
+    public long getOid();
     public String getUserName();
     public void setGroups(LocalUserGroupObjectLight[] _groups);
 }

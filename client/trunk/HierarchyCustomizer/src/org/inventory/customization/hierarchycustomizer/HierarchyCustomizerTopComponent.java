@@ -71,7 +71,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
 
         pnlLeft.add(bTreeView,BorderLayout.CENTER);
 
-        //By now, due to tranferable constraints (I'd have to create a Tranferable List to support multiple selections)
+        //For now, due to tranferable constraints (I'd have to create a Tranferable List to support multiple selections)
         //lstClasses.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstClasses.setDragEnabled(true);
 
