@@ -30,14 +30,14 @@ public class ClassMetadata extends ClassMetadataLight{
     /**
      *  Shows if this is a core class (the ones provided in the official release) or a custom one
      */
-    private Boolean custom;
+    private boolean custom;
     /**
      *  Indicates if the instances of this class are physical assets
      *  (in other words, if it's meaningful to have a count on them)
      *  Classes marked with the annotation NoCount (Slot, Port and the like)
      *  have this attribute set as false
      */
-    private Boolean countable;
+    private boolean countable;
     /**
      * List of interfaces this class implements
      */
@@ -45,7 +45,7 @@ public class ClassMetadata extends ClassMetadataLight{
     /**
      *  Color assigned to the instances when displayed
      */
-    private Integer color;
+    private int color;
     /**
      *  Icon to show in views
      */
@@ -69,7 +69,7 @@ public class ClassMetadata extends ClassMetadataLight{
     /**
      *  ClassMetada's creationDate
      */
-    private Long creationDate;
+    private long creationDate;
 
     public ClassMetadata() {
         attributes = new ArrayList<AttributeMetadata>();
@@ -78,27 +78,27 @@ public class ClassMetadata extends ClassMetadataLight{
 
 
    // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
-    public Integer getColor() {
+    public int getColor() {
         return color;
     }
 
-    public void setColor(Integer color) {
+    public void setColor(int color) {
         this.color = color;
     }
 
-    public Boolean isCountable() {
+    public boolean isCountable() {
         return countable;
     }
 
-    public void setCountable(Boolean countable) {
+    public void setCountable(boolean countable) {
         this.countable = countable;
     }
 
-    public Boolean isCustom() {
+    public boolean isCustom() {
         return custom;
     }
 
-    public void setCustom(Boolean custom) {
+    public void setCustom(boolean custom) {
         this.custom = custom;
     }
 
@@ -142,11 +142,11 @@ public class ClassMetadata extends ClassMetadataLight{
         this.description = description;
     }
     
-    public Long getCreationDate() {
+    public long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Long creationDate) {
+    public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -159,7 +159,7 @@ public class ClassMetadata extends ClassMetadataLight{
     }
     // </editor-fold>
 
-    public Boolean implementsInterface(String interfaceName){
+    public boolean implementsInterface(String interfaceName){
         if (interfaces == null)
             return false;
         for (InterfaceMetadata im : interfaces){
@@ -174,7 +174,7 @@ public class ClassMetadata extends ClassMetadataLight{
      * @param attribute attribute's name
      * @return if the class has or not such attribute
      */
-    public Boolean hasAttribute(String attribute){
+    public boolean hasAttribute(String attribute){
         for (AttributeMetadata eachAttribute : attributes){
             if (eachAttribute.getName().equals(attribute))
                 return true;
@@ -188,7 +188,7 @@ public class ClassMetadata extends ClassMetadataLight{
      * @return
      * @throws InvalidArgumentException
      */
-    public Integer getAttributeMapping(String attributeName) throws InvalidArgumentException{
+    public int getAttributeMapping(String attributeName) throws InvalidArgumentException{
         for (AttributeMetadata eachAttribute : attributes){
             if (eachAttribute.getName().equals(attributeName))
                 return eachAttribute.getMapping();

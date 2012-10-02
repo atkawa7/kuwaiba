@@ -38,7 +38,7 @@ public class CategoryMetadata {
     /**
      * category creation date
      */
-    private Long creationDate;
+    private long creationDate;
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public String getDescription() {
@@ -65,11 +65,11 @@ public class CategoryMetadata {
         this.name = name;
     }
 
-    public Long getCreationDate() {
+    public long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Long creationDate) {
+    public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
     }// </editor-fold>
     

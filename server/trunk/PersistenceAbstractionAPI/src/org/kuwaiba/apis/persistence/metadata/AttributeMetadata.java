@@ -25,7 +25,7 @@ import java.io.Serializable;
 public class AttributeMetadata implements Serializable{
 
     /**
-     * Integer, Float, Long, Boolean, String or Text
+     * int, Float, long, boolean, String or Text
      */
     public static final int MAPPING_PRIMITIVE = 1;
     /**
@@ -51,7 +51,7 @@ public class AttributeMetadata implements Serializable{
     /**
      * Attribute's id
      */
-    private Long id;
+    private long id;
     /**
      * Attribute's name
      */
@@ -67,11 +67,11 @@ public class AttributeMetadata implements Serializable{
     /**
      * Flag to mark an attribute to be used for administrative purposes (beyond the operational inventory)
      */
-    private Boolean administrative;
+    private boolean administrative;
     /**
      * Should this be shown or hidden
      */
-    private Boolean visible;
+    private boolean visible;
     /**
      * Attribute's short description
      */
@@ -79,34 +79,34 @@ public class AttributeMetadata implements Serializable{
     /**
      * Indicates how this attribute should be mapped (into a primitive type, a relationship, etc)
      */
-    private Integer mapping;
+    private int mapping;
     /**
      * Marks the attribute as read only
      */
-    private Boolean readOnly;
+    private boolean readOnly;
     /**
      * Marks the attribute as unique
      */
-    private Boolean unique;
+    private boolean unique;
     /**
      * Attribute's creation Date
      */
-    private Long creationDate;
+    private long creationDate;
     /**
      *
      */
-    private Boolean noCopy;
+    private boolean noCopy;
     /**
      *
      */
-    private Boolean noSerialize;
+    private boolean noSerialize;
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
-    public Boolean isAdministrative() {
+    public boolean isAdministrative() {
         return administrative;
     }
 
-    public void setAdministrative(Boolean administrative) {
+    public void setAdministrative(boolean administrative) {
         this.administrative = administrative;
     }
 
@@ -134,11 +134,11 @@ public class AttributeMetadata implements Serializable{
         this.name = name;
     }
 
-    public Boolean isReadOnly() {
+    public boolean isReadOnly() {
         return readOnly;
     }
 
-    public void setReadOnly(Boolean readOnly) {
+    public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
     }
 
@@ -150,59 +150,59 @@ public class AttributeMetadata implements Serializable{
         this.type = type;
     }
 
-    public Boolean isVisible() {
+    public boolean isVisible() {
         return visible;
     }
 
-    public void setVisible(Boolean visible) {
+    public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
-    public Boolean isUnique() {
+    public boolean isUnique() {
         return unique;
     }
 
-    public void setUnique(Boolean unique) {
+    public void setUnique(boolean unique) {
         this.unique = unique;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public Long getCreationDate() {
+    public long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Long creationDate) {
+    public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
     }
 
-    public Integer getMapping() {
+    public int getMapping() {
         return mapping;
     }
 
-    public void setMapping(Integer mapping) {
+    public void setMapping(int mapping) {
         this.mapping = mapping;
     }
 
-    public Boolean isNoCopy() {
+    public boolean isNoCopy() {
         return noCopy;
     }
 
-    public void setNoCopy(Boolean noCopy) {
+    public void setNoCopy(boolean noCopy) {
         this.noCopy = noCopy;
     }
 
-    public Boolean isNoSerialize() {
+    public boolean isNoSerialize() {
         return noSerialize;
     }
 
-    public void setNoSerialize(Boolean noSerialize) {
+    public void setNoSerialize(boolean noSerialize) {
         this.noSerialize = noSerialize;
     }// </editor-fold>
     

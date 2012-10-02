@@ -31,7 +31,7 @@ public class GenericObjectList {
     /**
      * List type display name
      */
-    private String dislayName;
+    private String displayName;
     /**
      * Type of relationship:<br/>
      * 1 for Many To One
@@ -51,12 +51,12 @@ public class GenericObjectList {
         this.className = className;
     }
 
-    public String getDislayName() {
-        return dislayName;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setDislayName(String dislayName) {
-        this.dislayName = dislayName;
+    public void setDisplayName(String dislayName) {
+        this.displayName = dislayName;
     }
 
     public List<RemoteBusinessObjectLight> getList() {

@@ -312,16 +312,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 newcm.setProperty(PROPERTY_NAME, newClassDefinition.getName());
             if(newClassDefinition.getDisplayName() != null)
                 newcm.setProperty(PROPERTY_DISPLAY_NAME, newClassDefinition.getDisplayName());
-            if(newClassDefinition.isCustom() != null)
-                newcm.setProperty(PROPERTY_CUSTOM, newClassDefinition.isCustom());
-            if(newClassDefinition.isCountable() != null)
-                newcm.setProperty(PROPERTY_COUNTABLE, newClassDefinition.isCountable());
-            if(newClassDefinition.getColor() != null)
-                newcm.setProperty(PROPERTY_COLOR, newClassDefinition.getColor());
+            newcm.setProperty(PROPERTY_CUSTOM, newClassDefinition.isCustom());
+            newcm.setProperty(PROPERTY_COUNTABLE, newClassDefinition.isCountable());
+            newcm.setProperty(PROPERTY_COLOR, newClassDefinition.getColor());
             if(newClassDefinition.getDescription() != null)
                 newcm.setProperty(PROPERTY_DESCRIPTION, newClassDefinition.getDescription());
-            if(newClassDefinition.isAbstractClass() != null)
-                newcm.setProperty(PROPERTY_ABSTRACT, newClassDefinition.isAbstractClass());
+            newcm.setProperty(PROPERTY_ABSTRACT, newClassDefinition.isAbstractClass());
             if(newClassDefinition.getIcon() != null)
                 newcm.setProperty(PROPERTY_ICON, newClassDefinition.getIcon());
             if(newClassDefinition.getSmallIcon() != null)
@@ -817,18 +813,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         atr.setProperty(PROPERTY_DISPLAY_NAME, newAttributeDefinition.getDisplayName());
                     if(newAttributeDefinition.getType() != null)
                         atr.setProperty(PROPERTY_TYPE, newAttributeDefinition.getType());
-                    if(newAttributeDefinition.getMapping() != null)
-                        atr.setProperty(PROPERTY_MAPPING, newAttributeDefinition.getMapping());
-                    if(newAttributeDefinition.isReadOnly() != null)
-                        atr.setProperty(PROPERTY_READONLY, newAttributeDefinition.isReadOnly());
-                    if(newAttributeDefinition.isVisible() != null)
-                        atr.setProperty(PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
-                    if(newAttributeDefinition.isAdministrative() != null)
-                        atr.setProperty(PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
-                    if(newAttributeDefinition.isNoCopy() != null)
-                        atr.setProperty(PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
-                    if(newAttributeDefinition.isNoSerialize() != null)
-                        atr.setProperty(PROPERTY_NO_SERIALIZE, newAttributeDefinition.isNoSerialize());
+                    atr.setProperty(PROPERTY_MAPPING, newAttributeDefinition.getMapping());
+                    atr.setProperty(PROPERTY_READONLY, newAttributeDefinition.isReadOnly());
+                    atr.setProperty(PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
+                    atr.setProperty(PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
+                    atr.setProperty(PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
+                    atr.setProperty(PROPERTY_NO_SERIALIZE, newAttributeDefinition.isNoSerialize());
 
                     couldDelAtt = true;
                 }
@@ -1205,13 +1195,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 if ((Boolean)childNode.getProperty(PROPERTY_ABSTRACT)){
                    for (Node subclassNode : Util.getAllSubclasses(childNode)){
                        for (ClassMetadataLight possibleChild : currentPossibleChildren)
-                            if (possibleChild.getId().longValue() == subclassNode.getId())
+                            if (possibleChild.getId() == subclassNode.getId())
                                 throw new InvalidArgumentException(Util.formatString("A subclass of %1s is already a possible child for instances of %2s", (String)childNode.getProperty(PROPERTY_NAME), (String)parentNode.getProperty(PROPERTY_NAME)), Level.INFO);
                    }
                 }
                 else{
                     for (ClassMetadataLight possibleChild : currentPossibleChildren)
-                        if (possibleChild.getId().longValue() == childNode.getId())
+                        if (possibleChild.getId() == childNode.getId())
                             throw new InvalidArgumentException(Util.formatString("Class %1s is already a possible child for instances of %2s", (String)childNode.getProperty(PROPERTY_NAME), (String)parentNode.getProperty(PROPERTY_NAME)), Level.INFO);
                 }
 
@@ -1281,13 +1271,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 if ((Boolean)childNode.getProperty(PROPERTY_ABSTRACT)){
                    for (Node subclassNode : Util.getAllSubclasses(childNode)){
                        for (ClassMetadataLight possibleChild : currentPossibleChildren)
-                            if (possibleChild.getId().longValue() == subclassNode.getId())
+                            if (possibleChild.getId() == subclassNode.getId())
                                 throw new InvalidArgumentException(Util.formatString("A subclass of %1s is already a possible child for instances of %2s", (String)childNode.getProperty(PROPERTY_NAME), (String)parentNode.getProperty(PROPERTY_NAME)), Level.INFO);
                    }
                 }
                 else{
                     for (ClassMetadataLight possibleChild : currentPossibleChildren)
-                        if (possibleChild.getId().longValue() == childNode.getId())
+                        if (possibleChild.getId() == childNode.getId())
                             throw new InvalidArgumentException(Util.formatString("Class %1s is already a possible child for instances of %2s", (String)childNode.getProperty(PROPERTY_NAME), (String)parentNode.getProperty(PROPERTY_NAME)), Level.INFO);
                 }
 

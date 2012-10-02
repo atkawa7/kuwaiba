@@ -27,7 +27,7 @@ public class ClassMetadataLight implements Serializable{
     /**
      * ClassMetada's Id
      */
-    private Long id;
+    private long id;
     /**
      * ClassMetada's Name
      */
@@ -39,17 +39,17 @@ public class ClassMetadataLight implements Serializable{
     /**
      * Instances of this class can have views associated (this going to be "true" for all subclasses of ViewableObject)
      */
-    private Boolean viewable;
+    private boolean viewable;
 
     /**
      * Indicates if a class can have instances by itself (All GenericXXX classes
      * and others in package entity.core are used to take advantage of OOP)
      */
-    private Boolean abstractClass;
+    private boolean abstractClass;
     /**
      *  Is this class a list type (Vendor, LocationOwner, OpticalLinkType, etc)
      */
-    private Boolean listType;
+    private boolean listType;
     /**
      *  The parent ClassMetada name
      */
@@ -62,7 +62,7 @@ public class ClassMetadataLight implements Serializable{
     public ClassMetadataLight() {
     }
     
-    public ClassMetadataLight(Long id, String name, String displayName) {
+    public ClassMetadataLight(long id, String name, String displayName) {
         this.id = id;
         this.name = name;
         this.displayName = displayName;
@@ -71,35 +71,35 @@ public class ClassMetadataLight implements Serializable{
     }
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public Boolean isListType() {
+    public boolean isListType() {
         return listType;
     }
 
-    public void setListType(Boolean listType) {
+    public void setListType(boolean listType) {
         this.listType = listType;
     }
 
-    public void setAbstractClass(Boolean abstractClass) {
+    public void setAbstractClass(boolean abstractClass) {
         this.abstractClass = abstractClass;
     }
 
-    public Boolean isAbstractClass() {
+    public boolean isAbstractClass() {
         return abstractClass;
     }
 
-    public Boolean isViewable() {
+    public boolean isViewable() {
         return viewable;
     }
 
-    public void setViewable(Boolean viewable) {
+    public void setViewable(boolean viewable) {
         this.viewable = viewable;
     }
 
