@@ -214,6 +214,10 @@
 
 <xs:element name="setClassAttributeProperties" type="tns:setClassAttributeProperties"/>
 
+<xs:element name="setClassAttributePropertiesById" type="tns:setClassAttributePropertiesById"/>
+
+<xs:element name="setClassAttributePropertiesByIdResponse" type="tns:setClassAttributePropertiesByIdResponse"/>
+
 <xs:element name="setClassAttributePropertiesResponse" type="tns:setClassAttributePropertiesResponse"/>
 
 <xs:element name="setClassMetadataProperties" type="tns:setClassMetadataProperties"/>
@@ -255,7 +259,7 @@
 
 <xs:complexType name="remoteObjectLight">
 <xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0"/>
+<xs:element name="oid" type="xs:long"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
 <xs:element name="validators" type="tns:validator" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
@@ -265,7 +269,7 @@
 <xs:complexType name="validator">
 <xs:sequence>
 <xs:element name="label" type="xs:string" minOccurs="0"/>
-<xs:element name="value" type="xs:int" minOccurs="0"/>
+<xs:element name="value" type="xs:int"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -291,7 +295,7 @@
 
 <xs:complexType name="classInfoLight">
 <xs:sequence>
-<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="id" type="xs:long"/>
 <xs:element name="abstractClass" type="xs:boolean" minOccurs="0"/>
 <xs:element name="viewable" type="xs:boolean" minOccurs="0"/>
 <xs:element name="listType" type="xs:boolean" minOccurs="0"/>
@@ -342,7 +346,7 @@
 
 <xs:complexType name="viewInfoLight">
 <xs:sequence>
-<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="id" type="xs:long"/>
 <xs:element name="type" type="xs:int"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
@@ -434,7 +438,7 @@
 
 <xs:complexType name="remoteQueryLight">
 <xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0"/>
+<xs:element name="oid" type="xs:long"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="isPublic" type="xs:boolean"/>
@@ -775,11 +779,11 @@
 
 <xs:complexType name="userInfo">
 <xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0"/>
+<xs:element name="oid" type="xs:long"/>
 <xs:element name="userName" type="xs:string" minOccurs="0"/>
 <xs:element name="firstName" type="xs:string" minOccurs="0"/>
 <xs:element name="lastName" type="xs:string" minOccurs="0"/>
-<xs:element name="creationDate" type="xs:long" minOccurs="0"/>
+<xs:element name="creationDate" type="xs:long"/>
 <xs:element name="enabled" type="xs:boolean"/>
 <xs:element name="groups" type="tns:userGroupInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="privileges" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
@@ -788,7 +792,7 @@
 
 <xs:complexType name="userGroupInfoLight">
 <xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0"/>
+<xs:element name="oid" type="xs:long"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
@@ -823,7 +827,6 @@
 
 <xs:complexType name="setClassAttributeProperties">
 <xs:sequence>
-<xs:element name="classId" type="xs:long" minOccurs="0"/>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="displayName" type="xs:string" minOccurs="0"/>
@@ -831,7 +834,7 @@
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="administrative" type="xs:boolean"/>
 <xs:element name="visible" type="xs:boolean"/>
-<xs:element name="mapping" type="xs:int" minOccurs="0"/>
+<xs:element name="mapping" type="xs:int"/>
 <xs:element name="readOnly" type="xs:boolean"/>
 <xs:element name="unique" type="xs:boolean"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
@@ -859,7 +862,7 @@
 <xs:sequence>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 <xs:element name="username" type="xs:string" minOccurs="0"/>
-<xs:element name="userId" type="xs:long" minOccurs="0"/>
+<xs:element name="userId" type="xs:long"/>
 <xs:element name="firstName" type="xs:string" minOccurs="0"/>
 <xs:element name="lastName" type="xs:string" minOccurs="0"/>
 </xs:sequence>
@@ -892,7 +895,7 @@
 
 <xs:complexType name="remoteObject">
 <xs:sequence>
-<xs:element name="oid" type="xs:long" minOccurs="0"/>
+<xs:element name="oid" type="xs:long"/>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
 <xs:element name="attributes" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="values" type="ns1:stringArray" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
@@ -932,6 +935,19 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="getLightMetadata">
+<xs:sequence>
+<xs:element name="includeListTypes" type="xs:boolean"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getLightMetadataResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="createGroup">
 <xs:sequence>
 <xs:element name="groupName" type="xs:string" minOccurs="0"/>
@@ -945,19 +961,6 @@
 <xs:complexType name="createGroupResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getLightMetadata">
-<xs:sequence>
-<xs:element name="includeListTypes" type="xs:boolean"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getLightMetadataResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -1075,7 +1078,7 @@
 <xs:extension base="tns:userGroupInfoLight">
 <xs:sequence>
 <xs:element name="members" type="tns:userInfo" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="creationDate" type="xs:long" minOccurs="0"/>
+<xs:element name="creationDate" type="xs:long"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:extension>
@@ -1084,7 +1087,7 @@
 
 <xs:complexType name="addAttributeClass">
 <xs:sequence>
-<xs:element name="classId" type="xs:long" minOccurs="0"/>
+<xs:element name="classId" type="xs:long"/>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="displayName" type="xs:string" minOccurs="0"/>
@@ -1092,7 +1095,7 @@
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="administrative" type="xs:boolean"/>
 <xs:element name="visible" type="xs:boolean"/>
-<xs:element name="mapping" type="xs:int" minOccurs="0"/>
+<xs:element name="mapping" type="xs:int"/>
 <xs:element name="readOnly" type="xs:boolean"/>
 <xs:element name="unique" type="xs:boolean"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
@@ -1100,6 +1103,26 @@
 </xs:complexType>
 
 <xs:complexType name="addAttributeClassResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="setClassAttributePropertiesById">
+<xs:sequence>
+<xs:element name="classid" type="xs:long"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="displayName" type="xs:string" minOccurs="0"/>
+<xs:element name="type" type="xs:string" minOccurs="0"/>
+<xs:element name="description" type="xs:string" minOccurs="0"/>
+<xs:element name="administrative" type="xs:boolean"/>
+<xs:element name="visible" type="xs:boolean"/>
+<xs:element name="mapping" type="xs:int"/>
+<xs:element name="readOnly" type="xs:boolean"/>
+<xs:element name="unique" type="xs:boolean"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="setClassAttributePropertiesByIdResponse">
 <xs:sequence/>
 </xs:complexType>
 
@@ -1231,7 +1254,7 @@
 
 <xs:complexType name="setClassMetadataProperties">
 <xs:sequence>
-<xs:element name="classId" type="xs:long" minOccurs="0"/>
+<xs:element name="classId" type="xs:long"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="displayName" type="xs:string" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>

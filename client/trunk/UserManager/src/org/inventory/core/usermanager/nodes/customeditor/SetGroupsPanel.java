@@ -111,7 +111,7 @@ public final class SetGroupsPanel extends JPanel{
      * Returns the groups to be added to the current user
      * @return An array with groups to be added to the current user
      */
-    public List<Long> toBeAdded(){
+    public long[] toBeAdded(){
         List<Long> res = new ArrayList<Long>();
         for (JCheckBox checkbox : checkBoxes){
             Long oid = Long.valueOf(checkbox.getName());
@@ -127,7 +127,11 @@ public final class SetGroupsPanel extends JPanel{
                     res.add(oid);
             }
         }
-        return res;
+        //TODO this is awful, but the user editor will be changed in the near future
+        long[] myRes = new long[res.size()];
+        for (int i = 0; i< res.size(); i++)
+            myRes[i] = res.get(i);
+        return myRes;
     }
 
     /**

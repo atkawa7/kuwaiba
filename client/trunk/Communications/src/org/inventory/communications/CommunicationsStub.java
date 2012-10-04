@@ -218,7 +218,7 @@ public class CommunicationsStub {
      * @param value Lock value. By now is a boolean, but I expect in the future a three level lock can be implemented (r,w,nothing)
      * @return success or failure
      */
-    public boolean setObjectLock(long oid, String objectClass,Boolean value){
+    public boolean setObjectLock(long oid, String objectClass,boolean value){
         return true;
     }
 
@@ -239,12 +239,13 @@ public class CommunicationsStub {
         }
     }
 
-    public List<Long> getSpecialAttribute(String objectClass, long objectId, String attributeName){
+    public long[] getSpecialAttribute(String objectClass, long objectId, String attributeName){
         try{
-            //This is only temporal, since the result may not be a long in  the future, but it is right now
-            List<Long> res = new ArrayList<Long>();
-            for (String value : port.getSpecialAttribute(objectClass, objectId,attributeName, session.getSessionId()))
-                res.add(Long.valueOf(value));
+
+            List<String> values = port.getSpecialAttribute(objectClass, objectId,attributeName, session.getSessionId());
+            long[] res = new long[values.size()];
+            for (int i = 0; i < values.size(); i++)
+                res[i]= Long.valueOf(values.get(i));
 
             return res;
         }catch(Exception ex){
@@ -537,9 +538,12 @@ public class CommunicationsStub {
      * @param childrenToBeDeleted List if ids of the classes to be removed as possible children
      * @return Success or failure
      */
-    public boolean removePossibleChildren(long parentClassId, List<Long> childrenToBeDeleted){
+    public boolean removePossibleChildren(long parentClassId, long[] childrenToBeDeleted){
         try{
-            port.removePossibleChildren(parentClassId, childrenToBeDeleted,this.session.getSessionId());
+            List<Long> pChildren = new ArrayList<Long>();
+            for (long pChild : childrenToBeDeleted)
+                pChildren.add(pChild);
+            port.removePossibleChildren(parentClassId, pChildren,this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -567,13 +571,13 @@ public class CommunicationsStub {
         }
     }
 
-    public boolean moveObjects(String targetClass, long targetOid, LocalObjectLight[] _objects) {
+    public boolean moveObjects(String targetClass, long targetOid, LocalObjectLight[] objects) {
 
         try{
             List<Long> objectOids = new ArrayList<Long>();
             List<String> objectClasses = new ArrayList<String>();
 
-            for (LocalObjectLight lol : _objects){
+            for (LocalObjectLight lol : objects){
                 objectOids.add(lol.getOid());
                 objectClasses.add(lol.getClassName());
             }
@@ -779,11 +783,11 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean setAttributePropertyValue(Long classId, String name, String displayName,
-            String type, String description, Boolean administrative, Boolean visible, Integer mapping, Boolean readOnly, Boolean unique)  {
+    public boolean setAttributePropertyValue(long classId, String name, String displayName,
+            String type, String description, boolean administrative, boolean visible, int mapping, boolean readOnly, boolean unique)  {
         try{
-            //port.setAttributePropertyValue(classId, attributeName, propertyName, propertyType,this.session.getSessionId());
-            port.setClassAttributeProperties(classId, null, name, displayName, type, description, administrative, visible, mapping, readOnly, unique, this.session.getSessionId());
+            port.setClassAttributePropertiesById(classId, name, displayName, type, description,
+                    administrative, visible, mapping, readOnly, unique, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -791,26 +795,16 @@ public class CommunicationsStub {
         return true;
     }
 
-    public boolean setClassMetadataProperties(Long classId, String displayName, String description, byte[] smallIcon, byte[] icon){
+    public boolean setClassMetadataProperties(long classId, String displayName, String description, byte[] smallIcon, byte[] icon){
         try{
-            //port.setClassPlainAttribute(classId, attributeName, attributeValue,this.session.getSessionId());
-            port.setClassMetadataProperties(classId, null, displayName, description, false, null, smallIcon, icon, this.session.getSessionId());
+            port.setClassMetadataProperties(classId, null, displayName, description, false, null,
+                    smallIcon, icon, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
         }
         return true;
     }
-
-//    public boolean setClassIcon(Long classId, String attributeName, byte[] attributeValue){
-//        try{
-//            //port.setClassIcon(classId, attributeName, attributeValue,this.session.getSessionId());
-//        }catch(Exception ex){
-//            this.error = ex.getMessage();
-//            return false;
-//        }
-//        return true;
-//    }
 
     /**
      * Retrieves the list types
@@ -920,9 +914,12 @@ public class CommunicationsStub {
      * @return success or failure
      */
     public boolean setUserProperties(long oid, String userName, String password, String firstName,
-            String lastName, List<Long> groups) {
+            String lastName, long[] groups) {
         try{
-            port.setUserProperties(oid, userName, firstName, lastName, password, true, null, groups, this.session.getSessionId());
+            List<Long> myGroups = new ArrayList<Long>();
+            for (long aGroup : groups)
+                myGroups.add(aGroup);
+            port.setUserProperties(oid, userName, firstName, lastName, password, true, null, myGroups, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;

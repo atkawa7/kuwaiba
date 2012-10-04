@@ -1,8 +1,22 @@
+/**
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.inventory.customization.attributecustomizer.nodes.properties;
 
 import java.lang.reflect.InvocationTargetException;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.customization.attributecustomizer.nodes.AttributeMetadataNode;
@@ -12,7 +26,7 @@ import org.openide.util.Lookup;
 
 /**
  * Property associate to each attribute
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class AttributeCustomizerNodeProperty extends PropertySupport.ReadWrite{
     private Object value;
@@ -35,16 +49,16 @@ public class AttributeCustomizerNodeProperty extends PropertySupport.ReadWrite{
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         CommunicationsStub com = CommunicationsStub.getInstance();
         LocalClassMetadataLight myClass = ((ClassMetadataNode)node.getParentNode()).getObject();
-        Boolean r = false;
+        boolean r = false;
 
         if(getName().equals("displayName"))
-            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), t.toString(), null, null, null, null, null, null, null);
+            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), t.toString(), null, null, false, node.getObject().isVisible(), node.getObject().getMapping(), false, false);
         if(getName().equals("isVisible"))
-            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, null, null, Boolean.valueOf(t.toString()), null, null, null);
+            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, null, false, Boolean.valueOf(t.toString()), node.getObject().getMapping(), false, false);
         if(getName().equals("administrative"))
-            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, null, Boolean.valueOf(t.toString()), null, null, null, null);
+            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, null, Boolean.valueOf(t.toString()), node.getObject().isVisible(), node.getObject().getMapping(), false, false);
         if(getName().equals("description"))
-            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, t.toString(), null, null, null, null, null);
+            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, t.toString(), false, node.getObject().isVisible(), node.getObject().getMapping(), false, false);
 
         if(r){
             this.value = t;

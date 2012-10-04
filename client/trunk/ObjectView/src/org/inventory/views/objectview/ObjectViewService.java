@@ -211,8 +211,8 @@ public class ObjectViewService implements LookupListener{
             }
         }else{
             if (!com.updateObjectRelatedView(vrtc.getScene().getCurrentObject().getOid(),
-                     vrtc.getScene().getCurrentObject().getClassName(), 1,
-                    "", "",viewStructure, vrtc.getScene().getBackgroundImage())) //NOI18N
+                     vrtc.getScene().getCurrentObject().getClassName(), vrtc.getScene().getCurrentView().getId(),
+                    null, null,viewStructure, vrtc.getScene().getBackgroundImage())) //NOI18N
                 vrtc.getNotifier().showSimplePopup("Object View", NotificationUtil.ERROR, com.getError());
             else
                 vrtc.setHtmlDisplayName(vrtc.getDisplayName());

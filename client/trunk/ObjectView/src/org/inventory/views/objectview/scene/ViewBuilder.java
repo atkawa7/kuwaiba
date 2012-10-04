@@ -142,10 +142,10 @@ public class ViewBuilder {
 
             for (LocalNode myNode : myLocalNodes){
                 
-                if (Long.valueOf(com.getSpecialAttribute(container.getClassName(), container.getOid(),aSideString).get(0)).equals(myNode.getObject().getOid())) //NOI18N
+                if (com.getSpecialAttribute(container.getClassName(), container.getOid(),aSideString)[0] == myNode.getObject().getOid()) //NOI18N
                     le.setaSide(myNode);
                 else{
-                    if (Long.valueOf(com.getSpecialAttribute(container.getClassName(), container.getOid(),bSideString).get(0)).equals(myNode.getObject().getOid())) //NOI18N
+                    if (com.getSpecialAttribute(container.getClassName(), container.getOid(),bSideString)[0] == myNode.getObject().getOid()) //NOI18N
                        le.setbSide(myNode);
                 }
                 if (le.getaSide() != null && le.getbSide() != null)
@@ -200,10 +200,10 @@ public class ViewBuilder {
                     aSideString = "endpointA";
                     bSideString = "endpointB";
                 }
-                LocalNode nodeA = getNodeMatching(myView.getNodes(), Long.valueOf(com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(),aSideString).get(0)));
+                LocalNode nodeA = getNodeMatching(myView.getNodes(), com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(),aSideString)[0]);
                 if (nodeA == null)
                     continue;
-                LocalNode nodeB = getNodeMatching(myView.getNodes(), Long.valueOf(com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(),bSideString).get(0)));
+                LocalNode nodeB = getNodeMatching(myView.getNodes(), com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(),bSideString)[0]);
                 if (nodeB == null)
                     continue;
                 myView.getEdges().add(LocalStuffFactory.createLocalEdge(toAdd, nodeA, nodeB, null));
@@ -217,7 +217,7 @@ public class ViewBuilder {
     }
 
     /**
-     * Helper to get a localnode which inner object has a given id
+     * Helper to get a local node matching an inner
      * @param list
      * @param id
      * @return the node matching the oid or null if the object is not present

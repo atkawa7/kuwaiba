@@ -18,8 +18,6 @@ package org.inventory.core.usermanager.nodes.properties;
 
 import java.beans.PropertyEditorSupport;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.session.LocalUserGroupObjectLight;
@@ -73,10 +71,9 @@ public class UserProperty extends ReadWrite{
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
         LocalUserGroupObjectLight[] groups = object.getGroups();
-        List<Long> oids = new ArrayList<Long>();
-        for (LocalUserGroupObjectLight group : groups) {
-            oids.add(group.getOid());
-        }
+        long[] oids = new long[groups.length];
+        for (int i = 0; i < groups.length; i++)
+            oids[i] = groups[i].getOid();
 
         boolean success = false;
         if (this.getName().equals(UserNode.PROP_USERNAME))
