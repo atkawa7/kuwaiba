@@ -724,7 +724,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             }
 
             if (viewNode == null)
-                throw new ObjectNotFoundException("View", oid); //NOI18N
+                throw new ObjectNotFoundException("View", viewId); //NOI18N
 
             tx = graphDb.beginTx();
 
@@ -840,8 +840,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         for (Relationship rel : instance.getRelationships(RelTypes.HAS_VIEW, Direction.OUTGOING)){
             Node viewNode = rel.getEndNode();
             if (viewNode.getId() == viewId){
-                ViewObject res = new ViewObject(viewId, (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),
-                        (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION), (Integer)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
+                ViewObject res = new ViewObject(viewId,
+                        viewNode.hasProperty(MetadataEntityManagerImpl.PROPERTY_NAME) ? (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME) : null,
+                        viewNode.hasProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION) ? (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION) : null,
+                        (Integer)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
                 if (viewNode.hasProperty(PROPERTY_BACKGROUND_FILE_NAME)){
                     String fileName = (String)viewNode.getProperty(PROPERTY_BACKGROUND_FILE_NAME);
                     Properties props = new Properties();
@@ -873,8 +875,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 else break;
             }
             Node viewNode = rel.getEndNode();
-            res.add(new ViewObjectLight(viewNode.getId(), (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),
-                    (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION),(Integer)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE)));
+            res.add(new ViewObjectLight(viewNode.getId(), 
+                    viewNode.hasProperty(MetadataEntityManagerImpl.PROPERTY_NAME) ? (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME) : null,
+                    viewNode.hasProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION) ? (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION) : null,
+                    (Integer)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE)));
         }
         return res;
     }
@@ -912,12 +916,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         if (gView == null)
             throw new ObjectNotFoundException("View", viewId);
 
-        ViewObject aView = new ViewObject(gView.getId(), (String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),
-                    (String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION), (Integer)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
-        if (gView.hasProperty(MetadataEntityManagerImpl.PROPERTY_NAME))
-            aView.setName((String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
-        if (gView.hasProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION))
-            aView.setDescription((String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION));
+        ViewObject aView = new ViewObject(gView.getId(),
+                gView.hasProperty(MetadataEntityManagerImpl.PROPERTY_NAME) ? (String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME) : null,
+                gView.hasProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION) ? (String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION) : null,
+                (Integer)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
         if (gView.hasProperty(PROPERTY_STRUCTURE))
             aView.setStructure((byte[])gView.getProperty(PROPERTY_STRUCTURE));
         if (gView.hasProperty(PROPERTY_BACKGROUND_FILE_NAME)){

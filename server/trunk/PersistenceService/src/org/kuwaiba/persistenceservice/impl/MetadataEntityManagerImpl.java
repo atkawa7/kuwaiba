@@ -788,17 +788,71 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @param newAttributeDefinition
      */
     @Override
-    public void changeAttributeDefinition(long classId, AttributeMetadata newAttributeDefinition) {
+    public void changeAttributeDefinition(long classId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException{
         Transaction tx = null;
         boolean couldDelAtt = false;
         try {
             tx = graphDb.beginTx();
             Node node = classIndex.get(PROPERTY_ID, classId).getSingle();
 
-            if (node == null) {
+            if (node == null)
                 throw new MetadataObjectNotFoundException(Util.formatString(
-                        "Can not find the Class with the id %1s", classId));
+                        "Can not find a class with the id %1s", classId));
+
+            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
+            for (Relationship relationship : relationships) {
+                Node atr = relationship.getEndNode();
+                if (String.valueOf(atr.getProperty(PROPERTY_NAME)).equals(newAttributeDefinition.getName()))
+                {
+                    if(newAttributeDefinition.getName() != null)
+                        atr.setProperty(PROPERTY_NAME, newAttributeDefinition.getName());
+                    if(newAttributeDefinition.getDescription() != null)
+                        atr.setProperty(PROPERTY_DESCRIPTION, newAttributeDefinition.getDescription());
+                    if(newAttributeDefinition.getDisplayName() != null)
+                        atr.setProperty(PROPERTY_DISPLAY_NAME, newAttributeDefinition.getDisplayName());
+                    if(newAttributeDefinition.getType() != null)
+                        atr.setProperty(PROPERTY_TYPE, newAttributeDefinition.getType());
+                    atr.setProperty(PROPERTY_MAPPING, newAttributeDefinition.getMapping());
+                    atr.setProperty(PROPERTY_READONLY, newAttributeDefinition.isReadOnly());
+                    atr.setProperty(PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
+                    atr.setProperty(PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
+                    atr.setProperty(PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
+                    atr.setProperty(PROPERTY_NO_SERIALIZE, newAttributeDefinition.isNoSerialize());
+
+                    couldDelAtt = true;
+                }
+            }//end for
+            //if the attribute does exist
+            if (!couldDelAtt) {
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                        "Can not find the Attribute with the name %1s", newAttributeDefinition.getName()));
             }
+
+            tx.success();
+        }catch(Exception ex){
+            throw new RuntimeException(ex.getMessage());
+        } finally {
+            tx.finish();
+        }
+    }
+
+
+    /**
+     * Changes an attribute definition belonging to a classMetadata
+     * @param ClassId
+     * @param newAttributeDefinition
+     */
+    @Override
+    public void changeAttributeDefinition(String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException{
+        Transaction tx = null;
+        boolean couldDelAtt = false;
+        try {
+            tx = graphDb.beginTx();
+            Node node = classIndex.get(PROPERTY_NAME, className).getSingle();
+
+            if (node == null)
+                throw new MetadataObjectNotFoundException(Util.formatString(
+                        "Can not find a class with name %1s", className));
 
             Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
             for (Relationship relationship : relationships) {
