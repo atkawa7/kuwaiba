@@ -414,7 +414,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void changeAttributeDefinition(long ClassId, AttributeInfo newAttributeDefinition)
+    public void changeAttributeDefinition(long classId, AttributeInfo newAttributeDefinition)
             throws ServerSideException
     {
         if (mem == null)
@@ -432,7 +432,33 @@ public class WebserviceBean implements WebserviceBeanRemote {
             attrMtdt.setVisible(newAttributeDefinition.isVisible());
             attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
 
-            mem.changeAttributeDefinition(ClassId, attrMtdt);
+            mem.changeAttributeDefinition(classId, attrMtdt);
+
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public void changeAttributeDefinition(String className, AttributeInfo newAttributeDefinition)
+            throws ServerSideException {
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try {
+            AttributeMetadata attrMtdt = new AttributeMetadata();
+
+            attrMtdt.setName(newAttributeDefinition.getName());
+            attrMtdt.setDisplayName(newAttributeDefinition.getDisplayName());
+            attrMtdt.setDescription(newAttributeDefinition.getDescription());
+            attrMtdt.setType(newAttributeDefinition.getType());
+            attrMtdt.setMapping(newAttributeDefinition.getMapping());
+            attrMtdt.setAdministrative(newAttributeDefinition.isAdministrative());
+            attrMtdt.setUnique(newAttributeDefinition.isUnique());
+            attrMtdt.setVisible(newAttributeDefinition.isVisible());
+            attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
+
+            mem.changeAttributeDefinition(className, attrMtdt);
 
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());

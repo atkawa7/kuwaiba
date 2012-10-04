@@ -172,11 +172,17 @@ public interface WebserviceBeanRemote {
     public AttributeInfo getAttribute(long classId, String attributeName) throws ServerSideException;
 
     /**
-     * Changes an attribute definition belonging to a classMetadata
-     * @param ClassId
+     * Changes an attribute definition using an id to get the class it belongs to
+     * @param classId Class name this attribute belongs to
      * @param newAttributeDefinition
      */
-    public void changeAttributeDefinition(long ClassId, AttributeInfo newAttributeDefinition) throws ServerSideException;
+    public void changeAttributeDefinition(long classId, AttributeInfo newAttributeDefinition) throws ServerSideException;
+    /**
+     * Changes an attribute definition using name to get the class it belongs to
+     * @param className Class name this attribute belongs to
+     * @param newAttributeDefinition
+     */
+    public void changeAttributeDefinition(String className, AttributeInfo newAttributeDefinition) throws ServerSideException;
 
     /**
      * Deletes an attribute belonging to a classMetadata

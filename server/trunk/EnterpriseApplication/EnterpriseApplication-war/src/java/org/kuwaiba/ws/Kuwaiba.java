@@ -157,7 +157,7 @@ public class Kuwaiba {
      * @param firstName User's first name
      * @param lastName User's last name
      * @param enabled Is this user enable by default?
-     * @param privileges A list of integers specifying the privileges for this user. Does nothing for now
+     * @param privileges A list of ints specifying the privileges for this user. Does nothing for now
      * @param groups List of the ids of the groups to relate to this user
      * @param sessionId Session token
      * @return The new user Id
@@ -1265,7 +1265,7 @@ public class Kuwaiba {
      */
     @WebMethod(operationName = "setClassMetadataProperties")
     public void setClassMetadataProperties(@WebParam(name = "classId")
-        Long ClassId, @WebParam(name = "name")
+        long ClassId, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "description")
         String description, @WebParam(name = "abstractClass")
@@ -1323,11 +1323,11 @@ public class Kuwaiba {
      * @param readOnly is the attribute read only?
      * @param unique should this attribute be unique?
      * @param sessionId session token
-     * @throws Exception
+     * @throws Exception IN case something goes wrong
      */
     @WebMethod(operationName = "addAttributeClass")
     public void addClassAttribute(@WebParam(name = "classId")
-        Long ClassId, @WebParam(name = "className")
+        long ClassId, @WebParam(name = "className")
         String ClassName,  @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "type")
@@ -1335,7 +1335,7 @@ public class Kuwaiba {
         String description, @WebParam(name = "administrative")
         boolean administrative, @WebParam(name = "visible")
         boolean visible, @WebParam(name = "mapping")
-        Integer mapping, @WebParam(name = "readOnly")
+        int mapping, @WebParam(name = "readOnly")
         boolean readOnly, @WebParam(name = "unique")
         boolean unique, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
@@ -1358,42 +1358,40 @@ public class Kuwaiba {
     }
 
     /**
-     * Update an attribute belonging to a classMetadata
-     * @param ClassId Class id where the attribute will be attached
-     * @param ClassName Class name where the attribute will be attached
+     * Update a class attribute taking its class name as parameter
+     * @param className Class the attribute belongs to
      * @param name attribute name
      * @param displayName attribute display name
      * @param type attribute type
      * @param description attribute description
      * @param administrative is the attribute administrative?
      * @param visible is the attribute visible?
-     * @param mapping
+     * @param mapping What kind of attribute is this? (text, relationship)
      * @param readOnly is the attribute read only?
      * @param unique should this attribute be unique?
      * @param sessionId session token
      * @throws Exception
      */
     @WebMethod(operationName = "setClassAttributeProperties")
-    public void setClassAttributeProperties(@WebParam(name = "classId")
-        Long ClassId, @WebParam(name = "className")
-        String ClassName,  @WebParam(name = "name")
+    public void setClassAttributeProperties(@WebParam(name = "className")
+        String className,  @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "type")
         String type, @WebParam(name = "description")
         String description, @WebParam(name = "administrative")
         boolean administrative, @WebParam(name = "visible")
         boolean visible, @WebParam(name = "mapping")
-        Integer mapping, @WebParam(name = "readOnly")
+        int mapping, @WebParam(name = "readOnly")
         boolean readOnly, @WebParam(name = "unique")
         boolean unique, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
 
         try {
-            wsBean.validateCall("addAttributeByClassId", getIPAddress(), sessionId);
+            wsBean.validateCall("setClassAttributeProperties", getIPAddress(), sessionId);
             AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
                                             visible, description, mapping);
 
-            wsBean.changeAttributeDefinition(ClassId, ai);
+            wsBean.changeAttributeDefinition(className, ai);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -1405,6 +1403,51 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Update a class attribute taking its class id as parameter
+     * @param className Class the attribute belongs to
+     * @param name attribute name
+     * @param displayName attribute display name
+     * @param type attribute type
+     * @param description attribute description
+     * @param administrative is the attribute administrative?
+     * @param visible is the attribute visible?
+     * @param mapping What kind of attribute is this? (text, relationship)
+     * @param readOnly is the attribute read only?
+     * @param unique should this attribute be unique?
+     * @param sessionId session token
+     * @throws Exception
+     */
+    @WebMethod(operationName = "setClassAttributePropertiesById")
+    public void setClassAttributePropertiesById(@WebParam(name = "classid")
+        long classid,  @WebParam(name = "name")
+        String name, @WebParam(name = "displayName")
+        String displayName, @WebParam(name = "type")
+        String type, @WebParam(name = "description")
+        String description, @WebParam(name = "administrative")
+        boolean administrative, @WebParam(name = "visible")
+        boolean visible, @WebParam(name = "mapping")
+        int mapping, @WebParam(name = "readOnly")
+        boolean readOnly, @WebParam(name = "unique")
+        boolean unique, @WebParam(name = "sessionId")
+        String sessionId) throws Exception {
+
+        try {
+            wsBean.validateCall("setClassAttributePropertiesById", getIPAddress(), sessionId);
+            AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
+                                            visible, description, mapping);
+
+            wsBean.changeAttributeDefinition(classid, ai);
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
 
     /**
      * Gets the metadata for a given class using its name as argument
