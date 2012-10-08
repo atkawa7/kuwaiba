@@ -27,7 +27,7 @@ public class RemoteBusinessObjectLight implements Serializable{
     /**
      * Object's id
      */
-    private Long id;
+    private long id;
     /**
      * Object's name
      */
@@ -46,11 +46,11 @@ public class RemoteBusinessObjectLight implements Serializable{
         this.className = className;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

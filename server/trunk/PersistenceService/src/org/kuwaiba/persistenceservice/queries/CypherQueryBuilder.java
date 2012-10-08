@@ -365,7 +365,7 @@ public class CypherQueryBuilder {
                     visibleAttributeNames.add(joinVisibleAttribute);
                 }
         }
-        ResultRecord resltRcrdHeader = new ResultRecord(null, null, null);
+        ResultRecord resltRcrdHeader = new ResultRecord(0, null, null);
         resltRcrdHeader.setExtraColumns(visibleAttributeNames);
         resultList.add(resltRcrdHeader);
 
