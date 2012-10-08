@@ -21,7 +21,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.SharedInformation;
-import org.inventory.connections.physicalconnections.wizards.ConnectionWizard;
+import org.inventory.core.wizards.physicalconnections.ConnectionWizard;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.Constants;
@@ -142,7 +142,7 @@ public class PhysicalConnectionProvider implements ConnectProvider{
                 wizardType = ConnectionWizard.WIZARDTYPE_CONNECTIONS;
                 break;
             default:
-                nu.showSimplePopup("Create Connection", NotificationUtil.ERROR, "No connection was selected");
+                nu.showSimplePopup("Create Connection", NotificationUtil.ERROR, "No connection type is selected");
                 return;
         }
 

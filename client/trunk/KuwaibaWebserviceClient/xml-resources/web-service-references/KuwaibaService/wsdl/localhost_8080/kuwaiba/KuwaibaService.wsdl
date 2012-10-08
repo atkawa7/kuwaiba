@@ -40,17 +40,17 @@
 <message name="getGroupsResponse">
 <part name="parameters" element="tns:getGroupsResponse"/>
 </message>
+<message name="executeQuery">
+<part name="parameters" element="tns:executeQuery"/>
+</message>
+<message name="executeQueryResponse">
+<part name="parameters" element="tns:executeQueryResponse"/>
+</message>
 <message name="createObject">
 <part name="parameters" element="tns:createObject"/>
 </message>
 <message name="createObjectResponse">
 <part name="parameters" element="tns:createObjectResponse"/>
-</message>
-<message name="getClassHierarchy">
-<part name="parameters" element="tns:getClassHierarchy"/>
-</message>
-<message name="getClassHierarchyResponse">
-<part name="parameters" element="tns:getClassHierarchyResponse"/>
 </message>
 <message name="copyObjects">
 <part name="parameters" element="tns:copyObjects"/>
@@ -58,11 +58,11 @@
 <message name="copyObjectsResponse">
 <part name="parameters" element="tns:copyObjectsResponse"/>
 </message>
-<message name="executeQuery">
-<part name="parameters" element="tns:executeQuery"/>
+<message name="getClassHierarchy">
+<part name="parameters" element="tns:getClassHierarchy"/>
 </message>
-<message name="executeQueryResponse">
-<part name="parameters" element="tns:executeQueryResponse"/>
+<message name="getClassHierarchyResponse">
+<part name="parameters" element="tns:getClassHierarchyResponse"/>
 </message>
 <message name="setUserProperties">
 <part name="parameters" element="tns:setUserProperties"/>
@@ -396,25 +396,25 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGroupsResponse" message="tns:getGroupsResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGroups/Fault/Exception"/>
 </operation>
+<operation name="executeQuery">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryRequest" message="tns:executeQuery"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryResponse" message="tns:executeQueryResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQuery/Fault/Exception"/>
+</operation>
 <operation name="createObject">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectRequest" message="tns:createObject"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectResponse" message="tns:createObjectResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObject/Fault/Exception"/>
-</operation>
-<operation name="getClassHierarchy">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchyRequest" message="tns:getClassHierarchy"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchyResponse" message="tns:getClassHierarchyResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchy/Fault/Exception"/>
 </operation>
 <operation name="copyObjects">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsRequest" message="tns:copyObjects"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsResponse" message="tns:copyObjectsResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjects/Fault/Exception"/>
 </operation>
-<operation name="executeQuery">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryRequest" message="tns:executeQuery"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryResponse" message="tns:executeQueryResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQuery/Fault/Exception"/>
+<operation name="getClassHierarchy">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchyRequest" message="tns:getClassHierarchy"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchyResponse" message="tns:getClassHierarchyResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchy/Fault/Exception"/>
 </operation>
 <operation name="setUserProperties">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setUserPropertiesRequest" message="tns:setUserProperties"/>
@@ -734,7 +734,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="createObject">
+<operation name="executeQuery">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -746,7 +746,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="getClassHierarchy">
+<operation name="createObject">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -770,7 +770,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="executeQuery">
+<operation name="getClassHierarchy">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

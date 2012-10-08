@@ -27,19 +27,17 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.inventory.communications.LocalStuffFactory;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.views.gis.scene.actions.MapWidgetPanAction;
 import org.inventory.views.gis.scene.actions.MoveAction;
 import org.inventory.views.gis.scene.actions.ZoomAction;
 import org.inventory.views.gis.scene.providers.AcceptActionProvider;
+import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.jdesktop.swingx.JXMapViewer;
 import org.jdesktop.swingx.mapviewer.GeoPosition;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
-import org.netbeans.api.visual.action.ConnectorState;
-import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.model.ObjectSceneEvent;
@@ -49,7 +47,6 @@ import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.ComponentWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
-import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
@@ -106,6 +103,10 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      * Scene lookup
      */
     private SceneLookup lookup;
+    /**
+     * Local connect provider
+     */
+    private PhysicalConnectionProvider connectProvider;
 
     public GISViewScene() {
         
@@ -118,6 +119,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         addChild(nodesLayer);
 
         this.lookup = new SceneLookup(Lookup.EMPTY);
+        this.connectProvider = new PhysicalConnectionProvider(this);
         
         MapPanel myMap = new MapPanel();
         myMap.setProvider(MapPanel.Providers.OSM);
@@ -152,7 +154,6 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         getActions().addAction(ActionFactory.createAcceptAction(new AcceptActionProvider(this)));
 
         setActiveTool(ObjectNodeWidget.ACTION_SELECT);
-
     }
 
     @Override
@@ -162,40 +163,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         myWidget.setImage(defaultIcon);
         myWidget.getActions(ObjectNodeWidget.ACTION_SELECT).addAction(createSelectAction());
         myWidget.getActions(ObjectNodeWidget.ACTION_SELECT).addAction(new MoveAction());
-        myWidget.getActions(ObjectNodeWidget.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(connectionsLayer, new ConnectProvider() {
-
-            @Override
-            public boolean isSourceWidget(Widget sourceWidget) {
-                if (sourceWidget instanceof GeoPositionedNodeWidget)
-                    return true;
-                return false;
-            }
-
-            @Override
-            public ConnectorState isTargetWidget(Widget sourceWidget, Widget targetWidget) {
-                if (sourceWidget instanceof GeoPositionedNodeWidget)
-                    return ConnectorState.ACCEPT;
-                return ConnectorState.REJECT;
-            }
-
-            @Override
-            public boolean hasCustomTargetWidgetResolver(Scene scene) {
-                return false;
-            }
-
-            @Override
-            public Widget resolveTargetWidget(Scene scene, Point sceneLocation) {
-                return null;
-            }
-
-            @Override
-            public void createConnection(Widget sourceWidget, Widget targetWidget) {
-                GeoPositionedConnectionWidget newEdge = (GeoPositionedConnectionWidget)addEdge(LocalStuffFactory.createLocalObjectLight());
-                newEdge.setSourceAnchor(AnchorFactory.createCircularAnchor(sourceWidget, 3));
-                newEdge.setTargetAnchor(AnchorFactory.createCircularAnchor(targetWidget, 3));
-                
-            }
-        }));
+        myWidget.getActions(ObjectNodeWidget.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(connectionsLayer, connectProvider));
         return myWidget;
     }
 
@@ -269,6 +237,10 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
 
         validate();
         repaint();
+    }
+
+    public PhysicalConnectionProvider getConnectProvider() {
+        return connectProvider;
     }
 
     /**

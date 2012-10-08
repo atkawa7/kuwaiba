@@ -18,8 +18,10 @@ package org.inventory.views.gis;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.util.logging.Logger;
+import javax.swing.ButtonGroup;
 import org.inventory.views.gis.scene.GISViewScene;
 import org.inventory.views.gis.scene.ObjectNodeWidget;
+import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -34,6 +36,7 @@ import org.openide.explorer.ExplorerManager;
 autostore = false)
 public final class GISViewTopComponent extends TopComponent implements ExplorerManager.Provider{
 
+    private ButtonGroup aButtonGroup;
     private static GISViewTopComponent instance;
     /** path to the icon used by the component and its open action */
     static final String ICON_PATH = "org/inventory/views/gis/res/icon.png";
@@ -49,12 +52,22 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
     public GISViewTopComponent() {
         initComponents();
+        initCustomComponents();
         setName(NbBundle.getMessage(GISViewTopComponent.class, "CTL_GISViewTopComponent"));
         setToolTipText(NbBundle.getMessage(GISViewTopComponent.class, "HINT_GISViewTopComponent"));
         scene = new GISViewScene();
         add(scene.createView(),BorderLayout.CENTER);
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         associateLookup(scene.getLookup());
+    }
+
+    private void initCustomComponents(){
+        aButtonGroup = new ButtonGroup();
+        aButtonGroup.add(btnWireContainer);
+        aButtonGroup.add(btnWirelessContainer);
+        aButtonGroup.add(btnElectricalLink);
+        aButtonGroup.add(btnOpticalLink);
+        aButtonGroup.add(btnWirelessLink);
     }
 
     /** This method is called from within the constructor to
@@ -74,6 +87,12 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnConnect = new javax.swing.JToggleButton();
         btnZommIn = new javax.swing.JButton();
         btnZoomOut = new javax.swing.JButton();
+        sepMainSeparator = new javax.swing.JToolBar.Separator();
+        btnWireContainer = new javax.swing.JToggleButton();
+        btnWirelessContainer = new javax.swing.JToggleButton();
+        btnOpticalLink = new javax.swing.JToggleButton();
+        btnElectricalLink = new javax.swing.JToggleButton();
+        btnWirelessLink = new javax.swing.JToggleButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -163,6 +182,72 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
             }
         });
         barToolMain.add(btnZoomOut);
+        barToolMain.add(sepMainSeparator);
+
+        btnWireContainer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/wire-container.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnWireContainer, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnWireContainer.text")); // NOI18N
+        btnWireContainer.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnWireContainer.toolTipText")); // NOI18N
+        btnWireContainer.setFocusable(false);
+        btnWireContainer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnWireContainer.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnWireContainer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnWireContainerActionPerformed(evt);
+            }
+        });
+        barToolMain.add(btnWireContainer);
+
+        btnWirelessContainer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/wireless-container.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnWirelessContainer, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnWirelessContainer.text")); // NOI18N
+        btnWirelessContainer.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnWirelessContainer.toolTipText")); // NOI18N
+        btnWirelessContainer.setFocusable(false);
+        btnWirelessContainer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnWirelessContainer.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnWirelessContainer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnWirelessContainerActionPerformed(evt);
+            }
+        });
+        barToolMain.add(btnWirelessContainer);
+
+        btnOpticalLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/optical-link.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnOpticalLink, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnOpticalLink.text")); // NOI18N
+        btnOpticalLink.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnOpticalLink.toolTipText")); // NOI18N
+        btnOpticalLink.setFocusable(false);
+        btnOpticalLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnOpticalLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnOpticalLink.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOpticalLinkActionPerformed(evt);
+            }
+        });
+        barToolMain.add(btnOpticalLink);
+
+        btnElectricalLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/electrical-link.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnElectricalLink, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnElectricalLink.text")); // NOI18N
+        btnElectricalLink.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnElectricalLink.toolTipText")); // NOI18N
+        btnElectricalLink.setFocusable(false);
+        btnElectricalLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnElectricalLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnElectricalLink.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnElectricalLinkActionPerformed(evt);
+            }
+        });
+        barToolMain.add(btnElectricalLink);
+
+        btnWirelessLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/wireless-link.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnWirelessLink, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnWirelessLink.text")); // NOI18N
+        btnWirelessLink.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnWirelessLink.toolTipText")); // NOI18N
+        btnWirelessLink.setFocusable(false);
+        btnWirelessLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnWirelessLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnWirelessLink.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnWirelessLinkActionPerformed(evt);
+            }
+        });
+        barToolMain.add(btnWirelessLink);
 
         add(barToolMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
@@ -185,16 +270,42 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnSelect.setSelected(false);
     }//GEN-LAST:event_btnConnectActionPerformed
 
+    private void btnWireContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWireContainerActionPerformed
+        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRECONTAINER);
+    }//GEN-LAST:event_btnWireContainerActionPerformed
+
+    private void btnWirelessContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessContainerActionPerformed
+        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRELESSCONTAINER);
+    }//GEN-LAST:event_btnWirelessContainerActionPerformed
+
+    private void btnOpticalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpticalLinkActionPerformed
+        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_OPTICALLINK);
+    }//GEN-LAST:event_btnOpticalLinkActionPerformed
+
+    private void btnElectricalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnElectricalLinkActionPerformed
+        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_ELECTRICALLINK);
+    }//GEN-LAST:event_btnElectricalLinkActionPerformed
+
+    private void btnWirelessLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessLinkActionPerformed
+        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRELESSLINK);
+    }//GEN-LAST:event_btnWirelessLinkActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barToolMain;
     private javax.swing.JToggleButton btnConnect;
+    private javax.swing.JToggleButton btnElectricalLink;
     private javax.swing.JButton btnExport;
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnOpen;
+    private javax.swing.JToggleButton btnOpticalLink;
     private javax.swing.JButton btnSave;
     private javax.swing.JToggleButton btnSelect;
+    private javax.swing.JToggleButton btnWireContainer;
+    private javax.swing.JToggleButton btnWirelessContainer;
+    private javax.swing.JToggleButton btnWirelessLink;
     private javax.swing.JButton btnZommIn;
     private javax.swing.JButton btnZoomOut;
+    private javax.swing.JToolBar.Separator sepMainSeparator;
     // End of variables declaration//GEN-END:variables
     /**
      * Gets default instance. Do not use directly: reserved for *.settings files only,
