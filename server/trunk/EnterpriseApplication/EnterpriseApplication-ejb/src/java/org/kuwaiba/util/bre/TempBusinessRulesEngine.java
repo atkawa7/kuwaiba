@@ -22,6 +22,9 @@ import java.util.List;
 
 /**
  * A temporary place to put the business rules while we develop a decent engine
+ * Core rules to implement:
+ * What objects could be added to what views
+ *
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class TempBusinessRulesEngine {
