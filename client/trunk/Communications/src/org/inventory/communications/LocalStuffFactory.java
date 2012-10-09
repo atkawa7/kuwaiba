@@ -16,7 +16,6 @@
 
 package org.inventory.communications;
 
-import java.awt.Point;
 import javax.xml.stream.XMLStreamException;
 import org.inventory.communications.core.LocalAttributeMetadataImpl;
 import org.inventory.communications.core.LocalAttributeWrapperImpl;
@@ -78,11 +77,11 @@ public class LocalStuffFactory {
         //return null;
     }
 
-    public static LocalEdge createLocalEdge(LocalObjectLight toAdd, LocalNode nodeA, LocalNode nodeB, Point[] controlPoints) {
+    public static LocalEdge createLocalEdge(LocalObjectLight toAdd, LocalNode nodeA, LocalNode nodeB, double[][] controlPoints) {
         return new LocalEdgeImpl(toAdd, nodeB, nodeB, controlPoints);
     }
 
-    public static LocalEdge createLocalEdge(LocalObjectLight container, Point[] controlPoints) {
+    public static LocalEdge createLocalEdge(LocalObjectLight container, double[][] controlPoints) {
         return new LocalEdgeImpl(container, controlPoints);
     }
 

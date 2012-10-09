@@ -51,9 +51,23 @@ public class ZoomAction extends WidgetAction.Adapter{
     public State mouseWheelMoved (Widget widget, WidgetMouseWheelEvent event) {
         GISViewScene scene = (GISViewScene)widget.getScene ();
 
-        int amount = event.getWheelRotation ();
+        return zoom(event.getWheelRotation (), scene);
 
-        if (amount < 0) //Zoom in
+        
+    }
+
+    @Override
+    public State mouseClicked(Widget widget, WidgetMouseEvent event) {
+        if (event.getClickCount() == 2){
+            GISViewScene scene = (GISViewScene)widget.getScene ();
+            return zoom(-1,scene);
+
+        }else
+            return WidgetAction.State.REJECTED;
+    }
+
+    private State zoom (int howMuch, GISViewScene scene){
+        if (howMuch < 0) //Zoom in
             scene.zoomIn();
         else //Zoom out
             scene.zoomOut();

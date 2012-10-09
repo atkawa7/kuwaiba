@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.inventory.communications.SharedInformation;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -139,10 +140,6 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
      * Event ID to indicate an object has been selected
      */
     public final static int SCENE_OBJECTSELECTED = 3;
-    /**
-     * Version of the XML format used to store this view (see getAsXML method)
-     */
-    private final static String FORMAT_VERSION = "1.0";
     /**
      * Default notifier
      */
@@ -359,7 +356,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
         ByteArrayOutputStream bas = new ByteArrayOutputStream();
         WAX xmlWriter = new WAX(bas);
         StartTagWAX mainTag = xmlWriter.start("view");
-        mainTag.attr("version", FORMAT_VERSION); //NOI18N
+        mainTag.attr("version", SharedInformation.VIEW_FORMAT_VERSION); //NOI18N
         //TODO: Get the class name from some else
         mainTag.start("class").text("DefaultView").end();
         StartTagWAX nodesTag = mainTag.start("nodes");

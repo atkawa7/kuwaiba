@@ -19,6 +19,8 @@ import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
+import javax.swing.JOptionPane;
+import org.inventory.views.gis.dialogs.SaveDialog;
 import org.inventory.views.gis.scene.GISViewScene;
 import org.inventory.views.gis.scene.ObjectNodeWidget;
 import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
@@ -41,6 +43,8 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     /** path to the icon used by the component and its open action */
     static final String ICON_PATH = "org/inventory/views/gis/res/icon.png";
     private static final String PREFERRED_ID = "GISViewTopComponent";
+    private GISViewService gvs;
+    private boolean isSaved = true;
     /**
      * Main scene
      */
@@ -56,6 +60,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         setName(NbBundle.getMessage(GISViewTopComponent.class, "CTL_GISViewTopComponent"));
         setToolTipText(NbBundle.getMessage(GISViewTopComponent.class, "HINT_GISViewTopComponent"));
         scene = new GISViewScene();
+        this.gvs = new GISViewService(scene, this);
         add(scene.createView(),BorderLayout.CENTER);
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         associateLookup(scene.getLookup());
@@ -85,7 +90,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnExport = new javax.swing.JButton();
         btnSelect = new javax.swing.JToggleButton();
         btnConnect = new javax.swing.JToggleButton();
-        btnZommIn = new javax.swing.JButton();
+        btnZoomIn = new javax.swing.JButton();
         btnZoomOut = new javax.swing.JButton();
         sepMainSeparator = new javax.swing.JToolBar.Separator();
         btnWireContainer = new javax.swing.JToggleButton();
@@ -104,6 +109,11 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnNew.setFocusable(false);
         btnNew.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnNew.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNewActionPerformed(evt);
+            }
+        });
         barToolMain.add(btnNew);
 
         btnOpen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/open.png"))); // NOI18N
@@ -117,14 +127,21 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/save.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnSave.text")); // NOI18N
         btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnSave.toolTipText")); // NOI18N
+        btnSave.setEnabled(false);
         btnSave.setFocusable(false);
         btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
         barToolMain.add(btnSave);
 
         btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/export.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnExport.text")); // NOI18N
         btnExport.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnExport.toolTipText")); // NOI18N
+        btnExport.setEnabled(false);
         btnExport.setFocusable(false);
         btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -134,6 +151,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnSelect.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(btnSelect, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnSelect.text")); // NOI18N
         btnSelect.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnSelect.toolTipText")); // NOI18N
+        btnSelect.setEnabled(false);
         btnSelect.setFocusable(false);
         btnSelect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSelect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -147,6 +165,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/connect.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnConnect, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnConnect.text")); // NOI18N
         btnConnect.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnConnect.toolTipText")); // NOI18N
+        btnConnect.setEnabled(false);
         btnConnect.setFocusable(false);
         btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnConnect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -157,22 +176,24 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         });
         barToolMain.add(btnConnect);
 
-        btnZommIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/zoom-in.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnZommIn, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnZommIn.text")); // NOI18N
-        btnZommIn.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnZommIn.toolTipText")); // NOI18N
-        btnZommIn.setFocusable(false);
-        btnZommIn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnZommIn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnZommIn.addActionListener(new java.awt.event.ActionListener() {
+        btnZoomIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/zoom-in.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnZoomIn, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnZoomIn.text")); // NOI18N
+        btnZoomIn.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnZoomIn.toolTipText")); // NOI18N
+        btnZoomIn.setEnabled(false);
+        btnZoomIn.setFocusable(false);
+        btnZoomIn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnZoomIn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnZoomIn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnZommInActionPerformed(evt);
+                btnZoomInActionPerformed(evt);
             }
         });
-        barToolMain.add(btnZommIn);
+        barToolMain.add(btnZoomIn);
 
         btnZoomOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/zoom-out.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnZoomOut, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnZoomOut.text")); // NOI18N
         btnZoomOut.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnZoomOut.toolTipText")); // NOI18N
+        btnZoomOut.setEnabled(false);
         btnZoomOut.setFocusable(false);
         btnZoomOut.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnZoomOut.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -187,6 +208,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnWireContainer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/wire-container.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnWireContainer, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnWireContainer.text")); // NOI18N
         btnWireContainer.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnWireContainer.toolTipText")); // NOI18N
+        btnWireContainer.setEnabled(false);
         btnWireContainer.setFocusable(false);
         btnWireContainer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnWireContainer.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -200,6 +222,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnWirelessContainer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/wireless-container.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnWirelessContainer, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnWirelessContainer.text")); // NOI18N
         btnWirelessContainer.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnWirelessContainer.toolTipText")); // NOI18N
+        btnWirelessContainer.setEnabled(false);
         btnWirelessContainer.setFocusable(false);
         btnWirelessContainer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnWirelessContainer.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -213,6 +236,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnOpticalLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/optical-link.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnOpticalLink, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnOpticalLink.text")); // NOI18N
         btnOpticalLink.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnOpticalLink.toolTipText")); // NOI18N
+        btnOpticalLink.setEnabled(false);
         btnOpticalLink.setFocusable(false);
         btnOpticalLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnOpticalLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -226,6 +250,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnElectricalLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/electrical-link.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnElectricalLink, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnElectricalLink.text")); // NOI18N
         btnElectricalLink.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnElectricalLink.toolTipText")); // NOI18N
+        btnElectricalLink.setEnabled(false);
         btnElectricalLink.setFocusable(false);
         btnElectricalLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnElectricalLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -239,6 +264,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnWirelessLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/wireless-link.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnWirelessLink, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnWirelessLink.text")); // NOI18N
         btnWirelessLink.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnWirelessLink.toolTipText")); // NOI18N
+        btnWirelessLink.setEnabled(false);
         btnWirelessLink.setFocusable(false);
         btnWirelessLink.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnWirelessLink.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -252,9 +278,9 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         add(barToolMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnZommInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZommInActionPerformed
+    private void btnZoomInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomInActionPerformed
         scene.zoomIn();
-    }//GEN-LAST:event_btnZommInActionPerformed
+    }//GEN-LAST:event_btnZoomInActionPerformed
 
     private void btnZoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomOutActionPerformed
         scene.zoomOut();
@@ -290,6 +316,17 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRELESSLINK);
     }//GEN-LAST:event_btnWirelessLinkActionPerformed
 
+    private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
+
+    }//GEN-LAST:event_btnNewActionPerformed
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        if (!isSaved){
+            SaveDialog saveDialog = new SaveDialog(ICON_PATH, ICON_PATH);
+            JOptionPane.showInternalConfirmDialog(null, saveDialog,"Save GIS view", JOptionPane.YES_NO_OPTION);
+        }
+    }//GEN-LAST:event_btnSaveActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barToolMain;
     private javax.swing.JToggleButton btnConnect;
@@ -303,7 +340,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     private javax.swing.JToggleButton btnWireContainer;
     private javax.swing.JToggleButton btnWirelessContainer;
     private javax.swing.JToggleButton btnWirelessLink;
-    private javax.swing.JButton btnZommIn;
+    private javax.swing.JButton btnZoomIn;
     private javax.swing.JButton btnZoomOut;
     private javax.swing.JToolBar.Separator sepMainSeparator;
     // End of variables declaration//GEN-END:variables
@@ -350,7 +387,26 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        toggleButtons(false);
+        scene.clear();
+    }
+
+    /**
+     * Enable or disable buttons massively
+     * @param enabled
+     */
+    public void toggleButtons(boolean enabled) {
+        btnConnect.setEnabled(enabled);
+        btnElectricalLink.setEnabled(enabled);
+        btnExport.setEnabled(enabled);
+        btnOpticalLink.setEnabled(enabled);
+        btnSave.setEnabled(enabled);
+        btnSelect.setEnabled(enabled);
+        btnWireContainer.setEnabled(enabled);
+        btnWirelessContainer.setEnabled(enabled);
+        btnWirelessLink.setEnabled(enabled);
+        btnZoomIn.setEnabled(enabled);
+        btnZoomOut.setEnabled(enabled);
     }
 
     void writeProperties(java.util.Properties p) {

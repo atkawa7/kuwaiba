@@ -17,7 +17,6 @@
 package org.inventory.communications.core.views;
 
 import java.awt.Image;
-import java.awt.Point;
 import java.io.ByteArrayInputStream;
 //import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -186,12 +185,15 @@ public class LocalObjectViewImpl  extends LocalObjectViewLightImpl implements Lo
                                 edges.add(myLocalEdge);
                                 while(true){
                                     reader.nextTag();
+                                    List<double[]> controlPoints = new ArrayList<double[]>();
                                     if (reader.getName().equals(qControlPoint)){
                                         if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                            edges.get(edges.size() -1).getControlPoints().
-                                                    add(new Point(Double.valueOf(reader.getAttributeValue(null,"x")).intValue(), //NOI18N
-                                                    Double.valueOf(reader.getAttributeValue(null,"y")).intValue()));             //NOI18N
-                                    }else break;
+                                            controlPoints.add(new double[]{Double.valueOf(reader.getAttributeValue(null,"x")), Double.valueOf(reader.getAttributeValue(null,"y"))});
+                                            
+                                    }else{
+                                        edges.get(edges.size() -1).setControlPoints(controlPoints.toArray(new double[0][0]));
+                                        break;
+                                    }
                                 }
                             }
                         }else

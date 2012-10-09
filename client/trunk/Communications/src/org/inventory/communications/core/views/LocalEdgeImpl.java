@@ -16,10 +16,6 @@
 
 package org.inventory.communications.core.views;
 
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.visual.LocalEdge;
 import org.inventory.core.services.api.visual.LocalNode;
@@ -49,7 +45,7 @@ public class LocalEdgeImpl implements LocalEdge {
     /**
      * Control points used to route the connection
      */
-    private List<Point> controlPoints;
+    private double[][] controlPoints;
 
     public LocalEdgeImpl() {    }
 
@@ -57,14 +53,12 @@ public class LocalEdgeImpl implements LocalEdge {
         this.object = obj;
     }
 
-    public LocalEdgeImpl(LocalObjectLight object, Point[] controlsPoints){
+    public LocalEdgeImpl(LocalObjectLight object, double[][] controlsPoints){
         this.object = object;
-        this.controlPoints = new ArrayList<Point>();
-        if (controlsPoints != null)
-            this.controlPoints.addAll(Arrays.asList(controlsPoints));
+        this.controlPoints = controlsPoints;
     }
 
-    public LocalEdgeImpl(LocalObjectLight object, LocalNode aSide, LocalNode bSide, Point[] controlsPoints){
+    public LocalEdgeImpl(LocalObjectLight object, LocalNode aSide, LocalNode bSide, double[][] controlsPoints){
         this (object,controlsPoints);
         this.aSide = aSide;
         this.bSide =bSide;
@@ -85,7 +79,7 @@ public class LocalEdgeImpl implements LocalEdge {
         hash = 53 * hash + (this.object != null ? this.object.hashCode() : 0);
         return hash;
     }
-    public List<Point> getControlPoints() {
+    public double[][] getControlPoints() {
         return controlPoints;
     }
 
@@ -107,5 +101,9 @@ public class LocalEdgeImpl implements LocalEdge {
 
     public void setbSide(LocalNode bSide) {
         this.bSide = bSide;
+    }
+
+    public void setControlPoints(double[][] controlPoints) {
+        this.controlPoints = controlPoints;
     }
 }

@@ -16,6 +16,8 @@
 
 package org.inventory.views.gis.scene;
 
+import com.ociweb.xml.StartTagWAX;
+import com.ociweb.xml.WAX;
 import java.awt.BasicStroke;
 import java.awt.Image;
 import java.awt.Point;
@@ -24,9 +26,11 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.inventory.communications.SharedInformation;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.views.gis.scene.actions.MapWidgetPanAction;
@@ -37,7 +41,6 @@ import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.jdesktop.swingx.JXMapViewer;
 import org.jdesktop.swingx.mapviewer.GeoPosition;
 import org.netbeans.api.visual.action.ActionFactory;
-import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.model.ObjectSceneEvent;
@@ -288,6 +291,49 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         if (currentZoom < mapComponent.getMaxZoom())
             mapComponent.getMainMap().setZoom(currentZoom + 1);
     }
+
+    /**
+     * Cleans up the scene and release resources
+     */
+    public void clear() {
+        labelsLayer.removeChildren();
+        mapLayer.removeChildren();
+        nodesLayer.removeChildren();
+        polygonsLayer.removeChildren();
+    }
+
+        public byte[] getAsXML() {
+        ByteArrayOutputStream bas = new ByteArrayOutputStream();
+        WAX xmlWriter = new WAX(bas);
+        StartTagWAX mainTag = xmlWriter.start("view");
+        mainTag.attr("version", SharedInformation.VIEW_FORMAT_VERSION); //NOI18N
+        //TODO: Get the class name from some else
+        mainTag.start("class").text("GISView").end();
+        mainTag.start("zoom").text(String.valueOf(((MapPanel)mapWidget.getComponent()).getMainMap().getZoom())).end();
+        StartTagWAX nodesTag = mainTag.start("nodes");
+        for (Widget nodeWidget : nodesLayer.getChildren())
+            nodesTag.start("node").attr("x", ((GeoPositionedNodeWidget)nodeWidget).getLongitude()).
+            attr("y", ((GeoPositionedNodeWidget)nodeWidget).getLatitude()).
+            attr("class", ((GeoPositionedNodeWidget)nodeWidget).getObject().getClassName()).
+            text(String.valueOf(((GeoPositionedNodeWidget)nodeWidget).getObject().getOid())).end();
+        nodesTag.end();
+
+        StartTagWAX edgesTag = mainTag.start("edges");
+        for (Widget edgeWidget : connectionsLayer.getChildren()){
+            StartTagWAX edgeTag = edgesTag.start("edge");
+            edgeTag.attr("id", ((GeoPositionedConnectionWidget)edgeWidget).getObject().getOid());
+            edgeTag.attr("class", ((GeoPositionedConnectionWidget)edgeWidget).getObject().getClassName());
+            edgeTag.attr("aside", ((GeoPositionedConnectionWidget)((ObjectConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
+            edgeTag.attr("bside", ((GeoPositionedConnectionWidget)((ObjectConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
+            for (double[] point : ((GeoPositionedConnectionWidget)edgeWidget).getGeoPositionedControlPoints())
+                edgeTag.start("controlpoint").attr("x", point[1]).attr("y", point[0]).end();
+            edgeTag.end();
+        }
+        edgesTag.end();
+        mainTag.end().close();
+        return bas.toByteArray();
+    }
+
     /**
      * Helper class to let us launch a lookup event every time a widget is selected
      */

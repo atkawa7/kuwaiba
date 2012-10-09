@@ -16,7 +16,6 @@
 
 package org.inventory.core.services.utils;
 
-import java.awt.LayoutManager;
 import java.util.HashMap;
 import javax.swing.JComponent;
 import javax.swing.JPanel;

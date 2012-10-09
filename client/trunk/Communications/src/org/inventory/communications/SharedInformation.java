@@ -52,6 +52,12 @@ public class SharedInformation {
     public static String CLASS_WIRECONTAINERTYPE = "WireContainerType";
     public static String CLASS_WIRELESSCONTAINERTYPE = "WirelessContainerType";
 
+    //Misc versions
+    /**
+     * Version for the XML document to save views (see http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Object_Views for details)
+     */
+     public static String VIEW_FORMAT_VERSION = "1.1";
+
     /**
      * Returns the connection type class for a given connection class
      */

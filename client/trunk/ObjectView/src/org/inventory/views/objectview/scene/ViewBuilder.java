@@ -16,6 +16,7 @@
 
 package org.inventory.views.objectview.scene;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
@@ -74,7 +75,7 @@ public class ViewBuilder {
 
         for (LocalNode node : myView.getNodes()){
             ObjectNodeWidget widget = new ObjectNodeWidget(scene, node);
-            widget.setPreferredLocation(node.getPosition());
+            widget.setPreferredLocation(new Point((int)node.getX(), (int)node.getY()));
             scene.getNodesLayer().addChild(widget);
             if (scene.findObject(widget)==null)
                 scene.addObject(widget.getObject(), widget);
@@ -100,7 +101,10 @@ public class ViewBuilder {
                         NotificationUtil.WARNING, "The connection "+
                         edge.getObject().getName()+" ["+edge.getObject().getClassName()+"], id="+edge.getObject().getOid()+" has a side missing, please check if it was moved and refresh the view"); //NOI18N
             else{
-                widget.setControlPoints(edge.getControlPoints(), true);
+                List<Point> controlPoints = new ArrayList<Point>();
+                for (double[] controlPoint : edge.getControlPoints())
+                    controlPoints.add(new Point((int)controlPoint[0], (int)controlPoint[1]));
+                widget.setControlPoints(controlPoints, true);
                 scene.getEdgesLayer().addChild(widget);
                 if (scene.findObject(widget)==null)
                     scene.addObject(widget.getObject(), widget);

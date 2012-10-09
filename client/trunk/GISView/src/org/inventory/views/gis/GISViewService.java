@@ -16,10 +16,56 @@
 
 package org.inventory.views.gis;
 
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.api.visual.LocalEdge;
+import org.inventory.core.services.api.visual.LocalNode;
+import org.inventory.core.services.api.visual.LocalObjectView;
+import org.inventory.views.gis.scene.GISViewScene;
+import org.inventory.views.gis.scene.GeoPositionedNodeWidget;
+import org.openide.util.Lookup;
+
 /**
- *
+ * Logic associated to the corresponding TopComponent
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class GISViewService {
 
+    private GISViewScene scene;
+    private LocalObjectView currentView;
+    private CommunicationsStub com = CommunicationsStub.getInstance();
+    private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
+    private GISViewTopComponent gvtc;
+
+    public GISViewService(GISViewScene scene, GISViewTopComponent gvtc) {
+        this.scene = scene;
+        this.gvtc = gvtc;
+    }
+
+    /**
+     * Updates the current view
+     * @param viewId
+     */
+    public void updateCurrentView(long viewId) {
+        this.currentView = com.getGeneralView(viewId);
+        if (this.currentView == null)
+            nu.showSimplePopup("Loading view", NotificationUtil.ERROR, com.getError());
+         buildView();
+    }
+
+    public void buildView(){
+        if (currentView == null)
+            return;
+
+        for (LocalNode node : currentView.getNodes()){
+            GeoPositionedNodeWidget widget = (GeoPositionedNodeWidget)scene.addNode(node.getObject());
+            widget.setCoordinates(node.getY(), node.getX());
+        }
+
+        for (LocalEdge node : currentView.getEdges()){
+            GeoPositionedNodeWidget widget = (GeoPositionedNodeWidget)scene.addNode(node.getObject());
+            //widget.setCoordinates(node.getY(), node.getX());
+        }
+        gvtc.toggleButtons(true);
+    }
 }
