@@ -16,13 +16,21 @@
 
 package org.inventory.views.gis;
 
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.LocalStuffFactory;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.api.visual.LocalEdge;
 import org.inventory.core.services.api.visual.LocalNode;
 import org.inventory.core.services.api.visual.LocalObjectView;
+import org.inventory.core.services.api.visual.LocalObjectViewLight;
 import org.inventory.views.gis.scene.GISViewScene;
+import org.inventory.views.gis.scene.GeoPositionedConnectionWidget;
 import org.inventory.views.gis.scene.GeoPositionedNodeWidget;
+import org.inventory.views.gis.scene.MapPanel;
+import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.openide.util.Lookup;
 
 /**
@@ -42,30 +50,68 @@ public class GISViewService {
         this.gvtc = gvtc;
     }
 
+    public LocalObjectView getCurrentView(){
+        return currentView;
+    }
+
+    void setCurrentView(Object object) {
+        currentView = null;
+    }
+
     /**
      * Updates the current view
      * @param viewId
      */
-    public void updateCurrentView(long viewId) {
+    public void loadView(long viewId) {
         this.currentView = com.getGeneralView(viewId);
         if (this.currentView == null)
             nu.showSimplePopup("Loading view", NotificationUtil.ERROR, com.getError());
          buildView();
     }
 
-    public void buildView(){
+    private void buildView(){
         if (currentView == null)
             return;
+
+        if (currentView.getCenter() != null)
+            scene.setCenterPosition(currentView.getCenter()[1], currentView.getCenter()[0]);
+
+        if (currentView.getZoom() != 0)
+            scene.setZoom(currentView.getZoom());
 
         for (LocalNode node : currentView.getNodes()){
             GeoPositionedNodeWidget widget = (GeoPositionedNodeWidget)scene.addNode(node.getObject());
             widget.setCoordinates(node.getY(), node.getX());
         }
 
-        for (LocalEdge node : currentView.getEdges()){
-            GeoPositionedNodeWidget widget = (GeoPositionedNodeWidget)scene.addNode(node.getObject());
-            //widget.setCoordinates(node.getY(), node.getX());
+        for (LocalEdge edge : currentView.getEdges()){
+            GeoPositionedConnectionWidget newEdge = (GeoPositionedConnectionWidget)scene.addEdge(edge.getObject());
+            newEdge.setSourceAnchor(AnchorFactory.createCircularAnchor(scene.findWidget(edge.getaSide().getObject()), 3));
+            newEdge.setTargetAnchor(AnchorFactory.createCircularAnchor(scene.findWidget(edge.getbSide().getObject()), 3));
+
+            List<Point> localControlPoints = new ArrayList<Point>();
+            for (double[] controlPoint : edge.getControlPoints())
+                localControlPoints.add(scene.coordinateToPixel(controlPoint[1], controlPoint[0], currentView.getZoom() != 0 ? currentView.getZoom() : MapPanel.DEFAULT_ZOOM_LEVEL ));
+
+            newEdge.setControlPoints(localControlPoints);
         }
         gvtc.toggleButtons(true);
+    }
+
+    void saveView(String nameInTxt, String descriptionInTxt) {
+        if (currentView == null){
+            long viewId = com.createGeneralView(LocalObjectViewLight.TYPE_GIS, nameInTxt, descriptionInTxt, scene.getAsXML(), null);
+            if (viewId != -1){
+                //currentView = LocalStuffFactory.createLocalObjectViewLight(viewId, nameInTxt, descriptionInTxt, LocalObjectViewLight.TYPE_GIS);
+                nu.showSimplePopup("New View", NotificationUtil.INFO, "View created successfully");
+            }else
+                nu.showSimplePopup("New View", NotificationUtil.ERROR, com.getError());
+        }
+        else{
+            if (com.updateGeneralView(currentView.getId(), nameInTxt, descriptionInTxt, scene.getAsXML(), null))
+                nu.showSimplePopup("Save View", NotificationUtil.INFO, "View created successfully");
+            else
+                nu.showSimplePopup("Save View", NotificationUtil.ERROR, com.getError());
+        }
     }
 }

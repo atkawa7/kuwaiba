@@ -81,4 +81,11 @@ public class LocalObjectViewLightImpl implements LocalObjectViewLight {
     public void setViewType(int type) {
         this.type = type;
     }
+
+    @Override
+    public String toString(){
+        if(name != null)
+            return name;
+        return "";
+    }
 }

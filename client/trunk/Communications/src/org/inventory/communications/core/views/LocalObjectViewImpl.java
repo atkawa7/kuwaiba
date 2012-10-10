@@ -56,6 +56,14 @@ public class LocalObjectViewImpl  extends LocalObjectViewLightImpl implements Lo
      * Every possible label in the view
      */
     private List<LocalLabel> labels;
+    /**
+     * View zoom
+     */
+    private int zoom = 0;
+    /**
+     * View center
+     */
+    private double[] center;
     
     /**
      * The view background
@@ -79,7 +87,6 @@ public class LocalObjectViewImpl  extends LocalObjectViewLightImpl implements Lo
         this.setDescription(description);
         this.background = Utils.getImageFromByteArray(_background);
         this.setViewType(viewType);
-        
         if (viewStructure != null){
             /* Comment this out for debugging purposes
             try{
@@ -118,6 +125,14 @@ public class LocalObjectViewImpl  extends LocalObjectViewLightImpl implements Lo
         return background;
     }
 
+    public double[] getCenter() {
+        return center;
+    }
+
+    public int getZoom(){
+        return zoom;
+    }
+
     /**
      * Parse the XML document using StAX. Thanks to <a href="http://www.ibm.com/developerworks/java/library/os-ag-renegade15/index.html">Michael Galpin</a>
      * for his ideas on this
@@ -128,6 +143,8 @@ public class LocalObjectViewImpl  extends LocalObjectViewLightImpl implements Lo
         //Here is where we use Woodstox as StAX provider
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
+        QName qZoom = new QName("zoom"); //NOI18N
+        QName qCenter = new QName("center"); //NOI18N
         QName qNode = new QName("node"); //NOI18N
         QName qEdge = new QName("edge"); //NOI18N
         QName qLabel = new QName("label"); //NOI18N
@@ -203,7 +220,17 @@ public class LocalObjectViewImpl  extends LocalObjectViewLightImpl implements Lo
                             //Unavailable for now
                         }
                         else{
-                            //An unknown discardable tag
+                            if (reader.getName().equals(qZoom))
+                                zoom = Integer.valueOf(reader.getText());
+                            else{
+                                if (reader.getName().equals(qCenter)){
+                                    double x = Double.valueOf(reader.getAttributeValue(null, "x"));
+                                    double y = Double.valueOf(reader.getAttributeValue(null, "y"));
+                                    center = new double[]{x,y};
+                                }else {
+                                    //Place more tags
+                                }
+                            }
                         }
                     }
                 }

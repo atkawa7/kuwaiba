@@ -34,6 +34,10 @@ public interface LocalObjectView extends LocalObjectViewLight {
 
     public Image getBackground();
 
+    public int getZoom();
+
+    public double[] getCenter();
+
     public void parseXML(byte[] structure) throws XMLStreamException;
 
     public boolean isDirty();

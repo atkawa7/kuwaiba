@@ -17,6 +17,8 @@ package org.inventory.core.authentication;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.MalformedURLException;
@@ -26,6 +28,7 @@ import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.LifecycleManager;
 import org.openide.modules.ModuleInstall;
+import org.openide.windows.WindowManager;
 
 /**
  * This installer shows the login window
@@ -85,7 +88,35 @@ public class Installer extends ModuleInstall {
             if (!CommunicationsStub.getInstance().createSession(pnlAuthentication.getTxtUser().getText(), new String(pnlAuthentication.getTxtPassword().getPassword()))){
                showExceptions(CommunicationsStub.getInstance().getError());
                return false;
-            }
+            }else
+                //The title can't be set directly since it's overwritten right after the startup. We have to wait till the window is open
+                WindowManager.getDefault().getMainWindow().addWindowListener(new WindowListener() {
+
+                @Override
+                public void windowOpened(WindowEvent e) {
+                        WindowManager.getDefault().getMainWindow().setTitle(String.format("%1s - [%2s]",
+                        WindowManager.getDefault().getMainWindow().getTitle(), CommunicationsStub.getInstance().getSession().getUsername()));
+                }
+
+                @Override
+                public void windowClosing(WindowEvent e) {  }
+
+                @Override
+                public void windowClosed(WindowEvent e) { }
+
+                @Override
+                public void windowIconified(WindowEvent e) {  }
+
+                @Override
+                public void windowDeiconified(WindowEvent e) {  }
+
+                @Override
+                public void windowActivated(WindowEvent e) { }
+
+                @Override
+                public void windowDeactivated(WindowEvent e) { }
+            });
+
 
         }catch(Exception exp){
             CommunicationsStub.resetInstance();

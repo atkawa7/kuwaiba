@@ -46,7 +46,7 @@ public class AcceptActionProvider implements AcceptProvider{
 
     @Override
     public ConnectorState isAcceptable(Widget widget, Point point, Transferable transferable) {
-        if (transferable.isDataFlavorSupported(LocalObjectLight.DATA_FLAVOR)){
+        if (transferable.isDataFlavorSupported(LocalObjectLight.DATA_FLAVOR)&& scene.hasView()){
             return ConnectorState.ACCEPT;
         }else return ConnectorState.REJECT_AND_STOP;
     }

@@ -44,6 +44,8 @@ public class MapPanel extends JXPanel{
      * Default maximum zoom level
      */
     private final int DEFAULT_MAXIMUM_ZOOM_LEVEL = 15;
+
+    public static final int DEFAULT_ZOOM_LEVEL = 10;
     /**
      * Open Street Maps tile server base URL
      */
@@ -107,7 +109,7 @@ public class MapPanel extends JXPanel{
             };
             TileFactory tf = new DefaultTileFactory(info);
             map.setTileFactory(tf);
-            map.setZoom(10);
+            map.setZoom(DEFAULT_ZOOM_LEVEL);
             map.setCenterPosition(new GeoPosition(0,0));
             maxZoom = DEFAULT_MAXIMUM_ZOOM_LEVEL;
             minZoom = DEFAULT_MINIMUM_ZOOM_LEVEL;

@@ -73,7 +73,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
     /**
      * Default coordinates to center the map
      */
-    private final GeoPosition DEFAULT_CENTER_POSITION = new GeoPosition(2.451627, -76.624424);
+    public final GeoPosition DEFAULT_CENTER_POSITION = new GeoPosition(2.451627, -76.624424);
     /**
      * Default icon
      */
@@ -116,6 +116,8 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         mapLayer = new LayerWidget(this);
         nodesLayer = new LayerWidget(this);
         connectionsLayer = new LayerWidget(this);
+        labelsLayer = new LayerWidget(this);
+        polygonsLayer = new LayerWidget(this);
 
         addChild(mapLayer);
         addChild(connectionsLayer);
@@ -129,7 +131,6 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         myMap.getMainMap().setAddressLocation(DEFAULT_CENTER_POSITION);
         myMap.addPropertyChangeListener("painted", this);
         mapWidget = new ComponentWidget(this, myMap);
-        mapLayer.addChild(mapWidget);
 
         mapWidget.getActions().addAction(new MapWidgetPanAction(myMap, MouseEvent.BUTTON1));
 
@@ -260,11 +261,15 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
 
     /**
      * Translate a point (Polar coordinates) into a Point object (Cartesian coordinates)  within the map viewport
-     * @param point Point to be translated
+     * @param latitude latitude
+     * @param longitude longitude
      * @return the resulting Point object
      */
-    public Point coordinateToPixel(GeoPosition point){
-        return null;
+    public Point coordinateToPixel(double latitude, double longitude, int zoom){
+        JXMapViewer map = ((MapPanel)mapWidget.getComponent()).getMainMap();
+        Rectangle realViewport = map.getViewportBounds();
+        Point2D point2D = map.getTileFactory().geoToPixel(new GeoPosition(latitude, longitude), zoom);
+        return new Point((int)point2D.getX() - realViewport.x, (int)point2D.getY() - realViewport.y);
     }
 
     @Override
@@ -299,17 +304,19 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         labelsLayer.removeChildren();
         mapLayer.removeChildren();
         nodesLayer.removeChildren();
+        connectionsLayer.removeChildren();
         polygonsLayer.removeChildren();
     }
 
-        public byte[] getAsXML() {
+    public byte[] getAsXML() {
         ByteArrayOutputStream bas = new ByteArrayOutputStream();
         WAX xmlWriter = new WAX(bas);
         StartTagWAX mainTag = xmlWriter.start("view");
         mainTag.attr("version", SharedInformation.VIEW_FORMAT_VERSION); //NOI18N
         //TODO: Get the class name from some else
         mainTag.start("class").text("GISView").end();
-        mainTag.start("zoom").text(String.valueOf(((MapPanel)mapWidget.getComponent()).getMainMap().getZoom())).end();
+        mainTag.start("zoom").text(String.valueOf(((MapPanel)mapWidget.getComponent()).getMainMap().getZoom()));
+        mainTag.start("center").attr("y", ((MapPanel)mapWidget.getComponent()).getMainMap().getAddressLocation().getLatitude()).attr("x", ((MapPanel)mapWidget.getComponent()).getMainMap().getAddressLocation().getLongitude()).end();
         StartTagWAX nodesTag = mainTag.start("nodes");
         for (Widget nodeWidget : nodesLayer.getChildren())
             nodesTag.start("node").attr("x", ((GeoPositionedNodeWidget)nodeWidget).getLongitude()).
@@ -332,6 +339,23 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         edgesTag.end();
         mainTag.end().close();
         return bas.toByteArray();
+    }
+
+    public void setCenterPosition(double latitude, double longitude) {
+        ((MapPanel)mapWidget.getComponent()).getMainMap().setAddressLocation(new GeoPosition(latitude, longitude));
+    }
+
+    public void setZoom(int zoom) {
+        ((MapPanel)mapWidget.getComponent()).getMainMap().setZoom(zoom);
+    }
+
+    public void loadDefault() {
+        mapLayer.addChild(mapWidget);
+        revalidate();
+    }
+
+    public boolean hasView() {
+        return !mapLayer.getChildren().isEmpty();
     }
 
     /**

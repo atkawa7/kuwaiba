@@ -117,6 +117,10 @@ public class CommunicationsStub {
     public static void setServerURL(URL _URL){
         serverURL = _URL;
     }
+
+    public LocalSession getSession(){
+        return session;
+    }
     
     /**
      * This method closes the current session

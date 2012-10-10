@@ -17,9 +17,13 @@ package org.inventory.views.gis;
 
 import java.awt.BorderLayout;
 import java.awt.Graphics;
+import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.api.visual.LocalObjectViewLight;
+import org.inventory.views.gis.dialogs.OpenDialog;
 import org.inventory.views.gis.dialogs.SaveDialog;
 import org.inventory.views.gis.scene.GISViewScene;
 import org.inventory.views.gis.scene.ObjectNodeWidget;
@@ -44,7 +48,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     static final String ICON_PATH = "org/inventory/views/gis/res/icon.png";
     private static final String PREFERRED_ID = "GISViewTopComponent";
     private GISViewService gvs;
-    private boolean isSaved = true;
+    private boolean isSaved = false;
     /**
      * Main scene
      */
@@ -122,6 +126,11 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnOpen.setFocusable(false);
         btnOpen.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnOpen.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOpenActionPerformed(evt);
+            }
+        });
         barToolMain.add(btnOpen);
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/save.png"))); // NOI18N
@@ -317,15 +326,38 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }//GEN-LAST:event_btnWirelessLinkActionPerformed
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-
+        scene.clear();
+        scene.loadDefault();
+        gvs.setCurrentView(null);
+        toggleButtons(true);
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         if (!isSaved){
-            SaveDialog saveDialog = new SaveDialog(ICON_PATH, ICON_PATH);
-            JOptionPane.showInternalConfirmDialog(null, saveDialog,"Save GIS view", JOptionPane.YES_NO_OPTION);
+            SaveDialog saveDialog;
+            if (gvs.getCurrentView() == null)
+                saveDialog = new SaveDialog(null, null);
+            else
+                saveDialog = new SaveDialog(gvs.getCurrentView().getName(), gvs.getCurrentView().getDescription());
+
+            if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), saveDialog,"Save GIS view", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION)
+                gvs.saveView(saveDialog.getNameInTxt(), saveDialog.getDescriptionInTxt());
         }
     }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
+        List<LocalObjectViewLight> views = CommunicationsStub.getInstance().getGeneralViews(LocalObjectViewLight.TYPE_GIS);
+        if (views == null)
+            JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), "Load View", JOptionPane.ERROR_MESSAGE);
+        else{
+            OpenDialog openDialog = new OpenDialog(views.toArray(new LocalObjectViewLight[0]));
+
+            if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), openDialog,"Open GIS view", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+                if (openDialog.getSelectedObject() !=  null)
+                    gvs.loadView(openDialog.getSelectedObject().getId());
+            }
+        }
+    }//GEN-LAST:event_btnOpenActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barToolMain;

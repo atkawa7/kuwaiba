@@ -35,11 +35,16 @@ public class GeoPositionedConnectionWidget extends ObjectConnectionWidget{
     private List<double[]> geoPositionedControlPoints;
     
 
-    public GeoPositionedConnectionWidget(GISViewScene scene, LocalObjectLight object) {
+    public GeoPositionedConnectionWidget(GISViewScene scene, LocalObjectLight object, ArrayList<double[]> controlPoints) {
         super(scene, object);
-        geoPositionedControlPoints = new ArrayList<double[]>();
+        this.geoPositionedControlPoints = controlPoints;
         setControlPointShape(PointShape.SQUARE_FILLED_BIG);
     }
+
+    public GeoPositionedConnectionWidget(GISViewScene scene, LocalObjectLight object) {
+        this(scene, object, new ArrayList<double[]>());
+    }
+
 
     /**
      * We override this method in order to set the geopositioned control points as well
@@ -59,7 +64,6 @@ public class GeoPositionedConnectionWidget extends ObjectConnectionWidget{
     public void setControlPoints(Collection<Point> controlPoints){
         super.setControlPoints(controlPoints, false);
     }
-
 
     /**
      * These control points can only be set by the setControlPoints method
