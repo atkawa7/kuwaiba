@@ -697,6 +697,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             }
             generalViewsIndex.add(newView, MetadataEntityManagerImpl.PROPERTY_ID, newView.getId());
             tx.success();
+
             return newView.getId();
         }catch (Exception ex){
             Logger.getLogger("createGeneralView: "+ex.getMessage()); //NOI18N
@@ -886,13 +887,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
 
     public List<ViewObjectLight> getGeneralViews(int viewType, int limit) throws InvalidArgumentException {
-        String cypherQuery = "START gView=node:"+ INDEX_GENERAL_VIEWS +"(name=*)";
+        String cypherQuery = "START gView=node:"+ INDEX_GENERAL_VIEWS +"('id:*')";
         if (viewType != -1)
-            cypherQuery += " MATCH gView."+MetadataEntityManagerImpl.PROPERTY_TYPE+"="+viewType;
-        if (limit != -1)
-            cypherQuery += " LIMIT "+limit;
+            cypherQuery += " WHERE gView."+MetadataEntityManagerImpl.PROPERTY_TYPE+"="+viewType;
 
         cypherQuery += " RETURN gView";
+
+        if (limit != -1)
+            cypherQuery += " LIMIT "+limit;
 
         ExecutionEngine engine = new ExecutionEngine(graphDb);
         ExecutionResult result = engine.execute(cypherQuery);
@@ -906,6 +908,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 aView.setName((String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
             if (gView.hasProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION));
                 aView.setDescription((String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION));
+
+            myRes.add(aView);
         }
         return myRes;
     }
@@ -936,8 +940,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
         return aView;
     }
-
-
 
     //Helpers
     private Node getInstanceOfClass(String className, long oid) throws MetadataObjectNotFoundException, ObjectNotFoundException{
