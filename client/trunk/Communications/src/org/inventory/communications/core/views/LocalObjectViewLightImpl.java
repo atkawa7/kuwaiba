@@ -19,27 +19,10 @@ package org.inventory.communications.core.views;
 import org.inventory.core.services.api.visual.LocalObjectViewLight;
 
 /**
- * Light version of LocalObjectView
+ * Light version of LocalObjectView. Reference implementation
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class LocalObjectViewLightImpl implements LocalObjectViewLight {
-
-    /**
-     * View id
-     */
-    private long id;
-    /**
-     * View type
-     */
-    private int type;
-    /**
-     * View name
-     */
-    private String name;
-    /**
-     * View description
-     */
-    private String description;
+public class LocalObjectViewLightImpl extends LocalObjectViewLight {
 
     public LocalObjectViewLightImpl(){}
 
@@ -48,44 +31,5 @@ public class LocalObjectViewLightImpl implements LocalObjectViewLight {
         this.name = name;
         this.description = description;
         this.type = type;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getViewType() {
-        return type;
-    }
-
-    public void setViewType(int type) {
-        this.type = type;
-    }
-
-    @Override
-    public String toString(){
-        if(name != null)
-            return name;
-        return "";
     }
 }

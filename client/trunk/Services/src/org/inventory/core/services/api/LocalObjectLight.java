@@ -31,6 +31,7 @@ public interface LocalObjectLight extends Transferable {
             new DataFlavor(LocalObjectLight.class,"Object/LocalObjectLight");
     public String getClassName();
     public long getOid();
+    public void setOid(long id);
     public String getName();
     public void setName(String text);
     public int getValidator(String label);

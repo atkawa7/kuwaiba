@@ -16,56 +16,25 @@
 
 package org.inventory.communications.core.views;
 
-import java.awt.Image;
 import org.inventory.core.services.api.visual.LocalObjectView;
 import org.inventory.core.services.utils.Utils;
-import org.openide.util.lookup.ServiceProvider;
 
 
 /**
  * This class represents the elements inside a view as recorded in the database
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@ServiceProvider(service=LocalObjectView.class)
-public class LocalObjectViewImpl  extends LocalObjectViewLightImpl implements LocalObjectView {
-    /**
-     * XML view structure
-     */
-    private byte[] viewStructure;
-    /**
-     * The view background
-     */
-    private Image background;
-    private int zoom;
-    private double[] center;
+public class LocalObjectViewImpl extends LocalObjectView {
     
     public LocalObjectViewImpl() {
     }
 
-    public LocalObjectViewImpl(long id, String name, String description, int viewType, byte[] viewStructure, byte[] _background) {
-        this();
+    public LocalObjectViewImpl(long id, String name, String description, int viewType, byte[] viewStructure, byte[] background) {
         this.setId(id);
         this.setName(name);
         this.setDescription(description);
-        this.background = Utils.getImageFromByteArray(_background);
+        this.background = Utils.getImageFromByteArray(background);
         this.setViewType(viewType);
-        this.viewStructure = viewStructure;
+        this.structure = viewStructure;
     }
-
-    public byte[] getViewStructure(){
-        return viewStructure;
-    }
-
-    public Image getBackground() {
-        return background;
-    }
-
-    public double[] getCenter() {
-        return center;
-    }
-
-    public int getZoom(){
-        return zoom;
-    }
-
 }

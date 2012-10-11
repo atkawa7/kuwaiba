@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package org.inventory.core.services.api.visual;
  * Interface representing a view
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface LocalObjectViewLight {
+public abstract class LocalObjectViewLight {
     /**
      * Id for a default view
      */
@@ -41,20 +41,60 @@ public interface LocalObjectViewLight {
      * A Topology view
      */
     public static final int TYPE_TOPOLOGY = 4;
+
+    /**
+     * View id
+     */
+    protected long id;
+    /**
+     * View name
+     */
+    protected String name;
+    /**
+     * View description
+     */
+    protected String description;
+    /**
+     * View type
+     */
+    protected int type;
     
-    public long getId();
+    public long getId(){
+        return id;
+    }
 
-    public void setId(long id);
+    public void setId(long id){
+        this.id = id;
+    }
 
-    public String getName();
+    public String getName(){
+        return name;
+    }
 
-    public void setName (String name);
+    public void setName (String name){
+        this.name = name;
+    }
 
-    public String getDescription();
+    public String getDescription(){
+        return description;
+    }
 
-    public void setDescription (String name);
+    public void setDescription (String name){
+        this.name = name;
+    }
 
-    public int getViewType();
+    public int getViewType(){
+        return type;
+    }
 
-    public void setViewType(int type);
+    public void setViewType(int type){
+        this.type = type;
+    }
+
+    @Override
+    public String toString(){
+        if(name != null)
+            return name;
+        return "";
+    }
 }

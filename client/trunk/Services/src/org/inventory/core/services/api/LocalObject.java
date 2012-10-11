@@ -31,5 +31,4 @@ public interface LocalObject extends LocalObjectLight{
     public LocalClassMetadata getObjectMetadata();
     public void setLocalObject(String className, String[] attributes, Object[] values);
     public void setObjectMetadata(LocalClassMetadata metaForClass);
-    public void setOid(long oid);
 }

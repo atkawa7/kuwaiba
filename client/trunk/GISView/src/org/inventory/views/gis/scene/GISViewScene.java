@@ -351,7 +351,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
 
     public void loadDefault() {
         mapLayer.addChild(mapWidget);
-        revalidate();
+        validate();
     }
 
     public boolean hasView() {

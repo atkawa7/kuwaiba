@@ -83,6 +83,10 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class does
         return oid;
     }
 
+    public void setOid(long id){
+        this.oid = id;
+    }
+
     public int getValidator(String label){
         if (this.validators == null)
             return 0;
