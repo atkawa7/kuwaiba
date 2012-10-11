@@ -37,6 +37,10 @@ public interface LocalObjectViewLight {
      * A GIS view
      */
     public static final int TYPE_GIS = 3;
+    /**
+     * A Topology view
+     */
+    public static final int TYPE_TOPOLOGY = 4;
     
     public long getId();
 
