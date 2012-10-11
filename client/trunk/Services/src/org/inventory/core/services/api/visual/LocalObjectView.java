@@ -17,30 +17,19 @@
 package org.inventory.core.services.api.visual;
 
 import java.awt.Image;
-import java.util.List;
-import javax.xml.stream.XMLStreamException;
 
 /**
  * Interface representing an object view
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public interface LocalObjectView extends LocalObjectViewLight {
+
+    public byte[] getViewStructure();
     
-    public List<LocalEdge> getEdges();
-
-    public List<LocalLabel> getLabels();
-
-    public List<LocalNode> getNodes();
-
     public Image getBackground();
 
     public int getZoom();
 
     public double[] getCenter();
 
-    public void parseXML(byte[] structure) throws XMLStreamException;
-
-    public boolean isDirty();
-
-    public void setDirty(boolean value);
 }
