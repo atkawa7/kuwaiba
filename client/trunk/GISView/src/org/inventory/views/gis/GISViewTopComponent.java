@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.api.visual.LocalObjectViewLight;
 import org.inventory.views.gis.dialogs.OpenDialog;
 import org.inventory.views.gis.dialogs.SaveDialog;
@@ -34,6 +35,7 @@ import org.openide.windows.WindowManager;
 import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.explorer.ExplorerManager;
+import org.openide.util.Lookup;
 
 /**
  * Top component which displays something.
@@ -49,6 +51,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     private static final String PREFERRED_ID = "GISViewTopComponent";
     private GISViewService gvs;
     private boolean isSaved = false;
+    private NotificationUtil nu;
     /**
      * Main scene
      */
@@ -475,6 +478,13 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     @Override
     public ExplorerManager getExplorerManager() {
         return em;
+    }
+
+    public NotificationUtil getNotifier(){
+        if (nu == null)
+            nu = Lookup.getDefault().lookup(NotificationUtil.class);
+
+        return nu;
     }
 
 }

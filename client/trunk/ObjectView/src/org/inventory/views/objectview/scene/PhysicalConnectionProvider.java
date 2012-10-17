@@ -22,9 +22,7 @@ import java.awt.event.ActionEvent;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.SharedInformation;
 import org.inventory.core.wizards.physicalconnections.ConnectionWizard;
-import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.services.utils.Constants;
 import org.inventory.views.objectview.ObjectViewTopComponent;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -82,26 +80,13 @@ public class PhysicalConnectionProvider implements ConnectProvider{
 
     @Override
     public boolean isSourceWidget(Widget sourceWidget) {
-        LocalObjectLight myObject = ((ObjectNodeWidget)sourceWidget).getObject();
-        switch (currentConnectionSelection){
-            case ObjectViewTopComponent.CONNECTION_WIRECONTAINER:
-            case ObjectViewTopComponent.CONNECTION_WIRELESSCONTAINER:
-                if (com.getMetaForClass(myObject.getClassName(), false).getValidator(Constants.IS_PHYSICAL_NODE_VALIDATOR) == 1)
-                    return true;
-                break;
-            case ObjectViewTopComponent.CONNECTION_ELECTRICALLINK:
-            case ObjectViewTopComponent.CONNECTION_OPTICALLINK:
-            case ObjectViewTopComponent.CONNECTION_WIRELESSLINK:
-                return true;
-        }
-        return false;
+        return true;
     }
 
     @Override
     public ConnectorState isTargetWidget(Widget sourceWidget, Widget targetWidget) {
         if (sourceWidget != targetWidget && targetWidget instanceof IconNodeWidget)
-            if (isSourceWidget(targetWidget))
-                return ConnectorState.ACCEPT;
+            return ConnectorState.ACCEPT;
 
         return ConnectorState.REJECT;
     }

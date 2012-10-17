@@ -200,7 +200,8 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      * when the component is painted. If there are network problems, you could get some nasty exceptions.
      */
     public void activateMap(){
-        
+        if (mapLayer.getChildren().isEmpty())
+            mapLayer.addChild(mapWidget);
     }
 
     /**
@@ -301,10 +302,11 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      * Cleans up the scene and release resources
      */
     public void clear() {
+        List<LocalObjectLight> clone = new ArrayList(getNodes());
+        for (LocalObjectLight node : clone)
+            removeNodeWithEdges(node);
         labelsLayer.removeChildren();
         mapLayer.removeChildren();
-        nodesLayer.removeChildren();
-        connectionsLayer.removeChildren();
         polygonsLayer.removeChildren();
     }
 
@@ -315,7 +317,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         mainTag.attr("version", SharedInformation.VIEW_FORMAT_VERSION); //NOI18N
         //TODO: Get the class name from some else
         mainTag.start("class").text("GISView").end();
-        mainTag.start("zoom").text(String.valueOf(((MapPanel)mapWidget.getComponent()).getMainMap().getZoom()));
+        mainTag.start("zoom").text(String.valueOf(((MapPanel)mapWidget.getComponent()).getMainMap().getZoom())).end();
         mainTag.start("center").attr("y", ((MapPanel)mapWidget.getComponent()).getMainMap().getAddressLocation().getLatitude()).attr("x", ((MapPanel)mapWidget.getComponent()).getMainMap().getAddressLocation().getLongitude()).end();
         StartTagWAX nodesTag = mainTag.start("nodes");
         for (Widget nodeWidget : nodesLayer.getChildren())

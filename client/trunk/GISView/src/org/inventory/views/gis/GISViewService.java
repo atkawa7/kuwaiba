@@ -18,6 +18,7 @@ package org.inventory.views.gis;
 
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.namespace.QName;
@@ -80,10 +81,10 @@ public class GISViewService {
             return;
 
         if (currentView.getStructure() != null){
-            /* Comment this out for debugging purposes
+             /*Comment this out for debugging purposes
             try{
                 FileOutputStream fos = new FileOutputStream("/home/zim/out.xml");
-                fos.write(viewStructure);
+                fos.write(currentView.getStructure());
                 fos.close();
             }catch(Exception e){}*/
 
@@ -161,8 +162,10 @@ public class GISViewService {
                                     //Unavailable for now
                                 }
                                 else{
-                                    if (reader.getName().equals(qZoom))
-                                        currentView.setZoom(Integer.valueOf(reader.getText()));
+                                    if (reader.getName().equals(qZoom)){
+                                        reader.next();
+                                        currentView.setZoom(Integer.valueOf(reader.getText().trim()));
+                                    }
                                     else{
                                         if (reader.getName().equals(qCenter)){
                                             double x = Double.valueOf(reader.getAttributeValue(null, "x"));
@@ -178,12 +181,20 @@ public class GISViewService {
                     }
                 }
                 reader.close();
+                scene.activateMap();
+                scene.validate();
+                gvtc.toggleButtons(true);
             } catch (XMLStreamException ex) {
-                System.out.println("An exception was thrown parsing the XML View: "+ex.getMessage());
+                gvtc.getNotifier().showSimplePopup("Object View", NotificationUtil.ERROR, "Error rendering view file (Corrupted File)");
+                scene.clear();
+            } catch (IllegalStateException ise){
+                gvtc.getNotifier().showSimplePopup("Object View", NotificationUtil.ERROR, "Error rendering view file (Illegal State)");
+                scene.clear();
+            } catch (NumberFormatException nfe){
+                gvtc.getNotifier().showSimplePopup("Object View", NotificationUtil.ERROR, "Error rendering view file (Wrong Number Format)");
+                scene.clear();
             }
         }
-
-        gvtc.toggleButtons(true);
     }
 
     void saveView(String nameInTxt, String descriptionInTxt) {
