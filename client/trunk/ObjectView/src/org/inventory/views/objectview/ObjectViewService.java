@@ -142,6 +142,7 @@ public class ObjectViewService implements LookupListener{
            LocalObjectView defaultView = com.getObjectRelatedView(myObject.getOid(),myObject.getClassName(), views.get(0).getId());
            vrtc.getScene().setCurrentView(defaultView);
            viewBuilder = new ViewBuilder(defaultView, vrtc.getScene());
+           vrtc.getScene().clear();
            viewBuilder.buildView();
            if (defaultView.isDirty()){
                vrtc.getNotifier().showSimplePopup("View changes", NotificationUtil.WARNING, "Some elements in the view has been deleted since the last time it was opened. They were removed");
