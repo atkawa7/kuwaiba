@@ -17,8 +17,14 @@
 package org.inventory.views.objectview.scene;
 
 import java.awt.Point;
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.LocalStuffFactory;
 import org.inventory.core.services.api.LocalObject;
@@ -40,7 +46,7 @@ public class ViewBuilder {
     /**
      * Wraps the view to be built
      */
-    private LocalObjectView myView;
+    private LocalObjectView currentView;
     /**
      * Reference to the scene
      */
@@ -57,7 +63,7 @@ public class ViewBuilder {
      */
     public ViewBuilder(LocalObjectView localView, ViewScene _scene) throws NullPointerException{
         if (_scene != null){
-            this.myView = localView;
+            this.currentView = localView;
             this.scene = _scene;
         }
         else
@@ -68,50 +74,112 @@ public class ViewBuilder {
      * Builds the actual view without refreshing . This method doesn't clean up the scene or refreshes it after building it,
      * that's coder's responsibility
      */
-    public void buildView(){
+    public void buildView() throws IllegalArgumentException{
         
         //We clean the object-widget mapping has in order to fill it again. So we do with listeners
         scene.clear();
 
-        for (LocalNode node : myView.getNodes()){
-            ObjectNodeWidget widget = new ObjectNodeWidget(scene, node);
-            widget.setPreferredLocation(new Point((int)node.getX(), (int)node.getY()));
-            scene.getNodesLayer().addChild(widget);
-            if (scene.findObject(widget)==null)
-                scene.addObject(widget.getObject(), widget);
-        }
+        try {
+            //Here is where we use Woodstox as StAX provider
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
-        for (LocalEdge edge : myView.getEdges()){
-            ObjectConnectionWidget widget = new ObjectConnectionWidget(scene,
-                    edge.getObject(),scene.getFreeRouter(), ObjectConnectionWidget.getConnectionColor(edge.getObject().getClassName()));
+            QName qZoom = new QName("zoom"); //NOI18N
+            QName qCenter = new QName("center"); //NOI18N
+            QName qNode = new QName("node"); //NOI18N
+            QName qEdge = new QName("edge"); //NOI18N
+            QName qLabel = new QName("label"); //NOI18N
+            QName qControlPoint = new QName("controlpoint"); //NOI18N
 
-            //TODO: This is a reprocess... It's already been done when creating the local view
-            for (Widget w : scene.getNodesLayer().getChildren()){
-                if (((ObjectNodeWidget)w).getObject().equals(edge.getaSide().getObject()))
-                    widget.setSourceAnchor(AnchorFactory.createFreeRectangularAnchor(w, true));
-                else{
-                    if(((ObjectNodeWidget)w).getObject().equals(edge.getbSide().getObject()))
-                        widget.setTargetAnchor(AnchorFactory.createFreeRectangularAnchor(w, true));
+            ByteArrayInputStream bais = new ByteArrayInputStream(currentView.getStructure());
+            XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+
+            while (reader.hasNext()){
+                int event = reader.next();
+                if (event == XMLStreamConstants.START_ELEMENT){
+                    if (reader.getName().equals(qNode)){
+                        String objectClass = reader.getAttributeValue(null, "class");
+
+                        int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
+                        int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
+                        Long objectId = Long.valueOf(reader.getElementText());
+
+                        LocalObjectLight lol = CommunicationsStub.getInstance().
+                                getObjectInfoLight(objectClass, objectId);
+                        if (lol != null){
+                            ObjectNodeWidget widget = new ObjectNodeWidget(scene, lol);
+                            widget.setPreferredLocation(new Point((int)xCoordinate, (int)yCoordinate));
+                            scene.getNodesLayer().addChild(widget);
+                            scene.addObject(lol, widget);
+                                
+                        }
+                        else
+                            currentView.setDirty(true);
+                    }else{
+                        if (reader.getName().equals(qEdge)){
+                            Long objectId = Long.valueOf(reader.getAttributeValue(null,"id"));
+                            Long aSide = Long.valueOf(reader.getAttributeValue(null,"aside"));
+                            Long bSide = Long.valueOf(reader.getAttributeValue(null,"bside"));
+
+                            String className = reader.getAttributeValue(null,"class");
+                            LocalObjectLight container = CommunicationsStub.getInstance().getObjectInfoLight(className, objectId);
+                            if (container != null){
+                                LocalObjectLight aSideObject = LocalStuffFactory.createLocalObjectLight();
+                                aSideObject.setOid(aSide);
+                                Widget aSideWidget = scene.findWidget(aSideObject);
+
+                                LocalObjectLight bSideObject = LocalStuffFactory.createLocalObjectLight();
+                                aSideObject.setOid(bSide);
+                                Widget bSideWidget = scene.findWidget(bSideObject);
+
+                                if (aSideWidget == null || bSideWidget == null)
+                                    currentView.setDirty(true);
+                                else{
+                                    ObjectConnectionWidget newEdge = new ObjectConnectionWidget(scene,
+                                           container,scene.getFreeRouter(), ObjectConnectionWidget.getConnectionColor(container.getClassName()));
+                                    newEdge.setSourceAnchor(AnchorFactory.createCircularAnchor(aSideWidget, 3));
+                                    newEdge.setTargetAnchor(AnchorFactory.createCircularAnchor(bSideWidget, 3));
+                                    while(true){
+                                        reader.nextTag();
+                                        List<Point> localControlPoints = new ArrayList<Point>();
+                                        if (reader.getName().equals(qControlPoint)){
+                                            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                                localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"y")), Integer.valueOf(reader.getAttributeValue(null,"x"))));
+                                        }else{
+                                            newEdge.setControlPoints(localControlPoints,false);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }else
+                                currentView.setDirty(true);
+                        }else{
+                            if (reader.getName().equals(qLabel)){
+                                //Unavailable for now
+                            }
+                            else{
+                                if (reader.getName().equals(qZoom))
+                                    currentView.setZoom(Integer.valueOf(reader.getText()));
+                                else{
+                                    if (reader.getName().equals(qCenter)){
+                                        double x = Double.valueOf(reader.getAttributeValue(null, "x"));
+                                        double y = Double.valueOf(reader.getAttributeValue(null, "y"));
+                                        currentView.setCenter(new double[]{x,y});
+                                    }else {
+                                        //Place more tags
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-                if (widget.getSourceAnchor() != null && widget.getTargetAnchor() != null)
-                    break;
             }
-            if (widget.getSourceAnchor() == null || widget.getTargetAnchor() == null)
-                scene.getNotifier().showSimplePopup("View Generation",
-                        NotificationUtil.WARNING, "The connection "+
-                        edge.getObject().getName()+" ["+edge.getObject().getClassName()+"], id="+edge.getObject().getOid()+" has a side missing, please check if it was moved and refresh the view"); //NOI18N
-            else{
-                List<Point> controlPoints = new ArrayList<Point>();
-                for (double[] controlPoint : edge.getControlPoints())
-                    controlPoints.add(new Point((int)controlPoint[0], (int)controlPoint[1]));
-                widget.setControlPoints(controlPoints, true);
-                scene.getEdgesLayer().addChild(widget);
-                if (scene.findObject(widget)==null)
-                    scene.addObject(widget.getObject(), widget);
-            }
+            reader.close();
+        } catch (XMLStreamException ex) {
+            System.out.println("An exception was thrown parsing the XML View: "+ex.getMessage());
         }
 
-        scene.setBackgroundImage(myView.getBackground());
+
+        scene.setBackgroundImage(currentView.getBackground());
     }
 
     /**
@@ -157,7 +225,7 @@ public class ViewBuilder {
             }
             myLocalEdges.add(le);
         }
-        myView = LocalStuffFactory.createLocalObjectView(myLocalNodes.toArray(new LocalNode[0]), myLocalEdges.toArray(new LocalEdge[0]),new LocalLabel[0]);
+        //currentView = LocalStuffFactory.createLocalObjectView();
         buildView();
     }
 
@@ -170,25 +238,25 @@ public class ViewBuilder {
     public void refreshView(List<LocalObjectLight> newNodes, List<LocalObjectLight> newPhysicalConnections,
             List<LocalObjectLight> nodesToDelete, List<LocalObjectLight> physicalConnectionsToDelete){
 
-        scene.getNodesLayer().removeChildren();
+   /**     scene.getNodesLayer().removeChildren();
         scene.getEdgesLayer().removeChildren();
         scene.getLabelsLayer().removeChildren();
         scene.getInteractionLayer().removeChildren();
         
         if (nodesToDelete != null){
             for (LocalObjectLight toDelete : nodesToDelete)
-                myView.getNodes().remove(LocalStuffFactory.createLocalNode(toDelete, 0, 0));
+                currentView.getNodes().remove(LocalStuffFactory.createLocalNode(toDelete, 0, 0));
         }
 
         if (physicalConnectionsToDelete != null){
             for (LocalObjectLight toDelete : physicalConnectionsToDelete)
-                myView.getEdges().remove(LocalStuffFactory.createLocalEdge(toDelete));
+                currentView.getEdges().remove(LocalStuffFactory.createLocalEdge(toDelete));
         }
 
         int i = 0;
         if (newNodes != null){
             for (LocalObjectLight toAdd : newNodes){
-                myView.getNodes().add(LocalStuffFactory.createLocalNode(toAdd, i, 0));
+                currentView.getNodes().add(LocalStuffFactory.createLocalNode(toAdd, i, 0));
                 i+=100;
             }
         }
@@ -204,20 +272,20 @@ public class ViewBuilder {
                     aSideString = "endpointA";
                     bSideString = "endpointB";
                 }
-                LocalNode nodeA = getNodeMatching(myView.getNodes(), com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(),aSideString)[0]);
+                LocalNode nodeA = getNodeMatching(currentView.getNodes(), com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(),aSideString)[0]);
                 if (nodeA == null)
                     continue;
-                LocalNode nodeB = getNodeMatching(myView.getNodes(), com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(),bSideString)[0]);
+                LocalNode nodeB = getNodeMatching(currentView.getNodes(), com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(),bSideString)[0]);
                 if (nodeB == null)
                     continue;
-                myView.getEdges().add(LocalStuffFactory.createLocalEdge(toAdd, nodeA, nodeB, null));
+                currentView.getEdges().add(LocalStuffFactory.createLocalEdge(toAdd, nodeA, nodeB, null));
             }
 
-        buildView();
+        buildView();*/
     }
 
-    public LocalObjectView getMyView(){
-        return this.myView;
+    public LocalObjectView getcurrentView(){
+        return this.currentView;
     }
 
     /**

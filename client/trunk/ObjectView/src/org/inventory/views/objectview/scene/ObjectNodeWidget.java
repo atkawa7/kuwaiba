@@ -35,12 +35,12 @@ public class ObjectNodeWidget extends IconNodeWidget implements ActionListener{
     private LocalObjectLight object;
     public static final Font defaultFont = new Font(Font.SANS_SERIF,Font.BOLD,12);
 
-    public ObjectNodeWidget(ViewScene scene, LocalNode node){
+    public ObjectNodeWidget(ViewScene scene, LocalObjectLight node){
         super(scene);
-        this.object = node.getObject();
-        setLabel(node.getObject().getName());
+        this.object = node;
+        setLabel(node.getName());
         getLabelWidget().setFont(defaultFont);
-        Image myIcon = CommunicationsStub.getInstance().getMetaForClass(node.getObject().getClassName(), false).getIcon();
+        Image myIcon = CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false).getIcon();
         if(myIcon == null)
             myIcon = ImageUtilities.loadImage("org/inventory/views/objectview/res/default_32.png");
         setImage(myIcon);
