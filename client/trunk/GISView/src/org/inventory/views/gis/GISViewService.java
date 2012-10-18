@@ -163,8 +163,7 @@ public class GISViewService {
                                 }
                                 else{
                                     if (reader.getName().equals(qZoom)){
-                                        reader.next();
-                                        currentView.setZoom(Integer.valueOf(reader.getText().trim()));
+                                        currentView.setZoom(Integer.valueOf(reader.getElementText().trim()));
                                     }
                                     else{
                                         if (reader.getName().equals(qCenter)){

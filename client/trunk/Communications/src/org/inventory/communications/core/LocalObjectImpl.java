@@ -90,16 +90,7 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
      */
     public Class getTypeOf(String name){
         return attributes.get(name).getClass();
-    }
-
-
-    @Override
-    public long getOid(){
-        return this.oid;
-    }
-    public void setOid(long id){
-        this.oid = id;
-    }
+    }   
 
     @Override
     public String toString(){

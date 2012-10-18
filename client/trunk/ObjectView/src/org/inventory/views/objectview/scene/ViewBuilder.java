@@ -18,6 +18,7 @@ package org.inventory.views.objectview.scene;
 
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.namespace.QName;
@@ -29,8 +30,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.LocalStuffFactory;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
-import org.inventory.core.services.api.visual.LocalEdge;
-import org.inventory.core.services.api.visual.LocalNode;
 import org.inventory.core.services.api.visual.LocalObjectView;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.Widget;
@@ -74,6 +73,14 @@ public class ViewBuilder {
      */
     public void buildView() throws IllegalArgumentException{
         try {
+
+            //Comment this out for debugging purposes
+            try{
+                FileOutputStream fos = new FileOutputStream("/home/zim/oview_"+currentView.getId()+".xml");
+                fos.write(currentView.getStructure());
+                fos.close();
+            }catch(Exception e){}
+
             //Here is where we use Woodstox as StAX provider
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
@@ -95,7 +102,7 @@ public class ViewBuilder {
 
                         int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
                         int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
-                        Long objectId = Long.valueOf(reader.getElementText());
+                        long objectId = Long.valueOf(reader.getElementText());
 
                         LocalObjectLight lol = CommunicationsStub.getInstance().
                                 getObjectInfoLight(objectClass, objectId);
@@ -109,9 +116,9 @@ public class ViewBuilder {
                             currentView.setDirty(true);
                     }else{
                         if (reader.getName().equals(qEdge)){
-                            Long objectId = Long.valueOf(reader.getAttributeValue(null,"id"));
-                            Long aSide = Long.valueOf(reader.getAttributeValue(null,"aside"));
-                            Long bSide = Long.valueOf(reader.getAttributeValue(null,"bside"));
+                            long objectId = Long.valueOf(reader.getAttributeValue(null,"id"));
+                            long aSide = Long.valueOf(reader.getAttributeValue(null,"aside"));
+                            long bSide = Long.valueOf(reader.getAttributeValue(null,"bside"));
 
                             String className = reader.getAttributeValue(null,"class");
                             LocalObjectLight container = CommunicationsStub.getInstance().getObjectInfoLight(className, objectId);
@@ -121,7 +128,7 @@ public class ViewBuilder {
                                 Widget aSideWidget = scene.findWidget(aSideObject);
 
                                 LocalObjectLight bSideObject = LocalStuffFactory.createLocalObjectLight();
-                                aSideObject.setOid(bSide);
+                                bSideObject.setOid(bSide);
                                 Widget bSideWidget = scene.findWidget(bSideObject);
 
                                 if (aSideWidget == null || bSideWidget == null)
@@ -129,6 +136,8 @@ public class ViewBuilder {
                                 else{
                                     ObjectConnectionWidget newEdge = new ObjectConnectionWidget(scene,
                                            container,scene.getFreeRouter(), ObjectConnectionWidget.getConnectionColor(container.getClassName()));
+                                    scene.getEdgesLayer().addChild(newEdge);
+                                    scene.addObject(container, newEdge);
                                     newEdge.setSourceAnchor(AnchorFactory.createCircularAnchor(aSideWidget, 3));
                                     newEdge.setTargetAnchor(AnchorFactory.createCircularAnchor(bSideWidget, 3));
                                     while(true){
@@ -298,19 +307,5 @@ public class ViewBuilder {
 
     public LocalObjectView getcurrentView(){
         return this.currentView;
-    }
-
-    /**
-     * Helper to get a local node matching an inner
-     * @param list
-     * @param id
-     * @return the node matching the oid or null if the object is not present
-     */
-    private LocalNode getNodeMatching(List<LocalNode> list, Long id){
-        for (LocalNode node : list){
-            if (node.getObject().getOid() == id)
-                return node;
-        }
-        return null;
     }
 }

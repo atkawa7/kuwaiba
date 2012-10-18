@@ -131,14 +131,14 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class does
            return false;
        if (!(obj instanceof LocalObjectLight))
            return false;
-       return (this.getOid() == ((LocalObjectLightImpl)obj).getOid());
+       return (this.getOid() == ((LocalObjectLight)obj).getOid());
    }
 
     @Override
     public int hashCode() {
         int hash = 5;
         hash = 47 * hash + (int) (this.oid ^ (this.oid >>> 32));
-        hash = 47 * hash + (this.className != null ? this.className.hashCode() : 0);
+        //hash = 47 * hash + (this.className != null ? this.className.hashCode() : 0);
         return hash;
     }
 

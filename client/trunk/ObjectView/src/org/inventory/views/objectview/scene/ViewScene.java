@@ -361,8 +361,8 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
         mainTag.start("class").text("DefaultView").end();
         StartTagWAX nodesTag = mainTag.start("nodes");
         for (Widget nodeWidget : nodesLayer.getChildren())
-            nodesTag.start("node").attr("x", nodeWidget.getPreferredLocation().getX()).
-            attr("y", nodeWidget.getPreferredLocation().getY()).
+            nodesTag.start("node").attr("x", nodeWidget.getPreferredLocation().x).
+            attr("y", nodeWidget.getPreferredLocation().y).
             attr("class", ((ObjectNodeWidget)nodeWidget).getObject().getClassName()).
             text(String.valueOf(((ObjectNodeWidget)nodeWidget).getObject().getOid()) ).end();
         nodesTag.end();
@@ -375,7 +375,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
             edgeTag.attr("aside", ((ObjectNodeWidget)((ObjectConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
             edgeTag.attr("bside", ((ObjectNodeWidget)((ObjectConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
             for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints())
-                edgeTag.start("controlpoint").attr("x", point.getX()).attr("y", point.getY()).end();
+                edgeTag.start("controlpoint").attr("x", point.x).attr("y", point.y).end();
             edgeTag.end();
         }
         edgesTag.end();
