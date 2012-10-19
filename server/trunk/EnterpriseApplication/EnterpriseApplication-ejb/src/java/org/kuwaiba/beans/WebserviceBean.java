@@ -1284,6 +1284,20 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
+    public void deleteGeneralView(long [] oids) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            aem.deleteGeneralViews(oids);
+        }catch(InventoryException ie){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ie.getMessage());
+        }catch(IOException ioe){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ioe.getMessage());
+            throw new ServerSideException(Level.SEVERE, ioe.getMessage());
+        }
+    }
+
+    @Override
     public long createQuery(String queryName, long ownerOid, byte[] queryStructure,
             String description) throws ServerSideException {
         if (aem == null)
