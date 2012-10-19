@@ -16,30 +16,30 @@
 
 package org.inventory.views.topology.scene;
 
-import org.netbeans.api.visual.graph.GraphScene;
-import org.netbeans.api.visual.widget.ConnectionWidget;
+import org.netbeans.api.visual.widget.LabelWidget;
+import org.netbeans.api.visual.widget.Scene;
 
 /**
  * A connection widget representing a link or a container
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class ObjectConnectionWidget extends ConnectionWidget{
-    /**
-     * Business object represented by this widget
-     */
-    private String name;
+public class ObjectLabelWidget extends LabelWidget{
 
-    public ObjectConnectionWidget(GraphScene<Object, String> scene, String name) {
-        super(scene);
-        this.name = name;
-        createActions(ObjectNodeWidget.ACTION_SELECT);
+    private String labelText;
+
+    public ObjectLabelWidget(Scene scene, String label) {
+        super(scene, label);
+        this.setOpaque (true);
+        this.setToolTipText ("Double-click to edit text");
+        this.labelText =  label;
     }
 
-    public String getName() {
-        return name;
+    public String getLabelText() {
+        return labelText;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLabelText(String labelText) {
+        this.labelText = labelText;
     }
+
 }

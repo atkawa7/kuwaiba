@@ -35,7 +35,7 @@ import org.openide.util.Exceptions;
 public class AcceptActionProvider implements AcceptProvider{
 
     /**
-     * Reference to the GIS view scene
+     * Reference to the Topology view scene
      */
     private TopologyViewScene scene;
 
