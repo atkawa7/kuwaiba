@@ -144,7 +144,7 @@ public class CommunicationsStub {
         try{
             this.session = new LocalSession(port.createSession(user, password));
             return true;
-        }catch(Exception ex){
+        }catch(Exception ex){ 
             this.error =  ex.getMessage();
             return false;
         }
@@ -1189,13 +1189,18 @@ public class CommunicationsStub {
      * @param ids view ids
      * @throws ObjectNotFoundException if the view can't be found
      */
-    public boolean deleteGeneralViews(long[] ids) {
-        return true;
-//         try{
-//            port.deleupdateGeneralView(oid, name, description, structure, background, session.getSessionId());
-//        }catch(Exception ex){
-//            this.error =  ex.getMessage();
-//        }
+    public boolean deleteGeneralViews(long [] ids) {
+         try{
+             List<Long> oIds = new ArrayList<Long>();
+             for (long l : ids) {
+                 oIds.add(l);
+             }
+             port. deleteGeneralView(oIds, session.getSessionId());
+             return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
     }
 
     /**
