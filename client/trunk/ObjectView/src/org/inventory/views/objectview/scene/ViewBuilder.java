@@ -18,7 +18,6 @@ package org.inventory.views.objectview.scene;
 
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.namespace.QName;
@@ -74,12 +73,12 @@ public class ViewBuilder {
     public void buildView() throws IllegalArgumentException{
         try {
 
-            //Comment this out for debugging purposes
+            /*Comment this out for debugging purposes
             try{
                 FileOutputStream fos = new FileOutputStream("/home/zim/oview_"+currentView.getId()+".xml");
                 fos.write(currentView.getStructure());
                 fos.close();
-            }catch(Exception e){}
+            }catch(Exception e){}*/
 
             //Here is where we use Woodstox as StAX provider
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -140,12 +139,13 @@ public class ViewBuilder {
                                     scene.addObject(container, newEdge);
                                     newEdge.setSourceAnchor(AnchorFactory.createCircularAnchor(aSideWidget, 3));
                                     newEdge.setTargetAnchor(AnchorFactory.createCircularAnchor(bSideWidget, 3));
+                                    List<Point> localControlPoints = new ArrayList<Point>();
                                     while(true){
                                         reader.nextTag();
-                                        List<Point> localControlPoints = new ArrayList<Point>();
+                                        
                                         if (reader.getName().equals(qControlPoint)){
                                             if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                                localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"y")), Integer.valueOf(reader.getAttributeValue(null,"x"))));
+                                                localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
                                         }else{
                                             newEdge.setControlPoints(localControlPoints,false);
                                             break;

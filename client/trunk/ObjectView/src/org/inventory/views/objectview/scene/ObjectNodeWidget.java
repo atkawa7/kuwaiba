@@ -22,7 +22,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.LocalObjectLight;
-import org.inventory.core.services.api.visual.LocalNode;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.widget.general.IconNodeWidget;
 import org.openide.util.ImageUtilities;
