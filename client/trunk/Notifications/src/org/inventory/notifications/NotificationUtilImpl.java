@@ -13,7 +13,7 @@ import org.openide.awt.StatusDisplayer;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * This class provides mechanisms to perform different notifications. By now this is
+ * This class provides mechanisms to perform different notifications. For now this is
  * a wrapper module for existing notifications but we'll be looking forward to extend the scope
  * adding connectors for remote notifications or integration with IM services, to name some
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
