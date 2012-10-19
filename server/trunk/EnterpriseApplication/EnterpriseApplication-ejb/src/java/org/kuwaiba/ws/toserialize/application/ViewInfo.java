@@ -31,6 +31,9 @@ public class ViewInfo extends ViewInfoLight {
     private byte[] background;
     private byte[] structure;
 
+    public ViewInfo() {
+    }
+
     public ViewInfo(ViewObject myView) {
         super(myView);
         this.structure = myView.getStructure();
