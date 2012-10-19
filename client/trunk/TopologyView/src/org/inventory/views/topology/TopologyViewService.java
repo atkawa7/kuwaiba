@@ -122,6 +122,7 @@ public class TopologyViewService implements LookupListener {
             return null;
         }
         else{
+            tvtc.toggleButtons(true);
             LocalObjectViewLight[] lov = new LocalObjectViewLight[res.size()];
             for (int i=0; i<res.size(); i++)
                 lov[i] = res.get(i);

@@ -196,6 +196,7 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
                 ObjectNodeWidget myWidget = new ObjectNodeWidget(this, (LocalObjectLight)node);
                 nodesLayer.addChild(myWidget);
                 myWidget.setImage(defaultIcon);
+                myWidget.setLabel(((LocalObjectLight)node).getName());
                 myWidget.getActions(ObjectNodeWidget.ACTION_SELECT).addAction(createSelectAction());
                 myWidget.getActions(ObjectNodeWidget.ACTION_SELECT).addAction(ActionFactory.createMoveAction());
                 myWidget.getActions(ObjectNodeWidget.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgesLayer, new SceneConnectProvider(this)));
@@ -294,13 +295,6 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
         }
     }
 
-    public boolean isEmpty(){
-        if(getNodes().isEmpty() || getEdges().isEmpty())
-            return true;
-        else
-            return false;
-
-    }
     public void addFreeFrame(){
         Widget f = addNode(FREE_FRAME+randomGenerator.nextInt(1000)+"New Title");
         f.setPreferredLocation (new Point (100, 100));
@@ -323,15 +317,18 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
         this.validate();
         this.repaint();
     }
-    /*
-     * clear the scene
-     */
+   
     public void clear(){
         while (!getNodes().isEmpty())
             removeNode(getNodes().iterator().next());
         while (!getEdges().isEmpty())
             removeEdge(getEdges().iterator().next());
     }
+
+    public LayerWidget getNodesLayer() {
+        return nodesLayer;
+    }
+
     /**
      * Export the scene to XML
      * @return a byte array
@@ -366,9 +363,7 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
             edgeTag.attr("id", "");
             edgeTag.attr("class", "");
             edgeTag.attr("name", ((ObjectConnectionWidget)edgeWidget).getName());
-            //soruce
             edgeTag.attr("aside", ((ObjectNodeWidget)((ObjectConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
-            //target
             edgeTag.attr("bside", ((ObjectNodeWidget)((ObjectConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
 
             for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints())
@@ -423,9 +418,5 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
         mainTag.end().close();
         return bas.toByteArray();
     }
-
-//    public void locateNodes(){
-//        LocalObjectView
-//    }
 
 }
