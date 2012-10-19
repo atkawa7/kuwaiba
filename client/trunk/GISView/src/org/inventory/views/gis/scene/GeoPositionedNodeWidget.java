@@ -17,7 +17,6 @@
 package org.inventory.views.gis.scene;
 
 import org.inventory.core.services.api.LocalObjectLight;
-import org.netbeans.api.visual.action.ActionFactory;
 
 /**
  * An ObjectNodeWidget with

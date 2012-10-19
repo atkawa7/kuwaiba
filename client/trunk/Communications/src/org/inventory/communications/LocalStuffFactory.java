@@ -26,6 +26,7 @@ import org.inventory.communications.core.LocalObjectLightImpl;
 import org.inventory.communications.core.queries.LocalTransientQueryImpl;
 import org.inventory.communications.core.views.LocalEdgeImpl;
 import org.inventory.communications.core.views.LocalNodeImpl;
+import org.inventory.communications.core.views.LocalObjectViewImpl;
 import org.inventory.communications.core.views.LocalObjectViewLightImpl;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
@@ -37,6 +38,7 @@ import org.inventory.core.services.api.queries.LocalQuery;
 import org.inventory.core.services.api.queries.LocalTransientQuery;
 import org.inventory.core.services.api.visual.LocalEdge;
 import org.inventory.core.services.api.visual.LocalNode;
+import org.inventory.core.services.api.visual.LocalObjectView;
 import org.inventory.core.services.api.visual.LocalObjectViewLight;
 
 /**
@@ -92,6 +94,10 @@ public class LocalStuffFactory {
 
     public static LocalObjectViewLight createLocalObjectViewLight (long id, String name, String description, int type) {
         return new LocalObjectViewLightImpl(id, name, description, type);
+    }
+
+    public static LocalObjectView createLocalObjectView (long id, String name, String description, int type, byte[] structure, byte[] background) {
+        return new LocalObjectViewImpl(id, name, description, type, structure, background);
     }
 
     public static LocalClassMetadata createLocalClassMetadata() {

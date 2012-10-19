@@ -128,7 +128,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         
         MapPanel myMap = new MapPanel();
         myMap.setProvider(MapPanel.Providers.OSM);
-        myMap.getMainMap().setAddressLocation(DEFAULT_CENTER_POSITION);
+        myMap.getMainMap().setCenterPosition(DEFAULT_CENTER_POSITION);
         myMap.addPropertyChangeListener("painted", this);
         mapWidget = new ComponentWidget(this, myMap);
 
@@ -319,7 +319,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         //TODO: Get the class name from some else
         mainTag.start("class").text("GISView").end();
         mainTag.start("zoom").text(String.valueOf(((MapPanel)mapWidget.getComponent()).getMainMap().getZoom())).end();
-        mainTag.start("center").attr("x", ((MapPanel)mapWidget.getComponent()).getMainMap().getAddressLocation().getLongitude()).attr("y", ((MapPanel)mapWidget.getComponent()).getMainMap().getAddressLocation().getLatitude()).end();
+        mainTag.start("center").attr("x", ((MapPanel)mapWidget.getComponent()).getMainMap().getCenterPosition().getLongitude()).attr("y", ((MapPanel)mapWidget.getComponent()).getMainMap().getCenterPosition().getLatitude()).end();
         StartTagWAX nodesTag = mainTag.start("nodes");
         for (Widget nodeWidget : nodesLayer.getChildren())
             nodesTag.start("node").attr("x", ((GeoPositionedNodeWidget)nodeWidget).getLongitude()).

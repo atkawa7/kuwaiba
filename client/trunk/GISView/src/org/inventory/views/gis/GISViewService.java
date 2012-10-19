@@ -18,6 +18,7 @@ package org.inventory.views.gis;
 
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.namespace.QName;
@@ -80,13 +81,12 @@ public class GISViewService {
             return;
 
         if (currentView.getStructure() != null){
-            
-             /*Comment this out for debugging purposes
+             /*Comment this out for debugging purposes*/
             try{
                 FileOutputStream fos = new FileOutputStream("/home/zim/out.xml");
                 fos.write(currentView.getStructure());
                 fos.close();
-            }catch(Exception e){}*/
+            }catch(Exception e){}
 
             try {
                 //Here is where we use Woodstox as StAX provider
@@ -108,8 +108,8 @@ public class GISViewService {
                         if (reader.getName().equals(qNode)){
                             String objectClass = reader.getAttributeValue(null, "class");
 
-                            int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
-                            int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
+                            double xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x"));
+                            double yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y"));
                             Long objectId = Long.valueOf(reader.getElementText());
 
                             LocalObjectLight lol = CommunicationsStub.getInstance().
@@ -164,7 +164,6 @@ public class GISViewService {
                                 else{
                                     if (reader.getName().equals(qZoom))
                                         currentView.setZoom(Integer.valueOf(reader.getElementText()));
-
                                     else{
                                         if (reader.getName().equals(qCenter)){
                                             double x = Double.valueOf(reader.getAttributeValue(null, "x"));
@@ -180,12 +179,10 @@ public class GISViewService {
                     }
                 }
                 reader.close();
-                
-                //System.out.println("center\nLatitude: "+currentView.getCenter()[1]+" Longitude: "+currentView.getCenter()[0]);
-                scene.setCenterPosition(currentView.getCenter()[1], currentView.getCenter()[0]);
                 scene.setZoom(currentView.getZoom());
-                //System.out.println("Zoom: "+currentView.getZoom());
+                scene.setCenterPosition(currentView.getCenter()[1], currentView.getCenter()[0]);
                 scene.activateMap();
+
                 scene.validate();
                 gvtc.toggleButtons(true);
             } catch (XMLStreamException ex) {
@@ -203,16 +200,20 @@ public class GISViewService {
 
     void saveView(String nameInTxt, String descriptionInTxt) {
         if (currentView == null){
-            long viewId = com.createGeneralView(LocalObjectViewLight.TYPE_GIS, nameInTxt, descriptionInTxt, scene.getAsXML(), null);
+            byte[] structure = scene.getAsXML();
+            long viewId = com.createGeneralView(LocalObjectViewLight.TYPE_GIS, nameInTxt, descriptionInTxt, structure, null);
             if (viewId != -1){
-                //currentView = LocalStuffFactory.createLocalObjectViewLight(viewId, nameInTxt, descriptionInTxt, LocalObjectViewLight.TYPE_GIS);
+                currentView = LocalStuffFactory.createLocalObjectView(viewId, nameInTxt, descriptionInTxt, LocalObjectViewLight.TYPE_GIS, structure, null);
                 nu.showSimplePopup("New View", NotificationUtil.INFO, "View created successfully");
             }else
                 nu.showSimplePopup("New View", NotificationUtil.ERROR, com.getError());
         }
         else{
-            if (com.updateGeneralView(currentView.getId(), nameInTxt, descriptionInTxt, scene.getAsXML(), null))
+            if (com.updateGeneralView(currentView.getId(), nameInTxt, descriptionInTxt, scene.getAsXML(), null)){
+                currentView.setName(nameInTxt);
+                currentView.setDescription(descriptionInTxt);
                 nu.showSimplePopup("Save View", NotificationUtil.INFO, "View created successfully");
+            }
             else
                 nu.showSimplePopup("Save View", NotificationUtil.ERROR, com.getError());
         }

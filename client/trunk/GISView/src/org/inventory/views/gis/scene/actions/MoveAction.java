@@ -22,6 +22,7 @@ import org.netbeans.api.visual.widget.Widget;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import org.inventory.views.gis.scene.GeoPositionedNodeWidget;
+import org.openide.awt.StatusDisplayer;
 
 /**
  * An adaptation of the generic move action: Based on the original code at <code>org.netbeans.modules.visual.action.MoveAction</code>
@@ -46,6 +47,7 @@ public final class MoveAction extends WidgetAction.LockedAdapter {
             lastMouseLocation = event.getPoint ();
             return State.createLocked (widget, this);
         }
+        
         return State.REJECTED;
     }
 
@@ -77,6 +79,7 @@ public final class MoveAction extends WidgetAction.LockedAdapter {
 
         widget.setPreferredLocation(new Point(widget.getPreferredLocation().x + deltaX, widget.getPreferredLocation().y + deltaY));
         ((GeoPositionedNodeWidget)widget).updateCoordinates();
+        StatusDisplayer.getDefault().setStatusText(((GeoPositionedNodeWidget)widget).getLatitude()+", "+((GeoPositionedNodeWidget)widget).getLongitude());
         return true;
     }
 

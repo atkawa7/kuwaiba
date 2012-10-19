@@ -1191,11 +1191,10 @@ public class CommunicationsStub {
      */
     public boolean deleteGeneralViews(long [] ids) {
          try{
-             List<Long> oIds = new ArrayList<Long>();
-             for (long l : ids) {
-                 oIds.add(l);
-             }
-             port.deleteGeneralView(oIds, session.getSessionId());
+             List<Long> oids = new ArrayList<Long>();
+             for (long l : ids) 
+                 oids.add(l);
+             port.deleteGeneralView(oids, session.getSessionId());
              return true;
         }catch(Exception ex){
             this.error =  ex.getMessage();
