@@ -493,6 +493,27 @@ public class Kuwaiba {
             throw e;
         }
     }
+    /**
+     * Deletes views
+     * @param oids
+     * @param sessionId
+     * @throws Exception
+     */
+    @WebMethod(operationName = "deleteGeneralView")
+    public void deleteGeneralView(@WebParam(name = "oids")long [] oids,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("updateGeneralView", getIPAddress(), sessionId);
+            wsBean.deleteGeneralView(oids);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
 
     /**
      * Creates a list type item
@@ -1253,9 +1274,10 @@ public class Kuwaiba {
 
      /**
      * Updates a class metadata properties
-     * @param name New class metadata object name. Null if unchanged
-     * @param displayName New class metadata object display name. Null if unchanged
-     * @param description New class metadata object description. Null if unchanged
+     * @param class metadata id.
+     * @param class metadata name. Null if unchanged
+     * @param displayName New class metadata display name. Null if unchanged
+     * @param description New class metadata description. Null if unchanged
      * @param abstractClass is this class abstract?
      * @param parentClassName New class metadata object parent class name. Null if unchanged
      * @param icon New icon for views. Null if unchanged. The size is limited by the value in Constants.MAX_ICON_SIZE
@@ -1748,7 +1770,7 @@ public class Kuwaiba {
     /**
      *
      * @param className
-     * @param sessionId
+     * @param recursive
      * @return Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
