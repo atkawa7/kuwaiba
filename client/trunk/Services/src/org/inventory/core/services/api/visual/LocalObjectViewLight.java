@@ -79,8 +79,8 @@ public abstract class LocalObjectViewLight {
         return description;
     }
 
-    public void setDescription (String name){
-        this.name = name;
+    public void setDescription (String description){
+        this.description = description;
     }
 
     public int getViewType(){

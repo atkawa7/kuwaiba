@@ -308,6 +308,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         labelsLayer.removeChildren();
         mapLayer.removeChildren();
         polygonsLayer.removeChildren();
+        ((MapPanel)mapWidget.getComponent()).getMainMap().setZoom(MapPanel.DEFAULT_ZOOM_LEVEL);
     }
 
     public byte[] getAsXML() {
@@ -318,7 +319,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         //TODO: Get the class name from some else
         mainTag.start("class").text("GISView").end();
         mainTag.start("zoom").text(String.valueOf(((MapPanel)mapWidget.getComponent()).getMainMap().getZoom())).end();
-        mainTag.start("center").attr("y", ((MapPanel)mapWidget.getComponent()).getMainMap().getAddressLocation().getLatitude()).attr("x", ((MapPanel)mapWidget.getComponent()).getMainMap().getAddressLocation().getLongitude()).end();
+        mainTag.start("center").attr("x", ((MapPanel)mapWidget.getComponent()).getMainMap().getAddressLocation().getLongitude()).attr("y", ((MapPanel)mapWidget.getComponent()).getMainMap().getAddressLocation().getLatitude()).end();
         StartTagWAX nodesTag = mainTag.start("nodes");
         for (Widget nodeWidget : nodesLayer.getChildren())
             nodesTag.start("node").attr("x", ((GeoPositionedNodeWidget)nodeWidget).getLongitude()).
@@ -340,11 +341,12 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         }
         edgesTag.end();
         mainTag.end().close();
+
         return bas.toByteArray();
     }
 
     public void setCenterPosition(double latitude, double longitude) {
-        ((MapPanel)mapWidget.getComponent()).getMainMap().setAddressLocation(new GeoPosition(latitude, longitude));
+        ((MapPanel)mapWidget.getComponent()).getMainMap().setCenterPosition(new GeoPosition(latitude, longitude));
     }
 
     public void setZoom(int zoom) {
