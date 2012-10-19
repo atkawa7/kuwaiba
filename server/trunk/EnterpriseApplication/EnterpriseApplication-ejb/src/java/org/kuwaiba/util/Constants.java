@@ -72,5 +72,9 @@ public class Constants {
      * Constant to identify when a requests refers to a GIS view
      */
     public static int VIEWS_GIS = 3;
+     /**
+     * Constant to identify when a requests refers to a Topology view
+     */
+    public static int VIEWS_TOPOLOGY = 4;
 
 }
