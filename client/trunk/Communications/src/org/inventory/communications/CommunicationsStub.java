@@ -1195,7 +1195,7 @@ public class CommunicationsStub {
              for (long l : ids) {
                  oIds.add(l);
              }
-             port. deleteGeneralView(oIds, session.getSessionId());
+             port.deleteGeneralView(oIds, session.getSessionId());
              return true;
         }catch(Exception ex){
             this.error =  ex.getMessage();
