@@ -420,6 +420,8 @@ public interface WebserviceBeanRemote {
 
     public void updateGeneralView(long viewId, String viewName, String viewDescription, byte[] structure, byte[] background) throws ServerSideException;
 
+    public void deleteGeneralView(long [] oids) throws ServerSideException;
+
     /**
      * Executes a complex query generated using the Graphical Query Builder.  Please note
      * that the first record is reserved for the column headers, so and empty result set
