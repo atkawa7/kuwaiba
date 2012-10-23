@@ -59,9 +59,8 @@ public class ZoomAction extends WidgetAction.Adapter{
     @Override
     public State mouseClicked(Widget widget, WidgetMouseEvent event) {
         if (event.getClickCount() == 2){
-            GISViewScene scene = (GISViewScene)widget.getScene ();
-            return zoom(-1,scene);
-
+           GISViewScene scene = (GISViewScene)widget.getScene ();
+           return zoom(-1,scene);
         }else
             return WidgetAction.State.REJECTED;
     }

@@ -224,18 +224,30 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
             Point2D point2D = map.getTileFactory().geoToPixel(
                     new GeoPosition(((GeoPositionedNodeWidget)node).getLatitude(), ((GeoPositionedNodeWidget)node).getLongitude()),
                     map.getZoom());
-            node.setPreferredLocation(new Point((int)point2D.getX() - realViewport.x - ICON_RADIUS, (int)point2D.getY() - realViewport.y - ICON_RADIUS));
+
+            int newX = (int)point2D.getX() - realViewport.x, newY = (int)point2D.getY() - realViewport.y;
+
+            if (newX < 0 || newY < 0)
+                node.setVisible(false);
+            else
+                node.setVisible(true);
+            node.setPreferredLocation(new Point(newX - ICON_RADIUS, newY - ICON_RADIUS));
         }
 
         for (Widget edge : connectionsLayer.getChildren()){
             if (edge instanceof GeoPositionedConnectionWidget ){
+                boolean visible = true;
                 List<Point> newControlPoints = new ArrayList<Point>();
                 for (double[] controlPoint : ((GeoPositionedConnectionWidget)edge).getGeoPositionedControlPoints()){
                     Point2D point2D = map.getTileFactory().geoToPixel(
                         new GeoPosition(controlPoint),
                         map.getZoom());
-                    newControlPoints.add(new Point((int)point2D.getX() - realViewport.x, (int)point2D.getY() - realViewport.y));
+                    int newX = (int)point2D.getX() - realViewport.x, newY = (int)point2D.getY() - realViewport.y;
+                    newControlPoints.add(new Point(newX, newY));
+                    if (newX < 0 || newY < 0)
+                        visible = false;
                 }
+                edge.setVisible(visible);
                 ((GeoPositionedConnectionWidget)edge).setControlPoints(newControlPoints);
             }
         }
@@ -302,9 +314,15 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      * Cleans up the scene and release resources
      */
     public void clear() {
-        List<LocalObjectLight> clone = new ArrayList(getNodes());
-        for (LocalObjectLight node : clone)
-            removeNodeWithEdges(node);
+        List<LocalObjectLight> clonedNodes = new ArrayList(getNodes());
+        List<LocalObjectLight> clonedEdges = new ArrayList(getEdges());
+
+        for (LocalObjectLight node : clonedNodes)
+            removeNode(node); //RemoveNodeWithEdges didn't work
+
+        for (LocalObjectLight edge : clonedEdges)
+            removeEdge(edge);
+
         labelsLayer.removeChildren();
         mapLayer.removeChildren();
         polygonsLayer.removeChildren();
@@ -333,14 +351,21 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
             StartTagWAX edgeTag = edgesTag.start("edge");
             edgeTag.attr("id", ((GeoPositionedConnectionWidget)edgeWidget).getObject().getOid());
             edgeTag.attr("class", ((GeoPositionedConnectionWidget)edgeWidget).getObject().getClassName());
-            edgeTag.attr("aside", ((GeoPositionedConnectionWidget)((ObjectConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
-            edgeTag.attr("bside", ((GeoPositionedConnectionWidget)((ObjectConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
+            edgeTag.attr("aside", ((GeoPositionedNodeWidget)((ObjectConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
+            edgeTag.attr("bside", ((GeoPositionedNodeWidget)((ObjectConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
             for (double[] point : ((GeoPositionedConnectionWidget)edgeWidget).getGeoPositionedControlPoints())
                 edgeTag.start("controlpoint").attr("x", point[1]).attr("y", point[0]).end();
             edgeTag.end();
         }
         edgesTag.end();
         mainTag.end().close();
+
+        /*Comment this out for debugging purposes
+        try{
+            FileOutputStream fos = new FileOutputStream("/home/zim/before-to-save_"+Calendar.getInstance().getTimeInMillis()+".xml");
+            fos.write(bas.toByteArray());
+            fos.close();
+        }catch(Exception e){}*/
 
         return bas.toByteArray();
     }

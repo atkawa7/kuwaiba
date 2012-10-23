@@ -20,6 +20,7 @@ import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -37,6 +38,7 @@ import org.inventory.views.gis.scene.GeoPositionedConnectionWidget;
 import org.inventory.views.gis.scene.GeoPositionedNodeWidget;
 import org.inventory.views.gis.scene.MapPanel;
 import org.netbeans.api.visual.anchor.AnchorFactory;
+import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
 
@@ -81,9 +83,9 @@ public class GISViewService {
             return;
 
         if (currentView.getStructure() != null){
-             /*Comment this out for debugging purposes*/
+             /*Comment this out for debugging purpose*/
             try{
-                FileOutputStream fos = new FileOutputStream("/home/zim/out.xml");
+                FileOutputStream fos = new FileOutputStream("/home/zim/parsing_"+Calendar.getInstance().getTimeInMillis()+".xml");
                 fos.write(currentView.getStructure());
                 fos.close();
             }catch(Exception e){}
@@ -117,6 +119,7 @@ public class GISViewService {
                             if (lol != null){
                                 GeoPositionedNodeWidget widget = (GeoPositionedNodeWidget)scene.addNode(lol);
                                 widget.setCoordinates(yCoordinate, xCoordinate);
+                                scene.validate();
                             }
                             else
                                 currentView.setDirty(true);
@@ -134,26 +137,28 @@ public class GISViewService {
                                     Widget aSideWidget = scene.findWidget(aSideObject);
 
                                     LocalObjectLight bSideObject = LocalStuffFactory.createLocalObjectLight();
-                                    aSideObject.setOid(bSide);
+                                    bSideObject.setOid(bSide);
                                     Widget bSideWidget = scene.findWidget(bSideObject);
 
                                     if (aSideWidget == null || bSideWidget == null)
                                         currentView.setDirty(true);
                                     else{
-                                        GeoPositionedConnectionWidget newEdge = (GeoPositionedConnectionWidget)scene.addEdge(container);
+                                        //GeoPositionedConnectionWidget newEdge = (GeoPositionedConnectionWidget)scene.addEdge(container);
+                                        /*ConnectionWidget newEdge = (GeoPositionedConnectionWidget)scene.addEdge(container);
                                         newEdge.setSourceAnchor(AnchorFactory.createCircularAnchor(aSideWidget, 3));
                                         newEdge.setTargetAnchor(AnchorFactory.createCircularAnchor(bSideWidget, 3));
+                                        List<Point> localControlPoints = new ArrayList<Point>();
                                         while(true){
                                             reader.nextTag();
-                                            List<Point> localControlPoints = new ArrayList<Point>();
                                             if (reader.getName().equals(qControlPoint)){
                                                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
                                                     localControlPoints.add(scene.coordinateToPixel(Double.valueOf(reader.getAttributeValue(null,"y")), Double.valueOf(reader.getAttributeValue(null,"x")), currentView.getZoom() != 0 ? currentView.getZoom() : MapPanel.DEFAULT_ZOOM_LEVEL ));
                                             }else{
-                                                newEdge.setControlPoints(localControlPoints);
+                                               //newEdge.setControlPoints(localControlPoints);
                                                 break;
                                             }
                                         }
+                                        scene.validate();*/
                                     }
                                 }else
                                     currentView.setDirty(true);
@@ -216,6 +221,21 @@ public class GISViewService {
             }
             else
                 nu.showSimplePopup("Save View", NotificationUtil.ERROR, com.getError());
+        }
+    }
+
+    void deleteCurrentView() {
+        if (currentView == null)
+            nu.showSimplePopup("Delete View", NotificationUtil.INFO, "This view has not been saved yet");
+        else{
+            if (com.deleteGeneralViews(new long[]{currentView.getId()})){
+                scene.clear();
+                currentView = null;
+                gvtc.toggleButtons(false);
+                nu.showSimplePopup("Delete View", NotificationUtil.INFO, "View deleted successfully");
+            }
+            else
+                nu.showSimplePopup("Delete View", NotificationUtil.ERROR, com.getError());
         }
     }
 }

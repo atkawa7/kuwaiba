@@ -68,7 +68,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         setToolTipText(NbBundle.getMessage(GISViewTopComponent.class, "HINT_GISViewTopComponent"));
         scene = new GISViewScene();
         this.gvs = new GISViewService(scene, this);
-        add(scene.createView(),BorderLayout.CENTER);
+        add(scene.createView(), BorderLayout.CENTER);
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         associateLookup(scene.getLookup());
     }
@@ -93,6 +93,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         barToolMain = new javax.swing.JToolBar();
         btnNew = new javax.swing.JButton();
         btnOpen = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
         btnExport = new javax.swing.JButton();
         btnSelect = new javax.swing.JToggleButton();
@@ -135,6 +136,20 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
             }
         });
         barToolMain.add(btnOpen);
+
+        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/delete.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnDelete, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnDelete.text")); // NOI18N
+        btnDelete.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnDelete.toolTipText")); // NOI18N
+        btnDelete.setEnabled(false);
+        btnDelete.setFocusable(false);
+        btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
+        barToolMain.add(btnDelete);
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/save.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnSave.text")); // NOI18N
@@ -362,9 +377,14 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         }
     }//GEN-LAST:event_btnOpenActionPerformed
 
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        gvs.deleteCurrentView();
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barToolMain;
     private javax.swing.JToggleButton btnConnect;
+    private javax.swing.JButton btnDelete;
     private javax.swing.JToggleButton btnElectricalLink;
     private javax.swing.JButton btnExport;
     private javax.swing.JButton btnNew;
@@ -442,6 +462,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnWirelessLink.setEnabled(enabled);
         btnZoomIn.setEnabled(enabled);
         btnZoomOut.setEnabled(enabled);
+        btnDelete.setEnabled(enabled);
     }
 
     void writeProperties(java.util.Properties p) {

@@ -18,7 +18,6 @@ package org.inventory.views.gis.scene.actions;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import javax.swing.SwingUtilities;
 import org.inventory.views.gis.scene.MapPanel;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.widget.Scene;
@@ -66,8 +65,7 @@ public class MapWidgetPanAction extends WidgetAction.LockedAdapter{
 
         if (event.getButton () == mouseButton) {
             scene = widget.getScene ();
-            lastLocation = scene.convertSceneToView (widget.convertLocalToScene (event.getPoint ()));
-            SwingUtilities.convertPointToScreen (lastLocation, scene.getView ());
+            lastLocation = event.getPoint ();
             return State.createLocked (widget, this);
         }
         return State.REJECTED;
@@ -87,11 +85,8 @@ public class MapWidgetPanAction extends WidgetAction.LockedAdapter{
     private boolean pan (Widget widget, Point newLocation) {
         if (scene != widget.getScene ())
             return false;
-        newLocation = scene.convertSceneToView (widget.convertLocalToScene (newLocation));
-        SwingUtilities.convertPointToScreen (newLocation, scene.getView ());
-        Point2D currentCenter = map.getMainMap().getCenter();
-        Point newCenter = new Point((int)(currentCenter.getX() + lastLocation.x - newLocation.x), (int)(currentCenter.getY() + lastLocation.y - newLocation.y));
-        map.getMainMap().setCenter(newCenter);
+        map.getMainMap().setCenter(new Point2D.Double(map.getMainMap().getCenter().getX() + lastLocation.x - newLocation.x,
+                map.getMainMap().getCenter().getY() + lastLocation.y - newLocation.y));
         lastLocation = newLocation;
         return true;
     }
