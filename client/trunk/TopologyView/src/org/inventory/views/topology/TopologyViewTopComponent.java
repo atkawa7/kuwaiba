@@ -68,7 +68,7 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
 
     private NotificationUtil nu;
     
-    private boolean isSaved = false;
+    private boolean isSaved = true;
 
     public TopologyViewTopComponent() {
         initComponents();
@@ -297,7 +297,8 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
                 "Delete saved view",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
             tvsrv.deleteView();
             scene.clear();
-            btnDelete.setEnabled(false);
+            tvsrv.setTvId(-1);
+            toggleButtons(false);
         }
 }//GEN-LAST:event_btnDeleteActionPerformed
 
@@ -351,6 +352,9 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
 
     private void btnShowNodeLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodeLabelsActionPerformed
         for (Widget node : scene.getNodesLayer().getChildren())
+            ((ObjectNodeWidget)node).getLabelWidget().setVisible(!btnShowNodeLabels.isSelected());
+        scene.validate();
+        for (Widget node : scene.getIconLayer().getChildren())
             ((ObjectNodeWidget)node).getLabelWidget().setVisible(!btnShowNodeLabels.isSelected());
         scene.validate();
     }//GEN-LAST:event_btnShowNodeLabelsActionPerformed
@@ -458,6 +462,8 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
     @Override
     public void componentClosed() {
         scene.clear();
+        tvsrv.setTvId(-1);
+        toggleButtons(false);
     }
 
     void writeProperties(java.util.Properties p) {
@@ -523,6 +529,7 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
         btnLabel.setEnabled(enabled);
         btnShowNodeLabels.setEnabled(enabled);
         btnSave.setEnabled(enabled);
+        btnDelete.setEnabled(enabled);
     }
 
 }

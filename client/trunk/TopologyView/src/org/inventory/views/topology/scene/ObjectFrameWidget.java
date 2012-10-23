@@ -17,6 +17,7 @@
 package org.inventory.views.topology.scene;
 
 import java.awt.Color;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import org.inventory.views.topology.scene.provider.LabelTextFieldEditor;
 import org.netbeans.api.visual.action.ActionFactory;
@@ -24,6 +25,7 @@ import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.Widget;
+import org.openide.util.Utilities;
 
 /**
  * a frame with a title
@@ -35,7 +37,8 @@ public class ObjectFrameWidget extends Widget {
 
     public ObjectFrameWidget(GraphScene<Object, String> scene, String title) {
         super(scene);
-        this.setBorder (BorderFactory.createResizeBorder (8, Color.BLACK, false));
+        this.setToolTipText ("Double-click to title text, resize on the corners");
+        this.setBorder (BorderFactory.createImageBorder (new Insets (5, 5, 5, 5), Utilities.loadImage ("org/inventory/views/topology/res/shadow_normal.png"))); // NOI18N
         this.setLayout (LayoutFactory.createVerticalFlowLayout (LayoutFactory.SerialAlignment.LEFT_TOP, 0));
         this.setPreferredBounds (new Rectangle (200, 200));
 

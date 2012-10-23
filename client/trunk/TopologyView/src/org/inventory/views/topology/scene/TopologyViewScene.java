@@ -192,7 +192,7 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
     @Override
     protected Widget attachNodeWidget(Object node) {
         if(node instanceof LocalObjectLight){
-            if(!((LocalObjectLight)node).getName().equals(CLOUD_ICON)){
+            if(!((LocalObjectLight)node).getName().contains(CLOUD_ICON)){
                 ObjectNodeWidget myWidget = new ObjectNodeWidget(this, (LocalObjectLight)node);
                 nodesLayer.addChild(myWidget);
                 myWidget.setImage(defaultIcon);
@@ -209,22 +209,24 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
                 ObjectNodeWidget cloudWidget = new ObjectNodeWidget(this, lol);
                 iconsLayer.addChild(cloudWidget);
                 cloudWidget.setImage(cloudIcon);
+                cloudWidget.setLabel(((LocalObjectLight)node).getName().substring(9));
+                cloudWidget.getActions().addAction (ActionFactory.createInplaceEditorAction (new LabelTextFieldEditor()));
                 cloudWidget.getActions().addAction(ActionFactory.createMoveAction());
                 cloudWidget.getActions().addAction(ActionFactory.createPopupMenuAction(iconMenu));
                 return cloudWidget;
             }
         }
         //the frame with title
-        if(FREE_FRAME.equals(node.toString().substring(0, 9))){
-            ObjectFrameWidget myFrame = new ObjectFrameWidget(this, node.toString().substring(12));
+        if((node.toString().contains(FREE_FRAME))){
+            ObjectFrameWidget myFrame = new ObjectFrameWidget(this, node.toString().substring(node.toString().indexOf(FREE_FRAME)+9));
             framesLayer.addChild (myFrame);
             myFrame.getActions().addAction(ActionFactory.createPopupMenuAction(frameMenu));
             myFrame.getActions ().addAction (ActionFactory.createResizeAction ());
             myFrame.getActions().addAction(ActionFactory.createMoveAction());
             return myFrame;
         }//labels
-        if(FREE_LABEL.equals(node.toString().substring(0, 9))){
-            ObjectLabelWidget myFreeLabel = new ObjectLabelWidget(this,node.toString().substring(12));
+        if((node.toString().contains(FREE_LABEL))){
+            ObjectLabelWidget myFreeLabel = new ObjectLabelWidget(this,node.toString().substring(node.toString().lastIndexOf(FREE_LABEL)+9));
             labelsLayer.addChild(myFreeLabel);
             myFreeLabel.getActions().addAction(ActionFactory.createMoveAction());
             myFreeLabel.getActions().addAction (ActionFactory.createInplaceEditorAction (new LabelTextFieldEditor()));
@@ -296,14 +298,14 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
     }
 
     public void addFreeFrame(){
-        Widget f = addNode(FREE_FRAME+randomGenerator.nextInt(1000)+"New Title");
+        Widget f = addNode(randomGenerator.nextInt(1000)+FREE_FRAME+"New Title");
         f.setPreferredLocation (new Point (100, 100));
         this.validate();
         this.repaint();
 
     }
     public void addFreeLabel(){
-        Widget f = addNode(FREE_LABEL+randomGenerator.nextInt(1000)+"New Label");
+        Widget f = addNode(randomGenerator.nextInt(1000)+FREE_LABEL+"New Label");
         f.setPreferredLocation (new Point (100, 100));
         this.validate();
         this.repaint();
@@ -311,7 +313,7 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
     public void addFreeCloud(){
         LocalObjectLight lol = LocalStuffFactory.createLocalObjectLight();
         lol.setOid(randomGenerator.nextInt(1000));
-        lol.setName(CLOUD_ICON);
+        lol.setName(CLOUD_ICON + "New Icon");
         Widget f = addNode(lol);
         f.setPreferredLocation (new Point (100, 100));
         this.validate();
@@ -327,6 +329,10 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
 
     public LayerWidget getNodesLayer() {
         return nodesLayer;
+    }
+
+    public LayerWidget getIconLayer() {
+        return iconsLayer;
     }
 
     /**
@@ -353,7 +359,8 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
              iconsTag.start("icon").attr("type", 1).
                      attr("id",((ObjectNodeWidget)icondWidget).getObject().getOid()).
                      attr("x", icondWidget.getPreferredLocation().getX()).
-                     attr("y",icondWidget.getPreferredLocation().getY()).end();
+                     attr("y",icondWidget.getPreferredLocation().getY()).
+                     text(((ObjectNodeWidget)icondWidget).getObject().getName()).end();
         }
         iconsTag.end();
         //edges
@@ -377,7 +384,7 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
              labelsTag.start("label").attr("x", labelWidget.getPreferredLocation().getX()).
              attr("y", labelWidget.getPreferredLocation().getY()).
              attr("orientation", ((ObjectLabelWidget)labelWidget).getOrientation()).
-             attr("labelText", ((ObjectLabelWidget)labelWidget).getLabelText()).end();
+             text(((ObjectLabelWidget)labelWidget).getLabelText()).end();
         }
         labelsTag.end();
         //free frames

@@ -17,6 +17,7 @@
 package org.inventory.views.topology.scene.provider;
 
 import org.inventory.views.topology.scene.ObjectLabelWidget;
+import org.inventory.views.topology.scene.ObjectNodeWidget;
 import org.netbeans.api.visual.action.TextFieldInplaceEditor;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Widget;
@@ -34,13 +35,25 @@ public class LabelTextFieldEditor implements TextFieldInplaceEditor {
 
     @Override
     public String getText (Widget widget) {
-        return ((ObjectLabelWidget) widget).getLabel ();
+        if(widget instanceof ObjectLabelWidget){
+            return ((ObjectLabelWidget) widget).getLabel ();
+        }
+        else if(widget instanceof ObjectNodeWidget){
+            return ((ObjectNodeWidget) widget).getObject().getName();
+        }
+        return "";
     }
 
     @Override
     public void setText (Widget widget, String text) {
-        ((LabelWidget) widget).setLabel (text);
-        ((ObjectLabelWidget) widget).setLabelText(text);
+        if(widget instanceof ObjectNodeWidget){
+            ((ObjectNodeWidget) widget).getObject().setName(text);
+            ((ObjectNodeWidget) widget).setLabel(text);
+        }
+        else{
+            ((LabelWidget) widget).setLabel (text);
+            ((ObjectLabelWidget) widget).setLabelText(text);
+        }
     }
 
 }

@@ -25,7 +25,7 @@ import org.netbeans.api.visual.widget.ConnectionWidget;
  */
 public class ObjectConnectionWidget extends ConnectionWidget{
     /**
-     * Business object represented by this widget
+     * Edge name
      */
     private String name;
 

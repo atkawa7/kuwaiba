@@ -68,6 +68,7 @@ public class ObjectNodeWidget extends IconNodeWidget implements Lookup.Provider{
         this.object = object;
     }
 
+
     @Override
     public Lookup getLookup(){
         return lookup;

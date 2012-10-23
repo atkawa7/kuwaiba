@@ -81,6 +81,10 @@ public class TopologyViewService implements LookupListener {
         return tvId;
     }
 
+    public void setTvId(long tvId) {
+        this.tvId = tvId;
+    }
+
     public Object[] getViewProperties() {
         return viewProperties;
     }
@@ -190,15 +194,15 @@ public class TopologyViewService implements LookupListener {
                 if (reader.getName().equals(qNode)){
                     String objectClass = reader.getAttributeValue(null, "class");
 
-                    int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
-                    int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
+                    int x = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
+                    int y = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
                     Long objectId = Long.valueOf(reader.getElementText());
 
                     LocalObjectLight lol = CommunicationsStub.getInstance().
                             getObjectInfoLight(objectClass, objectId);
                     if (lol != null){
                         ObjectNodeWidget widget = (ObjectNodeWidget)scene.addNode(lol);
-                        widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
+                        widget.setPreferredLocation(new Point(x, y));
                     }
                     else
                         currentView.setDirty(true);
@@ -206,12 +210,12 @@ public class TopologyViewService implements LookupListener {
                     if (reader.getName().equals(qIcon)){
                             if(Integer.valueOf(reader.getAttributeValue(null,"type"))==1){
                                 LocalObjectLight lol = LocalStuffFactory.createLocalObjectLight();
-                                lol.setName(scene.CLOUD_ICON);
                                 lol.setOid(Long.valueOf(reader.getAttributeValue(null,"id")));
+                                int x = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
+                                int y = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
+                                lol.setName(scene.CLOUD_ICON + reader.getElementText());
                                 Widget myCloud = scene.addNode(lol);
-                                Point p = new Point();
-                                p.setLocation(Double.valueOf(reader.getAttributeValue(null,"x")), Double.valueOf(reader.getAttributeValue(null,"y")));
-                                myCloud.setPreferredLocation(p);
+                                myCloud.setPreferredLocation(new Point(x, y));
 
                             }
                         }
@@ -259,14 +263,14 @@ public class TopologyViewService implements LookupListener {
                         }//hasta aqui edges
                         else{
                             if (reader.getName().equals(qLabel)){
-                                Widget myLabel = scene.addNode(scene.FREE_LABEL + randomGenerator.nextInt(1000) + reader.getAttributeValue(null, "labelText"));
-                                Point p = new Point();
-                                p.setLocation(Double.valueOf(reader.getAttributeValue(null,"x")), Double.valueOf(reader.getAttributeValue(null,"y")));
-                                myLabel.setPreferredLocation(p);
+                                int x = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
+                                int y = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
+                                Widget myLabel = scene.addNode(randomGenerator.nextInt(1000) +  scene.FREE_LABEL + reader.getElementText());
+                                myLabel.setPreferredLocation(new Point(x,y));
                             }
                             else{
                                 if (reader.getName().equals(qPolygon)) {
-                                    Widget myPolygon = scene.addNode(scene.FREE_FRAME + randomGenerator.nextInt(1000) + reader.getAttributeValue(null, "title"));
+                                    Widget myPolygon = scene.addNode(randomGenerator.nextInt(1000) +  scene.FREE_FRAME + reader.getAttributeValue(null, "title"));
                                     Point p = new Point();
                                     p.setLocation(Double.valueOf(reader.getAttributeValue(null, "x")), Double.valueOf(reader.getAttributeValue(null, "y")));
                                     myPolygon.setPreferredLocation(p);
