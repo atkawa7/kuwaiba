@@ -18,9 +18,7 @@ package org.inventory.views.gis;
 
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -38,7 +36,6 @@ import org.inventory.views.gis.scene.GeoPositionedConnectionWidget;
 import org.inventory.views.gis.scene.GeoPositionedNodeWidget;
 import org.inventory.views.gis.scene.MapPanel;
 import org.netbeans.api.visual.anchor.AnchorFactory;
-import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
 
@@ -75,7 +72,8 @@ public class GISViewService {
         this.currentView = com.getGeneralView(viewId);
         if (this.currentView == null)
             nu.showSimplePopup("Loading view", NotificationUtil.ERROR, com.getError());
-         buildView();
+        scene.clear();
+        buildView();
     }
 
     private void buildView() throws IllegalArgumentException{
@@ -83,12 +81,12 @@ public class GISViewService {
             return;
 
         if (currentView.getStructure() != null){
-             /*Comment this out for debugging purpose*/
+             /*Comment this out for debugging purpose
             try{
                 FileOutputStream fos = new FileOutputStream("/home/zim/parsing_"+Calendar.getInstance().getTimeInMillis()+".xml");
                 fos.write(currentView.getStructure());
                 fos.close();
-            }catch(Exception e){}
+            }catch(Exception e){}*/
 
             try {
                 //Here is where we use Woodstox as StAX provider
@@ -143,10 +141,10 @@ public class GISViewService {
                                     if (aSideWidget == null || bSideWidget == null)
                                         currentView.setDirty(true);
                                     else{
-                                        //GeoPositionedConnectionWidget newEdge = (GeoPositionedConnectionWidget)scene.addEdge(container);
-                                        /*ConnectionWidget newEdge = (GeoPositionedConnectionWidget)scene.addEdge(container);
+                                        GeoPositionedConnectionWidget newEdge = (GeoPositionedConnectionWidget)scene.addEdge(container);
                                         newEdge.setSourceAnchor(AnchorFactory.createCircularAnchor(aSideWidget, 3));
                                         newEdge.setTargetAnchor(AnchorFactory.createCircularAnchor(bSideWidget, 3));
+                                        
                                         List<Point> localControlPoints = new ArrayList<Point>();
                                         while(true){
                                             reader.nextTag();
@@ -158,7 +156,7 @@ public class GISViewService {
                                                 break;
                                             }
                                         }
-                                        scene.validate();*/
+                                        scene.validate();
                                     }
                                 }else
                                     currentView.setDirty(true);

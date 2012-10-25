@@ -235,21 +235,29 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         }
 
         for (Widget edge : connectionsLayer.getChildren()){
-            if (edge instanceof GeoPositionedConnectionWidget ){
-                boolean visible = true;
+            boolean visible = true;
+
+            if (!((GeoPositionedConnectionWidget)edge).getSourceAnchor().getRelatedWidget().isVisible() || !((GeoPositionedConnectionWidget)edge).getTargetAnchor().getRelatedWidget().isVisible())
+                visible = false;
+            else{
                 List<Point> newControlPoints = new ArrayList<Point>();
-                for (double[] controlPoint : ((GeoPositionedConnectionWidget)edge).getGeoPositionedControlPoints()){
-                    Point2D point2D = map.getTileFactory().geoToPixel(
-                        new GeoPosition(controlPoint),
-                        map.getZoom());
-                    int newX = (int)point2D.getX() - realViewport.x, newY = (int)point2D.getY() - realViewport.y;
-                    newControlPoints.add(new Point(newX, newY));
-                    if (newX < 0 || newY < 0)
+                //for (double[] controlPoint : ((GeoPositionedConnectionWidget)edge).getGeoPositionedControlPoints()){
+                    //Point2D point2D = map.getTileFactory().geoToPixel(
+                    //    new GeoPosition(controlPoint),
+                    //    map.getZoom());
+
+                //}
+
+                //In the meantime...
+                for (Point cPoint : ((GeoPositionedConnectionWidget)edge).getControlPoints()){
+                    if (cPoint.x <= 0 || cPoint.y <= 0)
                         visible = false;
                 }
-                edge.setVisible(visible);
-                ((GeoPositionedConnectionWidget)edge).setControlPoints(newControlPoints);
+                if (!newControlPoints.isEmpty())
+                    ((GeoPositionedConnectionWidget)edge).setControlPoints(newControlPoints);
             }
+            
+            edge.setVisible(visible);            
         }
 
         validate();

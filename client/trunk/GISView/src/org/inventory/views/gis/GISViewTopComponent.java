@@ -325,22 +325,32 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
     private void btnWireContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWireContainerActionPerformed
         scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRECONTAINER);
+        btnConnect.setSelected(true);
+        btnConnectActionPerformed(evt);
     }//GEN-LAST:event_btnWireContainerActionPerformed
 
     private void btnWirelessContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessContainerActionPerformed
         scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRELESSCONTAINER);
+        btnConnect.setSelected(true);
+        btnConnectActionPerformed(evt);
     }//GEN-LAST:event_btnWirelessContainerActionPerformed
 
     private void btnOpticalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpticalLinkActionPerformed
         scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_OPTICALLINK);
+        btnConnect.setSelected(true);
+        btnConnectActionPerformed(evt);
     }//GEN-LAST:event_btnOpticalLinkActionPerformed
 
     private void btnElectricalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnElectricalLinkActionPerformed
         scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_ELECTRICALLINK);
+        btnConnect.setSelected(true);
+        btnConnectActionPerformed(evt);
     }//GEN-LAST:event_btnElectricalLinkActionPerformed
 
     private void btnWirelessLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessLinkActionPerformed
         scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRELESSLINK);
+        btnConnect.setSelected(true);
+        btnConnectActionPerformed(evt);
     }//GEN-LAST:event_btnWirelessLinkActionPerformed
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
