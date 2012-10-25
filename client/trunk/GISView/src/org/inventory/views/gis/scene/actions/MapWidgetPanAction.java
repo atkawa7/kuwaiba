@@ -72,12 +72,6 @@ public class MapWidgetPanAction extends WidgetAction.LockedAdapter{
     }
 
     @Override
-    public State mouseReleased (Widget widget, WidgetMouseEvent event) {
-        boolean state = pan (widget, event.getPoint ());
-        return state ? State.createLocked (widget, this) : State.REJECTED;
-    }
-
-    @Override
     public State mouseDragged (Widget widget, WidgetMouseEvent event) {
         return pan (widget, event.getPoint ()) ? State.createLocked (widget, this) : State.REJECTED;
     }

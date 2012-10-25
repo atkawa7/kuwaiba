@@ -152,7 +152,7 @@ public class GISViewService {
                                                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
                                                     localControlPoints.add(scene.coordinateToPixel(Double.valueOf(reader.getAttributeValue(null,"y")), Double.valueOf(reader.getAttributeValue(null,"x")), currentView.getZoom() != 0 ? currentView.getZoom() : MapPanel.DEFAULT_ZOOM_LEVEL ));
                                             }else{
-                                               //newEdge.setControlPoints(localControlPoints);
+                                                newEdge.setControlPoints(localControlPoints);
                                                 break;
                                             }
                                         }
