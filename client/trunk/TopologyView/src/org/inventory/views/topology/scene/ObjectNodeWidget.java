@@ -16,9 +16,12 @@
 
 package org.inventory.views.topology.scene;
 
+import java.awt.Image;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.general.IconNodeWidget;
+import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 

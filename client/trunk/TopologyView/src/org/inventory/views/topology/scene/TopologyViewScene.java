@@ -26,6 +26,7 @@ import java.beans.PropertyChangeListener;
 import java.io.ByteArrayOutputStream;
 import java.util.Random;
 import java.util.Set;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.LocalStuffFactory;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
@@ -195,7 +196,10 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
             if(!((LocalObjectLight)node).getName().contains(CLOUD_ICON)){
                 ObjectNodeWidget myWidget = new ObjectNodeWidget(this, (LocalObjectLight)node);
                 nodesLayer.addChild(myWidget);
-                myWidget.setImage(defaultIcon);
+                Image myIcon = CommunicationsStub.getInstance().getMetaForClass(((LocalObjectLight)node).getClassName(), false).getIcon();
+                if(myIcon == null)
+                    myIcon = ImageUtilities.loadImage("org/inventory/views/topology/res/default.png");
+                myWidget.setImage(myIcon);
                 myWidget.setLabel(((LocalObjectLight)node).getName());
                 myWidget.getActions(ObjectNodeWidget.ACTION_SELECT).addAction(createSelectAction());
                 myWidget.getActions(ObjectNodeWidget.ACTION_SELECT).addAction(ActionFactory.createMoveAction());
