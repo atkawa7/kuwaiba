@@ -30,7 +30,7 @@ import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 
 /**
- * Implements the action to export an scene as image (JPG/PNG)
+ * Implements the action to export an scene as image (JPG/PNG) or as an XML document
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ExportSceneAction extends AbstractAction{
@@ -59,7 +59,7 @@ public class ExportSceneAction extends AbstractAction{
                                                   100,
                                                   0,  //Not used
                                                   0); //Not used
-                        JOptionPane.showMessageDialog(null, "The image was exported successfully", "Success!", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "The view was exported successfully", "Success!", JOptionPane.INFORMATION_MESSAGE);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(null,"The file name is not valid or you don't have enough permissions","Error",JOptionPane.ERROR_MESSAGE);
                     }

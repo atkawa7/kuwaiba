@@ -16,9 +16,7 @@
 
 package org.inventory.views.gis.scene;
 
-import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.netbeans.api.visual.anchor.PointShape;
@@ -37,6 +35,10 @@ public class GeoPositionedConnectionWidget extends ObjectConnectionWidget{
 
     public GeoPositionedConnectionWidget(GISViewScene scene, LocalObjectLight object, ArrayList<double[]> controlPoints) {
         super(scene, object);
+
+        if (controlPoints == null)
+            throw new NullPointerException("The set of control points can not be null");
+        
         this.geoPositionedControlPoints = controlPoints;
         setControlPointShape(PointShape.SQUARE_FILLED_BIG);
     }
@@ -51,19 +53,15 @@ public class GeoPositionedConnectionWidget extends ObjectConnectionWidget{
      * @param controlPoints
      * @param sceneLocations
      */
-    @Override
-    public void setControlPoints(Collection<Point> controlPoints, boolean sceneLocations) {
-        geoPositionedControlPoints.clear();
-        for (Point controlPoint : controlPoints){
-            double[] coordinates = ((GISViewScene)getScene()).pixelToCoordinate(controlPoint);
-            geoPositionedControlPoints.add(new double[]{coordinates[0], coordinates[1]});
-        }
-        super.setControlPoints(controlPoints, sceneLocations);
-    }
-
-    public void setControlPoints(Collection<Point> controlPoints){
-        super.setControlPoints(controlPoints, false);
-    }
+//    @Override
+//    public void setControlPoints(Collection<Point> controlPoints, boolean sceneLocations) {
+//        geoPositionedControlPoints.clear();
+//        for (Point controlPoint : controlPoints){
+//            double[] coordinates = ((GISViewScene)getScene()).pixelToCoordinate(controlPoint);
+//            geoPositionedControlPoints.add(new double[]{coordinates[0], coordinates[1]});
+//        }
+//        super.setControlPoints(controlPoints, sceneLocations);
+//    }
 
     /**
      * These control points can only be set by the setControlPoints method
@@ -71,5 +69,9 @@ public class GeoPositionedConnectionWidget extends ObjectConnectionWidget{
      */
     public List<double[]> getGeoPositionedControlPoints() {
         return geoPositionedControlPoints;
+    }
+
+    public void setGeoPositionedControlPoints(List<double[]> geoPositionedControlPoints) {
+        this.geoPositionedControlPoints = geoPositionedControlPoints;
     }
 }

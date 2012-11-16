@@ -30,8 +30,10 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.SharedInformation;
 import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.views.gis.scene.actions.MapWidgetPanAction;
 import org.inventory.views.gis.scene.actions.MoveAction;
@@ -49,6 +51,7 @@ import org.netbeans.api.visual.model.ObjectSceneListener;
 import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.ComponentWidget;
+import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.ImageUtilities;
@@ -133,6 +136,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         mapWidget = new ComponentWidget(this, myMap);
 
         mapWidget.getActions().addAction(new MapWidgetPanAction(myMap, MouseEvent.BUTTON1));
+        mapLayer.addChild(mapWidget);
 
         addObjectSceneListener(new ObjectSceneListener() {
             @Override
@@ -164,7 +168,8 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
     protected Widget attachNodeWidget(LocalObjectLight node) {
         GeoPositionedNodeWidget myWidget =  new GeoPositionedNodeWidget(this,node, 0, 0);
         nodesLayer.addChild(myWidget);
-        myWidget.setImage(defaultIcon);
+        LocalClassMetadataLight classInfo = CommunicationsStub.getInstance().getLightMetaForClass(node.getClassName(), false);
+        myWidget.setImage(classInfo.getSmallIcon() == null ? defaultIcon : classInfo.getSmallIcon());
         myWidget.getActions(ObjectNodeWidget.ACTION_SELECT).addAction(createSelectAction());
         myWidget.getActions(ObjectNodeWidget.ACTION_SELECT).addAction(new MoveAction());
         myWidget.getActions(ObjectNodeWidget.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(connectionsLayer, connectProvider));
@@ -187,12 +192,10 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
 
     @Override
     protected void attachEdgeSourceAnchor(LocalObjectLight edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -200,8 +203,8 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      * when the component is painted. If there are network problems, you could get some nasty exceptions.
      */
     public void activateMap(){
-        if (mapLayer.getChildren().isEmpty())
-            mapLayer.addChild(mapWidget);
+        mapWidget.setVisible(true);
+        updateMapBounds();
     }
 
     /**
@@ -209,6 +212,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      */
     public void updateMapBounds() {
         mapWidget.setPreferredSize(this.getBounds().getSize());
+        validate();
     }
 
     /**
@@ -217,7 +221,8 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        JXMapViewer map = ((MapPanel)mapWidget.getComponent()).getMainMap();
+        //repaint();
+        /*JXMapViewer map = ((MapPanel)mapWidget.getComponent()).getMainMap();
         Rectangle realViewport = map.getViewportBounds();
 
         for (Widget node : nodesLayer.getChildren()){
@@ -226,42 +231,53 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
                     map.getZoom());
 
             int newX = (int)point2D.getX() - realViewport.x, newY = (int)point2D.getY() - realViewport.y;
-
             if (newX < 0 || newY < 0)
                 node.setVisible(false);
             else
                 node.setVisible(true);
             node.setPreferredLocation(new Point(newX - ICON_RADIUS, newY - ICON_RADIUS));
+//            System.out.println(((GeoPositionedNodeWidget)node).getLatitude() + ", " + ((GeoPositionedNodeWidget)node).getLongitude() +
+//                    " ("+newX+", "+newY+")");
         }
 
         for (Widget edge : connectionsLayer.getChildren()){
+
+            if (!(edge instanceof GeoPositionedConnectionWidget)) //For some reason, the edges created during the connection process are placed on this layer
+                continue;
+
             boolean visible = true;
 
-            if (!((GeoPositionedConnectionWidget)edge).getSourceAnchor().getRelatedWidget().isVisible() || !((GeoPositionedConnectionWidget)edge).getTargetAnchor().getRelatedWidget().isVisible())
+            if (!((ConnectionWidget)edge).getSourceAnchor().getRelatedWidget().isVisible() || !((ConnectionWidget)edge).getTargetAnchor().getRelatedWidget().isVisible())
                 visible = false;
             else{
-                List<Point> newControlPoints = new ArrayList<Point>();
-                //for (double[] controlPoint : ((GeoPositionedConnectionWidget)edge).getGeoPositionedControlPoints()){
-                    //Point2D point2D = map.getTileFactory().geoToPixel(
-                    //    new GeoPosition(controlPoint),
-                    //    map.getZoom());
-
-                //}
-
+//                List<Point> newControlPoints = new ArrayList<Point>();
+//                for (double[] controlPoint : ((GeoPositionedConnectionWidget)edge).getGeoPositionedControlPoints()){
+//                    Point2D point2D = map.getTileFactory().geoToPixel(new GeoPosition(controlPoint[0], controlPoint[1]), map.getZoom());
+//
+//                    int newX = (int)point2D.getX() - realViewport.x, newY = (int)point2D.getY() - realViewport.y;
+//                    if (newX <= 0 || newY <= 0)
+//                        visible = false;
+//
+//                    newControlPoints.add(new Point(newX, newY));
+//                    System.out.println(controlPoint[0] + ", " + controlPoint[1] +
+//                    " ("+newX+", "+newY+")");
+//                }
+//
+//                if (!newControlPoints.isEmpty())
+//                    ((GeoPositionedConnectionWidget)edge).setControlPoints(newControlPoints);
                 //In the meantime...
-                for (Point cPoint : ((GeoPositionedConnectionWidget)edge).getControlPoints()){
+                for (Point cPoint : ((ConnectionWidget)edge).getControlPoints()){
                     if (cPoint.x <= 0 || cPoint.y <= 0)
                         visible = false;
                 }
-                if (!newControlPoints.isEmpty())
-                    ((GeoPositionedConnectionWidget)edge).setControlPoints(newControlPoints);
             }
             
             edge.setVisible(visible);            
         }
 
         validate();
-        repaint();
+        repaint();*/
+        validate();
     }
 
     public PhysicalConnectionProvider getConnectProvider() {
@@ -332,9 +348,10 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
             removeEdge(edge);
 
         labelsLayer.removeChildren();
-        mapLayer.removeChildren();
+        mapWidget.setVisible(false);
         polygonsLayer.removeChildren();
         ((MapPanel)mapWidget.getComponent()).getMainMap().setZoom(MapPanel.DEFAULT_ZOOM_LEVEL);
+        ((MapPanel)mapWidget.getComponent()).getMainMap().setCenterPosition(DEFAULT_CENTER_POSITION);
     }
 
     public byte[] getAsXML() {
@@ -382,8 +399,34 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         ((MapPanel)mapWidget.getComponent()).getMainMap().setCenterPosition(new GeoPosition(latitude, longitude));
     }
 
-    public void setZoom(int zoom) {
+    public void zoom(int zoom) {
         ((MapPanel)mapWidget.getComponent()).getMainMap().setZoom(zoom);
+    }
+
+    public void pan(int deltaX, int deltaY) {
+        if (deltaX == 0 && deltaY == 0)
+            return;
+
+        for (Widget node : nodesLayer.getChildren()){
+            node.setPreferredLocation(new Point(node.getPreferredLocation().x - deltaX, node.getPreferredLocation().y - deltaY));
+            if (node.getPreferredLocation().x < 0 || node.getPreferredLocation().y < 0)
+                node.setVisible(false);
+            else
+                node.setVisible(true);
+        }
+
+        for (Widget con : connectionsLayer.getChildren()){
+            List<Point> newControlPoints = new ArrayList<Point>();
+            boolean visible = true;
+            for (Point controlPoint : ((ConnectionWidget)con).getControlPoints()){
+                Point newControlPoint = new Point(controlPoint.x - deltaX, controlPoint.y - deltaY);
+                newControlPoints.add(newControlPoint);
+                if (newControlPoint.x <= 0 || newControlPoint.y <= 0)
+                    visible = false;
+            }
+            con.setVisible(visible);
+            ((ConnectionWidget)con).setControlPoints(newControlPoints, false);
+        }
     }
 
     public void loadDefault() {

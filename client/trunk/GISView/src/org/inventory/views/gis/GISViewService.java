@@ -34,7 +34,7 @@ import org.inventory.core.services.api.visual.LocalObjectViewLight;
 import org.inventory.views.gis.scene.GISViewScene;
 import org.inventory.views.gis.scene.GeoPositionedConnectionWidget;
 import org.inventory.views.gis.scene.GeoPositionedNodeWidget;
-import org.inventory.views.gis.scene.MapPanel;
+import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
@@ -87,7 +87,7 @@ public class GISViewService {
                 fos.write(currentView.getStructure());
                 fos.close();
             }catch(Exception e){}*/
-
+            scene.activateMap();
             try {
                 //Here is where we use Woodstox as StAX provider
                 XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -108,15 +108,20 @@ public class GISViewService {
                         if (reader.getName().equals(qNode)){
                             String objectClass = reader.getAttributeValue(null, "class");
 
-                            double xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x"));
-                            double yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y"));
+                            double longitude = Double.valueOf(reader.getAttributeValue(null,"x"));
+                            double latitude = Double.valueOf(reader.getAttributeValue(null,"y"));
                             Long objectId = Long.valueOf(reader.getElementText());
 
                             LocalObjectLight lol = CommunicationsStub.getInstance().
                                     getObjectInfoLight(objectClass, objectId);
                             if (lol != null){
                                 GeoPositionedNodeWidget widget = (GeoPositionedNodeWidget)scene.addNode(lol);
-                                widget.setCoordinates(yCoordinate, xCoordinate);
+                                widget.setCoordinates(latitude, longitude);
+                                widget.setPreferredLocation(scene.coordinateToPixel(latitude, longitude, currentView.getZoom()));
+                                //Hack: a scene doesn't support negative locations, 
+                                //so when the widgets are painted, the coordinates are turned positive
+                                if (widget.getPreferredLocation().x < 0 || widget.getPreferredLocation().y < 0)
+                                    widget.setVisible(false);
                                 scene.validate();
                             }
                             else
@@ -142,17 +147,28 @@ public class GISViewService {
                                         currentView.setDirty(true);
                                     else{
                                         GeoPositionedConnectionWidget newEdge = (GeoPositionedConnectionWidget)scene.addEdge(container);
-                                        newEdge.setSourceAnchor(AnchorFactory.createCircularAnchor(aSideWidget, 3));
-                                        newEdge.setTargetAnchor(AnchorFactory.createCircularAnchor(bSideWidget, 3));
-                                        
+                                        newEdge.setSourceAnchor(AnchorFactory.createRectangularAnchor(aSideWidget, true));
+                                        newEdge.setTargetAnchor(AnchorFactory.createRectangularAnchor(bSideWidget, true));
+                                        newEdge.setLineColor(PhysicalConnectionProvider.getConnectionColor(container.getClassName()));
+
+                                        boolean visible = true;
                                         List<Point> localControlPoints = new ArrayList<Point>();
                                         while(true){
                                             reader.nextTag();
                                             if (reader.getName().equals(qControlPoint)){
-                                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                                    localControlPoints.add(scene.coordinateToPixel(Double.valueOf(reader.getAttributeValue(null,"y")), Double.valueOf(reader.getAttributeValue(null,"x")), currentView.getZoom() != 0 ? currentView.getZoom() : MapPanel.DEFAULT_ZOOM_LEVEL ));
+                                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT){
+                                                    double longitude = Double.valueOf(reader.getAttributeValue(null,"x"));
+                                                    double latitude = Double.valueOf(reader.getAttributeValue(null,"y"));
+                                                    newEdge.getGeoPositionedControlPoints().add(new double[]{longitude, latitude});
+                                                    Point newControlPoint = scene.coordinateToPixel(latitude, longitude, currentView.getZoom());
+                                                    localControlPoints.add(newControlPoint);
+                                                    if (newControlPoint.x <= 0 || newControlPoint.y <= 0)
+                                                        visible = false;
+                                                }
                                             }else{
-                                                newEdge.setControlPoints(localControlPoints);
+                                                if (!localControlPoints.isEmpty())
+                                                    newEdge.setControlPoints(localControlPoints, false);
+                                                newEdge.setVisible(visible);
                                                 break;
                                             }
                                         }
@@ -165,13 +181,16 @@ public class GISViewService {
                                     //Unavailable for now
                                 }
                                 else{
-                                    if (reader.getName().equals(qZoom))
+                                    if (reader.getName().equals(qZoom)){
                                         currentView.setZoom(Integer.valueOf(reader.getElementText()));
+                                        scene.zoom(currentView.getZoom());
+                                    }
                                     else{
                                         if (reader.getName().equals(qCenter)){
                                             double x = Double.valueOf(reader.getAttributeValue(null, "x"));
                                             double y = Double.valueOf(reader.getAttributeValue(null, "y"));
                                             currentView.setCenter(new double[]{x,y});
+                                            scene.setCenterPosition(currentView.getCenter()[1], currentView.getCenter()[0]);
                                         }else {
                                             //Place more tags
                                         }
@@ -182,10 +201,6 @@ public class GISViewService {
                     }
                 }
                 reader.close();
-                scene.setZoom(currentView.getZoom());
-                scene.setCenterPosition(currentView.getCenter()[1], currentView.getCenter()[0]);
-                scene.activateMap();
-
                 scene.validate();
                 gvtc.toggleButtons(true);
             } catch (XMLStreamException ex) {

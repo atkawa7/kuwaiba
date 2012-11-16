@@ -16,7 +16,8 @@
 package org.inventory.views.gis;
 
 import java.awt.BorderLayout;
-import java.awt.Graphics;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
@@ -71,6 +72,25 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         add(scene.createView(), BorderLayout.CENTER);
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         associateLookup(scene.getLookup());
+        addComponentListener(new ComponentListener() {
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+                scene.updateMapBounds();
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+            }
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+            }
+        });
     }
 
     private void initCustomComponents(){
@@ -447,7 +467,8 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
     @Override
     public void componentOpened() {
-        // TODO add custom code on component opening
+        scene.updateMapBounds();
+        scene.paint();
     }
 
     @Override
@@ -498,12 +519,6 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     @Override
     protected String preferredID() {
         return PREFERRED_ID;
-    }
-
-    @Override
-    public void paint(Graphics g) {
-        scene.updateMapBounds();
-        super.paint(g);
     }
 
     @Override

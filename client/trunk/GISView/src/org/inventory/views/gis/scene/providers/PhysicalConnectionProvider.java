@@ -16,6 +16,7 @@
 
 package org.inventory.views.gis.scene.providers;
 
+import java.awt.Color;
 import java.awt.Point;
 import javax.swing.JOptionPane;
 import org.inventory.communications.SharedInformation;
@@ -43,6 +44,18 @@ public class PhysicalConnectionProvider implements ConnectProvider{
     public static final int CONNECTION_ELECTRICALLINK = 3;
     public static final int CONNECTION_OPTICALLINK = 4;
     public static final int CONNECTION_WIRELESSLINK = 5;
+
+    /**
+     * Some constants
+     */
+    public static final Color COLOR_WIRECONTAINER = new Color(255, 0, 0);
+    public static final Color COLOR_WIRELESSCONTAINER = new Color(0, 0, 255);
+    /**
+     * Connection colors
+     */
+    public static final Color COLOR_ELECTRICALLINK = new Color(255, 102, 0);
+    public static final Color COLOR_OPTICALLINK = new Color(0, 128, 0);
+    public static final Color COLOR_WIRELESSLINK = new Color(102, 0, 128);
 
     public PhysicalConnectionProvider(GraphScene currentScene) {
         this.currentScene = currentScene;
@@ -81,33 +94,39 @@ public class PhysicalConnectionProvider implements ConnectProvider{
         LocalObjectLight targetObject = (LocalObjectLight)((GraphScene)sourceWidget.getScene()).findObject(targetWidget);
 
         int wizardType;
+        Color lineColor;
         switch (currentConnectionSelection){
             case CONNECTION_WIRECONTAINER:
                 connectionClass = SharedInformation.CLASS_WIRECONTAINER;
                 wizardType = ConnectionWizard.WIZARDTYPE_CONTAINERS;
+                lineColor = COLOR_WIRECONTAINER;
                 break;
             case CONNECTION_WIRELESSCONTAINER:
                 connectionClass = SharedInformation.CLASS_WIRELESSCONTAINER;
                 wizardType = ConnectionWizard.WIZARDTYPE_CONTAINERS;
+                lineColor = COLOR_WIRELESSCONTAINER;
                 break;
             case CONNECTION_ELECTRICALLINK:
                 connectionClass = SharedInformation.CLASS_ELECTRICALLINK;
                 wizardType = ConnectionWizard.WIZARDTYPE_CONNECTIONS;
+                lineColor = COLOR_ELECTRICALLINK;
                 break;
             case CONNECTION_OPTICALLINK:
                 connectionClass = SharedInformation.CLASS_OPTICALLINK;
                 wizardType = ConnectionWizard.WIZARDTYPE_CONNECTIONS;
+                lineColor = COLOR_OPTICALLINK;
                 break;
             case CONNECTION_WIRELESSLINK:
                 connectionClass = SharedInformation.CLASS_WIRELESSLINK;
                 wizardType = ConnectionWizard.WIZARDTYPE_CONNECTIONS;
+                lineColor = COLOR_WIRELESSLINK;
                 break;
             default:
                 JOptionPane.showMessageDialog(null, "No connection type is selected", "New Connection",JOptionPane.ERROR_MESSAGE);
                 return;
         }
 
-        ConnectionWizard myWizard =new ConnectionWizard(wizardType,sourceObject,
+        ConnectionWizard myWizard = new ConnectionWizard(wizardType,sourceObject,
                 targetObject, connectionClass,
                 null);
 
@@ -115,6 +134,7 @@ public class PhysicalConnectionProvider implements ConnectProvider{
 
         if (myWizard.getNewConnection() != null){
             ConnectionWidget newEdge = (ConnectionWidget)currentScene.addEdge(myWizard.getNewConnection());
+            newEdge.setLineColor(lineColor);
             newEdge.setSourceAnchor(AnchorFactory.createCircularAnchor(sourceWidget, 3));
             newEdge.setTargetAnchor(AnchorFactory.createCircularAnchor(targetWidget, 3));
         }
@@ -124,5 +144,19 @@ public class PhysicalConnectionProvider implements ConnectProvider{
 
     public void setCurrentConnectionSelection(int currentConnectionSelection) {
         this.currentConnectionSelection = currentConnectionSelection;
+    }
+
+    public static Color getConnectionColor(String connectionClass){
+        if (connectionClass.equals(SharedInformation.CLASS_ELECTRICALLINK))
+            return COLOR_ELECTRICALLINK;
+        if (connectionClass.equals(SharedInformation.CLASS_OPTICALLINK))
+            return COLOR_OPTICALLINK;
+        if (connectionClass.equals(SharedInformation.CLASS_WIRELESSLINK))
+            return COLOR_WIRELESSLINK;
+        if (connectionClass.equals(SharedInformation.CLASS_WIRECONTAINER))
+            return COLOR_WIRECONTAINER;
+        if (connectionClass.equals(SharedInformation.CLASS_WIRELESSCONTAINER))
+            return COLOR_WIRELESSCONTAINER;
+        return Color.BLACK;
     }
 }

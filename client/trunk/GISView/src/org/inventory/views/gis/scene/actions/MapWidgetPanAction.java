@@ -18,6 +18,7 @@ package org.inventory.views.gis.scene.actions;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import org.inventory.views.gis.scene.GISViewScene;
 import org.inventory.views.gis.scene.MapPanel;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.widget.Scene;
@@ -79,8 +80,10 @@ public class MapWidgetPanAction extends WidgetAction.LockedAdapter{
     private boolean pan (Widget widget, Point newLocation) {
         if (scene != widget.getScene ())
             return false;
-        map.getMainMap().setCenter(new Point2D.Double(map.getMainMap().getCenter().getX() + lastLocation.x - newLocation.x,
-                map.getMainMap().getCenter().getY() + lastLocation.y - newLocation.y));
+        int deltaX = lastLocation.x - newLocation.x, deltaY = lastLocation.y - newLocation.y;
+        map.getMainMap().setCenter(new Point2D.Double(map.getMainMap().getCenter().getX() + deltaX,
+                map.getMainMap().getCenter().getY() + deltaY));
+        ((GISViewScene)scene).pan(deltaX, deltaY);
         lastLocation = newLocation;
         return true;
     }
