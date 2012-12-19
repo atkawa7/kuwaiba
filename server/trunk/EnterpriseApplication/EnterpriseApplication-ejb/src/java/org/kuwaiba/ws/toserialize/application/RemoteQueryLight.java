@@ -14,6 +14,7 @@
  *
  */
 package org.kuwaiba.ws.toserialize.application;
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -22,7 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteQueryLight{
+public class RemoteQueryLight implements Serializable {
 
     /**
      * Object id

@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.ws.toserialize.business;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,7 +27,7 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteObject {
+public class RemoteObject implements Serializable {
     /**
      * Object's id
      */

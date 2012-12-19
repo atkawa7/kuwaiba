@@ -16,13 +16,15 @@
 
 package org.kuwaiba.ws.toserialize.metadata;
 
+import java.io.Serializable;
+
 /**
  * This is a wrapper class for AttributeMetadata, containing the info required for the clients
  * to render the object attributes in the right way
  *
  * @author Adrian Martinez Molina <adrian.martinez@gmail.com>
  */
-public class AttributeInfo {
+public class AttributeInfo implements Serializable {
 
     /**
      * Attribute's id

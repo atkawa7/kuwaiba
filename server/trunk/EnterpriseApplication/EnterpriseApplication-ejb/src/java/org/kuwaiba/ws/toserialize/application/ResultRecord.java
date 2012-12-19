@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.ws.toserialize.application;
 
+import java.io.Serializable;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,7 +28,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ResultRecord {
+public class ResultRecord implements Serializable {
 
     /**
      * The main remote object light for this record

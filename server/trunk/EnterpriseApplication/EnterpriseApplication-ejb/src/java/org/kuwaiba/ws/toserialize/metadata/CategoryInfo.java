@@ -16,13 +16,15 @@
 
 package org.kuwaiba.ws.toserialize.metadata;
 
+import java.io.Serializable;
+
 /**
  * This is a wrapper class for CategoryMetadata, containing the info required for the clients
  * to render the object category in the right way
  *
  * @author Adrian Martinez Molina <adrian.martinez@gmail.com>
  */
-public class CategoryInfo {
+public class CategoryInfo implements Serializable {
 
      /**
      * Category name

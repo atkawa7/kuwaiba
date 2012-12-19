@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.ws.toserialize.metadata;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
@@ -26,7 +27,7 @@ import org.kuwaiba.ws.toserialize.application.Validator;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ClassInfoLight {
+public class ClassInfoLight implements Serializable {
     protected long id;
     protected Boolean abstractClass;
     protected Boolean viewable;

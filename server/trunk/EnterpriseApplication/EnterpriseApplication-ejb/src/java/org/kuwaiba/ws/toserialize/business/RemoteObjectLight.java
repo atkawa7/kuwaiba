@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.ws.toserialize.business;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,7 +28,7 @@ import org.kuwaiba.ws.toserialize.application.Validator;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteObjectLight {
+public class RemoteObjectLight implements Serializable {
     /**
      * Object's oid
      */

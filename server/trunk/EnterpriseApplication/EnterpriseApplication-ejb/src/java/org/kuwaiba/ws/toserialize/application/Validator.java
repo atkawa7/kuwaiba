@@ -16,6 +16,8 @@
 
 package org.kuwaiba.ws.toserialize.application;
 
+import java.io.Serializable;
+
 /**
  * Validators are flags indicating things about objects. Of course, every instance may have
  * something to expose or not. For instance, a port has an indicator to mark it as "connected physically",
@@ -32,7 +34,7 @@ package org.kuwaiba.ws.toserialize.application;
  * more calls to the webservice
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class Validator {
+public class Validator implements Serializable {
     /**
      * The name of this validator
      */

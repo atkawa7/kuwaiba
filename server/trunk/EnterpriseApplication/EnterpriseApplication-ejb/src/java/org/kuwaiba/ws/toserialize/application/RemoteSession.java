@@ -16,6 +16,7 @@
 
 package org.kuwaiba.ws.toserialize.application;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.application.UserProfile;
@@ -26,7 +27,7 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteSession {
+public class RemoteSession implements Serializable {
     private String sessionId;
     private String username;
     private long userId;

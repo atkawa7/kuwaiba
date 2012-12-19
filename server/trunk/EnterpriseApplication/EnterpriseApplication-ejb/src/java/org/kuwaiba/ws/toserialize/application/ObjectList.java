@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.ws.toserialize.application;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,7 +27,7 @@ import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ObjectList {
+public class ObjectList implements Serializable {
     /**
      * Class representing the list type (Vendor, AntennaType, etc)
      */

@@ -16,6 +16,7 @@
 
 package org.kuwaiba.ws.todeserialize;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -30,7 +31,7 @@ import java.util.ArrayList;
  * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
  */
 
-public class TransientQuery {
+public class TransientQuery implements Serializable {
     
     /**
      * OR logical connector
