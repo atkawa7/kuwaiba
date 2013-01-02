@@ -1,4 +1,4 @@
-/**
+    /**
  *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -1370,92 +1370,24 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
 
-@Override
+    @Override
     public ResultRecord[] executeQuery(TransientQuery query) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            List<ExtendedQuery> joinsList =  null;
-            List<org.kuwaiba.apis.persistence.application.ResultRecord> rrList = new ArrayList<org.kuwaiba.apis.persistence.application.ResultRecord>();
-            ExtendedQuery pa = null;
-            //parent
-            if(query.getParent() != null){
-                if(query.getParent().getJoins() != null){//joins
-                    joinsList =  new ArrayList<ExtendedQuery>();
-                    for (TransientQuery joinQuery : query.getParent().getJoins()) {
-                        if(joinQuery !=null){
-                            ExtendedQuery jeq = new ExtendedQuery(joinQuery.getClassName(),
-                                        joinQuery.getLogicalConnector(),
-                                        joinQuery.getAttributeNames(),
-                                        joinQuery.getVisibleAttributeNames(),
-                                        joinQuery.getAttributeValues(),
-                                        joinQuery.getConditions(), null,null, 1, 1);
-                            joinsList.add(jeq);
-                        }
-                        else//if is compact view
-                            joinsList.add(null);
-                    }//end for
-                }//end if joins
-                pa = new ExtendedQuery(query.getParent().getClassName(),
-                                    query.getParent().getLogicalConnector(),
-                                    query.getParent().getAttributeNames(),
-                                    query.getParent().getVisibleAttributeNames(),
-                                    query.getParent().getAttributeValues(),
-                                    query.getParent().getConditions(), joinsList, null, query.getPage(), query.getLimit());
-            }//end if parent
-            joinsList =  new ArrayList<ExtendedQuery>();
-            if(query.getJoins() != null){//joins
-//                for(int i = 0; i<query.getAttributeValues().size(); i++){
-//                    if(query.getAttributeValues().get(i) == null){
-//                        if(query.getJoins().get(i) != null){
-//                            ExtendedQuery jeq = new ExtendedQuery(query.getJoins().get(i).getClassName(),
-//                                        query.getJoins().get(i).getLogicalConnector(),
-//                                        query.getJoins().get(i).getAttributeNames(),
-//                                        query.getJoins().get(i).getVisibleAttributeNames(),
-//                                        query.getJoins().get(i).getAttributeValues(),
-//                                        query.getJoins().get(i).getConditions(), null,null, 1, 1);
-//                            joinsList.add(jeq);
-//                        }
-//                        else
-//                            joinsList.add(null);
-//                    }
-//                }
-                
-                for (TransientQuery joinQuery : query.getJoins()) {
-                    if(joinQuery != null){
-                        ExtendedQuery jeq = new ExtendedQuery(joinQuery.getClassName(),
-                                    joinQuery.getLogicalConnector(),
-                                    joinQuery.getAttributeNames(),
-                                    joinQuery.getVisibleAttributeNames(),
-                                    joinQuery.getAttributeValues(),
-                                    joinQuery.getConditions(), null,null, 1, 1);
-                        joinsList.add(jeq);
-                    }
-                    else//if is compact view
-                        joinsList.add(null);
-                }//end for
-            }//end if there are joins
-            ExtendedQuery eq = new ExtendedQuery(query.getClassName(),
-                                    query.getLogicalConnector(),
-                                    query.getAttributeNames(),
-                                    query.getVisibleAttributeNames(),
-                                    query.getAttributeValues(),
-                                    query.getConditions(), joinsList, pa, query.getPage(), query.getLimit());
+            List<org.kuwaiba.apis.persistence.application.ResultRecord> resultRecordList = new ArrayList<org.kuwaiba.apis.persistence.application.ResultRecord>();
 
-            rrList = aem.executeQuery(eq);
+            resultRecordList = aem.executeQuery(transientQuerytoExtendedQuery(query));
 
-            ResultRecord[] rrArray = new ResultRecord[rrList.size()];
-
-            int i = 0;
-            for (org.kuwaiba.apis.persistence.application.ResultRecord rrApi : rrList)
+            ResultRecord[] resultArray = new ResultRecord[resultRecordList.size()];
+            
+            for (int i=0;resultRecordList.size() >i; i++)
             {
-                RemoteObjectLight rol = new RemoteObjectLight(rrApi.getId(), rrApi.getName(), rrApi.getClassName());
-                rrArray[i] = new ResultRecord(rol, (ArrayList<String>) rrApi.getExtraColumns());
-                i++;
+                RemoteObjectLight rol = new RemoteObjectLight(resultRecordList.get(i).getId(), resultRecordList.get(i).getName(), resultRecordList.get(i).getClassName());
+                resultArray[i] = new ResultRecord(rol, (ArrayList<String>) resultRecordList.get(i).getExtraColumns());
             }
 
-            return rrArray;
-
+            return resultArray;
         }catch (Exception ex){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -1512,6 +1444,35 @@ public class WebserviceBean implements WebserviceBeanRemote {
             bem = null;
             aem = null;
         }
+    }
+
+    /**
+     * Helper class to parse from a transientQuery into a ExtendedQuery
+     * @param query
+     * @return
+     */
+    private ExtendedQuery transientQuerytoExtendedQuery(TransientQuery query){
+        ExtendedQuery eq = new ExtendedQuery();
+        List<ExtendedQuery> listeq = new ArrayList<ExtendedQuery>();
+
+        if(query == null)
+            return null;
+        else
+            eq = new ExtendedQuery(query.getClassName(),
+                                query.getLogicalConnector(),
+                                query.getAttributeNames(),
+                                query.getVisibleAttributeNames(),
+                                query.getAttributeValues(),
+                                query.getConditions(), listeq, query.getPage(), query.getLimit());
+
+
+        if(query.getJoins() != null){
+            for(TransientQuery join : query.getJoins()){
+                    listeq.add(transientQuerytoExtendedQuery(join));
+            }
+        }
+        
+        return eq;
     }
     // </editor-fold>
 }
