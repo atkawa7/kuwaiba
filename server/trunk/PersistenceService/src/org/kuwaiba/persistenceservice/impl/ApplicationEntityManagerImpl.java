@@ -48,7 +48,7 @@ import org.kuwaiba.apis.persistence.interfaces.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.persistenceservice.caching.CacheManager;
-import org.kuwaiba.persistenceservice.queries.CypherQueryBuilder;
+import org.kuwaiba.persistenceservice.queries.CypherSimpleQuery;
 import org.kuwaiba.persistenceservice.util.Constants;
 import org.kuwaiba.persistenceservice.util.Util;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
@@ -1133,48 +1133,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
     @Override
     public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException {
-
-        Map<String, Node> classNodes = new HashMap<String, Node>();
-        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, query.getClassName()).getSingle();
-               
-        if (classNode == null) 
-            throw new MetadataObjectNotFoundException(Util.formatString(
-                    "Can not find class %1s", query.getClassName()));//NOI18N
-
-        Boolean isAbstract = (Boolean) classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT);
-        classNodes.put("className", classNode);
-        //joins
-        if(query.getJoins()!= null){
-            for(int i = 0; i<query.getJoins().size(); i++){
-                if(query.getJoins().get(i) != null){
-                    Node joinClassNode  =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, query.getJoins().get(i).getClassName()).getSingle();
-                    classNodes.put("join"+i, joinClassNode);
-                }
-            }
-        }
-        //Parent
-        Boolean isParentAbstract = false;
-        Boolean hasParent = false;
-        if(query.getParent() != null){
-            Node parentClassNode =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, query.getParent().getClassName()).getSingle();
-
-            if (classNode == null)
-                throw new MetadataObjectNotFoundException(Util.formatString(
-                        "Can not find the Parent Class with name %1s", query.getClassName()));//NOI18N
-            //parent joins
-            if(query.getParent().getJoins()!= null){
-                for(int i = 0; i>query.getParent().getJoins().size(); i++){
-                    Node joinClassNode  =  classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, query.getParent().getJoins().get(i).getClassName()).getSingle();
-                    classNodes.put("parentJoin"+i, joinClassNode);
-                }
-            }
-            classNodes.put(query.getParent().getClassName(), parentClassNode);
-            hasParent = true;
-            isParentAbstract = (Boolean) parentClassNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT);
-        }
         
-        CypherQueryBuilder cqb = new CypherQueryBuilder();
-        cqb.createQuery(classNodes, isAbstract, query, hasParent,isParentAbstract);
+        CypherSimpleQuery cqb = new CypherSimpleQuery();
+        cqb.setClassNodes(getNodesFromQuery(query));
+        cqb.createQuery(query);
 
         return cqb.getResultList();
     }
@@ -1277,5 +1239,40 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
         subclassesTag.end();
         currentTag.end();
+    }
+    
+    /**
+     * Reads a ExtendedQuery looking for the classes involved in the query and returns every classes nodes
+     * @param query
+     * @return classmetada's nodes
+     */
+    private Map<String, Node> getNodesFromQuery(ExtendedQuery query)  throws MetadataObjectNotFoundException{
+
+        Map<String, Node> classNodes = new HashMap<String, Node>();
+        List<String> ListClassNames = new ArrayList();
+        readJoins(ListClassNames, query);
+        for(String className : ListClassNames)
+            classNodes.put(className, classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, className).getSingle());
+        
+        return classNodes;
+    }
+
+     private String readJoins(List<String> l, ExtendedQuery query){
+        
+        String className  = "";
+
+        if(query == null)
+            return null;
+        else
+            className = query.getClassName();
+
+        if(query.getJoins() != null){
+            for(ExtendedQuery join : query.getJoins()){
+                    readJoins(l,join);
+            }
+        }
+        if(className != null || className.equals(""))
+            l.add(className);
+        return className;
     }
 }

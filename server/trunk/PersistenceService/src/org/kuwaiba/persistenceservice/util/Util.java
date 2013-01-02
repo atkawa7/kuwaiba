@@ -716,13 +716,10 @@ public class Util {
      * @param attributeValue
      * @return
      */
-    public static Object evalAttributeType(String attributeType, String attributeName, String attributeValue){
+    public static Object evalAttributeType(String attributeType, String attributeValue){
 
         if(attributeType.equals("String"))//NOI18N
-            return attributeValue;
-
-        if(attributeValue.contains("(?i)"))
-                    attributeValue = attributeValue.substring(4, attributeValue.length());
+            return "(?i)".concat(attributeValue);
 
         if(attributeType.equals("Date")){//NOI18N
             //the date you are looking for into long
@@ -731,7 +728,7 @@ public class Util {
             try {
                 attrbtDate = dateFormat.parse(attributeValue).getTime();
             } catch (ParseException ex) {
-                System.out.println("wrong date format should be "+ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
+                System.out.println("wrong date format should be " + ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
             }
             return attrbtDate;
         }//end if is date

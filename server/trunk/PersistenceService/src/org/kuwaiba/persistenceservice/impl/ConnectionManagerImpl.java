@@ -34,7 +34,7 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
     /**
      *
      */
-    public static final String DEFAULT_DB_PATH = "target/kuwaiba_db";
+    public static final String DEFAULT_DB_PATH = "target/kuwaiba.db";
     /**
      * Neo4J Database handler
      */
