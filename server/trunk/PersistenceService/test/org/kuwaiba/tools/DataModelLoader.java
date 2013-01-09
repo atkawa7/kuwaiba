@@ -11,8 +11,8 @@ import java.io.IOException;
 public class DataModelLoader {
 public static void main(String argv[]) throws IOException, Exception {
         XMLBackupReader a = new XMLBackupReader();
-        File nombre = new File("/home/zim/classhierarchy_v5.xml");
+        File nombre = new File("/home/zim/class_hierarchy.xml");
         a.read(XMLBackupReader.getBytesFromFile(nombre));
-        a.axu();
+        a.load();
     }
 }

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
@@ -58,10 +59,10 @@ public interface BusinessEntityManagerRemote extends Remote{
                 WrongMappingException, InvalidArgumentException, RemoteException;
     public long createObject(String className, String parentClassName, long parentOid,
             HashMap<String,List<String>> attributes, long template)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException, RemoteException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException, DatabaseException, RemoteException;
    public long createSpecialObject(String className, String parentClassName, long parentOid,
             HashMap<String,List<String>> attributes,long template)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, RemoteException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, DatabaseException, RemoteException;
 
     public void deleteObjects(HashMap<String, long[]> objects, boolean releaseRelationships)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;

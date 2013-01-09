@@ -29,6 +29,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
+import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -245,6 +247,24 @@ public class Util {
     }
 
     /**
+     * Helper to create a dummy root. It assumes the transaction is handled by the caller
+     * @return The new node
+     * @throws DatabaseException if the reference node does not exist
+     */
+    public static Node createDummyRoot(GraphDatabaseService graphDb) throws DatabaseException{
+        Node dummyRootNode = graphDb.createNode();
+        dummyRootNode.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, MetadataEntityManagerImpl.DUMMYROOT);
+        dummyRootNode.setProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME, MetadataEntityManagerImpl.DUMMYROOT);
+        dummyRootNode.setProperty(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+
+        if (graphDb.getReferenceNode() == null)
+            throw new DatabaseException("Reference node does not exists. The database seems to be corrupted");
+
+        graphDb.getReferenceNode().createRelationshipTo(dummyRootNode, RelTypes.DUMMY_ROOT);
+        return dummyRootNode;
+    }
+
+    /**
      * Converts a String value to an object value based on a give mapping. This method
      * does not convert binary or relationship-like attributes
      * @param value Value as String
@@ -279,13 +299,13 @@ public class Util {
      * @param classMetadata
      * @return
      */
-    public static ClassMetadata createDefaultClassMetadata(ClassMetadata classDefinition) throws MetadataObjectNotFoundException{
+    public static ClassMetadata setDefaultsForClassMetadata(ClassMetadata classDefinition) throws MetadataObjectNotFoundException{
 
         Integer color = null;
 
         if(classDefinition.getName() == null)
             throw new MetadataObjectNotFoundException(Util.formatString(
-                         "Can not create a ClassMetada without a name"));
+                         "Can not create a class metadata entry without a name"));
 
         if(classDefinition.getDisplayName() == null)
             classDefinition.setDisplayName("");

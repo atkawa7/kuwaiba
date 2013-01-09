@@ -17,6 +17,7 @@
 package org.kuwaiba.apis.persistence.interfaces;
 
 import java.util.List;
+import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
@@ -37,9 +38,10 @@ public interface MetadataEntityManager {
      * category (if the category does not exist it will be create).
      * @param classDefinition
      * @return the Id of the newClassMetadata
-     * @throws ClassNotFoundException if there's no Parent Class whit the ParentId
+     * @throws MetadataObjectNotFoundException if the specified parent class doesn't exist
+     * @throws DatabaseException if the reference node doesn't exist
      */
-    public long createClass(ClassMetadata classDefinition) throws Exception;
+    public long createClass(ClassMetadata classDefinition) throws DatabaseException, MetadataObjectNotFoundException;
 
     /**
      * Changes a classmetadata definiton
@@ -234,8 +236,11 @@ public interface MetadataEntityManager {
      *
      * @param parentClassId Id of the class whose instances can contain the instances of the next param
      * @param _possibleChildren ids of the candidates to be contained
+     * @throws MetadataObjectNotFoundException if any of the possible children or the parent don't exist
+     * @throws InvalidArgumentException
+     * @throws DatabaseException if the reference node doesn't exist
      */
-    public void addPossibleChildren(long parentClassId, long[] possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    public void addPossibleChildren(long parentClassId, long[] possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException;
     /**
      * Adds to a given class a list of possible children classes whose instances can be contained using the class name to find the parent class
      * @param parentClassName parent class name

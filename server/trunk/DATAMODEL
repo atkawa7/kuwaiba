@@ -164,3 +164,7 @@
 * Removed attribute "edge" from "GenericAntenna" and added to "DipoleAntenna" and "ParabolicAntenna"
 * Added class "PolarizationType"
 * Class WorkStation renamed to "Workstation"
+* Added attribute "length" to class "GenericPhysicalContainer" and "GenericPhysicalLink"
+* Added class "CementJunctionBox"
+* Added class "House"
+* Added class "Zone"

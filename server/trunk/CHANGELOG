@@ -56,3 +56,10 @@
 * Datamodel change (see DATAMODEL file for a full list of changes)
 * Added security check to getMetaData and getMetadataLight methods
 * Fixed a bug that made getMultipleChoice to return also the abstract list types
+
+0.4
+0.5
+* Added method getUpstreamContainmentHierarchy to the ws API
+* Added capabilities for searching objects by id and parent
+* Added methods getObjectRelatedViews and getGeneralViews to the webservice API
+* APIs use now primitive types (boolean, long, etc) instead of wrappers (Long, Boolean) to improve type safety

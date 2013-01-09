@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
@@ -149,82 +150,56 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Creates a classmetadata with its attributes(some new attributes and others
+     * Creates a class metadata entry with its attributes(some new attributes and others
      * extended from the parent) and a category (if the category does not exist it will be created).
-     * @param classDefinition
+     * @param classDefinition. If the parent class is null, the node to be created will be interpreted as the RootObject or its equivalent
      * @return the Id of the newClassMetadata
-     * @throws ClassNotFoundException if there's no Parent Class whit the ParentId
+     * @throws MetadataObjectNotFoundException if there's no a parent class with the identifier provided
+     * @throws DatabaseException if the reference node does not exist
      */
     @Override
-    public long createClass(ClassMetadata classDefinition) throws MetadataObjectNotFoundException {
+    public long createClass(ClassMetadata classDefinition) throws MetadataObjectNotFoundException, DatabaseException {
         Transaction tx = null;
         long id;
 
-        classDefinition = Util.createDefaultClassMetadata(classDefinition);
+        classDefinition = Util.setDefaultsForClassMetadata(classDefinition);
 
         try {
             tx = graphDb.beginTx();
-            //The root must exist
-            Node referenceNode = graphDb.getReferenceNode();
-            Relationship rootRel = referenceNode.getSingleRelationship(
-                    RelTypes.ROOT, Direction.BOTH);
+            
+            //The reference node must exist
+            if (graphDb.getReferenceNode() == null)
+                throw new DatabaseException("Reference node does not exist. The database seems to be corrupted");
 
-            if (rootRel == null && classDefinition.getName().equals(CLASS_ROOTOBJECT)) {
-                Node rootNode = graphDb.createNode();
-                Node dummyRootNode = graphDb.createNode();
+            if (classIndex.get(PROPERTY_NAME, classDefinition.getName()).getSingle() != null)
+                throw new InvalidArgumentException(String.format("Class %1s already exists in the database", classDefinition.getName()), Level.INFO);
 
-                rootNode.setProperty(PROPERTY_NAME, classDefinition.getName());
-                rootNode.setProperty(PROPERTY_DISPLAY_NAME, classDefinition.getDisplayName());
-                rootNode.setProperty(PROPERTY_CUSTOM, classDefinition.isCustom());
-                rootNode.setProperty(PROPERTY_COUNTABLE, classDefinition.isCountable());
-                rootNode.setProperty(PROPERTY_COLOR, classDefinition.getColor());
-                rootNode.setProperty(PROPERTY_DESCRIPTION, classDefinition.getDescription());
-                rootNode.setProperty(PROPERTY_ABSTRACT, classDefinition.isAbstractClass());
-                rootNode.setProperty(PROPERTY_ICON, classDefinition.getIcon());
-                rootNode.setProperty(PROPERTY_SMALL_ICON, classDefinition.getSmallIcon());
-                rootNode.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+            Node classNode = graphDb.createNode();
 
-                dummyRootNode.setProperty(PROPERTY_NAME, DUMMYROOT);
-                dummyRootNode.setProperty(PROPERTY_DISPLAY_NAME, DUMMYROOT);
-                dummyRootNode.setProperty(PROPERTY_CUSTOM, classDefinition.isCustom());
-                dummyRootNode.setProperty(PROPERTY_COUNTABLE, classDefinition.isCountable());
-                dummyRootNode.setProperty(PROPERTY_COLOR, classDefinition.getColor());
-                dummyRootNode.setProperty(PROPERTY_DESCRIPTION, classDefinition.getDescription());
-                dummyRootNode.setProperty(PROPERTY_ABSTRACT, classDefinition.isAbstractClass());
-                dummyRootNode.setProperty(PROPERTY_ICON, classDefinition.getIcon());
-                dummyRootNode.setProperty(PROPERTY_SMALL_ICON, classDefinition.getSmallIcon());
-                dummyRootNode.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+            classNode.setProperty(PROPERTY_NAME, classDefinition.getName());
+            classNode.setProperty(PROPERTY_DISPLAY_NAME, classDefinition.getDisplayName());
+            classNode.setProperty(PROPERTY_CUSTOM, classDefinition.isCustom());
+            classNode.setProperty(PROPERTY_COUNTABLE, classDefinition.isCountable());
+            classNode.setProperty(PROPERTY_COLOR, classDefinition.getColor());
+            classNode.setProperty(PROPERTY_DESCRIPTION, classDefinition.getDescription());
+            classNode.setProperty(PROPERTY_ABSTRACT, classDefinition.isAbstractClass());
+            classNode.setProperty(PROPERTY_ICON, classDefinition.getIcon());
+            classNode.setProperty(PROPERTY_SMALL_ICON, classDefinition.getSmallIcon());
+            classNode.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
 
-                classIndex.putIfAbsent(rootNode, PROPERTY_NAME, classDefinition.getName());
-                classIndex.putIfAbsent(rootNode, PROPERTY_ID, rootNode.getId());
+            id = classNode.getId();
 
-                referenceNode.createRelationshipTo(rootNode, RelTypes.ROOT);
-                referenceNode.createRelationshipTo(dummyRootNode, RelTypes.DUMMY_ROOT);
+            classIndex.putIfAbsent(classNode, PROPERTY_NAME, classDefinition.getName());
+            classIndex.putIfAbsent(classNode, PROPERTY_ID, classNode.getId());
 
-                id = rootNode.getId();
-
-            }//end if is rootNode
+            //Is this class the root of all class hierarchy?
+            if (classDefinition.getParentClassName() == null){
+                if (graphDb.getReferenceNode().getSingleRelationship(RelTypes.ROOT, Direction.BOTH) == null)
+                    classNode.createRelationshipTo(graphDb.getReferenceNode(), RelTypes.ROOT);
+                else
+                    throw new MetadataObjectNotFoundException("Parent class can not be null, or if it is, only one root class is permitted");
+            }
             else {
-                //The ClassNode
-                Node classNode = graphDb.createNode();
-
-                classNode.setProperty(PROPERTY_NAME, classDefinition.getName());
-                classNode.setProperty(PROPERTY_DISPLAY_NAME, classDefinition.getDisplayName());
-                classNode.setProperty(PROPERTY_CUSTOM, classDefinition.isCustom());
-                classNode.setProperty(PROPERTY_COUNTABLE, classDefinition.isCountable());
-                classNode.setProperty(PROPERTY_COLOR, classDefinition.getColor());
-                classNode.setProperty(PROPERTY_DESCRIPTION, classDefinition.getDescription());
-                classNode.setProperty(PROPERTY_ABSTRACT, classDefinition.isAbstractClass());
-                classNode.setProperty(PROPERTY_ICON, classDefinition.getIcon());
-                classNode.setProperty(PROPERTY_SMALL_ICON, classDefinition.getSmallIcon());
-                classNode.setProperty(PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-
-
-                id = classNode.getId();
-
-                classIndex.putIfAbsent(classNode, PROPERTY_NAME, classDefinition.getName());
-                classIndex.putIfAbsent(classNode, PROPERTY_ID, classNode.getId());
-
                 //Category
                 //if the category already exists
                 if (classDefinition.getCategory() != null) {
@@ -262,10 +237,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         classNode.createRelationshipTo(newAttrNode, RelTypes.HAS_ATTRIBUTE);
                     }
                 }//end if there is a Parent
-                else {
-                    throw new MetadataObjectNotFoundException(Util.formatString(
-                            "Can not find the parent Class with the name %1s", classDefinition.getParentClassName()));
-                }
+                else
+                    throw new MetadataObjectNotFoundException(String.format(
+                            "Can not find parent class with name %1s", classDefinition.getParentClassName()));
 
             }//end else not rootNode
 
@@ -292,7 +266,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Changes a classmetadata definiton 
+     * Changes a class metadata definiton
      * @param newClassDefinition
      * @return true if success
      * @throws ClassNotFoundException if there is no class with such classId
@@ -1206,7 +1180,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
     @Override
     public void addPossibleChildren(long parentClassId, long[] _possibleChildren)
-            throws MetadataObjectNotFoundException, InvalidArgumentException {
+            throws MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException {
         Transaction tx = null;
         Node parentNode;
         boolean isDummyRoot = false;
@@ -1223,7 +1197,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }else{
             Node referenceNode = graphDb.getReferenceNode();
             Relationship rel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
-            parentNode = rel.getEndNode();
+            if (rel == null)
+                parentNode = Util.createDummyRoot(graphDb);
+            else
+                parentNode = rel.getEndNode();
 
             if(!(DUMMYROOT).equals((String)parentNode.getProperty(PROPERTY_NAME)))
                     throw new MetadataObjectNotFoundException("DummyRoot node is corrupted");

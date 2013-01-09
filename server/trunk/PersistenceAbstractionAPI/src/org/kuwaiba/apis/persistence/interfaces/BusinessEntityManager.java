@@ -22,6 +22,7 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
+import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
@@ -47,10 +48,11 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException Thrown if the parent id is not found
      * @throws OperationNotPermittedException If the update can't be performed due to a format issue
      * @throws InvalidArgumentException If the parent node is malformed.
+     * @throws DatabaseException if the reference node used by the dummy root doesn't exist
      */
     public long createObject(String className, String parentClassName, long parentOid,
             HashMap<String,List<String>> attributes,long template)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, DatabaseException;
     /**
      * Creates a new inventory object for a domain specific model (where the standard containment rules don't apply)
      * @param className Name of the class which this object will be instantiated from
@@ -65,10 +67,11 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException Thrown if the parent id is not found
      * @throws OperationNotPermittedException If the update can't be performed due to a format issue
      * @throws InvalidArgumentException If the parent node is malformed.
+     * @throws DatabaseException if the reference node used by the dummy root doesn't exist
      */
     public long createSpecialObject(String className, String parentClassName, long parentOid,
             HashMap<String,List<String>> attributes,long template)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException;
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, DatabaseException;
     /**
      * Gets the detailed information about an object
      * @param className Object class name

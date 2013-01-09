@@ -27,6 +27,7 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
+import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
@@ -86,7 +87,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
 
     public long createObject(String className, String parentClassName, long parentOid, HashMap<String,List<String>> attributes, long template)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException {
 
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null)
@@ -117,8 +118,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
              parentNode = getInstanceOfClass(parentClassName, parentOid);
             if (parentNode == null)
                 throw new ObjectNotFoundException(parentClassName, parentOid);
-        }else
-            parentNode = graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING).getEndNode();
+        }else{
+            Relationship rel = graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
+            if (rel == null)
+                parentNode = Util.createDummyRoot(graphDb);
+            else
+                parentNode = rel.getEndNode();
+        }
 
         Transaction tx = null;
         try{
@@ -200,7 +206,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
 
     public long createSpecialObject(String className, String parentClassName, long parentOid, HashMap<String,List<String>> attributes, long template)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException {
 
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null)
@@ -226,8 +232,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
              parentNode = getInstanceOfClass(parentClassName, parentOid);
             if (parentNode == null)
                 throw new ObjectNotFoundException(parentClassName, parentOid);
-        }else
-            parentNode = graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING).getEndNode();
+        }else{
+            Relationship rel = graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
+            if (rel == null)
+                parentNode = Util.createDummyRoot(graphDb);
+            else
+                parentNode = rel.getEndNode();
+        }
 
         Transaction tx = null;
         try{

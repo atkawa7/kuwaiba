@@ -40,6 +40,7 @@ public class XMLBackupReader {
 
     MetadataEntityManagerImpl mem;
     ConnectionManagerImpl cm;
+    String sub= "";
 
     public XMLBackupReader() {
         try {
@@ -50,8 +51,6 @@ public class XMLBackupReader {
             Logger.getLogger(XMLBackupReader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    String sub= "";    
 
     public void read(byte[] xmlDocument) throws Exception{
         QName hierarchyTag = new QName("hierarchy"); //NOI18N
@@ -69,9 +68,8 @@ public class XMLBackupReader {
                     this.serverVersion = reader.getAttributeValue(null, "serverVersion"); //NOI18N
                     this.date = new Date(Long.valueOf(reader.getAttributeValue(null, "date"))); //NOI18N
                 }else
-                    if (reader.getName().equals(classTag)){
+                    if (reader.getName().equals(classTag))
                         roots.add(readClassNode(reader));
-                    }
             }
         }
         reader.close();
@@ -153,9 +151,9 @@ public class XMLBackupReader {
         return bytes;
     }
 
-    public void axu(){
+    public void load(){
         try {
-            readRoots(roots, "");
+            readRoots(roots, null);
         } catch (Exception ex) {
             Logger.getLogger(XMLBackupReader.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -164,7 +162,6 @@ public class XMLBackupReader {
     public void readRoots(List<LocalClassWrapper> listNodes, String parentClassName) throws Exception{
 
         ClassMetadata clmt = new ClassMetadata();
-        byte[] x = new byte[1];
 
 //        dC.setName("defaul-category");
 //        dC.setDisplayName("defaul-category");
@@ -179,12 +176,12 @@ public class XMLBackupReader {
             clmt.setCustom(false);
             clmt.setDescription("");
             clmt.setDisplayName("");
-            clmt.setIcon(x);
+            clmt.setIcon(new byte[0]);
             clmt.setInterfaces(null);
             clmt.setListType(false);
             clmt.setName(lcw.getName());
             clmt.setParentClassName(parentClassName);
-            clmt.setSmallIcon(x);
+            clmt.setSmallIcon(new byte[0]);
 
             List<AttributeMetadata> attList = new ArrayList<AttributeMetadata>();
             
@@ -196,7 +193,6 @@ public class XMLBackupReader {
                 attr.setDisplayName("");
                 attr.setDescription("");
                 attr.setType(law.getType());
-                //everithing is technicial by default
                 attr.setAdministrative(false);
 
                 if(law.getType().equals("Float") || law.getType().equals("Long") || law.getType().equals("String")
@@ -219,14 +215,14 @@ public class XMLBackupReader {
                     attList.add(attr);
             }
             clmt.setAttributes(attList);
-
-            mem.createClass(clmt);
-
-            if(lcw.getDirectSubClasses().size() >1){
-                
-                readRoots(lcw.getDirectSubClasses(), lcw.getName());
+            try{
+                mem.createClass(clmt);
+            }catch (Exception ex){
+                System.out.println(String.format("Class %1s was not created: %2s", lcw.getName(), ex.getMessage()));
             }
-            
+            //The subclasses are processed even if the parent class failed
+            if(lcw.getDirectSubClasses().size() > 0)
+                readRoots(lcw.getDirectSubClasses(), lcw.getName());
         }
     }
 }

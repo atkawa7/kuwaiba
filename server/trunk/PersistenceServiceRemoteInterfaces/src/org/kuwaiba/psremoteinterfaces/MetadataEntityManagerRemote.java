@@ -19,6 +19,7 @@ package org.kuwaiba.psremoteinterfaces;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
@@ -39,7 +40,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public long createClass(ClassMetadata classDefinition) throws RemoteException, MetadataObjectNotFoundException;
+    public long createClass(ClassMetadata classDefinition) throws RemoteException, MetadataObjectNotFoundException, DatabaseException;
     /**
      * See Persistence Abstraction API documentation
      * @param newClassDefinition
@@ -275,8 +276,11 @@ public interface MetadataEntityManagerRemote extends Remote{
      *
      * @param parentClassId Id of the class whose instances can contain the instances of the next param
      * @param _possibleChildren ids of the candidates to be contained
+     * @throws MetadataObjectNotFoundException if any of the possible children or the parent don't exist
+     * @throws InvalidArgumentException
+     * @throws DatabaseException if the reference node doesn't exist
      */
-    public void addPossibleChildren(long parentClassId, long[] _possibleChildren) throws RemoteException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public void addPossibleChildren(long parentClassId, long[] _possibleChildren) throws RemoteException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException;
 
     /**
      * Adds to a given class a list of possible children classes whose instances can be contained
