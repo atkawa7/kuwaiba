@@ -1243,7 +1243,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     /**
      * Reads a ExtendedQuery looking for the classes involved in the query and returns every classes nodes
      * @param query
-     * @return classmetada's nodes
+     * @return class metadata's nodes
      */
     private Map<String, Node> getNodesFromQuery(ExtendedQuery query)  throws MetadataObjectNotFoundException{
 
