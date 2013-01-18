@@ -22,10 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
+import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
-import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -36,6 +35,7 @@ import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 import org.kuwaiba.apis.persistence.interfaces.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.persistenceservice.caching.CacheManager;
 import org.kuwaiba.persistenceservice.util.Util;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
@@ -576,7 +576,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     public List<RemoteBusinessObjectLight> getObjectChildren(String className, long oid, int maxResults)
             throws ObjectNotFoundException, MetadataObjectNotFoundException {
         try{
-            Node parentNode = getInstanceOfClass(className, oid);
+            Node parentNode;
+            if(oid == -1){
+                Relationship rel = graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
+                if (rel == null)
+                    parentNode = Util.createDummyRoot(graphDb);
+                else
+                    parentNode = rel.getEndNode();
+            }
+            parentNode = getInstanceOfClass(className, oid);
             Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING);
             List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
 
@@ -602,7 +610,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     public List<RemoteBusinessObjectLight> getObjectChildren(long oid, long classId, int maxResults)
             throws ObjectNotFoundException, MetadataObjectNotFoundException {
         try{
-            Node parentNode = getInstanceOfClass(classId, oid);
+            Node parentNode;
+            if(classId == -1 && oid == -1){
+                Relationship rel = graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
+                if (rel == null)
+                    parentNode = Util.createDummyRoot(graphDb);
+                else
+                    parentNode = rel.getEndNode();
+            }
+            parentNode = getInstanceOfClass(classId, oid);
             Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING);
             List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
             if (maxResults > 0){
