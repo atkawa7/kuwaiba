@@ -771,7 +771,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
-
     public void updateGeneralView(long oid, String name, String description, byte[] structure, byte[] background) throws InvalidArgumentException, ObjectNotFoundException {
         Transaction tx = null;
         try{
@@ -882,8 +881,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
         return res;
     }
-
-
 
     public List<ViewObjectLight> getGeneralViews(int viewType, int limit) throws InvalidArgumentException {
         String cypherQuery = "START gView=node:"+ INDEX_GENERAL_VIEWS +"('id:*')";
@@ -1075,8 +1072,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
     @Override
     public List<CompactQuery> getQueries(boolean showPublic) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException
-    {
+            throws MetadataObjectNotFoundException, InvalidArgumentException{
         List<CompactQuery> queryList = new ArrayList<CompactQuery>();
         IndexHits<Node> queries = queryIndex.query(CompactQuery.PROPERTY_QUERYNAME, "*");
         for (Node queryNode : queries)
