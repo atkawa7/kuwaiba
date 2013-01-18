@@ -62,6 +62,7 @@ import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.Traverser.Order;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.IteratorUtil;
 
 /**
@@ -252,16 +253,27 @@ public class Util {
      * @throws DatabaseException if the reference node does not exist
      */
     public static Node createDummyRoot(GraphDatabaseService graphDb) throws DatabaseException{
-        Node dummyRootNode = graphDb.createNode();
-        dummyRootNode.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, MetadataEntityManagerImpl.DUMMYROOT);
-        dummyRootNode.setProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME, MetadataEntityManagerImpl.DUMMYROOT);
-        dummyRootNode.setProperty(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            Node dummyRootNode = graphDb.createNode();
+            dummyRootNode.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, MetadataEntityManagerImpl.DUMMYROOT);
+            dummyRootNode.setProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME, MetadataEntityManagerImpl.DUMMYROOT);
+            dummyRootNode.setProperty(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
 
-        if (graphDb.getReferenceNode() == null)
-            throw new DatabaseException("Reference node does not exists. The database seems to be corrupted");
+            if (graphDb.getReferenceNode() == null) {
+                throw new DatabaseException("Reference node does not exists. The database seems to be corrupted");
+            }
 
-        graphDb.getReferenceNode().createRelationshipTo(dummyRootNode, RelTypes.DUMMY_ROOT);
-        return dummyRootNode;
+            graphDb.getReferenceNode().createRelationshipTo(dummyRootNode, RelTypes.DUMMY_ROOT);
+
+            tx.success();
+
+            return dummyRootNode;
+            
+        }finally {
+            tx.finish();
+        }
     }
 
     /**
