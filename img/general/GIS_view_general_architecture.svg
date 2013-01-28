@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   sodipodi:docname="GIS_view_general_architecture.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="449.49585"
+     inkscape:cy="710.21711"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1358"
+     inkscape:window-height="716"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#808000;fill-opacity:1;stroke:#79ffff;stroke-width:5.57681799;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect2985-8"
+       width="279.01953"
+       height="90"
+       x="99.285706"
+       y="161.64787"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277" />
+    <rect
+       style="fill:#008000;fill-opacity:1;stroke:#79ffff;stroke-width:5.76567841;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect2985-8-0"
+       width="300.10364"
+       height="89.440376"
+       x="99.565514"
+       y="324.78485"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="127.14286"
+       y="243.79076"
+       id="text3810"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277"><tspan
+         sodipodi:role="line"
+         id="tspan3812"
+         x="127.14286"
+         y="243.79076"
+         style="font-size:28px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">Persistence Service</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="390.46765"
+       y="380.17047"
+       id="text3810-1"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277"><tspan
+         sodipodi:role="line"
+         id="tspan3812-9"
+         x="105.2459"
+         y="380.17047"
+         style="font-size:28px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-anchor:end;text-align:end">Web Application</tspan><tspan
+         sodipodi:role="line"
+         x="105.2459"
+         y="403.00336"
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-anchor:end;text-align:end"
+         id="tspan3835">(Business rules engine/Webservice API)</tspan></text>
+    <rect
+       style="fill:#c83737;fill-opacity:1;stroke:#79ffff;stroke-width:5.57681799000000034;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect2985-8-2"
+       width="279.01953"
+       height="90"
+       x="437.63309"
+       y="324.50504"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="465.49023"
+       y="406.64792"
+       id="text3810-8"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277"><tspan
+         sodipodi:role="line"
+         id="tspan3812-1"
+         x="465.49023"
+         y="406.64792"
+         style="font-size:28px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">Tile Caching Server</tspan></text>
+    <rect
+       style="fill:#916f6f;fill-opacity:1;stroke:#79ffff;stroke-width:6.13097477;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect2985-8-2-8"
+       width="337.22577"
+       height="90"
+       x="597.63312"
+       y="73.076469"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="619.49023"
+       y="155.21936"
+       id="text3810-8-3"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277"><tspan
+         sodipodi:role="line"
+         id="tspan3812-1-2"
+         x="619.49023"
+         y="155.21936"
+         style="font-size:28px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">3rd Party Maps Provider</tspan></text>
+    <g
+       id="g3889"
+       transform="translate(-33.335034,-243.44676)"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277">
+      <rect
+         y="528.07648"
+         x="268.57144"
+         height="26.073622"
+         width="22.263992"
+         id="rect3885"
+         style="fill:#000000;fill-opacity:1;stroke:#79ffff;stroke-width:2.34787726;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none;stroke-dashoffset:0" />
+      <path
+         transform="matrix(0.99857812,0.05330795,-0.05330795,0.99857812,111.33422,23.529635)"
+         inkscape:transform-center-y="-4.5740435"
+         inkscape:transform-center-x="0.095018821"
+         d="m 178.57142,498.07648 7.45559,-14.30449 7.45558,-14.30448 8.66026,13.60897 8.66025,13.60897 -16.11584,0.69551 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="false"
+         sodipodi:arg2="3.622061"
+         sodipodi:arg1="2.5748634"
+         sodipodi:r2="9.3131456"
+         sodipodi:r1="18.626293"
+         sodipodi:cy="488.07648"
+         sodipodi:cx="194.28571"
+         sodipodi:sides="3"
+         id="path3887"
+         style="fill:#000000;fill-opacity:1;stroke:#79ffff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none;stroke-dashoffset:0"
+         sodipodi:type="star" />
+    </g>
+    <g
+       id="g3919"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277">
+      <rect
+         y="210.23753"
+         x="670.18396"
+         height="101.50053"
+         width="22.263992"
+         id="rect3885-0"
+         style="fill:#000000;fill-opacity:1;stroke:#79ffff;stroke-width:4.63243008;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none;stroke-dashoffset:0" />
+      <path
+         transform="matrix(1.1326152,0.06152193,-0.06046337,1.1524444,490.61959,-368.13067)"
+         inkscape:transform-center-y="-5.2788505"
+         inkscape:transform-center-x="0.10778201"
+         d="m 178.57142,498.07648 7.45559,-14.30449 7.45558,-14.30448 8.66026,13.60897 8.66025,13.60897 -16.11584,0.69551 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="false"
+         sodipodi:arg2="3.622061"
+         sodipodi:arg1="2.5748634"
+         sodipodi:r2="9.3131456"
+         sodipodi:r1="18.626293"
+         sodipodi:cy="488.07648"
+         sodipodi:cx="194.28571"
+         sodipodi:sides="3"
+         id="path3887-8"
+         style="fill:#000000;fill-opacity:1;stroke:#79ffff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none;stroke-dashoffset:0"
+         sodipodi:type="star" />
+    </g>
+    <rect
+       style="fill:#008080;fill-opacity:1;stroke:#79ffff;stroke-width:8.26253223;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect3923"
+       width="124.13258"
+       height="43.436558"
+       x="360.37936"
+       y="513.93854"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="403.28378"
+       y="551.27936"
+       id="text3810-8-8"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277"><tspan
+         sodipodi:role="line"
+         id="tspan3812-1-0"
+         x="403.28378"
+         y="551.27936"
+         style="font-size:28px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">Client</tspan></text>
+    <g
+       id="g3889-6"
+       transform="translate(104.54645,-58.229742)"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277">
+      <rect
+         y="528.07648"
+         x="268.57144"
+         height="26.073622"
+         width="22.263992"
+         id="rect3885-4"
+         style="fill:#000000;fill-opacity:1;stroke:#79ffff;stroke-width:2.34787726;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none;stroke-dashoffset:0" />
+      <path
+         transform="matrix(0.99857812,0.05330795,-0.05330795,0.99857812,111.33422,23.529635)"
+         inkscape:transform-center-y="-4.5740435"
+         inkscape:transform-center-x="0.095018821"
+         d="m 178.57142,498.07648 7.45559,-14.30449 7.45558,-14.30448 8.66026,13.60897 8.66025,13.60897 -16.11584,0.69551 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="false"
+         sodipodi:arg2="3.622061"
+         sodipodi:arg1="2.5748634"
+         sodipodi:r2="9.3131456"
+         sodipodi:r1="18.626293"
+         sodipodi:cy="488.07648"
+         sodipodi:cx="194.28571"
+         sodipodi:sides="3"
+         id="path3887-3"
+         style="fill:#000000;fill-opacity:1;stroke:#79ffff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none;stroke-dashoffset:0"
+         sodipodi:type="star" />
+    </g>
+    <g
+       id="g3889-64"
+       transform="translate(181.35865,-58.229742)"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277">
+      <rect
+         y="528.07648"
+         x="268.57144"
+         height="26.073622"
+         width="22.263992"
+         id="rect3885-3"
+         style="fill:#000000;fill-opacity:1;stroke:#79ffff;stroke-width:2.34787726;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none;stroke-dashoffset:0" />
+      <path
+         transform="matrix(0.99857812,0.05330795,-0.05330795,0.99857812,111.33422,23.529635)"
+         inkscape:transform-center-y="-4.5740435"
+         inkscape:transform-center-x="0.095018821"
+         d="m 178.57142,498.07648 7.45559,-14.30449 7.45558,-14.30448 8.66026,13.60897 8.66025,13.60897 -16.11584,0.69551 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="false"
+         sodipodi:arg2="3.622061"
+         sodipodi:arg1="2.5748634"
+         sodipodi:r2="9.3131456"
+         sodipodi:r1="18.626293"
+         sodipodi:cy="488.07648"
+         sodipodi:cx="194.28571"
+         sodipodi:sides="3"
+         id="path3887-86"
+         style="fill:#000000;fill-opacity:1;stroke:#79ffff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:0;stroke-dasharray:none;stroke-dashoffset:0"
+         sodipodi:type="star" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="705.85815"
+       y="257.30191"
+       id="text3810-8-8-0"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277"><tspan
+         sodipodi:role="line"
+         id="tspan3812-1-0-1"
+         x="705.85815"
+         y="257.30191"
+         style="font-size:28px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">HTTP Requests</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="487.75629"
+       y="482.42932"
+       id="text3810-8-8-0-4"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277"><tspan
+         sodipodi:role="line"
+         id="tspan3812-1-0-1-1"
+         x="487.75629"
+         y="482.42932"
+         style="font-size:28px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">HTTP Requests</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="276.3277"
+       y="296.71506"
+       id="text3810-8-8-0-49"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/zim/GIS_views_general_architecture.png"
+       inkscape:export-xdpi="24.836277"
+       inkscape:export-ydpi="24.836277"><tspan
+         sodipodi:role="line"
+         id="tspan3812-1-0-1-8"
+         x="276.3277"
+         y="296.71506"
+         style="font-size:28px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">RMI/REST</tspan></text>
+  </g>
+</svg>
