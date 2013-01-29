@@ -1,4 +1,4 @@
-    /**
+/**
  *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -38,8 +38,8 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
-import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.beans.sessions.Session;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -52,18 +52,18 @@ import org.kuwaiba.ws.todeserialize.TransientQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.UserGroupInfo;
 import org.kuwaiba.ws.toserialize.application.UserInfo;
 import org.kuwaiba.ws.toserialize.application.Validator;
 import org.kuwaiba.ws.toserialize.application.ViewInfo;
+import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.ws.toserialize.metadata.CategoryInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
-import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
-import org.kuwaiba.ws.toserialize.application.ResultRecord;
-import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
 
 /**
  * Session bean to give primary support to the web service calls
@@ -523,8 +523,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
-            CategoryMetadata ctgrMtdt = new CategoryMetadata();
-            ctgrMtdt = mem.getCategory(categoryName);
+            CategoryMetadata ctgrMtdt = mem.getCategory(categoryName);
 
             CategoryInfo ctgrInfo = new CategoryInfo(ctgrMtdt.getName(),
                                                      ctgrMtdt.getDisplayName(),
@@ -544,8 +543,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
-            CategoryMetadata ctgrMtdt = new CategoryMetadata();
-            ctgrMtdt = mem.getCategory(categoryId);
+            CategoryMetadata ctgrMtdt = mem.getCategory(categoryId);
 
             CategoryInfo ctgrInfo = new CategoryInfo();
 
@@ -725,6 +723,24 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
+    
+    /**
+     * Get the whole class hierarchy as an XML document
+     * @param showAll
+     * @return The resulting XML document
+     * @throws ServerSideException
+     */
+    @Override
+    public byte[] getClassHierarchy(boolean showAll) throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            return aem.getClassHierachy(showAll);
+        }catch (Exception ex){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
@@ -766,7 +782,17 @@ public class WebserviceBean implements WebserviceBeanRemote {
         if (!aSession.getIpAddress().equals(remoteAddress))
             throw new NotAuthorizedException("This IP is not allowed to close the current session");
         sessions.remove(sessionId);
-    }// </editor-fold>
+    }
+    
+    @Override
+    public UserInfo getUserInSession(String sessionId){
+        Session aSession = sessions.get(sessionId);
+        if (aSession == null)
+            return null;
+        
+        return new UserInfo(aSession.getUser());
+    }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
     @Override
@@ -1375,9 +1401,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            List<org.kuwaiba.apis.persistence.application.ResultRecord> resultRecordList = new ArrayList<org.kuwaiba.apis.persistence.application.ResultRecord>();
-
-            resultRecordList = aem.executeQuery(transientQuerytoExtendedQuery(query));
+            List<org.kuwaiba.apis.persistence.application.ResultRecord> resultRecordList = aem.executeQuery(transientQuerytoExtendedQuery(query));
 
             ResultRecord[] resultArray = new ResultRecord[resultRecordList.size()];
             
@@ -1393,39 +1417,61 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
-
-    /**
-     *
-     * @param showAll
-     * @return
-     * @throws ServerSideException
-     */
+    
+    //Pools
     @Override
-    public byte[] getClassHierarchy(boolean showAll) throws ServerSideException{
+    public long createPool(String name, String description, String instancesOfClass, long owner) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            return aem.getClassHierachy(showAll);
+            return aem.createPool(name, description, instancesOfClass, owner);
         }catch (Exception ex){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
+
+    @Override
+    public void deletePools(long[] ids) throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            aem.deletePools(ids);
+        }catch (Exception ex){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public RemoteObjectLight[] getPools(int limit) throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            return RemoteObjectLight.toRemoteObjectLightArray(aem.getPools(limit));
+        }catch (Exception ex){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+
     /**
-     * For now, everyone can do everything unless the credentials are invalid or the
+     * For now, everyone can do everything unless the credentials are invalid
      * @param methodName
      * @param ipAddress
      * @param sessionId
      */
     @Override
-    public void validateCall(String methodName, String ipAddress, String sessionId) throws NotAuthorizedException{
+    public Session validateCall(String methodName, String ipAddress, String sessionId) throws NotAuthorizedException{
         Session aSession = sessions.get(sessionId);
         if (aSession == null)
             throw new NotAuthorizedException(Util.formatString("The session token provided to call %1s is not valid",methodName));
 
         if (!aSession.getIpAddress().equals(ipAddress))
             throw new NotAuthorizedException(Util.formatString("This IP is not allowed to perform this operation: %1s", methodName));
-        return;
+        
+        return aSession;
     }
 
     // </editor-fold>
@@ -1452,7 +1498,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
      * @return
      */
     private ExtendedQuery transientQuerytoExtendedQuery(TransientQuery query){
-        ExtendedQuery eq = new ExtendedQuery();
+        ExtendedQuery eq;
         List<ExtendedQuery> listeq = new ArrayList<ExtendedQuery>();
 
         if(query == null)

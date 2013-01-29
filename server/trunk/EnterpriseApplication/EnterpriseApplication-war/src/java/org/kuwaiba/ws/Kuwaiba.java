@@ -24,9 +24,10 @@ import javax.ejb.EJB;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.xml.ws.WebServiceContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.ws.WebServiceContext;
 import org.kuwaiba.beans.WebserviceBeanRemote;
+import org.kuwaiba.beans.sessions.Session;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
 import org.kuwaiba.util.Util;
@@ -798,6 +799,81 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Methods related to managing pools
+     */
+    /**
+     * Creates a pool
+     * @param name Pool name
+     * @param description Pool description
+     * @param instancesOfClass What kind of objects can this pool contain? 
+     * @param sessionId Session identifier
+     * @return id of the new pool
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "createPool")
+    public long createPool(@WebParam(name = "name")String name,
+            @WebParam(name = "description")String description,
+            @WebParam(name = "instancesOfClass")String instancesOfClass,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            Session session = wsBean.validateCall("createPool", getIPAddress(), sessionId); //NOI18N
+            UserInfo user = wsBean.getUserInSession(sessionId);
+            return wsBean.createPool(name, description, instancesOfClass, user.getOid());
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    /**
+     * Deletes a set of pools
+     * @param ids Pools to be deleted
+     * @param sessionId Session identifier
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "deletePools")
+    public void deletePools(@WebParam(name = "ids")long[] ids,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("deletePools", getIPAddress(), sessionId); //NOI18N
+            wsBean.deletePools(ids);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    /**
+     * Get a set of pools
+     * @param limit Maximum number of pool records to be returned
+     * @param sessionId Session identifier
+     * @return The list of pools as RemoteObjectLight instances
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getPools")
+    public RemoteObjectLight[] getPools(@WebParam(name = "limit")int limit,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("getPools", getIPAddress(), sessionId); //NOI18N
+            return wsBean.getPools(limit);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Business Methods. Click on the + sign on the left to edit the code.">

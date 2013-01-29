@@ -18,6 +18,7 @@ package org.kuwaiba.beans;
 
 import java.util.List;
 import javax.ejb.Remote;
+import org.kuwaiba.beans.sessions.Session;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
@@ -50,12 +51,19 @@ public interface WebserviceBeanRemote {
      */
     public RemoteSession createSession(String user, String password, String IPAddress) throws ServerSideException;
     /**
-     *
+     * Closes a session
      * @param sessionId
      * @param remoteAddress
      * @return
      */
     public void closeSession(String sessionId, String remoteAddress) throws NotAuthorizedException;
+
+    /**
+     * Returns the user related to the given session id
+     * @param sessionId The session id
+     * @return The user or null if none
+     */
+    public UserInfo getUserInSession(String sessionId);
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
@@ -490,10 +498,19 @@ public interface WebserviceBeanRemote {
     /**
      * Verifies if a given user is able to call a webservice method according to its privileges
      * @param methodName method that is trying to be called
-     * @param ipAddress IP Address where th request is comming from
+     * @param ipAddress IP Address where th request is coming from
      * @param sessionId Session token
+     * @return the active session if any
+     * @throws NotAuthorizedException if the session id doesn't belong to an active session
      */
-    public void validateCall(String methodName, String ipAddress, String sessionId) throws NotAuthorizedException;
+    public Session validateCall(String methodName, String ipAddress, String sessionId) throws NotAuthorizedException;
+    
+    //Pools
+    public long createPool(String name, String description, String instancesOfClass, long owner) throws ServerSideException;
+
+    public void deletePools(long[] ids) throws ServerSideException;
+
+    public RemoteObjectLight[] getPools(int limit) throws ServerSideException;
 
     // </editor-fold>
 
