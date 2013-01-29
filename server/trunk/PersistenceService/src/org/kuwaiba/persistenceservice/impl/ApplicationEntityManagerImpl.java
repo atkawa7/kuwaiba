@@ -46,6 +46,7 @@ import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.interfaces.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.persistenceservice.caching.CacheManager;
 import org.kuwaiba.persistenceservice.queries.CypherSimpleQuery;
@@ -68,7 +69,7 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
  * Application Entity Manager reference implementation
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ApplicationEntityManagerImpl implements ApplicationEntityManager, ApplicationEntityManagerRemote{
+public class ApplicationEntityManagerImpl implements ApplicationEntityManager, ApplicationEntityManagerRemote {
 
     /**
      * Index name for user nodes
@@ -91,9 +92,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
      */
     public static final String INDEX_GENERAL_VIEWS = "generalViews"; //NOI18N
     /**
+     * Name of the index for pools
+     */
+    public static final String INDEX_POOLS = "pools"; //NOI18N
+    /**
      * Property "background path" for views
      */
     public static final String PROPERTY_BACKGROUND_FILE_NAME = "backgroundPath";
+    /**
+     * Property "class name" for pools
+     */
+    public static final String PROPERTY_CLASS_NAME = "className";
     /**
      * Property "structure" for views
      */
@@ -119,13 +128,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
      */
     private Index<Node> groupIndex;
     /**
-     * query index; 
+     * Queries index; 
      */
     private Index<Node> queryIndex;
     /**
      * Index for list type items (of all classes)
      */
     private Index<Node> listTypeItemsIndex;
+    /**
+     * Pools index 
+     */
+    private Index<Node> poolsIndex;
     /**
      * Index for general views (those not related to a particular object)
      */
@@ -143,6 +156,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         this.classIndex = graphDb.index().forNodes(MetadataEntityManagerImpl.INDEX_CLASS);
         this.listTypeItemsIndex = graphDb.index().forNodes(INDEX_LIST_TYPE_ITEMS);
         this.generalViewsIndex = graphDb.index().forNodes(INDEX_GENERAL_VIEWS);
+        this.poolsIndex = graphDb.index().forNodes(INDEX_POOLS);
         this.cm = CacheManager.getInstance();
     }
 
@@ -1154,6 +1168,87 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         rootTag.end().close();
         return bas.toByteArray();
     }
+    
+    //Pools
+    public long createPool(String name, String description, String instancesOfClass, long owner) throws MetadataObjectNotFoundException, InvalidArgumentException {
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            
+            Node poolNode =  graphDb.createNode();
+            if (name != null)
+                poolNode.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, name);
+            if (description != null)
+                poolNode.setProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION, description);
+            
+            ClassMetadata classMetadata = cm.getClass(instancesOfClass);
+            if (classMetadata == null)
+                throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", instancesOfClass));
+            
+            Node user = userIndex.get(MetadataEntityManagerImpl.PROPERTY_ID, owner).getSingle();
+            if (user == null)
+                throw new InvalidArgumentException(Util.formatString("User with id %1 doesn't exist", owner), Level.SEVERE);
+            
+            poolNode.setProperty(PROPERTY_CLASS_NAME, instancesOfClass);
+            poolNode.createRelationshipTo(user, RelTypes.OWNS_POOL);
+            
+            poolsIndex.putIfAbsent(poolNode, MetadataEntityManagerImpl.PROPERTY_ID, poolNode.getId());
+            tx.success();
+            return poolNode.getId();
+
+        }catch(Exception ex){
+            Logger.getLogger("createPool: "+ex.getMessage()); //NOI18N
+            tx.failure();
+            throw new RuntimeException(ex.getMessage());
+        }finally{
+            if (tx != null)
+                tx.finish();
+        }
+    }
+
+    public void deletePools(long[] ids) throws InvalidArgumentException {
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            for (long id : ids){
+                Node poolNode = poolsIndex.get(MetadataEntityManagerImpl.PROPERTY_ID, id).getSingle();
+                if (poolNode == null)
+                    throw new InvalidArgumentException(Util.formatString("Pool with id %1 doesn't exist", id),Level.INFO);
+                poolsIndex.remove(poolNode);
+                poolNode.delete();
+            }
+            tx.success();
+
+        }catch(Exception ex){
+            Logger.getLogger("deletePool: "+ex.getMessage()); //NOI18N
+            tx.failure();
+            throw new RuntimeException(ex.getMessage());
+        }finally{
+            if (tx != null)
+                tx.finish();
+        }
+    }
+
+    public List<RemoteBusinessObjectLight> getPools(int limit) {
+        IndexHits<Node> poolNodes = poolsIndex.query(UserProfile.PROPERTY_ID, "*");
+
+        List<RemoteBusinessObjectLight> pools  = new ArrayList<RemoteBusinessObjectLight>();
+        int i = 0;
+        for (Node node : poolNodes){
+            if (limit != -1){
+                if (i >= limit)
+                     break;
+                i++;
+            }
+                
+            RemoteBusinessObjectLight rbol = new RemoteBusinessObjectLight(node.getId(), 
+                                    node.hasProperty(MetadataEntityManagerImpl.PROPERTY_NAME) ? (String)node.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME) : null,
+                                    ApplicationEntityManager.CLASS_POOL);
+            pools.add(rbol);
+        }
+            
+        return pools;
+    }
 
     /**
      * Helpers
@@ -1237,9 +1332,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     }
     
     /**
-     * Reads a ExtendedQuery looking for the classes involved in the query and returns every classes nodes
+     * Reads a ExtendedQuery looking for the classes involved in the query and returns all class nodes
      * @param query
-     * @return class metadata's nodes
+     * @return class metadata nodes
      */
     private Map<String, Node> getNodesFromQuery(ExtendedQuery query)  throws MetadataObjectNotFoundException{
 
@@ -1252,9 +1347,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         return classNodes;
     }
 
+    //Helpers
      private String readJoins(List<String> l, ExtendedQuery query){
         
-        String className  = "";
+        String className;
 
         if(query == null)
             return null;

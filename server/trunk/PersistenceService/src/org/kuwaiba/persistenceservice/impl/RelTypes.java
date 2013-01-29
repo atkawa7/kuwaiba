@@ -19,7 +19,7 @@ import org.neo4j.graphdb.RelationshipType;
 
 
 /**
- * Possible attribute types
+ * Possible relationship types
  * @author Adrian Fernando Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public enum RelTypes implements RelationshipType{
@@ -34,6 +34,7 @@ public enum RelTypes implements RelationshipType{
     RELATED_TO, //Represents the many-to-one, many-to-may relationships (like type, responsible, etc)
     BELONGS_TO_GROUP, //Used to associate a user to a group (group of user)
     OWNS_QUERY, //Used to asociate a user to a query
+    OWNS_POOL, //Used to asociate a user to a pool
     DUMMY_ROOT, //Used to associate the db root object with application dummy root
     POSSIBLE_CHILD, //Used to build the containment hierarchy
     HAS_VIEW, //Used to link an object to a particular view

@@ -38,7 +38,7 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
  * RMI wrapper for the ApplicationEntityManager interface
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface ApplicationEntityManagerRemote extends Remote{
+public interface ApplicationEntityManagerRemote extends Remote {
     public static final String REFERENCE_AEM = "aem";
     /**
      * Verifies if a pair username/password matches
@@ -376,4 +376,32 @@ public interface ApplicationEntityManagerRemote extends Remote{
      */
     public byte[] getClassHierachy(boolean showAll)
             throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    //Pools
+    /**
+     * Creates a pool
+     * @param name Pool name
+     * @param description Pool description
+     * @param instancesOfClass What kind of objects can this pool contain? 
+     * @param owner Pool owner id
+     * @return The id of the new pool
+     * @throws MetadataObjectNotFoundException If instancesOfClass is not a valid subclass of InventoryObject
+     * @throws InvalidArgumentException If the owner doesn't exist
+     */
+    public long createPool(String name, String description, String instancesOfClass, long owner) 
+            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    /**
+     * Deletes a set of pools
+     * @param ids the list of ids from the objects to be deleted
+     * @throws InvalidArgumentException If any of the pools to be deleted couldn't be found
+     */
+    public void deletePools(long[] ids) throws InvalidArgumentException, RemoteException;
+
+    /**
+     * Get the available pools
+     * @param limit Maximum number of pool records to be returned. -1 to return all
+     * @return The list of pools as RemoteBusinessObjectLight instances
+     */
+    public List<RemoteBusinessObjectLight> getPools(int limit) throws RemoteException;
 }
