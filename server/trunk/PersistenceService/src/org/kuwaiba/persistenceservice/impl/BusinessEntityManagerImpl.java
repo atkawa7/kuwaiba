@@ -120,10 +120,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 throw new ObjectNotFoundException(parentClassName, parentOid);
         }else{
             Relationship rel = graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
-            if (rel == null)
-                parentNode = Util.createDummyRoot(graphDb);
-            else
-                parentNode = rel.getEndNode();
+            parentNode = rel.getEndNode();
         }
 
         Transaction tx = null;
@@ -234,10 +231,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 throw new ObjectNotFoundException(parentClassName, parentOid);
         }else{
             Relationship rel = graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
-            if (rel == null)
-                parentNode = Util.createDummyRoot(graphDb);
-            else
-                parentNode = rel.getEndNode();
+            parentNode = rel.getEndNode();
         }
 
         Transaction tx = null;
@@ -579,10 +573,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             Node parentNode;
             if(oid == -1){
                 Relationship rel = graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
-                if (rel == null)
-                    parentNode = Util.createDummyRoot(graphDb);
-                else
-                    parentNode = rel.getEndNode();
+                parentNode = rel.getEndNode();
             }
             parentNode = getInstanceOfClass(className, oid);
             Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING);
@@ -613,10 +604,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             Node parentNode;
             if(classId == -1 && oid == -1){
                 Relationship rel = graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
-                if (rel == null)
-                    parentNode = Util.createDummyRoot(graphDb);
-                else
-                    parentNode = rel.getEndNode();
+                parentNode = rel.getEndNode();
             }
             parentNode = getInstanceOfClass(classId, oid);
             Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING);
