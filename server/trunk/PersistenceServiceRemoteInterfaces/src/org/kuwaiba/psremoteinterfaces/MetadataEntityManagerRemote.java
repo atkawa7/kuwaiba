@@ -22,6 +22,7 @@ import java.util.List;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -69,7 +70,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return the list of classes
      * @throws Exception EntityManagerNotAvailableException or something unexpected
      */
-    public List<ClassMetadataLight> getLightMetadata(Boolean includeListTypes) throws RemoteException, MetadataObjectNotFoundException;
+    public List<ClassMetadataLight> getLightMetadata(boolean includeListTypes, boolean includeIndesign) throws RemoteException, MetadataObjectNotFoundException;
 
     /**
      * Retrieves all the class metadata except for classes marked as dummy
@@ -77,7 +78,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * the subclasses of GenericObjectList
      * @return An array of classes
      */
-    public List<ClassMetadata> getMetadata(Boolean includeListTypes) throws RemoteException, MetadataObjectNotFoundException;
+    public List<ClassMetadata> getMetadata(boolean includeListTypes, boolean includeIndesign) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param className
@@ -116,7 +117,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public void addAttribute(String className, AttributeMetadata attributeDefinition) throws RemoteException, MetadataObjectNotFoundException;
+    public void addAttribute(String className, AttributeMetadata attributeDefinition) throws RemoteException, MetadataObjectNotFoundException, OperationNotPermittedException;
     /**
      * See Persistence Abstraction API documentation
      * @param classId
@@ -124,7 +125,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public void addAttribute(long classId, AttributeMetadata attributeDefinition) throws RemoteException, MetadataObjectNotFoundException;
+    public void addAttribute(long classId, AttributeMetadata attributeDefinition) throws RemoteException, MetadataObjectNotFoundException, OperationNotPermittedException;
 
     /**
      * See Persistence Abstraction API documentation
@@ -195,7 +196,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public CategoryMetadata getCategory(Integer categoryId) throws RemoteException, MetadataObjectNotFoundException;
+    public CategoryMetadata getCategory(int categoryId) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param categoryDefinition
@@ -212,35 +213,35 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @param categoryId
      * @throws RemoteException, Exception
      */
-    public void deleteCategory(Integer categoryId) throws RemoteException, MetadataObjectNotFoundException;
+    public void deleteCategory(int categoryId) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param classWhichImplementsName
      * @param interfaceToImplementName
      * @throws RemoteException, Exception
      */
-    public void addImplementor(String classWhichImplementsName,String interfaceToImplementName) throws RemoteException, MetadataObjectNotFoundException;
+    public void addImplementor(String classWhichImplementsName, String interfaceToImplementName) throws RemoteException, MetadataObjectNotFoundException;
     /**
      *
      * @param classWhichImplementsName
      * @param interfaceToBeRemovedName
      * @throws RemoteException, Exception
      */
-    public void removeImplementor(String classWhichImplementsName ,String interfaceToBeRemovedName) throws RemoteException, MetadataObjectNotFoundException;
+    public void removeImplementor(String classWhichImplementsName, String interfaceToBeRemovedName) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param classWhichImplementsId
      * @param interfaceToImplementId
      * @throws RemoteException, Exception
      */
-    public void addImplementor(Integer classWhichImplementsId, Integer interfaceToImplementId) throws RemoteException, MetadataObjectNotFoundException;
+    public void addImplementor(int classWhichImplementsId, int interfaceToImplementId) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param classWhichImplementsId
      * @param interfaceToBeRemovedId
      * @throws RemoteException, Exception
      */
-    public void removeImplementor(Integer classWhichImplementsId ,Integer interfaceToBeRemovedId) throws RemoteException, MetadataObjectNotFoundException;
+    public void removeImplementor(int classWhichImplementsId ,int interfaceToBeRemovedId) throws RemoteException, MetadataObjectNotFoundException;
     /**
      * See Persistence Abstraction API documentation
      * @param interfaceName
@@ -254,7 +255,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return The requested interface metadata
      * @throws RemoteException, Exception
      */
-    public InterfaceMetadata getInterface(Integer interfaceid) throws RemoteException, MetadataObjectNotFoundException;
+    public InterfaceMetadata getInterface(int interfaceid) throws RemoteException, MetadataObjectNotFoundException;
 
     /**
      * Gets all classes whose instances can be contained into the given parent class. This method
