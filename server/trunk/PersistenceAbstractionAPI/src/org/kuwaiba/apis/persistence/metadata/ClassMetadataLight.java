@@ -40,7 +40,6 @@ public class ClassMetadataLight implements Serializable{
      * Instances of this class can have views associated (this going to be "true" for all subclasses of ViewableObject)
      */
     private boolean viewable;
-
     /**
      * Indicates if a class can have instances by itself (All GenericXXX classes
      * and others in package entity.core are used to take advantage of OOP)
