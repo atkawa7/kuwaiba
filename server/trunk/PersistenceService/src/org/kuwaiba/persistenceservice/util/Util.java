@@ -62,8 +62,13 @@ import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.Traverser.Order;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
+import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.traversal.Evaluators;
+import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.helpers.collection.IteratorUtil;
+import org.neo4j.kernel.Traversal;
+import org.neo4j.shell.Output;
 
 /**
  * Utility class containing misc methods to perform common tasks
@@ -248,35 +253,6 @@ public class Util {
     }
 
     /**
-     * Helper to create a dummy root. It assumes the transaction is handled by the caller
-     * @return The new node
-     * @throws DatabaseException if the reference node does not exist
-     */
-    public static Node createDummyRoot(GraphDatabaseService graphDb) throws DatabaseException{
-        Transaction tx = null;
-        try{
-            tx = graphDb.beginTx();
-            Node dummyRootNode = graphDb.createNode();
-            dummyRootNode.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, MetadataEntityManagerImpl.DUMMYROOT);
-            dummyRootNode.setProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME, MetadataEntityManagerImpl.DUMMYROOT);
-            dummyRootNode.setProperty(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-
-            if (graphDb.getReferenceNode() == null) {
-                throw new DatabaseException("Reference node does not exists. The database seems to be corrupted");
-            }
-
-            graphDb.getReferenceNode().createRelationshipTo(dummyRootNode, RelTypes.DUMMY_ROOT);
-
-            tx.success();
-
-            return dummyRootNode;
-            
-        }finally {
-            tx.finish();
-        }
-    }
-
-    /**
      * Converts a String value to an object value based on a give mapping. This method
      * does not convert binary or relationship-like attributes
      * @param value Value as String
@@ -292,14 +268,10 @@ public class Util {
                 return AttributeMetadata.MAPPING_PRIMITIVE;
             else if(type.equals("Date"))
                 return AttributeMetadata.MAPPING_DATE;
-
             else
                 return AttributeMetadata.MAPPING_MANYTOONE;
-             
 //            throw new InvalidArgumentException("Can not retrieve the correct value for ("+
 //                value+" "+type+"). Please check your mappings", Level.WARNING);
-
-
         }catch (Exception e){
             throw new InvalidArgumentException("Can not retrieve the correct value for ("+
                             value+" "+type+"). Please check your mappings", Level.WARNING);
@@ -784,8 +756,101 @@ public class Util {
      */
     public static String getClassName(Node instance){
         Iterable<Relationship> aClass = instance.getRelationships(RelTypes.INSTANCE_OF, Direction.OUTGOING);
-        if (!aClass.iterator().hasNext())
+        if (!aClass.iterator().hasNext()){
             return null;
+        }
         return (String)aClass.iterator().next().getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME);
+    }
+    
+    public static boolean isAttributeName(Node node, AttributeMetadata attribute){
+        ClassMetadata classMetadata = createClassMetadataFromNode(node);
+        List<AttributeMetadata> attributes = classMetadata.getAttributes();
+        for (AttributeMetadata attributeMetadata : attributes){
+            if(attributeMetadata.getName().equals(attribute.getName())){
+                return true;
+            }
+        }
+       return false;
+    }
+    
+    public static void addAttribute(Node node, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException{
+        final TraversalDescription TRAVERSAL = Traversal.description().
+                    breadthFirst().
+                    relationships(RelTypes.EXTENDS, Direction.INCOMING).
+                    relationships(RelTypes.INSTANCE_OF, Direction.INCOMING).
+                    evaluator(Evaluators.excludeStartPosition());
+        
+        for(Path p : TRAVERSAL.traverse(node)){
+            if(!p.endNode().hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)){
+                for (Relationship attrRel: p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING)){
+                    if(attrRel.getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals(newAttributeDefinition.getDisplayName())){
+                        throw new MetadataObjectNotFoundException(Util.formatString(
+                        "Can not create the attribute, an attribute with the name %1s already exist", newAttributeDefinition.getName()));
+                    }   
+                    else{
+                        
+                    }
+                        
+                }
+            }
+        }//end for
+    }
+    
+    public static void changeAttributeTypes(Node node, AttributeMetadata oldAttributeDefinition, AttributeMetadata newAttributeDefinition){
+        final TraversalDescription UPDATE_TRAVERSAL = Traversal.description().
+                    breadthFirst().
+                    relationships(RelTypes.EXTENDS, Direction.INCOMING).
+                    relationships(RelTypes.INSTANCE_OF, Direction.INCOMING).
+                    evaluator(Evaluators.excludeStartPosition());
+                
+        for(Path p : UPDATE_TRAVERSAL.traverse(node)){
+                if(p.endNode().hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)){
+                    p.endNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME);
+                    if(newAttributeDefinition.getType().equals("String")){
+                        p.endNode().getProperty(oldAttributeDefinition.getName());
+                    }
+                }
+                else{
+                    for (Relationship attrRel: p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING)){
+                        if(attrRel.getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals(oldAttributeDefinition.getName())){
+                            attrRel.delete();
+                            attrRel.getEndNode().delete();
+                            
+                        }
+                    }
+                }
+        }
+    }
+    
+    public static void deleteAttribute(Node node, String attributeName){
+        Transaction tx = null;
+        final TraversalDescription TRAVERSAL = Traversal.description().
+                    breadthFirst().
+                    relationships(RelTypes.EXTENDS, Direction.INCOMING).
+                    relationships(RelTypes.INSTANCE_OF, Direction.INCOMING).
+                    evaluator(Evaluators.excludeStartPosition());
+        try{
+            tx = node.getGraphDatabase().beginTx();
+            for(Path p : TRAVERSAL.traverse(node)){
+                if(p.endNode().hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)){
+                    p.endNode().getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).delete();
+                    p.endNode().delete();
+                }
+                else{
+                    for (Relationship attrRel: p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING)){
+                        if(attrRel.getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals(attributeName)){
+                            attrRel.delete();
+                            attrRel.getEndNode().delete();
+                        }        
+                    }
+                }
+            }//end for
+            tx.success();
+        }catch(Exception ex){
+            throw new RuntimeException(ex.getMessage());
+        } finally {
+            if (tx != null)
+                tx.finish();
+        }
     }
 }
