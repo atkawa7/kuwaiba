@@ -20,6 +20,7 @@ import java.util.List;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -72,7 +73,7 @@ public interface MetadataEntityManager {
      * @return the list of classes
      * @throws Exception EntityManagerNotAvailableException or something unexpected
      */
-    public List<ClassMetadataLight> getLightMetadata(Boolean includeListTypes) throws Exception;
+    public List<ClassMetadataLight> getLightMetadata(boolean includeListTypes, boolean includeIndesign) throws Exception;
 
     /**
      * Retrieves all the class metadata except for classes marked as dummy
@@ -80,7 +81,7 @@ public interface MetadataEntityManager {
      * the subclasses of GenericObjectList
      * @return An array of classes
      */
-    public List<ClassMetadata> getMetadata(Boolean includeListTypes) throws Exception;
+    public List<ClassMetadata> getMetadata(boolean includeListTypes, boolean includeIndesign) throws Exception;
 
     /**
      * Gets a classmetadata, its attributes and Category
@@ -122,7 +123,7 @@ public interface MetadataEntityManager {
      * @param attributeDefinition
      * @throws ClassNotFoundException if there is no a class with such className
      */
-    public void addAttribute(String className, AttributeMetadata attributeDefinition) throws Exception;
+    public void addAttribute(String className, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, OperationNotPermittedException;
 
     /**
      * Adds an attribute to a class
@@ -130,7 +131,7 @@ public interface MetadataEntityManager {
      * @param attributeDefinition
      * @throws ClassNotFoundException if there is no a class with such classId
      */
-    public void addAttribute(long classId, AttributeMetadata attributeDefinition) throws Exception;
+    public void addAttribute(long classId, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, OperationNotPermittedException;
 
     /**
      * Gets an attribute belonging to a class
@@ -193,7 +194,7 @@ public interface MetadataEntityManager {
      * @param categoryId
      * @return CategoryMetadata
      */
-    public CategoryMetadata getCategory(Integer categoryId) throws Exception;
+    public CategoryMetadata getCategory(int categoryId) throws Exception;
 
     /**
      * Changes a category definition
@@ -207,13 +208,13 @@ public interface MetadataEntityManager {
      * @param categoryDefinition
      */
     public void deleteCategory(String categoryName) throws Exception;
-    public void deleteCategory(Integer categoryId) throws Exception;
+    public void deleteCategory(int categoryId) throws Exception;
     public void addImplementor(String classWhichImplementsName,String interfaceToImplementName) throws Exception;
     public void removeImplementor(String classWhichImplementsName ,String interfaceToBeRemovedName) throws Exception;
-    public void addImplementor(Integer classWhichImplementsId, Integer interfaceToImplementId) throws Exception;
-    public void removeImplementor(Integer classWhichImplementsId ,Integer interfaceToBeRemovedId) throws Exception;
+    public void addImplementor(int classWhichImplementsId, int interfaceToImplementId) throws Exception;
+    public void removeImplementor(int classWhichImplementsId ,int interfaceToBeRemovedId) throws Exception;
     public InterfaceMetadata getInterface(String interfaceName) throws Exception;
-    public InterfaceMetadata getInterface(Integer interfaceid) throws Exception;
+    public InterfaceMetadata getInterface(int interfaceid) throws Exception;
 
     /**
      * Gets all classes whose instances can be contained into the given parent class. This method
