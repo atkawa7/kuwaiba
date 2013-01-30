@@ -67,6 +67,10 @@ public class ClassMetadata extends ClassMetadataLight{
      */
     private String description;
     /**
+     * Classmetada's state default false operational or in design true
+     */
+    private boolean inDesing;
+    /**
      *  ClassMetada's creationDate
      */
     private long creationDate;
@@ -75,8 +79,7 @@ public class ClassMetadata extends ClassMetadataLight{
         attributes = new ArrayList<AttributeMetadata>();
         possibleChildren = new ArrayList<String>();
     }
-
-
+    
    // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public int getColor() {
         return color;
@@ -157,6 +160,14 @@ public class ClassMetadata extends ClassMetadataLight{
     public void setPossibleChildren(List<String> possibleChildren) {
         this.possibleChildren = possibleChildren;
     }
+
+    public boolean isInDesing() {
+        return inDesing;
+    }
+
+    public void setInDesing(boolean inDesing) {
+        this.inDesing = inDesing;
+    }    
     // </editor-fold>
 
     public boolean implementsInterface(String interfaceName){
