@@ -955,20 +955,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     private Node getInstanceOfClass(String className, long oid) throws MetadataObjectNotFoundException, ObjectNotFoundException{
 
         //if any of the parameters is null, return the dummy root
-        if (className == null)
+        if (className == null){
             return graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.BOTH).getEndNode();
-
-
+        }
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
-
-        if (classNode == null)
+        if (classNode == null){
             throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
-
+        }
         Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
         while (instances.iterator().hasNext()){
             Node otherSide = instances.iterator().next().getStartNode();
-            if (otherSide.getId() == oid)
+            if (otherSide.getId() == oid){
                 return otherSide;
+            }
         }
         throw new ObjectNotFoundException(className, oid);
     }
@@ -998,8 +997,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             else
                 queryNode.setProperty(CompactQuery.PROPERTY_IS_PUBLIC, true);
 
-
-            queryIndex.putIfAbsent(queryNode, CompactQuery.PROPERTY_QUERYNAME, queryName);
             queryIndex.putIfAbsent(queryNode, CompactQuery.PROPERTY_ID, queryNode.getId());
             tx.success();
             return queryNode.getId();
@@ -1088,7 +1085,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     public List<CompactQuery> getQueries(boolean showPublic) 
             throws MetadataObjectNotFoundException, InvalidArgumentException{
         List<CompactQuery> queryList = new ArrayList<CompactQuery>();
-        IndexHits<Node> queries = queryIndex.query(CompactQuery.PROPERTY_QUERYNAME, "*");
+        IndexHits<Node> queries = queryIndex.query(CompactQuery.PROPERTY_ID, "*");
         for (Node queryNode : queries)
         {
             CompactQuery cq =  new CompactQuery();
