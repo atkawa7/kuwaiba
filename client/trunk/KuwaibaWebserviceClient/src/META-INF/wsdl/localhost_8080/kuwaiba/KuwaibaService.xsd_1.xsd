@@ -52,6 +52,10 @@
 
 <xs:element name="createPhysicalConnectionResponse" type="tns:createPhysicalConnectionResponse"/>
 
+<xs:element name="createPool" type="tns:createPool"/>
+
+<xs:element name="createPoolResponse" type="tns:createPoolResponse"/>
+
 <xs:element name="createQuery" type="tns:createQuery"/>
 
 <xs:element name="createQueryResponse" type="tns:createQueryResponse"/>
@@ -72,6 +76,10 @@
 
 <xs:element name="deleteClassResponse" type="tns:deleteClassResponse"/>
 
+<xs:element name="deleteGeneralView" type="tns:deleteGeneralView"/>
+
+<xs:element name="deleteGeneralViewResponse" type="tns:deleteGeneralViewResponse"/>
+
 <xs:element name="deleteGroups" type="tns:deleteGroups"/>
 
 <xs:element name="deleteGroupsResponse" type="tns:deleteGroupsResponse"/>
@@ -87,6 +95,10 @@
 <xs:element name="deletePhysicalConnection" type="tns:deletePhysicalConnection"/>
 
 <xs:element name="deletePhysicalConnectionResponse" type="tns:deletePhysicalConnectionResponse"/>
+
+<xs:element name="deletePools" type="tns:deletePools"/>
+
+<xs:element name="deletePoolsResponse" type="tns:deletePoolsResponse"/>
 
 <xs:element name="deleteQuery" type="tns:deleteQuery"/>
 
@@ -171,6 +183,10 @@
 <xs:element name="getObjectRelatedViews" type="tns:getObjectRelatedViews"/>
 
 <xs:element name="getObjectRelatedViewsResponse" type="tns:getObjectRelatedViewsResponse"/>
+
+<xs:element name="getPools" type="tns:getPools"/>
+
+<xs:element name="getPoolsResponse" type="tns:getPoolsResponse"/>
 
 <xs:element name="getPossibleChildren" type="tns:getPossibleChildren"/>
 
@@ -692,6 +708,17 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="deleteGeneralView">
+<xs:sequence>
+<xs:element name="oids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteGeneralViewResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="getChildrenOfClassLight">
 <xs:sequence>
 <xs:element name="parentOid" type="xs:long"/>
@@ -935,17 +962,16 @@
 <xs:sequence/>
 </xs:complexType>
 
-<xs:complexType name="createGroup">
+<xs:complexType name="createPool">
 <xs:sequence>
-<xs:element name="groupName" type="xs:string" minOccurs="0"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
-<xs:element name="privileges" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="users" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="instancesOfClass" type="xs:string" minOccurs="0"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="createGroupResponse">
+<xs:complexType name="createPoolResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
 </xs:sequence>
@@ -964,6 +990,22 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="createGroup">
+<xs:sequence>
+<xs:element name="groupName" type="xs:string" minOccurs="0"/>
+<xs:element name="description" type="xs:string" minOccurs="0"/>
+<xs:element name="privileges" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="users" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createGroupResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="addPossibleChildrenByClassName">
 <xs:sequence>
 <xs:element name="parentClassName" type="xs:string" minOccurs="0"/>
@@ -973,6 +1015,17 @@
 </xs:complexType>
 
 <xs:complexType name="addPossibleChildrenByClassNameResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="deletePools">
+<xs:sequence>
+<xs:element name="ids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deletePoolsResponse">
 <xs:sequence/>
 </xs:complexType>
 
@@ -1124,6 +1177,19 @@
 
 <xs:complexType name="setClassAttributePropertiesByIdResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getPools">
+<xs:sequence>
+<xs:element name="limit" type="xs:int"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getPoolsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getPossibleChildrenNoRecursive">
