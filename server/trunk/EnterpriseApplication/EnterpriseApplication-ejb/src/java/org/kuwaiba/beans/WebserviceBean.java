@@ -211,7 +211,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
             List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
-            List<ClassMetadataLight> classLightMetadata = mem.getLightMetadata(includeListTypes);
+            List<ClassMetadataLight> classLightMetadata = mem.getLightMetadata(includeListTypes, false);
 
             for (ClassMetadataLight classMetadataLight : classLightMetadata){
                 List<Validator> validators = new ArrayList<Validator>();
@@ -236,7 +236,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
             List<ClassInfo> cml = new ArrayList<ClassInfo>();
-            List<ClassMetadata> classMetadataList = mem.getMetadata(includeListTypes);
+            List<ClassMetadata> classMetadataList = mem.getMetadata(includeListTypes, false);
 
             for (ClassMetadata classMetadata : classMetadataList){
                 List<Validator> validators = new ArrayList<Validator>();
