@@ -24,6 +24,7 @@ import org.kuwaiba.persistence.factory.PersistenceLayerFactory;
 import org.kuwaiba.persistenceservice.impl.ApplicationEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.BusinessEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
+import org.kuwaiba.persistenceservice.integrity.DataIntegrityService;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
@@ -49,6 +50,10 @@ public class Main {
             cm.openConnection();
             System.out.println("Connection established");
             cm.printConnectionDetails();
+            
+            DataIntegrityService dis = new DataIntegrityService(cm);
+            dis.createDummyroot();
+            
             MetadataEntityManagerRemote meri = new MetadataEntityManagerImpl(cm);
             MetadataEntityManagerRemote memStub = (MetadataEntityManagerRemote)UnicastRemoteObject.exportObject(meri,0);
 
@@ -57,8 +62,6 @@ public class Main {
 
             ApplicationEntityManagerRemote aemri = new ApplicationEntityManagerImpl(cm);
             ApplicationEntityManagerRemote aemStub = (ApplicationEntityManagerRemote)UnicastRemoteObject.exportObject(aemri,0);
-
-            
 
             Registry registry = LocateRegistry.getRegistry();
             System.out.println("Registry obtained...");
