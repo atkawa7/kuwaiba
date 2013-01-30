@@ -27,12 +27,12 @@ import java.util.Formatter;
 import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
-import org.inventory.core.services.api.metadata.LocalClassMetadata;
-import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.LocalObjectListItem;
+import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
+import org.inventory.core.services.api.metadata.LocalClassMetadata;
+import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.Constants;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
@@ -98,14 +98,14 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         showObjectIdAction = new ShowObjectIdAction(this);
     }
     
-    public ObjectNode(LocalObjectLight _lol){
-        super(new ObjectChildren(), Lookups.singleton(_lol));
-        this.object = _lol;
+    public ObjectNode(LocalObjectLight lol){
+        super(new ObjectChildren(), Lookups.singleton(lol));
+        this.object = lol;
         this.object.addPropertyChangeListener(this);
         
         com = CommunicationsStub.getInstance();
 
-        icon = (com.getMetaForClass(_lol.getClassName(),false)).getSmallIcon();
+        icon = (com.getMetaForClass(lol.getClassName(),false)).getSmallIcon();
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
 
         createAction = new CreateBusinessObjectAction(this);
@@ -142,7 +142,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
             return sheet;
         }
 
-        LocalObject lo = null;
+        LocalObject lo;
         if (object instanceof LocalObject)
             lo = (LocalObject)object;
         else
@@ -262,7 +262,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                     }
                 }
             }
-            children = toBeAdded;
 
             for (Node deadNode : toBeDeleted)
                 ((ObjectChildren)getChildren()).remove(new Node[]{deadNode});

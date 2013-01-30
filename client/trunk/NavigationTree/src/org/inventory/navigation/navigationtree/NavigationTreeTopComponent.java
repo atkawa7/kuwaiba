@@ -15,7 +15,6 @@
  */
 package org.inventory.navigation.navigationtree;
 
-import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -28,15 +27,15 @@ import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
-import org.openide.util.NbBundle;
-import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
+import org.openide.util.NbBundle;
+import org.openide.windows.TopComponent;
+import org.openide.windows.WindowManager;
 
 /**
  * Navigation Tree Top Component
@@ -87,7 +86,7 @@ public final class NavigationTreeTopComponent extends TopComponent
         associateLookup(ExplorerUtils.createLookup(em, map));
         treeView = new BeanTreeView();
         treeView.setWheelScrollingEnabled(true);
-        add(treeView,BorderLayout.CENTER);
+        add(treeView);
     }
 
     /** This method is called from within the constructor to

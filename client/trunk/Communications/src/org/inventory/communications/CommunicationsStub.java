@@ -29,20 +29,19 @@ import org.inventory.communications.core.LocalClassMetadataLightImpl;
 import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.communications.core.LocalObjectLightImpl;
 import org.inventory.communications.core.LocalObjectListItemImpl;
-import org.inventory.communications.core.queries.LocalResultRecordImpl;
-import org.inventory.communications.core.queries.LocalTransientQueryImpl;
-import org.inventory.communications.core.queries.LocalQueryImpl;
-import org.inventory.communications.core.queries.LocalQueryLightImpl;
 import org.inventory.communications.core.LocalUserGroupObjectImpl;
 import org.inventory.communications.core.LocalUserObjectImpl;
+import org.inventory.communications.core.queries.LocalQueryImpl;
+import org.inventory.communications.core.queries.LocalQueryLightImpl;
+import org.inventory.communications.core.queries.LocalResultRecordImpl;
+import org.inventory.communications.core.queries.LocalTransientQueryImpl;
 import org.inventory.communications.core.views.LocalObjectViewImpl;
 import org.inventory.communications.core.views.LocalObjectViewLightImpl;
-import org.inventory.core.services.factories.ObjectFactory;
-import org.inventory.core.services.api.metadata.LocalClassMetadata;
-import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.LocalObject;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.LocalObjectListItem;
+import org.inventory.core.services.api.metadata.LocalClassMetadata;
+import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.queries.LocalQuery;
 import org.inventory.core.services.api.queries.LocalQueryLight;
 import org.inventory.core.services.api.queries.LocalResultRecord;
@@ -51,6 +50,7 @@ import org.inventory.core.services.api.session.LocalUserGroupObject;
 import org.inventory.core.services.api.session.LocalUserObject;
 import org.inventory.core.services.api.visual.LocalObjectView;
 import org.inventory.core.services.api.visual.LocalObjectViewLight;
+import org.inventory.core.services.factories.ObjectFactory;
 import org.inventory.objectcache.Cache;
 import org.kuwaiba.wsclient.ClassInfo;
 import org.kuwaiba.wsclient.ClassInfoLight;
@@ -151,8 +151,8 @@ public class CommunicationsStub {
     }
 
     /**
-     * Retrieves a given object's children
-     * @return an array of local objects representing the object's children
+     * Retrieves an object children providing the object class id
+     * @return an array of local objects representing the object's children. Null in a problem occurs during the execution
      */
     public List<LocalObjectLight> getObjectChildren(long oid, long objectClassId){
         try{
@@ -163,6 +163,28 @@ public class CommunicationsStub {
                 res.add(new LocalObjectLightImpl(rol));
 
             return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Retrieves an object children providing the object class name
+     * @param oid object id
+     * @param className object class name
+     * @return an array of local objects representing the object's children. Null in a problem occurs during the execution
+     */
+    public List<LocalObjectLight> getObjectChildren(long oid, String className) {
+        try{
+//            List <RemoteObjectLight> children = port.getObjectChildren(oid, className, 0,this.session.getSessionId());
+//            List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
+//
+//            for (RemoteObjectLight rol : children)
+//                res.add(new LocalObjectLightImpl(rol));
+//
+//            return res;
+            return null;
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
@@ -1224,5 +1246,55 @@ public class CommunicationsStub {
 //            return false;
 //        }
         return false;
+    }
+
+    /**
+     * Pools
+     */
+    
+    /**
+     * Creates a pool
+     * @param name Pool name
+     * @param description Pool description
+     * @param className What kind of objects can this pool contain?
+     * @return The newly created pool
+     */
+    public LocalObjectLight createPool(String name, String description, String className){
+        try{
+            long objectId  = port.createPool(name, description, className,session.getSessionId());
+            return new LocalObjectLightImpl(objectId, name, "Pool");
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    public boolean deletePool(long id){
+        try{
+            port.deletePools(Arrays.asList(new Long(id)), this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Returns the list of pools available
+     * @return The list of pools
+     */
+    public List<LocalObjectLight> getPools() {
+        try{
+            List <RemoteObjectLight> children = port.getPools(-1,this.session.getSessionId());
+            List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
+
+            for (RemoteObjectLight rol : children)
+                res.add(new LocalObjectLightImpl(rol));
+
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
     }
 }

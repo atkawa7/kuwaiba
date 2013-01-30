@@ -31,8 +31,8 @@ public class RootObjectNode extends AbstractNode{
 
    static final String DEFAULT_ICON_PATH = "org/inventory/navigation/applicationnodes/res/root.png";
 
-    public RootObjectNode(Children _children) {
-        super(_children,Lookups.singleton(LocalStuffFactory.createLocalObjectLight())); //Dummy object
+    public RootObjectNode(Children children) {
+        super(children,Lookups.singleton(LocalStuffFactory.createLocalObjectLight())); //Dummy object
         setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ROOT"));
         setIconBaseWithExtension(DEFAULT_ICON_PATH);
     }

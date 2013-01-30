@@ -17,11 +17,13 @@
 package org.inventory.core.services.utils;
 
 import java.util.HashMap;
+import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 /**
- * This is a general purpose component used to display complex dialogs. Provides capabilities to retrieve the fields
+ * This is a general purpose component used to display complex dialogs. Provides capabilities to retrieve the fields. It
+ * uses a BoxLayout.PAGE_AXIS layout, so the components should be provided in pair label-component
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class JComplexDialogPanel extends JPanel{
@@ -30,6 +32,7 @@ public class JComplexDialogPanel extends JPanel{
 
     public JComplexDialogPanel(JComponent ... components) {
         this.components = new HashMap<String, JComponent>();
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         int i = 0;
         for (JComponent component : components){
             this.components.put(component.getName() == null ? String.valueOf(i) : component.getName(), component);

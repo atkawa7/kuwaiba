@@ -87,6 +87,7 @@ public class GISViewService {
                 fos.write(currentView.getStructure());
                 fos.close();
             }catch(Exception e){}*/
+
             scene.activateMap();
             try {
                 //Here is where we use Woodstox as StAX provider

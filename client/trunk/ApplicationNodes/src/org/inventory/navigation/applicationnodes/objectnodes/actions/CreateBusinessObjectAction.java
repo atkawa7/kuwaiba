@@ -15,16 +15,16 @@
  */
 package org.inventory.navigation.applicationnodes.objectnodes.actions;
 
-import org.inventory.core.services.utils.MenuScroller;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;

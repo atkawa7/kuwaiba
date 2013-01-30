@@ -30,6 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.SharedInformation;
 import org.inventory.core.services.api.LocalObjectLight;
@@ -287,25 +288,42 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
     /**
      * Translate a point (Cartesian coordinates) within the map viewport into a GeoPosition object
      * @param point Point to be translated
+     * @param zoom the zoom to be used to perform the calculation (note that this might NOT be the current map zoom)
+     * @return the resulting coordinates as a pair (latitude, longitude)
+     */
+    public double[] pixelToCoordinate(Point point, int zoom){
+        JXMapViewer map = ((MapPanel)mapWidget.getComponent()).getMainMap();
+        int currentZoom = map.getZoom();
+        map.setZoom(zoom);
+        Rectangle realViewport = map.getViewportBounds();
+        GeoPosition coordinates = map.getTileFactory().pixelToGeo(new Point(point.x + realViewport.x, point.y + realViewport.y), map.getZoom());
+        map.setZoom(currentZoom);
+        return new double[]{coordinates.getLatitude(), coordinates.getLongitude()};
+    }
+
+    /**
+     * Translate a point (Cartesian coordinates) within the map viewport into a GeoPosition object using the current zoom level
+     * @param point point to be translated
      * @return the resulting coordinates as a pair (latitude, longitude)
      */
     public double[] pixelToCoordinate(Point point){
-        JXMapViewer map = ((MapPanel)mapWidget.getComponent()).getMainMap();
-        Rectangle realViewport = map.getViewportBounds();
-        GeoPosition coordinates = map.getTileFactory().pixelToGeo(new Point(point.x + realViewport.x, point.y + realViewport.y), map.getZoom());
-        return new double[]{coordinates.getLatitude(), coordinates.getLongitude()};
+        return pixelToCoordinate(point, ((MapPanel)mapWidget.getComponent()).getMainMap().getZoom());
     }
 
     /**
      * Translate a point (Polar coordinates) into a Point object (Cartesian coordinates)  within the map viewport
      * @param latitude latitude
      * @param longitude longitude
+     * @param zoom the zoom to be used to perform the calculation (note that this might NOT be the current map zoom)
      * @return the resulting Point object
      */
     public Point coordinateToPixel(double latitude, double longitude, int zoom){
         JXMapViewer map = ((MapPanel)mapWidget.getComponent()).getMainMap();
+        int currentZoom = map.getZoom();
+        map.setZoom(zoom);
         Rectangle realViewport = map.getViewportBounds();
         Point2D point2D = map.getTileFactory().geoToPixel(new GeoPosition(latitude, longitude), zoom);
+        map.setZoom(currentZoom);
         return new Point((int)point2D.getX() - realViewport.x, (int)point2D.getY() - realViewport.y);
     }
 
@@ -320,8 +338,27 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
     public void zoomIn() {
         MapPanel mapComponent = (MapPanel)mapWidget.getComponent();
         int currentZoom = mapComponent.getMainMap().getZoom();
-        if (currentZoom > mapComponent.getMinZoom())
+        if (currentZoom > mapComponent.getMinZoom()){
+
+            for (Widget node : nodesLayer.getChildren()){
+                double[] geoControlPoint = pixelToCoordinate(node.getPreferredLocation(), mapComponent.getMainMap().getZoom());
+                Point newLocation = coordinateToPixel(geoControlPoint[0], geoControlPoint[1], mapComponent.getMainMap().getZoom() - 1);
+                node.setPreferredLocation(newLocation);
+            }
+
+            for (Widget edge : connectionsLayer.getChildren()){
+                List<Point> newControlPoints = new ArrayList<Point>();
+                for (Point oldControlPoint : ((GeoPositionedConnectionWidget)edge).getControlPoints()){
+                    double[] geoControlPoint = pixelToCoordinate(oldControlPoint, mapComponent.getMainMap().getZoom());
+                    newControlPoints.add(coordinateToPixel(geoControlPoint[1], geoControlPoint[0], mapComponent.getMainMap().getZoom() - 1));
+                }
+                if (!newControlPoints.isEmpty())
+                    ((GeoPositionedConnectionWidget)edge).setControlPoints(newControlPoints, false);
+            }
+
             mapComponent.getMainMap().setZoom(currentZoom - 1);
+        }else
+            JOptionPane.showMessageDialog(null, "The maximum zoom level has been reached");
     }
 
     /**
@@ -330,8 +367,27 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
     public void zoomOut() {
         MapPanel mapComponent = (MapPanel)mapWidget.getComponent();
         int currentZoom = mapComponent.getMainMap().getZoom();
-        if (currentZoom < mapComponent.getMaxZoom())
+        if (currentZoom < mapComponent.getMaxZoom()){
+
+            for (Widget node : nodesLayer.getChildren()){
+                double[] geoControlPoint = pixelToCoordinate(node.getPreferredLocation(), mapComponent.getMainMap().getZoom());
+                Point newLocation = coordinateToPixel(geoControlPoint[0], geoControlPoint[1], mapComponent.getMainMap().getZoom() + 1);
+                node.setPreferredLocation(newLocation);
+            }
+            for (Widget edge : connectionsLayer.getChildren()){
+                List<Point> newControlPoints = new ArrayList<Point>();
+                for (Point oldControlPoint : ((GeoPositionedConnectionWidget)edge).getControlPoints()){
+                    double[] geoControlPoint = pixelToCoordinate(oldControlPoint);
+                    newControlPoints.add(coordinateToPixel(geoControlPoint[1], geoControlPoint[0], mapComponent.getMainMap().getZoom() + 1));
+                }
+                if (!newControlPoints.isEmpty())
+                    ((GeoPositionedConnectionWidget)edge).setControlPoints(newControlPoints, false);
+            }
+
             mapComponent.getMainMap().setZoom(currentZoom + 1);
+        }
+        else
+            JOptionPane.showMessageDialog(null, "The minimum zoom level has been reached");
     }
 
     /**
@@ -348,21 +404,24 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
             removeEdge(edge);
 
         labelsLayer.removeChildren();
-        mapWidget.setVisible(false);
+        //mapWidget.setVisible(false);
         polygonsLayer.removeChildren();
         ((MapPanel)mapWidget.getComponent()).getMainMap().setZoom(MapPanel.DEFAULT_ZOOM_LEVEL);
         ((MapPanel)mapWidget.getComponent()).getMainMap().setCenterPosition(DEFAULT_CENTER_POSITION);
     }
 
     public byte[] getAsXML() {
+
+        MapPanel mapComponent = ((MapPanel)mapWidget.getComponent());
+
         ByteArrayOutputStream bas = new ByteArrayOutputStream();
         WAX xmlWriter = new WAX(bas);
         StartTagWAX mainTag = xmlWriter.start("view");
         mainTag.attr("version", SharedInformation.VIEW_FORMAT_VERSION); //NOI18N
         //TODO: Get the class name from some else
         mainTag.start("class").text("GISView").end();
-        mainTag.start("zoom").text(String.valueOf(((MapPanel)mapWidget.getComponent()).getMainMap().getZoom())).end();
-        mainTag.start("center").attr("x", ((MapPanel)mapWidget.getComponent()).getMainMap().getCenterPosition().getLongitude()).attr("y", ((MapPanel)mapWidget.getComponent()).getMainMap().getCenterPosition().getLatitude()).end();
+        mainTag.start("zoom").text(String.valueOf(mapComponent.getMainMap().getZoom())).end();
+        mainTag.start("center").attr("x", mapComponent.getMainMap().getCenterPosition().getLongitude()).attr("y", mapComponent.getMainMap().getCenterPosition().getLatitude()).end();
         StartTagWAX nodesTag = mainTag.start("nodes");
         for (Widget nodeWidget : nodesLayer.getChildren())
             nodesTag.start("node").attr("x", ((GeoPositionedNodeWidget)nodeWidget).getLongitude()).
@@ -378,8 +437,11 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
             edgeTag.attr("class", ((GeoPositionedConnectionWidget)edgeWidget).getObject().getClassName());
             edgeTag.attr("aside", ((GeoPositionedNodeWidget)((ObjectConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
             edgeTag.attr("bside", ((GeoPositionedNodeWidget)((ObjectConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
-            for (double[] point : ((GeoPositionedConnectionWidget)edgeWidget).getGeoPositionedControlPoints())
-                edgeTag.start("controlpoint").attr("x", point[1]).attr("y", point[0]).end();
+            //for (double[] point : ((GeoPositionedConnectionWidget)edgeWidget).getGeoPositionedControlPoints())
+            for (Point point : ((ConnectionWidget)edgeWidget).getControlPoints()){
+                double[] geoPosition = pixelToCoordinate(point, mapComponent.getMainMap().getZoom());
+                edgeTag.start("controlpoint").attr("x", geoPosition[1]).attr("y", geoPosition[0]).end();
+            }
             edgeTag.end();
         }
         edgesTag.end();
@@ -387,7 +449,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
 
         /*Comment this out for debugging purposes
         try{
-            FileOutputStream fos = new FileOutputStream("/home/zim/before-to-save_"+Calendar.getInstance().getTimeInMillis()+".xml");
+            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/before-to-save_"+Calendar.getInstance().getTimeInMillis()+".xml");
             fos.write(bas.toByteArray());
             fos.close();
         }catch(Exception e){}*/
