@@ -202,7 +202,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
         Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,userName).getSingle();
         if (storedUser != null)
-            throw new InvalidArgumentException(Util.formatString("The username %1s is already in use", userName), Level.WARNING);
+            throw new InvalidArgumentException(String.format("The username %1s is already in use", userName), Level.WARNING);
 
         Transaction tx = graphDb.beginTx();
         
@@ -236,7 +236,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 else{
                     tx.failure();
                     tx.finish();
-                    throw new InvalidArgumentException(Util.formatString("Group with id %1s can't be found",groupId), Level.OFF);
+                    throw new InvalidArgumentException(String.format("Group with id %1s can't be found",groupId), Level.OFF);
                 }
             }
         }
@@ -263,7 +263,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
             Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,userName).getSingle();
             if (storedUser != null)
-                throw new InvalidArgumentException(Util.formatString("The username %1s is already in use", userName), Level.WARNING);
+                throw new InvalidArgumentException(String.format("The username %1s is already in use", userName), Level.WARNING);
         }
 
         if(password != null){
@@ -273,7 +273,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
         Node userNode = userIndex.get(UserProfile.PROPERTY_ID, oid).getSingle();
         if(userNode == null)
-            throw new ApplicationObjectNotFoundException(Util.formatString("Can not find a user with id %1s",oid));
+            throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %1s",oid));
 
         Transaction tx =  graphDb.beginTx();
         if (userName != null){
@@ -319,7 +319,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
             Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,newUserName).getSingle();
             if (storedUser != null)
-                throw new InvalidArgumentException(Util.formatString("The username %1s is already in use", newUserName), Level.WARNING);
+                throw new InvalidArgumentException(String.format("The username %1s is already in use", newUserName), Level.WARNING);
         }
 
         if(password != null){
@@ -329,7 +329,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
         Node userNode = userIndex.get(UserProfile.PROPERTY_USERNAME, oldUserName).getSingle();
         if(userNode == null)
-            throw new ApplicationObjectNotFoundException(Util.formatString("Can not find a user with name %1s",oldUserName));
+            throw new ApplicationObjectNotFoundException(String.format("Can not find a user with name %1s",oldUserName));
 
         Transaction tx =  graphDb.beginTx();
         if (newUserName != null){
@@ -372,7 +372,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
         Node storedGroup = groupIndex.get(GroupProfile.PROPERTY_GROUPNAME,groupName).getSingle();
         if (storedGroup != null)
-            throw new InvalidArgumentException(Util.formatString("The group name %1s is already in use", groupName), Level.WARNING);
+            throw new InvalidArgumentException(String.format("The group name %1s is already in use", groupName), Level.WARNING);
 
         Transaction tx = graphDb.beginTx();
         Node newGroup = graphDb.createNode();
@@ -428,7 +428,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
             Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
             if(groupNode == null)
-                throw new ApplicationObjectNotFoundException(Util.formatString("Can not find the group with id %1s",id));
+                throw new ApplicationObjectNotFoundException(String.format("Can not find the group with id %1s",id));
 
             if(groupName != null){
                 if (groupName.trim().equals("")) //NOI18N
@@ -438,7 +438,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 {
                     Node storedGroup = groupIndex.get(GroupProfile.PROPERTY_GROUPNAME, groupName).getSingle();
                     if (storedGroup != null)
-                        throw new InvalidArgumentException(Util.formatString("The group name %1s is already in use", groupName), Level.WARNING);
+                        throw new InvalidArgumentException(String.format("The group name %1s is already in use", groupName), Level.WARNING);
                 }
                 groupIndex.remove(groupNode, GroupProfile.PROPERTY_GROUPNAME, (String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME));
                 cm.removeGroup((String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME));
@@ -483,7 +483,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 {
                     Node userNode = userIndex.get(UserProfile.PROPERTY_ID, id).getSingle();
                     if(userNode == null)
-                        throw new ApplicationObjectNotFoundException(Util.formatString("Can not find the user with id %1s",id));
+                        throw new ApplicationObjectNotFoundException(String.format("Can not find the user with id %1s",id));
                     cm.removeUser((String)userNode.getProperty(UserProfile.PROPERTY_USERNAME));
 
                     Iterable<Relationship> relationships = userNode.getRelationships();
@@ -514,7 +514,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
 
                     if(groupNode == null)
-                        throw new ApplicationObjectNotFoundException(Util.formatString("Can not find the group with id %1s",id));
+                        throw new ApplicationObjectNotFoundException(String.format("Can not find the group with id %1s",id));
 
                     cm.removeGroup((String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME));
 
@@ -543,9 +543,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
        
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, className).getSingle();
         if (classNode ==  null)
-            throw new MetadataObjectNotFoundException(Util.formatString("Can not find a class with name %1s",className));
+            throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %1s",className));
         if (!cm.isSubClass("GenericObjectList", className))
-            throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", className), Level.WARNING);
+            throw new InvalidArgumentException(String.format("Class %1s is not a list type", className), Level.WARNING);
 
         Transaction tx = null;
         try{
@@ -574,7 +574,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         try{
             tx = graphDb.beginTx();
             if (!cm.isSubClass("GenericObjectList", className))
-                throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", className), Level.WARNING);
+                throw new InvalidArgumentException(String.format("Class %1s is not a list type", className), Level.WARNING);
 
             Node instance = getInstanceOfClass(className, oid);
             Util.deleteObject(instance, realeaseRelationships);
@@ -594,10 +594,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     public List<RemoteBusinessObjectLight> getListTypeItems(String className) throws MetadataObjectNotFoundException, InvalidArgumentException{
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, className).getSingle();
         if (classNode ==  null)
-            throw new MetadataObjectNotFoundException(Util.formatString("Can not find a class with name %1s",className));
+            throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %1s",className));
 
         if (!Util.isSubClass("GenericObjectList", classNode))
-            throw new InvalidArgumentException(Util.formatString("Class %1s is not a list type", className), Level.WARNING);
+            throw new InvalidArgumentException(String.format("Class %1s is not a list type", className), Level.WARNING);
 
         Iterable<Relationship> childrenAsRelationships = classNode.getRelationships(RelTypes.INSTANCE_OF);
         List<RemoteBusinessObjectLight> children = new ArrayList<RemoteBusinessObjectLight>();
@@ -609,11 +609,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         return children;
     }
 
-    public List<ClassMetadataLight> getInstanceableListTypes() throws MetadataObjectNotFoundException {
+    public List<ClassMetadataLight> getInstanceableListTypes() throws ApplicationObjectNotFoundException {
         Node genericObjectListNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, "GenericObjectList").getSingle();
 
         if (genericObjectListNode == null)
-            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s is not a list type", "GenericObjectList"));
+            throw new ApplicationObjectNotFoundException("ClassGenericObjectList not found");
 
         String cypherQuery = "START classmetadata = node:classes(name = {className}) ".concat(
                              "MATCH classmetadata <-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-listType ").concat(
@@ -960,7 +960,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
         Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
         if (classNode == null){
-            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
+            throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
         }
         Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
         while (instances.iterator().hasNext()){
@@ -1019,8 +1019,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             tx = graphDb.beginTx();
             Node queryNode =  queryIndex.get(CompactQuery.PROPERTY_ID, queryOid).getSingle();
             if(queryNode == null)
-                throw new MetadataObjectNotFoundException(Util.formatString(
-                        "Can not find the query with the id %1s", queryOid));
+                throw new ApplicationObjectNotFoundException(String.format(
+                        "Can not find the query with id %1s", queryOid));
 
             queryNode.setProperty(CompactQuery.PROPERTY_QUERYNAME, queryName);
             if(description == null)
@@ -1032,8 +1032,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 queryNode.setProperty(CompactQuery.PROPERTY_IS_PUBLIC, false);
                 Node userNode = userIndex.get(UserProfile.PROPERTY_ID, ownerOid).getSingle();
                 if(userNode == null)
-                    throw new MetadataObjectNotFoundException(Util.formatString(
-                            "Can not find the query with the id %1s", queryOid));
+                    throw new ApplicationObjectNotFoundException(String.format(
+                                "Can not find the query with id %1s", queryOid));
 
                 Relationship singleRelationship = queryNode.getSingleRelationship(RelTypes.OWNS_QUERY, Direction.INCOMING);
 
@@ -1054,13 +1054,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
-    public void deleteQuery(long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException {
+    public void deleteQuery(long queryOid) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         Transaction tx = null;
         try{
             tx = graphDb.beginTx();
             Node queryNode =  queryIndex.get(CompactQuery.PROPERTY_ID, queryOid).getSingle();
             if(queryNode == null)
-                throw new MetadataObjectNotFoundException(Util.formatString(
+                throw new ApplicationObjectNotFoundException(String.format(
                         "Can not find the query with id %1s", queryOid));
 
             Iterable<Relationship> relationships = queryNode.getRelationships(RelTypes.OWNS_QUERY, Direction.INCOMING);
@@ -1083,7 +1083,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
     @Override
     public List<CompactQuery> getQueries(boolean showPublic) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException{
+            throws ApplicationObjectNotFoundException, InvalidArgumentException{
         List<CompactQuery> queryList = new ArrayList<CompactQuery>();
         IndexHits<Node> queries = queryIndex.query(CompactQuery.PROPERTY_ID, "*");
         for (Node queryNode : queries)
@@ -1110,14 +1110,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     }
 
     @Override
-    public CompactQuery getQuery(long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException {
+    public CompactQuery getQuery(long queryOid) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         
         CompactQuery cq =  new CompactQuery();
 
         Node queryNode = queryIndex.get(CompactQuery.PROPERTY_ID, queryOid).getSingle();
 
         if (queryNode == null){
-             throw new MetadataObjectNotFoundException(Util.formatString(
+             throw new ApplicationObjectNotFoundException(String.format(
                         "Can not find the query with id %1s", queryOid));
         }
                 
@@ -1156,9 +1156,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         rootTag.attr("date", Calendar.getInstance().getTimeInMillis());
         StartTagWAX inventoryTag = rootTag.start("inventory");
         StartTagWAX classesTag = inventoryTag.start("classes");
-        Node rootObjectNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, "RootObject").getSingle(); //NOI18N
+        Node rootObjectNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, MetadataEntityManagerImpl.CLASS_ROOTOBJECT).getSingle(); //NOI18N
         if (rootObjectNode == null)
-            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", "RootObject"));
+            throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", MetadataEntityManagerImpl.CLASS_ROOTOBJECT));
         getXMLNodeForClass(rootObjectNode, rootTag);
         classesTag.end();
         inventoryTag.end();
@@ -1180,11 +1180,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             
             ClassMetadata classMetadata = cm.getClass(instancesOfClass);
             if (classMetadata == null)
-                throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", instancesOfClass));
+                throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", instancesOfClass));
             
             Node user = userIndex.get(MetadataEntityManagerImpl.PROPERTY_ID, owner).getSingle();
             if (user == null)
-                throw new InvalidArgumentException(Util.formatString("User with id %1 doesn't exist", owner), Level.SEVERE);
+                throw new InvalidArgumentException(String.format("User with id %1 doesn't exist", owner), Level.SEVERE);
             
             poolNode.setProperty(PROPERTY_CLASS_NAME, instancesOfClass);
             poolNode.createRelationshipTo(user, RelTypes.OWNS_POOL);
@@ -1203,6 +1203,40 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
+    /**
+     * Creates an object inside a pool
+     * @param poolId Parent pool id
+     * @param attributeNames Attributes to be set
+     * @param attributeValues Attribute values to be set
+     * @param templateId Template used to create the object, if applicable. -1 for none
+     * @throws ApplicationObjectNotFoundException If the parent pool can't be found
+     * @throws InvalidArgumentException If any of the attributes or its type is invalid
+     * @return the id of the newly created object
+     */
+    public long createPoolItem(long poolId, String[] attributeNames, String[][] attributeValues, long templateId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            Node pool = poolsIndex.get(MetadataEntityManagerImpl.PROPERTY_ID, poolId).getSingle();
+            
+            if (pool == null)
+                throw new ApplicationObjectNotFoundException(String.format("Class %1s can not be found", CLASS_POOL));
+
+            tx.success();
+            return pool.getId();
+
+        }catch(Exception ex){
+            Logger.getLogger("createPoolItem: "+ex.getMessage()); //NOI18N
+            tx.failure();
+            throw new RuntimeException(ex.getMessage());
+        }finally{
+            if (tx != null)
+                tx.finish();
+        }
+    }
+
+    
+    
     public void deletePools(long[] ids) throws InvalidArgumentException {
         Transaction tx = null;
         try{
@@ -1210,7 +1244,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             for (long id : ids){
                 Node poolNode = poolsIndex.get(MetadataEntityManagerImpl.PROPERTY_ID, id).getSingle();
                 if (poolNode == null)
-                    throw new InvalidArgumentException(Util.formatString("Pool with id %1 doesn't exist", id),Level.INFO);
+                    throw new InvalidArgumentException(String.format("Pool with id %1 does not exist", id),Level.INFO);
                 poolsIndex.remove(poolNode);
                 poolNode.delete();
             }

@@ -189,10 +189,10 @@ public interface ApplicationEntityManager {
     /**
      * Get the possible list types
      * @return A list of ClassMetadataLight instances representing the possible list types
-     * @throws MetadataObjectNotFoundException
+     * @throws ApplicationObjectNotFoundException if the GenericObjectList class does not exist
      */
     public List<ClassMetadataLight> getInstanceableListTypes()
-            throws MetadataObjectNotFoundException;
+            throws ApplicationObjectNotFoundException;
 
     /**
      * Get a view related to an object, such as the default, rack or equipment views
@@ -334,7 +334,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
-    public void deleteQuery(long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    public void deleteQuery(long queryOid) throws ApplicationObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Gets all queries
@@ -343,7 +343,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
-    public List<CompactQuery> getQueries(boolean showPublic) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    public List<CompactQuery> getQueries(boolean showPublic) throws ApplicationObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Gets a single query
@@ -352,7 +352,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
-    public CompactQuery getQuery(long queryOid) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    public CompactQuery getQuery(long queryOid) throws ApplicationObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Used to perform complex queries. Please note
@@ -387,6 +387,18 @@ public interface ApplicationEntityManager {
     public long createPool(String name, String description, String instancesOfClass, long owner) 
             throws MetadataObjectNotFoundException, InvalidArgumentException;
 
+    /**
+     * Creates an object inside a pool
+     * @param poolId Parent pool id
+     * @param attributeNames Attributes to be set
+     * @param attributeValues Attribute values to be set
+     * @param templateId Template used to create the object, if applicable. -1 for none
+     * @throws ApplicationObjectNotFoundException If the parent pool can't be found
+     * @throws InvalidArgumentException If any of the attributes or its type is invalid
+     * @return the id of the newly created object
+     */
+    public long createPoolItem(long poolId, String[] attributeNames, String[][] attributeValues, long templateId) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
      * Deletes a set of pools
      * @param ids the list of ids from the objects to be deleted

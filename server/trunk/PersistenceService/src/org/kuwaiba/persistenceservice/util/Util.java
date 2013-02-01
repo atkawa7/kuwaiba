@@ -29,9 +29,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -40,35 +38,33 @@ import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
-import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
-import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
-import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.persistenceservice.impl.ApplicationEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.BusinessEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.RelTypes;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ReturnableEvaluator;
 import org.neo4j.graphdb.StopEvaluator;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.Traverser.Order;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
-import org.neo4j.graphdb.Path;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.traversal.Evaluators;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.helpers.collection.IteratorUtil;
 import org.neo4j.kernel.Traversal;
-import org.neo4j.shell.Output;
 
 /**
  * Utility class containing misc methods to perform common tasks
@@ -124,11 +120,11 @@ public class Util {
                 case AttributeMetadata.MAPPING_TIMESTAMP:
                     return Timestamp.valueOf(value);
                 default:
-                    throw new InvalidArgumentException(formatString("Can not convert value %1s to a typ %2s", value, type), Level.WARNING);
+                    throw new InvalidArgumentException(String.format("Can not convert value %1s to a typ %2s", value, type), Level.WARNING);
             }
 
         }catch (Exception e){
-            throw new InvalidArgumentException(formatString("Can not convert value %1s to a typ %2s", value, type), Level.WARNING);
+            throw new InvalidArgumentException(String.format("Can not convert value %1s to a typ %2s", value, type), Level.WARNING);
         }
     }
 
@@ -173,10 +169,10 @@ public class Util {
     public static void deleteObject(Node instance, boolean releaseAll) throws OperationNotPermittedException {
         if(!releaseAll){
             if (instance.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING).iterator().hasNext())
-                throw new OperationNotPermittedException("deleteObject",Util.formatString("The object with id %1s can not be deleted since it has relationships", instance.getId()));
+                throw new OperationNotPermittedException("deleteObject",String.format("The object with id %1s can not be deleted since it has relationships", instance.getId()));
 
             if (instance.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.OUTGOING).iterator().hasNext())
-                throw new OperationNotPermittedException("deleteObject",Util.formatString("The object with id %1s can not be deleted since it has relationships", instance.getId()));
+                throw new OperationNotPermittedException("deleteObject",String.format("The object with id %1s can not be deleted since it has relationships", instance.getId()));
         }
 
         for (Relationship rel : instance.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING))
@@ -288,8 +284,7 @@ public class Util {
         Integer color = null;
 
         if(classDefinition.getName() == null)
-            throw new MetadataObjectNotFoundException(Util.formatString(
-                         "Can not create a class metadata entry without a name"));
+            throw new MetadataObjectNotFoundException("Can not create a class metadata entry without a name");
 
         if(classDefinition.getDisplayName() == null)
             classDefinition.setDisplayName("");
@@ -322,8 +317,7 @@ public class Util {
         //Integer mapping = null;
 
         if(AttributeDefinition.getName() == null)
-            throw new MetadataObjectNotFoundException(Util.formatString(
-                         "Can not create an attribute without a name"));
+            throw new MetadataObjectNotFoundException("Can not create an attribute without a name");
 
         if(AttributeDefinition.getDisplayName() == null)
             AttributeDefinition.setDisplayName("");
@@ -506,7 +500,7 @@ public class Util {
         while(relationships.iterator().hasNext()){
             Relationship relationship = relationships.iterator().next();
             if (!relationship.hasProperty(MetadataEntityManagerImpl.PROPERTY_NAME))
-                throw new InvalidArgumentException(Util.formatString("The object with id %1s is malformed", instance.getId()), Level.SEVERE);
+                throw new InvalidArgumentException(String.format("The object with id %1s is malformed", instance.getId()), Level.SEVERE);
 
             String attributeName = (String)relationship.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME);
             for (AttributeMetadata myAtt : myClass.getAttributes()){
@@ -647,16 +641,6 @@ public class Util {
     }
 
     /**
-     * Formats a String. It's basically a wrapper for Formatter.format() method
-     * @param stringToFormat String to be formatted
-     * @param args a variable set of arguments to be used with the formatter
-     * @return The resulting string of merging @stringToFormat with @args
-     */
-    public static String formatString(String stringToFormat,Object ... args){
-        return new Formatter().format(stringToFormat, args).toString();
-    }
-
-    /**
      * Retrieves the subclasses of a given class metadata node within the class hierarchy
      * @param ClassMetadata
      * @return
@@ -784,7 +768,7 @@ public class Util {
             if(!p.endNode().hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)){
                 for (Relationship attrRel: p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING)){
                     if(attrRel.getEndNode().getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals(newAttributeDefinition.getDisplayName())){
-                        throw new MetadataObjectNotFoundException(Util.formatString(
+                        throw new MetadataObjectNotFoundException(String.format(
                         "Can not create the attribute, an attribute with the name %1s already exist", newAttributeDefinition.getName()));
                     }   
                     else{

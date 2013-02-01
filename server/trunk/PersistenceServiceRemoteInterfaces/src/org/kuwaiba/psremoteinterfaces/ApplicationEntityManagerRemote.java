@@ -186,10 +186,10 @@ public interface ApplicationEntityManagerRemote extends Remote {
     /**
      * Get the possible list types
      * @return A list of ClassMetadataLight instances representing the possible list types
-     * @throws MetadataObjectNotFoundException
+     * @throws ApplicationObjectNotFoundException If the GenericObjectListClass does not exist
      */
     public List<ClassMetadataLight> getInstanceableListTypes()
-            throws MetadataObjectNotFoundException, RemoteException;
+            throws ApplicationObjectNotFoundException, RemoteException;
 
     /**
      * Get a view related to an object, such as the default, rack or equipment views
@@ -330,31 +330,31 @@ public interface ApplicationEntityManagerRemote extends Remote {
     /**
      * Deletes a Query
      * @param queryOid
-     * @throws MetadataObjectNotFoundException
+     * @throws ApplicationObjectNotFoundException
      * @throws InvalidArgumentException
      */
     public void deleteQuery(long queryOid)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, RemoteException;
 
     /**
      * Gets all queries
      * @param showPublic
      * @return
-     * @throws MetadataObjectNotFoundException
+     * @throws ApplicationObjectNotFoundException
      * @throws InvalidArgumentException
      */
     public List<CompactQuery> getQueries(boolean showPublic)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, RemoteException;
 
     /**
      * Gets a single query
      * @param queryOid
      * @return
-     * @throws MetadataObjectNotFoundException
+     * @throws ApplicationObjectNotFoundException
      * @throws InvalidArgumentException
      */
     public CompactQuery getQuery(long queryOid)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, RemoteException;
 
     /**
      * Used to perform complex queries. Please note
@@ -390,6 +390,19 @@ public interface ApplicationEntityManagerRemote extends Remote {
      */
     public long createPool(String name, String description, String instancesOfClass, long owner) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+    
+    /**
+     * Creates an object inside a pool
+     * @param poolId Parent pool id
+     * @param attributeNames Attributes to be set
+     * @param attributeValues Attribute values to be set
+     * @param templateId Template used to create the object, if applicable. -1 for none
+     * @throws ApplicationObjectNotFoundException If the parent pool can't be found
+     * @throws InvalidArgumentException If any of the attributes or its type is invalid
+     * @return the id of the newly created object
+     */
+    public long createPoolItem(long poolId, String[] attributeNames, String[][] attributeValues, long templateId) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, RemoteException;
 
     /**
      * Deletes a set of pools

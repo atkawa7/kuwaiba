@@ -22,7 +22,6 @@ import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
-import org.kuwaiba.persistenceservice.util.Util;
 
 /**
  * Manages the caching strategy
@@ -186,7 +185,7 @@ public class CacheManager {
         ClassMetadata currentClass = getClass(className);
 
         if (currentClass == null)
-            throw new MetadataObjectNotFoundException(Util.formatString("Class %1s can not be found", className));
+            throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
 
         if (allegedParentClass.equals(className))
             return true;
