@@ -18,7 +18,6 @@ package org.kuwaiba.persistenceservice.queries;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Map;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.persistenceservice.impl.ApplicationEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.RelTypes;
@@ -28,8 +27,6 @@ import org.kuwaiba.persistenceservice.impl.RelTypes;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class CypherParser {
-
-        
     /**
      * creates the start for the cypher query
      * @param isAbstract if the class is an abstract classMetadata
@@ -126,7 +123,7 @@ public class CypherParser {
     }
 
     /**
-     * every time a list type for a join or a parent o r a parent join is added
+     * every time a list type for a join or a parent or a parent join is added
      * there must be a relation to identify every list type.
      * @param joinName
      * @return
