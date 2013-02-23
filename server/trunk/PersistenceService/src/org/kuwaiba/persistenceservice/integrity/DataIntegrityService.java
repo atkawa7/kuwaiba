@@ -18,8 +18,8 @@ package org.kuwaiba.persistenceservice.integrity;
 import java.util.Calendar;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
-import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.RelTypes;
+import org.kuwaiba.persistenceservice.util.Constants;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -49,9 +49,9 @@ public class DataIntegrityService{
             try{
                 tx = graphDb.beginTx();
                 Node dummyRootNode = graphDb.createNode();
-                dummyRootNode.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, MetadataEntityManagerImpl.DUMMYROOT);
-                dummyRootNode.setProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME, MetadataEntityManagerImpl.DUMMYROOT);
-                dummyRootNode.setProperty(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+                dummyRootNode.setProperty(Constants.PROPERTY_NAME, Constants.DUMMYROOT);
+                dummyRootNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, Constants.DUMMYROOT);
+                dummyRootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
 
                 if (graphDb.getReferenceNode() == null) {
                     throw new DatabaseException("Reference node does not exists. The database seems to be corrupted");

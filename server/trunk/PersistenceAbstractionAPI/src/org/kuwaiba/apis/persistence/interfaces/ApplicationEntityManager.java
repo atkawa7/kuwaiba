@@ -26,6 +26,7 @@ import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
@@ -42,6 +43,11 @@ public interface ApplicationEntityManager {
      * String that identifies the class used for pools
      */
     public static final String CLASS_POOL = "Pool";
+    /**
+     * String that identifies the superclass of all the list types
+     */
+    public static final String CLASS_GENERICOBJECTLIST = "GenericObjectList";
+    
     
     /**
      * Verifies if a pair username/password matches
@@ -390,6 +396,7 @@ public interface ApplicationEntityManager {
     /**
      * Creates an object inside a pool
      * @param poolId Parent pool id
+     * @param className Class this object is going to be instance of
      * @param attributeNames Attributes to be set
      * @param attributeValues Attribute values to be set
      * @param templateId Template used to create the object, if applicable. -1 for none
@@ -397,8 +404,8 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException If any of the attributes or its type is invalid
      * @return the id of the newly created object
      */
-    public long createPoolItem(long poolId, String[] attributeNames, String[][] attributeValues, long templateId) 
-            throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public long createPoolItem(long poolId, String className, String[] attributeNames, String[][] attributeValues, long templateId) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException;
     /**
      * Deletes a set of pools
      * @param ids the list of ids from the objects to be deleted
@@ -407,11 +414,20 @@ public interface ApplicationEntityManager {
     public void deletePools(long[] ids) throws InvalidArgumentException;
 
     /**
-     * Get the available pools
+     * Gets the available pools
      * @param limit Maximum number of pool records to be returned. -1 to return all
      * @return The list of pools as RemoteBusinessObjectLight instances
      */
     public List<RemoteBusinessObjectLight> getPools(int limit);
+    
+    /**
+     * Gets the list of objects into a pool
+     * @param poolId Parent pool id
+     * @param limit Result limit. -1 To return all
+     * @return The list of items inside the pool
+     * @throws ApplicationObjectNotFoundException If the pool id provided is not valid
+     */
+    public List<RemoteBusinessObjectLight> getPoolItems(long poolId, int limit) throws ApplicationObjectNotFoundException;
 }
 
 

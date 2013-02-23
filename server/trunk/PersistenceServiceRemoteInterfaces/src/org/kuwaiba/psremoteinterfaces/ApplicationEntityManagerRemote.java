@@ -28,6 +28,7 @@ import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
@@ -401,8 +402,8 @@ public interface ApplicationEntityManagerRemote extends Remote {
      * @throws InvalidArgumentException If any of the attributes or its type is invalid
      * @return the id of the newly created object
      */
-    public long createPoolItem(long poolId, String[] attributeNames, String[][] attributeValues, long templateId) 
-            throws ApplicationObjectNotFoundException, InvalidArgumentException, RemoteException;
+    public long createPoolItem(long poolId, String className, String[] attributeNames, String[][] attributeValues, long templateId) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, RemoteException;
 
     /**
      * Deletes a set of pools
@@ -412,9 +413,18 @@ public interface ApplicationEntityManagerRemote extends Remote {
     public void deletePools(long[] ids) throws InvalidArgumentException, RemoteException;
 
     /**
-     * Get the available pools
+     * Gets the available pools
      * @param limit Maximum number of pool records to be returned. -1 to return all
      * @return The list of pools as RemoteBusinessObjectLight instances
      */
     public List<RemoteBusinessObjectLight> getPools(int limit) throws RemoteException;
+    /**
+     * Gets the objects into a pool
+     * @param poolId Parent pool id
+     * @param limit max number of results. -1 to get all
+     * @return The list of objects
+     * @throws MetadataObjectNotFoundException If the id provided does not belong to an existing pool
+     * @throws RemoteException 
+     */
+    public List<RemoteBusinessObjectLight> getPoolItems(long poolId, int limit) throws ApplicationObjectNotFoundException, RemoteException;
 }

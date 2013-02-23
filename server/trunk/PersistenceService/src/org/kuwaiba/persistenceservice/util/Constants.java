@@ -82,4 +82,102 @@ public class Constants {
      * Application modifier for attributes used for administrative purposes only
      */
     public static int ATTRIBUTE_MODIFIER_ADMINISTRATIVE = 16;
+    /**
+     * To label the objects index
+     */
+    public static final String INDEX_OBJECTS ="objects"; //NOI18N
+    /**
+     * Index name for user nodes
+     */
+    public static final String INDEX_USERS = "users"; //NOI18N
+    /**
+     * Index name for group nodes
+     */
+    public static final String INDEX_GROUPS = "groups"; //NOI18N
+    /**
+     * Index name for group nodes
+     */
+    public static final String INDEX_QUERIES = "queries"; //NOI18N
+    /**
+     * Name of the index for list type items
+     */
+    public static final String INDEX_LIST_TYPE_ITEMS = "listTypeItems"; //NOI18N
+    /**
+     * Name of the index for general views
+     */
+    public static final String INDEX_GENERAL_VIEWS = "generalViews"; //NOI18N
+    /**
+     * Name of the index for pools
+     */
+    public static final String INDEX_POOLS = "pools"; //NOI18N
+    /**
+     * Label used for the class index
+     */
+    public static final String INDEX_CLASS = "classes"; //NOI18N
+    /**
+     * Label used for the category index
+     */
+    public static final String INDEX_CATEGORY = "categories"; //NOI18N
+    /**
+     * Property "background path" for views
+     */
+    public static final String PROPERTY_BACKGROUND_FILE_NAME = "backgroundPath";
+    /**
+     * Property "class name" for pools
+     */
+    public static final String PROPERTY_CLASS_NAME = "className";
+    /**
+     * Property "structure" for views
+     */
+    public static final String PROPERTY_STRUCTURE = "structure"; //NOI18N
+    public static final String PROPERTY_PRIVILEGES = "privileges"; //NOI18N
+    public static final String PROPERTY_NAME = "name"; //NOI18N
+    public static final String PROPERTY_CREATION_DATE = "creationDate"; //NOI18N
+    public static final String PROPERTY_DISPLAY_NAME = "displayName"; //NOI18N
+    public static final String PROPERTY_TYPE = "type"; //NOI18N
+    public static final String PROPERTY_ADMINISTRATIVE = "administrative"; //NOI18N
+    public static final String PROPERTY_VISIBLE = "isVisible"; //NOI18N
+    public static final String PROPERTY_DESCRIPTION = "description"; //NOI18N
+    public static final String PROPERTY_READONLY = "readOnly"; //NOI18N
+    public static final String PROPERTY_ID = "id"; //NOI18N
+    public static final String PROPERTY_ABSTRACT = "abstract"; //NOI18N
+    public static final String PROPERTY_CUSTOM = "custom"; //NOI18N
+    public static final String PROPERTY_COUNTABLE = "countable"; //NOI18N
+    public static final String PROPERTY_COLOR = "color"; //NOI18N
+    public static final String PROPERTY_ICON = "icon"; //NOI18N
+    public static final String PROPERTY_SMALL_ICON = "smallIcon"; //NOI18N
+    public static final String PROPERTY_NO_COPY = "noCopy"; //NOI18N
+    public static final String PROPERTY_NO_SERIALIZE = "noSerialize"; //NOI18N
+    public static final String PROPERTY_UNIQUE = "unique"; //NOI18N
+    public static final String PROPERTY_IN_DESIGN = "inDesign"; //NOI18N
+    /**
+     * How an attribute should be mapped (as a Float, Integer, relationship, etc)
+     */
+    public static final String PROPERTY_MAPPING = "mapping"; //NOI18N
+    /**
+     * Root for all business classes
+     */
+    public static final String CLASS_INVENTORYOBJECT = "InventoryObject"; //NOI18N ID 286
+    /**
+     * Root for all list types class name
+     */
+    public static final String CLASS_GENERICOBJECTLIST = "GenericObjectList"; //NOI18N ID 27
+    /**
+     * Root for all classes that can have a view attached
+     */
+    public static final String CLASS_VIEWABLEOBJECT = "ViewableObject"; //NOI18N
+    /**
+     * Class hierarchy root
+     */
+    public static final String CLASS_ROOTOBJECT = "RootObject"; //NOI18N
+    /**
+     * Dummy root node name
+     */
+    public static final String DUMMYROOT = "DummyRoot"; //NOI18N
+    /**
+     * Date format for queries
+     */
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
+    
+    
 }

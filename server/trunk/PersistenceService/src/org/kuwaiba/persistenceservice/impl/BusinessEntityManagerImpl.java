@@ -37,6 +37,7 @@ import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.persistenceservice.caching.CacheManager;
+import org.kuwaiba.persistenceservice.util.Constants;
 import org.kuwaiba.persistenceservice.util.Util;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.neo4j.graphdb.Direction;
@@ -53,10 +54,6 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
  */
 public class BusinessEntityManagerImpl implements BusinessEntityManager, BusinessEntityManagerRemote{
 
-    /**
-     * To label the objects index
-     */
-    public static final String INDEX_OBJECTS ="objects"; //NOI18N
     /**
      * Reference to the db handler
      */
@@ -76,14 +73,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
     private BusinessEntityManagerImpl() {
         cm= CacheManager.getInstance();
-        
     }
 
     public BusinessEntityManagerImpl(ConnectionManager cmn) {
         this();
         this.graphDb = (EmbeddedGraphDatabase)cmn.getConnectionHandler();
-        this.classIndex = graphDb.index().forNodes(MetadataEntityManagerImpl.INDEX_CLASS);
-        this.objectIndex = graphDb.index().forNodes(INDEX_OBJECTS);
+        this.classIndex = graphDb.index().forNodes(Constants.INDEX_CLASS);
+        this.objectIndex = graphDb.index().forNodes(Constants.INDEX_OBJECTS);
     }
 
     public long createObject(String className, String parentClassName, long parentOid, HashMap<String,List<String>> attributes, long template)
@@ -93,10 +89,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         if (myClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
 
-        if (myClass.isAbstractClass())
-            throw new OperationNotPermittedException("Create Object", "Can't create objects from an abstract classes");
-
-        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
+        Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
             throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
 
@@ -125,71 +118,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
         Transaction tx = null;
         try{
-
             tx = graphDb.beginTx();
-            Node newObject = graphDb.createNode();
-            newObject.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
-
-            if (parentNode !=null)
-                newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
-
-            for (AttributeMetadata att : myClass.getAttributes()){
-                if (att.getName().equals(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE)){
-                    newObject.setProperty(att.getName(), Calendar.getInstance().getTimeInMillis());
-                    continue;
-                }
-
-                if (attributes.get(att.getName()) == null)
-                    continue;
-
-                switch (att.getMapping()){
-                    case AttributeMetadata.MAPPING_PRIMITIVE:
-                    case AttributeMetadata.MAPPING_DATE:
-                    case AttributeMetadata.MAPPING_TIMESTAMP:
-                        if (attributes.get(att.getName()) != null){
-                            //If the array is empty, it means the attribute should be set to null
-                            if (!attributes.get(att.getName()).isEmpty()){
-                                if (attributes.get(att.getName()).get(0) != null)
-                                    newObject.setProperty(att.getName(),
-                                            Util.getRealValue(attributes.get(att.getName()).get(0),
-                                            myClass.getAttributeMapping(att.getName()),
-                                            myClass.getType(att.getName())));
-                            }
-                        }
-                    break;
-                    case AttributeMetadata.MAPPING_MANYTOMANY:
-                    case AttributeMetadata.MAPPING_MANYTOONE:
-                        List<Long> listTypeItems = new ArrayList<Long>();
-                        if (!cm.isSubClass("GenericObjectList", att.getType()))
-                            throw new InvalidArgumentException(String.format("Class %1s is not a list type", att.getName()), Level.WARNING);
-                        try{
-                            for (String value : attributes.get(att.getName()))
-                                listTypeItems.add(Long.valueOf(value));
-                        }catch(NumberFormatException ex){
-                            throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
-                        }
-                        Node listTypeNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, att.getType()).getSingle();
-                        List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
-
-                        //Create the new relationships
-                        for (Node item : listTypeNodes){
-                            Relationship newRelationship = newObject.createRelationshipTo(item, RelTypes.RELATED_TO);
-                            newRelationship.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, att.getName());
-                        }
-                    break;
-                    default:
-                        tx.failure();
-                        tx.finish();
-                        throw new InvalidArgumentException(
-                            String.format("The attribute %1s is binary so it can't be set using this method. Use setBinaryAttributes instead", att.getName()), Level.WARNING);
-                }
-            }
-
-            //The object's name can't be null in N4J, it has to be set to ""
-            if (attributes.get(MetadataEntityManagerImpl.PROPERTY_NAME) == null)
-                newObject.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, "");
-            
-            objectIndex.putIfAbsent(newObject, MetadataEntityManagerImpl.PROPERTY_ID, newObject.getId());
+            Node newObject = createObject(classNode, myClass, attributes, template);
+            newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
             tx.success();
             return newObject.getId();
         }catch(Exception ex){
@@ -201,6 +132,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 tx.finish();
         }
     }
+    
+    
 
     public long createSpecialObject(String className, String parentClassName, long parentOid, HashMap<String,List<String>> attributes, long template)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException {
@@ -212,7 +145,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         if (myClass.isAbstractClass())
             throw new OperationNotPermittedException("Create Object", "Can't create objects from an abstract classes");
 
-        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
+        Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
             throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
 
@@ -245,7 +178,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
 
             for (AttributeMetadata att : myClass.getAttributes()){
-                if (att.getName().equals(MetadataEntityManagerImpl.PROPERTY_CREATION_DATE)){
+                if (att.getName().equals(Constants.PROPERTY_CREATION_DATE)){
                     newObject.setProperty(att.getName(), Calendar.getInstance().getTimeInMillis());
                     continue;
                 }
@@ -279,13 +212,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                         }catch(NumberFormatException ex){
                             throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
                         }
-                        Node listTypeNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, att.getType()).getSingle();
+                        Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, att.getType()).getSingle();
                         List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
 
                         //Create the new relationships
                         for (Node item : listTypeNodes){
                             Relationship newRelationship = newObject.createRelationshipTo(item, RelTypes.RELATED_TO);
-                            newRelationship.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, att.getName());
+                            newRelationship.setProperty(Constants.PROPERTY_NAME, att.getName());
                         }
                     break;
                     default:
@@ -297,10 +230,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             }
 
             //The object's name can't be null in N4J, it has to be set to ""
-            if (attributes.get(MetadataEntityManagerImpl.PROPERTY_NAME) == null)
-                newObject.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, "");
+            if (attributes.get(Constants.PROPERTY_NAME) == null)
+                newObject.setProperty(Constants.PROPERTY_NAME, "");
 
-            objectIndex.putIfAbsent(newObject, MetadataEntityManagerImpl.PROPERTY_ID, newObject.getId());
+            objectIndex.putIfAbsent(newObject, Constants.PROPERTY_ID, newObject.getId());
             tx.success();
             return newObject.getId();
         }catch(Exception ex){
@@ -325,7 +258,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     public RemoteBusinessObjectLight getObjectInfoLight(String className, long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException {
         //Perform benchmarks to see if accessing to the objects index is less expensive
-        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
+        Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
             throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
         Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
@@ -334,7 +267,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
             if (instance.getId() == oid)
                 return new RemoteBusinessObjectLight(oid,
-                        instance.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME) == null ? null : instance.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).toString(),
+                        instance.getProperty(Constants.PROPERTY_NAME) == null ? null : instance.getProperty(Constants.PROPERTY_NAME).toString(),
                         className);
 
         }
@@ -371,7 +304,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     public void updateObject(String className, long oid, HashMap<String,List<String>> attributes)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, WrongMappingException, InvalidArgumentException {
 
-        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
+        Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
 
         if (classNode == null)
             throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
@@ -409,7 +342,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                             throw new InvalidArgumentException(String.format("Class %1s is not a list type", myClass.getType(attributeName)), Level.WARNING);
                         
                         if (attributes.get(attributeName) == null){
-                            Util.releaseRelationships(instance, RelTypes.RELATED_TO, Direction.OUTGOING, MetadataEntityManagerImpl.PROPERTY_NAME,
+                            Util.releaseRelationships(instance, RelTypes.RELATED_TO, Direction.OUTGOING, Constants.PROPERTY_NAME,
                                 attributeName);
                             break;
                         }
@@ -420,16 +353,16 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                         }catch(NumberFormatException ex){
                             throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
                         }
-                        Node listTypeNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, myClass.getType(attributeName)).getSingle();
+                        Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, myClass.getType(attributeName)).getSingle();
                         List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
 
-                        Util.releaseRelationships(instance, RelTypes.RELATED_TO, Direction.OUTGOING, MetadataEntityManagerImpl.PROPERTY_NAME,
+                        Util.releaseRelationships(instance, RelTypes.RELATED_TO, Direction.OUTGOING, Constants.PROPERTY_NAME,
                                 attributeName);
 
                         //Create the new relationships
                         for (Node item : listTypeNodes){
                             Relationship newRelationship = instance.createRelationshipTo(item, RelTypes.RELATED_TO);
-                            newRelationship.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, attributeName);
+                            newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
                         }
                     break;
                     default:
@@ -470,7 +403,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             Node nodeA = getInstanceOfClass(aObjectClass, aObjectId);
             Node nodeB = getInstanceOfClass(bObjectClass, bObjectId);
             Relationship rel = nodeA.createRelationshipTo(nodeB, RelTypes.RELATED_TO_SPECIAL);
-            rel.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, name);
+            rel.setProperty(Constants.PROPERTY_NAME, name);
             tx.success();
         }catch(Exception ex){
             Logger.getLogger("createSpecialRelationship: "+ex.getMessage()); //NOI18N
@@ -499,7 +432,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 if (!cm.canBeChild(targetClassName, myClass))
                     throw new OperationNotPermittedException("moveObjects", String.format("An instance of class %1s can not be child of an instance of class %2s", myClass,targetClassName));
 
-                Node instanceClassNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, myClass).getSingle();
+                Node instanceClassNode = classIndex.get(Constants.PROPERTY_NAME, myClass).getSingle();
                 if (instanceClassNode == null)
                     throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", myClass));
                 for (long oid : objects.get(myClass)){
@@ -538,14 +471,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             int i = 0;
             for (String myClass : objects.keySet()){
                 if (!cm.canBeChild(targetClassName, myClass))
-                    throw new OperationNotPermittedException("moveObjects", String.format("An instance of class %1s can not be child of an instance of class %2s", myClass,targetClassName));
+                    throw new OperationNotPermittedException("copyObjects", String.format("An instance of class %1s can not be child of an instance of class %2s", myClass,targetClassName));
 
-                Node instanceClassNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, myClass).getSingle();
+                Node instanceClassNode = classIndex.get(Constants.PROPERTY_NAME, myClass).getSingle();
                 if (instanceClassNode == null)
                     throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", myClass));
                 for (long oid : objects.get(myClass)){
                     Node templateObject = getInstanceOfClass(instanceClassNode, oid);
-                    Node newInstance = Util.copyObject(templateObject, newParentNode, recursive, graphDb);
+                    Node newInstance = copyObject(templateObject, recursive);
+                    newInstance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF);
                     res[i] =newInstance.getId();
                     i++;
                 }
@@ -585,12 +519,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 while(children.iterator().hasNext() && (counter < maxResults)){
                     counter++;
                     Node child = children.iterator().next().getStartNode();
-                    res.add(new RemoteBusinessObjectLight(child.getId(),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), Util.getClassName(child)));
+                    res.add(new RemoteBusinessObjectLight(child.getId(),(String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
                 }
             }else{
                 while(children.iterator().hasNext()){
                     Node child = children.iterator().next().getStartNode();
-                    res.add(new RemoteBusinessObjectLight(child.getId(),(String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), Util.getClassName(child)));
+                    res.add(new RemoteBusinessObjectLight(child.getId(),(String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
                 }
             }
             return res;
@@ -616,12 +550,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 while(children.iterator().hasNext() && (counter < maxResults)){
                     counter++;
                     Node child = children.iterator().next().getStartNode();
-                    res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), Util.getClassName(child)));
+                    res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
                 }
             }else{
                 while(children.iterator().hasNext()){
                     Node child = children.iterator().next().getStartNode();
-                    res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), Util.getClassName(child)));
+                    res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
                 }
             }
             return res;
@@ -647,7 +581,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
             Node classNode = child.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode();
 
-            ClassMetadata classMetadata = cm.getClass((String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
+            ClassMetadata classMetadata = cm.getClass((String)classNode.getProperty(Constants.PROPERTY_NAME));
             if (cm.isSubClass(classToFilter, classMetadata.getName())){
                 res.add(Util.createRemoteObjectFromNode(child, classMetadata));
                 if (maxResults > 0){
@@ -669,7 +603,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
             Node classNode = child.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode();
 
-            ClassMetadata classMetadata = cm.getClass((String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
+            ClassMetadata classMetadata = cm.getClass((String)classNode.getProperty(Constants.PROPERTY_NAME));
             if (cm.isSubClass(classToFilter, classMetadata.getName())){
                 res.add(Util.createRemoteObjectFromNode(child, classMetadata));
                 if (maxResults > 0 && ++counter == maxResults)
@@ -696,7 +630,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
             String className = Util.getClassName(child);
             if (cm.isSubClass(classToFilter, className)){
-                res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),className));
+                res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME),className));
                 if (maxResults > 0){
                     if (++counter == maxResults)
                         break;
@@ -717,7 +651,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             String className = Util.getClassName(child);
 
             if (cm.isSubClass(classToFilter, className)){
-                res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),className));
+                res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME),className));
                 if (maxResults > 0){
                     if (++counter == maxResults)
                         break;
@@ -736,7 +670,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         Node instance = getInstanceOfClass(objectClass, objectId);
         List<String> res = new ArrayList<String>();
         for (Relationship rel : instance.getRelationships(RelTypes.RELATED_TO_SPECIAL))
-            if (rel.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals(specialAttributeName))
+            if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName))
                 res.add(String.valueOf(rel.getEndNode().getId() == objectId ? rel.getStartNode().getId() : rel.getEndNode().getId()));
         return res;
     }
@@ -758,7 +692,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             return graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.BOTH).getEndNode();
 
 
-        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
+        Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
 
         if (classNode == null)
             throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
@@ -785,7 +719,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         if (classId == -1)
             return graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.BOTH).getEndNode();
 
-        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_ID,classId).getSingle();
+        Node classNode = classIndex.get(Constants.PROPERTY_ID,classId).getSingle();
 
         if (classNode == null)
             throw new MetadataObjectNotFoundException(String.format("Class with id %1s can not be found", classId));
@@ -796,7 +730,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             if (otherSide.getId() == oid)
                 return otherSide;
         }
-        throw new ObjectNotFoundException((String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), oid);
+        throw new ObjectNotFoundException((String)classNode.getProperty(Constants.PROPERTY_NAME), oid);
     }
 
     private Node getInstanceOfClass(Node classNode, long oid) throws ObjectNotFoundException{
@@ -806,8 +740,101 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             if (otherSide.getId() == oid)
                 return otherSide;
         }
-        throw new ObjectNotFoundException((String)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), oid);
+        throw new ObjectNotFoundException((String)classNode.getProperty(Constants.PROPERTY_NAME), oid);
     }
+    
+    protected Node createObject(Node classNode, ClassMetadata classToMap, HashMap<String,List<String>> attributes, long template) 
+            throws InvalidArgumentException, MetadataObjectNotFoundException{
+ 
+        if (classToMap.isAbstractClass())
+                throw new InvalidArgumentException(String.format("Can not create objects from abstract classes (%1s)", classToMap.getName()), Level.OFF);
+        
+        if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, classToMap.getName()))
+            throw new InvalidArgumentException(String.format("Class %1s is not a subclass of %2s", classToMap.getName(), Constants.CLASS_INVENTORYOBJECT), Level.INFO);
 
+        Node newObject = graphDb.createNode();
 
+        for (AttributeMetadata att : classToMap.getAttributes()){
+            if (att.getName().equals(Constants.PROPERTY_CREATION_DATE)){
+                newObject.setProperty(att.getName(), Calendar.getInstance().getTimeInMillis());
+                continue;
+            }
+
+            if (attributes.get(att.getName()) == null)
+                continue;
+
+            switch (att.getMapping()){
+                case AttributeMetadata.MAPPING_PRIMITIVE:
+                case AttributeMetadata.MAPPING_DATE:
+                case AttributeMetadata.MAPPING_TIMESTAMP:
+                    if (attributes.get(att.getName()) != null){
+                        //If the array is empty, it means the attribute should be set to null
+                        if (!attributes.get(att.getName()).isEmpty()){
+                            if (attributes.get(att.getName()).get(0) != null)
+                                newObject.setProperty(att.getName(),
+                                        Util.getRealValue(attributes.get(att.getName()).get(0),
+                                        classToMap.getAttributeMapping(att.getName()),
+                                        classToMap.getType(att.getName())));
+                        }
+                    }
+                break;
+                case AttributeMetadata.MAPPING_MANYTOMANY:
+                case AttributeMetadata.MAPPING_MANYTOONE:
+                    List<Long> listTypeItems = new ArrayList<Long>();
+                    if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, att.getType()))
+                        throw new InvalidArgumentException(String.format("Class %1s is not a list type", att.getName()), Level.WARNING);
+                    try{
+                        for (String value : attributes.get(att.getName()))
+                            listTypeItems.add(Long.valueOf(value));
+                    }catch(NumberFormatException ex){
+                        throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
+                    }
+                    Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, att.getType()).getSingle();
+                    List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
+
+                    //Create the new relationships
+                    for (Node item : listTypeNodes){
+                        Relationship newRelationship = newObject.createRelationshipTo(item, RelTypes.RELATED_TO);
+                        newRelationship.setProperty(Constants.PROPERTY_NAME, att.getName());
+                    }
+                break;
+                default:
+                    throw new InvalidArgumentException(
+                        String.format("The attribute %1s is binary so it can't be set using this method. Use setBinaryAttributes instead", att.getName()), Level.WARNING);
+            }
+        }
+
+        //The object's name can't be null in N4J, it has to be set to ""
+        if (attributes.get(Constants.PROPERTY_NAME) == null)
+            newObject.setProperty(Constants.PROPERTY_NAME, "");
+
+        objectIndex.putIfAbsent(newObject, Constants.PROPERTY_ID, newObject.getId());
+        newObject.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
+        
+        return newObject;       
+    }
+    
+    /**
+     * Copies and object and optionally its children objects. This method does not manage transactions
+     * @param templateObject The object to be cloned
+     * @param recursive should the children be copied recursively?
+     * @return The cloned node
+     */
+    private Node copyObject(Node templateObject, boolean recursive) {
+        Node newInstance = graphDb.createNode();
+        for (String property : templateObject.getPropertyKeys())
+            newInstance.setProperty(property, templateObject.getProperty(property));
+        for (Relationship rel : templateObject.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING))
+            newInstance.createRelationshipTo(rel.getEndNode(), RelTypes.RELATED_TO).setProperty(Constants.PROPERTY_NAME, rel.getProperty(Constants.PROPERTY_NAME));
+
+        newInstance.createRelationshipTo(templateObject.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode(), RelTypes.INSTANCE_OF);
+
+        if (recursive){
+            for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING)){
+                Node newChild = copyObject(rel.getStartNode(), true);
+                newChild.createRelationshipTo(newInstance, RelTypes.CHILD_OF);
+            }
+        }
+        return newInstance;
+    }
 }

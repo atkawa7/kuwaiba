@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,6 +41,7 @@ import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
@@ -72,46 +74,6 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
 public class ApplicationEntityManagerImpl implements ApplicationEntityManager, ApplicationEntityManagerRemote {
 
     /**
-     * Index name for user nodes
-     */
-    public static final String INDEX_USERS = "users"; //NOI18N
-    /**
-     * Index name for group nodes
-     */
-    public static final String INDEX_GROUPS = "groups"; //NOI18N
-    /**
-     * Index name for group nodes
-     */
-    public static final String INDEX_QUERIES = "queries"; //NOI18N
-    /**
-     * Name of the index for list type items
-     */
-    public static final String INDEX_LIST_TYPE_ITEMS = "listTypeItems"; //NOI18N
-    /**
-     * Name of the index for general views
-     */
-    public static final String INDEX_GENERAL_VIEWS = "generalViews"; //NOI18N
-    /**
-     * Name of the index for pools
-     */
-    public static final String INDEX_POOLS = "pools"; //NOI18N
-    /**
-     * Property "background path" for views
-     */
-    public static final String PROPERTY_BACKGROUND_FILE_NAME = "backgroundPath";
-    /**
-     * Property "class name" for pools
-     */
-    public static final String PROPERTY_CLASS_NAME = "className";
-    /**
-     * Property "structure" for views
-     */
-    public static final String PROPERTY_STRUCTURE = "structure";
-    /**
-     * Date format for queries
-     */
-    public static final String DATE_FORMAT = "yyyy-MM-dd";
-    /**
      * Graph db service
      */
     private GraphDatabaseService graphDb;
@@ -143,6 +105,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
      * Index for general views (those not related to a particular object)
      */
     private Index<Node> generalViewsIndex;
+    private  BusinessEntityManagerImpl bem;
     /**
      * Reference to the singleton instance of CacheManager
      */
@@ -150,13 +113,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
     public ApplicationEntityManagerImpl(ConnectionManager cmn) {
         this.graphDb = (EmbeddedGraphDatabase)cmn.getConnectionHandler();
-        this.userIndex = graphDb.index().forNodes(INDEX_USERS);
-        this.groupIndex = graphDb.index().forNodes(INDEX_GROUPS);
-        this.queryIndex = graphDb.index().forNodes(INDEX_QUERIES);
-        this.classIndex = graphDb.index().forNodes(MetadataEntityManagerImpl.INDEX_CLASS);
-        this.listTypeItemsIndex = graphDb.index().forNodes(INDEX_LIST_TYPE_ITEMS);
-        this.generalViewsIndex = graphDb.index().forNodes(INDEX_GENERAL_VIEWS);
-        this.poolsIndex = graphDb.index().forNodes(INDEX_POOLS);
+        this.userIndex = graphDb.index().forNodes(Constants.INDEX_USERS);
+        this.groupIndex = graphDb.index().forNodes(Constants.INDEX_GROUPS);
+        this.queryIndex = graphDb.index().forNodes(Constants.INDEX_QUERIES);
+        this.classIndex = graphDb.index().forNodes(Constants.INDEX_CLASS);
+        this.listTypeItemsIndex = graphDb.index().forNodes(Constants.INDEX_LIST_TYPE_ITEMS);
+        this.generalViewsIndex = graphDb.index().forNodes(Constants.INDEX_GENERAL_VIEWS);
+        this.poolsIndex = graphDb.index().forNodes(Constants.INDEX_POOLS);
         this.cm = CacheManager.getInstance();
     }
 
@@ -541,7 +504,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
        if (name == null || className == null)
            throw new InvalidArgumentException("Item name and class name can not be null", Level.INFO);
        
-        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, className).getSingle();
+        Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
         if (classNode ==  null)
             throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %1s",className));
         if (!cm.isSubClass("GenericObjectList", className))
@@ -551,11 +514,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         try{
              tx = graphDb.beginTx();
              Node newItem = graphDb.createNode();
-             newItem.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, name);
+             newItem.setProperty(Constants.PROPERTY_NAME, name);
              if (displayName != null)
-                newItem.setProperty(MetadataEntityManagerImpl.PROPERTY_DISPLAY_NAME, displayName);
+                newItem.setProperty(Constants.PROPERTY_DISPLAY_NAME, displayName);
              newItem.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
-             listTypeItemsIndex.putIfAbsent(newItem, MetadataEntityManagerImpl.PROPERTY_ID, newItem.getId());
+             listTypeItemsIndex.putIfAbsent(newItem, Constants.PROPERTY_ID, newItem.getId());
              tx.success();
              return newItem.getId();
         }catch(Exception ex){
@@ -592,7 +555,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     }
 
     public List<RemoteBusinessObjectLight> getListTypeItems(String className) throws MetadataObjectNotFoundException, InvalidArgumentException{
-        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, className).getSingle();
+        Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
         if (classNode ==  null)
             throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %1s",className));
 
@@ -604,13 +567,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
         while(childrenAsRelationships.iterator().hasNext()){
             Node child = childrenAsRelationships.iterator().next().getStartNode();
-            children.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME), className));
+            children.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME), className));
         }
         return children;
     }
 
     public List<ClassMetadataLight> getInstanceableListTypes() throws ApplicationObjectNotFoundException {
-        Node genericObjectListNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, "GenericObjectList").getSingle();
+        Node genericObjectListNode = classIndex.get(Constants.PROPERTY_NAME, "GenericObjectList").getSingle();
 
         if (genericObjectListNode == null)
             throw new ApplicationObjectNotFoundException("ClassGenericObjectList not found");
@@ -621,7 +584,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                              "ORDER BY listType.name ASC");
 
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("className", MetadataEntityManagerImpl.CLASS_GENERICOBJECTLIST);//NOI18N
+        params.put("className", Constants.CLASS_GENERICOBJECTLIST);//NOI18N
 
         ExecutionEngine engine = new ExecutionEngine(graphDb);
         ExecutionResult result = engine.execute(cypherQuery, params);
@@ -629,7 +592,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         List<ClassMetadataLight> res = new ArrayList<ClassMetadataLight>();
         for (Node node : IteratorUtil.asIterable(n_column))
         {
-            if (!(Boolean)node.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT))
+            if (!(Boolean)node.getProperty(Constants.PROPERTY_ABSTRACT))
                 res.add(Util.createClassMetadataLightFromNode(node));
         }
 
@@ -647,29 +610,29 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             tx = graphDb.beginTx();
 
             Node viewNode = graphDb.createNode();
-            viewNode.setProperty(MetadataEntityManagerImpl.PROPERTY_TYPE, viewType);
+            viewNode.setProperty(Constants.PROPERTY_TYPE, viewType);
             instance.createRelationshipTo(viewNode, RelTypes.HAS_VIEW);
 
             if (name != null)
-                viewNode.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, name);
+                viewNode.setProperty(Constants.PROPERTY_NAME, name);
 
             if (structure != null)
-                viewNode.setProperty(PROPERTY_STRUCTURE, structure);
+                viewNode.setProperty(Constants.PROPERTY_STRUCTURE, structure);
 
             if (background != null){
                 try{
                     Properties props = new Properties();
-                    String fileName = "view-" + oid + "-" + viewNode.getId() + "-" + viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE);
+                    String fileName = "view-" + oid + "-" + viewNode.getId() + "-" + viewNode.getProperty(Constants.PROPERTY_TYPE);
                     props.load(new FileInputStream("persistence.properties"));
                     Util.saveFile(props.getProperty("background_path"), fileName, background);
-                    viewNode.setProperty(PROPERTY_BACKGROUND_FILE_NAME, fileName);
+                    viewNode.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
                 }catch(Exception ex){
                     throw new InvalidArgumentException(String.format("Background image for view %1s couldn't be saved",oid), Level.SEVERE);
                 }
             }
 
             if (description != null)
-                viewNode.setProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION, description);
+                viewNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
 
             tx.success();
             return viewNode.getId();
@@ -690,25 +653,25 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             tx = graphDb.beginTx();
             Node newView = graphDb.createNode();
 
-            newView.setProperty(MetadataEntityManagerImpl.PROPERTY_TYPE, viewType);
+            newView.setProperty(Constants.PROPERTY_TYPE, viewType);
             if (name != null)
-                newView.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, name);
+                newView.setProperty(Constants.PROPERTY_NAME, name);
             if (description != null)
-                newView.setProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION, description);
+                newView.setProperty(Constants.PROPERTY_DESCRIPTION, description);
             if (structure != null)
-                newView.setProperty(PROPERTY_STRUCTURE, structure);
+                newView.setProperty(Constants.PROPERTY_STRUCTURE, structure);
             if (background != null){
                 try{
                     Properties props = new Properties();
                     String fileName = "view-" + newView.getId() + "-" + viewType;
                     props.load(new FileInputStream("persistence.properties"));
                     Util.saveFile(props.getProperty("background_path"), fileName, background);
-                    newView.setProperty(PROPERTY_BACKGROUND_FILE_NAME, fileName);
+                    newView.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
                 }catch(Exception ex){
                     throw new InvalidArgumentException(String.format("Background image for view %1s couldn't be saved",newView.getId()), Level.SEVERE);
                 }
             }
-            generalViewsIndex.add(newView, MetadataEntityManagerImpl.PROPERTY_ID, newView.getId());
+            generalViewsIndex.add(newView, Constants.PROPERTY_ID, newView.getId());
             tx.success();
 
             return newView.getId();
@@ -743,33 +706,33 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             tx = graphDb.beginTx();
 
             if (name != null)
-                viewNode.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, name);
+                viewNode.setProperty(Constants.PROPERTY_NAME, name);
 
             if (structure != null)
-                viewNode.setProperty(PROPERTY_STRUCTURE, structure);
+                viewNode.setProperty(Constants.PROPERTY_STRUCTURE, structure);
 
             if (description != null)
-                viewNode.setProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION, description);
+                viewNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
 
             Properties props = new Properties();
             props.load(new FileInputStream("persistence.properties"));
-            String fileName = "view-" + oid + "-" + viewNode.getId() + "-" + viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE);
+            String fileName = "view-" + oid + "-" + viewNode.getId() + "-" + viewNode.getProperty(Constants.PROPERTY_TYPE);
             if (background != null){
                 try{
                     Util.saveFile(props.getProperty("background_path"), fileName, background);
-                    viewNode.setProperty(PROPERTY_BACKGROUND_FILE_NAME, fileName);
+                    viewNode.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
                 }catch(Exception ex){
                     throw new InvalidArgumentException(String.format("Background image for view %1s couldn't be saved",oid), Level.SEVERE);
                 }
             }
             else{
-                if (viewNode.hasProperty(PROPERTY_BACKGROUND_FILE_NAME)){
+                if (viewNode.hasProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME)){
                     try{
                         new File(props.getProperty("background_path") + "/" + fileName).delete();
                     }catch(Exception ex){
                         throw new InvalidArgumentException(String.format("View background %1s couldn't be deleted",props.getProperty("background_path") + "/" + fileName), Level.SEVERE);
                     }
-                    viewNode.removeProperty(PROPERTY_BACKGROUND_FILE_NAME);
+                    viewNode.removeProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME);
                 }
             }
 
@@ -789,29 +752,29 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         Transaction tx = null;
         try{
             tx = graphDb.beginTx();
-            Node gView = generalViewsIndex.get(MetadataEntityManagerImpl.PROPERTY_ID, oid).getSingle();
+            Node gView = generalViewsIndex.get(Constants.PROPERTY_ID, oid).getSingle();
             if (gView == null)
                 throw new ObjectNotFoundException("View", oid);
             if (name != null)
-                gView.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, name);
+                gView.setProperty(Constants.PROPERTY_NAME, name);
             if (description != null)
-                gView.setProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION, description);
+                gView.setProperty(Constants.PROPERTY_DESCRIPTION, description);
             if (structure != null)
-                gView.setProperty(PROPERTY_STRUCTURE, structure);
+                gView.setProperty(Constants.PROPERTY_STRUCTURE, structure);
             if (background != null){
                 if (background.length != 0){
                     try{
                         Properties props = new Properties();
-                        String fileName = "view-" + oid + "-" + gView.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE);
+                        String fileName = "view-" + oid + "-" + gView.getProperty(Constants.PROPERTY_TYPE);
                         props.load(new FileInputStream("persistence.properties"));
                         Util.saveFile(props.getProperty("background_path"), fileName, background);
-                        gView.setProperty(PROPERTY_BACKGROUND_FILE_NAME, fileName);
+                        gView.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
                     }catch(Exception ex){
                         throw new InvalidArgumentException(String.format("Background image for view %1s couldn't be saved",oid), Level.SEVERE);
                     }
                 }
             }else
-                gView.removeProperty(PROPERTY_BACKGROUND_FILE_NAME);
+                gView.removeProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME);
 
             tx.success();
             
@@ -831,7 +794,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         try{
             tx = graphDb.beginTx();
             for (long id : ids){
-                Node gView = generalViewsIndex.get(MetadataEntityManagerImpl.PROPERTY_ID, id).getSingle();
+                Node gView = generalViewsIndex.get(Constants.PROPERTY_ID, id).getSingle();
                 generalViewsIndex.remove(gView);
                 gView.delete();
             }
@@ -854,11 +817,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             Node viewNode = rel.getEndNode();
             if (viewNode.getId() == viewId){
                 ViewObject res = new ViewObject(viewId,
-                        viewNode.hasProperty(MetadataEntityManagerImpl.PROPERTY_NAME) ? (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME) : null,
-                        viewNode.hasProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION) ? (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION) : null,
-                        (Integer)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
-                if (viewNode.hasProperty(PROPERTY_BACKGROUND_FILE_NAME)){
-                    String fileName = (String)viewNode.getProperty(PROPERTY_BACKGROUND_FILE_NAME);
+                        viewNode.hasProperty(Constants.PROPERTY_NAME) ? (String)viewNode.getProperty(Constants.PROPERTY_NAME) : null,
+                        viewNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? (String)viewNode.getProperty(Constants.PROPERTY_DESCRIPTION) : null,
+                        (Integer)viewNode.getProperty(Constants.PROPERTY_TYPE));
+                if (viewNode.hasProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME)){
+                    String fileName = (String)viewNode.getProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME);
                     Properties props = new Properties();
                     byte[] background = null;
                     try {
@@ -869,8 +832,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     }
                     res.setBackground(background);
                 }
-                if (viewNode.hasProperty(PROPERTY_STRUCTURE))
-                    res.setStructure((byte[])viewNode.getProperty(PROPERTY_STRUCTURE));
+                if (viewNode.hasProperty(Constants.PROPERTY_STRUCTURE))
+                    res.setStructure((byte[])viewNode.getProperty(Constants.PROPERTY_STRUCTURE));
                 return res;
             }
         }
@@ -889,17 +852,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             }
             Node viewNode = rel.getEndNode();
             res.add(new ViewObjectLight(viewNode.getId(), 
-                    viewNode.hasProperty(MetadataEntityManagerImpl.PROPERTY_NAME) ? (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME) : null,
-                    viewNode.hasProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION) ? (String)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION) : null,
-                    (Integer)viewNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE)));
+                    viewNode.hasProperty(Constants.PROPERTY_NAME) ? (String)viewNode.getProperty(Constants.PROPERTY_NAME) : null,
+                    viewNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? (String)viewNode.getProperty(Constants.PROPERTY_DESCRIPTION) : null,
+                    (Integer)viewNode.getProperty(Constants.PROPERTY_TYPE)));
         }
         return res;
     }
 
     public List<ViewObjectLight> getGeneralViews(int viewType, int limit) throws InvalidArgumentException {
-        String cypherQuery = "START gView=node:"+ INDEX_GENERAL_VIEWS +"('id:*')";
+        String cypherQuery = "START gView=node:"+ Constants.INDEX_GENERAL_VIEWS +"('id:*')";
         if (viewType != -1)
-            cypherQuery += " WHERE gView."+MetadataEntityManagerImpl.PROPERTY_TYPE+"="+viewType;
+            cypherQuery += " WHERE gView."+Constants.PROPERTY_TYPE+"="+viewType;
 
         cypherQuery += " RETURN gView";
 
@@ -912,12 +875,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         List<ViewObjectLight> myRes = new ArrayList<ViewObjectLight>();
         while (gViews.hasNext()){
             Node gView = gViews.next();
-            ViewObjectLight aView = new ViewObjectLight(gView.getId(), (String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME),
-                    (String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION), (Integer)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
-            if (gView.hasProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
-                aView.setName((String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
-            if (gView.hasProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION));
-                aView.setDescription((String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION));
+            ViewObjectLight aView = new ViewObjectLight(gView.getId(), (String)gView.getProperty(Constants.PROPERTY_NAME),
+                    (String)gView.getProperty(Constants.PROPERTY_DESCRIPTION), (Integer)gView.getProperty(Constants.PROPERTY_TYPE));
+            if (gView.hasProperty(Constants.PROPERTY_NAME));
+                aView.setName((String)gView.getProperty(Constants.PROPERTY_NAME));
+            if (gView.hasProperty(Constants.PROPERTY_DESCRIPTION));
+                aView.setDescription((String)gView.getProperty(Constants.PROPERTY_DESCRIPTION));
 
             myRes.add(aView);
         }
@@ -925,19 +888,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     }
 
     public ViewObject getGeneralView(long viewId) throws ObjectNotFoundException {
-        Node gView = generalViewsIndex.get(MetadataEntityManagerImpl.PROPERTY_ID,viewId).getSingle();
+        Node gView = generalViewsIndex.get(Constants.PROPERTY_ID,viewId).getSingle();
 
         if (gView == null)
             throw new ObjectNotFoundException("View", viewId);
 
         ViewObject aView = new ViewObject(gView.getId(),
-                gView.hasProperty(MetadataEntityManagerImpl.PROPERTY_NAME) ? (String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME) : null,
-                gView.hasProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION) ? (String)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION) : null,
-                (Integer)gView.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
-        if (gView.hasProperty(PROPERTY_STRUCTURE))
-            aView.setStructure((byte[])gView.getProperty(PROPERTY_STRUCTURE));
-        if (gView.hasProperty(PROPERTY_BACKGROUND_FILE_NAME)){
-            String fileName = (String)gView.getProperty(PROPERTY_BACKGROUND_FILE_NAME);
+                gView.hasProperty(Constants.PROPERTY_NAME) ? (String)gView.getProperty(Constants.PROPERTY_NAME) : null,
+                gView.hasProperty(Constants.PROPERTY_DESCRIPTION) ? (String)gView.getProperty(Constants.PROPERTY_DESCRIPTION) : null,
+                (Integer)gView.getProperty(Constants.PROPERTY_TYPE));
+        if (gView.hasProperty(Constants.PROPERTY_STRUCTURE))
+            aView.setStructure((byte[])gView.getProperty(Constants.PROPERTY_STRUCTURE));
+        if (gView.hasProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME)){
+            String fileName = (String)gView.getProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME);
             Properties props = new Properties();
             byte[] background = null;
             try {
@@ -958,7 +921,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         if (className == null){
             return graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.BOTH).getEndNode();
         }
-        Node classNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME,className).getSingle();
+        Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
         if (classNode == null){
             throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
         }
@@ -1156,9 +1119,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         rootTag.attr("date", Calendar.getInstance().getTimeInMillis());
         StartTagWAX inventoryTag = rootTag.start("inventory");
         StartTagWAX classesTag = inventoryTag.start("classes");
-        Node rootObjectNode = classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, MetadataEntityManagerImpl.CLASS_ROOTOBJECT).getSingle(); //NOI18N
+        Node rootObjectNode = classIndex.get(Constants.PROPERTY_NAME, Constants.CLASS_ROOTOBJECT).getSingle(); //NOI18N
         if (rootObjectNode == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", MetadataEntityManagerImpl.CLASS_ROOTOBJECT));
+            throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", Constants.CLASS_ROOTOBJECT));
         getXMLNodeForClass(rootObjectNode, rootTag);
         classesTag.end();
         inventoryTag.end();
@@ -1174,22 +1137,22 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             
             Node poolNode =  graphDb.createNode();
             if (name != null)
-                poolNode.setProperty(MetadataEntityManagerImpl.PROPERTY_NAME, name);
+                poolNode.setProperty(Constants.PROPERTY_NAME, name);
             if (description != null)
-                poolNode.setProperty(MetadataEntityManagerImpl.PROPERTY_DESCRIPTION, description);
+                poolNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
             
             ClassMetadata classMetadata = cm.getClass(instancesOfClass);
             if (classMetadata == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", instancesOfClass));
             
-            Node user = userIndex.get(MetadataEntityManagerImpl.PROPERTY_ID, owner).getSingle();
+            Node user = userIndex.get(Constants.PROPERTY_ID, owner).getSingle();
             if (user == null)
                 throw new InvalidArgumentException(String.format("User with id %1 doesn't exist", owner), Level.SEVERE);
             
-            poolNode.setProperty(PROPERTY_CLASS_NAME, instancesOfClass);
+            poolNode.setProperty(Constants.PROPERTY_CLASS_NAME, instancesOfClass);
             poolNode.createRelationshipTo(user, RelTypes.OWNS_POOL);
             
-            poolsIndex.putIfAbsent(poolNode, MetadataEntityManagerImpl.PROPERTY_ID, poolNode.getId());
+            poolsIndex.putIfAbsent(poolNode, Constants.PROPERTY_ID, poolNode.getId());
             tx.success();
             return poolNode.getId();
 
@@ -1213,17 +1176,45 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
      * @throws InvalidArgumentException If any of the attributes or its type is invalid
      * @return the id of the newly created object
      */
-    public long createPoolItem(long poolId, String[] attributeNames, String[][] attributeValues, long templateId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+    @Override
+    public long createPoolItem(long poolId, String className, String[] attributeNames, String[][] attributeValues, long templateId) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException {
+        
+        if (attributeNames != null && attributeValues != null){
+            if (attributeNames.length != attributeValues.length)
+            throw new ArraySizeMismatchException("attributeNames", "attributeValues");
+        }
+        
         Transaction tx = null;
         try{
             tx = graphDb.beginTx();
-            Node pool = poolsIndex.get(MetadataEntityManagerImpl.PROPERTY_ID, poolId).getSingle();
+            Node pool = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
             
             if (pool == null)
-                throw new ApplicationObjectNotFoundException(String.format("Class %1s can not be found", CLASS_POOL));
-
+                throw new ApplicationObjectNotFoundException(String.format("Pool with id %1s can not be found", poolId));
+            
+            if (!pool.hasProperty(Constants.PROPERTY_CLASS_NAME))
+                throw new InvalidArgumentException("This pool has not set his class name attribute", Level.INFO);
+            
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
+            
+            ClassMetadata classMetadata = cm.getClass(className);
+            
+            if (!cm.isSubClass((String)pool.getProperty(Constants.PROPERTY_CLASS_NAME), className))
+                throw new InvalidArgumentException(String.format("Class %1s is not subclass of %2s", className, (String)pool.getProperty(Constants.PROPERTY_CLASS_NAME)), Level.OFF);
+            
+            HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
+            if (attributeNames != null && attributeValues != null){
+                for (int i = 0; i < attributeNames.length; i++)
+                    attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
+            }
+            
+            Node newObject = bem.createObject(classNode, classMetadata, attributes, templateId);
+            newObject.createRelationshipTo(pool, RelTypes.CHILD_OF_SPECIAL);
             tx.success();
-            return pool.getId();
+            return newObject.getId();
 
         }catch(Exception ex){
             Logger.getLogger("createPoolItem: "+ex.getMessage()); //NOI18N
@@ -1242,7 +1233,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         try{
             tx = graphDb.beginTx();
             for (long id : ids){
-                Node poolNode = poolsIndex.get(MetadataEntityManagerImpl.PROPERTY_ID, id).getSingle();
+                Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, id).getSingle();
                 if (poolNode == null)
                     throw new InvalidArgumentException(String.format("Pool with id %1 does not exist", id),Level.INFO);
                 poolsIndex.remove(poolNode);
@@ -1273,12 +1264,42 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             }
                 
             RemoteBusinessObjectLight rbol = new RemoteBusinessObjectLight(node.getId(), 
-                                    node.hasProperty(MetadataEntityManagerImpl.PROPERTY_NAME) ? (String)node.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME) : null,
-                                    ApplicationEntityManager.CLASS_POOL);
+                                    node.hasProperty(Constants.PROPERTY_NAME) ? (String)node.getProperty(Constants.PROPERTY_NAME) : null,
+                                    node.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)node.getProperty(Constants.PROPERTY_CLASS_NAME) : null);
             pools.add(rbol);
         }
             
         return pools;
+    }
+    
+    public List<RemoteBusinessObjectLight> getPoolItems(long poolId, int limit) throws ApplicationObjectNotFoundException{
+        
+        Node poolNode = poolsIndex.get(UserProfile.PROPERTY_ID, poolId).getSingle();
+
+        if (poolNode == null)
+            throw new ApplicationObjectNotFoundException(String.format("The pool with id %1s could not be found", poolId));
+        
+        List<RemoteBusinessObjectLight> poolItems  = new ArrayList<RemoteBusinessObjectLight>();
+        
+        int i = 0;
+        for (Relationship rel : poolNode.getRelationships(RelTypes.CHILD_OF_SPECIAL)){
+            if (limit != -1){
+                if (i >= limit)
+                     break;
+                i++;
+            }
+            Node item = rel.getStartNode();
+            RemoteBusinessObjectLight rbol = new RemoteBusinessObjectLight(item.getId(), 
+                                    item.hasProperty(Constants.PROPERTY_NAME) ? (String)item.getProperty(Constants.PROPERTY_NAME) : null,
+                                    Util.getClassName(item));
+            poolItems.add(rbol);
+        }
+                   
+        return poolItems;
+    }
+    
+    public void setBusinessEntityManager(BusinessEntityManagerImpl bem) {
+        this.bem = bem;
     }
 
     /**
@@ -1293,27 +1314,27 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         int applicationModifiers = 0;
         int javaModifiers = 0;
         StartTagWAX currentTag = parentTag.start("class"); //NOI18N
-        currentTag.attr("name", classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
+        currentTag.attr("name", classNode.getProperty(Constants.PROPERTY_NAME));
         
         currentTag.attr("classPackage", "");
         
         //Application modifiers
-        if ((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_COUNTABLE))
+        if ((Boolean)classNode.getProperty(Constants.PROPERTY_COUNTABLE))
             applicationModifiers |= Constants.CLASS_MODIFIER_COUNTABLE;
 
-        if ((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_CUSTOM))
+        if ((Boolean)classNode.getProperty(Constants.PROPERTY_CUSTOM))
             applicationModifiers |= Constants.CLASS_MODIFIER_CUSTOM;
 
         currentTag.attr("applicationModifiers",applicationModifiers);
 
         //Language modifiers
-        if ((Boolean)classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ABSTRACT))
+        if ((Boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT))
             applicationModifiers |= Modifier.ABSTRACT;
         
         currentTag.attr("javaModifiers",javaModifiers);
         
         //Class type
-        if (classNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME).equals("RootObject")){
+        if (classNode.getProperty(Constants.PROPERTY_NAME).equals("RootObject")){
             currentTag.attr("classType",Constants.CLASS_TYPE_ROOT);
         }else{
             if (Util.isSubClass("InventoryObject", classNode))
@@ -1335,19 +1356,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             StartTagWAX attributeTag = attributesTag.start("attribute");
             Node attributeNode = relWithAttributes.getEndNode();
             int attributeApplicationModifiers = 0;
-            attributeTag.attr("name", attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NAME));
-            attributeTag.attr("type", attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_TYPE));
+            attributeTag.attr("name", attributeNode.getProperty(Constants.PROPERTY_NAME));
+            attributeTag.attr("type", attributeNode.getProperty(Constants.PROPERTY_TYPE));
             attributeTag.attr("javaModifiers", 0); //Not used
             //Application modifiers
-            if ((Boolean)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NO_COPY))
+            if ((Boolean)attributeNode.getProperty(Constants.PROPERTY_NO_COPY))
                 attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_NOCOPY;
-            if ((Boolean)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_VISIBLE))
+            if ((Boolean)attributeNode.getProperty(Constants.PROPERTY_VISIBLE))
                 attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_VISIBLE;
-            if ((Boolean)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_ADMINISTRATIVE))
+            if ((Boolean)attributeNode.getProperty(Constants.PROPERTY_ADMINISTRATIVE))
                 attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_ADMINISTRATIVE;
-            if ((Boolean)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_NO_SERIALIZE))
+            if ((Boolean)attributeNode.getProperty(Constants.PROPERTY_NO_SERIALIZE))
                 attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_NOSERIALIZE;
-            if ((Boolean)attributeNode.getProperty(MetadataEntityManagerImpl.PROPERTY_READONLY))
+            if ((Boolean)attributeNode.getProperty(Constants.PROPERTY_READONLY))
                 attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_READONLY;
             attributeTag.attr("applicationModifiers", attributeApplicationModifiers);
             attributeTag.end();
@@ -1373,7 +1394,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         List<String> ListClassNames = new ArrayList();
         readJoins(ListClassNames, query);
         for(String className : ListClassNames)
-            classNodes.put(className, classIndex.get(MetadataEntityManagerImpl.PROPERTY_NAME, className).getSingle());
+            classNodes.put(className, classIndex.get(Constants.PROPERTY_NAME, className).getSingle());
         
         return classNodes;
     }

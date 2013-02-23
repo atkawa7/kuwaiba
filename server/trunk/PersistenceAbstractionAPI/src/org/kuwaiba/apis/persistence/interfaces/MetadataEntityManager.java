@@ -74,6 +74,17 @@ public interface MetadataEntityManager {
      * @throws Exception EntityManagerNotAvailableException or something unexpected
      */
     public List<ClassMetadataLight> getLightMetadata(boolean includeListTypes, boolean includeIndesign) throws Exception;
+    
+    /**
+     * Gets the subclasses of a given class
+     * @param className Class name
+     * @param includeAbstractClasses Should the list include the abstract subclasses
+     * @param includeSelf Should the list include the subclasses and the parent class?
+     * @return The list of subclasses
+     * @throws MetadataObjectNotFoundException If the class can not be found
+     * @throws InvalidArgumentException If the provided class is not a subclass of InventoryObject
+     */
+    public List<ClassMetadataLight> getLightSubClasses(String className, boolean includeAbstractClasses, boolean includeSelf) throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Retrieves all the class metadata except for classes marked as dummy

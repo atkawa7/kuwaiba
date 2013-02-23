@@ -19,8 +19,8 @@ package org.kuwaiba.persistenceservice.queries;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
-import org.kuwaiba.persistenceservice.impl.ApplicationEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.RelTypes;
+import org.kuwaiba.persistenceservice.util.Constants;
 
 /**
  * Cypher parser
@@ -104,11 +104,11 @@ public class CypherParser {
             if (!attibuteType.equals("String") && condition == ExtendedQuery.EQUAL)
                 operator = operator.substring(0, operator.length() - 1);
             if (attibuteType.equals("Date")){
-                SimpleDateFormat dateFormat = new SimpleDateFormat(ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
+                SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);//NOI18N
                 try {
                     attributeValue = Long.toString(dateFormat.parse(attributeValue).getTime());
                 } catch (ParseException ex) {
-                    System.out.println("wrong date format should be " + ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
+                    System.out.println("wrong date format should be " + Constants.DATE_FORMAT);//NOI18N
                 }
             }
             if(attibuteType.equals("String")){
@@ -145,11 +145,11 @@ public class CypherParser {
             if (!attibuteType.equals("String") && condition == ExtendedQuery.EQUAL)
                 operator = operator.substring(0, operator.length() - 1);
             if (attibuteType.equals("Date")){
-                SimpleDateFormat dateFormat = new SimpleDateFormat(ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
+                SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);//NOI18N
                 try {
                     attributeValue = Long.toString(dateFormat.parse(attributeValue).getTime());
                 } catch (ParseException ex) {
-                    System.out.println("wrong date format should be " + ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
+                    System.out.println("wrong date format should be " + Constants.DATE_FORMAT);//NOI18N
                 }
             }
             if(attibuteType.equals("String")){
@@ -182,11 +182,11 @@ public class CypherParser {
             if (!attibuteType.equals("String") && condition == ExtendedQuery.EQUAL)
                 operator = operator.substring(0, operator.length() - 1);
             if (attibuteType.equals("Date")){
-                SimpleDateFormat dateFormat = new SimpleDateFormat(ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
+                SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);//NOI18N
                 try {
                     attributeValue = Long.toString(dateFormat.parse(attributeValue).getTime());
                 } catch (ParseException ex) {
-                    System.out.println("wrong date format should be " + ApplicationEntityManagerImpl.DATE_FORMAT);//NOI18N
+                    System.out.println("wrong date format should be " + Constants.DATE_FORMAT);//NOI18N
                 }
             }
             if(attibuteType.equals("String")){

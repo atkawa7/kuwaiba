@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
-import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
 import org.kuwaiba.persistenceservice.util.Constants;
 import org.kuwaiba.persistenceservice.util.Util;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -31,13 +30,11 @@ import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Node;
 
 /**
- * Creates cypher Query
+ * Creates cypher simple Query
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class CypherQueryBuilder {
-    public static final String INSTANCE = "instance"; //NOI18N
-    public static final String PARENT = "parent"; //NOI18N
-    public static final String LISTTYPE = "listType_"; //NOI18N
+public class CypherSimpleQuery {
+
     /**
      *
      */
@@ -49,7 +46,7 @@ public class CypherQueryBuilder {
     /**
      *
      */
-    private List defaultVisibleAttributes = new ArrayList<String>();
+    List defaultVisibleAttributes = new ArrayList<String>() {{add("name"); }};
     /**
      *
      */
@@ -86,7 +83,7 @@ public class CypherQueryBuilder {
 
         match = match.concat(cp.createParentMatch());
         where = where.concat(cp.createParentRelation(query.getClassName()));
-        _return = _return.concat(", ".concat(PARENT));
+        _return = ", parent";
 
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
@@ -97,9 +94,8 @@ public class CypherQueryBuilder {
                                                             Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
                                                             ).concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : "  OR "));
                     }
-                    else{
+                    else
                         readJoins(query.getAttributeNames().get(i)+"_P", listTypeName, query.getJoins().get(i));
-                    }
             }//end for
         }//end if
     }
@@ -115,7 +111,7 @@ public class CypherQueryBuilder {
         Node classNode = classNodes.get(query.getClassName());
         match = match.concat(cp.createListypeMatch(listTypeName, listTypeName2));
         where = where.concat(cp.createJoinRelation(listTypeName));
-        _return = _return.concat(", ").concat(LISTTYPE).concat(listTypeName);
+        _return = _return.concat(", listType_"+listTypeName);
 
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
@@ -126,9 +122,8 @@ public class CypherQueryBuilder {
                                                             Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
                                                             ).concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : "  OR "));
                     }
-                    else{
+                    else
                         readJoins(query.getAttributeNames().get(i), listTypeName, query.getJoins().get(i));
-                    }
             }//end for
         }//end if
     }
@@ -140,20 +135,22 @@ public class CypherQueryBuilder {
      * @param query
      */
     public void readJoinQuery(String listTypeName, String listTypeName2, ExtendedQuery query){
+
         Node classNode = classNodes.get(query.getClassName());
+
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
                 if(query.getAttributeValues().get(i) != null){
                     where = where.concat(parser.createJoinWhere(query.getConditions().get(i), listTypeName,
-                                            query.getAttributeNames().get(i),
-                                            query.getAttributeValues().get(i),
-                                            Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
-                                            ).concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : "  OR "));
+                                                        query.getAttributeNames().get(i),
+                                                        query.getAttributeValues().get(i),
+                                                        Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
+                                                        ).concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : "  OR "));
                 }
-                else{
+                else
                    readJoins(query.getAttributeNames().get(i), listTypeName, query);
-                }
             }
+            
         }
     }
 
@@ -162,24 +159,20 @@ public class CypherQueryBuilder {
      * @param query
      */
     public void readQuery(ExtendedQuery query){
-        _return = cp.createReturn();
         Node classNode = classNodes.get(query.getClassName());
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
-                if(query.getAttributeValues().get(i) != null){
+                if(query.getAttributeValues().get(i) != null)
                     where = where.concat(parser.createWhere(query.getConditions().get(i),
                                                             query.getAttributeNames().get(i),
                                                             query.getAttributeValues().get(i),
                                                             Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
                                                             ).concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : "  OR "));
-                }
                else{
-                    if( query.getAttributeNames().get(i).equalsIgnoreCase(PARENT)){
+                    if( query.getAttributeNames().get(i).equalsIgnoreCase("parent"))
                         readParent(query.getAttributeNames().get(i), "", query.getJoins().get(i));
-                    }
-                    else{
+                    else
                         readJoins(query.getAttributeNames().get(i), "", query.getJoins().get(i));
-                    }
                 }
             }//end for
         }//end if
@@ -190,23 +183,19 @@ public class CypherQueryBuilder {
      * @param query
      */
     public void readVissibleAttributes(ExtendedQuery query){
-        if(query.getVisibleAttributeNames() != null){
-             vissibleAttributes.put(INSTANCE, query.getVisibleAttributeNames());
-        }
-        else{
-            vissibleAttributes.put(INSTANCE, defaultVisibleAttributes);
-        }
+        if(query.getVisibleAttributeNames() != null)
+             vissibleAttributes.put("instance", query.getVisibleAttributeNames());
+        else
+            vissibleAttributes.put("instance", defaultVisibleAttributes);
+
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
-                if(query.getAttributeValues().get(i) == null){
-                    if(query.getAttributeNames().get(i).equalsIgnoreCase(PARENT)){
+                if(query.getAttributeValues().get(i) == null)
+                    if( query.getAttributeNames().get(i).equalsIgnoreCase("parent"))
                         readVissibleAttributeParent(query.getJoins().get(i));
-                    }
-                    else{
+                    else
                         readVissibleAttributeJoins(query.getAttributeNames().get(i), query.getJoins().get(i));
-                    }
-                }
-            }//end for
+            }
         }
     }
 
@@ -215,19 +204,19 @@ public class CypherQueryBuilder {
      * @param query
      */
     public void readVissibleAttributeParent(ExtendedQuery query){
-        if(query.getVisibleAttributeNames() != null){
-            vissibleAttributes.put(PARENT, query.getVisibleAttributeNames());
-        }
-        else{
-            vissibleAttributes.put(PARENT, defaultVisibleAttributes);
-        }
+        if(query.getVisibleAttributeNames() != null)
+            vissibleAttributes.put("parent", query.getVisibleAttributeNames());
+        else
+            vissibleAttributes.put("parent", defaultVisibleAttributes);
+
+
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
-                if(query.getJoins().get(i) != null){
+                if(query.getJoins().get(i) != null)
                     readVissibleAttributeJoins(query.getAttributeNames().get(i), query.getJoins().get(i));
-                }
             }
-        }//listTypeName, listTypeName2;
+        }
+        //listTypeName, listTypeName2;
     }
 
     /**
@@ -236,17 +225,16 @@ public class CypherQueryBuilder {
      * @param query
      */
     public void readVissibleAttributeJoins(String listTypeName, ExtendedQuery query){
-         if(query.getVisibleAttributeNames() != null){
-             vissibleAttributes.put(LISTTYPE.concat(listTypeName), query.getVisibleAttributeNames());
-         }
+         if(query.getVisibleAttributeNames() != null)
+             vissibleAttributes.put("listType_"+listTypeName, query.getVisibleAttributeNames());
         else{
-            vissibleAttributes.put(LISTTYPE.concat(listTypeName), defaultVisibleAttributes);
+            vissibleAttributes.put("listType_"+listTypeName, defaultVisibleAttributes);
         }
+
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
-                if(query.getJoins().get(i) != null){
+                if(query.getJoins().get(i) != null)
                     readVissibleAttributeJoins(query.getAttributeNames().get(i), query.getJoins().get(i));
-                }
             }
         }
     }
@@ -267,8 +255,8 @@ public class CypherQueryBuilder {
             cypherQuery = cypherQuery.concat(match);
         if(!where.isEmpty())
             cypherQuery = cypherQuery.concat(" WHERE ".concat(where.substring(0, where.length()-4)));
-        
-        cypherQuery = cypherQuery.concat(" RETURN ".concat(_return));
+
+        cypherQuery = cypherQuery.concat(" RETURN ".concat(cp.createReturn()).concat(_return));
 
         cypherQuery = cypherQuery.concat(" ORDER BY instance.name ASC");
         if(query.getPage()>0){
@@ -285,6 +273,7 @@ public class CypherQueryBuilder {
      * @param cypherQuery
      */
     public void executeQuery(Node classNode, String cypherQuery){
+        
         ExecutionEngine engine = new ExecutionEngine(classNode.getGraphDatabase());
         ExecutionResult result = engine.execute(cypherQuery, new HashMap<String, Object>());
         readResult(result.iterator());
@@ -299,41 +288,39 @@ public class CypherQueryBuilder {
         ResultRecord rr;
         List<String> vissibleAttibutesTitles = new ArrayList<String>();
 
-        String[] split = _return.split(", ");
-        for(int g=0; g < split.length; g++){
-            for(String va: (List<String>)vissibleAttributes.get(split[g])){
+        //Iterator it = vissibleAttributes.entrySet().iterator();
+        //while (it.hasNext()) {
+            //Map.Entry e = (Map.Entry)it.next();
+
+            for(String va: (List<String>)vissibleAttributes.get("instance"))
                 vissibleAttibutesTitles.add(va);
-            }
-        }
-        while(columnsIterator.hasNext()){//interates by row
-            Map<String, Object> column = columnsIterator.next();
-            List<String> extraColumns = new ArrayList<String>();
-            //create the class
-            Node instanceNode = (Node)column.get(split[0]);
-            rr = new ResultRecord(instanceNode.getId(), Util.getAttributeFromNode(instanceNode, Constants.PROPERTY_NAME) ,Util.getClassName(instanceNode));
-            //iterates by column
-            for(int lu=  0; lu <split.length; lu++){
-                for(String va: (List<String>)vissibleAttributes.get(split[lu])){
-                    Node node = (Node)column.get(split[lu]);
-                    if(va.equals(Constants.PROPERTY_ID)){
-                        extraColumns.add(Long.toString(node.getId()));
-                    }
-                    else{
-                        extraColumns.add(Util.getAttributeFromNode(node, va));
-                    }
+
+            while(columnsIterator.hasNext()){
+                Map<String, Object> column = columnsIterator.next();
+                List<String> extraColumns = new ArrayList<String>();
+                Node instanceNode = (Node)column.get("instance");//(String)e.getKey()
+
+                for(String va: (List<String>)vissibleAttibutesTitles){
+                    if(va.equals("id"))
+                        extraColumns.add(Long.toString(instanceNode.getId()));
+                    else
+                        extraColumns.add(Util.getAttributeFromNode(instanceNode, va));
+
                 }
+                rr = new ResultRecord(instanceNode.getId(), Util.getAttributeFromNode(instanceNode,"name") ,Util.getClassName(instanceNode));
+
+                rr.setExtraColumns(extraColumns);
+                onlyResults.add(rr);
             }
-            rr.setExtraColumns(extraColumns);
-            onlyResults.add(rr);
-        }
+        //}
+
         ResultRecord resltRcrdHeader = new ResultRecord(0, null, null);
         resltRcrdHeader.setExtraColumns(vissibleAttibutesTitles);
         resultList.add(resltRcrdHeader);
 
         if(onlyResults.size()>0){
-            for(ResultRecord orr: onlyResults){
+            for(ResultRecord orr: onlyResults)
                 resultList.add(orr);
-            }
         }
     }
 
