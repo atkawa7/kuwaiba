@@ -106,9 +106,20 @@ public interface WebserviceBeanRemote {
      * @param includeListTypes boolean to indicate if the list should include
      * the subclasses of GenericObjectList
      * @return the list of classes
-     * @throws Exception EntityManagerNotAvailableException or something unexpected
+     * @throws ServerSideException EntityManagerNotAvailableException or something unexpected
      */
     public List<ClassInfoLight> getLightMetadata(boolean includeListTypes) throws ServerSideException;
+    
+    /**
+     * Gets the subclasses of a given class
+     * @param className Class name
+     * @param includeAbstractClasses should the result include the abstract classes?
+     * @param includeSelf Should the list include the subclasses and the parent class?
+     * @param sessionId Session token
+     * @return The list of subclasses
+     * @throws Exception If the class can not be found
+     */
+    public List<ClassInfoLight> getLightSubClasses(String className, boolean includeAbstractClasses, boolean includeSelf) throws ServerSideException;
 
     /**
      * Retrieves all the class metadata except for classes marked as dummy
@@ -507,11 +518,16 @@ public interface WebserviceBeanRemote {
     
     //Pools
     public long createPool(String name, String description, String instancesOfClass, long owner) throws ServerSideException;
+    
+    public long createPoolItem(long poolId, String className, String[] attributeNames, String[][] attributeValues, long templateId) throws ServerSideException;
 
     public void deletePools(long[] ids) throws ServerSideException;
-
+    
     public RemoteObjectLight[] getPools(int limit) throws ServerSideException;
+    
+    public RemoteObjectLight[] getPoolItems(long poolId, int limit) throws ServerSideException;
 
     // </editor-fold>
+   
 
 }

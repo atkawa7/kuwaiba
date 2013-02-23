@@ -205,8 +205,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
 
     @Override
     public List<ClassInfoLight> getLightMetadata(boolean includeListTypes)
-            throws ServerSideException
-    {
+            throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
@@ -229,9 +228,31 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
+    public List<ClassInfoLight> getLightSubClasses(String className, boolean includeAbstractClasses, boolean includeSelf) throws ServerSideException {
+        if (mem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try {
+            List<ClassInfoLight> cml = new ArrayList<ClassInfoLight>();
+            List<ClassMetadataLight> classLightMetadata = mem.getLightSubClasses(className, includeAbstractClasses, includeSelf);
+
+            for (ClassMetadataLight classMetadataLight : classLightMetadata){
+                List<Validator> validators = new ArrayList<Validator>();
+                for (String mapping : bre.getSubclassOfValidators().keySet()){
+                    if (mem.isSubClass(mapping, classMetadataLight.getName()))
+                        validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
+                }
+                cml.add(new ClassInfoLight(classMetadataLight, validators.toArray(new Validator[0])));
+            }
+            return cml;
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
     public List<ClassInfo> getMetadata(boolean includeListTypes)
-            throws ServerSideException
-    {
+            throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
@@ -1430,6 +1451,18 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
+    
+    @Override
+    public long createPoolItem(long poolId, String className, String attributeNames[], String attributeValues[][], long templateId) throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            return aem.createPoolItem(poolId, className, attributeNames, attributeValues, templateId);
+        }catch (Exception ex){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
 
     @Override
     public void deletePools(long[] ids) throws ServerSideException{
@@ -1455,6 +1488,17 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
 
+    @Override
+    public RemoteObjectLight[] getPoolItems(long poolId, int limit) throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            return RemoteObjectLight.toRemoteObjectLightArray(aem.getPoolItems(poolId, limit));
+        }catch (Exception ex){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
 
     /**
      * For now, everyone can do everything unless the credentials are invalid

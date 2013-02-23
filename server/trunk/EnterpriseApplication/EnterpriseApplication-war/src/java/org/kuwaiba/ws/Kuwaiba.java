@@ -800,7 +800,7 @@ public class Kuwaiba {
     }
 
     /**
-     * Methods related to managing pools
+     * Methods related to manage pools
      */
     /**
      * Creates a pool
@@ -820,6 +820,37 @@ public class Kuwaiba {
             Session session = wsBean.validateCall("createPool", getIPAddress(), sessionId); //NOI18N
             UserInfo user = wsBean.getUserInSession(sessionId);
             return wsBean.createPool(name, description, instancesOfClass, user.getOid());
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    /**
+     * Creates an object within a pool
+     * @param poolId Id of the pool under which the object will be created
+     * @param className Class this object is going to be instance of
+     * @param attributeNames Attributes to be set in the new object. Null or empty array for none
+     * @param attributeValues Attributes to be set in the new object (values). Null or empty array for none. The size of this array must match attributeNames size
+     * @param templateId Template to be used
+     * @param sessionId Session identifier
+     * @return The id of the newly created object
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "createPoolItem")
+    public long createPoolItem(@WebParam(name = "poolId")long poolId,
+            @WebParam(name = "className")String className,
+            @WebParam(name = "attributeNames")String[] attributeNames,
+            @WebParam(name = "attributeValues")String[][] attributeValues,
+            @WebParam(name = "templateId")long templateId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("createPoolItem", getIPAddress(), sessionId); //NOI18N
+            return wsBean.createPoolItem(poolId, className, attributeNames, attributeValues, templateId);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -874,13 +905,39 @@ public class Kuwaiba {
             throw e;
         }
     }
+    
+    /**
+     * Get the objects contained into a pool
+     * @param poolId Parent pool id
+     * @param limit limit of results. -1 to return all
+     * @param sessionId Session identifier
+     * @return The list of items
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getPoolItems")
+    public RemoteObjectLight[] getPoolItems(@WebParam(name = "poolId")int poolId,
+            @WebParam(name = "limit")int limit,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("getPoolItems", getIPAddress(), sessionId); //NOI18N
+            return wsBean.getPoolItems(poolId, limit);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Business Methods. Click on the + sign on the left to edit the code.">
     /**
      * Gets the children of a given object given his class id and object id
-     * @param oid object's id
      * @param objectClassId object's class id
+     * @param oid object's id
      * @param maxResults Max number of children to be returned. O for all
      * @param sessionId Session token
      * @return An array of all the direct children of the provided object according with the current container hierarchy
@@ -915,8 +972,8 @@ public class Kuwaiba {
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getObjectChildrenByClassName")
-    public RemoteObjectLight[] getObjectChildrenByClassName(@WebParam(name = "oid") long oid,
-            @WebParam(name = "objectClassName") long objectClassName,
+    public RemoteObjectLight[] getObjectChildrenByClassName(@WebParam(name = "objectClassName") long objectClassName,
+            @WebParam(name = "oid") long oid,
             @WebParam(name = "maxResults") int maxResults,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
@@ -1615,6 +1672,37 @@ public class Kuwaiba {
         {
             wsBean.validateCall("getLightMetadata", getIPAddress(), sessionId);
             return wsBean.getLightMetadata(includeListTypes);
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+
+    }
+    
+    /**
+     * Gets the subclasses of a given class
+     * @param className Class name
+     * @param includeAbstractClasses should the result include the abstract classes?
+     * @param includeSelf Should the list include the subclasses and the parent class?
+     * @param sessionId Session token
+     * @return The list of subclasses
+     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getLightSubClasses")
+    public List<ClassInfoLight> getLightSubClasses(
+            @WebParam(name = "className")String className,
+            @WebParam(name = "includeAbstractClasses")boolean includeAbstractClasses,
+            @WebParam(name = "includeSelf")boolean includeSelf,
+            @WebParam(name = "sessionId") String sessionId) throws Exception{
+        try
+        {
+            wsBean.validateCall("getLightSubclasses", getIPAddress(), sessionId);
+            return wsBean.getLightSubClasses(className, includeAbstractClasses, includeSelf);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
