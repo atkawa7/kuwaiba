@@ -54,6 +54,10 @@
 
 <xs:element name="createPool" type="tns:createPool"/>
 
+<xs:element name="createPoolItem" type="tns:createPoolItem"/>
+
+<xs:element name="createPoolItemResponse" type="tns:createPoolItemResponse"/>
+
 <xs:element name="createPoolResponse" type="tns:createPoolResponse"/>
 
 <xs:element name="createQuery" type="tns:createQuery"/>
@@ -144,6 +148,10 @@
 
 <xs:element name="getLightMetadataResponse" type="tns:getLightMetadataResponse"/>
 
+<xs:element name="getLightSubClasses" type="tns:getLightSubClasses"/>
+
+<xs:element name="getLightSubClassesResponse" type="tns:getLightSubClassesResponse"/>
+
 <xs:element name="getListTypeItems" type="tns:getListTypeItems"/>
 
 <xs:element name="getListTypeItemsResponse" type="tns:getListTypeItemsResponse"/>
@@ -183,6 +191,10 @@
 <xs:element name="getObjectRelatedViews" type="tns:getObjectRelatedViews"/>
 
 <xs:element name="getObjectRelatedViewsResponse" type="tns:getObjectRelatedViewsResponse"/>
+
+<xs:element name="getPoolItems" type="tns:getPoolItems"/>
+
+<xs:element name="getPoolItemsResponse" type="tns:getPoolItemsResponse"/>
 
 <xs:element name="getPools" type="tns:getPools"/>
 
@@ -393,6 +405,21 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getLightSubClasses">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="includeAbstractClasses" type="xs:boolean"/>
+<xs:element name="includeSelf" type="xs:boolean"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getLightSubClassesResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="setGroupProperties">
 <xs:sequence>
 <xs:element name="oid" type="xs:long"/>
@@ -482,6 +509,20 @@
 <xs:complexType name="getQueriesResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:remoteQueryLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getPoolItems">
+<xs:sequence>
+<xs:element name="poolId" type="xs:int"/>
+<xs:element name="limit" type="xs:int"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getPoolItemsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -657,6 +698,23 @@
 
 <xs:complexType name="moveObjectsResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="createPoolItem">
+<xs:sequence>
+<xs:element name="poolId" type="xs:long"/>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="attributeValues" type="ns1:stringArray" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="templateId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createPoolItemResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="deleteListTypeItem">
@@ -977,19 +1035,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="getLightMetadata">
-<xs:sequence>
-<xs:element name="includeListTypes" type="xs:boolean"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getLightMetadataResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="createGroup">
 <xs:sequence>
 <xs:element name="groupName" type="xs:string" minOccurs="0"/>
@@ -1003,6 +1048,19 @@
 <xs:complexType name="createGroupResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getLightMetadata">
+<xs:sequence>
+<xs:element name="includeListTypes" type="xs:boolean"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getLightMetadataResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -1267,8 +1325,8 @@
 
 <xs:complexType name="getObjectChildrenByClassName">
 <xs:sequence>
-<xs:element name="oid" type="xs:long"/>
 <xs:element name="objectClassName" type="xs:long"/>
+<xs:element name="oid" type="xs:long"/>
 <xs:element name="maxResults" type="xs:int"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>

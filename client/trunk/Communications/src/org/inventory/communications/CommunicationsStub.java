@@ -1269,6 +1269,16 @@ public class CommunicationsStub {
         }
     }
     
+    public LocalObjectLight createPoolItem (long poolId, String className){
+        try{
+            long objectId  = port.createPoolItem(poolId, className, null, null, -1,session.getSessionId());
+            return new LocalObjectLightImpl(objectId, null, className);
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
     public boolean deletePool(long id){
         try{
             port.deletePools(Arrays.asList(new Long(id)), this.session.getSessionId());
@@ -1290,6 +1300,21 @@ public class CommunicationsStub {
 
             for (RemoteObjectLight rol : children)
                 res.add(new LocalObjectLightImpl(rol));
+
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+
+    public List<LocalClassMetadataLight> getLightSubclasses(String className, boolean includeAbstractSubClasses, boolean includeSelf) {
+        try{
+            List<ClassInfoLight> subClasses = port.getLightSubClasses(className, includeAbstractSubClasses, includeSelf, session.getSessionId());
+            List <LocalClassMetadataLight> res = new ArrayList<LocalClassMetadataLight>();
+
+            for (ClassInfoLight rol : subClasses)
+                res.add(new LocalClassMetadataLightImpl(rol));
 
             return res;
         }catch(Exception ex){

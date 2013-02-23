@@ -15,9 +15,7 @@
  */
 package org.inventory.navigation.applicationnodes.pools;
 
-import java.util.List;
 import javax.swing.Action;
-import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.inventory.navigation.applicationnodes.pools.actions.NewPoolItem;
@@ -27,7 +25,9 @@ import org.openide.nodes.AbstractNode;
  * @author Charles edward Bedon Cortazar <charles.bedon@neotropic.co>
  */
 public class PoolNode extends AbstractNode {
+    
     private LocalObjectLight pool;
+
     public PoolNode(LocalObjectLight lol) {
         super(new ObjectChildren());
         this.pool = lol;
