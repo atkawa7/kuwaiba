@@ -915,7 +915,7 @@ public class Kuwaiba {
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getPoolItems")
-    public RemoteObjectLight[] getPoolItems(@WebParam(name = "poolId")int poolId,
+    public RemoteObjectLight[] getPoolItems(@WebParam(name = "poolId")long poolId,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
