@@ -150,11 +150,11 @@ public interface MetadataEntityManagerRemote extends Remote{
     /**
      * See Persistence Abstraction API documentation
      * @param classId
-     * @param attributeName
+     * @param attributeId
      * @return
      * @throws RemoteException, Exception
      */
-    public AttributeMetadata getAttribute(long classId, String attributeName) throws RemoteException, MetadataObjectNotFoundException;
+    public AttributeMetadata getAttribute(long classId, long attributeId) throws RemoteException, MetadataObjectNotFoundException;
 
     /**
      * See Persistence Abstraction API documentation
