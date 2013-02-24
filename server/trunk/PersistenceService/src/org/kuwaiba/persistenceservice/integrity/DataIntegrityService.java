@@ -65,7 +65,7 @@ public class DataIntegrityService{
     }
         
     public void checkIntegrity() {
-        //check every attribute and if is in the sons.
+        //check every attributes inheritance.
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }
