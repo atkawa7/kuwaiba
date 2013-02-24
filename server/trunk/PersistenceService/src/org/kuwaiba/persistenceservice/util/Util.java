@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
@@ -67,8 +68,6 @@ import org.neo4j.kernel.Traversal;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class Util {
-
-     
      /**
      * Gets an attribute type by traversing through the "HAS" relationship of a given class metadata node
      * @param classNode
@@ -260,24 +259,22 @@ public class Util {
      * @return
      */
     public static ClassMetadata setDefaultsForClassMetadata(ClassMetadata classDefinition) throws MetadataObjectNotFoundException{
-
         Integer color = null;
-
-        if(classDefinition.getName() == null)
+        if(classDefinition.getName() == null){
             throw new MetadataObjectNotFoundException("Can not create a class metadata entry without a name");
-
-        if(classDefinition.getDisplayName() == null)
+        }
+        if(classDefinition.getDisplayName() == null){
             classDefinition.setDisplayName("");
-
-        if(classDefinition.getDescription() == null)
+        }
+        if(classDefinition.getDescription() == null){
             classDefinition.setDisplayName("");
-
-        if(classDefinition.getIcon() == null)
+        }
+        if(classDefinition.getIcon() == null){
             classDefinition.setIcon(new byte[0]);
-
-        if(classDefinition.getSmallIcon() == null)
+        }
+        if(classDefinition.getSmallIcon() == null){
             classDefinition.setSmallIcon(new byte[0]);
-
+        }
         try {
             color = Integer.valueOf(classDefinition.getColor());
         } catch (NumberFormatException e) {
@@ -293,24 +290,35 @@ public class Util {
      * @return
      */
     public static AttributeMetadata createDefaultAttributeMetadata(AttributeMetadata AttributeDefinition) throws MetadataObjectNotFoundException{
-
         //Integer mapping = null;
-
-        if(AttributeDefinition.getName() == null)
+        if(AttributeDefinition.getName() == null){
             throw new MetadataObjectNotFoundException("Can not create an attribute without a name");
-
-        if(AttributeDefinition.getDisplayName() == null)
+        }
+        if(AttributeDefinition.getDisplayName() == null){
             AttributeDefinition.setDisplayName("");
-
-        if(AttributeDefinition.getDescription() == null)
+        }
+        if(AttributeDefinition.getDescription() == null){
             AttributeDefinition.setDisplayName("");
-
-        if(AttributeDefinition.getType() == null)
+        }
+        if(AttributeDefinition.getType() == null){
             AttributeDefinition.setType("");
-
+        }
         return AttributeDefinition;
     }
 
+    public static CategoryMetadata createDefaultCategoryMetadata(CategoryMetadata categoryDefinition) throws MetadataObjectNotFoundException{
+        if(categoryDefinition.getName() == null){
+            throw new MetadataObjectNotFoundException("Can not create a category without a name");
+        }
+        if(categoryDefinition.getDescription() == null){
+            categoryDefinition.setDescription("");
+        }
+        if(categoryDefinition.getDisplayName() == null){
+            categoryDefinition.setDisplayName("");
+        }
+        return categoryDefinition;
+    }
+    
     /**
      * Converts a class metadata node into a ClassMetadataLight object
      * @param classNode
@@ -398,20 +406,20 @@ public class Util {
 
             myClass.setCategory(ctgr);
         }
-
         //Possible Children
         for (Relationship rel : classNode.getRelationships(Direction.OUTGOING, RelTypes.POSSIBLE_CHILD))
         {
-
             if((Boolean)rel.getEndNode().getProperty(Constants.PROPERTY_ABSTRACT)){
                 Traverser traverserMetadata = Util.getAllSubclasses(rel.getEndNode());
                 for (Node childNode : traverserMetadata) {
-                    if(!(Boolean)childNode.getProperty(Constants.PROPERTY_ABSTRACT))
+                    if(!(Boolean)childNode.getProperty(Constants.PROPERTY_ABSTRACT)){
                         myClass.getPossibleChildren().add((String)childNode.getProperty(Constants.PROPERTY_NAME));
+                    }
                 }//end for
             }//end if
-            else
+            else{
                 myClass.getPossibleChildren().add((String)rel.getEndNode().getProperty(Constants.PROPERTY_NAME));
+            }
         }
 
         return myClass;
@@ -509,19 +517,19 @@ public class Util {
        for (Relationship relationship : relationships) {
             Node groupNode = relationship.getEndNode();
             groups.add(new GroupProfile(groupNode.getId(),
-                        (String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME),
-                        (String)groupNode.getProperty(GroupProfile.PROPERTY_DESCRIPTION),
-                        (Long)groupNode.getProperty(GroupProfile.PROPERTY_CREATION_DATE))
+                        (String)groupNode.getProperty(Constants.PROPERTY_NAME),
+                        (String)groupNode.getProperty(Constants.PROPERTY_DESCRIPTION),
+                        (Long)groupNode.getProperty(Constants.PROPERTY_CREATION_DATE))
                      );
         }
 
        UserProfile user =  new UserProfile(
                 userNode.getId(),
-                (String)userNode.getProperty(UserProfile.PROPERTY_USERNAME),
-                (String)userNode.getProperty(UserProfile.PROPERTY_FIRST_NAME),
-                (String)userNode.getProperty(UserProfile.PROPERTY_LAST_NAME),
-                (Boolean)userNode.getProperty(UserProfile.PROPERTY_ENABLED),
-                (Long)userNode.getProperty(UserProfile.PROPERTY_CREATION_DATE),
+                (String)userNode.getProperty(Constants.PROPERTY_NAME),
+                (String)userNode.getProperty(Constants.PROPERTY_FIRST_NAME),
+                (String)userNode.getProperty(Constants.PROPERTY_LAST_NAME),
+                (Boolean)userNode.getProperty(Constants.PROPERTY_ENABLED),
+                (Long)userNode.getProperty(Constants.PROPERTY_CREATION_DATE),
                 null);
 
        user.setGroups(groups);
@@ -534,33 +542,29 @@ public class Util {
      * @param groupNode
      * @return
      */
-    public static GroupProfile createGroupProfileFromNode(Node groupNode)
-    {
+    public static GroupProfile createGroupProfileFromNode(Node groupNode){
         Iterable<Relationship> relationships = groupNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.INCOMING);
         List<UserProfile> users = new ArrayList<UserProfile>();
 
         for (Relationship relationship : relationships) {
             Node userNode = relationship.getStartNode();
             users.add(new UserProfile(userNode.getId(),
-                        (String)userNode.getProperty(UserProfile.PROPERTY_USERNAME),
-                        (String)userNode.getProperty(UserProfile.PROPERTY_FIRST_NAME),
-                        (String)userNode.getProperty(UserProfile.PROPERTY_LAST_NAME),
-                        (Boolean)userNode.getProperty(UserProfile.PROPERTY_ENABLED),
-                        (Long)userNode.getProperty(UserProfile.PROPERTY_CREATION_DATE),
+                        (String)userNode.getProperty(Constants.PROPERTY_NAME),
+                        (String)userNode.getProperty(Constants.PROPERTY_FIRST_NAME),
+                        (String)userNode.getProperty(Constants.PROPERTY_LAST_NAME),
+                        (Boolean)userNode.getProperty(Constants.PROPERTY_ENABLED),
+                        (Long)userNode.getProperty(Constants.PROPERTY_CREATION_DATE),
                         null)
                      );
         }
-
         GroupProfile group =  new GroupProfile(
                 groupNode.getId(),
-                (String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME),
-                (String)groupNode.getProperty(GroupProfile.PROPERTY_DESCRIPTION),
-                (Long)groupNode.getProperty(GroupProfile.PROPERTY_CREATION_DATE),
+                (String)groupNode.getProperty(Constants.PROPERTY_NAME),
+                (String)groupNode.getProperty(Constants.PROPERTY_DESCRIPTION),
+                (Long)groupNode.getProperty(Constants.PROPERTY_CREATION_DATE),
                 null,
                 null);
-
         group.setUsers(users);
-
         return group;
     }
 
@@ -644,7 +648,6 @@ public class Util {
      * @return
      */
     public static String getAttributeFromNode(Node objectNode, String attribute){
-
         if(objectNode.hasProperty(attribute)){
             Object property = objectNode.getProperty(attribute);
             if(attribute.equals(Constants.PROPERTY_CREATION_DATE)){
@@ -678,7 +681,7 @@ public class Util {
     }
 
     /**
-     * Evals a
+     * Evaluates attribute type
      * @param attributeType
      * @param attributeName
      * @param attributeValue
@@ -737,52 +740,111 @@ public class Util {
        return false;
     }
     
-    public static void addAttribute(Node node, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException{
+    public static void addAttribute(Node classNode, Node attributeNode) throws MetadataObjectNotFoundException{
+        Transaction tx = null;
         final TraversalDescription TRAVERSAL = Traversal.description().
                     breadthFirst().
                     relationships(RelTypes.EXTENDS, Direction.INCOMING).
                     relationships(RelTypes.INSTANCE_OF, Direction.INCOMING).
                     evaluator(Evaluators.excludeStartPosition());
         
-        for(Path p : TRAVERSAL.traverse(node)){
+        for(Path p : TRAVERSAL.traverse(classNode)){
             if(!p.endNode().hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)){
                 for (Relationship attrRel: p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING)){
-                    if(attrRel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(newAttributeDefinition.getDisplayName())){
+                    if(attrRel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(
+                            attributeNode.getProperty(Constants.PROPERTY_NAME))){
                         throw new MetadataObjectNotFoundException(String.format(
-                        "Can not create the attribute, an attribute with the name %1s already exist", newAttributeDefinition.getName()));
+                        "Can not create the attribute, an attribute with the name %1s already exist", 
+                        attributeNode.getProperty(Constants.PROPERTY_NAME)));
                     }   
-                    else{
-                        
-                    }
-                        
+                }
+                try{
+                    tx = classNode.getGraphDatabase().beginTx();
+                    p.endNode().createRelationshipTo(attributeNode, RelTypes.HAS_ATTRIBUTE);
+                    tx.success();
+                }catch(Exception ex){
+                    throw new RuntimeException(ex.getMessage());
+                } finally {
+                    if (tx != null)
+                        tx.finish();
                 }
             }
         }//end for
     }
-    
-    public static void changeAttributeTypes(Node node, AttributeMetadata oldAttributeDefinition, AttributeMetadata newAttributeDefinition){
+    public static void changeAttributeTypes(Node classNode, Node attributeNode, String oldAttributeName, String oldAttributeType){
+        Transaction tx = null;
         final TraversalDescription UPDATE_TRAVERSAL = Traversal.description().
                     breadthFirst().
                     relationships(RelTypes.EXTENDS, Direction.INCOMING).
                     relationships(RelTypes.INSTANCE_OF, Direction.INCOMING).
                     evaluator(Evaluators.excludeStartPosition());
-                
-        for(Path p : UPDATE_TRAVERSAL.traverse(node)){
+        try{
+            tx = classNode.getGraphDatabase().beginTx();
+            for(Path p : UPDATE_TRAVERSAL.traverse(classNode)){
+        
                 if(p.endNode().hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)){
-                    p.endNode().getProperty(Constants.PROPERTY_NAME);
-                    if(newAttributeDefinition.getType().equals("String")){
-                        p.endNode().getProperty(oldAttributeDefinition.getName());
+                    if(p.endNode().hasProperty(oldAttributeName)){
+                        Object property = p.endNode().getProperty(oldAttributeName);
+                        p.endNode().removeProperty(oldAttributeName);
+                        if("String".equals(attributeNode.getProperty(Constants.PROPERTY_TYPE)) &&
+                           oldAttributeType.equals("Boolean") || oldAttributeType.equals("Long") ||
+                           oldAttributeType.equals("Integer") || oldAttributeType.equals("Float"))
+                        {
+                            p.endNode().setProperty((String)attributeNode.getProperty(Constants.PROPERTY_NAME), property.toString());
+                        }
                     }
                 }
                 else{
                     for (Relationship attrRel: p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING)){
-                        if(attrRel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(oldAttributeDefinition.getName())){
-                            attrRel.delete();
+                        
+                        if(oldAttributeName.equals(attrRel.getEndNode().getProperty(Constants.PROPERTY_NAME)))
+                        {
                             attrRel.getEndNode().delete();
-                            
+                            attrRel.delete();
+                            p.endNode().createRelationshipTo(attributeNode, RelTypes.HAS_ATTRIBUTE);
                         }
                     }
                 }
+            }//end for
+            tx.success();
+            }catch(Exception ex){
+                Logger.getLogger("Delete attribute: "+ex.getMessage()); //NOI18N
+            if (tx != null)
+                tx.failure();
+                throw new RuntimeException(ex.getMessage());
+            } finally {
+            if (tx != null)
+                tx.finish();
+        }
+    }
+    
+    public static void show(Node node){
+        String output = "";
+        Transaction tx = node.getGraphDatabase().beginTx();
+        try{
+        final TraversalDescription TRAVERSAL = Traversal.description().
+                    breadthFirst().
+                    relationships(RelTypes.EXTENDS, Direction.INCOMING).
+                    relationships(RelTypes.INSTANCE_OF, Direction.INCOMING).
+                    evaluator(Evaluators.all());
+            for(Path p : TRAVERSAL.traverse(node)){
+                if(p.endNode().hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)){
+                    output += "Instance: " ;
+                }
+                output += p.endNode().getProperty("name") +" id: "+ p.endNode().getId() +"\n";
+                for (Relationship attrRel: p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING)){
+                    output += "-" + attrRel.getEndNode().getProperty("name") + "\n";
+                }
+            }
+        System.out.println("stop");
+        }catch(Exception ex){
+            Logger.getLogger("Delete attribute: "+ex.getMessage()); //NOI18N
+            if (tx != null)
+                tx.failure();
+            throw new RuntimeException(ex.getMessage());
+        } finally {
+            if (tx != null)
+                tx.finish();
         }
     }
     
@@ -811,6 +873,9 @@ public class Util {
             }//end for
             tx.success();
         }catch(Exception ex){
+            Logger.getLogger("Delete attribute: "+ex.getMessage()); //NOI18N
+            if (tx != null)
+                tx.failure();
             throw new RuntimeException(ex.getMessage());
         } finally {
             if (tx != null)
