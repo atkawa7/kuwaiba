@@ -24,12 +24,6 @@ import java.util.List;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class GroupProfile implements Serializable{
-    public static final String PROPERTY_ID = "id"; //NOI18N
-    public static final String PROPERTY_GROUPNAME = "username"; //NOI18N
-    public static final String PROPERTY_DESCRIPTION = "description"; //NOI18N
-    public static final String PROPERTY_PRIVILEGES = "privileges"; //NOI18N
-    public static final String PROPERTY_CREATION_DATE = "creationDate"; //NOI18N
-
     /**
      * Group's id (oid)
      */
