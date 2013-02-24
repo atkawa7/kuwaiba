@@ -100,6 +100,10 @@ public class AttributeMetadata implements Serializable{
      *
      */
     private boolean noSerialize;
+    /**
+     * Cannot change or delete it a locked attribute
+     */
+    private boolean locked;
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public boolean isAdministrative() {
@@ -204,6 +208,44 @@ public class AttributeMetadata implements Serializable{
 
     public void setNoSerialize(boolean noSerialize) {
         this.noSerialize = noSerialize;
-    }// </editor-fold>
+    }
     
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+    // </editor-fold>
+    
+    @Override
+    public boolean equals(Object obj){
+        if (obj == null)
+            return false;
+        if (!(obj instanceof AttributeMetadata))
+            return false;
+        
+        if(this.getCreationDate() == ((AttributeMetadata)obj).getCreationDate() &&
+                this.getDescription().equals(((AttributeMetadata)obj).getDescription()) &&
+                this.getDisplayName().equals(((AttributeMetadata)obj).getDisplayName()) &&
+                this.getId() == ((AttributeMetadata)obj).getId() &&
+                this.getMapping() == ((AttributeMetadata)obj).getMapping() &&
+                this.getName().equals(((AttributeMetadata)obj).getName()) &&
+                this.getType().equals(((AttributeMetadata)obj).getType()) &&
+                this.isAdministrative() == ((AttributeMetadata)obj).isAdministrative() &&
+                this.isNoCopy() == ((AttributeMetadata)obj).isNoCopy() &&
+                this.isNoSerialize() == ((AttributeMetadata)obj).isNoSerialize() &&
+                this.isReadOnly() == ((AttributeMetadata)obj).isReadOnly() &&
+                this.isUnique() == ((AttributeMetadata)obj).isUnique() &&
+                this.isVisible() == ((AttributeMetadata)obj).isVisible()
+                // && this.isLocked() == ((AttributeMetadata)obj).isLocked()
+                )
+        {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 }
