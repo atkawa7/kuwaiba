@@ -1,5 +1,5 @@
 /**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010, 2011, 2012, 2013 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.persistenceservice.caching.CacheManager;
-import org.kuwaiba.persistenceservice.queries.CypherSimpleQuery;
+import org.kuwaiba.persistenceservice.queries.CypherQueryBuilder;
 import org.kuwaiba.persistenceservice.util.Constants;
 import org.kuwaiba.persistenceservice.util.Util;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
@@ -123,256 +123,306 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         this.cm = CacheManager.getInstance();
     }
 
+    @Override
     public UserProfile login(String username, String password) {
-
-        if (username == null || password == null)
+        if (username == null || password == null){
             return null;
-
-        Node user = userIndex.get(UserProfile.PROPERTY_USERNAME,username).getSingle();
-        if (user == null)
+        }
+        Node user = userIndex.get(Constants.PROPERTY_NAME,username).getSingle();
+        if (user == null){
             return null;
-
-        if (!(Boolean)user.getProperty(UserProfile.PROPERTY_ENABLED))
+        }
+        if (!(Boolean)user.getProperty(Constants.PROPERTY_ENABLED)){
             return null;
-
-        if (Util.getMD5Hash(password).equals(user.getProperty(UserProfile.PROPERTY_PASSWORD)))
+        }
+        if (Util.getMD5Hash(password).equals(user.getProperty(Constants.PROPERTY_PASSWORD))){
             return new UserProfile(user.getId(),
-                    (String)user.getProperty(UserProfile.PROPERTY_USERNAME),
-                    (String)user.getProperty(UserProfile.PROPERTY_FIRST_NAME),
-                    (String)user.getProperty(UserProfile.PROPERTY_LAST_NAME),
-                    (Boolean)user.getProperty(UserProfile.PROPERTY_ENABLED),
-                    (Long)user.getProperty(UserProfile.PROPERTY_CREATION_DATE),
+                    (String)user.getProperty(Constants.PROPERTY_NAME),
+                    (String)user.getProperty(Constants.PROPERTY_FIRST_NAME),
+                    (String)user.getProperty(Constants.PROPERTY_LAST_NAME),
+                    (Boolean)user.getProperty(Constants.PROPERTY_ENABLED),
+                    (Long)user.getProperty(Constants.PROPERTY_CREATION_DATE),
                     //(List<Integer>)user.getProperty(UserProfile.PROPERTY_PRIVILEGES)
                     new int[0]);
-        else
+        }
+        else{
             return null;
+        }
     }
 
+    @Override
     public long createUser(String userName, String password, String firstName,
             String lastName, boolean enabled, int[] privileges, long[] groups)
             throws InvalidArgumentException {
-        if (userName == null)
+        Transaction tx = null;
+        
+        if (userName == null){
             throw new InvalidArgumentException("User name can not be null", Level.INFO);
-
-        if (userName.trim().equals("")) //NOI18N
+        }
+        if (userName.trim().equals("")){
             throw new InvalidArgumentException("User name can not be an empty string", Level.INFO);
-
-        if (password == null)
+        }
+        if (password == null){
             throw new InvalidArgumentException("Password can not be null", Level.INFO);
-
-        if (password.trim().equals("")) //NOI18N
+        }
+        if (password.trim().equals("")){
             throw new InvalidArgumentException("Password can not be an empty string", Level.INFO);
-
-        Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,userName).getSingle();
-        if (storedUser != null)
+        }
+        Node storedUser = userIndex.get(Constants.PROPERTY_NAME,userName).getSingle();
+        if (storedUser != null){
             throw new InvalidArgumentException(String.format("The username %1s is already in use", userName), Level.WARNING);
+        }
+        try{
+            tx = graphDb.beginTx();
 
-        Transaction tx = graphDb.beginTx();
-        
-        Node newUser = graphDb.createNode();
+            Node newUser = graphDb.createNode();
 
-        newUser.setProperty(UserProfile.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-        newUser.setProperty(UserProfile.PROPERTY_USERNAME, userName);
-        newUser.setProperty(UserProfile.PROPERTY_PASSWORD, Util.getMD5Hash(password));
-        
-        if(firstName == null)
-            firstName = "";
+            newUser.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+            newUser.setProperty(Constants.PROPERTY_NAME, userName);
+            newUser.setProperty(Constants.PROPERTY_PASSWORD, Util.getMD5Hash(password));
 
-        newUser.setProperty(UserProfile.PROPERTY_FIRST_NAME, firstName);
+            if(firstName == null){
+                firstName = "";
+            }
+            newUser.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
+            if(lastName == null){
+                lastName = "";
+            }
+            newUser.setProperty(Constants.PROPERTY_LAST_NAME, lastName);
 
-        if(lastName == null)
-            lastName = "";
-
-        newUser.setProperty(UserProfile.PROPERTY_LAST_NAME, lastName);
-        
-        newUser.setProperty(UserProfile.PROPERTY_ENABLED, enabled);
-
-//        TODO privileges
-//        if (privileges != null || privileges.size()<1)
-//            newUser.setProperty(UserProfile.PROPERTY_PRIVILEGES, privileges);
-
-        if (groups != null){
-            for (long groupId : groups){
-                Node group = groupIndex.get(UserProfile.PROPERTY_ID,groupId).getSingle();
-                if (group != null)
-                    newUser.createRelationshipTo(group, RelTypes.BELONGS_TO_GROUP);
-                else{
-                    tx.failure();
-                    tx.finish();
-                    throw new InvalidArgumentException(String.format("Group with id %1s can't be found",groupId), Level.OFF);
+            newUser.setProperty(Constants.PROPERTY_ENABLED, enabled);
+  //        TODO privileges
+  //        if (privileges != null || privileges.size()<1)
+  //            newUser.setProperty(UserProfile.PROPERTY_PRIVILEGES, privileges);
+            if (groups != null){
+                for (long groupId : groups){
+                    Node group = groupIndex.get(Constants.PROPERTY_ID,groupId).getSingle();
+                    if (group != null){
+                        newUser.createRelationshipTo(group, RelTypes.BELONGS_TO_GROUP);
+                    }
+                    else{
+                        tx.failure();
+                        tx.finish();
+                        throw new InvalidArgumentException(String.format("Group with id %1s can't be found",groupId), Level.OFF);
+                    }
                 }
             }
-        }
-        
-        userIndex.putIfAbsent(newUser, UserProfile.PROPERTY_ID, newUser.getId());
-        userIndex.putIfAbsent(newUser, UserProfile.PROPERTY_USERNAME, userName);
+            userIndex.putIfAbsent(newUser, Constants.PROPERTY_ID, newUser.getId());
+            userIndex.putIfAbsent(newUser, Constants.PROPERTY_NAME, userName);
+            
+            tx.success();
+            
+            cm.putUser(new UserProfile(newUser.getId(), userName,
+            firstName, lastName, true, (Long)newUser.getProperty(Constants.PROPERTY_CREATION_DATE), privileges));
 
-        tx.success();
-        tx.finish();
-        
-        cm.putUser(new UserProfile(newUser.getId(), userName,
-                firstName, lastName, true, (Long)newUser.getProperty(UserProfile.PROPERTY_CREATION_DATE), privileges));
-        
-        return newUser.getId();
+            return newUser.getId();
+           
+        }catch(Exception ex){
+            Logger.getLogger("Create user: "+ex.getMessage()); //NOI18N
+            if (tx != null){
+                tx.failure();
+            }
+            throw new RuntimeException(ex.getMessage());
+        } finally {
+            if (tx != null){
+                tx.finish();
+            }
+        }
     }
 
+    @Override
     public void setUserProperties(long oid, String userName, String password, String firstName,
             String lastName, boolean enabled, int[] privileges, long[] groups)
             throws InvalidArgumentException, ApplicationObjectNotFoundException {
-
+        Transaction tx = null;
         if(userName != null){
-            if (userName.trim().equals("")) //NOI18N
+            if (userName.trim().equals("")){
                 throw new InvalidArgumentException("Username can not be an empty string", Level.INFO);
-
-            Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,userName).getSingle();
-            if (storedUser != null)
+            }
+            Node storedUser = userIndex.get(Constants.PROPERTY_NAME,userName).getSingle();
+            if (storedUser != null){
                 throw new InvalidArgumentException(String.format("The username %1s is already in use", userName), Level.WARNING);
-        }
-
-        if(password != null){
-            if (password.trim().equals("")) //NOI18N
-                throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
-        }
-
-        Node userNode = userIndex.get(UserProfile.PROPERTY_ID, oid).getSingle();
-        if(userNode == null)
-            throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %1s",oid));
-
-        Transaction tx =  graphDb.beginTx();
-        if (userName != null){
-            //refresh the userindex
-            userIndex.remove(userNode, UserProfile.PROPERTY_USERNAME, (String)userNode.getProperty(UserProfile.PROPERTY_USERNAME));
-            userNode.setProperty(UserProfile.PROPERTY_USERNAME, userName);
-            userIndex.putIfAbsent(userNode, UserProfile.PROPERTY_USERNAME, userName);
-        }
-
-        if (password != null)
-            userNode.setProperty(UserProfile.PROPERTY_PASSWORD, Util.getMD5Hash(password));
-
-        if(firstName != null)
-            userNode.setProperty(UserProfile.PROPERTY_FIRST_NAME, firstName);
-
-        if(lastName != null)
-            userNode.setProperty(UserProfile.PROPERTY_LAST_NAME, lastName);
-
-        if(groups != null){
-            Iterable<Relationship> relationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP);
-            for (Relationship relationship : relationships)
-                relationship.delete();
-
-            for (long id : groups) {
-                Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
-                userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
             }
         }
-        tx.success();
-        tx.finish();
+        if(password != null){
+            if (password.trim().equals("")){
+                throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
+            }
+        }
+        Node userNode = userIndex.get(Constants.PROPERTY_ID, oid).getSingle();
+        if(userNode == null){
+            throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %1s",oid));
+        }
+        try{
+            tx =  graphDb.beginTx();
+            if (userName != null){
+                //refresh the userindex
+                userIndex.remove(userNode, Constants.PROPERTY_NAME, (String)userNode.getProperty(Constants.PROPERTY_NAME));
+                userNode.setProperty(Constants.PROPERTY_NAME, userName);
+                userIndex.putIfAbsent(userNode, Constants.PROPERTY_NAME, userName);
+            }
+            if (password != null){
+                userNode.setProperty(Constants.PROPERTY_PASSWORD, Util.getMD5Hash(password));
+            }
+            if(firstName != null){
+                userNode.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
+            }
+            if(lastName != null){
+                userNode.setProperty(Constants.PROPERTY_LAST_NAME, lastName);
+            }
+            if(groups != null){
+                Iterable<Relationship> relationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP);
+                for (Relationship relationship : relationships){
+                    relationship.delete();
+                }
+                for (long id : groups) {
+                    Node groupNode = groupIndex.get(Constants.PROPERTY_ID, id).getSingle();
+                    userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
+                }
+            }
+            tx.success();
+        }catch(Exception ex){
+            Logger.getLogger("Set user properties: "+ex.getMessage()); //NOI18N
+            if (tx != null){
+                tx.failure();
+            }
+            throw new RuntimeException(ex.getMessage());
+        } finally {
+            if (tx != null){
+                tx.finish();
+            }
+        }
     }
-
+    
+    @Override
     public void setUserProperties(String oldUserName, String newUserName, String password,
             String firstName, String lastName, boolean enabled, int[] privileges, long[] groups)
             throws InvalidArgumentException, ApplicationObjectNotFoundException {
-
-        if(oldUserName == null)
+        Transaction tx = null;
+        if(oldUserName == null){
             throw new InvalidArgumentException("Username can not be null", Level.INFO);
-
+        }
         if(newUserName != null){
-            if (newUserName.trim().equals("")) //NOI18N
+            if (newUserName.trim().equals("")){
                 throw new InvalidArgumentException("Username can not be an empty string", Level.INFO);
-
-            Node storedUser = userIndex.get(UserProfile.PROPERTY_USERNAME,newUserName).getSingle();
-            if (storedUser != null)
+            }
+            Node storedUser = userIndex.get(Constants.PROPERTY_NAME,newUserName).getSingle();
+            if (storedUser != null){
                 throw new InvalidArgumentException(String.format("The username %1s is already in use", newUserName), Level.WARNING);
-        }
-
-        if(password != null){
-            if (password.trim().equals("")) //NOI18N
-                throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
-        }
-
-        Node userNode = userIndex.get(UserProfile.PROPERTY_USERNAME, oldUserName).getSingle();
-        if(userNode == null)
-            throw new ApplicationObjectNotFoundException(String.format("Can not find a user with name %1s",oldUserName));
-
-        Transaction tx =  graphDb.beginTx();
-        if (newUserName != null){
-            //refresh the userindex
-            userIndex.remove(userNode, UserProfile.PROPERTY_USERNAME, oldUserName);
-            userNode.setProperty(UserProfile.PROPERTY_USERNAME, newUserName);
-            userIndex.putIfAbsent(userNode, UserProfile.PROPERTY_USERNAME, newUserName);
-        }
-
-        if (password != null)
-            userNode.setProperty(UserProfile.PROPERTY_PASSWORD, Util.getMD5Hash(password));
-
-        if(firstName != null)
-            userNode.setProperty(UserProfile.PROPERTY_FIRST_NAME, firstName);
-
-        if(lastName != null)
-            userNode.setProperty(UserProfile.PROPERTY_LAST_NAME, lastName);
-
-        if(groups != null){
-            Iterable<Relationship> relationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP);
-            for (Relationship relationship : relationships)
-                relationship.delete();
-
-            for (long id : groups) {
-                Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
-                userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
             }
         }
-        tx.success();
-        tx.finish();
+        if(password != null){
+            if (password.trim().equals("")){
+                throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
+            }
+        }
+        Node userNode = userIndex.get(Constants.PROPERTY_NAME, oldUserName).getSingle();
+        if(userNode == null){
+            throw new ApplicationObjectNotFoundException(String.format("Can not find a user with name %1s",oldUserName));
+        }
+        try{
+            tx =  graphDb.beginTx();
+            if (newUserName != null){
+                //refresh the userindex
+                userIndex.remove(userNode, Constants.PROPERTY_NAME, oldUserName);
+                userNode.setProperty(Constants.PROPERTY_NAME, newUserName);
+                userIndex.putIfAbsent(userNode, Constants.PROPERTY_NAME, newUserName);
+            }
+            if (password != null){
+                userNode.setProperty(Constants.PROPERTY_PASSWORD, Util.getMD5Hash(password));
+            }
+            if(firstName != null){
+                userNode.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
+            }
+            if(lastName != null){
+                userNode.setProperty(Constants.PROPERTY_LAST_NAME, lastName);
+            }
+            if(groups != null){
+                Iterable<Relationship> relationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP);
+                for (Relationship relationship : relationships){
+                    relationship.delete();
+                }
+                for (long id : groups) {
+                    Node groupNode = groupIndex.get(Constants.PROPERTY_ID, id).getSingle();
+                    userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
+                }
+            }
+            tx.success();
+        }catch(Exception ex){
+            Logger.getLogger("Set user properties: "+ex.getMessage()); //NOI18N
+            if (tx != null){
+                tx.failure();
+            }
+            throw new RuntimeException(ex.getMessage());
+        } finally {
+            if (tx != null){
+                tx.finish();
+            }
+        }
     }
-
+    
+    @Override
     public long createGroup(String groupName, String description,
             int[] privileges, long[] users) throws InvalidArgumentException {
-        if (groupName == null)
+        Transaction tx = null;
+        if (groupName == null){
             throw new InvalidArgumentException("Group name can not be null", Level.INFO);
-
-        if (groupName.trim().equals("")) //NOI18N
+        }
+        if (groupName.trim().equals("")){
             throw new InvalidArgumentException("User name can't be an empty string", Level.INFO);
-
-        Node storedGroup = groupIndex.get(GroupProfile.PROPERTY_GROUPNAME,groupName).getSingle();
-        if (storedGroup != null)
+        }
+        Node storedGroup = groupIndex.get(Constants.PROPERTY_NAME,groupName).getSingle();
+        if (storedGroup != null){
             throw new InvalidArgumentException(String.format("The group name %1s is already in use", groupName), Level.WARNING);
+        }
+        try{
+            tx = graphDb.beginTx();
+            Node newGroup = graphDb.createNode();
 
-        Transaction tx = graphDb.beginTx();
-        Node newGroup = graphDb.createNode();
+            newGroup.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+            newGroup.setProperty(Constants.PROPERTY_NAME, groupName);
+            if(description != null){
+                description="";
+                newGroup.setProperty(Constants.PROPERTY_DESCRIPTION, description);
+            }
+            groupIndex.putIfAbsent(newGroup, Constants.PROPERTY_ID, newGroup.getId());
+            groupIndex.putIfAbsent(newGroup, Constants.PROPERTY_NAME, groupName);
 
-        newGroup.setProperty(GroupProfile.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-        newGroup.setProperty(GroupProfile.PROPERTY_GROUPNAME, groupName);
+            cm.putGroup(new GroupProfile(newGroup.getId(), groupName,
+                description, (Long)newGroup.getProperty(Constants.PROPERTY_CREATION_DATE)));
 
-        if(description == null)
-            description = "";
-
-        newGroup.setProperty(GroupProfile.PROPERTY_DESCRIPTION, description);
-
-        groupIndex.putIfAbsent(newGroup, GroupProfile.PROPERTY_ID, newGroup.getId());
-        groupIndex.putIfAbsent(newGroup, GroupProfile.PROPERTY_GROUPNAME, groupName);
-
-        cm.putGroup(new GroupProfile(newGroup.getId(), groupName,
-            description, (Long)newGroup.getProperty(UserProfile.PROPERTY_CREATION_DATE)));
-
-        tx.success();
-        tx.finish();
-
-        return newGroup.getId();
+            tx.success();
+            
+            return newGroup.getId();
+            
+        }catch(Exception ex){
+            Logger.getLogger("Create group: "+ex.getMessage()); //NOI18N
+            if (tx != null){
+                tx.failure();
+            }
+        throw new RuntimeException(ex.getMessage());
+        } finally {
+            if (tx != null){
+                tx.finish();
+            }
+        }
     }
 
+    @Override
     public List<UserProfile> getUsers() {
-        IndexHits<Node> usersNodes = userIndex.query(UserProfile.PROPERTY_USERNAME, "*");
+        IndexHits<Node> usersNodes = userIndex.query(Constants.PROPERTY_NAME, "*");
 
         List<UserProfile> users = new ArrayList<UserProfile>();
         
-        for (Node node : usersNodes)
+        for (Node node : usersNodes){
             users.add(Util.createUserProfileFromNode(node));
-            
+        }
         return users;
     }
 
+    @Override
     public List<GroupProfile> getGroups() {
-        IndexHits<Node> groupsNodes = groupIndex.query(GroupProfile.PROPERTY_GROUPNAME, "*");
+        IndexHits<Node> groupsNodes = groupIndex.query(Constants.PROPERTY_NAME, "*");
 
         List<GroupProfile> groups =  new ArrayList<GroupProfile>();
         for (Node node : groupsNodes)
@@ -382,6 +432,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         return groups;
     }
 
+    @Override
     public void setGroupProperties(long id, String groupName, String description,
             int[] privileges, long[] users)
             throws InvalidArgumentException, ApplicationObjectNotFoundException{
@@ -389,53 +440,58 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         try{
             tx = graphDb.beginTx();
 
-            Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
-            if(groupNode == null)
+            Node groupNode = groupIndex.get(Constants.PROPERTY_ID, id).getSingle();
+            if(groupNode == null){
                 throw new ApplicationObjectNotFoundException(String.format("Can not find the group with id %1s",id));
-
+            }
             if(groupName != null){
-                if (groupName.trim().equals("")) //NOI18N
+                if (groupName.trim().equals("")){
                     throw new InvalidArgumentException("User name can not be an empty string", Level.INFO);
-
+                }
                 if (cm.getUser(groupName) == null)
                 {
-                    Node storedGroup = groupIndex.get(GroupProfile.PROPERTY_GROUPNAME, groupName).getSingle();
-                    if (storedGroup != null)
+                    Node storedGroup = groupIndex.get(Constants.PROPERTY_NAME, groupName).getSingle();
+                    if (storedGroup != null){
                         throw new InvalidArgumentException(String.format("The group name %1s is already in use", groupName), Level.WARNING);
+                    }
                 }
-                groupIndex.remove(groupNode, GroupProfile.PROPERTY_GROUPNAME, (String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME));
-                cm.removeGroup((String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME));
+                groupIndex.remove(groupNode, Constants.PROPERTY_NAME, (String)groupNode.getProperty(Constants.PROPERTY_NAME));
+                cm.removeGroup((String)groupNode.getProperty(Constants.PROPERTY_NAME));
 
-                groupNode.setProperty(GroupProfile.PROPERTY_GROUPNAME, groupName);
-                groupIndex.putIfAbsent(groupNode, GroupProfile.PROPERTY_GROUPNAME, groupName);
+                groupNode.setProperty(Constants.PROPERTY_NAME, groupName);
+                groupIndex.putIfAbsent(groupNode, Constants.PROPERTY_NAME, groupName);
                 cm.putGroup(new GroupProfile(groupNode.getId(), groupName,
-                description, (Long)groupNode.getProperty(UserProfile.PROPERTY_CREATION_DATE)));
+                description, (Long)groupNode.getProperty(Constants.PROPERTY_CREATION_DATE)));
             }
-            
-            if(description != null)
-                groupNode.setProperty(GroupProfile.PROPERTY_DESCRIPTION, description);
-
+            if(description != null){
+                groupNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
+            }
             if(users != null){
                 Iterable<Relationship> relationships = groupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP);
-                for (Relationship relationship : relationships) {
+                for (Relationship relationship : relationships){
                     relationship.delete();
                 }
                 for (long userId : users) {
-                    Node userNode = userIndex.get(UserProfile.PROPERTY_ID, userId).getSingle();
+                    Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
                     userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
                 }
             }
 
-
             tx.success();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex.getMessage());
+        }catch(Exception ex){
+            Logger.getLogger("Set group properties: "+ex.getMessage()); //NOI18N
+            if (tx != null){
+                tx.failure();
+            }
+        throw new RuntimeException(ex.getMessage());
         } finally {
-            if(tx != null)
+            if (tx != null){
                 tx.finish();
+            }
         }
     }
 
+    @Override
     public void deleteUsers(long[] oids) throws ApplicationObjectNotFoundException {
         Transaction tx = null;
         try{
@@ -444,11 +500,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             if(oids != null){
                 for (long id : oids)
                 {
-                    Node userNode = userIndex.get(UserProfile.PROPERTY_ID, id).getSingle();
-                    if(userNode == null)
+                    Node userNode = userIndex.get(Constants.PROPERTY_ID, id).getSingle();
+                    if(userNode == null){
                         throw new ApplicationObjectNotFoundException(String.format("Can not find the user with id %1s",id));
-                    cm.removeUser((String)userNode.getProperty(UserProfile.PROPERTY_USERNAME));
-
+                    }
+                    cm.removeUser((String)userNode.getProperty(Constants.PROPERTY_NAME));
                     Iterable<Relationship> relationships = userNode.getRelationships();
                     for (Relationship relationship : relationships) {
                         relationship.delete();
@@ -457,29 +513,32 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     userNode.delete();
                 }
             }
-
-
             tx.success();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex.getMessage());
+        }catch(Exception ex){
+            Logger.getLogger("Delete users: "+ex.getMessage()); //NOI18N
+            if (tx != null){
+                tx.failure();
+            }
+        throw new RuntimeException(ex.getMessage());
         } finally {
-            if(tx != null)
+            if (tx != null){
                 tx.finish();
+            }
         }
     }
 
+    @Override
     public void deleteGroups(long[] oids) throws ApplicationObjectNotFoundException {
         Transaction tx = null;
         try{
             if(oids != null){
                 tx = graphDb.beginTx();
                 for (long id : oids) {
-                    Node groupNode = groupIndex.get(GroupProfile.PROPERTY_ID, id).getSingle();
-
-                    if(groupNode == null)
+                    Node groupNode = groupIndex.get(Constants.PROPERTY_ID, id).getSingle();
+                    if(groupNode == null){
                         throw new ApplicationObjectNotFoundException(String.format("Can not find the group with id %1s",id));
-
-                    cm.removeGroup((String)groupNode.getProperty(GroupProfile.PROPERTY_GROUPNAME));
+                    }
+                    cm.removeGroup((String)groupNode.getProperty(Constants.PROPERTY_NAME));
 
                     Iterable<Relationship> relationships = groupNode.getRelationships();
                     for (Relationship relationship : relationships) {
@@ -490,37 +549,43 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 }
                 tx.success();
             }
-        } catch (Exception ex) {
-            throw new RuntimeException(ex.getMessage());
+        }catch(Exception ex){
+            Logger.getLogger("Delete groups: "+ex.getMessage()); //NOI18N
+            if (tx != null){
+                tx.failure();
+            }
+        throw new RuntimeException(ex.getMessage());
         } finally {
-            if(tx != null)
+            if (tx != null){
                 tx.finish();
+            }
         }
     }
 
-    //List type related methods
+   //List type related methods
    public long createListTypeItem(String className, String name, String displayName)
             throws MetadataObjectNotFoundException, InvalidArgumentException {
-       if (name == null || className == null)
+       if (name == null || className == null){
            throw new InvalidArgumentException("Item name and class name can not be null", Level.INFO);
-       
-        Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
-        if (classNode ==  null)
-            throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %1s",className));
-        if (!cm.isSubClass("GenericObjectList", className))
+       }
+       Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
+       if (classNode ==  null){
+           throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %1s",className));
+       }
+       if (!cm.isSubClass("GenericObjectList", className)){
             throw new InvalidArgumentException(String.format("Class %1s is not a list type", className), Level.WARNING);
-
-        Transaction tx = null;
-        try{
-             tx = graphDb.beginTx();
-             Node newItem = graphDb.createNode();
-             newItem.setProperty(Constants.PROPERTY_NAME, name);
-             if (displayName != null)
-                newItem.setProperty(Constants.PROPERTY_DISPLAY_NAME, displayName);
-             newItem.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
-             listTypeItemsIndex.putIfAbsent(newItem, Constants.PROPERTY_ID, newItem.getId());
-             tx.success();
-             return newItem.getId();
+       }
+       Transaction tx = null;
+       try{
+           tx = graphDb.beginTx();
+           Node newItem = graphDb.createNode();
+           newItem.setProperty(Constants.PROPERTY_NAME, name);
+           if (displayName != null)
+               newItem.setProperty(Constants.PROPERTY_DISPLAY_NAME, displayName);
+           newItem.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
+           listTypeItemsIndex.putIfAbsent(newItem, Constants.PROPERTY_ID, newItem.getId());
+           tx.success();
+           return newItem.getId();
         }catch(Exception ex){
             Logger.getLogger("createListTypeItem: "+ex.getMessage()); //NOI18N
             if (tx != null)
@@ -952,7 +1017,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             
             if(ownerOid != -1){
                 queryNode.setProperty(CompactQuery.PROPERTY_IS_PUBLIC, false);
-                Node userNode = userIndex.get(UserProfile.PROPERTY_ID, ownerOid).getSingle();
+                Node userNode = userIndex.get(Constants.PROPERTY_ID, ownerOid).getSingle();
 
                 if(userNode != null)
                     userNode.createRelationshipTo(queryNode, RelTypes.OWNS_QUERY);
@@ -986,14 +1051,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                         "Can not find the query with id %1s", queryOid));
 
             queryNode.setProperty(CompactQuery.PROPERTY_QUERYNAME, queryName);
-            if(description == null)
-                description = "";
-            queryNode.setProperty(CompactQuery.PROPERTY_DESCRIPTION, description);
+            if(description != null){
+                queryNode.setProperty(CompactQuery.PROPERTY_DESCRIPTION, description);
+            }
             queryNode.setProperty(CompactQuery.PROPERTY_QUERYSTRUCTURE, queryStructure);
             
             if(ownerOid != -1) {
                 queryNode.setProperty(CompactQuery.PROPERTY_IS_PUBLIC, false);
-                Node userNode = userIndex.get(UserProfile.PROPERTY_ID, ownerOid).getSingle();
+                Node userNode = userIndex.get(Constants.PROPERTY_ID, ownerOid).getSingle();
                 if(userNode == null)
                     throw new ApplicationObjectNotFoundException(String.format(
                                 "Can not find the query with id %1s", queryOid));
@@ -1085,7 +1150,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
                 
         cq.setName((String)queryNode.getProperty(CompactQuery.PROPERTY_QUERYNAME));
-        cq.setDescription((String)queryNode.getProperty(CompactQuery.PROPERTY_DESCRIPTION));
+        if(queryNode.hasProperty(CompactQuery.PROPERTY_DESCRIPTION)){
+            cq.setDescription((String)queryNode.getProperty(CompactQuery.PROPERTY_DESCRIPTION));
+        }
         cq.setContent((byte[])queryNode.getProperty(CompactQuery.PROPERTY_QUERYSTRUCTURE));
         cq.setIsPublic((Boolean)queryNode.getProperty(CompactQuery.PROPERTY_IS_PUBLIC));
         cq.setId(queryNode.getId());
@@ -1103,7 +1170,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     @Override
     public List<ResultRecord> executeQuery(ExtendedQuery query) throws MetadataObjectNotFoundException, InvalidArgumentException {
         
-        CypherSimpleQuery cqb = new CypherSimpleQuery();
+        CypherQueryBuilder cqb = new CypherQueryBuilder();
         cqb.setClassNodes(getNodesFromQuery(query));
         cqb.createQuery(query);
 
@@ -1252,7 +1319,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     }
 
     public List<RemoteBusinessObjectLight> getPools(int limit) {
-        IndexHits<Node> poolNodes = poolsIndex.query(UserProfile.PROPERTY_ID, "*");
+        IndexHits<Node> poolNodes = poolsIndex.query(Constants.PROPERTY_ID, "*");
 
         List<RemoteBusinessObjectLight> pools  = new ArrayList<RemoteBusinessObjectLight>();
         int i = 0;
@@ -1274,7 +1341,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     
     public List<RemoteBusinessObjectLight> getPoolItems(long poolId, int limit) throws ApplicationObjectNotFoundException{
         
-        Node poolNode = poolsIndex.get(UserProfile.PROPERTY_ID, poolId).getSingle();
+        Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
 
         if (poolNode == null)
             throw new ApplicationObjectNotFoundException(String.format("The pool with id %1s could not be found", poolId));
