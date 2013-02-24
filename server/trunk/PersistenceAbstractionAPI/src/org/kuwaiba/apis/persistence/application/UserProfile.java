@@ -25,16 +25,16 @@ import java.util.List;
  */
 public class UserProfile implements Serializable{
 
-    public static final String PROPERTY_ID = "id"; //NOI18N
-    public static final String PROPERTY_USERNAME = "username"; //NOI18N
-    public static final String PROPERTY_DESCRIPTION = "description"; //NOI18N
-    public static final String PROPERTY_PASSWORD = "password"; //NOI18N
-    public static final String PROPERTY_SALT = "salt"; //NOI18N
-    public static final String PROPERTY_FIRST_NAME = "firstName"; //NOI18N
-    public static final String PROPERTY_LAST_NAME = "lastName"; //NOI18N
-    public static final String PROPERTY_PRIVILEGES = "privileges"; //NOI18N
-    public static final String PROPERTY_CREATION_DATE = "creationDate"; //NOI18N
-    public static final String PROPERTY_ENABLED = "enabled"; //NOI18N
+//    public static final String PROPERTY_ID = "id"; //NOI18N
+//    public static final String PROPERTY_USERNAME = "username"; //NOI18N
+//    public static final String PROPERTY_DESCRIPTION = "description"; //NOI18N
+//    public static final String PROPERTY_PASSWORD = "password"; //NOI18N
+//    public static final String PROPERTY_SALT = "salt"; //NOI18N
+//    public static final String PROPERTY_FIRST_NAME = "firstName"; //NOI18N
+//    public static final String PROPERTY_LAST_NAME = "lastName"; //NOI18N
+//    public static final String PROPERTY_PRIVILEGES = "privileges"; //NOI18N
+//    public static final String PROPERTY_CREATION_DATE = "creationDate"; //NOI18N
+//    public static final String PROPERTY_ENABLED = "enabled"; //NOI18N
     /**
      * User's id (oid)
      */
