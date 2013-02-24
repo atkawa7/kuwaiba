@@ -431,7 +431,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             ExecutionResult result = engine.execute(cypherQuery, params);
             Iterator<Node> n_column = result.columnAs("classmetadata");
 
-            if (includeSelf)
+            if (includeSelf && !aClass.isAbstractClass())
                 cml.add(aClass);
 
             for (Node node : IteratorUtil.asIterable(n_column)){

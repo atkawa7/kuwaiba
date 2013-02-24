@@ -42,6 +42,7 @@ import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -225,6 +226,24 @@ public class Util {
         FileOutputStream fos = new FileOutputStream(directory + "/" + fileName); //NOI18N
         fos.write(content);
         fos.close();
+    }
+
+    /**
+     * Gets an object's class name given the node representing it
+     * @param objectNode The node to e evaluated
+     * @return The object's class name.
+     * @throws MetadataObjectNotFoundException if no class node is associated to this node (this should not happen)
+     * @throws UnsupportedPropertyException if the class node is malformed
+     */
+    public static String getObjectClassName(Node objectNode) throws MetadataObjectNotFoundException, UnsupportedPropertyException {
+        Iterator<Relationship> iterator = objectNode.getRelationships(RelTypes.INSTANCE_OF).iterator();
+        if (!iterator.hasNext())
+            throw new MetadataObjectNotFoundException(String.format("The object with id %1s does not have a class associated to it", objectNode.getId()));
+        
+        Node classNode = iterator.next().getEndNode();
+        if (!classNode.hasProperty(Constants.PROPERTY_NAME))
+            throw new UnsupportedPropertyException(Constants.PROPERTY_NAME);
+        return (String)classNode.getProperty(Constants.PROPERTY_NAME);
     }
 
     /**

@@ -1293,8 +1293,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
-    
-    
     public void deletePools(long[] ids) throws InvalidArgumentException {
         Transaction tx = null;
         try{
@@ -1302,14 +1300,31 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             for (long id : ids){
                 Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, id).getSingle();
                 if (poolNode == null)
-                    throw new InvalidArgumentException(String.format("Pool with id %1 does not exist", id),Level.INFO);
+                    throw new InvalidArgumentException(String.format("A pool with id %1 does not exist", id),Level.INFO);
+                
+                //Let's delete the objects inside, if possible
+                HashMap<String, long[]> toBeDeleted = new HashMap<String, long[]>();
+                for (Relationship rel : poolNode.getRelationships(RelTypes.CHILD_OF_SPECIAL)){
+                    Node objectNode = rel.getStartNode();
+                    String className = Util.getObjectClassName(objectNode);
+                    if (toBeDeleted.get(className) == null)
+                        toBeDeleted.put(className, new long[]{objectNode.getId()});
+                    //else
+                    //    toBeDeleted.put(className, Arrays.asList(toBeDeleted.get(className)). );
+                }
+                
+                bem.deleteObjects(toBeDeleted, false);
+                
+                for (Relationship rel : poolNode.getRelationships())
+                    rel.delete();
+                
                 poolsIndex.remove(poolNode);
                 poolNode.delete();
             }
             tx.success();
 
         }catch(Exception ex){
-            Logger.getLogger("deletePool: "+ex.getMessage()); //NOI18N
+            Logger.getLogger("deletePools: "+ex.getMessage()); //NOI18N
             tx.failure();
             throw new RuntimeException(ex.getMessage());
         }finally{
