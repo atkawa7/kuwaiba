@@ -411,13 +411,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public AttributeInfo getAttribute(long classId, String attributeName)
+    public AttributeInfo getAttribute(long classId, long attributeId)
             throws ServerSideException
     {
         if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
-            AttributeMetadata atrbMtdt = mem.getAttribute(classId, attributeName);
+            AttributeMetadata atrbMtdt = mem.getAttribute(classId, attributeId);
 
             AttributeInfo atrbInfo = new AttributeInfo(atrbMtdt.getName(),
                                                        atrbMtdt.getDisplayName(),
