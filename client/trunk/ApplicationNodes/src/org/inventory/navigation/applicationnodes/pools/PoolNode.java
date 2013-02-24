@@ -15,27 +15,34 @@
  */
 package org.inventory.navigation.applicationnodes.pools;
 
+import java.awt.Image;
 import javax.swing.Action;
 import org.inventory.core.services.api.LocalObjectLight;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
+import org.inventory.navigation.applicationnodes.pools.actions.DeletePool;
 import org.inventory.navigation.applicationnodes.pools.actions.NewPoolItem;
 import org.openide.nodes.AbstractNode;
+import org.openide.util.ImageUtilities;
 /**
  * Represents a pool (a set of objects of a certain kind)
  * @author Charles edward Bedon Cortazar <charles.bedon@neotropic.co>
  */
 public class PoolNode extends AbstractNode {
     
+    private static Image defaultIcon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/pool.png");
     private LocalObjectLight pool;
+    private NewPoolItem newPoolItemAction;
+    private DeletePool deletePoolAction;
+    private ShowObjectIdAction showObjectIdAction;
 
     public PoolNode(LocalObjectLight lol) {
-        super(new ObjectChildren());
+        super(new PoolChildren(lol));
         this.pool = lol;
     }
     
     @Override
     public String getName(){
-        return pool.getName();
+        return pool.getName() +" ["+pool.getClassName()+"]";
     }
     
     public LocalObjectLight getPool(){
@@ -44,6 +51,21 @@ public class PoolNode extends AbstractNode {
     
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{new NewPoolItem(this)};
+        if (newPoolItemAction == null){
+            newPoolItemAction = new NewPoolItem(this);
+            deletePoolAction = new DeletePool(this);
+            showObjectIdAction = new ShowObjectIdAction (pool.getOid(), pool.getClassName());
+        }
+        return new Action[]{newPoolItemAction, deletePoolAction, showObjectIdAction};
+    }
+ 
+        @Override
+    public Image getIcon(int i){
+        return defaultIcon;
+    }
+
+    @Override
+    public Image getOpenedIcon(int i){
+        return getIcon(i);
     }
 }

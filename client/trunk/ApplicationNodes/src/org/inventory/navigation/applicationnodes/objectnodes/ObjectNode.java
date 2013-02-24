@@ -95,7 +95,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         editAction = new EditObjectAction(this);
         deleteAction = new DeleteBusinessObjectAction(this);
         refreshAction = new RefreshObjectAction(this);
-        showObjectIdAction = new ShowObjectIdAction(this);
+        showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName());
     }
     
     public ObjectNode(LocalObjectLight lol){
@@ -112,7 +112,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         deleteAction = new DeleteBusinessObjectAction(this);
         editAction = new EditObjectAction(this);
         refreshAction = new RefreshObjectAction(this);
-        showObjectIdAction = new ShowObjectIdAction(this);
+        showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName());
     }
 
     /*

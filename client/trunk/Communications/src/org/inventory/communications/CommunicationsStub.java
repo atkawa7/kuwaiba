@@ -1262,7 +1262,7 @@ public class CommunicationsStub {
     public LocalObjectLight createPool(String name, String description, String className){
         try{
             long objectId  = port.createPool(name, description, className,session.getSessionId());
-            return new LocalObjectLightImpl(objectId, name, "Pool");
+            return new LocalObjectLightImpl(objectId, name, className);
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
@@ -1299,6 +1299,26 @@ public class CommunicationsStub {
             List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
 
             for (RemoteObjectLight rol : children)
+                res.add(new LocalObjectLightImpl(rol));
+
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Retrieves the items inside a pool
+     * @param oid The pool 
+     * @return The list of items inside the pool. Null in case of error
+     */
+    public List<LocalObjectLight> getPoolItems(long oid) {
+        try{
+            List <RemoteObjectLight> items = port.getPoolItems(oid,-1,this.session.getSessionId());
+            List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
+
+            for (RemoteObjectLight rol : items)
                 res.add(new LocalObjectLightImpl(rol));
 
             return res;

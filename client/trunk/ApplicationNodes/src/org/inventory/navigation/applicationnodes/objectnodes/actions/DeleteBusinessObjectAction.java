@@ -23,10 +23,9 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.actions.ObjectAction;
-import org.inventory.core.services.exceptions.ObjectActionException;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
+import org.inventory.core.services.exceptions.ObjectActionException;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
@@ -62,9 +61,9 @@ public final class DeleteBusinessObjectAction extends AbstractAction implements 
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             if (CommunicationsStub.getInstance().deleteObject(node.getObject().getClassName(),
                     node.getObject().getOid())){
-                if (node.getParentNode() != null) //Delete can be call for nodes outside the tree structure
+                if (node.getParentNode() != null) //Delete can be called for nodes outside the tree structure
                                                   //e.g. In a search result list
-                    ((ObjectChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
+                    node.getParentNode().getChildren().remove(new Node[]{node});
                 nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
             }
             else

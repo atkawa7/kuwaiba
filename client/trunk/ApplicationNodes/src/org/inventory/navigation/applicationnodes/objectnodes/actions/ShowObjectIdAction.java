@@ -19,24 +19,25 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 
 /**
  * Gets the selected object oid
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public final class ShowObjectIdAction extends AbstractAction{
-    private ObjectNode node;
+    private long id;
+    private String className;
 
-    public ShowObjectIdAction(ObjectNode _node) {
+    public ShowObjectIdAction(long id, String className) {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SHOW_OBJECT_ID_ACTION"));
-        this.node = _node;
+        this.id  = id;
+        this.className = className;
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
         JOptionPane.showMessageDialog(null, 
-                new SelectableLabel(node.getObject().getOid() + " ["+node.getObject().getClassName()+"]"), //NOI18N
+                new SelectableLabel(id + " ["+ className +"]"), //NOI18N
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SHOW_OBJECT_ID_ACTION_TITLE"),
                 JOptionPane.INFORMATION_MESSAGE);
     }
@@ -49,6 +50,5 @@ public final class ShowObjectIdAction extends AbstractAction{
             setEditable(false);
             setBorder(null);
         }
-
     }
 }
