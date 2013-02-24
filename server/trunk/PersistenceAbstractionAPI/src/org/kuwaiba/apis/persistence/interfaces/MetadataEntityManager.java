@@ -49,21 +49,21 @@ public interface MetadataEntityManager {
      * @param newClassDefinition
      * @throws ClassNotFoundException if there is no class with such classId
      */
-    public void changeClassDefinition(ClassMetadata newClassDefinition) throws Exception;
+    public void changeClassDefinition(ClassMetadata newClassDefinition) throws MetadataObjectNotFoundException;
 
     /**
      * Deletes a classmetadata, its attributes and category relationships
      * @param classId
      * @throws ClassNotFoundException if there is not a class with de ClassId
      */
-    public void deleteClass(String className) throws Exception;
+    public void deleteClass(String className) throws MetadataObjectNotFoundException;
 
     /**
      * Deletes a classmetadata, its attributes and category relationships
      * @param classId
      * @throws ClassNotFoundException if there is not a class with de ClassName
      */
-    public void deleteClass(long classId) throws Exception;
+    public void deleteClass(long classId) throws MetadataObjectNotFoundException;
     
     /**
      * Retrieves the simplified list of classes. This list won't include either
@@ -73,7 +73,7 @@ public interface MetadataEntityManager {
      * @return the list of classes
      * @throws Exception EntityManagerNotAvailableException or something unexpected
      */
-    public List<ClassMetadataLight> getLightMetadata(boolean includeListTypes, boolean includeIndesign) throws Exception;
+    public List<ClassMetadataLight> getLightMetadata(boolean includeListTypes, boolean includeIndesign) throws MetadataObjectNotFoundException;
     
     /**
      * Gets the subclasses of a given class
@@ -92,7 +92,7 @@ public interface MetadataEntityManager {
      * the subclasses of GenericObjectList
      * @return An array of classes
      */
-    public List<ClassMetadata> getMetadata(boolean includeListTypes, boolean includeIndesign) throws Exception;
+    public List<ClassMetadata> getMetadata(boolean includeListTypes, boolean includeIndesign) throws MetadataObjectNotFoundException;
 
     /**
      * Gets a classmetadata, its attributes and Category
@@ -100,7 +100,7 @@ public interface MetadataEntityManager {
      * @return A ClassMetadata with the className
      * @throws ClassNotFoundException there is no class with such className
      */
-    public ClassMetadata getClass(String className) throws Exception;
+    public ClassMetadata getClass(String className) throws MetadataObjectNotFoundException;
 
     /**
      * Gets a classmetadata, its attributes and Category
@@ -108,7 +108,7 @@ public interface MetadataEntityManager {
      * @return A ClassMetadata with the classId
      * @throws ClassNotFoundException there is no class with such classId
      */
-    public ClassMetadata getClass(long classId) throws Exception;
+    public ClassMetadata getClass(long classId) throws MetadataObjectNotFoundException;
 
     /**
      * Moves a class from one parentClass to an other parentClass
@@ -117,7 +117,7 @@ public interface MetadataEntityManager {
      * @throws ClassNotFoundException if there is no a classToMove with such name
      * or if there is no a targetParentClass with such name
      */
-    public void moveClass(String classToMoveName, String targetParentName) throws Exception;
+    public void moveClass(String classToMoveName, String targetParentName) throws MetadataObjectNotFoundException;
 
     /**
      * Moves a class from one parentClass to an other parentClass
@@ -126,7 +126,7 @@ public interface MetadataEntityManager {
      * @throws ClassNotFoundException if there is no a classToMove with such classId
      * or if there is no a targetParentClass with such classId
      */
-    public void moveClass(long classToMoveId, long targetParentId) throws Exception;
+    public void moveClass(long classToMoveId, long targetParentId) throws MetadataObjectNotFoundException;
 
     /**
      * Adds an attribute to the class
@@ -152,45 +152,53 @@ public interface MetadataEntityManager {
      * @throws ClassNotFoundException if there is no a class with such className
      * @throws MiscException if the attributeName does not exist
      */
-    public AttributeMetadata getAttribute(String className, String attributeName) throws Exception;
+    public AttributeMetadata getAttribute(String className, String attributeName) throws MetadataObjectNotFoundException;
 
     /**
      * Gets an attribute belonging to a class
      * @param classId
-     * @param attributeName
+     * @param attributeId
      * @return AttributeMetada, null if there is no attribute with such name
      * @throws ClassNotFoundException if there is no a class with such classId
      * @throws MiscException if the attributeName does not exist
      */
-    public AttributeMetadata getAttribute(long classId, String attributeName) throws Exception;
+    public AttributeMetadata getAttribute(long classId, long attributeId) throws MetadataObjectNotFoundException;
 
     /**
      * Changes an attribute definition belonging to a classMetadata
      * @param ClassId
      * @param newAttributeDefinition
      */
-    public void changeAttributeDefinition(long ClassId, AttributeMetadata newAttributeDefinition) throws Exception;
+    public void changeAttributeDefinition(long ClassId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException;
+    
+    /**
+     * Changes an attribute definition belonging to a classMetadata
+     * @param className
+     * @param newAttributeDefinition
+     * @throws MetadataObjectNotFoundException 
+     */
+    public void changeAttributeDefinition(String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException;
 
     /**
      * Deletes an attribute belonging to a classMetadata
      * @param className
      * @param attributeName
      */
-    public void  deleteAttribute(String className, String attributeName) throws Exception;
+    public void  deleteAttribute(String className, String attributeName) throws MetadataObjectNotFoundException;
 
     /**
      * Deletes an attribute belonging to a classMetadata
      * @param classId
      * @param attributeName
      */
-    public void deleteAttribute(long classId,String attributeName) throws Exception;
+    public void deleteAttribute(long classId,String attributeName) throws MetadataObjectNotFoundException;
 
     /**
      * Creates a new category
      * @param categoryDefinition
      * @return CategoryId
      */
-    public long createCategory(CategoryMetadata categoryDefinition) throws Exception;
+    public long createCategory(CategoryMetadata categoryDefinition) throws MetadataObjectNotFoundException;
 
     /**
      * Gets a Category with it's name
@@ -198,28 +206,28 @@ public interface MetadataEntityManager {
      * @return CategoryMetadata
      * @throws MiscException if the Category does not exist
      */
-    public CategoryMetadata getCategory(String categoryName) throws Exception;
+    public CategoryMetadata getCategory(String categoryName) throws MetadataObjectNotFoundException;
 
     /**
      * Gets a Category with it's Id
      * @param categoryId
      * @return CategoryMetadata
      */
-    public CategoryMetadata getCategory(int categoryId) throws Exception;
+    public CategoryMetadata getCategory(int categoryId) throws MetadataObjectNotFoundException;
 
     /**
      * Changes a category definition
      * @param categoryDefinition
      * @return true if success
      */
-    public void changeCategoryDefinition(CategoryMetadata categoryDefinition) throws Exception;
+    public void changeCategoryDefinition(CategoryMetadata categoryDefinition) throws MetadataObjectNotFoundException;
 
     /**
      * Deletes a category definition Still don't know what to do with the clasess
      * @param categoryDefinition
      */
-    public void deleteCategory(String categoryName) throws Exception;
-    public void deleteCategory(int categoryId) throws Exception;
+    public void deleteCategory(String categoryName) throws MetadataObjectNotFoundException;
+    public void deleteCategory(int categoryId) throws MetadataObjectNotFoundException;
     public void addImplementor(String classWhichImplementsName,String interfaceToImplementName) throws Exception;
     public void removeImplementor(String classWhichImplementsName ,String interfaceToBeRemovedName) throws Exception;
     public void addImplementor(int classWhichImplementsId, int interfaceToImplementId) throws Exception;
