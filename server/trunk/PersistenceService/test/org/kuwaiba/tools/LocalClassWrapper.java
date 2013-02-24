@@ -1,6 +1,17 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kuwaiba.tools;
@@ -21,6 +32,7 @@ public class LocalClassWrapper {
     private int javaModifiers;
     private int applicationModifiers;
     private int classType;
+    private String classPackage;
     private List<LocalClassWrapper> directSubClasses;
     private List<LocalAttributeWrapper> attributes;
 
@@ -85,6 +97,14 @@ public class LocalClassWrapper {
         return (applicationModifiers & MODIFIER_NOCOUNT) != MODIFIER_NOCOUNT;
     }
 
+    public String getClassPackage() {
+        return classPackage;
+    }
+
+    public void setClassPackage(String classPackage) {
+        this.classPackage = classPackage;
+    }
+    
     @Override
     public boolean equals(Object obj){
         if (obj == null)
