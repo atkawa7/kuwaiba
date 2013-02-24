@@ -23,6 +23,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
+import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.persistenceservice.impl.ConnectionManagerImpl;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
@@ -82,12 +83,14 @@ public class XMLBackupReader {
     private LocalClassWrapper readClassNode(XMLStreamReader reader) throws XMLStreamException{
         LocalClassWrapper aClass = new LocalClassWrapper();
 
-        aClass.setName(reader.getAttributeValue(null, "name"));
-        aClass.setApplicationModifiers(Integer.valueOf(reader.getAttributeValue(null, "applicationModifiers")));
-        aClass.setJavaModifiers(Integer.valueOf(reader.getAttributeValue(null, "javaModifiers")));
-        aClass.setClassType(Integer.valueOf(reader.getAttributeValue(null, "classType")));
+        aClass.setName(reader.getAttributeValue(null, "name")); //NOI18N
+        aClass.setApplicationModifiers(Integer.valueOf(reader.getAttributeValue(null, "applicationModifiers"))); //NOI18N
+        aClass.setJavaModifiers(Integer.valueOf(reader.getAttributeValue(null, "javaModifiers"))); //NOI18N
+        aClass.setClassType(Integer.valueOf(reader.getAttributeValue(null, "classType"))); //NOI18N
+        aClass.setClassPackage(reader.getAttributeValue(null, "classPackage")); //NOI18N
         QName attributeTag = new QName("attribute"); //NOI18N
         QName classTag = new QName("class"); //NOI18N
+        
 
         while (true){
             int event = reader.next();
@@ -162,13 +165,15 @@ public class XMLBackupReader {
     public void readRoots(List<LocalClassWrapper> listNodes, String parentClassName) throws Exception{
 
         ClassMetadata clmt = new ClassMetadata();
+//        CategoryMetadata ctgry = new CategoryMetadata();
 
-//        dC.setName("defaul-category");
-//        dC.setDisplayName("defaul-category");
-//        dC.setDescription("Default category to test");
 
         for (LocalClassWrapper lcw: listNodes) {
 
+//            ctgry.setName(lcw.getClassPackage());
+//            ctgry.setDescription(null);
+//            ctgry.setDisplayName(null);
+            
             clmt.setAbstractClass(Modifier.isAbstract(lcw.getJavaModifiers()));
             clmt.setCategory(null);
             clmt.setColor(0);
@@ -183,7 +188,7 @@ public class XMLBackupReader {
             clmt.setParentClassName(parentClassName);
             clmt.setSmallIcon(new byte[0]);
             clmt.setInDesing(false);
-
+            
             List<AttributeMetadata> attList = new ArrayList<AttributeMetadata>();
             
             for (LocalAttributeWrapper law : lcw.getAttributes())
