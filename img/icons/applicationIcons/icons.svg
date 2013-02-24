@@ -374,6 +374,50 @@
        inkscape:vp_y="0 : 1000 : 0"
        inkscape:vp_x="0 : 0.5 : 1"
        sodipodi:type="inkscape:persp3d" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3139-7"
+       id="linearGradient3145-7"
+       x1="934.97192"
+       y1="436.14948"
+       x2="905.09668"
+       y2="435.79593"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-229.8097,38.15291)" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3139-7">
+      <stop
+         style="stop-color:#c83737;stop-opacity:1;"
+         offset="0"
+         id="stop3141-5" />
+      <stop
+         style="stop-color:#c83737;stop-opacity:0;"
+         offset="1"
+         id="stop3143-4" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3130-6"
+       id="linearGradient3136-5"
+       x1="992.22705"
+       y1="439.27127"
+       x2="964.5"
+       y2="439.09448"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-229.8097,38.15291)" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3130-6">
+      <stop
+         style="stop-color:#0000ff;stop-opacity:1;"
+         offset="0"
+         id="stop3132-6" />
+      <stop
+         style="stop-color:#0000ff;stop-opacity:0;"
+         offset="1"
+         id="stop3134-4" />
+    </linearGradient>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -382,9 +426,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8284272"
-     inkscape:cx="627.5618"
-     inkscape:cy="124.90047"
+     inkscape:zoom="2.0000001"
+     inkscape:cx="805.83133"
+     inkscape:cy="439.94157"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -3025,7 +3069,7 @@
        sodipodi:cy="120.59447"
        sodipodi:rx="32.5"
        sodipodi:ry="29.5"
-       d="m 247,120.59447 a 32.5,29.5 0 1 1 -65,0 32.5,29.5 0 1 1 65,0 z"
+       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
        transform="matrix(0.74400118,0,0,0.81966231,325.48699,847.44943)"
        inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP (copy)/trunk/GISView/src/org/inventory/views/gis/res/add.png"
        inkscape:export-xdpi="40.942863"
@@ -3045,5 +3089,208 @@
          x="469.28952"
          y="962.76917"
          style="font-size:56px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;font-family:Ubuntu;-inkscape-font-specification:Ubuntu Bold">+</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+       id="path3435-6-6-0-4-9-9-1"
+       sodipodi:cx="214.5"
+       sodipodi:cy="120.59447"
+       sodipodi:rx="32.5"
+       sodipodi:ry="29.5"
+       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
+       transform="matrix(0.74400118,0,0,0.81966231,807.02669,469.38995)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/trunk/GISView/src/org/inventory/views/gis/res/optical-link.png"
+       inkscape:export-xdpi="40.942863"
+       inkscape:export-ydpi="40.942863" />
+    <g
+       id="g3354"
+       transform="translate(-0.35355338,-4.7071068)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/trunk/GISView/src/org/inventory/views/gis/res/optical-link.png"
+       inkscape:export-xdpi="40.942863"
+       inkscape:export-ydpi="40.942863">
+      <path
+         inkscape:export-ydpi="47.142857"
+         inkscape:export-xdpi="47.142857"
+         inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/optical_link.png"
+         id="rect3072-0-4"
+         d="m 963.955,591.32853 21.7123,-22.61354 -0.10177,-0.0962 c 1.06968,-1.38423 -1.21183,-5.45773 -5.2172,-9.24206 -4.00536,-3.78433 -8.21796,-5.84658 -9.55965,-4.71936 l -0.10177,-0.0961 -21.7123,22.61355 14.98039,14.15372 z"
+         style="color:#000000;fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.89586335;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         inkscape:connector-curvature="0" />
+      <path
+         inkscape:export-ydpi="47.142857"
+         inkscape:export-xdpi="47.142857"
+         inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/optical_link.png"
+         transform="matrix(-0.62389743,-0.58946873,0.62035134,-0.64610138,1277.4024,1402.6622)"
+         d="m 942,418.21948 c 0,2.00203 -5.31662,3.625 -11.875,3.625 -6.55838,0 -11.875,-1.62297 -11.875,-3.625 0,-2.00203 5.31662,-3.625 11.875,-3.625 6.55838,0 11.875,1.62297 11.875,3.625 z"
+         sodipodi:ry="3.625"
+         sodipodi:rx="11.875"
+         sodipodi:cy="418.21948"
+         sodipodi:cx="930.125"
+         id="path3082-0-9"
+         style="color:#000000;fill:#71c837;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.02174163;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
+    <path
+       sodipodi:type="arc"
+       style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+       id="path3435-6-6-0-4-9-9-1-9"
+       sodipodi:cx="214.5"
+       sodipodi:cy="120.59447"
+       sodipodi:rx="32.5"
+       sodipodi:ry="29.5"
+       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
+       transform="matrix(0.74400118,0,0,0.81966231,807.94522,519.93768)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/trunk/GISView/src/org/inventory/views/gis/res/electrical-link.png"
+       inkscape:export-xdpi="40.942863"
+       inkscape:export-ydpi="40.942863" />
+    <g
+       id="g3426"
+       transform="matrix(-0.66326601,-0.62985486,0.63169197,-0.6612654,1218.7853,1639.1054)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/trunk/GISView/src/org/inventory/views/gis/res/electrical-link.png"
+       inkscape:export-xdpi="40.942863"
+       inkscape:export-ydpi="40.942863">
+      <path
+         inkscape:export-ydpi="47.142857"
+         inkscape:export-xdpi="47.142857"
+         inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/electrical_link.png"
+         id="rect3072-0-7-1"
+         d="m 956.17561,601.58214 0,35 0.15625,0 c 0.20882,1.94355 5.19416,3.5 11.34375,3.5 6.14959,0 11.13493,-1.55645 11.34375,-3.5 l 0.15625,0 0,-35 -23,0 z"
+         style="color:#000000;fill:#ff6600;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         inkscape:connector-curvature="0" />
+      <path
+         inkscape:export-ydpi="47.142857"
+         inkscape:export-xdpi="47.142857"
+         inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/electrical_link.png"
+         transform="matrix(0.95789474,0,0,1,76.713755,183.48839)"
+         d="m 942,418.21948 c 0,2.00203 -5.31662,3.625 -11.875,3.625 -6.55838,0 -11.875,-1.62297 -11.875,-3.625 0,-2.00203 5.31662,-3.625 11.875,-3.625 6.55838,0 11.875,1.62297 11.875,3.625 z"
+         sodipodi:ry="3.625"
+         sodipodi:rx="11.875"
+         sodipodi:cy="418.21948"
+         sodipodi:cx="930.125"
+         id="path3082-0-8-7"
+         style="color:#000000;fill:#ff9955;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.02174163;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
+    <path
+       sodipodi:type="arc"
+       style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+       id="path3435-6-6-0-4-9-9-1-9-5"
+       sodipodi:cx="214.5"
+       sodipodi:cy="120.59447"
+       sodipodi:rx="32.5"
+       sodipodi:ry="29.5"
+       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
+       transform="matrix(0.74400118,0,0,0.81966231,807.25892,571.91002)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/trunk/GISView/src/org/inventory/views/gis/res/wireless-link.png"
+       inkscape:export-xdpi="40.942863"
+       inkscape:export-ydpi="40.942863" />
+    <g
+       id="g3501"
+       transform="matrix(-0.63988672,-0.61641127,0.61416176,-0.64223044,1143.8829,1688.0662)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/trunk/GISView/src/org/inventory/views/gis/res/wireless-link.png"
+       inkscape:export-xdpi="40.942863"
+       inkscape:export-ydpi="40.942863">
+      <path
+         inkscape:export-ydpi="47.142857"
+         inkscape:export-xdpi="47.142857"
+         inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/wireless_link.png"
+         id="rect3072-0-9-8"
+         d="m 923.49998,668.36183 0,35 0.15625,0 c 0.20882,1.94355 5.19416,3.5 11.34375,3.5 6.14959,0 11.13493,-1.55645 11.34375,-3.5 l 0.15625,0 0,-35 -23,0 z"
+         style="color:#000000;fill:#800080;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         inkscape:connector-curvature="0" />
+      <path
+         inkscape:export-ydpi="47.142857"
+         inkscape:export-xdpi="47.142857"
+         inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/wireless_link.png"
+         transform="matrix(0.95789474,0,0,1,44.038136,250.26808)"
+         d="m 942,418.21948 c 0,2.00203 -5.31662,3.625 -11.875,3.625 -6.55838,0 -11.875,-1.62297 -11.875,-3.625 0,-2.00203 5.31662,-3.625 11.875,-3.625 6.55838,0 11.875,1.62297 11.875,3.625 z"
+         sodipodi:ry="3.625"
+         sodipodi:rx="11.875"
+         sodipodi:cy="418.21948"
+         sodipodi:cx="930.125"
+         id="path3082-0-3-3"
+         style="color:#000000;fill:#cc00ff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.02174163;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
+    <path
+       sodipodi:type="arc"
+       style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+       id="path3435-6-6-0-4-9-9-1-4"
+       sodipodi:cx="214.5"
+       sodipodi:cy="120.59447"
+       sodipodi:rx="32.5"
+       sodipodi:ry="29.5"
+       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
+       transform="matrix(0.74400118,0,0,0.81966231,540.41173,433.01546)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/trunk/GISView/src/org/inventory/views/gis/res/wire-container.png"
+       inkscape:export-xdpi="40.94289"
+       inkscape:export-ydpi="40.94289" />
+    <g
+       id="g4115"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/trunk/GISView/src/org/inventory/views/gis/res/wire-container.png"
+       inkscape:export-xdpi="40.94289"
+       inkscape:export-ydpi="40.94289">
+      <path
+         inkscape:export-ydpi="47.142857"
+         inkscape:export-xdpi="47.142857"
+         inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/wire-container.png"
+         id="rect3072-81"
+         d="m 695.56505,549.71908 21.45544,-22.13749 -0.0991,-0.0956 c 1.05905,-1.35702 -1.14713,-5.39071 -5.04546,-9.15205 -3.89834,-3.76134 -8.01276,-5.82612 -9.33656,-4.72455 l -0.099,-0.0956 -21.45543,22.13749 14.58011,14.06774 z"
+         style="color:#000000;fill:#c83737;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.90856755;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         inkscape:connector-curvature="0" />
+      <path
+         inkscape:export-ydpi="47.142857"
+         inkscape:export-xdpi="47.142857"
+         inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/wire-container.png"
+         transform="matrix(-0.60722689,-0.58588744,0.61301252,-0.63249961,996.77521,1352.0779)"
+         d="m 942,418.21948 a 11.875,3.625 0 1 1 -23.75,0 11.875,3.625 0 1 1 23.75,0 z"
+         sodipodi:ry="3.625"
+         sodipodi:rx="11.875"
+         sodipodi:cy="418.21948"
+         sodipodi:cx="930.125"
+         id="path3082-2"
+         style="color:#000000;fill:#d27075;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.90856754999999989;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
+    <path
+       sodipodi:type="arc"
+       style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+       id="path3435-6-6-0-4-9-9-1-4-0"
+       sodipodi:cx="214.5"
+       sodipodi:cy="120.59447"
+       sodipodi:rx="32.5"
+       sodipodi:ry="29.5"
+       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
+       transform="matrix(0.74400118,0,0,0.81966231,595.60177,432.37776)"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/trunk/GISView/src/org/inventory/views/gis/res/wireless-container.png"
+       inkscape:export-xdpi="40.94289"
+       inkscape:export-ydpi="40.94289" />
+    <g
+       id="g4119"
+       inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/trunk/GISView/src/org/inventory/views/gis/res/wireless-container.png"
+       inkscape:export-xdpi="40.94289"
+       inkscape:export-ydpi="40.94289">
+      <path
+         inkscape:export-ydpi="47.142857"
+         inkscape:export-xdpi="47.142857"
+         inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/wireless-container.png"
+         id="rect3072-8-0"
+         d="m 751.00411,548.41573 21.7724,-21.90455 -0.10243,-0.0926 c 1.07212,-1.34009 -1.22784,-5.26814 -5.25926,-8.91195 -4.03142,-3.64379 -8.26784,-5.62365 -9.61374,-4.53103 l -0.10244,-0.0926 -21.77239,21.90455 15.07786,13.62814 z"
+         style="color:#000000;fill:#0000ff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.90856755;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         inkscape:connector-curvature="0" />
+      <path
+         inkscape:export-ydpi="47.142857"
+         inkscape:export-xdpi="47.142857"
+         inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP/ViewRenderer/src/org/inventory/views/viewrenderer/res/wireless-container.png"
+         transform="matrix(-0.62795676,-0.56757933,0.62206853,-0.62584422,1067.4593,1331.1896)"
+         d="m 942,418.21948 a 11.875,3.625 0 1 1 -23.75,0 11.875,3.625 0 1 1 23.75,0 z"
+         sodipodi:ry="3.625"
+         sodipodi:rx="11.875"
+         sodipodi:cy="418.21948"
+         sodipodi:cx="930.125"
+         id="path3082-4-0"
+         style="color:#000000;fill:#5c6bff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.90856754999999989;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         sodipodi:type="arc" />
+    </g>
   </g>
 </svg>

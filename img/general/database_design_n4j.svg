@@ -54,17 +54,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.1470021"
-     inkscape:cx="365.93103"
-     inkscape:cy="938.4655"
+     inkscape:zoom="0.57350105"
+     inkscape:cx="417.48193"
+     inkscape:cy="237.51404"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="false"
+     showgrid="true"
      inkscape:window-width="1366"
      inkscape:window-height="714"
      inkscape:window-x="-3"
      inkscape:window-y="-3"
-     inkscape:window-maximized="1">
+     inkscape:window-maximized="1"
+     inkscape:snap-global="false">
     <inkscape:grid
        type="xygrid"
        id="grid15836" />
@@ -99,14 +100,14 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
-       x="230.90999"
-       y="281.08246"
+       x="371.27591"
+       y="277.59509"
        id="text5302"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan5304"
-         x="230.90999"
-         y="281.08246"
+         x="371.27591"
+         y="277.59509"
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">Root Node</tspan></text>
     <path
        sodipodi:type="arc"
@@ -655,7 +656,7 @@
        sodipodi:cy="113.79076"
        sodipodi:rx="35.714287"
        sodipodi:ry="38.57143"
-       d="m 308.57143,113.79076 a 35.714287,38.57143 0 1 1 -71.42857,0 35.714287,38.57143 0 1 1 71.42857,0 z"
+       d="m 308.57143,113.79076 c 0,21.30241 -15.98983,38.57143 -35.71428,38.57143 -19.72446,0 -35.71429,-17.26902 -35.71429,-38.57143 0,-21.302416 15.98983,-38.571434 35.71429,-38.571434 19.72445,0 35.71428,17.269018 35.71428,38.571434 z"
        transform="matrix(0.69999998,0,0,0.64814812,257.64973,107.92396)" />
     <text
        xml:space="preserve"
@@ -1146,7 +1147,7 @@
          id="tspan5304-0-9-8-0-1-2-3-8-8"
          x="1202.574"
          y="140.63829"
-         style="font-size:10px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#008000;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">HAS_HISTORY_ENTRY</tspan></text>
+         style="font-size:10px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#008000;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">HAS_ACTIVITY_LOG</tspan></text>
     <rect
        style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.91142964000000004;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect15765"
@@ -1345,17 +1346,17 @@
          x="775.33112"
          y="77.524849"
          style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
-         id="tspan15984">Very likely to disappear in the future, since the authentication is meant to be</tspan><tspan
+         id="tspan15986">The authentication is meant to be handled outside,</tspan><tspan
          sodipodi:role="line"
          x="775.33112"
          y="107.52485"
          style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
-         id="tspan15986">handled outside, integrating identity managers or simple authentication sources</tspan><tspan
+         id="tspan4695">integrating identity managers or simple authentication services</tspan><tspan
          sodipodi:role="line"
          x="775.33112"
          y="137.52484"
          style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
-         id="tspan15994">such as LDAP or Radius</tspan></text>
+         id="tspan15994">such as LDAP or Radius. The privileges are stored locally, though</tspan></text>
     <rect
        style="fill:#808000;fill-opacity:1;stroke:none"
        id="rect15765-61"
@@ -1433,14 +1434,24 @@
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
        x="94.026917"
-       y="1532.6217"
+       y="1516.6217"
        id="text5302-17-49"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan5304-8-5"
          x="94.026917"
-         y="1532.6217"
-         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">History entry nodes. Used to stored the changes performed on the existing objects</tspan></text>
+         y="1516.6217"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">Activity Log nodes. Used to store information about the system events.  There are two type of nodes: Those containing Object Specific Events</tspan><tspan
+         sodipodi:role="line"
+         x="94.026917"
+         y="1534.1217"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+         id="tspan5404">(such as attribute changes) and General Events (such as syncronization routines). These actions are performed by users. The idea of saving the </tspan><tspan
+         sodipodi:role="line"
+         x="94.026917"
+         y="1551.6217"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+         id="tspan5406">events here instead of in a log file, is that recorded actions can be (mostly) rolled back.</tspan></text>
     <rect
        style="fill:#ff00ff;fill-opacity:1;stroke:none"
        id="rect15765-7-1"
@@ -1469,7 +1480,7 @@
        sodipodi:cy="113.79076"
        sodipodi:rx="35.714287"
        sodipodi:ry="38.57143"
-       d="m 308.57143,113.79076 a 35.714287,38.57143 0 1 1 -71.42857,0 35.714287,38.57143 0 1 1 71.42857,0 z"
+       d="m 308.57143,113.79076 c 0,21.30241 -15.98983,38.57143 -35.71428,38.57143 -19.72446,0 -35.71429,-17.26902 -35.71429,-38.57143 0,-21.302416 15.98983,-38.571434 35.71429,-38.571434 19.72445,0 35.71428,17.269018 35.71428,38.571434 z"
        transform="matrix(0.69999998,0,0,0.64814812,133.32375,-160.88337)" />
     <path
        sodipodi:type="arc"
@@ -1479,7 +1490,7 @@
        sodipodi:cy="113.79076"
        sodipodi:rx="35.714287"
        sodipodi:ry="38.57143"
-       d="m 308.57143,113.79076 a 35.714287,38.57143 0 1 1 -71.42857,0 35.714287,38.57143 0 1 1 71.42857,0 z"
+       d="m 308.57143,113.79076 c 0,21.30241 -15.98983,38.57143 -35.71428,38.57143 -19.72446,0 -35.71429,-17.26902 -35.71429,-38.57143 0,-21.302416 15.98983,-38.571434 35.71429,-38.571434 19.72445,0 35.71428,17.269018 35.71428,38.571434 z"
        transform="matrix(0.69999998,0,0,0.64814812,82.757147,3.0221774)" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)"
@@ -1533,19 +1544,19 @@
        id="rect15765-7-1-6"
        width="55.554272"
        height="29.745226"
-       x="22.415447"
+       x="20.671772"
        y="1604.4406"
        ry="0" />
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
-       x="95.568283"
+       x="93.824608"
        y="1625.1823"
        id="text5302-17-49-7-6"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan5304-8-5-4-6"
-         x="95.568283"
+         x="93.824608"
          y="1625.1823"
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">Pools nodes. Used to group objects that normally can't be put under the .conventional natigation tree (e.g. VLANs or IPAddresses)</tspan></text>
     <path
@@ -1556,7 +1567,7 @@
        sodipodi:cy="113.79076"
        sodipodi:rx="35.714287"
        sodipodi:ry="38.57143"
-       d="m 308.57143,113.79076 a 35.714287,38.57143 0 1 1 -71.42857,0 35.714287,38.57143 0 1 1 71.42857,0 z"
+       d="m 308.57143,113.79076 c 0,21.30241 -15.98983,38.57143 -35.71428,38.57143 -19.72446,0 -35.71429,-17.26902 -35.71429,-38.57143 0,-21.302416 15.98983,-38.571434 35.71429,-38.571434 19.72445,0 35.71428,17.269018 35.71428,38.571434 z"
        transform="matrix(0.69999998,0,0,0.64814812,-55.865105,100.66804)" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)"
@@ -1594,5 +1605,418 @@
          y="216.03334"
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
          id="tspan5863">Object node</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="952.08429"
+       y="929.52893"
+       id="text5302-0-0-7-7-0"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="953.69757"
+         y="929.52893"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+         id="tspan3219">Object Specific Activity </tspan><tspan
+         sodipodi:role="line"
+         x="952.08429"
+         y="947.02893"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+         id="tspan5126">Log nodes</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#eeffaa;fill-opacity:1;stroke:none"
+       id="path5300-57-3-6"
+       sodipodi:cx="272.85715"
+       sodipodi:cy="113.79076"
+       sodipodi:rx="35.714287"
+       sodipodi:ry="38.57143"
+       d="m 308.57143,113.79076 a 35.714287,38.57143 0 1 1 -71.42857,0 35.714287,38.57143 0 1 1 71.42857,0 z"
+       transform="matrix(0.69999998,0,0,0.64814812,915.36241,738.85348)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)"
+       d="m 963.26836,552.25627 119.38144,-39.9767"
+       id="path3243"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#path5300-5-9-5-4-7-06-1-6"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#path5300-57-3-6"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="663.36499"
+       y="1113.4116"
+       id="text5302-05-8-3-3-9-1-0-7-4-3"
+       sodipodi:linespacing="125%"
+       transform="matrix(0.9497269,-0.31307958,0.31307958,0.9497269,0,0)"
+       inkscape:transform-center-x="5.2310279"
+       inkscape:transform-center-y="7.8465419"><tspan
+         sodipodi:role="line"
+         id="tspan5304-0-9-8-0-1-2-3-8-8-7"
+         x="663.36499"
+         y="1113.4116"
+         style="font-size:10px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#008000;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">PERFORMED_BY</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#a7ac93;fill-opacity:1;stroke:none"
+       id="path5300-5-9-3-2"
+       sodipodi:cx="272.85715"
+       sodipodi:cy="113.79076"
+       sodipodi:rx="35.714287"
+       sodipodi:ry="38.57143"
+       d="m 308.57143,113.79076 a 35.714287,38.57143 0 1 1 -71.42857,0 35.714287,38.57143 0 1 1 71.42857,0 z"
+       transform="matrix(0.69999998,0,0,0.64814812,-45.999998,201.60892)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)"
+       d="m 308.68805,-33.169645 -138.68808,0.223789"
+       id="path3222"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#path5300"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#path5300-5-9-3-2"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="228.11882"
+       y="268.95117"
+       id="text5302-05-6-4"
+       sodipodi:linespacing="125%"
+       transform="matrix(0.99991362,0.01314376,-0.01314376,0.99991362,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan5304-0-8-9"
+         x="228.11882"
+         y="268.95117"
+         style="font-size:10px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#008000;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">ROOT</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#ff6600;fill-opacity:1;stroke:none"
+       id="path5300-5-9-5-4-9-3-5"
+       sodipodi:cx="272.85715"
+       sodipodi:cy="113.79076"
+       sodipodi:rx="35.714287"
+       sodipodi:ry="38.57143"
+       d="m 308.57143,113.79076 a 35.714287,38.57143 0 1 1 -71.42857,0 35.714287,38.57143 0 1 1 71.42857,0 z"
+       transform="matrix(0.69999998,0,0,0.64814812,-196.23102,144.25997)" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#ff6600;fill-opacity:1;stroke:none"
+       id="path5300-5-9-5-4-9-3-7"
+       sodipodi:cx="272.85715"
+       sodipodi:cy="113.79076"
+       sodipodi:rx="35.714287"
+       sodipodi:ry="38.57143"
+       d="m 308.57143,113.79076 a 35.714287,38.57143 0 1 1 -71.42857,0 35.714287,38.57143 0 1 1 71.42857,0 z"
+       transform="matrix(0.69999998,0,0,0.64814812,-203.20573,234.05928)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)"
+       d="m 18.131364,-81.336145 103.506246,39.51231"
+       id="path4234"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#path5300-5-9-5-4-9-3-5"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#path5300-5-9-3-2"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)"
+       d="M 12.282959,-5.5101035 120.51131,-27.850567"
+       id="path4236"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#path5300-5-9-5-4-9-3-7"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#path5300-5-9-3-2"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="-82.855453"
+       y="259.62527"
+       id="text5302-0-0-7-60-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="-82.855453"
+         y="259.62527"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+         id="tspan5863-5">Object nodes</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="107.89799"
+       y="199.96245"
+       id="text5302-05-8-3-3-9-7-6-1"
+       sodipodi:linespacing="125%"
+       transform="matrix(0.93258452,0.36095168,-0.36095168,0.93258452,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan5304-0-9-8-0-1-7-3-8"
+         x="107.89799"
+         y="199.96245"
+         style="font-size:10px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#008000;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">CHILD_OF_SPECIAL</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="112.75636"
+       y="313.15353"
+       id="text5302-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5304-7"
+         x="112.75636"
+         y="313.15353"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">Trash Node</tspan></text>
+    <rect
+       style="fill:#a7ac93;fill-opacity:1;stroke:none"
+       id="rect15765-7-1-6-1"
+       width="55.554272"
+       height="29.745226"
+       x="20.962156"
+       y="1648.0844"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="94.11499"
+       y="1668.826"
+       id="text5302-17-49-7-6-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5304-8-5-4-6-4"
+         x="94.11499"
+         y="1668.826"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">Trash node. Under this single node, all the deleted objects are stored.</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#3771c8;fill-opacity:1;stroke:none"
+       id="path5300-5-9-5-4-7-06-1-6-1-7"
+       sodipodi:cx="272.85715"
+       sodipodi:cy="113.79076"
+       sodipodi:rx="35.714287"
+       sodipodi:ry="38.57143"
+       d="m 308.57143,113.79076 a 35.714287,38.57143 0 1 1 -71.42857,0 35.714287,38.57143 0 1 1 71.42857,0 z"
+       transform="matrix(0.69999998,0,0,0.64814812,904.02851,877.47571)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="1171.8258"
+       y="809.02582"
+       id="text5302-0-0-7-7-0-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="1171.8258"
+         y="809.02582"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+         id="tspan3219-6">User nodes</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)"
+       d="M 961.62803,571.94677 1072.9562,631.2113"
+       id="path4736"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#path5300-5-9-5-4-7-06-1-6"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#path5300-5-9-5-4-7-06-1-6-1-7"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)"
+       d="M 945.37267,685.61969 1070.98,649.81615"
+       id="path4738"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#path5300-5-9-5-4-7-06-1-6-1"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#path5300-5-9-5-4-7-06-1-6-1-7"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#c4c8b7;fill-opacity:1;stroke:none"
+       id="path5300-5-9-5-4-7-06-1-6-3"
+       sodipodi:cx="272.85715"
+       sodipodi:cy="113.79076"
+       sodipodi:rx="35.714287"
+       sodipodi:ry="38.57143"
+       d="m 308.57143,113.79076 a 35.714287,38.57143 0 1 1 -71.42857,0 35.714287,38.57143 0 1 1 71.42857,0 z"
+       transform="matrix(0.69999998,0,0,0.64814812,1053.9846,879.21939)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="1290.2329"
+       y="312.96628"
+       id="text5302-05-8-3-3-9-7-4"
+       sodipodi:linespacing="125%"
+       transform="matrix(0.88046328,0.47411434,-0.47411434,0.88046328,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan5304-0-9-8-0-1-7-8"
+         x="1290.2329"
+         y="312.96628"
+         style="font-size:10px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#008000;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">CHILD_OF_SPECIAL</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)"
+       d="m 1219.9863,644.41428 -99.9594,-1.16233"
+       id="path5149"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#path5300-5-9-5-4-7-06-1-6-3"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#path5300-5-9-5-4-7-06-1-6-1-7"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="1131.3516"
+       y="942.52832"
+       id="text5302-05-8-3-3-9-7-4-1"
+       sodipodi:linespacing="125%"
+       transform="matrix(0.99998939,0.00460584,-0.00460584,0.99998939,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan5304-0-9-8-0-1-7-8-5"
+         x="1131.3516"
+         y="942.52832"
+         style="font-size:10px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#008000;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">CHILD_OF_SPECIAL</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="1251.5533"
+       y="997.16162"
+       id="text5302-0-0-7-7-0-3"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="1253.1666"
+         y="997.16162"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+         id="tspan3219-4">General Activity </tspan><tspan
+         sodipodi:role="line"
+         x="1251.5533"
+         y="1014.6617"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+         id="tspan5126-5">Log nodes</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="1131.2397"
+       y="902.13123"
+       id="text5302-0-0-7-7-0-3-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="1132.853"
+         y="902.13123"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+         id="tspan3219-4-0">Root Activity </tspan><tspan
+         sodipodi:role="line"
+         x="1131.2397"
+         y="919.63123"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+         id="tspan5126-5-2">Log node</tspan></text>
+    <rect
+       style="fill:#3771c8;fill-opacity:1;stroke:none"
+       id="rect15765-7-1-6-1-8"
+       width="55.554272"
+       height="29.745226"
+       x="21.155972"
+       y="1692.8105"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="94.308815"
+       y="1713.5522"
+       id="text5302-17-49-7-6-1-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5304-8-5-4-6-4-3"
+         x="94.308815"
+         y="1713.5522"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">Activity Log root node. Under this single node, activity logs are stored.</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#eeffaa;fill-opacity:1;stroke:none"
+       id="path5300-57-3-6-0"
+       sodipodi:cx="272.85715"
+       sodipodi:cy="113.79076"
+       sodipodi:rx="35.714287"
+       sodipodi:ry="38.57143"
+       d="m 308.57143,113.79076 a 35.714287,38.57143 0 1 1 -71.42857,0 35.714287,38.57143 0 1 1 71.42857,0 z"
+       transform="matrix(0.69999998,0,0,0.64814812,1054.9112,751.12686)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#TriangleOutL)"
+       d="m 1245.1654,619.7056 0.565,-78.09382"
+       id="path5450"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#path5300-5-9-5-4-7-06-1-6-3"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#path5300-57-3-6-0"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="870.95605"
+       y="-1243.3447"
+       id="text5302-05-8-3-3-9-1-0-7-4-3-5"
+       sodipodi:linespacing="125%"
+       transform="matrix(0.01499543,0.99988756,-0.99988756,0.01499543,0,0)"
+       inkscape:transform-center-x="6.433659"
+       inkscape:transform-center-y="-7.3267034"><tspan
+         sodipodi:role="line"
+         id="tspan5304-0-9-8-0-1-2-3-8-8-7-2"
+         x="870.95605"
+         y="-1243.3447"
+         style="font-size:10px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#008000;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">PERFORMED_BY</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       id="path5300-8"
+       sodipodi:cx="272.85715"
+       sodipodi:cy="113.79076"
+       sodipodi:rx="35.714287"
+       sodipodi:ry="38.57143"
+       d="m 308.57143,113.79076 a 35.714287,38.57143 0 1 1 -71.42857,0 35.714287,38.57143 0 1 1 71.42857,0 z"
+       transform="matrix(0.69999998,0,0,0.64814812,949.90436,1003.2682)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="1178.4922"
+       y="1079.5588"
+       id="text5302-2"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5304-5"
+         x="1178.4922"
+         y="1079.5588"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">Root Node</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:none;marker-start:url(#TriangleInL)"
+       d="m 1103.5964,666.45451 28.7401,78.80602"
+       id="path5681"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#path5300-5-9-5-4-7-06-1-6-1-7"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#path5300-8"
+       inkscape:connection-end-point="d4"
+       transform="translate(0,308.2677)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="1349.6626"
+       y="-668.24866"
+       id="text5302-05-8-3-3-9-7-4-1-5"
+       sodipodi:linespacing="125%"
+       transform="matrix(0.36936353,0.92928498,-0.92928498,0.36936353,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan5304-0-9-8-0-1-7-8-5-3"
+         x="1349.6626"
+         y="-668.24866"
+         style="font-size:10px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#008000;font-family:Ubuntu;-inkscape-font-specification:Ubuntu">ROOT</tspan></text>
   </g>
 </svg>
