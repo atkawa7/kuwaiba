@@ -188,7 +188,7 @@ public interface WebserviceBeanRemote {
      * @param attributeName
      * @return AttributeMetada, null if there is no attribute with such name
      */
-    public AttributeInfo getAttribute(long classId, String attributeName) throws ServerSideException;
+    public AttributeInfo getAttribute(long classId, long attributeId) throws ServerSideException;
 
     /**
      * Changes an attribute definition using an id to get the class it belongs to
