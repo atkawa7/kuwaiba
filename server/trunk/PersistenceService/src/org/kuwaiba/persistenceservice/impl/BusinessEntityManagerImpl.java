@@ -441,7 +441,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                         instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().next().delete();
                     //If the object was child of a pool
                     if (instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().hasNext())
-                        instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().next().delete();
+                        instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().next().delete();
                     
                     instance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF);
                 }
