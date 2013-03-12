@@ -31,6 +31,7 @@ import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.Node;
+import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
 
@@ -43,19 +44,15 @@ import org.openide.windows.TopComponent;
 autostore = false)
 @TopComponent.Description(
     preferredID = "PoolsTopComponent",
-//iconBase="SET/PATH/TO/ICON/HERE", 
+    iconBase="org/inventory/navigation/pools/res/icon.png", 
 persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.inventory.navigation.pools.PoolsTopComponent")
-@ActionReference(path = "Menu/Window" /*, position = 333 */)
+//@ActionReference(path = "Menu/Tools" /*, position = 333 */)
+@ActionReference(path = "Toolbars/Tools,Menu/Tools" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_PoolsAction",
 preferredID = "PoolsTopComponent")
-@Messages({
-    "CTL_PoolsAction=Pools",
-    "CTL_PoolsTopComponent=Pools Window",
-    "HINT_PoolsTopComponent=This is a Pools window"
-})
 public final class PoolsTopComponent extends TopComponent implements ExplorerManager.Provider, RefreshableTopComponent{
     
     private final ExplorerManager em = new ExplorerManager();
@@ -65,8 +62,8 @@ public final class PoolsTopComponent extends TopComponent implements ExplorerMan
     public PoolsTopComponent() {
         initComponents();
         initCustomComponents();
-        setName(Bundle.CTL_PoolsTopComponent());
-        setToolTipText(Bundle.HINT_PoolsTopComponent());
+        setName(NbBundle.getMessage(PoolsTopComponent.class, "CTL_PoolsTopComponent"));
+        setToolTipText(NbBundle.getMessage(PoolsTopComponent.class, "HINT_PoolsTopComponent"));
 
     }
     

@@ -15,8 +15,8 @@
  */
 package org.inventory.communications.core;
 
-import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.api.LocalObjectLight;
+import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.utils.Utils;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -54,42 +54,52 @@ public class LocalAttributeMetadataImpl
             listAttributeClassName = _type;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public String getDisplayName() {
-        return displayName.equals("")?name:displayName;
+        return displayName.equals("") ? name : displayName;
     }
 
+    @Override
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
+    @Override
     public boolean isVisible() {
         return isVisible;
     }
 
+    @Override
     public void setVisible(boolean isVisible) {
         this.isVisible = isVisible;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public Class getType() {
         return type;
     }
 
+    @Override
     public void setType(Class type) {
         this.type = type;
     }
@@ -97,22 +107,27 @@ public class LocalAttributeMetadataImpl
     /*
      * If this is a list type attribute, returns the class name associated to the item
      */
+    @Override
     public String getListAttributeClassName(){
         return listAttributeClassName;
     }
 
+    @Override
     public long getId(){
         return id;
     }
 
+    @Override
     public void setId(long _id){
         this.id =_id;
     }
 
+    @Override
     public int getMapping() {
         return mapping;
     }
 
+    @Override
     public void setMapping(int mapping){
         this.mapping = mapping;
     }
