@@ -153,8 +153,6 @@ public class Constants {
     public static final String PROPERTY_LAST_NAME = "lastName"; //NOI18N
     public static final String PROPERTY_ENABLED = "enabled"; //NOI18N
     public static final String PROPERTY_PASSWORD = "password"; //NOI18N
-    
-    
     /**
      * How an attribute should be mapped (as a Float, Integer, relationship, etc)
      */
@@ -183,6 +181,4 @@ public class Constants {
      * Date format for queries
      */
     public static final String DATE_FORMAT = "yyyy-MM-dd";
-    
-    
 }

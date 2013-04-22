@@ -347,21 +347,19 @@ public class Util {
     {
         ClassMetadataLight myClass = new ClassMetadataLight(classNode.getId(),(String)classNode.getProperty(Constants.PROPERTY_NAME),(String)classNode.getProperty(Constants.PROPERTY_DISPLAY_NAME));
         
-        myClass.setAbstractClass((Boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT));
+        myClass.setAbstract((Boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT));
         myClass.setSmallIcon((byte[])classNode.getProperty(Constants.PROPERTY_SMALL_ICON));
         myClass.setViewable((Boolean)isSubClass(Constants.CLASS_VIEWABLEOBJECT, classNode));
         myClass.setId(classNode.getId());
         
         //Parent
-        if (classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING) != null)
-            myClass.setParentClassName(
-                    classNode.getSingleRelationship(
-                        RelTypes.EXTENDS, Direction.OUTGOING).getEndNode().getProperty(
-                            Constants.PROPERTY_NAME).toString());
-        else
+        if (classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING) != null){
+            myClass.setParentClassName(classNode.getSingleRelationship(
+                    RelTypes.EXTENDS, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME).toString());
+        }
+        else{
             myClass.setParentClassName(null);
-
-
+        }
         return myClass;
     }
 
@@ -377,7 +375,7 @@ public class Util {
         CategoryMetadata ctgr = new CategoryMetadata();
 
         myClass.setName((String)classNode.getProperty(Constants.PROPERTY_NAME));
-        myClass.setAbstractClass((Boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT));
+        myClass.setAbstract((Boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT));
         myClass.setColor((Integer)classNode.getProperty(Constants.PROPERTY_COLOR));
         myClass.setCountable((Boolean)classNode.getProperty(Constants.PROPERTY_COUNTABLE));
         myClass.setCustom((Boolean)classNode.getProperty(Constants.PROPERTY_CUSTOM));
@@ -390,13 +388,15 @@ public class Util {
         //Is Viewable if is subclass of
         myClass.setViewable((Boolean)isSubClass(Constants.CLASS_VIEWABLEOBJECT, classNode));
         //Parent
-        if (classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING) != null)
+        if (classNode.getSingleRelationship(RelTypes.EXTENDS, Direction.OUTGOING) != null){
             myClass.setParentClassName(
                     classNode.getSingleRelationship(
                         RelTypes.EXTENDS, Direction.OUTGOING).getEndNode().getProperty(
                             Constants.PROPERTY_NAME).toString());
-        else
+        }
+        else{
             myClass.setParentClassName(null);
+        }
         //Attributes
         String cypherQuery = "START metadataclass = node({classid}) ".concat(
                              "MATCH metadataclass -[:").concat(RelTypes.HAS_ATTRIBUTE.toString()).concat("]->attribute ").concat(
