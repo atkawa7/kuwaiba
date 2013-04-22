@@ -1363,46 +1363,50 @@ public class Kuwaiba {
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createClassMetadata")
-    public long createClassMetadata(@WebParam(name = "name")
-        String name, @WebParam(name = "displayName")
+    public long createClassMetadata(@WebParam(name = "className")
+        String className, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "description")
-        String description, @WebParam(name = "abstractClass")
-        boolean abstractClass, @WebParam(name = "parentClassName")
+        String description, @WebParam(name = "_abstract")
+        boolean _abstract, @WebParam(name = "custom")
+        boolean custom, @WebParam(name = "countable")
+        boolean countable, @WebParam(name = "inDesign")
+        boolean inDesign, @WebParam(name = "parentClassName")
         String parentClassName, @WebParam(name = "icon")
         byte[] icon, @WebParam(name = "smallIcon")
         byte[] smallIcon, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
-
-            try{
-                wsBean.validateCall("createClassMetadata", getIPAddress(), sessionId);
-
-                if (icon != null)
-                    if (icon.length > Constants.MAX_ICON_SIZE)
-                        throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
-
-                if (smallIcon != null)
-                    if (smallIcon.length > Constants.MAX_ICON_SIZE)
-                        throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
-
-                ClassInfo ci = new ClassInfo();
-                ci.setClassName(name);
-                ci.setDisplayName(displayName);
-                ci.setDescription(description);
-                ci.setIcon(icon);
-                ci.setSmallIcon(smallIcon);
-                ci.setParentClassName(parentClassName);
-                ci.setIsAbstract(abstractClass);
-
-                return wsBean.createClass(ci);
-
-            }catch(Exception e){
-                Level level = Level.SEVERE;
-                if (e instanceof ServerSideException)
-                    level = ((ServerSideException)e).getLevel();
-                Logger.getLogger(Kuwaiba.class.getName()).log(level,
-                        e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-                throw e;
+        
+        try{
+            wsBean.validateCall("createClassMetadata", getIPAddress(), sessionId);
+            if (icon != null){
+                if (icon.length > Constants.MAX_ICON_SIZE){
+                    throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
+                }
             }
+            if (smallIcon != null){
+                if (smallIcon.length > Constants.MAX_ICON_SIZE){
+                    throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
+                }
+            }
+            ClassInfo ci = new ClassInfo();
+            ci.setClassName(className);
+            ci.setDisplayName(displayName);
+            ci.setDescription(description);
+            ci.setIcon(icon);
+            ci.setSmallIcon(smallIcon);
+            ci.setParentClassName(parentClassName);
+            ci.setAbstract(_abstract);
+
+            return wsBean.createClass(ci);
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
     }
 
      /**
@@ -1412,7 +1416,6 @@ public class Kuwaiba {
      * @param displayName New class metadata display name. Null if unchanged
      * @param description New class metadata description. Null if unchanged
      * @param abstractClass is this class abstract?
-     * @param parentClassName New class metadata object parent class name. Null if unchanged
      * @param icon New icon for views. Null if unchanged. The size is limited by the value in Constants.MAX_ICON_SIZE
      * @param smallIcon New icon for trees. Null if unchanged. The size is limited by the value in Constants.MAX_ICON_SIZE
      * @param sessionId Session token
@@ -1423,25 +1426,26 @@ public class Kuwaiba {
         long ClassId, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "description")
-        String description, @WebParam(name = "abstractClass")
-        boolean abstractClass, @WebParam(name = "parentClassName")
-        String parentClassName, @WebParam(name = "smallIcon")
+        String description, @WebParam(name = "smallIcon")
         byte[] smallIcon,  @WebParam(name = "icon")
-        byte[] icon, @WebParam(name = "sessionId")
+        byte[] icon, @WebParam(name = "_abstract")
+        boolean _abstract, @WebParam(name = "inDesign")
+        boolean inDesign, @WebParam(name = "countable")
+        boolean countable, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
-
         try
         {
             wsBean.validateCall("changeClassMetadataDefinition", getIPAddress(), sessionId);
-
-            if (icon != null)
-                if (icon.length > Constants.MAX_ICON_SIZE)
+            if (icon != null){
+                if (icon.length > Constants.MAX_ICON_SIZE){
                     throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
-
-            if (smallIcon != null)
-                if (smallIcon.length > Constants.MAX_ICON_SIZE)
+                }
+            }
+            if (smallIcon != null){
+                if (smallIcon.length > Constants.MAX_ICON_SIZE){
                     throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
-
+                }
+            }
             ClassInfo ci = new ClassInfo();
             ci.setId(ClassId);
             ci.setClassName(name);
@@ -1449,8 +1453,9 @@ public class Kuwaiba {
             ci.setDescription(description);
             ci.setIcon(icon);
             ci.setSmallIcon(smallIcon);
-            ci.setParentClassName(parentClassName);
-            ci.setIsAbstract(abstractClass);
+            ci.setAbstract(_abstract);
+            ci.setInDesign(inDesign);
+            ci.setCountable(countable);
 
             wsBean.changeClassDefinition(ci);
 
@@ -1466,7 +1471,6 @@ public class Kuwaiba {
 
     /**
      * Adds an attribute to a classMetadata
-     * @param ClassId Class id where the attribute will be attached
      * @param ClassName Class name where the attribute will be attached
      * @param name attribute name
      * @param displayName attribute display name
@@ -1480,10 +1484,9 @@ public class Kuwaiba {
      * @param sessionId session token
      * @throws Exception IN case something goes wrong
      */
-    @WebMethod(operationName = "addAttributeClass")
-    public void addClassAttribute(@WebParam(name = "classId")
-        long ClassId, @WebParam(name = "className")
-        String ClassName,  @WebParam(name = "name")
+    @WebMethod(operationName = "addClassAttribute")
+    public void addClassAttribute(@WebParam(name = "className")
+        String className,  @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "type")
         String type, @WebParam(name = "description")
@@ -1492,6 +1495,54 @@ public class Kuwaiba {
         boolean visible, @WebParam(name = "mapping")
         int mapping, @WebParam(name = "readOnly")
         boolean readOnly, @WebParam(name = "unique")
+        boolean unique, @WebParam(name = "sessionId")
+        String sessionId) throws Exception {
+
+        try {
+            wsBean.validateCall("addAttributeByClassId", getIPAddress(), sessionId);
+            AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
+                                            visible, description, mapping);
+
+            wsBean.addAttribute(className, ai);
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    /**
+     * Adds an attribute to a classMetadata
+     * @param ClassId Class id where the attribute will be attached
+     * @param name attribute name
+     * @param displayName attribute display name
+     * @param type attribute type
+     * @param description attribute description
+     * @param administrative is the attribute administrative?
+     * @param visible is the attribute visible?
+     * @param mapping
+     * @param readOnly is the attribute read only?
+     * @param unique should this attribute be unique?
+     * @param sessionId session token
+     * @throws Exception IN case something goes wrong
+     */
+    @WebMethod(operationName = "addClassAttributeById")
+    public void addClassAttributeById(@WebParam(name = "classId")
+        long ClassId, @WebParam(name = "name")
+        String name, @WebParam(name = "displayName")
+        String displayName, @WebParam(name = "type")
+        String type, @WebParam(name = "description")
+        String description, @WebParam(name = "administrative")
+        boolean administrative, @WebParam(name = "visible")
+        boolean visible, @WebParam(name = "mapping")
+        int mapping, @WebParam(name = "readOnly")
+        boolean readOnly, @WebParam(name = "noCopy")
+        boolean noCopy, @WebParam(name = "noSerializable")
+        boolean noSerializable, @WebParam(name = "unique")
         boolean unique, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
 
@@ -1511,7 +1562,7 @@ public class Kuwaiba {
             throw e;
         }
     }
-
+    
     /**
      * Update a class attribute taking its class name as parameter
      * @param className Class the attribute belongs to
@@ -1603,6 +1654,59 @@ public class Kuwaiba {
             throw e;
         }
     }
+    
+    /**
+     * Deletes a class attribute
+     * @param className
+     * @param attributeName
+     * @param sessionId
+     * @throws Exception 
+     */
+    
+    @WebMethod(operationName = "deleteClassAttribute")
+    public void deleteClassAttribute(@WebParam(name = "className") 
+            String className, @WebParam(name = "attributeName")
+            String attributeName, @WebParam(name = "sessionId")
+            String sessionId) throws Exception{
+        try {
+            wsBean.validateCall("deleteClassAttribute", getIPAddress(), sessionId);
+            wsBean.deleteAttribute(className, attributeName);
+        } catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException){
+                level = ((ServerSideException)e).getLevel();
+            }
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+
+    /**
+     * Deletes a class attribute
+     * @param classId
+     * @param attributeName
+     * @param sessionId
+     * @throws Exception 
+     */
+    @WebMethod(operationName = "deleteClassAttributeByClassId")
+    public void deleteClassAttributeByClassId(@WebParam(name = "classId") 
+            long classId, @WebParam(name = "attributeName")
+            String attributeName, @WebParam(name = "sessionId")
+            String sessionId) throws Exception{
+        try {
+            wsBean.validateCall("deleteClassAttributeById", getIPAddress(), sessionId);
+            wsBean.deleteAttribute(classId, attributeName);
+        } catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException){
+                level = ((ServerSideException)e).getLevel();
+            }
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
 
     /**
      * Gets the metadata for a given class using its name as argument
@@ -1640,7 +1744,6 @@ public class Kuwaiba {
     public ClassInfo getMetadataForClassById(@WebParam(name = "classId")
     long classId, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
-
         try {
             wsBean.validateCall("getMetadataForClassById", getIPAddress(), sessionId);
             return wsBean.getMetadataForClass(classId);
@@ -1667,7 +1770,6 @@ public class Kuwaiba {
     public List<ClassInfoLight> getLightMetadata(
             @WebParam(name = "includeListTypes")boolean includeListTypes,
             @WebParam(name = "sessionId") String sessionId) throws Exception{
-
         try
         {
             wsBean.validateCall("getLightMetadata", getIPAddress(), sessionId);
@@ -1714,6 +1816,37 @@ public class Kuwaiba {
         }
 
     }
+    
+    /**
+     * Gets the subclasses of a given class
+     * @param className Class name
+     * @param includeAbstractClasses should the result include the abstract classes?
+     * @param includeSelf Should the list include the subclasses and the parent class?
+     * @param sessionId Session token
+     * @return The list of subclasses
+     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getLightSubClassesNoRecursive")
+    public List<ClassInfoLight> getLightSubClassesNoRecursive(
+            @WebParam(name = "className")String className,
+            @WebParam(name = "includeAbstractClasses")boolean includeAbstractClasses,
+            @WebParam(name = "includeSelf")boolean includeSelf,
+            @WebParam(name = "sessionId") String sessionId) throws Exception{
+        try
+        {
+            wsBean.validateCall("getLightSubclassesNoRecursive", getIPAddress(), sessionId);
+            return wsBean.getLightSubClassesNoRecursive(className, includeAbstractClasses, includeSelf);
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+
+    }
 
     /**
      * Retrieves the metadata for the entire class hierarchy as ClassInfo instances
@@ -1727,7 +1860,6 @@ public class Kuwaiba {
     public List<ClassInfo> getMetadata(
             @WebParam(name = "includeListTypes")boolean includeListTypes,
             @WebParam(name = "sessionId") String sessionId) throws Exception{
-
         try
         {
             wsBean.validateCall("getMetadata", getIPAddress(), sessionId);
@@ -1847,7 +1979,7 @@ public class Kuwaiba {
             throw e;
         }
     }
-
+    
     /**
      * Adds possible children to a given class using its id as argument. If any of the arguments provided are already added,
      * it will abort the operation and rise an exception
@@ -1958,10 +2090,7 @@ public class Kuwaiba {
     }
     // </editor-fold>
 
-    /**
-     * Helpers
-     */
-
+    // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**
     /**
      * Gets the IP address from the client issuing the request
      * @return the IP address as string
@@ -1969,5 +2098,5 @@ public class Kuwaiba {
     private String getIPAddress(){
         return ((HttpServletRequest)context.getMessageContext().
                     get("javax.xml.ws.servlet.request")).getRemoteAddr().toString(); //NOI18N
-    }
+    }// </editor-fold>
 }
