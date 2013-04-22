@@ -50,10 +50,6 @@
             <public-packages>
                 <package>org.inventory.communications</package>
             </public-packages>
-            <class-path-extension>
-                <runtime-relative-path>ext/KuwaibaWebserviceClient.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/KuwaibaWebserviceClient.jar</binary-origin>
-            </class-path-extension>
         </data>
     </configuration>
 </project>

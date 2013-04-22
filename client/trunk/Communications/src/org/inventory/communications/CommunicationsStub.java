@@ -117,7 +117,8 @@ public class CommunicationsStub {
     public static void setServerURL(URL _URL){
         serverURL = _URL;
     }
-
+    
+    // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
     public LocalSession getSession(){
         return session;
     }
@@ -148,7 +149,7 @@ public class CommunicationsStub {
             this.error =  ex.getMessage();
             return false;
         }
-    }
+    }// </editor-fold>
 
     /**
      * Retrieves an object children providing the object class id
@@ -159,9 +160,9 @@ public class CommunicationsStub {
             List <RemoteObjectLight> children = port.getObjectChildren(oid, objectClassId, 0,this.session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
 
-            for (RemoteObjectLight rol : children)
+            for (RemoteObjectLight rol : children){
                 res.add(new LocalObjectLightImpl(rol));
-
+            }
             return res;
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -196,19 +197,18 @@ public class CommunicationsStub {
             List <RemoteObject> children = port.getChildrenOfClass(oid, parentClassName, childrenClassName, 0, this.session.getSessionId());
             List <LocalObject> res = new ArrayList<LocalObject>();
 
-            for (RemoteObject rol : children)
+            for (RemoteObject rol : children){
                 res.add(new LocalObjectImpl(rol, getMetaForClass(rol.getClassName(), false)));
-
+            }
             return res;
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
         }
-    }
+    }// </editor-fold>
 
     /**
      * Updates the attributes of a given object
-     *
      * @param obj is the object to be updated. Note that this object doesn't have
      *            every field within the "original". it only has the field(s) to be updated
      */
@@ -320,9 +320,9 @@ public class CommunicationsStub {
     public List<LocalClassMetadataLight> getPossibleChildren(String className, boolean ignoreCache) {
         try{
             List<LocalClassMetadataLight> resAsLocal = null;
-            if (!ignoreCache)
+            if (!ignoreCache){
                     resAsLocal = cache.getPossibleChildrenCached(className);
-
+            }
             if (resAsLocal == null){
                 resAsLocal = new ArrayList<LocalClassMetadataLight>();
                 List<ClassInfoLight> resAsRemote = port.getPossibleChildren(className,this.session.getSessionId());
@@ -350,23 +350,22 @@ public class CommunicationsStub {
             List<ClassInfoLight> resAsRemote = port.getPossibleChildrenNoRecursive(className,this.session.getSessionId());
             List<LocalClassMetadataLight> resAsLocal = new ArrayList<LocalClassMetadataLight>();
 
-            for (ClassInfoLight cil : resAsRemote)
+            for (ClassInfoLight cil : resAsRemote){
                 resAsLocal.add(new LocalClassMetadataLightImpl(cil));
-
+            }
             return resAsLocal;
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
         }
     }
-
-
+      
    public List<LocalClassMetadataLight> getUpstreamContainmentHierarchy(String className, boolean recursive){
         try{
             List<LocalClassMetadataLight> res = new ArrayList<LocalClassMetadataLight>();
-            for (ClassInfoLight cil : port.getUpstreamContainmentHierarchy(className, recursive, this.session.getSessionId()))
+            for (ClassInfoLight cil : port.getUpstreamContainmentHierarchy(className, recursive, this.session.getSessionId())){
                 res.add(new LocalClassMetadataLightImpl(cil));
-            
+            }
             return res;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -374,16 +373,7 @@ public class CommunicationsStub {
         }
    }
 
-    public LocalObjectLight createObject(String objectClass, String parentClass, long parentOid, long template){
-        try{
-            long objectId  = port.createObject(objectClass,parentClass, parentOid, new ArrayList<String>(),new ArrayList<StringArray>(),template,this.session.getSessionId());
-            return new LocalObjectLightImpl(objectId, null, objectClass);
-        }catch(Exception ex){
-            this.error = ex.getMessage();
-            return null;
-        }
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
     /**
      * The result is cached to be used when needed somewhere else, but the whole
      * metadata information is always retrieved directly from the ws
@@ -440,7 +430,7 @@ public class CommunicationsStub {
 
     /**
      * Retrieves the metadata for a given class
-     * @param className the object class
+     * @param className the classmetadata name
      * @return the metadata information
      */
     public LocalClassMetadata getMetaForClass(String className, boolean ignoreCache){
@@ -453,6 +443,32 @@ public class CommunicationsStub {
             }
 
             ClassInfo cm = port.getMetadataForClass(className,this.session.getSessionId());
+
+            res = new LocalClassMetadataImpl(cm);
+            cache.addMeta(new LocalClassMetadata[]{res});
+            return res;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+
+    /**
+     * Retrieves the metadata for a given class
+     * @param classId classmetadata id
+     * @param ignoreCache
+     * @return the metadata information
+     */
+    public LocalClassMetadata getMetaForClass(long classId, boolean ignoreCache){
+        try{
+            LocalClassMetadata res;
+            if (!ignoreCache){
+                res = cache.getMetaForClass(classId);
+                if (res != null){
+                    return res;
+                }
+            }
+            ClassInfo cm = port.getMetadataForClassById(classId,this.session.getSessionId());
 
             res = new LocalClassMetadataImpl(cm);
             cache.addMeta(new LocalClassMetadata[]{res});
@@ -497,11 +513,47 @@ public class CommunicationsStub {
         }
     }
 
-    public LocalObjectLight createListTypeItem(String className){
+    public List<LocalClassMetadataLight> getLightSubclasses(String className, boolean includeAbstractSubClasses, boolean includeSelf) {
         try{
-            long myObjectId = port.createListTypeItem(className, "","",this.session.getSessionId());
-            return new LocalObjectLightImpl(myObjectId,null,className);
+            List<ClassInfoLight> subClasses = port.getLightSubClasses(className, includeAbstractSubClasses, includeSelf, session.getSessionId());
+            List <LocalClassMetadataLight> res = new ArrayList<LocalClassMetadataLight>();
+
+            for (ClassInfoLight rol : subClasses){
+                res.add(new LocalClassMetadataLightImpl(rol));
+            }
+            return res;
         }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+     public List<LocalClassMetadataLight> getLightSubclassesNoRecursive(String className, boolean includeAbstractSubClasses, boolean includeSelf) {
+        try{
+            List<ClassInfoLight> subClasses = port.getLightSubClassesNoRecursive(className, includeAbstractSubClasses, includeSelf, session.getSessionId());
+            List <LocalClassMetadataLight> res = new ArrayList<LocalClassMetadataLight>();
+
+            for (ClassInfoLight rol : subClasses){
+                res.add(new LocalClassMetadataLightImpl(rol));
+            }
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }// </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="List methods. Click on the + sign on the left to edit the code.">
+    /**
+     *
+     * @param className
+     * @return
+     */
+    public LocalObjectLight createListTypeItem(String className) {
+        try {
+            long myObjectId = port.createListTypeItem(className, "", "", this.session.getSessionId());
+            return new LocalObjectLightImpl(myObjectId, null, className);
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -517,39 +569,64 @@ public class CommunicationsStub {
     public List<LocalObjectListItem> getList(String className, boolean includeNullValue,boolean ignoreCache){
         try{
             List<LocalObjectListItem> res = null;
-
-            if (!ignoreCache)
+            if (!ignoreCache){
                 res = cache.getListCached(className);
-
+            }
             if (res == null){
                res = new ArrayList<LocalObjectListItem>();
                res.add(ObjectFactory.createNullItem());
 
                 List<RemoteObjectLight> remoteList = port.getListTypeItems(className,this.session.getSessionId());
 
-                for(RemoteObjectLight entry : remoteList)
+                for(RemoteObjectLight entry : remoteList){
                     res.add(new LocalObjectListItemImpl(entry.getOid(),entry.getClassName(),entry.getName()));
-
+                }
                 //Warning, the null value is always cached
                 cache.addListCached(className, res);
             }
-
-            if (includeNullValue)
+            if (includeNullValue){
                 return res;
-            else
+            }
+            else{
                 return res.subList(1, res.size());
+            }
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }// </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Object methods. Click on the + sign on the left to edit the code.">
+    /**
+     * 
+     * @param objectClass
+     * @param parentClass
+     * @param parentOid
+     * @param template
+     * @return 
+     */
+    public LocalObjectLight createObject(String objectClass, String parentClass, long parentOid, long template){
+        try{
+            long objectId  = port.createObject(objectClass,parentClass, parentOid, new ArrayList<String>(),new ArrayList<StringArray>(),template,this.session.getSessionId());
+            return new LocalObjectLightImpl(objectId, null, objectClass);
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
         }
     }
 
+    /**
+     * 
+     * @param parentClassId
+     * @param possibleChildren
+     * @return 
+     */
     public boolean addPossibleChildren(long parentClassId, long[] possibleChildren){
         try{
             List<Long> pChildren = new ArrayList<Long>();
-            for (long pChild : possibleChildren)
+            for (long pChild : possibleChildren){
                 pChildren.add(pChild);
+            }
             port.addPossibleChildren(parentClassId, pChildren,this.session.getSessionId());
             return true;
         }catch(Exception ex){
@@ -567,8 +644,9 @@ public class CommunicationsStub {
     public boolean removePossibleChildren(long parentClassId, long[] childrenToBeDeleted){
         try{
             List<Long> pChildren = new ArrayList<Long>();
-            for (long pChild : childrenToBeDeleted)
+            for (long pChild : childrenToBeDeleted){
                 pChildren.add(pChild);
+            }
             port.removePossibleChildren(parentClassId, pChildren,this.session.getSessionId());
             return true;
         }catch(Exception ex){
@@ -640,11 +718,41 @@ public class CommunicationsStub {
             return null;
         }
     }
-
-    /**
-     * QUERIES
+        /**
+     * Creates a physical link (cable, fiber optics, mw link) or container (pipe, conduit, ditch)
+     * @param endpointAClass source object class name
+     * @param endpointAId source object oid
+     * @param endpointBClass target object class name
+     * @param endpointBId target object oid
+     * @param parentClass connection's parent class
+     * @param parentId connection's parent id
+     * @param connectionClass Class for the corresponding connection to be created
+     * @return A local object light representing the new connection
      */
+    public LocalObjectLight createPhysicalConnection(String endpointAClass, long endpointAId,
+            String endpointBClass, long endpointBId, String parentClass, long parentId, String name, String type, String connectionClass) {
+        try{
+            List<StringArray> values = new ArrayList<StringArray>();
+            StringArray valueName = new StringArray();
+            valueName.getItem().add(name);
 
+            StringArray valueType = new StringArray();
+            valueType.getItem().add(type);
+
+            values.add(valueName);
+            values.add(valueType);
+
+            long myObjectId = port.createPhysicalConnection(endpointAClass, endpointAId,
+                    endpointBClass, endpointBId, parentClass, parentId, Arrays.asList(new String[]{"name","type"}), values, connectionClass, this.session.getSessionId());
+            return new LocalObjectLightImpl(myObjectId, "", connectionClass);
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Query methods. Click on the + sign on the left to edit the code.">
     /**
      * Call to remote executeQuery method
      * @param query Query to be executed in an execution (code)-friendly format
@@ -752,12 +860,9 @@ public class CommunicationsStub {
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return null;
         }
-    }
+    }// </editor-fold>
 
-    /**
-     * MISC
-     */
-
+    // <editor-fold defaultstate="collapsed" desc="Misc methods. Click on the + sign on the left to edit the code.">
     /**
      * Reset the cache to the default cleaning all hashes:
      */
@@ -775,23 +880,25 @@ public class CommunicationsStub {
     public void refreshCache(boolean refreshMeta, boolean refreshLightMeta,
             boolean refreshList, boolean refreshPossibleChildren){
         try{
-            if (refreshMeta)
+            if (refreshMeta){
                 for (LocalClassMetadata lcm : cache.getMetadataIndex()){
                     LocalClassMetadata myLocal =
                             new LocalClassMetadataImpl(port.getMetadataForClass(lcm.getClassName(),this.session.getSessionId()));
-                    if(myLocal!=null)
-                    cache.addMeta(new LocalClassMetadata[]{myLocal});
+                    if(myLocal!=null){
+                        cache.addMeta(new LocalClassMetadata[]{myLocal});
+                    }
                 }
-
+            }
             if (refreshLightMeta){
                 List<ClassInfoLight> myLocalLight  = port.getLightMetadata(true, this.session.getSessionId());
-                if (myLocalLight != null)
+                if (myLocalLight != null){
                     getAllLightMeta(true);
+                }
             }
 
             if (refreshList){
                 HashMap<String, List<LocalObjectListItem>> myLocalList = cache.getAllList();
-            for (String key : myLocalList.keySet()){
+                for (String key : myLocalList.keySet()){
                     myLocalList.remove(key);
                     getList(key,false,true);
                 }
@@ -820,18 +927,61 @@ public class CommunicationsStub {
         }
         return true;
     }
-
-    public boolean setClassMetadataProperties(long classId, String displayName, String description, byte[] smallIcon, byte[] icon){
+        
+    public boolean createClassMetadata(String className, String displayName, String description, String parentClassName, boolean custom, boolean countable, int color, boolean _abstract, boolean inDesign){
         try{
-            port.setClassMetadataProperties(classId, null, displayName, description, false, null,
-                    smallIcon, icon, this.session.getSessionId());
+            port.createClassMetadata(className, displayName, description, _abstract, custom, countable, inDesign, parentClassName, null, null, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
         }
         return true;
     }
-
+    
+    public boolean deleteClassMetadata(long classId){
+        try{
+            port.deleteClassById(classId, this.session.getSessionId());
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean addAttribute(long oid, String name, String displayName, String description, String type, boolean administrative, int mapping, boolean readOnly, boolean visible, boolean noCopy, boolean noSerializable, boolean unique){
+        try{
+            port.addClassAttributeById(oid, name, displayName, type, description, administrative, visible, mapping, readOnly, noCopy, noSerializable, unique, this.session.getSessionId());
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean deleteAttribute(long oid, String attributeName){
+        try{
+            port.deleteClassAttributeByClassId(oid, attributeName, this.session.getSessionId());
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean setClassMetadataProperties(long classId, String className, 
+                                                 String displayName, String description, 
+                                                 byte[] smallIcon, byte[] icon, 
+                                                 boolean _abstract,boolean inDesign, boolean countable){
+        try{
+            port.setClassMetadataProperties(classId, className, displayName, description, smallIcon , icon,
+                    _abstract, inDesign, countable,this.session.getSessionId());
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+        return true;
+    }
+    
     /**
      * Retrieves the list types
      * @return an array with all possible instanceable list types
@@ -840,7 +990,6 @@ public class CommunicationsStub {
         try{
             List<ClassInfoLight> listTypes;
             listTypes = port.getInstanceableListTypes(this.session.getSessionId());
-
 
             LocalClassMetadataLight[] res = new LocalClassMetadataLight[listTypes.size()];
             int i = 0;
@@ -870,12 +1019,9 @@ public class CommunicationsStub {
             this.error =  ex.getMessage();
             return false;
         }
-    }
-
-    /**
-     * User management
-     */
-
+    }// </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="user/groups methods. Click on the + sign on the left to edit the code.">
     /**
      * Retrieves the user list
      * @return An array of LocalUserObject
@@ -1019,44 +1165,9 @@ public class CommunicationsStub {
             this.error = ex.getMessage();
         }
         return true;
-    }
-
-    /**
-     * Creates a physical link (cable, fiber optics, mw link) or container (pipe, conduit, ditch)
-     * @param endpointAClass source object class name
-     * @param endpointAId source object oid
-     * @param endpointBClass target object class name
-     * @param endpointBId target object oid
-     * @param parentClass connection's parent class
-     * @param parentId connection's parent id
-     * @param connectionClass Class for the corresponding connection to be created
-     * @return A local object light representing the new connection
-     */
-    public LocalObjectLight createPhysicalConnection(String endpointAClass, long endpointAId,
-            String endpointBClass, long endpointBId, String parentClass, long parentId, String name, String type, String connectionClass) {
-        try{
-            List<StringArray> values = new ArrayList<StringArray>();
-            StringArray valueName = new StringArray();
-            valueName.getItem().add(name);
-
-            StringArray valueType = new StringArray();
-            valueType.getItem().add(type);
-
-            values.add(valueName);
-            values.add(valueType);
-
-            long myObjectId = port.createPhysicalConnection(endpointAClass, endpointAId,
-                    endpointBClass, endpointBId, parentClass, parentId, Arrays.asList(new String[]{"name","type"}), values, connectionClass, this.session.getSessionId());
-            return new LocalObjectLightImpl(myObjectId, "", connectionClass);
-        }catch(Exception ex){
-            this.error =  ex.getMessage();
-            return null;
-        }
-    }
-
-    /**
-     * Views
-     */
+    }// </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Views methods. Click on the + sign on the left to edit the code.">
 
     /**
      * Get a view related to an object, such as the default, rack or equipment views
@@ -1214,21 +1325,18 @@ public class CommunicationsStub {
     public boolean deleteGeneralViews(long [] ids) {
          try{
              List<Long> oids = new ArrayList<Long>();
-             for (long l : ids) 
+             for (long l : ids){ 
                  oids.add(l);
+             }
              port.deleteGeneralView(oids, session.getSessionId());
              return true;
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return false;
         }
-    }
+    }// </editor-fold>
 
-    /**
-     * Services
-     */
-
-
+    // <editor-fold defaultstate="collapsed" desc="Services methods. Click on the + sign on the left to edit the code.">
     /**
      * Relates a resource to a service
      * @param resourceClassName
@@ -1246,12 +1354,9 @@ public class CommunicationsStub {
 //            return false;
 //        }
         return false;
-    }
-
-    /**
-     * Pools
-     */
+    }// </editor-fold>
     
+    // <editor-fold defaultstate="collapsed" desc="Pools methods. Click on the + sign on the left to edit the code.">
     /**
      * Creates a pool
      * @param name Pool name
@@ -1290,6 +1395,28 @@ public class CommunicationsStub {
     }
     
     /**
+     * Retrieves the items inside a pool
+     *
+     * @param oid The pool
+     * @return The list of items inside the pool. Null in case of error
+     */
+    public List<LocalObjectLight> getPoolItems(long oid) {
+        try {
+            List<RemoteObjectLight> items = port.getPoolItems(oid, -1, this.session.getSessionId());
+            List<LocalObjectLight> res = new ArrayList<LocalObjectLight>();
+
+            for (RemoteObjectLight rol : items) {
+                res.add(new LocalObjectLightImpl(rol));
+            }
+
+            return res;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
      * Returns the list of pools available
      * @return The list of pools
      */
@@ -1298,9 +1425,9 @@ public class CommunicationsStub {
             List <RemoteObjectLight> children = port.getPools(-1,this.session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
 
-            for (RemoteObjectLight rol : children)
+            for (RemoteObjectLight rol : children){
                 res.add(new LocalObjectLightImpl(rol));
-
+            }
             return res;
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -1308,38 +1435,6 @@ public class CommunicationsStub {
         }
     }
     
-    /**
-     * Retrieves the items inside a pool
-     * @param oid The pool 
-     * @return The list of items inside the pool. Null in case of error
-     */
-    public List<LocalObjectLight> getPoolItems(long oid) {
-        try{
-            List <RemoteObjectLight> items = port.getPoolItems(oid,-1,this.session.getSessionId());
-            List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
-
-            for (RemoteObjectLight rol : items)
-                res.add(new LocalObjectLightImpl(rol));
-
-            return res;
-        }catch(Exception ex){
-            this.error =  ex.getMessage();
-            return null;
-        }
-    }
-
-    public List<LocalClassMetadataLight> getLightSubclasses(String className, boolean includeAbstractSubClasses, boolean includeSelf) {
-        try{
-            List<ClassInfoLight> subClasses = port.getLightSubClasses(className, includeAbstractSubClasses, includeSelf, session.getSessionId());
-            List <LocalClassMetadataLight> res = new ArrayList<LocalClassMetadataLight>();
-
-            for (ClassInfoLight rol : subClasses)
-                res.add(new LocalClassMetadataLightImpl(rol));
-
-            return res;
-        }catch(Exception ex){
-            this.error =  ex.getMessage();
-            return null;
-        }
-    }
+    
+    // </editor-fold>
 }

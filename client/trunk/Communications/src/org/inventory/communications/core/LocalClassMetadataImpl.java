@@ -24,7 +24,7 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  * It's a proxy class, whose instances represent the metadata information associated to a class
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.com>
  */
 @ServiceProvider(service=LocalClassMetadata.class)
 public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
@@ -32,6 +32,7 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
 
     private Image icon;
     private String description;
+    private boolean countable;
     private long [] attributeIds;
     private String [] attributeNames; 
     private String [] attributeTypes;
@@ -39,7 +40,10 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
     private boolean [] attributesIsVisible;
     private int [] attributeMappings;
     private String [] attributesDescription;
-
+    /**
+     * Creation Date
+     */
+    public long creationDate;
      /**
      * This constructor is called to create dummy class metadata objects, such as that used to represent the Navigation Tree root
      */
@@ -50,19 +54,20 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         this.icon = (cm.getIcon()==null) ? null : Utils.getImageFromByteArray(cm.getIcon());
         this.description = cm.getDescription();
         this.attributeIds = new long[cm.getAttributeIds().size()];
-        for (int i = 0; i < cm.getAttributeIds().size(); i++)
+        for (int i = 0; i < cm.getAttributeIds().size(); i++){
             attributeIds[i] = cm.getAttributeIds().get(i).longValue();
-
+        }
         this.attributeNames = cm.getAttributeNames().toArray(new String[0]);
         this.attributeTypes = cm.getAttributeTypes().toArray(new String[0]);
         this.attributeDisplayNames = cm.getAttributeDisplayNames().toArray(new String[0]);
         this.attributesIsVisible = new boolean[cm.getAttributesIsVisible().size()];
-        for (int i = 0; i < cm.getAttributesIsVisible().size(); i++)
+        for (int i = 0; i < cm.getAttributesIsVisible().size(); i++){
             attributesIsVisible[i] = cm.getAttributesIsVisible().get(i).booleanValue();
+        }
         this.attributeMappings = new int[cm.getAttributesMapping().size()];
-        for (int i = 0; i < cm.getAttributesMapping().size(); i++)
+        for (int i = 0; i < cm.getAttributesMapping().size(); i++){
             attributeMappings[i] = cm.getAttributesMapping().get(i).intValue();
-
+        }
         this.attributesDescription = cm.getAttributesDescription().toArray(new String[0]);
     }
 
@@ -114,45 +119,58 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         this.attributesIsVisible = attributesIsVisible;
     }
 
+    @Override
     public String getDisplayNameForAttribute(String att){
-        for (int i=0; i< this.attributeNames.length;i++)
-            if(this.attributeNames[i].equals(att))
+        for (int i=0; i< this.attributeNames.length;i++){
+            if(this.attributeNames[i].equals(att)){
                 return this.attributeDisplayNames[i].equals("")?att:this.attributeDisplayNames[i];
+            }
+        }
         return att;
     }
 
+    @Override
     public int getMappingForAttribute(String att){
-        for (int i=0; i< this.attributeNames.length;i++)
-            if(this.attributeNames[i].equals(att))
+        for (int i=0; i< this.attributeNames.length;i++){
+            if(this.attributeNames[i].equals(att)){
                 return this.attributeMappings[i];
+            }
+        }
         return 0;
     }
-    
+    @Override
     public boolean isVisible(String att){
-        for (int i=0; i< this.attributeNames.length;i++)
-            if(this.attributeNames[i].equals(att))
+        for (int i=0; i< this.attributeNames.length;i++){
+            if(this.attributeNames[i].equals(att)){
                 return this.attributesIsVisible[i];
+            }
+        }
         return false;
     }
 
+    @Override
     public String getDescriptionForAttribute(String att){
-        for (int i=0; i< this.attributeNames.length;i++)
-            if(this.attributeNames[i].equals(att))
+        for (int i=0; i< this.attributeNames.length;i++){
+            if(this.attributeNames[i].equals(att)){
                 return this.attributesDescription[i];
+            }
+        }
         return "";
     }
-
+    @Override
     public String getTypeForAttribute(String att){
-        for (int i=0; i< this.attributeNames.length;i++)
-            if(this.attributeNames[i].equals(att))
+        for (int i=0; i< this.attributeNames.length;i++){
+            if(this.attributeNames[i].equals(att)){
                 return this.attributeTypes[i];
+            }
+        }
         return "String";
     }
 
     public LocalAttributeMetadataImpl[] getAttributes(){
         LocalAttributeMetadataImpl[] res =
                 new LocalAttributeMetadataImpl[attributeNames.length];
-        for (int i = 0; i<res.length;i++)
+        for (int i = 0; i<res.length;i++){
             res[i] = new LocalAttributeMetadataImpl(
                                     attributeIds[i],
                                     attributeNames[i],
@@ -161,11 +179,18 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
                                     attributesIsVisible[i],
                                     attributeMappings[i],
                                     attributesDescription[i]);
+        }
         return res;
     }
 
+    @Override
     public Image getIcon() {
         return icon;
+    }
+    
+    @Override
+    public void setIcon(Image icon){
+        this.icon = icon;
     }
 
     public long[] getAttributeIds() {
@@ -176,11 +201,37 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         return id;
     }
 
+    @Override
     public String getDescription() {
-        return this.description;
+        return description;
+    }
+    
+    @Override
+    public void setDescription(String description){
+        this.description = description;
     }
 
-    public LocalClassMetadataLight asLocalClassMetadataLight(){
-        return new LocalClassMetadataLightImpl(id, className, displayName, smallIcon, abstractClass, viewable, listType, validators);
+    @Override
+    public boolean isCountable() {
+        return countable;
     }
+
+    @Override
+    public void setCountable(boolean countable) {
+        this.countable = countable;
+    }
+            
+    @Override
+    public LocalClassMetadataLight asLocalClassMetadataLight(){
+        return new LocalClassMetadataLightImpl(id, className, displayName, parentName, smallIcon, _abstract, viewable, listType, validators);
+    }
+
+    public long getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(long creationDate) {
+        this.creationDate = creationDate;
+    }
+    
 }

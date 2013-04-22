@@ -20,6 +20,7 @@ import javax.xml.stream.XMLStreamException;
 import org.inventory.communications.core.LocalAttributeMetadataImpl;
 import org.inventory.communications.core.LocalAttributeWrapperImpl;
 import org.inventory.communications.core.LocalClassMetadataImpl;
+import org.inventory.communications.core.LocalClassMetadataLightImpl;
 import org.inventory.communications.core.LocalClassWrapperImpl;
 import org.inventory.communications.core.LocalObjectImpl;
 import org.inventory.communications.core.LocalObjectLightImpl;
@@ -33,6 +34,7 @@ import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.api.metadata.LocalAttributeWrapper;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
+import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.metadata.LocalClassWrapper;
 import org.inventory.core.services.api.queries.LocalQuery;
 import org.inventory.core.services.api.queries.LocalTransientQuery;
@@ -102,5 +104,9 @@ public class LocalStuffFactory {
 
     public static LocalClassMetadata createLocalClassMetadata() {
         return new LocalClassMetadataImpl();
+    }
+    
+    public static LocalClassMetadataLight createLocalClassMetadataLight() {
+        return new LocalClassMetadataLightImpl();
     }
 }

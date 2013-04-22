@@ -16,8 +16,8 @@
 package org.inventory.communications.core;
 
 import java.util.HashMap;
-import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.LocalObject;
+import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.utils.Utils;
 import org.kuwaiba.wsclient.RemoteObject;
 import org.openide.util.lookup.ServiceProvider;
@@ -25,7 +25,7 @@ import org.openide.util.lookup.ServiceProvider;
 /**
  * Represents the whole information related to an object. Instances if this class
  * are actually proxies representing a business object. They can be cities, buildings, port, etc
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=LocalObject.class)
 public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject {
