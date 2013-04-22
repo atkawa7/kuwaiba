@@ -26,11 +26,6 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ClassMetadata extends ClassMetadataLight{
-
-    /**
-     *  Shows if this is a core class (the ones provided in the official release) or a custom one
-     */
-    private boolean custom;
     /**
      *  Indicates if the instances of this class are physical assets
      *  (in other words, if it's meaningful to have a count on them)
@@ -67,10 +62,6 @@ public class ClassMetadata extends ClassMetadataLight{
      */
     private String description;
     /**
-     * Classmetada's state default false operational or in design true
-     */
-    private boolean inDesing;
-    /**
      *  ClassMetada's creationDate
      */
     private long creationDate;
@@ -95,14 +86,6 @@ public class ClassMetadata extends ClassMetadataLight{
 
     public void setCountable(boolean countable) {
         this.countable = countable;
-    }
-
-    public boolean isCustom() {
-        return custom;
-    }
-
-    public void setCustom(boolean custom) {
-        this.custom = custom;
     }
 
     public List<InterfaceMetadata> getInterfaces() {
@@ -159,16 +142,7 @@ public class ClassMetadata extends ClassMetadataLight{
 
     public void setPossibleChildren(List<String> possibleChildren) {
         this.possibleChildren = possibleChildren;
-    }
-
-    public boolean isInDesing() {
-        return inDesing;
-    }
-
-    public void setInDesing(boolean inDesing) {
-        this.inDesing = inDesing;
-    }    
-    // </editor-fold>
+    }// </editor-fold>
 
     public boolean implementsInterface(String interfaceName){
         if (interfaces == null)

@@ -101,7 +101,7 @@ public class AttributeMetadata implements Serializable{
      */
     private boolean noSerialize;
     /**
-     * Cannot change or delete it a locked attribute
+     * Cannot change or delete a locked attribute
      */
     private boolean locked;
 
