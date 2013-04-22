@@ -83,14 +83,15 @@ public class ClassManagerService extends FileFilter implements ActionListener{
             String description, byte[] smallIcon, byte[] icon) {
         boolean res =true;
         CommunicationsStub com = CommunicationsStub.getInstance();
-         if (!displayName.equals(""))
-            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), displayName, null, null, null);
+        LocalClassMetadata oldClass = com.getMetaForClass(modifiedClass.getOid(), true);
+        if (!displayName.equals(""))
+            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), null, displayName, oldClass.getDescription(), null, null, oldClass.isAbstract(), oldClass.isInDesign(), oldClass.isCountable());
         if (!description.equals(""))
-            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), null, description, null, null);
+            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), null, null, description, null, null, oldClass.isAbstract(), oldClass.isInDesign(), oldClass.isCountable());
         if (smallIcon != null)
-            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), null, null, smallIcon, null);
+            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), null, null, null, smallIcon, null, oldClass.isAbstract(), oldClass.isInDesign(), oldClass.isCountable());
         if (icon != null)
-            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), null, null, null, icon);
+            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), null, null, null, null, icon, oldClass.isAbstract(), oldClass.isInDesign(), oldClass.isCountable());
         return res;
     }
 
