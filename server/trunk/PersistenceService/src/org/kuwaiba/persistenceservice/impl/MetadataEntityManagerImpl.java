@@ -1,15 +1,15 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010, 2011, 2012, 2013 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
- *  you may not use this file except in compliance with the License.
+ *  you may not use this file except in compliance with the License
  *  You may obtain a copy of the License at
  *
  *       http://www.eclipse.org/legal/epl-v10.html
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
@@ -92,7 +92,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             cm.putClass(aClass);
             cm.putPossibleChildren(aClass.getName(), aClass.getPossibleChildren());
         }
-
         //TODO: Take this out of here, let the nav tree root possible children to be cached at getPossibleChildren
         try{
             List<String> possibleChildrenOfRoot = new ArrayList<String>();
@@ -132,7 +131,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             classNode.setProperty(Constants.PROPERTY_COUNTABLE, classDefinition.isCountable());
             classNode.setProperty(Constants.PROPERTY_COLOR, classDefinition.getColor());
             classNode.setProperty(Constants.PROPERTY_DESCRIPTION, classDefinition.getDescription());
-            classNode.setProperty(Constants.PROPERTY_ABSTRACT, classDefinition.isAbstractClass());
+            classNode.setProperty(Constants.PROPERTY_ABSTRACT, classDefinition.isAbstract());
             classNode.setProperty(Constants.PROPERTY_ICON, classDefinition.getIcon());
             classNode.setProperty(Constants.PROPERTY_SMALL_ICON, classDefinition.getSmallIcon());
             classNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
@@ -221,26 +220,25 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         try {
             tx = graphDb.beginTx();
             Node newcm = classIndex.get(Constants.PROPERTY_ID, newClassDefinition.getId()).getSingle();
-            if (newcm == null) {
+            if (newcm == null)
                 throw new MetadataObjectNotFoundException(String.format(
                         "Can not find a class with id %1s", newClassDefinition.getName()));
-            }
-            if(newClassDefinition.getName() != null){
+            if(newClassDefinition.getName() != null)
                 newcm.setProperty(Constants.PROPERTY_NAME, newClassDefinition.getName());
-            }
-            if(newClassDefinition.getDisplayName() != null){
-                newcm.setProperty(Constants.PROPERTY_DISPLAY_NAME, newClassDefinition.getDisplayName());}
-            if(newClassDefinition.getDescription() != null){
-                newcm.setProperty(Constants.PROPERTY_DESCRIPTION, newClassDefinition.getDescription());}
-            if(newClassDefinition.getIcon() != null){
-                newcm.setProperty(Constants.PROPERTY_ICON, newClassDefinition.getIcon());}
-            if(newClassDefinition.getSmallIcon() != null){
-                newcm.setProperty(Constants.PROPERTY_SMALL_ICON, newClassDefinition.getSmallIcon());}
-            newcm.setProperty(Constants.PROPERTY_CUSTOM, newClassDefinition.isCustom());
+            if(newClassDefinition.getDisplayName() != null)
+                newcm.setProperty(Constants.PROPERTY_DISPLAY_NAME, newClassDefinition.getDisplayName());
+            if(newClassDefinition.getDescription() != null)
+                newcm.setProperty(Constants.PROPERTY_DESCRIPTION, newClassDefinition.getDescription());
+            if(newClassDefinition.getIcon() != null)
+                newcm.setProperty(Constants.PROPERTY_ICON, newClassDefinition.getIcon());
+            if(newClassDefinition.getSmallIcon() != null)
+                newcm.setProperty(Constants.PROPERTY_SMALL_ICON, newClassDefinition.getSmallIcon());
+            if(newClassDefinition.getColor() != -1)
+                newcm.setProperty(Constants.PROPERTY_COLOR, newClassDefinition.getColor());
             newcm.setProperty(Constants.PROPERTY_COUNTABLE, newClassDefinition.isCountable());
-            newcm.setProperty(Constants.PROPERTY_COLOR, newClassDefinition.getColor());
-            newcm.setProperty(Constants.PROPERTY_ABSTRACT, newClassDefinition.isAbstractClass());
+            newcm.setProperty(Constants.PROPERTY_ABSTRACT, newClassDefinition.isAbstract());
             newcm.setProperty(Constants.PROPERTY_IN_DESIGN, newClassDefinition.isInDesing());
+            //newcm.setProperty(Constants.PROPERTY_CUSTOM, newClassDefinition.isCustom());
             
             if(newClassDefinition.getAttributes() != null ){
                 for (AttributeMetadata attr : newClassDefinition.getAttributes()) {
@@ -408,7 +406,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
         return cml;
     }
-    
+
+    @Override
     public List<ClassMetadataLight> getLightSubClasses(String className, boolean includeAbstractClasses, boolean includeSelf) 
             throws MetadataObjectNotFoundException, InvalidArgumentException {
         List<ClassMetadataLight> cml = new ArrayList<ClassMetadataLight>();
@@ -431,7 +430,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             ExecutionResult result = engine.execute(cypherQuery, params);
             Iterator<Node> n_column = result.columnAs("classmetadata");
 
-            if (includeSelf && !aClass.isAbstractClass())
+            if (includeSelf && !aClass.isAbstract())
                 cml.add(aClass);
 
             for (Node node : IteratorUtil.asIterable(n_column)){
@@ -444,6 +443,42 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         return cml;
     }
 
+
+    @Override
+    public List<ClassMetadataLight> getLightSubClassesNoRecursive(String className, boolean includeAbstractClasses, boolean includeSelf) 
+            throws MetadataObjectNotFoundException, InvalidArgumentException {
+        List<ClassMetadataLight> cml = new ArrayList<ClassMetadataLight>();
+        try {
+            
+            ClassMetadata aClass = cm.getClass(className);
+            if (aClass == null)
+                throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %1s", className));
+            
+            String cypherQuery = "START inventory = node:classes({className}) ".concat(
+                                 "MATCH inventory <-[:").concat(RelTypes.EXTENDS.toString()).concat("]-classmetadata ").concat(
+                                 includeAbstractClasses ? "" : "WHERE classmetadata.abstract <> true ").concat(
+                                 "RETURN classmetadata ").concat(
+                                 "ORDER BY classmetadata.name ASC");
+
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("className", "name:"+ className);//NOI18N
+
+            ExecutionEngine engine = new ExecutionEngine(graphDb);
+            ExecutionResult result = engine.execute(cypherQuery, params);
+            Iterator<Node> n_column = result.columnAs("classmetadata");
+
+            if (includeSelf)
+                cml.add(aClass);
+
+            for (Node node : IteratorUtil.asIterable(n_column)){
+                 cml.add(Util.createClassMetadataLightFromNode(node));
+            }
+        }catch(Exception ex){
+            throw new RuntimeException(ex.getMessage());
+        }
+
+        return cml;
+    }
     /**
      * Retrieves all the class metadata
      * @param includeListTypes boolean to indicate if the list should include
@@ -1414,7 +1449,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     if(childNode.getId() == possiblechild.getId()){
                         rel.delete();
                         String parentClassName = (String)parentNode.getProperty(Constants.PROPERTY_NAME);
-                        if (cm.getClass((String)childNode.getProperty(Constants.PROPERTY_NAME)).isAbstractClass()){
+                        if (cm.getClass((String)childNode.getProperty(Constants.PROPERTY_NAME)).isAbstract()){
                             for(Node subClass : Util.getAllSubclasses(childNode)){
                                 cm.removePossibleChild(parentClassName, (String)subClass.getProperty(Constants.PROPERTY_NAME));
                             }
@@ -1485,4 +1520,5 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             return false;
         }
     }
+  
 }
