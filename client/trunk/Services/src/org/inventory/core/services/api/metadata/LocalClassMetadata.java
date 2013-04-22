@@ -19,16 +19,23 @@ import java.awt.Image;
 
 /**
  * Classes implementing this interface are proxy classes, whose instances represent the metadata information associated to a class
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public interface LocalClassMetadata extends LocalClassMetadataLight{
-    public String getDisplayNameForAttribute(String att);
-    public LocalAttributeMetadata[] getAttributes();
+    
     public String getDescription();
-    public String getDescriptionForAttribute(String att);
-    public boolean isVisible(String att);
-    public int getMappingForAttribute(String att);
-    public String getTypeForAttribute(String att);
+    public void setDescription(String description);
     public Image getIcon();
+    public void setIcon(Image icon);
+    public boolean isCountable();
+    public void setCountable(boolean countable);
+    //Attributes section
+    public boolean isVisible(String att);
+    public String getDisplayNameForAttribute(String att);
+    public String getTypeForAttribute(String att);
+    public String getDescriptionForAttribute(String att);
+    public int getMappingForAttribute(String att);
+    public LocalAttributeMetadata[] getAttributes();
+    
     public LocalClassMetadataLight asLocalClassMetadataLight();
 }
