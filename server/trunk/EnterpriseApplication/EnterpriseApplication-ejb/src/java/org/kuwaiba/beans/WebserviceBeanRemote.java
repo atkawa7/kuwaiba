@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
 @Remote
 public interface WebserviceBeanRemote {
-
 
     // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
     /**
@@ -121,6 +120,17 @@ public interface WebserviceBeanRemote {
      */
     public List<ClassInfoLight> getLightSubClasses(String className, boolean includeAbstractClasses, boolean includeSelf) throws ServerSideException;
 
+    /**
+     * Gets the subclasses of a given class
+     * @param className Class name
+     * @param includeAbstractClasses should the result include the abstract classes?
+     * @param includeSelf Should the list include the subclasses and the parent class?
+     * @param sessionId Session token
+     * @return The list of subclasses
+     * @throws Exception If the class can not be found
+     */
+    public List<ClassInfoLight> getLightSubClassesNoRecursive(String className, boolean includeAbstractClasses, boolean includeSelf) throws ServerSideException;
+    
     /**
      * Retrieves all the class metadata except for classes marked as dummy
      * @param includeListTypes boolean to indicate if the list should include
@@ -245,8 +255,8 @@ public interface WebserviceBeanRemote {
      * @param categoryDefinition
      */
     public void changeCategoryDefinition(CategoryInfo categoryDefinition) throws ServerSideException;
-
-        /**
+        
+    /**
      * Gets all classes whose instances can be contained into the given parent class. This method
      * is recursive, so the result include the possible children in children classes
      * @param parentClass
