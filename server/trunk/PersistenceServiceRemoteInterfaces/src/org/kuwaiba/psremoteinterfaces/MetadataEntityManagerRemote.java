@@ -84,6 +84,17 @@ public interface MetadataEntityManagerRemote extends Remote{
     public List<ClassMetadataLight> getLightSubClasses(String className, boolean includeAbstractClasses, boolean includeSelf) throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
     /**
+     * Gets the subclasses of a given class
+     * @param className
+     * @param includeAbstractClasses
+     * @param includeSelf
+     * @return
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException 
+     */
+    public List<ClassMetadataLight> getLightSubClassesNoRecursive(String className, boolean includeAbstractClasses, boolean includeSelf) 
+            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+    /**
      * Retrieves all the class metadata except for classes marked as dummy
      * @param includeListTypes boolean to indicate if the list should include
      * the subclasses of GenericObjectList
