@@ -70,7 +70,7 @@ public class ObjectChildren extends Children.Array {
 
         if (keys == null)
             keys = new ArrayList<LocalObjectLight>();
-
+            
         CommunicationsStub com = CommunicationsStub.getInstance();
         LocalObjectLight node = ((ObjectNode)this.getNode()).getObject();
         List <LocalObjectLight> children = com.getObjectChildren(node.getOid(),
@@ -78,6 +78,7 @@ public class ObjectChildren extends Children.Array {
         if (children == null){
             NotificationUtil  nu = Lookup.getDefault().lookup(NotificationUtil.class);
             nu.showSimplePopup("Error", NotificationUtil.ERROR, "An error has occurred retrieving this object's children: "+com.getError());
+            
         }else{
             for (LocalObjectLight child : children){
                 ObjectNode newNode = new ObjectNode(child);
@@ -127,5 +128,4 @@ public class ObjectChildren extends Children.Array {
         }
         return super.remove(arr);
     }
-
 }

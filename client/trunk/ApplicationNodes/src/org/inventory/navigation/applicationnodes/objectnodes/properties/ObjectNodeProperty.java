@@ -41,7 +41,6 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
     private List<LocalObjectListItem> list;
     private ObjectNode node;
 
-
     /**
      * This constructor is called when the type is anything but a list
      */

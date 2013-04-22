@@ -42,6 +42,4 @@ public class RootObjectNode extends AbstractNode{
         CreateBusinessObjectAction createAction = new CreateBusinessObjectAction(this);
         return new Action[]{createAction};
     }
-
-
 }
