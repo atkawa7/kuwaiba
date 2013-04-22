@@ -142,7 +142,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         if (myClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
 
-        if (myClass.isAbstractClass())
+        if (myClass.isAbstract())
             throw new OperationNotPermittedException("Create Object", "Can't create objects from an abstract classes");
 
         Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
@@ -750,7 +750,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     protected Node createObject(Node classNode, ClassMetadata classToMap, HashMap<String,List<String>> attributes, long template) 
             throws InvalidArgumentException, MetadataObjectNotFoundException{
  
-        if (classToMap.isAbstractClass())
+        if (classToMap.isAbstract())
                 throw new InvalidArgumentException(String.format("Can not create objects from abstract classes (%1s)", classToMap.getName()), Level.OFF);
         
         if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, classToMap.getName()))
