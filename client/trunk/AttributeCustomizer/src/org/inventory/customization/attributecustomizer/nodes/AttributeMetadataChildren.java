@@ -33,6 +33,7 @@ import org.openide.nodes.Node;
 public class AttributeMetadataChildren extends Children.Array{
     List<LocalAttributeMetadata> keys;
     LocalClassMetadataLight lcml;
+    
     public AttributeMetadataChildren(LocalClassMetadataLight _lcml){
         this.lcml = _lcml;
         keys = new ArrayList<LocalAttributeMetadata>();

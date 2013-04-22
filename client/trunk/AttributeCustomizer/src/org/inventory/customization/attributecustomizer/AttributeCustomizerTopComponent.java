@@ -204,18 +204,20 @@ public final class AttributeCustomizerTopComponent extends TopComponent
     }
 
     public NotificationUtil getNotifier(){
-        if (nu == null)
+        if (nu == null){
             nu = Lookup.getDefault().lookup(NotificationUtil.class);
+        }
         return nu;
     }
 
     public void setRoot(){
         LocalClassMetadataLight[] allMeta = acs.getInstanceableMeta();
         em.setRootContext(new AbstractNode(new ClassMetadataChildren(allMeta)));
-        if (allMeta.length !=0)
-        tblClassCustomizerMain.setProperties(em.getRootContext().getChildren().
+        if (allMeta.length !=0){
+            tblClassCustomizerMain.setProperties(em.getRootContext().getChildren().
                 getNodes()[0].getChildren().getNodes()[0].getPropertySets()[0].
                 getProperties());
+        }
     }
 
     public void refresh() {
