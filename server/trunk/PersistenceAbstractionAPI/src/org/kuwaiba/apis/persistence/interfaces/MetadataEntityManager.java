@@ -87,6 +87,17 @@ public interface MetadataEntityManager {
     public List<ClassMetadataLight> getLightSubClasses(String className, boolean includeAbstractClasses, boolean includeSelf) throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
+     * Gets the subclasses of a given class
+     * @param className
+     * @param includeAbstractClasses
+     * @param includeSelf
+     * @return
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException 
+     */
+    public List<ClassMetadataLight> getLightSubClassesNoRecursive(String className, boolean includeAbstractClasses, boolean includeSelf) 
+            throws MetadataObjectNotFoundException, InvalidArgumentException;
+    /**
      * Retrieves all the class metadata except for classes marked as dummy
      * @param includeListTypes boolean to indicate if the list should include
      * the subclasses of GenericObjectList
@@ -269,7 +280,6 @@ public interface MetadataEntityManager {
      * @throws InvalidArgumentException if any of the given possible children can not be a possible children of parentClassName
      */
     public void addPossibleChildren(String parentClassName, String[] possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException;
-
     /**
      * The opposite of addPossibleChildren. It removes the given possible children
      * TODO: Make this method safe. This is, check if there's already intances of the given
