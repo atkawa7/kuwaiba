@@ -174,7 +174,7 @@ public class XMLBackupReader {
 //            ctgry.setDescription(null);
 //            ctgry.setDisplayName(null);
             
-            clmt.setAbstractClass(Modifier.isAbstract(lcw.getJavaModifiers()));
+            clmt.setAbstract(Modifier.isAbstract(lcw.getJavaModifiers()));
             clmt.setCategory(null);
             clmt.setColor(0);
             clmt.setCountable((lcw.getApplicationModifiers() & LocalClassWrapper.MODIFIER_NOCOUNT) != LocalClassWrapper.MODIFIER_NOCOUNT);
