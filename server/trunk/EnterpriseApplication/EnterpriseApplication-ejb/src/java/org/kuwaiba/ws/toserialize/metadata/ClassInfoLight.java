@@ -29,7 +29,7 @@ import org.kuwaiba.ws.toserialize.application.Validator;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ClassInfoLight implements Serializable {
     protected long id;
-    protected Boolean abstractClass;
+    protected Boolean _abstract;
     protected Boolean viewable;
     protected Boolean listType;
     protected Validator[] validators;
@@ -48,7 +48,7 @@ public class ClassInfoLight implements Serializable {
         this.className = myClassLight.getName();
         this.parentClassName = myClassLight.getParentClassName();
         this.smallIcon = myClassLight.getSmallIcon();
-        this.abstractClass = myClassLight.isAbstractClass();
+        this._abstract = myClassLight.isAbstract();
         this.displayName = myClassLight.getDisplayName();
         this.validators = validators;
         this.viewable = myClassLight.isViewable();
@@ -58,7 +58,7 @@ public class ClassInfoLight implements Serializable {
     public ClassInfoLight(long id, String name, String displayName,Validator[] validators, Boolean isViewable,
             Boolean isAbstract, Boolean isListType, byte[] smallIcon) {
         this.id = id;
-        this.abstractClass = isAbstract;
+        this._abstract = isAbstract;
         this.validators = validators;
         this.viewable = isViewable;
         this.className = name;
@@ -84,11 +84,11 @@ public class ClassInfoLight implements Serializable {
     }
 
     public Boolean isAbstract() {
-        return abstractClass;
+        return _abstract;
     }
 
-    public void setIsAbstract(Boolean isAbstract) {
-        this.abstractClass = isAbstract;
+    public void setAbstract(Boolean isAbstract) {
+        this._abstract = isAbstract;
     }
 
     public String getDisplayName() {
@@ -105,14 +105,6 @@ public class ClassInfoLight implements Serializable {
 
     public void setSmallIcon(byte[] smallIcon) {
         this.smallIcon = smallIcon;
-    }
-
-    public Boolean getAbstractClass() {
-        return abstractClass;
-    }
-
-    public void setAbstractClass(Boolean abstractClass) {
-        this.abstractClass = abstractClass;
     }
 
     public String getParentClassName() {

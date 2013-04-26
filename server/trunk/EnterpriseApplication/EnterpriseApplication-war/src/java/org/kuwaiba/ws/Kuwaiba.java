@@ -1454,8 +1454,8 @@ public class Kuwaiba {
             ci.setIcon(icon);
             ci.setSmallIcon(smallIcon);
             ci.setAbstract(_abstract);
-            ci.setInDesign(inDesign);
-            ci.setCountable(countable);
+            //ci.setInDesign(inDesign);
+            //ci.setCountable(countable);
 
             wsBean.changeClassDefinition(ci);
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.io.Serializable;
  * This is a wrapper class for AttributeMetadata, containing the info required for the clients
  * to render the object attributes in the right way
  *
- * @author Adrian Martinez Molina <adrian.martinez@gmail.com>
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class AttributeInfo implements Serializable {
 

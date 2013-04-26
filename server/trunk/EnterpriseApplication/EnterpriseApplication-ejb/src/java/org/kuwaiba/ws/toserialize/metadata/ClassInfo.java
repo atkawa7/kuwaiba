@@ -70,7 +70,7 @@ public class ClassInfo extends ClassInfoLight{
     public ClassInfo(){}
     public ClassInfo(ClassMetadata myClass, Validator[] validators){
         super (myClass, validators);
-        this.abstractClass = myClass.isAbstractClass();
+        this._abstract = myClass.isAbstract();
         this.icon = myClass.getIcon();
         List<AttributeMetadata> ar = myClass.getAttributes();
         this.attributeIds = new long[ar.size()];
