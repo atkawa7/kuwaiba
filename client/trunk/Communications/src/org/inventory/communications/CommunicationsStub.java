@@ -462,12 +462,12 @@ public class CommunicationsStub {
     public LocalClassMetadata getMetaForClass(long classId, boolean ignoreCache){
         try{
             LocalClassMetadata res;
-            if (!ignoreCache){
-                res = cache.getMetaForClass(classId);
-                if (res != null){
-                    return res;
-                }
-            }
+//            if (!ignoreCache){
+//                res = cache.getMetaForClass(classId);
+//                if (res != null){
+//                    return res;
+//                }
+//            }
             ClassInfo cm = port.getMetadataForClassById(classId,this.session.getSessionId());
 
             res = new LocalClassMetadataImpl(cm);

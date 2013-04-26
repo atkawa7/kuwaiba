@@ -4,9 +4,13 @@
 
 <xs:element name="Exception" type="tns:Exception"/>
 
-<xs:element name="addAttributeClass" type="tns:addAttributeClass"/>
+<xs:element name="addClassAttribute" type="tns:addClassAttribute"/>
 
-<xs:element name="addAttributeClassResponse" type="tns:addAttributeClassResponse"/>
+<xs:element name="addClassAttributeById" type="tns:addClassAttributeById"/>
+
+<xs:element name="addClassAttributeByIdResponse" type="tns:addClassAttributeByIdResponse"/>
+
+<xs:element name="addClassAttributeResponse" type="tns:addClassAttributeResponse"/>
 
 <xs:element name="addPossibleChildren" type="tns:addPossibleChildren"/>
 
@@ -73,6 +77,14 @@
 <xs:element name="createUserResponse" type="tns:createUserResponse"/>
 
 <xs:element name="deleteClass" type="tns:deleteClass"/>
+
+<xs:element name="deleteClassAttribute" type="tns:deleteClassAttribute"/>
+
+<xs:element name="deleteClassAttributeByClassId" type="tns:deleteClassAttributeByClassId"/>
+
+<xs:element name="deleteClassAttributeByClassIdResponse" type="tns:deleteClassAttributeByClassIdResponse"/>
+
+<xs:element name="deleteClassAttributeResponse" type="tns:deleteClassAttributeResponse"/>
 
 <xs:element name="deleteClassById" type="tns:deleteClassById"/>
 
@@ -149,6 +161,10 @@
 <xs:element name="getLightMetadataResponse" type="tns:getLightMetadataResponse"/>
 
 <xs:element name="getLightSubClasses" type="tns:getLightSubClasses"/>
+
+<xs:element name="getLightSubClassesNoRecursive" type="tns:getLightSubClassesNoRecursive"/>
+
+<xs:element name="getLightSubClassesNoRecursiveResponse" type="tns:getLightSubClassesNoRecursiveResponse"/>
 
 <xs:element name="getLightSubClassesResponse" type="tns:getLightSubClassesResponse"/>
 
@@ -324,7 +340,7 @@
 <xs:complexType name="classInfoLight">
 <xs:sequence>
 <xs:element name="id" type="xs:long"/>
-<xs:element name="abstractClass" type="xs:boolean" minOccurs="0"/>
+<xs:element name="_abstract" type="xs:boolean" minOccurs="0"/>
 <xs:element name="viewable" type="xs:boolean" minOccurs="0"/>
 <xs:element name="listType" type="xs:boolean" minOccurs="0"/>
 <xs:element name="validators" type="tns:validator" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
@@ -717,6 +733,17 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="deleteGeneralView">
+<xs:sequence>
+<xs:element name="oids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteGeneralViewResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="deleteListTypeItem">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
@@ -766,15 +793,19 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="deleteGeneralView">
+<xs:complexType name="getLightSubClassesNoRecursive">
 <xs:sequence>
-<xs:element name="oids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="includeAbstractClasses" type="xs:boolean"/>
+<xs:element name="includeSelf" type="xs:boolean"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="deleteGeneralViewResponse">
-<xs:sequence/>
+<xs:complexType name="getLightSubClassesNoRecursiveResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getChildrenOfClassLight">
@@ -908,6 +939,18 @@
 <xs:sequence>
 <xs:element name="return" type="tns:classInfo" minOccurs="0"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteClassAttributeByClassId">
+<xs:sequence>
+<xs:element name="classId" type="xs:long"/>
+<xs:element name="attributeName" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteClassAttributeByClassIdResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="setClassAttributeProperties">
@@ -1076,6 +1119,18 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="deleteClassAttribute">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="attributeName" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteClassAttributeResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="deletePools">
 <xs:sequence>
 <xs:element name="ids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
@@ -1139,10 +1194,13 @@
 
 <xs:complexType name="createClassMetadata">
 <xs:sequence>
-<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
 <xs:element name="displayName" type="xs:string" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
-<xs:element name="abstractClass" type="xs:boolean"/>
+<xs:element name="_abstract" type="xs:boolean"/>
+<xs:element name="custom" type="xs:boolean"/>
+<xs:element name="countable" type="xs:boolean"/>
+<xs:element name="inDesign" type="xs:boolean"/>
 <xs:element name="parentClassName" type="xs:string" minOccurs="0"/>
 <xs:element name="icon" type="xs:base64Binary" nillable="true" minOccurs="0"/>
 <xs:element name="smallIcon" type="xs:base64Binary" nillable="true" minOccurs="0"/>
@@ -1196,9 +1254,8 @@
 </xs:complexContent>
 </xs:complexType>
 
-<xs:complexType name="addAttributeClass">
+<xs:complexType name="addClassAttribute">
 <xs:sequence>
-<xs:element name="classId" type="xs:long"/>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="displayName" type="xs:string" minOccurs="0"/>
@@ -1213,7 +1270,7 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="addAttributeClassResponse">
+<xs:complexType name="addClassAttributeResponse">
 <xs:sequence/>
 </xs:complexType>
 
@@ -1299,6 +1356,28 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="addClassAttributeById">
+<xs:sequence>
+<xs:element name="classId" type="xs:long"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="displayName" type="xs:string" minOccurs="0"/>
+<xs:element name="type" type="xs:string" minOccurs="0"/>
+<xs:element name="description" type="xs:string" minOccurs="0"/>
+<xs:element name="administrative" type="xs:boolean"/>
+<xs:element name="visible" type="xs:boolean"/>
+<xs:element name="mapping" type="xs:int"/>
+<xs:element name="readOnly" type="xs:boolean"/>
+<xs:element name="noCopy" type="xs:boolean"/>
+<xs:element name="noSerializable" type="xs:boolean"/>
+<xs:element name="unique" type="xs:boolean"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addClassAttributeByIdResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="deleteGroups">
 <xs:sequence>
 <xs:element name="oids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
@@ -1382,10 +1461,11 @@
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="displayName" type="xs:string" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
-<xs:element name="abstractClass" type="xs:boolean"/>
-<xs:element name="parentClassName" type="xs:string" minOccurs="0"/>
 <xs:element name="smallIcon" type="xs:base64Binary" nillable="true" minOccurs="0"/>
 <xs:element name="icon" type="xs:base64Binary" nillable="true" minOccurs="0"/>
+<xs:element name="_abstract" type="xs:boolean"/>
+<xs:element name="inDesign" type="xs:boolean"/>
+<xs:element name="countable" type="xs:boolean"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>

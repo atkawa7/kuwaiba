@@ -52,17 +52,17 @@
 <message name="createObjectResponse">
 <part name="parameters" element="tns:createObjectResponse"/>
 </message>
-<message name="getClassHierarchy">
-<part name="parameters" element="tns:getClassHierarchy"/>
-</message>
-<message name="getClassHierarchyResponse">
-<part name="parameters" element="tns:getClassHierarchyResponse"/>
-</message>
 <message name="copyObjects">
 <part name="parameters" element="tns:copyObjects"/>
 </message>
 <message name="copyObjectsResponse">
 <part name="parameters" element="tns:copyObjectsResponse"/>
+</message>
+<message name="getClassHierarchy">
+<part name="parameters" element="tns:getClassHierarchy"/>
+</message>
+<message name="getClassHierarchyResponse">
+<part name="parameters" element="tns:getClassHierarchyResponse"/>
 </message>
 <message name="setUserProperties">
 <part name="parameters" element="tns:setUserProperties"/>
@@ -99,6 +99,12 @@
 </message>
 <message name="getLightSubClassesResponse">
 <part name="parameters" element="tns:getLightSubClassesResponse"/>
+</message>
+<message name="getLightSubClassesNoRecursive">
+<part name="parameters" element="tns:getLightSubClassesNoRecursive"/>
+</message>
+<message name="getLightSubClassesNoRecursiveResponse">
+<part name="parameters" element="tns:getLightSubClassesNoRecursiveResponse"/>
 </message>
 <message name="getPossibleChildren">
 <part name="parameters" element="tns:getPossibleChildren"/>
@@ -376,11 +382,17 @@
 <message name="setClassMetadataPropertiesResponse">
 <part name="parameters" element="tns:setClassMetadataPropertiesResponse"/>
 </message>
-<message name="addAttributeClass">
-<part name="parameters" element="tns:addAttributeClass"/>
+<message name="addClassAttribute">
+<part name="parameters" element="tns:addClassAttribute"/>
 </message>
-<message name="addAttributeClassResponse">
-<part name="parameters" element="tns:addAttributeClassResponse"/>
+<message name="addClassAttributeResponse">
+<part name="parameters" element="tns:addClassAttributeResponse"/>
+</message>
+<message name="addClassAttributeById">
+<part name="parameters" element="tns:addClassAttributeById"/>
+</message>
+<message name="addClassAttributeByIdResponse">
+<part name="parameters" element="tns:addClassAttributeByIdResponse"/>
 </message>
 <message name="setClassAttributeProperties">
 <part name="parameters" element="tns:setClassAttributeProperties"/>
@@ -393,6 +405,18 @@
 </message>
 <message name="setClassAttributePropertiesByIdResponse">
 <part name="parameters" element="tns:setClassAttributePropertiesByIdResponse"/>
+</message>
+<message name="deleteClassAttribute">
+<part name="parameters" element="tns:deleteClassAttribute"/>
+</message>
+<message name="deleteClassAttributeResponse">
+<part name="parameters" element="tns:deleteClassAttributeResponse"/>
+</message>
+<message name="deleteClassAttributeByClassId">
+<part name="parameters" element="tns:deleteClassAttributeByClassId"/>
+</message>
+<message name="deleteClassAttributeByClassIdResponse">
+<part name="parameters" element="tns:deleteClassAttributeByClassIdResponse"/>
 </message>
 <message name="getMetadataForClassById">
 <part name="parameters" element="tns:getMetadataForClassById"/>
@@ -448,15 +472,15 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectResponse" message="tns:createObjectResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObject/Fault/Exception"/>
 </operation>
-<operation name="getClassHierarchy">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchyRequest" message="tns:getClassHierarchy"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchyResponse" message="tns:getClassHierarchyResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchy/Fault/Exception"/>
-</operation>
 <operation name="copyObjects">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsRequest" message="tns:copyObjects"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsResponse" message="tns:copyObjectsResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjects/Fault/Exception"/>
+</operation>
+<operation name="getClassHierarchy">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchyRequest" message="tns:getClassHierarchy"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchyResponse" message="tns:getClassHierarchyResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchy/Fault/Exception"/>
 </operation>
 <operation name="setUserProperties">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setUserPropertiesRequest" message="tns:setUserProperties"/>
@@ -487,6 +511,11 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightSubClassesRequest" message="tns:getLightSubClasses"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightSubClassesResponse" message="tns:getLightSubClassesResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightSubClasses/Fault/Exception"/>
+</operation>
+<operation name="getLightSubClassesNoRecursive">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightSubClassesNoRecursiveRequest" message="tns:getLightSubClassesNoRecursive"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightSubClassesNoRecursiveResponse" message="tns:getLightSubClassesNoRecursiveResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getLightSubClassesNoRecursive/Fault/Exception"/>
 </operation>
 <operation name="getPossibleChildren">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPossibleChildrenRequest" message="tns:getPossibleChildren"/>
@@ -718,10 +747,15 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassMetadataPropertiesResponse" message="tns:setClassMetadataPropertiesResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassMetadataProperties/Fault/Exception"/>
 </operation>
-<operation name="addAttributeClass">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeClassRequest" message="tns:addAttributeClass"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeClassResponse" message="tns:addAttributeClassResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeClass/Fault/Exception"/>
+<operation name="addClassAttribute">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addClassAttributeRequest" message="tns:addClassAttribute"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addClassAttributeResponse" message="tns:addClassAttributeResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addClassAttribute/Fault/Exception"/>
+</operation>
+<operation name="addClassAttributeById">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addClassAttributeByIdRequest" message="tns:addClassAttributeById"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addClassAttributeByIdResponse" message="tns:addClassAttributeByIdResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addClassAttributeById/Fault/Exception"/>
 </operation>
 <operation name="setClassAttributeProperties">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassAttributePropertiesRequest" message="tns:setClassAttributeProperties"/>
@@ -732,6 +766,16 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassAttributePropertiesByIdRequest" message="tns:setClassAttributePropertiesById"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassAttributePropertiesByIdResponse" message="tns:setClassAttributePropertiesByIdResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassAttributePropertiesById/Fault/Exception"/>
+</operation>
+<operation name="deleteClassAttribute">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteClassAttributeRequest" message="tns:deleteClassAttribute"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteClassAttributeResponse" message="tns:deleteClassAttributeResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteClassAttribute/Fault/Exception"/>
+</operation>
+<operation name="deleteClassAttributeByClassId">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteClassAttributeByClassIdRequest" message="tns:deleteClassAttributeByClassId"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteClassAttributeByClassIdResponse" message="tns:deleteClassAttributeByClassIdResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteClassAttributeByClassId/Fault/Exception"/>
 </operation>
 <operation name="getMetadataForClassById">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getMetadataForClassByIdRequest" message="tns:getMetadataForClassById"/>
@@ -835,7 +879,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="getClassHierarchy">
+<operation name="copyObjects">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -847,7 +891,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="copyObjects">
+<operation name="getClassHierarchy">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -920,6 +964,18 @@
 </fault>
 </operation>
 <operation name="getLightSubClasses">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getLightSubClassesNoRecursive">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -1483,7 +1539,19 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="addAttributeClass">
+<operation name="addClassAttribute">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="addClassAttributeById">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -1508,6 +1576,30 @@
 </fault>
 </operation>
 <operation name="setClassAttributePropertiesById">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="deleteClassAttribute">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="deleteClassAttributeByClassId">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
