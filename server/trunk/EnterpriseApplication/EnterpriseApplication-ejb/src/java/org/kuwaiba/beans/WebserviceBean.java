@@ -343,7 +343,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             atm.setType(attributeDefinition.getType());
             atm.setUnique(attributeDefinition.isUnique());
             atm.setVisible(attributeDefinition.isVisible());
-            //atm.setNoCopy(attributeDefinition.ge);
+            atm.setNoCopy(attributeDefinition.isNoCopy());
 
             mem.addAttribute(className, atm);
 
@@ -369,8 +369,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
             atm.setType(attributeDefinition.getType());
             atm.setUnique(attributeDefinition.isUnique());
             atm.setVisible(attributeDefinition.isVisible());
-            //atm.setNoCopy(attributeDefinition.isNoCopy());
-            //atm.setNoSerialize(attributeDefinition.isNoSerialize());
+            atm.setNoCopy(attributeDefinition.isNoCopy());
+            atm.setNoSerialize(attributeDefinition.isNoSerialize());
             
             mem.addAttribute(classId, atm);
 
@@ -394,8 +394,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
             cm.setDescription(newClassDefinition.getDescription());
             cm.setParentClassName(newClassDefinition.getParentClassName());
             cm.setAbstract(newClassDefinition.isAbstract());
-            //cm.setCountable(newClassDefinition.isCountable());
-            //cm.setInDesing(newClassDefinition.isInDesign());
+            cm.setCountable(newClassDefinition.isCountable());
+            cm.setInDesing(newClassDefinition.isInDesign());
             cm.setIcon(newClassDefinition.getIcon());
             cm.setSmallIcon(newClassDefinition.getSmallIcon());
             //TODO decode flags, set category
