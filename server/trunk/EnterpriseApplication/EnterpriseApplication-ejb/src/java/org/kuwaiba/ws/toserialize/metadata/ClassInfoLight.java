@@ -29,9 +29,11 @@ import org.kuwaiba.ws.toserialize.application.Validator;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ClassInfoLight implements Serializable {
     protected long id;
-    protected Boolean _abstract;
-    protected Boolean viewable;
-    protected Boolean listType;
+    protected boolean _abstract;
+    protected boolean viewable;
+    protected boolean custom;
+    protected boolean inDesign;
+    protected boolean listType;
     protected Validator[] validators;
     protected String className;
     protected String displayName;
@@ -53,18 +55,22 @@ public class ClassInfoLight implements Serializable {
         this.validators = validators;
         this.viewable = myClassLight.isViewable();
         this.listType = myClassLight.isListType();
+        this.custom = myClassLight.isCustom();
+        this.inDesign = myClassLight.isInDesing();
     }
 
-    public ClassInfoLight(long id, String name, String displayName,Validator[] validators, Boolean isViewable,
-            Boolean isAbstract, Boolean isListType, byte[] smallIcon) {
+    public ClassInfoLight (long id, String className, String displayName, Validator[] validators, boolean viewable, boolean _abstract, boolean custom, boolean inDesign, String parentClassName, boolean listType, byte[] smallIcon){
         this.id = id;
-        this._abstract = isAbstract;
-        this.validators = validators;
-        this.viewable = isViewable;
-        this.className = name;
+        this.className = className;
         this.displayName = displayName;
+        this.viewable = viewable;
+        this._abstract = _abstract;
+        this.custom = custom;
+        this.inDesign = inDesign;
+        this.parentClassName = parentClassName;
+        this.validators = validators;
         this.smallIcon = smallIcon;
-        this.listType = isListType;
+        this.listType = listType;
     }
 
     public String getClassName() {
@@ -81,14 +87,6 @@ public class ClassInfoLight implements Serializable {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public Boolean isAbstract() {
-        return _abstract;
-    }
-
-    public void setAbstract(Boolean isAbstract) {
-        this._abstract = isAbstract;
     }
 
     public String getDisplayName() {
@@ -114,14 +112,6 @@ public class ClassInfoLight implements Serializable {
     public void setParentClassName(String parentClassName) {
         this.parentClassName = parentClassName;
     }
-    
-    public Boolean isViewable() {
-        return viewable;
-    }
-
-    public void setViewable(Boolean viewable) {
-        this.viewable = viewable;
-    }
 
     public Validator[] getValidators() {
         return validators;
@@ -131,13 +121,46 @@ public class ClassInfoLight implements Serializable {
         this.validators = validators;
     }
 
-    public Boolean getListType() {
+    public boolean isAbstract() {
+        return _abstract;
+    }
+
+    public void setAbstract(boolean _abstract) {
+        this._abstract = _abstract;
+    }
+
+    public boolean isViewable() {
+        return viewable;
+    }
+
+    public void setViewable(boolean viewable) {
+        this.viewable = viewable;
+    }
+
+    public boolean isCustom() {
+        return custom;
+    }
+
+    public void setCustom(boolean custom) {
+        this.custom = custom;
+    }
+
+    public boolean isInDesign() {
+        return inDesign;
+    }
+
+    public void setInDesign(boolean inDesign) {
+        this.inDesign = inDesign;
+    }
+
+    public boolean isListType() {
         return listType;
     }
 
-    public void setListType(Boolean listType) {
+    public void setListType(boolean listType) {
         this.listType = listType;
     }
+
 
     @Override
     public boolean equals(Object obj){

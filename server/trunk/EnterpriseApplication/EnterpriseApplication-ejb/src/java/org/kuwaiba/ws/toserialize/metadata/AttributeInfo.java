@@ -66,6 +66,18 @@ public class AttributeInfo implements Serializable {
      * Indicates how this attribute should be mapped (into a primitive type, a relationship, etc)
      */
     private int mapping;
+    /**
+     *
+     */
+    private boolean noCopy;
+    /**
+     *
+     */
+    private boolean noSerialize;
+    /**
+     * Cannot change or delete a locked attribute
+     */
+    private boolean locked;
 
     public AttributeInfo(String name, String displayName, String type, 
                          boolean administrative, boolean visible,
@@ -158,5 +170,28 @@ public class AttributeInfo implements Serializable {
     public void setUnique(boolean unique) {
         this.unique = unique;
     }
-    
+
+    public boolean isNoCopy() {
+        return noCopy;
+    }
+
+    public void setNoCopy(boolean noCopy) {
+        this.noCopy = noCopy;
+    }
+
+    public boolean isNoSerialize() {
+        return noSerialize;
+    }
+
+    public void setNoSerialize(boolean noSerialize) {
+        this.noSerialize = noSerialize;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
 }

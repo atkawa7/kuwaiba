@@ -66,6 +66,17 @@ public class ClassInfo extends ClassInfoLight{
      * Class description
      */
     protected String description;
+    /**
+     *  ClassMetada's creationDate
+     */
+    public long creationDate;
+    /**
+     *  Indicates if the instances of this class are physical assets
+     *  (in other words, if it's meaningful to have a count on them)
+     *  Classes marked with the annotation NoCount (Slot, Port and the like)
+     *  have this attribute set as false
+     */
+    private boolean countable;
 
     public ClassInfo(){}
     public ClassInfo(ClassMetadata myClass, Validator[] validators){
@@ -81,6 +92,7 @@ public class ClassInfo extends ClassInfoLight{
         this.attributesMapping = new int[this.attributeNames.length];
         this.attributesDescription = new String[this.attributeNames.length];
         this.description = myClass.getDescription();
+        this.countable = myClass.isCountable();
         int i = 0;
         for (AttributeMetadata myAtt : ar){
             this.attributeIds[i] = myAtt.getId();
@@ -167,5 +179,21 @@ public class ClassInfo extends ClassInfoLight{
 
     public void setIcon(byte[] icon) {
         this.icon = icon;
+    }
+    
+    public long getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(long creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public boolean isCountable() {
+        return countable;
+    }
+
+    public void setCountable(boolean countable) {
+        this.countable = countable;
     }
 }
