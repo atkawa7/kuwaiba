@@ -17,6 +17,7 @@ package org.inventory.navigation.pools;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
@@ -32,8 +33,8 @@ import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.Node;
 import org.openide.util.NbBundle;
-import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
+import org.openide.windows.WindowManager;
 
 /**
  * Main top component for the Pools module
@@ -48,13 +49,15 @@ autostore = false)
 persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.inventory.navigation.pools.PoolsTopComponent")
-//@ActionReference(path = "Menu/Tools" /*, position = 333 */)
-@ActionReference(path = "Toolbars/Tools,Menu/Tools" /*, position = 333 */)
+@ActionReference(path = "Menu/Tools" /*, position = 333 */)
+//@ActionReference(path = "Toolbars/Tools" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_PoolsAction",
 preferredID = "PoolsTopComponent")
 public final class PoolsTopComponent extends TopComponent implements ExplorerManager.Provider, RefreshableTopComponent{
     
+    private static final String PREFERRED_ID = "PoolsTopComponent";
+    private static PoolsTopComponent instance;
     private final ExplorerManager em = new ExplorerManager();
     private PoolsService ps;
     private BeanTreeView treeView;
@@ -88,6 +91,37 @@ public final class PoolsTopComponent extends TopComponent implements ExplorerMan
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
+    /**
+     * Gets default instance. Do not use directly: reserved for *.settings files only,
+     * i.e. deserialization routines; otherwise you could get a non-deserialized instance.
+     * To obtain the singleton instance, use {@link #findInstance}.
+     */
+    public static synchronized PoolsTopComponent getDefault() {
+        if (instance == null) {
+            instance = new PoolsTopComponent();
+        }
+        return instance;
+    }
+
+    /**
+     * Obtain the NavigationTreeTopComponent instance. Never call {@link #getDefault} directly!
+     */
+    public static synchronized PoolsTopComponent findInstance() {
+        TopComponent win = WindowManager.getDefault().findTopComponent(PREFERRED_ID);
+        if (win == null) {
+            Logger.getLogger(PoolsTopComponent.class.getName()).warning(
+                    "Cannot find " + PREFERRED_ID + " component. It will not be located properly in the window system.");
+            return getDefault();
+        }
+        if (win instanceof PoolsTopComponent) {
+            return (PoolsTopComponent) win;
+        }
+        Logger.getLogger(PoolsTopComponent.class.getName()).warning(
+                "There seem to be multiple components with the '" + PREFERRED_ID
+                + "' ID. That is a potential source of errors and unexpected behavior.");
+        return getDefault();
+    }
+    
     @Override
     public void componentOpened() {
         setRoot();

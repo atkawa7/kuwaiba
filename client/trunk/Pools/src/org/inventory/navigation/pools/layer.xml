@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Actions">
+        <folder name="Tools">
+            <file name="org-inventory-navigation-pools-PoolsAction.instance">
+                <attr name="component" methodvalue="org.inventory.navigation.pools.PoolsTopComponent.findInstance"/>
+                <attr name="displayName" bundlevalue="org.inventory.navigation.pools.Bundle#CTL_PoolsAction"/>
+                <attr name="iconBase" stringvalue="org/inventory/navigation/pools/res/icon.png"/>
+                <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
+            </file>
+        </folder>
+    </folder>
+    <folder name="Toolbars">
+        <folder name="Tools">
+            <file name="org-inventory-navigation-pools-PoolsAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Tools/org-inventory-navigation-pools-PoolsAction.instance" />
+            </file>
+        </folder>
+    </folder>
+    <folder name="Shortcuts">
+        <file name="D-P.shadow">
+            <attr name="originalFile" stringvalue="Actions/Tools/org-inventory-navigation-pools-PoolsAction.instance"/>
+        </file>
+    </folder>
+</filesystem>

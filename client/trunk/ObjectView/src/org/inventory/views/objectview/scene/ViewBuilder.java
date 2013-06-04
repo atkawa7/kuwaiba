@@ -107,7 +107,7 @@ public class ViewBuilder {
                                 getObjectInfoLight(objectClass, objectId);
                         if (lol != null){
                             ObjectNodeWidget widget = new ObjectNodeWidget(scene, lol);
-                            widget.setPreferredLocation(new Point((int)xCoordinate, (int)yCoordinate));
+                            widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
                             scene.getNodesLayer().addChild(widget);
                             scene.addObject(lol, widget);
                         }
