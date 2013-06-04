@@ -6,7 +6,6 @@ Client
 * Fix shortcuts
 * Support for dates in searches and editors
 * Rewrite the ObjectView module
-* Reorganize menus
 * Limit the number of children shown under a given node
 * Constraints for certain fields according to business rules
 * Extend the privileges subsystem
