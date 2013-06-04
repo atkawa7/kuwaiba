@@ -11,7 +11,7 @@
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ *  limitations under the License. test
  */
 
 package org.kuwaiba.persistenceservice;
@@ -59,7 +59,7 @@ public class Main {
             MetadataEntityManagerRemote memStub = (MetadataEntityManagerRemote)UnicastRemoteObject.exportObject(meri,0);
 
             BusinessEntityManagerImpl bemi = new BusinessEntityManagerImpl(cm);
-            BusinessEntityManagerRemote bemri = bemi;
+            BusinessEntityManagerRemote bemri = bemi; 
             BusinessEntityManagerRemote bemStub = (BusinessEntityManagerRemote)UnicastRemoteObject.exportObject(bemri,0);
 
             ApplicationEntityManagerImpl aemi = new ApplicationEntityManagerImpl(cm);
