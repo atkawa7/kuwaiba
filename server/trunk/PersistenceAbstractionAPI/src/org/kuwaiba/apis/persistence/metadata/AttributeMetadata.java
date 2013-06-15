@@ -93,7 +93,7 @@ public class AttributeMetadata implements Serializable{
      */
     private long creationDate;
     /**
-     *
+     * Attributtes that won't be copy in copy paste operation
      */
     private boolean noCopy;
     /**
