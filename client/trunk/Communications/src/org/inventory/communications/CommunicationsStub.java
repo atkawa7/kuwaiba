@@ -916,11 +916,11 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean setAttributePropertyValue(long classId, String name, String displayName,
-            String type, String description, boolean administrative, boolean visible, int mapping, boolean readOnly, boolean unique)  {
+    public boolean setAttributePropertyValue(long classId, long attributeId, String name, String displayName,
+            String type, String description, boolean administrative, boolean visible, boolean readOnly, boolean unique)  {
         try{
-            port.setClassAttributePropertiesById(classId, name, displayName, type, description,
-                    administrative, visible, mapping, readOnly, unique, this.session.getSessionId());
+            port.setClassAttributePropertiesById(classId, attributeId, name, displayName, type, description,
+                    administrative, visible, readOnly, unique, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -948,9 +948,25 @@ public class CommunicationsStub {
         return true;
     }
     
-    public boolean addAttribute(long oid, String name, String displayName, String description, String type, boolean administrative, int mapping, boolean readOnly, boolean visible, boolean noCopy, boolean noSerializable, boolean unique){
+    public boolean addAttribute(long classId, String name, String displayName, 
+                                String description, String type, boolean administrative, 
+                                boolean readOnly, boolean visible, boolean noCopy, 
+                                boolean unique){
         try{
-            port.addClassAttributeById(oid, name, displayName, type, description, administrative, visible, mapping, readOnly, noCopy, noSerializable, unique, this.session.getSessionId());
+            port.addClassAttributeById(classId, name, displayName, type, description, administrative, visible, readOnly, noCopy, unique, this.session.getSessionId());
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean addAttribute(String className, String name, String displayName, 
+                                String description, String type, boolean administrative,
+                                boolean readOnly, boolean visible, boolean noCopy, 
+                                boolean unique){
+        try{
+            port.addClassAttribute(className, name, displayName, type, description, administrative, visible, readOnly, noCopy, unique, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;

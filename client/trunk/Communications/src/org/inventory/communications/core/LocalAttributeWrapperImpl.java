@@ -42,34 +42,42 @@ public class LocalAttributeWrapperImpl implements LocalAttributeWrapper{
     }
 
 
+    @Override
     public int getApplicationModifiers() {
         return applicationModifiers;
     }
 
+    @Override
     public void setApplicationModifiers(int applicationModifiers) {
         this.applicationModifiers = applicationModifiers;
     }
 
+    @Override
     public int getJavaModifiers() {
         return javaModifiers;
     }
 
+    @Override
     public void setJavaModifiers(int javaModifiers) {
         this.javaModifiers = javaModifiers;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public void setType(String type) {
         this.type = type;
     }
@@ -82,14 +90,17 @@ public class LocalAttributeWrapperImpl implements LocalAttributeWrapper{
         this.prefix = prefix;
     }
 
+    @Override
     public boolean canCopy(){
         return (applicationModifiers & MODIFIER_NOCOPY) != MODIFIER_NOCOPY;
     }
 
+    @Override
     public boolean canWrite() {
         return (applicationModifiers & MODIFIER_READONLY) != MODIFIER_READONLY;
     }
 
+    @Override
     public boolean canSerialize(){
         return (applicationModifiers & MODIFIER_NOSERIALIZE) != MODIFIER_NOSERIALIZE;
     }

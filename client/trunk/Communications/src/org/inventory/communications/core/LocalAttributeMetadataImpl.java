@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,11 +22,13 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Represents the metadata associated to a single attribute
+ *
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@ServiceProvider(service=LocalAttributeMetadata.class)
+@ServiceProvider(service = LocalAttributeMetadata.class)
 public class LocalAttributeMetadataImpl
-        implements LocalAttributeMetadata{
+        implements LocalAttributeMetadata {
+
     private String name;
     private long id;
     private Class type;
@@ -34,14 +36,17 @@ public class LocalAttributeMetadataImpl
     private boolean isVisible;
     private int mapping;
     private String description;
-
+    private boolean administrative;
+    private boolean noCopy;
+    private boolean unique;
     private String listAttributeClassName = null;
 
-    public LocalAttributeMetadataImpl(){
+    public LocalAttributeMetadataImpl() {
         this.displayName = "";
     }
+
     public LocalAttributeMetadataImpl(long oid, String _name, String _type, String _displayName,
-            boolean _isVisible, Integer mapping, String _description){
+            boolean _isVisible, Integer mapping, String _description) {
         this.id = oid;
         this.name = _name;
         this.type = Utils.getRealType(_type);
@@ -49,9 +54,9 @@ public class LocalAttributeMetadataImpl
         this.isVisible = _isVisible;
         this.mapping = mapping;
         this.description = _description;
-
-        if (this.type.equals(LocalObjectLight.class))
+        if (this.type.equals(LocalObjectLight.class)) {
             listAttributeClassName = _type;
+        }
     }
 
     @Override
@@ -93,7 +98,7 @@ public class LocalAttributeMetadataImpl
     public void setName(String name) {
         this.name = name;
     }
-
+    
     @Override
     public Class getType() {
         return type;
@@ -103,23 +108,33 @@ public class LocalAttributeMetadataImpl
     public void setType(Class type) {
         this.type = type;
     }
-
+    
+    @Override
+    public boolean isAdministrative(){
+        return administrative;
+    }
+    
+    @Override
+    public void setAdministrative(boolean administrative){
+        this.administrative = administrative;
+    }
     /*
      * If this is a list type attribute, returns the class name associated to the item
      */
+
     @Override
-    public String getListAttributeClassName(){
+    public String getListAttributeClassName() {
         return listAttributeClassName;
     }
 
     @Override
-    public long getId(){
+    public long getId() {
         return id;
     }
 
     @Override
-    public void setId(long _id){
-        this.id =_id;
+    public void setId(long _id) {
+        this.id = _id;
     }
 
     @Override
@@ -128,17 +143,39 @@ public class LocalAttributeMetadataImpl
     }
 
     @Override
-    public void setMapping(int mapping){
+    public void setMapping(int mapping) {
         this.mapping = mapping;
+    }
+    
+    @Override
+    public void setNoCopy(boolean noCopy){
+        this.noCopy = noCopy;
+    }
+    
+    @Override
+    public boolean isNoCopy(){
+        return noCopy;
+    }
+    
+    @Override
+    public void setUnique(boolean unique){
+        this.unique = unique;
+    }    
+    
+    @Override
+    public boolean isUnique(){
+        return unique;
     }
 
     @Override
-    public boolean equals(Object obj){
-        if (obj == null)
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
-        if (!(obj instanceof LocalAttributeMetadata))
+        }
+        if (!(obj instanceof LocalAttributeMetadata)) {
             return false;
-        return this.getId() == ((LocalAttributeMetadata)obj).getId();
+        }
+        return this.getId() == ((LocalAttributeMetadata) obj).getId();
     }
 
     @Override
@@ -147,5 +184,4 @@ public class LocalAttributeMetadataImpl
         hash = 83 * hash + (int) (this.id ^ (this.id >>> 32));
         return hash;
     }
-
 }
