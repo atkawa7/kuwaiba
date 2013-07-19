@@ -136,6 +136,14 @@
 
 <xs:element name="getChildrenOfClassResponse" type="tns:getChildrenOfClassResponse"/>
 
+<xs:element name="getClassAttribute" type="tns:getClassAttribute"/>
+
+<xs:element name="getClassAttributeById" type="tns:getClassAttributeById"/>
+
+<xs:element name="getClassAttributeByIdResponse" type="tns:getClassAttributeByIdResponse"/>
+
+<xs:element name="getClassAttributeResponse" type="tns:getClassAttributeResponse"/>
+
 <xs:element name="getClassHierarchy" type="tns:getClassHierarchy"/>
 
 <xs:element name="getClassHierarchyResponse" type="tns:getClassHierarchyResponse"/>
@@ -340,9 +348,11 @@
 <xs:complexType name="classInfoLight">
 <xs:sequence>
 <xs:element name="id" type="xs:long"/>
-<xs:element name="_abstract" type="xs:boolean" minOccurs="0"/>
-<xs:element name="viewable" type="xs:boolean" minOccurs="0"/>
-<xs:element name="listType" type="xs:boolean" minOccurs="0"/>
+<xs:element name="_abstract" type="xs:boolean"/>
+<xs:element name="viewable" type="xs:boolean"/>
+<xs:element name="custom" type="xs:boolean"/>
+<xs:element name="inDesign" type="xs:boolean"/>
+<xs:element name="listType" type="xs:boolean"/>
 <xs:element name="validators" type="tns:validator" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
 <xs:element name="displayName" type="xs:string" minOccurs="0"/>
@@ -658,6 +668,8 @@
 <xs:element name="attributesDescription" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="icon" type="xs:base64Binary" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
+<xs:element name="creationDate" type="xs:long"/>
+<xs:element name="countable" type="xs:boolean"/>
 </xs:sequence>
 </xs:extension>
 </xs:complexContent>
@@ -675,6 +687,37 @@
 
 <xs:complexType name="updateObjectResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getClassAttributeById">
+<xs:sequence>
+<xs:element name="classId" type="xs:string" minOccurs="0"/>
+<xs:element name="attributeName" type="xs:string" minOccurs="0"/>
+<xs:element name="sesionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getClassAttributeByIdResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:attributeInfo" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="attributeInfo">
+<xs:sequence>
+<xs:element name="administrative" type="xs:boolean"/>
+<xs:element name="description" type="xs:string" minOccurs="0"/>
+<xs:element name="displayName" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:long"/>
+<xs:element name="locked" type="xs:boolean"/>
+<xs:element name="mapping" type="xs:int"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="noCopy" type="xs:boolean"/>
+<xs:element name="readOnly" type="xs:boolean"/>
+<xs:element name="type" type="xs:string" minOccurs="0"/>
+<xs:element name="unique" type="xs:boolean"/>
+<xs:element name="visible" type="xs:boolean"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="closeSession">
@@ -714,6 +757,20 @@
 
 <xs:complexType name="moveObjectsResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getClassAttribute">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="attributeName" type="xs:string" minOccurs="0"/>
+<xs:element name="sesionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getClassAttributeResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:attributeInfo" minOccurs="0"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="createPoolItem">
@@ -956,13 +1013,13 @@
 <xs:complexType name="setClassAttributeProperties">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="attributeId" type="xs:long"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="displayName" type="xs:string" minOccurs="0"/>
 <xs:element name="type" type="xs:string" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="administrative" type="xs:boolean"/>
 <xs:element name="visible" type="xs:boolean"/>
-<xs:element name="mapping" type="xs:int"/>
 <xs:element name="readOnly" type="xs:boolean"/>
 <xs:element name="unique" type="xs:boolean"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
@@ -1263,8 +1320,8 @@
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="administrative" type="xs:boolean"/>
 <xs:element name="visible" type="xs:boolean"/>
-<xs:element name="mapping" type="xs:int"/>
 <xs:element name="readOnly" type="xs:boolean"/>
+<xs:element name="noCopy" type="xs:boolean"/>
 <xs:element name="unique" type="xs:boolean"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
@@ -1277,13 +1334,13 @@
 <xs:complexType name="setClassAttributePropertiesById">
 <xs:sequence>
 <xs:element name="classid" type="xs:long"/>
+<xs:element name="attributeId" type="xs:long"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="displayName" type="xs:string" minOccurs="0"/>
 <xs:element name="type" type="xs:string" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="administrative" type="xs:boolean"/>
 <xs:element name="visible" type="xs:boolean"/>
-<xs:element name="mapping" type="xs:int"/>
 <xs:element name="readOnly" type="xs:boolean"/>
 <xs:element name="unique" type="xs:boolean"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
@@ -1365,10 +1422,8 @@
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="administrative" type="xs:boolean"/>
 <xs:element name="visible" type="xs:boolean"/>
-<xs:element name="mapping" type="xs:int"/>
 <xs:element name="readOnly" type="xs:boolean"/>
 <xs:element name="noCopy" type="xs:boolean"/>
-<xs:element name="noSerializable" type="xs:boolean"/>
 <xs:element name="unique" type="xs:boolean"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>

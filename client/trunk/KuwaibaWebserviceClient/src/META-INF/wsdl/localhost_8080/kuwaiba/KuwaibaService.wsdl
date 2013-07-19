@@ -382,6 +382,18 @@
 <message name="setClassMetadataPropertiesResponse">
 <part name="parameters" element="tns:setClassMetadataPropertiesResponse"/>
 </message>
+<message name="getClassAttribute">
+<part name="parameters" element="tns:getClassAttribute"/>
+</message>
+<message name="getClassAttributeResponse">
+<part name="parameters" element="tns:getClassAttributeResponse"/>
+</message>
+<message name="getClassAttributeById">
+<part name="parameters" element="tns:getClassAttributeById"/>
+</message>
+<message name="getClassAttributeByIdResponse">
+<part name="parameters" element="tns:getClassAttributeByIdResponse"/>
+</message>
 <message name="addClassAttribute">
 <part name="parameters" element="tns:addClassAttribute"/>
 </message>
@@ -746,6 +758,16 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassMetadataPropertiesRequest" message="tns:setClassMetadataProperties"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassMetadataPropertiesResponse" message="tns:setClassMetadataPropertiesResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setClassMetadataProperties/Fault/Exception"/>
+</operation>
+<operation name="getClassAttribute">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassAttributeRequest" message="tns:getClassAttribute"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassAttributeResponse" message="tns:getClassAttributeResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassAttribute/Fault/Exception"/>
+</operation>
+<operation name="getClassAttributeById">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassAttributeByIdRequest" message="tns:getClassAttributeById"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassAttributeByIdResponse" message="tns:getClassAttributeByIdResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassAttributeById/Fault/Exception"/>
 </operation>
 <operation name="addClassAttribute">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addClassAttributeRequest" message="tns:addClassAttribute"/>
@@ -1528,6 +1550,30 @@
 </fault>
 </operation>
 <operation name="setClassMetadataProperties">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getClassAttribute">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getClassAttributeById">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
