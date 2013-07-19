@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
-import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -198,14 +197,6 @@ public interface BusinessEntityManager {
      */
     public List<RemoteBusinessObjectLight> getObjectChildren(String className, long oid, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException;
-    
-    /**
-     * Executes a query
-     * @return The list of results
-     * @throws MetadataObjectNotFoundException If any of the classes used as based for the search do not exist
-     */
-    public List<ResultRecord> executeQuery()
-            throws MetadataObjectNotFoundException;
 
     /**
      * Creates a relationship between two elements and labels it

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
-import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
 import org.kuwaiba.persistenceservice.util.Constants;
 import org.kuwaiba.persistenceservice.util.Util;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -45,7 +44,7 @@ public class CypherQueryBuilder {
     /**
      *
      */
-    public Map<String, List<String>> vissibleAttributes = new HashMap<String, List<String>>();
+    public Map<String, List<String>> visibleAttributes = new HashMap<String, List<String>>();
     /**
      *
      */
@@ -191,10 +190,10 @@ public class CypherQueryBuilder {
      */
     public void readVissibleAttributes(ExtendedQuery query){
         if(query.getVisibleAttributeNames() != null){
-             vissibleAttributes.put(INSTANCE, query.getVisibleAttributeNames());
+             visibleAttributes.put(INSTANCE, query.getVisibleAttributeNames());
         }
         else{
-            vissibleAttributes.put(INSTANCE, defaultVisibleAttributes);
+            visibleAttributes.put(INSTANCE, defaultVisibleAttributes);
         }
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
@@ -216,10 +215,10 @@ public class CypherQueryBuilder {
      */
     public void readVissibleAttributeParent(ExtendedQuery query){
         if(query.getVisibleAttributeNames() != null){
-            vissibleAttributes.put(PARENT, query.getVisibleAttributeNames());
+            visibleAttributes.put(PARENT, query.getVisibleAttributeNames());
         }
         else{
-            vissibleAttributes.put(PARENT, defaultVisibleAttributes);
+            visibleAttributes.put(PARENT, defaultVisibleAttributes);
         }
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
@@ -237,10 +236,10 @@ public class CypherQueryBuilder {
      */
     public void readVissibleAttributeJoins(String listTypeName, ExtendedQuery query){
          if(query.getVisibleAttributeNames() != null){
-             vissibleAttributes.put(LISTTYPE.concat(listTypeName), query.getVisibleAttributeNames());
+             visibleAttributes.put(LISTTYPE.concat(listTypeName), query.getVisibleAttributeNames());
          }
         else{
-            vissibleAttributes.put(LISTTYPE.concat(listTypeName), defaultVisibleAttributes);
+            visibleAttributes.put(LISTTYPE.concat(listTypeName), defaultVisibleAttributes);
         }
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
@@ -300,11 +299,11 @@ public class CypherQueryBuilder {
         List<String> vissibleAttibutesTitles = new ArrayList<String>();
 
         String[] split = _return.split(", ");
-        for(int g=0; g < split.length; g++){
-            for(String va: (List<String>)vissibleAttributes.get(split[g])){
+        for(int g = 0; g < split.length; g++){
+            for(String va: (List<String>)visibleAttributes.get(split[g]))
                 vissibleAttibutesTitles.add(va);
-            }
         }
+
         while(columnsIterator.hasNext()){//interates by row
             Map<String, Object> column = columnsIterator.next();
             List<String> extraColumns = new ArrayList<String>();
@@ -313,7 +312,7 @@ public class CypherQueryBuilder {
             rr = new ResultRecord(instanceNode.getId(), Util.getAttributeFromNode(instanceNode, Constants.PROPERTY_NAME) ,Util.getClassName(instanceNode));
             //iterates by column
             for(int lu=  0; lu <split.length; lu++){
-                for(String va: (List<String>)vissibleAttributes.get(split[lu])){
+                for(String va: (List<String>)visibleAttributes.get(split[lu])){
                     Node node = (Node)column.get(split[lu]);
                     if(va.equals(Constants.PROPERTY_ID)){
                         extraColumns.add(Long.toString(node.getId()));
@@ -330,7 +329,7 @@ public class CypherQueryBuilder {
         resltRcrdHeader.setExtraColumns(vissibleAttibutesTitles);
         resultList.add(resltRcrdHeader);
 
-        if(onlyResults.size()>0){
+        if(onlyResults.size() > 0){
             for(ResultRecord orr: onlyResults){
                 resultList.add(orr);
             }

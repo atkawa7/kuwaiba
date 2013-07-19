@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
@@ -664,10 +663,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
 
         return res;
-    }
-
-    public List<ResultRecord> executeQuery() throws MetadataObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public List<String> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) throws ObjectNotFoundException, MetadataObjectNotFoundException {
