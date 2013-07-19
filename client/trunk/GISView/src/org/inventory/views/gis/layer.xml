@@ -11,13 +11,13 @@
             </file>
         </folder>
     </folder>
-    <folder name="Menu">
+    <!--<folder name="Menu">
         <folder name="Tools">
             <file name="GISViewAction.shadow">
                 <attr name="originalFile" stringvalue="Actions/Window/org-inventory-views-gis-GISViewAction.instance"/>
             </file>
         </folder>
-    </folder>
+    </folder>-->
     <folder name="Windows2">
         <folder name="Components">
             <file name="GISViewTopComponent.settings" url="GISViewTopComponentSettings.xml"/>
@@ -28,7 +28,7 @@
             </folder>
         </folder>
     </folder>
-    <folder name="Toolbars">
+    <!--<folder name="Toolbars">
         <folder name="Tools">
             <file name="GISViewAction.shadow">
                 <attr name="originalFile" stringvalue="Actions/Window/org-inventory-views-gis-GISViewAction.instance"/>
@@ -39,5 +39,5 @@
         <file name="DS-G.shadow">
             <attr name="originalFile" stringvalue="Actions/Window/org-inventory-views-gis-GISViewAction.instance"/>
         </file>
-    </folder>
+    </folder>-->
 </filesystem>

@@ -46,7 +46,7 @@ iconBase = "org/inventory/customization/datamodelmanager/res/icon.png",
 persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.customization.datamodelmanager.DataModelManagerTopComponent")
-@ActionReference(path = "Menu/Tools" /*, position = 333 */)
+@ActionReference(path = "Menu/Tools/Administrative/Class Management" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_DataModelManagerAction",
 preferredID = "DataModelManagerTopComponent")

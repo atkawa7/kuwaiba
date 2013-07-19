@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010, 2011, 2012, 2013 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 /**
  * This class implements DragGestureListener and extends from TransferHandler in order to manage
  * the transfer operation between the JList and the BeanTreeView
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ClassMetadataTransferManager extends TransferHandler implements DragGestureListener, DragSourceListener{
 
@@ -47,6 +47,9 @@ public class ClassMetadataTransferManager extends TransferHandler implements Dra
             return;
         ClassMetadataTransferManager tf = (ClassMetadataTransferManager)list.getTransferHandler();
         Transferable t = tf.createTransferable(list);
+        //To avoid bogus drag and drop events trigger this behavior
+        if (t == null)
+            return;
         dge.startDrag(null, t);
     }
 
@@ -79,7 +82,7 @@ public class ClassMetadataTransferManager extends TransferHandler implements Dra
 
     /*
      * This is supposed to support multiple objects dragged... But it didn't work.
-     * To be reviewd later
+     * To be reviewed later
     private class MultipleItemsTransferable extends ArrayList<LocalClassMetadataLight>
             implements Transferable{
 

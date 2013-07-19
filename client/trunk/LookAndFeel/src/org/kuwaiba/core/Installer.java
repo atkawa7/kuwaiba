@@ -58,7 +58,7 @@ public class Installer extends ModuleInstall {
 //                NimRODLookAndFeel NimRODLF = new NimRODLookAndFeel();
 //                NimRODLookAndFeel.setCurrentTheme( nt);
 //                UIManager.setLookAndFeel( NimRODLF);
-//            }
+//            }           
         }catch(Exception ex){
             System.out.println("Error loading LaF: " + ex.getMessage());
         }
