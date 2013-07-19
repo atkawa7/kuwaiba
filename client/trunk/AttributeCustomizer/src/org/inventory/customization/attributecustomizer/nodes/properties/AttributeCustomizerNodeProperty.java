@@ -51,14 +51,14 @@ public class AttributeCustomizerNodeProperty extends PropertySupport.ReadWrite{
         LocalClassMetadataLight myClass = ((ClassMetadataNode)node.getParentNode()).getObject();
         boolean r = false;
 
-        if(getName().equals("displayName"))
-            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), t.toString(), null, null, false, node.getObject().isVisible(), node.getObject().getMapping(), false, false);
-        if(getName().equals("isVisible"))
-            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, null, false, Boolean.valueOf(t.toString()), node.getObject().getMapping(), false, false);
-        if(getName().equals("administrative"))
-            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, null, Boolean.valueOf(t.toString()), node.getObject().isVisible(), node.getObject().getMapping(), false, false);
-        if(getName().equals("description"))
-            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, t.toString(), false, node.getObject().isVisible(), node.getObject().getMapping(), false, false);
+//        if(getName().equals("displayName"))
+//            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), t.toString(), null, null, false, node.getObject().isVisible(), node.getObject().getMapping(), false, false);
+//        if(getName().equals("isVisible"))
+//            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, null, false, Boolean.valueOf(t.toString()), node.getObject().getMapping(), false, false);
+//        if(getName().equals("administrative"))
+//            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, null, Boolean.valueOf(t.toString()), node.getObject().isVisible(), node.getObject().getMapping(), false, false);
+//        if(getName().equals("description"))
+//            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, t.toString(), false, node.getObject().isVisible(), node.getObject().getMapping(), false, false);
 
         if(r){
             this.value = t;
