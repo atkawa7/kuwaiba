@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -67,28 +67,37 @@ public class AttributeInfo implements Serializable {
      */
     private int mapping;
     /**
-     *
+     * Indicates if an attribute is copy when the copy/paste is made
      */
     private boolean noCopy;
-    /**
-     *
-     */
-    private boolean noSerialize;
     /**
      * Cannot change or delete a locked attribute
      */
     private boolean locked;
 
     public AttributeInfo(String name, String displayName, String type, 
-                         boolean administrative, boolean visible,
-                         String description, int mapping) {
+            boolean administrative, boolean visible, String description) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
         this.administrative = administrative;
         this.visible = visible;
         this.description = description;
-        this.mapping = mapping;
+    }
+    
+    public AttributeInfo(String name, String displayName, String type, 
+                         boolean administrative, boolean visible, 
+                         boolean readOnly, boolean unique, String description, 
+                         boolean noCopy) {
+        this.name = name;
+        this.displayName = displayName;
+        this.type = type;
+        this.administrative = administrative;
+        this.visible = visible;
+        this.readOnly = readOnly;
+        this.unique = unique;
+        this.description = description;
+        this.noCopy = noCopy;
     }
 
     public boolean isAdministrative() {
@@ -177,14 +186,6 @@ public class AttributeInfo implements Serializable {
 
     public void setNoCopy(boolean noCopy) {
         this.noCopy = noCopy;
-    }
-
-    public boolean isNoSerialize() {
-        return noSerialize;
-    }
-
-    public void setNoSerialize(boolean noSerialize) {
-        this.noSerialize = noSerialize;
     }
 
     public boolean isLocked() {

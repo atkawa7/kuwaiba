@@ -370,7 +370,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             atm.setUnique(attributeDefinition.isUnique());
             atm.setVisible(attributeDefinition.isVisible());
             atm.setNoCopy(attributeDefinition.isNoCopy());
-            atm.setNoSerialize(attributeDefinition.isNoSerialize());
             
             mem.addAttribute(classId, atm);
 
@@ -423,8 +422,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                                                        atrbMtdt.getType(),
                                                        atrbMtdt.isAdministrative(),
                                                        atrbMtdt.isVisible(),
-                                                       atrbMtdt.getDescription(),
-                                                       atrbMtdt.getMapping());
+                                                       atrbMtdt.getDescription());
             return atrbInfo;
          } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
@@ -445,8 +443,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                                                        atrbMtdt.getType(),
                                                        atrbMtdt.isAdministrative(),
                                                        atrbMtdt.isVisible(),
-                                                       atrbMtdt.getDescription(),
-                                                       atrbMtdt.getMapping());
+                                                       atrbMtdt.getDescription());
             return atrbInfo;
 
          } catch (Exception ex) {
@@ -463,6 +460,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             AttributeMetadata attrMtdt = new AttributeMetadata();
 
+            attrMtdt.setId(newAttributeDefinition.getId());
             attrMtdt.setName(newAttributeDefinition.getName());
             attrMtdt.setDisplayName(newAttributeDefinition.getDisplayName());
             attrMtdt.setDescription(newAttributeDefinition.getDescription());
@@ -489,6 +487,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             AttributeMetadata attrMtdt = new AttributeMetadata();
 
+            attrMtdt.setId(newAttributeDefinition.getId());
             attrMtdt.setName(newAttributeDefinition.getName());
             attrMtdt.setDisplayName(newAttributeDefinition.getDisplayName());
             attrMtdt.setDescription(newAttributeDefinition.getDescription());
