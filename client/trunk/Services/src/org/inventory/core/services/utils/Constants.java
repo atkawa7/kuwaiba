@@ -34,6 +34,18 @@ public class Constants {
      */
     public static String IS_PHYSICAL_ENDPOINT_VALIDATOR = "physicalEndpoint";
     /**
+     * Name for the class inventory object
+     */
+    public static String CLASS_INVENTORYOBJECT = "InventoryObject";
+    /**
+     * Name for the class Generic Object List
+     */
+    public static String CLASS_GENERICOBJECTLIST = "GenericObjectList";
+    /**
+     * Defaul type for a new attribute
+     */
+    public static final String DEFAULT_ATTRIBUTE_TYPE = "String";
+    /**
      * Integer, Float, Long, Boolean, String or Text
      */
     public static final int MAPPING_PRIMITIVE = 1;
@@ -57,4 +69,10 @@ public class Constants {
      * Many to Many relationship (such as accountable persons for a given equipment)
      */
     public static final int MAPPING_MANYTOMANY = 6;
+    /**
+     * Possible attributes types
+     */
+    public static final String [] ATTRIBUTE_TYPES = new String[]{"String", "Integer", "Long", "Float", "Boolean", "Date"};
+    
+    
 }

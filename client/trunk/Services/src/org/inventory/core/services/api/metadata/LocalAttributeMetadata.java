@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,18 +21,44 @@ package org.inventory.core.services.api.metadata;
  */
 public interface LocalAttributeMetadata {
     public long getId();
+
     public void setId(long id);
+
     public String getDescription();
+
     public void setDescription(String description);
+
     public String getDisplayName();
+
     public void setDisplayName(String displayName);
+
     public boolean isVisible();
+
     public int getMapping();
+
     public void setMapping(int mapping);
+
     public void setVisible(boolean isVisible);
+
     public String getName();
+
     public void setName(String name);
+            
     public Class getType();
+
     public void setType(Class type);
+    
+    public boolean isAdministrative();
+    
+    public void setAdministrative(boolean administrative);
+    
+    public boolean isUnique();
+    
+    public void setUnique(boolean Unique);
+    
+    public boolean isNoCopy();
+    
+    public void setNoCopy( boolean noCopy);
+
     public String getListAttributeClassName();
 }
