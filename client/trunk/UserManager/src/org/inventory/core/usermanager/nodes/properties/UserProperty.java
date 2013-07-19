@@ -32,7 +32,7 @@ import org.openide.util.Lookup;
 
 /**
  * Represents a single user's property
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class UserProperty extends ReadWrite{
 

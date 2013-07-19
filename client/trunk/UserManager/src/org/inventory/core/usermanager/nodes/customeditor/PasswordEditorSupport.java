@@ -31,7 +31,7 @@ import org.openide.util.Lookup;
 
 /**
  * This is the editor used for changing the password
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class PasswordEditorSupport extends PropertyEditorSupport
     implements ExPropertyEditor, VetoableChangeListener{
