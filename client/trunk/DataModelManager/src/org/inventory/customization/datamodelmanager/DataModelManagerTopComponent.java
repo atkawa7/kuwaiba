@@ -16,19 +16,14 @@
 
 package org.inventory.customization.datamodelmanager;
 
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.ActionMap;
 import javax.swing.text.DefaultEditorKit;
+import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
-import org.inventory.customization.datamodelmanager.nodes.AttributeMetadataChildren;
-import org.inventory.customization.datamodelmanager.nodes.AttributeMetadataNode;
-import org.inventory.navigation.applicationnodes.metadataclassnodes.ClassMetadataChildren;
-import org.inventory.navigation.applicationnodes.metadataclassnodes.ClassMetadataNode;
-import org.inventory.navigation.applicationnodes.metadataclassnodes.RootClassMetadataNode;
-import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataChildren;
+import org.inventory.navigation.applicationnodes.pools.PoolRootNode;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -36,9 +31,10 @@ import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.explorer.view.OutlineView;
-import org.openide.explorer.view.TableView;
 import org.openide.explorer.view.TreeTableView;
+import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Node;
+import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
@@ -52,8 +48,8 @@ autostore = false)
 @TopComponent.Description(
     preferredID = "DataModelManagerTopComponent",
 iconBase = "org/inventory/customization/datamodelmanager/res/icon.png",
-persistenceType = TopComponent.PERSISTENCE_ALWAYS)
-@TopComponent.Registration(mode = "output", openAtStartup = false)
+persistenceType = TopComponent.PERSISTENCE_NEVER)
+@TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.customization.datamodelmanager.DataModelManagerTopComponent")
 @ActionReference(path = "Menu/Tools" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
@@ -68,7 +64,8 @@ public final class DataModelManagerTopComponent extends TopComponent
         implements ExplorerManager.Provider, RefreshableTopComponent{
 
     private final ExplorerManager em = new ExplorerManager();
-    private DataModelManagerServices dmms;
+    private DataModelManagerService dmms;
+    private NotificationUtil nu;
        
     public DataModelManagerTopComponent() {
         initComponents();
@@ -78,27 +75,16 @@ public final class DataModelManagerTopComponent extends TopComponent
     }
     
     public void initComponentsCustom(){
-        dmms = new DataModelManagerServices(this);
-        //Associates a lookup to this component
-        //use InstanceContent dynamic lookups (?), and ProxyLookup to expose many lookups
-        //within the same (?)
+        dmms = new DataModelManagerService(this);
         ActionMap map = getActionMap();
         map.put(DefaultEditorKit.copyAction, ExplorerUtils.actionCopy(em));
         map.put(DefaultEditorKit.cutAction, ExplorerUtils.actionCut(em));
         map.put(DefaultEditorKit.pasteAction, ExplorerUtils.actionPaste(em));
         
         associateLookup(ExplorerUtils.createLookup(em, map));
-                
         treeView = new BeanTreeView();
         treeView.setRootVisible(false);
-        treeView.setWheelScrollingEnabled(true);
-        pnlDataModel.add(treeView);
-        
-        outlineViewAttributeCustomizer = new OutlineView();
-        outlineViewAttributeCustomizer.setPropertyColumns("a","b");
-        
-        pnlTableEnclosing.add(outlineViewAttributeCustomizer,BorderLayout.CENTER);
-        
+        add(treeView);
     }
 
     /**
@@ -109,38 +95,11 @@ public final class DataModelManagerTopComponent extends TopComponent
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pnlDataModel = new javax.swing.JPanel();
-        pnlTableEnclosing = new javax.swing.JPanel();
-
-        pnlDataModel.setLayout(new java.awt.BorderLayout());
-
-        pnlTableEnclosing.setLayout(new java.awt.BorderLayout());
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(pnlDataModel, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlTableEnclosing, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlDataModel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(49, 49, 49)
-                .addComponent(pnlTableEnclosing, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
+        setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel pnlDataModel;
-    private javax.swing.JPanel pnlTableEnclosing;
     // End of variables declaration//GEN-END:variables
-    private OutlineView  outlineViewAttributeCustomizer;
     private BeanTreeView treeView;
     
     @Override
@@ -162,39 +121,30 @@ public final class DataModelManagerTopComponent extends TopComponent
         // TODO store your settings
     }
 
-    void readProperties(java.util.Properties p) {
+    void readProperties(java.util.Properties p) {   
         String version = p.getProperty("version");
         // TODO read your settings according to their version
     }
     
     public void setRoot(){
-        LocalClassMetadataLight[] rootClassesMetadata = dmms.getRootChildren();
-        if (rootClassesMetadata != null){
-            RootClassMetadataNode root = new RootClassMetadataNode(new ClassMetadataChildren(rootClassesMetadata));
-            em.setRootContext(root);
-        }
+        LocalClassMetadataLight[] allMeta = dmms.getRootChildren();
+        em.setRootContext(new AbstractNode(new ClassMetadataChildren(allMeta)));
     }
 
     @Override
     public ExplorerManager getExplorerManager() {
         return em;
     }
+    
 
     @Override
     public void refresh() {
-        if (em.getRootContext() instanceof RootObjectNode){
-            List<Node> toBeDeleted = new ArrayList<Node>();
-            for (Node child : em.getRootContext().getChildren().getNodes()){
-                if (!((ClassMetadataNode)child).refresh()){
-                    toBeDeleted.add(child);
-                }
-            }
-            for (Node deadNode : toBeDeleted){
-                ((ClassMetadataChildren)em.getRootContext().getChildren()).remove(new Node[]{deadNode});
-            }
-        }else{
-            setRoot();
-            revalidate();
-        }throw new UnsupportedOperationException("Not supported yet.");
+
+    }
+    
+    public NotificationUtil getNotifier(){
+         if (nu == null)
+             return Lookup.getDefault().lookup(NotificationUtil.class);
+         return nu;
     }
 }
