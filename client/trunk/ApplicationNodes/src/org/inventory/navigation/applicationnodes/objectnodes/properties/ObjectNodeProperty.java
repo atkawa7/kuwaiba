@@ -125,7 +125,6 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
         } catch (Exception ex) {
             return;
         } 
-
     }
 
     @Override
