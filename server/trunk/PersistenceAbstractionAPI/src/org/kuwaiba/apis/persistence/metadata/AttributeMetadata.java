@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.io.Serializable;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class AttributeMetadata implements Serializable{
-
     /**
      * int, Float, long, boolean, String or Text
      */
@@ -81,10 +80,6 @@ public class AttributeMetadata implements Serializable{
      */
     private int mapping;
     /**
-     * Marks the attribute as read only
-     */
-    private boolean readOnly;
-    /**
      * Marks the attribute as unique
      */
     private boolean unique;
@@ -93,13 +88,13 @@ public class AttributeMetadata implements Serializable{
      */
     private long creationDate;
     /**
-     * Attributtes that won't be copy in copy paste operation
+     * Indicates if an attribute could be copy in the copy/paste operation
      */
     private boolean noCopy;
     /**
-     *
+     * Marks the attribute as read only
      */
-    private boolean noSerialize;
+    private boolean readOnly;
     /**
      * Cannot change or delete a locked attribute
      */
@@ -201,14 +196,6 @@ public class AttributeMetadata implements Serializable{
     public void setNoCopy(boolean noCopy) {
         this.noCopy = noCopy;
     }
-
-    public boolean isNoSerialize() {
-        return noSerialize;
-    }
-
-    public void setNoSerialize(boolean noSerialize) {
-        this.noSerialize = noSerialize;
-    }
     
     public boolean isLocked() {
         return locked;
@@ -235,7 +222,6 @@ public class AttributeMetadata implements Serializable{
                 this.getType().equals(((AttributeMetadata)obj).getType()) &&
                 this.isAdministrative() == ((AttributeMetadata)obj).isAdministrative() &&
                 this.isNoCopy() == ((AttributeMetadata)obj).isNoCopy() &&
-                this.isNoSerialize() == ((AttributeMetadata)obj).isNoSerialize() &&
                 this.isReadOnly() == ((AttributeMetadata)obj).isReadOnly() &&
                 this.isUnique() == ((AttributeMetadata)obj).isUnique() &&
                 this.isVisible() == ((AttributeMetadata)obj).isVisible()
@@ -247,5 +233,12 @@ public class AttributeMetadata implements Serializable{
         else{
             return false;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
+        return hash;
     }
 }
