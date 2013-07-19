@@ -16,8 +16,6 @@
 
 package org.inventory.customization.datamodelmanager;
 
-import javax.swing.ActionMap;
-import javax.swing.text.DefaultEditorKit;
 import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -71,12 +69,7 @@ public final class DataModelManagerTopComponent extends TopComponent
     
     public void initComponentsCustom(){
         dmms = new DataModelManagerService(this);
-        ActionMap map = getActionMap();
-        map.put(DefaultEditorKit.copyAction, ExplorerUtils.actionCopy(em));
-        map.put(DefaultEditorKit.cutAction, ExplorerUtils.actionCut(em));
-        map.put(DefaultEditorKit.pasteAction, ExplorerUtils.actionPaste(em));
-        
-        associateLookup(ExplorerUtils.createLookup(em, map));
+        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
         treeView = new BeanTreeView();
         treeView.setRootVisible(false);
         add(treeView);

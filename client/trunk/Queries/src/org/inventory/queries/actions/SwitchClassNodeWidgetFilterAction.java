@@ -23,7 +23,7 @@ import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.LocalObjectListItem;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
-import org.inventory.queries.graphical.QueryEditorNodeWidget;
+import org.inventory.queries.graphical.elements.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.inventory.queries.graphical.elements.ClassNodeWidget;
 import org.inventory.queries.graphical.elements.filters.ListTypeFilter;

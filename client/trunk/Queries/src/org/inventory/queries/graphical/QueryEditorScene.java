@@ -46,6 +46,7 @@
 
 package org.inventory.queries.graphical;
 
+import org.inventory.queries.graphical.elements.QueryEditorNodeWidget;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

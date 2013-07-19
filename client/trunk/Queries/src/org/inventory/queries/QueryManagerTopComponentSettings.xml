@@ -7,6 +7,6 @@ and open the template in the editor.
 <settings version="1.0">
     <module name="org.inventory.queries" spec="1.0"/>
     <instanceof class="org.openide.windows.TopComponent"/>
-    <instanceof class="org.inventory.queries.QueryBuilderTopComponent"/>
-    <instance class="org.inventory.queries.QueryBuilderTopComponent" method="getDefault"/>
+    <instanceof class="org.inventory.queries.QueryManagerTopComponent"/>
+    <instance class="org.inventory.queries.QueryManagerTopComponent" method="getDefault"/>
 </settings>

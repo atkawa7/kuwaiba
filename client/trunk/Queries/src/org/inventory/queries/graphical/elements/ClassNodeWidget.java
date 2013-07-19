@@ -25,7 +25,6 @@ import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.queries.LocalTransientQuery;
 import org.inventory.core.services.utils.Constants;
-import org.inventory.queries.graphical.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.inventory.queries.graphical.elements.filters.SimpleCriteriaNodeWidget;
 import org.netbeans.api.visual.vmd.VMDColorScheme;

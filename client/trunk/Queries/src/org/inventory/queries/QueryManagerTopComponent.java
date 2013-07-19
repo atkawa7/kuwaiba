@@ -47,14 +47,14 @@ import org.openide.util.Lookup;
 /**
  * Top component which displays something.
  */
-@ConvertAsProperties(dtd = "-//org.inventory.queries//QueryBuilder//EN",
+@ConvertAsProperties(dtd = "-//org.inventory.queries//QueryManager//EN",
 autostore = false)
 public final class QueryManagerTopComponent extends TopComponent implements ActionListener{
 
     private static QueryManagerTopComponent instance;
     /** path to the icon used by the component and its open action */
     static final String ICON_PATH = "org/inventory/queries/res/icon2.png";
-    private static final String PREFERRED_ID = "QueryBuilderTopComponent";
+    private static final String PREFERRED_ID = "QueryManagerTopComponent";
     private QueryEditorScene queryScene;
     private NotificationUtil nu;
     private QueryManagerService qbs;
@@ -64,8 +64,8 @@ public final class QueryManagerTopComponent extends TopComponent implements Acti
     public QueryManagerTopComponent() {
         initComponents();
         initCustomComponents();
-        setName(NbBundle.getMessage(QueryManagerTopComponent.class, "CTL_QueryBuilderTopComponent"));
-        setToolTipText(NbBundle.getMessage(QueryManagerTopComponent.class, "HINT_QueryBuilderTopComponent"));
+        setName(NbBundle.getMessage(QueryManagerTopComponent.class, "CTL_QueryManagerTopComponent"));
+        setToolTipText(NbBundle.getMessage(QueryManagerTopComponent.class, "HINT_QueryManagerTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
     }
 

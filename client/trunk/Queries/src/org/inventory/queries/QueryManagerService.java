@@ -39,13 +39,13 @@ import org.inventory.core.services.api.queries.LocalQueryLight;
 import org.inventory.core.services.api.queries.LocalResultRecord;
 import org.inventory.core.services.api.queries.LocalTransientQuery;
 import org.inventory.core.services.utils.JComplexDialogPanel;
-import org.inventory.queries.graphical.QueryEditorNodeWidget;
+import org.inventory.queries.graphical.elements.QueryEditorNodeWidget;
 import org.inventory.queries.graphical.QueryEditorScene;
 import org.inventory.queries.graphical.elements.ClassNodeWidget;
 import org.inventory.queries.graphical.elements.filters.ListTypeFilter;
 
 /**
- * This class will replace the old QueryBuilderService in next releases
+ * This class will replace the old QueryManagerService in next releases
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class QueryManagerService implements ActionListener{
@@ -184,7 +184,14 @@ public class QueryManagerService implements ActionListener{
                             qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
                             return;
                         }
+                        
+                        if (los.isEmpty()){
+                            JOptionPane.showMessageDialog(null, "This class is not a possible child to another");
+                            return;
+                        }
+                        
                         JComboBox lstPossibleParentClasses = new JComboBox(los.toArray());
+                        lstPossibleParentClasses.setName("possibleParentClasses");
                         JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(
                                 new String[] {"Select the possible parent class"}, 
                                 new JComponent[] {lstPossibleParentClasses});
