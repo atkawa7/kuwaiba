@@ -1,5 +1,6 @@
 Manifest-Version: 1.0
 OpenIDE-Module: org.inventory.views.gis
+OpenIDE-Module-Install: org/inventory/views/gis/Installer.class
 OpenIDE-Module-Layer: org/inventory/views/gis/layer.xml
 OpenIDE-Module-Localizing-Bundle: org/inventory/views/gis/Bundle.properties
 OpenIDE-Module-Requires: org.openide.windows.WindowManager

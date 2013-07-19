@@ -24,7 +24,7 @@ import java.util.Random;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 import org.inventory.communications.CommunicationsStub;
@@ -185,9 +185,9 @@ public class QueryManagerService implements ActionListener{
                             return;
                         }
                         JComboBox lstPossibleParentClasses = new JComboBox(los.toArray());
-                        lstPossibleParentClasses.setName("possibleParentClasses");
-                        JLabel lblPossibleParentClasses = new JLabel("Select the possible parent class");
-                        JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(lblPossibleParentClasses, lstPossibleParentClasses);
+                        JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(
+                                new String[] {"Select the possible parent class"}, 
+                                new JComponent[] {lstPossibleParentClasses});
                         pnlMyDialog.setLayout(new BoxLayout(pnlMyDialog, BoxLayout.PAGE_AXIS));
                         insideCheck.setEnabled(false);
 

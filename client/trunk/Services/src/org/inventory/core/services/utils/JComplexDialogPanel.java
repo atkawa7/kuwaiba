@@ -16,9 +16,12 @@
 
 package org.inventory.core.services.utils;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.HashMap;
-import javax.swing.BoxLayout;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
@@ -30,14 +33,22 @@ public class JComplexDialogPanel extends JPanel{
 
     private HashMap<String, JComponent> components;
 
-    public JComplexDialogPanel(JComponent ... components) {
+    public JComplexDialogPanel(String[] labels, JComponent[] components) {
+        if (labels.length != components.length)
+            throw new RuntimeException("You must provide the same number of labels and components");
+        
         this.components = new HashMap<String, JComponent>();
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        int i = 0;
-        for (JComponent component : components){
-            this.components.put(component.getName() == null ? String.valueOf(i) : component.getName(), component);
-            add(component);
-            i++;
+        setLayout(new GridBagLayout());
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.insets = new Insets(2, 2, 2, 2);
+        for (int i = 0 ; i < components.length;  i++ ){
+            this.components.put(components[i].getName(), components[i]);
+            gc.gridy = i;
+            gc.gridx = 0;
+            add(new JLabel(labels[i]), gc);
+            gc.gridx = 1;
+            add(components[i], gc);
         }
     }
 

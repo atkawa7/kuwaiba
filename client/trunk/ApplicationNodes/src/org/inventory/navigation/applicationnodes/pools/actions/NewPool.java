@@ -18,7 +18,7 @@ package org.inventory.navigation.applicationnodes.pools.actions;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
@@ -53,9 +53,6 @@ public class NewPool extends AbstractAction{
     @Override
     public void actionPerformed(ActionEvent ev) {
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        JLabel lblName = new JLabel(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME")), 
-                lblDescription = new JLabel(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION")), 
-                lblType = new JLabel(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TYPE"));
 
         JTextField txtName = new JTextField(), txtDescription =  new JTextField();
         txtName.setName("txtName"); //NOI18N
@@ -65,7 +62,9 @@ public class NewPool extends AbstractAction{
         
         JComboBox lstType = new JComboBox(allMeta);
         lstType.setName("lstType"); //NOI18N
-        JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(lblName, txtName, lblDescription, txtDescription, lblType, lstType);
+        JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(
+                new String[]{java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"), java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"), java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TYPE")},
+                new JComponent []{txtName, txtDescription, lstType});
 
         if (JOptionPane.showConfirmDialog(null,
                 pnlMyDialog,
