@@ -176,7 +176,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         newAttrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, parentAttrNode.getProperty(Constants.PROPERTY_ADMINISTRATIVE));
                         newAttrNode.setProperty(Constants.PROPERTY_MAPPING, parentAttrNode.getProperty(Constants.PROPERTY_MAPPING));
                         newAttrNode.setProperty(Constants.PROPERTY_NO_COPY, parentAttrNode.getProperty(Constants.PROPERTY_NO_COPY));
-                        newAttrNode.setProperty(Constants.PROPERTY_NO_SERIALIZE, parentAttrNode.getProperty(Constants.PROPERTY_NO_SERIALIZE));
                         newAttrNode.setProperty(Constants.PROPERTY_UNIQUE, parentAttrNode.getProperty(Constants.PROPERTY_UNIQUE));
                         //newAttrNode.setProperty(PROPERTY_LOCKED, parentAttrNode.getProperty(PROPERTY_LOCKED));
                         classNode.createRelationshipTo(newAttrNode, RelTypes.HAS_ATTRIBUTE);
@@ -666,7 +665,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 attrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, attributeDefinition.isAdministrative());
                 attrNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
                 attrNode.setProperty(Constants.PROPERTY_NO_COPY, attributeDefinition.isNoCopy());
-                attrNode.setProperty(Constants.PROPERTY_NO_SERIALIZE, attributeDefinition.isNoSerialize());
                 attrNode.setProperty(Constants.PROPERTY_UNIQUE, attributeDefinition.isUnique());
 
                 classNode.createRelationshipTo(attrNode, RelTypes.HAS_ATTRIBUTE);
@@ -719,7 +717,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 attrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, attributeDefinition.isAdministrative());
                 attrNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
                 attrNode.setProperty(Constants.PROPERTY_NO_COPY, attributeDefinition.isNoCopy());
-                attrNode.setProperty(Constants.PROPERTY_NO_SERIALIZE, attributeDefinition.isNoSerialize());
                 attrNode.setProperty(Constants.PROPERTY_UNIQUE, attributeDefinition.isUnique());
                 
                 classNode.createRelationshipTo(attrNode, RelTypes.HAS_ATTRIBUTE);
@@ -847,7 +844,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         attrNode.setProperty(Constants.PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
                         attrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
                         attrNode.setProperty(Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
-                        attrNode.setProperty(Constants.PROPERTY_NO_SERIALIZE, newAttributeDefinition.isNoSerialize());
                         couldDelAtt = true;
                         tx.success();
                         Util.changeAttributeTypes(classNode, attrNode, oldAttributeName, oldAttributeType);
@@ -914,7 +910,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         attrNode.setProperty(Constants.PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
                         attrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
                         attrNode.setProperty(Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
-                        attrNode.setProperty(Constants.PROPERTY_NO_SERIALIZE, newAttributeDefinition.isNoSerialize());
                         tx.success();
                         couldDelAtt = true;
                         Util.changeAttributeTypes(classNode, attrNode, oldAttributeName, oldAttributeType);

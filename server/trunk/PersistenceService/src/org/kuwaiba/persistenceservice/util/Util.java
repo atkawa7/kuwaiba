@@ -462,7 +462,6 @@ public class Util {
             attribute.setVisible((Boolean)AttibuteNode.getProperty(Constants.PROPERTY_VISIBLE));
             attribute.setAdministrative((Boolean)AttibuteNode.getProperty(Constants.PROPERTY_ADMINISTRATIVE));
             attribute.setNoCopy((Boolean)AttibuteNode.getProperty(Constants.PROPERTY_NO_COPY));
-            attribute.setNoSerialize((Boolean)AttibuteNode.getProperty(Constants.PROPERTY_NO_SERIALIZE));
             attribute.setUnique((Boolean)AttibuteNode.getProperty(Constants.PROPERTY_UNIQUE));
             attribute.setId(AttibuteNode.getId());
 

@@ -213,7 +213,6 @@ public class XMLBackupReader {
 
                 attr.setReadOnly((applicationModifiers & LocalAttributeWrapper.MODIFIER_READONLY) != LocalAttributeWrapper.MODIFIER_READONLY);
                 attr.setNoCopy((applicationModifiers & LocalAttributeWrapper.MODIFIER_NOCOPY) != LocalAttributeWrapper.MODIFIER_NOCOPY);
-                attr.setNoSerialize((applicationModifiers & LocalAttributeWrapper.MODIFIER_NOSERIALIZE) != LocalAttributeWrapper.MODIFIER_NOSERIALIZE);
                 attr.setUnique(false);
                 attr.setVisible(true);
 
