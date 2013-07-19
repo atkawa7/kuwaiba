@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010, 2011, 2012, 2013 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -18,22 +18,17 @@ package org.inventory.customization.datamodelmanager;
 
 import javax.swing.ActionMap;
 import javax.swing.text.DefaultEditorKit;
-import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataChildren;
-import org.inventory.navigation.applicationnodes.pools.PoolRootNode;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
-import org.openide.explorer.view.OutlineView;
-import org.openide.explorer.view.TreeTableView;
 import org.openide.nodes.AbstractNode;
-import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
