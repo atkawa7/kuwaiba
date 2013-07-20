@@ -25,7 +25,6 @@ import org.inventory.core.services.utils.Constants;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
-import org.openide.util.actions.Presenter;
 
 /**
  *  Creates an attributemetadata
@@ -33,7 +32,7 @@ import org.openide.util.actions.Presenter;
  */
 public class CreateAttributeAction extends AbstractAction {
     
-    private Node node;
+    private ClassMetadataNode node;
     private CommunicationsStub com;
 
     public CreateAttributeAction() {
@@ -57,8 +56,10 @@ public class CreateAttributeAction extends AbstractAction {
                              Constants.DEFAULT_ATTRIBUTE_TYPE, false, false, true, false, false))
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR,
                     com.getError());
-        else
+        else{
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO,
                     java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
+            node.refresh();
+        }
     }
 }

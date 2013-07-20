@@ -115,15 +115,14 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
     
     public boolean refresh(){
         LocalClassMetadataLight classMetadataRefresh;
-        if(classMetadata instanceof LocalClassMetadataLight)
-            classMetadataRefresh = com.getLightMetaForClass(PROP_NAME, true);
-        else
-            classMetadataRefresh = com.getMetaForClass(PROP_NAME, true);
+        
+        classMetadataRefresh = com.getLightMetaForClass(PROP_NAME, true);
         
         if(classMetadataRefresh == null)
             return false;
         else
-            classMetadata = classMetadataRefresh; 
+            classMetadata = classMetadataRefresh;
+        
         if (this.sheet != null)
             setSheet(createSheet());
         

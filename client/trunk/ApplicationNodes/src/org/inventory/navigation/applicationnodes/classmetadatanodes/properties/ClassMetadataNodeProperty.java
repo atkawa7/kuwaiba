@@ -78,7 +78,7 @@ public class ClassMetadataNodeProperty extends ReadWrite implements PropertyChan
             }
             
             if(!CommunicationsStub.getInstance().setClassMetadataProperties(update.getOid(), update.getClassName(), update.getDisplayName(), update.getDescription(), null, null, update.isAbstract(), update.isInDesign(), update.isCountable())){
-                throw new Exception("[saveClass]: Error "+ CommunicationsStub.getInstance().getError());
+                throw new Exception(CommunicationsStub.getInstance().getError());
             }
 
             value = t;
@@ -104,9 +104,11 @@ public class ClassMetadataNodeProperty extends ReadWrite implements PropertyChan
             if (this.getName().equals("name")){
                 node.getClassMetadata().setClassName((String)getPropertyEditor().getValue());
                 node.setDisplayName((String)getPropertyEditor().getValue());
+                node.refresh();
             }
         } catch (Exception ex) {
-            return;
+            NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
+            nu.showSimplePopup("", NotificationUtil.ERROR, String.format("Error modifying class attribute %1s", ex.getMessage()));
         } 
     }
     
@@ -118,5 +120,4 @@ public class ClassMetadataNodeProperty extends ReadWrite implements PropertyChan
         }
         return true;
     }
-    
 }
