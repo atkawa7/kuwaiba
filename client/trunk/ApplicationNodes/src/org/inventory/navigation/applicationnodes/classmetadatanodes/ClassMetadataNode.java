@@ -32,7 +32,6 @@ import org.inventory.navigation.applicationnodes.classmetadatanodes.action.Creat
 import org.inventory.navigation.applicationnodes.classmetadatanodes.action.DeleteClassMetadataAction;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.action.RefreshClassMetadataAction;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.properties.ClassMetadataNodeProperty;
-import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
@@ -40,7 +39,7 @@ import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 
 /**
- * Represents a classmetadata as a node within the data model manager
+ * Represents a class metadata entity as a node within the data model manager
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class ClassMetadataNode extends AbstractNode implements PropertyChangeListener{
@@ -48,10 +47,8 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
     public static final String GENERIC_ICON_PATH="org/inventory/navigation/applicationnodes/res/metadataclassdefaulticon.png";
     protected LocalClassMetadataLight classMetadata;
     
-    protected static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
 
     protected CommunicationsStub com;
-
     protected CreateClassMetadataAction createAction;
     protected DeleteClassMetadataAction deleteAction;
     protected RefreshClassMetadataAction refreshAction;
@@ -70,7 +67,6 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
         this.classMetadata.addPropertyChangeListener(this);
         com = CommunicationsStub.getInstance();
         icon  = classMetadata.getSmallIcon();
-        explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
         createAction = new CreateClassMetadataAction(this);
         deleteAction = new DeleteClassMetadataAction(this);
         createAttributeAction = new CreateAttributeMetadataAction(this);
