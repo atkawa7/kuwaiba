@@ -60,7 +60,8 @@ public class ClassAttributeMetadataProperty extends PropertySupport.ReadWrite im
 
     @Override
     public boolean canWrite(){
-        if (getName().equals("name") || getName().equals("type"))
+        if (getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"))
+                || getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_DATE")))
             return false;
         else
             return true;

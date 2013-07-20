@@ -104,7 +104,6 @@ public class ClassMetadataNodeProperty extends ReadWrite implements PropertyChan
                 node.getClassMetadata().setClassName((String)getPropertyEditor().getValue());
                 node.setDisplayName((String)getPropertyEditor().getValue());
             }
-            
         } catch (Exception ex) {
             return;
         } 

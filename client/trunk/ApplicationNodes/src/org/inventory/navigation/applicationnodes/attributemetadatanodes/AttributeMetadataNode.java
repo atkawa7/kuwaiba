@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010, 2011, 2012, 2013 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License
@@ -85,11 +85,6 @@ public class AttributeMetadataNode extends AbstractNode{
                 Boolean.class, attribute.isVisible(), 
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_UNIQUE"), 
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_UNIQUE"), this, classId));
-        
-        generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_SERIALIZABLE"), 
-                Boolean.class, attribute.getType(), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_SERIALIZABLE"), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_SERIALIZABLE"), this, classId));
         
         generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_COPY"), 
                 Boolean.class, attribute.getType(), 

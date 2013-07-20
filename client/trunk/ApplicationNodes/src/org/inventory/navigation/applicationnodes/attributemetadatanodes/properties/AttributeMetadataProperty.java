@@ -1,12 +1,17 @@
 /*
- * Copyright (c) 2013 adrian.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>
  *
- * Contributors:
- *    adrian - initial API and implementation and/or initial documentation
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.inventory.navigation.applicationnodes.attributemetadatanodes.properties;
 
@@ -23,8 +28,8 @@ import org.openide.nodes.PropertySupport;
 import org.openide.util.Lookup;
 
 /**
- *
- * @author adrian
+ * Provides a property editor
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class AttributeMetadataProperty  extends PropertySupport.ReadWrite implements PropertyChangeListener {
 
@@ -68,6 +73,7 @@ public class AttributeMetadataProperty  extends PropertySupport.ReadWrite implem
         
         for(LocalAttributeMetadata attribute: lclm.getAttributes()){
             if(attribute.getId() == _node.getObject().getId()){
+                attribute.setId(_node.getObject().getId());
                 if (getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"))) 
                     attribute.setName(t.toString());
 
@@ -87,27 +93,23 @@ public class AttributeMetadataProperty  extends PropertySupport.ReadWrite implem
                     attribute.setAdministrative((Boolean) t);
 
                 if (getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_UNIQUE"))) 
-                    System.out.println("a");
-
-                if (getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_SERIALIZABLE"))) 
-                    System.out.println("a");
+                    attribute.setUnique((Boolean) t);
 
                 if (getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_COPY"))) 
-                    System.out.println("a");
-                
-                CommunicationsStub.getInstance().setAttributePropertyValue(classId, attribute.getId(), 
-                        attribute.getName(), attribute.getDisplayName(), attribute.getType().toString(), 
-                        attribute.getDescription(), attribute.isAdministrative(), attribute.isVisible(), attribute.isNoCopy(), attribute.isUnique());
+                    attribute.setNoCopy((Boolean) t);
+
+                try{
+                    CommunicationsStub.getInstance().setAttributePropertyValue(classId, attribute.getId(), 
+                            attribute.getName(), attribute.getDisplayName(), attribute.getType().toString(), 
+                            attribute.getDescription(), attribute.isAdministrative(), attribute.isVisible(), attribute.isReadOnly(), attribute.isNoCopy(), attribute.isUnique());
+            
+                    this._value = t;
+                }catch(Exception e){
+                    nu.showSimplePopup("Attribute Property Update", NotificationUtil.ERROR, com.getError());                    
+                }
+                break;
             }
         }
-            
-        if(true){
-            this._value = t;
-            //Refresh the cache
-            //com.getMetaForClass(myClass.getClassName(), true);
-            nu.showSimplePopup("Attribute Property Update", NotificationUtil.INFO, "Attribute modified successfully");
-        }else
-            nu.showSimplePopup("Attribute Property Update", NotificationUtil.ERROR, com.getError());
     }
 
     @Override
@@ -128,6 +130,9 @@ public class AttributeMetadataProperty  extends PropertySupport.ReadWrite implem
     
     @Override
     public boolean canWrite(){
-        return true;
+        if(_name.equals("name") && _value.equals("name") || _name.equals("creationDate"))
+            return false;
+        else
+            return true;
     }
 }
