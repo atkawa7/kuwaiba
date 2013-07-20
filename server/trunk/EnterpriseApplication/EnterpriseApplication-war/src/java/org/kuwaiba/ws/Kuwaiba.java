@@ -1625,6 +1625,7 @@ public class Kuwaiba {
      * @param visible is the attribute visible?
      * @param readOnly is the attribute read only?
      * @param unique should this attribute be unique?
+     * @param noCopy can this attribute be copy in copy/paste operation?
      * @param sessionId session token
      * @throws Exception
      */
@@ -1639,13 +1640,14 @@ public class Kuwaiba {
         boolean administrative, @WebParam(name = "visible")
         boolean visible, @WebParam(name = "readOnly")
         boolean readOnly, @WebParam(name = "unique")
-        boolean unique, @WebParam(name = "sessionId")
+        boolean unique, @WebParam(name = "noCopy")
+        boolean noCopy, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
 
         try {
             wsBean.validateCall("setClassAttributeProperties", getIPAddress(), sessionId);
-            AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
-                                            visible, description);
+            AttributeInfo ai = new AttributeInfo(attributeId, name, displayName, 
+                    type, administrative, visible, readOnly, unique, description, noCopy);
 
             wsBean.changeAttributeDefinition(className, ai);
 
@@ -1671,6 +1673,7 @@ public class Kuwaiba {
      * @param visible is the attribute visible?
      * @param readOnly is the attribute read only?
      * @param unique should this attribute be unique?
+     * @param noCopy can this attribute be copy in copy/paste operation?
      * @param sessionId session token
      * @throws Exception
      */
@@ -1684,14 +1687,15 @@ public class Kuwaiba {
         String description, @WebParam(name = "administrative")
         boolean administrative, @WebParam(name = "visible")
         boolean visible, @WebParam(name = "readOnly")
-        boolean readOnly, @WebParam(name = "unique")
+        boolean readOnly, @WebParam(name = "noCopy")
+        boolean noCopy, @WebParam(name = "unique")
         boolean unique, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
 
         try {
             wsBean.validateCall("setClassAttributePropertiesById", getIPAddress(), sessionId);
-            AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative,
-                                            visible, description);
+            AttributeInfo ai = new AttributeInfo(attributeId, name, displayName, 
+                    type, administrative, visible, readOnly, unique, description, noCopy);
 
             wsBean.changeAttributeDefinition(classid, ai);
 
