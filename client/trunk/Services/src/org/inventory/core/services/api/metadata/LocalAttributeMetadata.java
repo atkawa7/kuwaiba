@@ -56,6 +56,10 @@ public interface LocalAttributeMetadata {
     
     public void setUnique(boolean Unique);
     
+    public void setReadOnly(boolean readOnly);
+    
+    public boolean isReadOnly();
+    
     public boolean isNoCopy();
     
     public void setNoCopy( boolean noCopy);
