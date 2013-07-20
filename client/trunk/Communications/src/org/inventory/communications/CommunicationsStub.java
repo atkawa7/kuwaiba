@@ -916,16 +916,14 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean setAttributePropertyValue(long classId, long attributeId, String name, String displayName,
-            String type, String description, boolean administrative, boolean visible, boolean readOnly, boolean unique)  {
+    public void setAttributePropertyValue(long classId, long attributeId, String name, String displayName,
+            String type, String description, boolean administrative, boolean visible, boolean readOnly, boolean noCopy, boolean unique)  {
         try{
             port.setClassAttributePropertiesById(classId, attributeId, name, displayName, type, description,
-                    administrative, visible, readOnly, unique, this.session.getSessionId());
+                    administrative, visible, readOnly, unique, noCopy, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
-            return false;
         }
-        return true;
     }
         
     public boolean createClassMetadata(String className, String displayName, String description, String parentClassName, boolean custom, boolean countable, int color, boolean _abstract, boolean inDesign){

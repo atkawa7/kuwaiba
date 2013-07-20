@@ -39,6 +39,7 @@ public class LocalAttributeMetadataImpl
     private boolean administrative;
     private boolean noCopy;
     private boolean unique;
+    private boolean readOnly;
     private String listAttributeClassName = null;
 
     public LocalAttributeMetadataImpl() {
@@ -167,6 +168,16 @@ public class LocalAttributeMetadataImpl
         return unique;
     }
 
+    @Override
+    public void setReadOnly(boolean readOnly){
+        this.readOnly = readOnly;
+    }
+    
+    @Override
+    public boolean isReadOnly(){
+        return readOnly;
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
