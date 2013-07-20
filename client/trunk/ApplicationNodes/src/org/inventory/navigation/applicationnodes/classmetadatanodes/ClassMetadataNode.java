@@ -25,11 +25,11 @@ import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.AttributeMetadataNode;
-import org.inventory.navigation.applicationnodes.attributemetadatanodes.action.CreateAttributeMetadataAction;
-import org.inventory.navigation.applicationnodes.attributemetadatanodes.action.DeleteAttributeMetadataAction;
+import org.inventory.navigation.applicationnodes.classmetadatanodes.action.CreateAttributeAction;
+import org.inventory.navigation.applicationnodes.classmetadatanodes.action.DeleteAttributeAction;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.properties.ClassAttributeMetadataProperty;
-import org.inventory.navigation.applicationnodes.classmetadatanodes.action.CreateClassMetadataAction;
-import org.inventory.navigation.applicationnodes.classmetadatanodes.action.DeleteClassMetadataAction;
+import org.inventory.navigation.applicationnodes.classmetadatanodes.action.CreateClassAction;
+import org.inventory.navigation.applicationnodes.classmetadatanodes.action.DeleteClassAction;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.action.RefreshClassMetadataAction;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.properties.ClassMetadataNodeProperty;
 import org.openide.nodes.AbstractNode;
@@ -49,11 +49,11 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
     
 
     protected CommunicationsStub com;
-    protected CreateClassMetadataAction createAction;
-    protected DeleteClassMetadataAction deleteAction;
+    protected CreateClassAction createAction;
+    protected DeleteClassAction deleteAction;
     protected RefreshClassMetadataAction refreshAction;
-    protected CreateAttributeMetadataAction createAttributeAction;
-    protected DeleteAttributeMetadataAction deleteAttributeAction;
+    protected CreateAttributeAction createAttributeAction;
+    protected DeleteAttributeAction deleteAttributeAction;
     
     protected Sheet sheet;
     protected Image icon;
@@ -67,10 +67,10 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
         this.classMetadata.addPropertyChangeListener(this);
         com = CommunicationsStub.getInstance();
         icon  = classMetadata.getSmallIcon();
-        createAction = new CreateClassMetadataAction(this);
-        deleteAction = new DeleteClassMetadataAction(this);
-        createAttributeAction = new CreateAttributeMetadataAction(this);
-        deleteAttributeAction = new DeleteAttributeMetadataAction(this);
+        createAction = new CreateClassAction(this);
+        deleteAction = new DeleteClassAction(this);
+        createAttributeAction = new CreateAttributeAction(this);
+        deleteAttributeAction = new DeleteAttributeAction(this);
     }
     
     public LocalClassMetadataLight getClassMetadata() {

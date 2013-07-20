@@ -23,6 +23,7 @@ import java.util.Date;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.caching.Cache;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
 import org.openide.nodes.PropertySupport.ReadWrite;
 import org.openide.util.Lookup;
@@ -53,9 +54,8 @@ public class ClassMetadataNodeProperty extends ReadWrite implements PropertyChan
     @Override
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         try{
-            LocalClassMetadata update = Lookup.getDefault().lookup(LocalClassMetadata.class);
             
-            update = CommunicationsStub.getInstance().getMetaForClass(node.getClassMetadata().getOid(), true);
+            LocalClassMetadata update = CommunicationsStub.getInstance().getMetaForClass(node.getClassMetadata().getOid(), true);
             String[] attributes = new String[] {this.getName()};
             Object[] values = new Object[]{t};
             if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"))){
@@ -80,8 +80,9 @@ public class ClassMetadataNodeProperty extends ReadWrite implements PropertyChan
             if(!CommunicationsStub.getInstance().setClassMetadataProperties(update.getOid(), update.getClassName(), update.getDisplayName(), update.getDescription(), null, null, update.isAbstract(), update.isInDesign(), update.isCountable())){
                 throw new Exception("[saveClass]: Error "+ CommunicationsStub.getInstance().getError());
             }
-            else
-                value = t;
+
+            value = t;
+            Cache.getInstace().removeMeta(node.getName());
             
         }catch(Exception e){
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);

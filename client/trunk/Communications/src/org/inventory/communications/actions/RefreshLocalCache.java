@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 zim.
+ *  Copyright 2010 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -18,14 +18,15 @@ package org.inventory.communications.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
-import org.inventory.objectcache.Cache;
+import org.inventory.core.services.caching.Cache;
 
 /**
  * Refreshes the local cache
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public final class RefreshLocalCache implements ActionListener {
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         Cache.getInstace().resetLists();
         Cache.getInstace().resetLightMetadataIndex();

@@ -20,25 +20,26 @@ import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
 import org.openide.nodes.Node;
-import org.openide.util.actions.Presenter.Popup;
+import org.openide.util.Lookup;
 
 /**
  * Action to delete a class metadata
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class DeleteClassMetadataAction extends AbstractAction implements Popup{
+public class DeleteClassAction extends AbstractAction {
 
     private Node node;
     private CommunicationsStub com;
 
-    public DeleteClassMetadataAction() {
+    public DeleteClassAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_CLASS"));
         com = CommunicationsStub.getInstance();
     }
 
-    public DeleteClassMetadataAction(ClassMetadataNode node) {
+    public DeleteClassAction(ClassMetadataNode node) {
         this();
         this.node = node;
     }
@@ -46,17 +47,13 @@ public class DeleteClassMetadataAction extends AbstractAction implements Popup{
     @Override
     public void actionPerformed(ActionEvent ae) {
         LocalClassMetadata classMetaData = com.getMetaForClass(((JMenuItem)ae.getSource()).getName(), false);
+        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         if(classMetaData.isCustom()){
-            com.deleteClassMetadata(classMetaData.getOid());
-        }
+            if (com.deleteClassMetadata(classMetaData.getOid()))
+                nu.showSimplePopup("Operation Result", NotificationUtil.INFO, "The class was deleted successfully");
+            else
+                nu.showSimplePopup("Operation Result", NotificationUtil.ERROR, com.getError());
+        }else
+            nu.showSimplePopup("Operation Result", NotificationUtil.ERROR, "Core classes can not be deleted");
     }
-
-    @Override
-    public JMenuItem getPopupPresenter() {
-        JMenuItem smiChildren = new JMenuItem(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_CLASS"));
-        smiChildren.setName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_CLASS"));
-        smiChildren.addActionListener(this);
-        return smiChildren;
-    }
-    
 }

@@ -17,7 +17,7 @@ package org.inventory.navigation.applicationnodes.classmetadatanodes;
 
 import javax.swing.Action;
 import org.inventory.communications.LocalStuffFactory;
-import org.inventory.navigation.applicationnodes.classmetadatanodes.action.CreateClassMetadataAction;
+import org.inventory.navigation.applicationnodes.classmetadatanodes.action.CreateClassAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.lookup.Lookups;
@@ -37,7 +37,7 @@ public class RootClassMetadataNode extends AbstractNode{
     
     @Override
     public Action[] getActions(boolean context){
-        CreateClassMetadataAction createAction = new CreateClassMetadataAction(this);
+        CreateClassAction createAction = new CreateClassAction(this);
         return new Action[]{createAction};
     }
 }

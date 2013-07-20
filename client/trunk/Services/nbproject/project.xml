@@ -33,6 +33,7 @@
                 <package>org.inventory.core.services.api.session</package>
                 <package>org.inventory.core.services.api.visual</package>
                 <package>org.inventory.core.services.api.xml</package>
+                <package>org.inventory.core.services.caching</package>
                 <package>org.inventory.core.services.exceptions</package>
                 <package>org.inventory.core.services.factories</package>
                 <package>org.inventory.core.services.utils</package>

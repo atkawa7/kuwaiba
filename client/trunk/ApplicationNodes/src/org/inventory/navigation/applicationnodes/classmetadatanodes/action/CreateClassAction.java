@@ -21,32 +21,32 @@ import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.caching.Cache;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.RootClassMetadataNode;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
-import org.openide.util.actions.Presenter.Popup;
 
 /**
  * Action that requests a metadata class creation
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class CreateClassMetadataAction extends AbstractAction implements Popup{
+public class CreateClassAction extends AbstractAction {
     
     private Node node;
     private CommunicationsStub com;
 
-    public CreateClassMetadataAction() {
+    public CreateClassAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
         com = CommunicationsStub.getInstance();
     }
 
-    public CreateClassMetadataAction(ClassMetadataNode node) {
+    public CreateClassAction(ClassMetadataNode node) {
         this();
         this.node = node;
     }
 
-    public CreateClassMetadataAction(RootClassMetadataNode node) {
+    public CreateClassAction(RootClassMetadataNode node) {
         this();
         this.node = node;
     }
@@ -57,22 +57,11 @@ public class CreateClassMetadataAction extends AbstractAction implements Popup{
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         boolean createClassMetadata = com.createClassMetadata(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_CLASS")+random.nextInt(10000), 
                                                               "","", ((JMenuItem)ae.getSource()).getName(), true, false, 0, false, true);
-        if (!createClassMetadata){
+        if (!createClassMetadata)
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR,
                     com.getError());
-        }
-        else{
+        else
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO,
                     java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
-        }
-    }
-
-    @Override
-    public JMenuItem getPopupPresenter() {
-        JMenuItem smiChildren = new JMenuItem(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_CLASS"));
-        smiChildren.setName(((ClassMetadataNode)node).getName());
-        smiChildren.addActionListener(this);
-                
-        return smiChildren;
     }
  }
