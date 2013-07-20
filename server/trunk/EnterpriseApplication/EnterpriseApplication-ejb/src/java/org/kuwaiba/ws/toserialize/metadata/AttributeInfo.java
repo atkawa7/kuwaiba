@@ -84,6 +84,21 @@ public class AttributeInfo implements Serializable {
         this.visible = visible;
         this.description = description;
     }
+
+    public AttributeInfo(long id, String name, String displayName, String type, 
+            boolean administrative, boolean visible, boolean readOnly, 
+            boolean unique, String description, boolean noCopy) {
+        this.id = id;
+        this.name = name;
+        this.displayName = displayName;
+        this.type = type;
+        this.administrative = administrative;
+        this.visible = visible;
+        this.readOnly = readOnly;
+        this.unique = unique;
+        this.description = description;
+        this.noCopy = noCopy;
+    }
     
     public AttributeInfo(String name, String displayName, String type, 
                          boolean administrative, boolean visible, 
