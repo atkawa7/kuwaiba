@@ -125,19 +125,7 @@ public class AttributeEditorSupport extends PropertyEditorSupport
 
     @Override
     public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
-         if(evt.getNewValue().equals(PropertyEnv.STATE_VALID)){
-            try {
-                    Object value = property.getValue();
-                    System.out.println(value.toString());
-                    Object clientProperty = psv.getClientProperty(value);
-                    System.out.println(clientProperty.toString());
-                } catch (IllegalAccessException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (IllegalArgumentException ex) {
-                    Exceptions.printStackTrace(ex);
-                } catch (InvocationTargetException ex) {
-                }
-        }
+    
     }
     
 }

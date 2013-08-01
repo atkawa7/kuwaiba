@@ -130,8 +130,14 @@ public class AttributeMetadataProperty  extends PropertySupport.ReadWrite implem
     
     @Override
     public boolean canWrite(){
-        if(_name.equals("name") && _value.equals("name") || _name.equals("creationDate"))
-            return false;
+        if(_name.equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"))
+                && _value.equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"))
+                || _name.equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_DATE"))){
+            if(_name.equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TYPE")))
+                return false;
+            else 
+                return true;
+        }
         else
             return true;
     }

@@ -15,9 +15,11 @@
  */
 package org.inventory.navigation.applicationnodes.classmetadatanodes.properties;
 
+import java.awt.Image;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import org.inventory.communications.CommunicationsStub;
@@ -29,13 +31,13 @@ import org.openide.nodes.PropertySupport.ReadWrite;
 import org.openide.util.Lookup;
 
 /**
- *
+ * ClassMetadata properties
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class ClassMetadataNodeProperty extends ReadWrite implements PropertyChangeListener{
 
-    Object value;
-    ClassMetadataNode node;
+    private Object value;
+    private ClassMetadataNode node;
 
     public ClassMetadataNodeProperty(String _name, Class _valueType, Object _value,
             String _displayName,String _toolTextTip, ClassMetadataNode _node){
@@ -46,6 +48,10 @@ public class ClassMetadataNodeProperty extends ReadWrite implements PropertyChan
         this.getPropertyEditor().addPropertyChangeListener(this);
     }
 
+    public long getId(){
+        return node.getClassMetadata().getOid();
+    }
+    
     @Override
     public Object getValue() throws IllegalAccessException, InvocationTargetException {
         return value;
@@ -58,28 +64,37 @@ public class ClassMetadataNodeProperty extends ReadWrite implements PropertyChan
             LocalClassMetadata update = CommunicationsStub.getInstance().getMetaForClass(node.getClassMetadata().getOid(), true);
             String[] attributes = new String[] {this.getName()};
             Object[] values = new Object[]{t};
-            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"))){
+
+            byte[] smallIcon = null;
+            byte[] icon = null;
+            String x;
+            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME")))
                 update.setClassName((String)values[0]);
-            }
-            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME"))){
-                update.setDisplayName((String)values[0]);
-            }
-            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"))){
-                update.setDescription((String)values[0]);
-            }
-            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ABSTRACT"))){
-                update.setAbstract((Boolean)values[0]);
-            }
-            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_INDESIGN"))){
-                update.setInDesign((Boolean)values[0]);
-            }
-            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_COUNTABLE"))){
-                update.setCountable((Boolean)values[0]);
-            }
             
-            if(!CommunicationsStub.getInstance().setClassMetadataProperties(update.getOid(), update.getClassName(), update.getDisplayName(), update.getDescription(), null, null, update.isAbstract(), update.isInDesign(), update.isCountable())){
+            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME")))
+                update.setDisplayName((String)values[0]);
+            
+            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION")))
+                update.setDescription((String)values[0]);
+            
+            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ABSTRACT")))
+                update.setAbstract((Boolean)values[0]);
+            
+            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_INDESIGN")))
+                update.setInDesign((Boolean)values[0]);
+            
+            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_COUNTABLE")))
+                update.setCountable((Boolean)values[0]);
+            
+    //            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SMALL_ICON")))
+    //                x = (String)values[0];
+    //            
+    //            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ICON")))
+    //                x = (String)values[0];
+            
+            if(!CommunicationsStub.getInstance().setClassMetadataProperties(update.getOid(), update.getClassName(), update.getDisplayName(), update.getDescription(), null, null, update.isAbstract(), update.isInDesign(), update.isCountable()))
                 throw new Exception(CommunicationsStub.getInstance().getError());
-            }
+           
 
             value = t;
             Cache.getInstace().removeMeta(node.getName());
@@ -92,7 +107,12 @@ public class ClassMetadataNodeProperty extends ReadWrite implements PropertyChan
 
     @Override
     public PropertyEditor getPropertyEditor(){
-        return super.getPropertyEditor();
+        if(getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ICON")))
+            return new IconPropertyEditor(node.getClassMetadata().getOid(), false);
+        if(getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SMALL_ICON")))
+            return new IconPropertyEditor(node.getClassMetadata().getOid(), true);
+        else
+            return super.getPropertyEditor();
     }
     
     @Override
@@ -120,4 +140,16 @@ public class ClassMetadataNodeProperty extends ReadWrite implements PropertyChan
         }
         return true;
     }
+    
+    public String getExtension(File f) {
+        String ext = null;
+        String s = f.getName();
+        int i = s.lastIndexOf('.');
+
+        if (i > 0 &&  i < s.length() - 1) {
+            ext = s.substring(i+1).toLowerCase();
+        }
+        return ext;
+    }
+    
 }

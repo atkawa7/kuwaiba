@@ -69,6 +69,17 @@ public class ClassAttributeMetadataProperty extends PropertySupport.ReadWrite im
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            if (this.getValue() == null) 
+                return;
+
+            if (this.getName().equals("name")){
+                node.getObject().setName((String)getPropertyEditor().getValue());
+                node.setDisplayName((String)getPropertyEditor().getValue());
+            }
+            
+        } catch (Exception ex) {
+            return;
+        }
     }
 }

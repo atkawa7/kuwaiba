@@ -15,6 +15,8 @@
  */
 package org.inventory.navigation.applicationnodes.attributemetadatanodes;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.properties.AttributeMetadataProperty;
 import org.openide.nodes.AbstractNode;
@@ -26,7 +28,7 @@ import org.openide.util.lookup.Lookups;
  * Represents an attribute as a node within the data model manager
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class AttributeMetadataNode extends AbstractNode{
+public class AttributeMetadataNode extends AbstractNode implements PropertyChangeListener{
     
     static final String ICON_PATH = "org/inventory/customization/attributecustomizer/res/flag-blue.png";
     private LocalAttributeMetadata attribute;
@@ -44,9 +46,9 @@ public class AttributeMetadataNode extends AbstractNode{
     public String getDisplayName(){
        return this.attribute.getName();
     }
-
-   @Override
-   protected Sheet createSheet() {
+    
+    @Override
+    protected Sheet createSheet() {
        sheet = Sheet.createDefault();
         
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet();
@@ -77,17 +79,17 @@ public class AttributeMetadataNode extends AbstractNode{
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_VISIBLE"), this, classId));
         
         generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ADMINISTRATIVE"), 
-                Boolean.class, attribute.isVisible(), 
+                Boolean.class, attribute.isAdministrative(), 
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ADMINISTRATIVE"), 
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ADMINISTRATIVE"), this, classId));
         
         generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_UNIQUE"), 
-                Boolean.class, attribute.isVisible(), 
+                Boolean.class, attribute.isUnique(), 
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_UNIQUE"), 
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_UNIQUE"), this, classId));
         
         generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_COPY"), 
-                Boolean.class, attribute.getType(), 
+                Boolean.class, attribute.isNoCopy(), 
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_COPY"), 
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_COPY"), this, classId));
         
@@ -99,11 +101,33 @@ public class AttributeMetadataNode extends AbstractNode{
         sheet.put(generalPropertySet);
         
         return sheet;  
-   }
+    }
+
+    @Override
+    public void setName(String s) {
+        super.setName(s);
+        refresh();
+    }
    
+    public boolean refresh(){
+        LocalAttributeMetadata attributeMetadataRefresh = null;
+        
+//        if(attributeMetadataRefresh == null)
+//            return false;
+        
+        if (this.sheet != null)
+            setSheet(createSheet());
+        
+        return true;
+    }
    
-   public LocalAttributeMetadata getObject(){
-       return attribute;
-   }
+    public LocalAttributeMetadata getObject(){
+        return attribute;
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }
