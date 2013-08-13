@@ -18,13 +18,9 @@ package org.inventory.navigation.applicationnodes.classmetadatanodes.action;
 import java.awt.event.ActionEvent;
 import java.util.Random;
 import javax.swing.AbstractAction;
-import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.services.caching.Cache;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
-import org.inventory.navigation.applicationnodes.classmetadatanodes.RootClassMetadataNode;
-import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
 /**
@@ -33,11 +29,11 @@ import org.openide.util.Lookup;
  */
 public class CreateClassAction extends AbstractAction {
     
-    private Node node;
+    private ClassMetadataNode node;
     private CommunicationsStub com;
 
     public CreateClassAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_SUBCLASS"));
         com = CommunicationsStub.getInstance();
     }
 
@@ -45,18 +41,13 @@ public class CreateClassAction extends AbstractAction {
         this();
         this.node = node;
     }
-
-    public CreateClassAction(RootClassMetadataNode node) {
-        this();
-        this.node = node;
-    }
-    
+   
     @Override
     public void actionPerformed(ActionEvent ae) {
         Random random = new Random();
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         boolean createClassMetadata = com.createClassMetadata(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_CLASS")+random.nextInt(10000), 
-                                                              "","", ((JMenuItem)ae.getSource()).getName(), true, false, 0, false, true);
+                                                              "","", node.getName(), true, false, 0, false, true);
         if (!createClassMetadata)
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR,
                     com.getError());

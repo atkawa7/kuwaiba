@@ -18,12 +18,10 @@ package org.inventory.navigation.applicationnodes.classmetadatanodes.action;
 import java.awt.event.ActionEvent;
 import java.util.Random;
 import javax.swing.AbstractAction;
-import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.Constants;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
-import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
 /**
@@ -49,7 +47,7 @@ public class CreateAttributeAction extends AbstractAction {
     public void actionPerformed(ActionEvent ae) {
         Random random = new Random();
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        if(!com.addAttribute(((JMenuItem)ae.getSource()).getName(), 
+        if(!com.addAttribute(node.getName(), 
                              java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_ATTRIBUTE")+random.nextInt(1000), 
                              java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME"), 
                              java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"),
