@@ -1,5 +1,5 @@
 /**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,44 +38,40 @@ public class CypherQueryBuilder {
     public static final String PARENT = "parent"; //NOI18N
     public static final String LISTTYPE = "listType_"; //NOI18N
     /**
-     *
+     * nodes selected for query
      */
     public Map<String, Node> classNodes = new HashMap<String, Node>();
     /**
-     *
+     * attributes selected
      */
     public Map<String, List<String>> visibleAttributes = new HashMap<String, List<String>>();
     /**
-     *
+     * if has not selected attribute, name is taken as default visible attribute
      */
     private List defaultVisibleAttributes = new ArrayList<String>();
     /**
-     *
-     */
-    private CypherParser parser = new CypherParser();
-    /**
-     *
+     * match statements
      */
     private String match = "";
     /**
-     *
+     * where statements
      */
     private String where = "";
     /**
-     *
+     * return statements
      */
     private String _return = "";
     /**
-     *
+     * Cypher parser to execute the queries
      */
-    CypherParser cp = new CypherParser();
+    private CypherParser cp;
     /**
-     *
+     * result list
      */
     public List<ResultRecord> resultList = new ArrayList<ResultRecord>();
 
     /**
-     *
+     * read the parent and his joins
      * @param listTypeName
      * @param listTypeName2
      * @param query
@@ -90,7 +86,7 @@ public class CypherQueryBuilder {
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
                     if(query.getAttributeValues().get(i) != null){
-                        where = where.concat(parser.createParentWhere(query.getConditions().get(i), listTypeName,
+                        where = where.concat(cp.createParentWhere(query.getConditions().get(i), listTypeName,
                                                             query.getAttributeNames().get(i),
                                                             query.getAttributeValues().get(i),
                                                             Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
@@ -104,7 +100,7 @@ public class CypherQueryBuilder {
     }
 
     /**
-     *
+     * read the sub queries (joins)
      * @param listTypeName
      * @param listTypeName2
      * @param query
@@ -119,7 +115,7 @@ public class CypherQueryBuilder {
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
                     if(query.getAttributeValues().get(i) != null){
-                        where = where.concat(parser.createJoinWhere(query.getConditions().get(i), listTypeName,
+                        where = where.concat(cp.createJoinWhere(query.getConditions().get(i), listTypeName,
                                                             query.getAttributeNames().get(i),
                                                             query.getAttributeValues().get(i),
                                                             Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
@@ -133,7 +129,7 @@ public class CypherQueryBuilder {
     }
 
     /**
-     *
+     * reads the sub sub queries
      * @param listTypeName
      * @param listTypeName2
      * @param query
@@ -143,7 +139,7 @@ public class CypherQueryBuilder {
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
                 if(query.getAttributeValues().get(i) != null){
-                    where = where.concat(parser.createJoinWhere(query.getConditions().get(i), listTypeName,
+                    where = where.concat(cp.createJoinWhere(query.getConditions().get(i), listTypeName,
                                             query.getAttributeNames().get(i),
                                             query.getAttributeValues().get(i),
                                             Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
@@ -157,7 +153,7 @@ public class CypherQueryBuilder {
     }
 
     /**
-     *
+     * reads the query main recursively
      * @param query
      */
     public void readQuery(ExtendedQuery query){
@@ -166,7 +162,7 @@ public class CypherQueryBuilder {
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
                 if(query.getAttributeValues().get(i) != null){
-                    where = where.concat(parser.createWhere(query.getConditions().get(i),
+                    where = where.concat(cp.createWhere(query.getConditions().get(i),
                                                             query.getAttributeNames().get(i),
                                                             query.getAttributeValues().get(i),
                                                             Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
@@ -185,16 +181,14 @@ public class CypherQueryBuilder {
     }
 
     /**
-     *
+     * Reads the visible attributes for the main query and its joins
      * @param query
      */
     public void readVissibleAttributes(ExtendedQuery query){
-        if(query.getVisibleAttributeNames() != null){
+        if(query.getVisibleAttributeNames() != null)
              visibleAttributes.put(INSTANCE, query.getVisibleAttributeNames());
-        }
-        else{
-            visibleAttributes.put(INSTANCE, defaultVisibleAttributes);
-        }
+        else
+            visibleAttributes.put(INSTANCE, new ArrayList<String>());
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
                 if(query.getAttributeValues().get(i) == null){
@@ -210,20 +204,18 @@ public class CypherQueryBuilder {
     }
 
     /**
-     * 
+     * Reads the visible attributes for the parent and its joins
      * @param query
      */
     public void readVissibleAttributeParent(ExtendedQuery query){
-        if(query.getVisibleAttributeNames() != null){
+        if(query.getVisibleAttributeNames() != null)
             visibleAttributes.put(PARENT, query.getVisibleAttributeNames());
-        }
-        else{
-            visibleAttributes.put(PARENT, defaultVisibleAttributes);
-        }
+        else
+            visibleAttributes.put(PARENT, new ArrayList<String>() {{ add("name");}});
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
                 if(query.getJoins().get(i) != null){
-                    readVissibleAttributeJoins(query.getAttributeNames().get(i), query.getJoins().get(i));
+                    readVissibleAttributeJoins(query.getAttributeNames().get(i)+"_P", query.getJoins().get(i));
                 }
             }
         }//listTypeName, listTypeName2;
@@ -235,12 +227,10 @@ public class CypherQueryBuilder {
      * @param query
      */
     public void readVissibleAttributeJoins(String listTypeName, ExtendedQuery query){
-         if(query.getVisibleAttributeNames() != null){
+        if(query.getVisibleAttributeNames() != null)
              visibleAttributes.put(LISTTYPE.concat(listTypeName), query.getVisibleAttributeNames());
-         }
-        else{
-            visibleAttributes.put(LISTTYPE.concat(listTypeName), defaultVisibleAttributes);
-        }
+        else
+            visibleAttributes.put(LISTTYPE.concat(listTypeName), new ArrayList<String>() {{ add("name");}});
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
                 if(query.getJoins().get(i) != null){
@@ -251,11 +241,12 @@ public class CypherQueryBuilder {
     }
 
     /**
-     * 
-     * @param query
+     * Creates the query
+     * @param query 
      */
     public void createQuery(ExtendedQuery query){
 
+        cp = new CypherParser();
         Node classNode = classNodes.get(query.getClassName());
         boolean isAbstract = (Boolean) classNode.getProperty(Constants.PROPERTY_ABSTRACT);
 
@@ -279,7 +270,7 @@ public class CypherQueryBuilder {
     }
 
     /**
-     * 
+     * Executes the query
      * @param classNode
      * @param cypherQuery
      */
@@ -290,7 +281,7 @@ public class CypherQueryBuilder {
     }
 
     /**
-     * 
+     * Read the results
      * @param columnsIterator
      */
     public void readResult(Iterator<Map<String, Object>> columnsIterator){
