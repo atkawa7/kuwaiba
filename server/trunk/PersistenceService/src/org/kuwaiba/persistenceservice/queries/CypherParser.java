@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class CypherParser {
         return ", instance-[:" + RelTypes.CHILD_OF + "*]->parent-[:" + RelTypes.INSTANCE_OF + "]-parentclassmetadata";//NOI18N
     }
     /**
-     * add every listype into de the match a listType for every join
+     * add every listType into de the match a listType for every join
      * @param listTypeName
      * @param listTypeName2
      * @return
@@ -78,7 +78,7 @@ public class CypherParser {
      * Add this to the match for the parent and the parent joins
      * @param listTypeName
      * @param listTypeName2
-     * @return
+     * @return 
      */
     public String createListypeParentMatch(String listTypeName, String listTypeName2){
         if(listTypeName2.isEmpty())
@@ -93,7 +93,7 @@ public class CypherParser {
      * @param attributeName
      * @param attributeValue
      * @param attibuteType
-     * @return
+     * @return simple where statement
      */
     public String createWhere(int condition, String attributeName, String attributeValue, String attibuteType){
         String operator = getOperator(condition);
@@ -135,6 +135,15 @@ public class CypherParser {
             return "r_"+joinName+".name=\""+joinName+"\" AND ";
     }
 
+    /**
+     * Creates a where statement for joins
+     * @param condition
+     * @param joinName
+     * @param attributeName
+     * @param attributeValue
+     * @param attibuteType
+     * @return where join statement
+     */
     public String createJoinWhere(int condition, String joinName, String attributeName, String attributeValue, String attibuteType){
         String operator = getOperator(condition);
 
@@ -163,15 +172,24 @@ public class CypherParser {
     }
 
     /**
-     * every time a list type for a join or a parent o r a parent join is added
+     * every time a list type for a join or a parent or a parent join is added
      * there must be a relation to identify every list type.
      * @param joinName
-     * @return
+     * @return 
      */
     public String createParentRelation(String joinName){
         return "parentclassmetadata.name=\""+joinName+"\" AND ";
     }
 
+    /**
+     * Creates the where statement if there is a parent
+     * @param condition
+     * @param joinName
+     * @param attributeName
+     * @param attributeValue
+     * @param attibuteType
+     * @return parent where statement
+     */
     public String createParentWhere(int condition, String joinName, String attributeName, String attributeValue, String attibuteType){
         String operator = getOperator(condition);
 
@@ -199,6 +217,11 @@ public class CypherParser {
         return joinName+"."+attributeName+operator+attributeValue;
     }
 
+    /**
+     * Get the operator as a string
+     * @param condition
+     * @return the operator as a string
+     */
     public String getOperator(int condition){
         switch (condition) {
             case ExtendedQuery.EQUAL:
@@ -218,6 +241,10 @@ public class CypherParser {
         }
     }
 
+    /**
+     * creates the main return the "instance"
+     * @return 
+     */
     public String createReturn(){
         return "instance";
     }
