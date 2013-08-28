@@ -1183,7 +1183,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         List<ClassMetadataLight> cml = new ArrayList<ClassMetadataLight>();
         try {
             String cypherQuery;
-            if (parentClassName.equals(Constants.DUMMYROOT)){
+            if (parentClassName == null || parentClassName.equals(Constants.DUMMYROOT)){
                 cypherQuery = "START rootNode = node(0) ".concat(
                                  "MATCH rootNode -[:DUMMY_ROOT]->dummyRootNode-[:POSSIBLE_CHILD]->directChild<-[?:EXTENDS*]-subClass ").concat(
                                  "WHERE subClass.abstract=false OR subClass IS NULL ").concat(
@@ -1226,7 +1226,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         List<ClassMetadataLight> cml = new ArrayList<ClassMetadataLight>();
         try {
             String cypherQuery;
-            if (parentClassName == null){//The Dummy Rooot
+            if (parentClassName == null || parentClassName.equals(Constants.DUMMYROOT)){//The Dummy Rooot
                 cypherQuery = "START rootNode = node(0) ".concat(
                                  "MATCH rootNode -[:DUMMY_ROOT]->dummyRootNode-[:POSSIBLE_CHILD]->directChild ").concat(
                                  "RETURN directChild ").concat(
