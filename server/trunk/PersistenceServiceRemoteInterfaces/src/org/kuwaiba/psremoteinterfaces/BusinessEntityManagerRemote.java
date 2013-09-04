@@ -48,11 +48,17 @@ public interface BusinessEntityManagerRemote extends Remote{
     public List<RemoteBusinessObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String myClass, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
 
-    public RemoteBusinessObject getObjectInfo(String objectClass, long oid)
+    public RemoteBusinessObject getObject(String objectClass, long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
-    public RemoteBusinessObjectLight getObjectInfoLight(String objectClass, long oid)
+    public RemoteBusinessObjectLight getObjectLight(String objectClass, long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
+    
+    public RemoteBusinessObject getParent(String objectClass, long oid)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+
+    public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
 
     public void updateObject(String className, long oid, HashMap<String,List<String>> attributes)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException,

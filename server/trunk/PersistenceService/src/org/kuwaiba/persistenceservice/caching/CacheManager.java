@@ -79,6 +79,14 @@ public class CacheManager {
     public void putClass(ClassMetadata newClass){
         classIndex.put(newClass.getName(), newClass);
     }
+    
+    /**
+     * Remove a class from cache
+     * @param className The class name
+     */
+    public void removeClass(String className){
+        classIndex.remove(className);
+    }
 
     /**
      * Adds an entry to the possible children index

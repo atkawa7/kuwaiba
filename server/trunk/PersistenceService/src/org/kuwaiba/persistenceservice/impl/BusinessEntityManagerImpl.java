@@ -245,7 +245,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
 
-    public RemoteBusinessObject getObjectInfo(String className, long oid)
+    public RemoteBusinessObject getObject(String className, long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         ClassMetadata myClass = cm.getClass(className);
@@ -254,7 +254,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         return res;
     }
 
-    public RemoteBusinessObjectLight getObjectInfoLight(String className, long oid)
+    public RemoteBusinessObjectLight getObjectLight(String className, long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException {
         //Perform benchmarks to see if accessing to the objects index is less expensive
         Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
@@ -266,11 +266,53 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
             if (instance.getId() == oid)
                 return new RemoteBusinessObjectLight(oid,
-                        instance.getProperty(Constants.PROPERTY_NAME) == null ? null : instance.getProperty(Constants.PROPERTY_NAME).toString(),
+                        (String) instance.getProperty(Constants.PROPERTY_NAME),
                         className);
 
         }
         throw new ObjectNotFoundException(className, oid);
+    }
+    
+    public RemoteBusinessObject getParent(String objectClass, long oid) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+        Node objectNode = getInstanceOfClass(objectClass, oid);
+        if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF)){
+            Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
+            
+            //If the direct parent is DummyRoot, return a dummy RemoteBusinessObject with oid = -1
+            if (parentNode.hasRelationship(RelTypes.DUMMY_ROOT))
+                return new RemoteBusinessObject(-1L, Constants.DUMMYROOT, Constants.DUMMYROOT);
+            else    
+                return Util.createRemoteObjectFromNode(parentNode, cm.getClass(Util.getClassName(parentNode)));
+        }
+        if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)){
+            Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).getEndNode();
+            return Util.createRemoteObjectFromNode(parentNode, cm.getClass(Util.getClassName(parentNode)));
+        }
+        return null;
+    }
+
+    public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+        Node objectNode = getInstanceOfClass(objectClass, oid);
+        
+        while (true){
+            //This method won't support CHILD_OF_SPECIAL relationships
+            if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF)){
+                Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
+
+                if (parentNode.hasRelationship(RelTypes.DUMMY_ROOT))
+                    return null;
+                else{  
+                    String thisNodeClass = Util.getClassName(parentNode);
+                    if (cm.isSubClass(thisNodeClass, parentClass))
+                        return Util.createRemoteObjectFromNode(parentNode, cm.getClass(thisNodeClass));
+                    objectNode = parentNode;
+                    continue;
+                }
+            }
+            return null;
+        }
     }
 
     public void deleteObjects(HashMap<String, long[]> objects, boolean releaseRelationships)

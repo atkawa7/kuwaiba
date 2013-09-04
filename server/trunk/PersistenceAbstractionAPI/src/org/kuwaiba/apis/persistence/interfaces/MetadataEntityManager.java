@@ -49,7 +49,7 @@ public interface MetadataEntityManager {
      * @param newClassDefinition
      * @throws ClassNotFoundException if there is no class with such classId
      */
-    public void changeClassDefinition(ClassMetadata newClassDefinition) throws MetadataObjectNotFoundException;
+    public void setClassProperties(ClassMetadata newClassDefinition) throws MetadataObjectNotFoundException;
 
     /**
      * Deletes a classmetadata, its attributes and category relationships
@@ -73,7 +73,7 @@ public interface MetadataEntityManager {
      * @return the list of classes
      * @throws Exception EntityManagerNotAvailableException or something unexpected
      */
-    public List<ClassMetadataLight> getLightMetadata(boolean includeListTypes, boolean includeIndesign) throws MetadataObjectNotFoundException;
+    public List<ClassMetadataLight> getAllClassesLight (boolean includeListTypes, boolean includeIndesign) throws MetadataObjectNotFoundException;
     
     /**
      * Gets the subclasses of a given class
@@ -84,7 +84,7 @@ public interface MetadataEntityManager {
      * @throws MetadataObjectNotFoundException If the class can not be found
      * @throws InvalidArgumentException If the provided class is not a subclass of InventoryObject
      */
-    public List<ClassMetadataLight> getLightSubClasses(String className, boolean includeAbstractClasses, boolean includeSelf) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    public List<ClassMetadataLight> getSubClassesLight(String className, boolean includeAbstractClasses, boolean includeSelf) throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Gets the subclasses of a given class
@@ -95,7 +95,7 @@ public interface MetadataEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException 
      */
-    public List<ClassMetadataLight> getLightSubClassesNoRecursive(String className, boolean includeAbstractClasses, boolean includeSelf) 
+    public List<ClassMetadataLight> getSubClassesLightNoRecursive(String className, boolean includeAbstractClasses, boolean includeSelf) 
             throws MetadataObjectNotFoundException, InvalidArgumentException;
     /**
      * Retrieves all the class metadata except for classes marked as dummy
@@ -103,7 +103,7 @@ public interface MetadataEntityManager {
      * the subclasses of GenericObjectList
      * @return An array of classes
      */
-    public List<ClassMetadata> getMetadata(boolean includeListTypes, boolean includeIndesign) throws MetadataObjectNotFoundException;
+    public List<ClassMetadata> getAllClasses(boolean includeListTypes, boolean includeIndesign) throws MetadataObjectNotFoundException;
 
     /**
      * Gets a classmetadata, its attributes and Category
@@ -180,7 +180,7 @@ public interface MetadataEntityManager {
      * @param ClassId
      * @param newAttributeDefinition
      */
-    public void changeAttributeDefinition(long ClassId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException;
+    public void setAttributeProperties(long ClassId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException;
     
     /**
      * Changes an attribute definition belonging to a classMetadata
@@ -188,7 +188,7 @@ public interface MetadataEntityManager {
      * @param newAttributeDefinition
      * @throws MetadataObjectNotFoundException 
      */
-    public void changeAttributeDefinition(String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException;
+    public void setAttributeProperties(String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException;
 
     /**
      * Deletes an attribute belonging to a classMetadata
@@ -224,14 +224,14 @@ public interface MetadataEntityManager {
      * @param categoryId
      * @return CategoryMetadata
      */
-    public CategoryMetadata getCategory(int categoryId) throws MetadataObjectNotFoundException;
+    public CategoryMetadata getCategory(long categoryId) throws MetadataObjectNotFoundException;
 
     /**
      * Changes a category definition
      * @param categoryDefinition
      * @return true if success
      */
-    public void changeCategoryDefinition(CategoryMetadata categoryDefinition) throws MetadataObjectNotFoundException;
+    public void setCategoryProperties(CategoryMetadata categoryDefinition) throws MetadataObjectNotFoundException;
 
     /**
      * Deletes a category definition Still don't know what to do with the clasess

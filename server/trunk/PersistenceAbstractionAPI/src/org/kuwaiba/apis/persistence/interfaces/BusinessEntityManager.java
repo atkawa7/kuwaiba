@@ -81,7 +81,7 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
-    public RemoteBusinessObject getObjectInfo(String className, long oid)
+    public RemoteBusinessObject getObject(String className, long oid)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException;
 
     /**
@@ -93,9 +93,33 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the requested object can't be found
      * @throws NotAuthorizedException If the update can't be performed due to permissions
      */
-    public RemoteBusinessObjectLight getObjectInfoLight(String className, long oid)
+    public RemoteBusinessObjectLight getObjectLight(String className, long oid)
             throws MetadataObjectNotFoundException, ObjectNotFoundException;
 
+    /**
+     * Gets the parent of a given object in the containment hierarchy
+     * @param objectClass Object class
+     * @param oid Object id
+     * @return The immediate parent. Null if the parent is null. A dummy object with id -1 if the parent is DummyRoot
+     * @throws ObjectNotFoundException If the requested object can't be found
+     * @throws MetadataObjectNotFoundException If any of the class nodes involved is malformed
+     * @throws InvalidArgumentException If any of the nodes involved is malformed
+     */
+    public RemoteBusinessObject getParent(String objectClass, long oid)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+
+    /**
+     * Gets the first parent of an object which matches the given class in the containment hierarchy
+     * @param objectClass Object class
+     * @param oid Object id
+     * @param parentClass Parent class
+     * @return The nearest parent of the provided class. Null if none found.
+     * @throws ObjectNotFoundException If any of the requested objects can't be found
+     * @throws MetadataObjectNotFoundException If any of the class nodes involved is malformed
+     * @throws InvalidArgumentException If any of the nodes involved is malformed
+     */
+    public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
     /**
      * Deletes a set of objects
      * @param  objects a hashmap where the class name is the key and the value is a list of long containing the ids of the objects to be deleted that are instance of the key class
