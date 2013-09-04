@@ -15,7 +15,6 @@
  */
 package org.inventory.navigation.applicationnodes.classmetadatanodes.properties;
 
-import java.awt.Image;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
@@ -64,10 +63,7 @@ public class ClassMetadataNodeProperty extends ReadWrite implements PropertyChan
             LocalClassMetadata update = CommunicationsStub.getInstance().getMetaForClass(node.getClassMetadata().getOid(), true);
             String[] attributes = new String[] {this.getName()};
             Object[] values = new Object[]{t};
-
-            byte[] smallIcon = null;
-            byte[] icon = null;
-            String x;
+           
             if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME")))
                 update.setClassName((String)values[0]);
             

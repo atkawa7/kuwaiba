@@ -74,10 +74,10 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
     public LocalClassMetadataLight getClassMetadata() {
         return classMetadata;
     }
-    
+       
     @Override
     public String getName(){     
-        return getEditableText();
+        return classMetadata.getClassName();
     }
     
     @Override
@@ -92,11 +92,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
     public Image getOpenedIcon(int i){
         return getIcon(i);
     }
-    
-    private String getEditableText() {
-        return classMetadata.getClassName();
-    }
-    
+        
     @Override
     public Action[] getActions(boolean context){
         return new Action[]{createAction,
@@ -113,25 +109,27 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
 
     @Override
     public void setName(String newName) {
-        LocalClassMetadata update = Lookup.getDefault().lookup(LocalClassMetadata.class);
-        classMetadata.setClassName(newName);
-        refresh();
+        if(com.setClassMetadataProperties(classMetadata.getOid(), newName, null, null, null, 
+                null, classMetadata.isAbstract(), classMetadata.isInDesign(), true)){
+            classMetadata.setClassName(newName);
+            refresh();
+        }else
+            nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
     }
     
-    public boolean refresh(){
+    public void refresh(){
         LocalClassMetadataLight classMetadataRefresh;
         
-        classMetadataRefresh = com.getLightMetaForClass(PROP_NAME, true);
+        classMetadataRefresh = com.getLightMetaForClass(classMetadata.getClassName(), true);
         
         if(classMetadataRefresh == null)
-            return false;
-        else
+            nu.showSimplePopup("Error refreshing class metadata", NotificationUtil.ERROR, com.getError());
+        else{
             classMetadata = classMetadataRefresh;
-        
-        if (this.sheet != null)
-            setSheet(createSheet());
-        
-        return true;
+            if (this.sheet != null)
+                setSheet(createSheet());
+            fireNameChange("", getName());
+        }
     }
     
     @Override
@@ -220,6 +218,4 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
             }
         }
     }
-    
-    
 }

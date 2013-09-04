@@ -67,15 +67,18 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
                     Utils.getRealValue(lcmdt.getTypeForAttribute(ro.getAttributes().get(i)), lcmdt.getMappingForAttribute(ro.getAttributes().get(i)), ro.getValues().get(i).getItem()));
     }
 
+    @Override
     public LocalClassMetadata getObjectMetadata() {
         return myMetadata;
     }
 
+    @Override
     public void setObjectMetadata(LocalClassMetadata metaForClass) {
         this.myMetadata = metaForClass;
     }
 
 
+    @Override
     public void setLocalObject(String className, String[] attributes, Object[] values){
         HashMap<String,Object> dict = new HashMap<String, Object>();
         this.className = className;
@@ -97,10 +100,12 @@ public class LocalObjectImpl extends LocalObjectLightImpl implements LocalObject
         return this.getAttribute("name")==null?"":this.getAttribute("name").toString();
     }
 
+    @Override
     public HashMap<String,Object> getAttributes() {
         return this.attributes;
     }
 
+    @Override
     public Object getAttribute(String name){
         return attributes.get(name);
     }

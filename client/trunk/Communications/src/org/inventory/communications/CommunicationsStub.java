@@ -257,7 +257,7 @@ public class CommunicationsStub {
     public LocalObject getObjectInfo(String objectClass, long oid){
         try{
             LocalClassMetadata lcmd = getMetaForClass(objectClass, false);
-            RemoteObject myObject = port.getObjectInfo(objectClass, oid,this.session.getSessionId());
+            RemoteObject myObject = port.getObject(objectClass, oid,this.session.getSessionId());
             return new LocalObjectImpl(myObject,lcmd);
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -288,7 +288,7 @@ public class CommunicationsStub {
      */
     public LocalObjectLight getObjectInfoLight(String objectClass, long oid){
         try{
-            RemoteObjectLight myLocalObject = port.getObjectInfoLight(objectClass, oid,this.session.getSessionId());
+            RemoteObjectLight myLocalObject = port.getObjectLight(objectClass, oid,this.session.getSessionId());
             return new LocalObjectLightImpl(myLocalObject);
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -383,7 +383,7 @@ public class CommunicationsStub {
      */
     public LocalClassMetadataLight[] getAllLightMeta(boolean includeListTypes) {
         try{
-            List<ClassInfoLight> metas = port.getLightMetadata(includeListTypes, this.session.getSessionId());
+            List<ClassInfoLight> metas = port.getAllClassesLight(includeListTypes, this.session.getSessionId());
 
             LocalClassMetadataLight[] lm = new LocalClassMetadataLight[metas.size()];
             int i=0;
@@ -413,7 +413,7 @@ public class CommunicationsStub {
     public LocalClassMetadata[] getAllMeta(boolean includeListTypes) {
         try{
             List<ClassInfo> metas;
-            metas= port.getMetadata(includeListTypes, this.session.getSessionId());
+            metas= port.getAllClasses(includeListTypes, this.session.getSessionId());
             LocalClassMetadata[] lm = new LocalClassMetadata[metas.size()];
             int i=0;
             for (ClassInfo cm : metas){
@@ -442,7 +442,7 @@ public class CommunicationsStub {
                     return res;
             }
 
-            ClassInfo cm = port.getMetadataForClass(className,this.session.getSessionId());
+            ClassInfo cm = port.getClass(className,this.session.getSessionId());
 
             res = new LocalClassMetadataImpl(cm);
             cache.addMeta(new LocalClassMetadata[]{res});
@@ -468,7 +468,7 @@ public class CommunicationsStub {
 //                    return res;
 //                }
 //            }
-            ClassInfo cm = port.getMetadataForClassById(classId,this.session.getSessionId());
+            ClassInfo cm = port.getClassWithId(classId,this.session.getSessionId());
 
             res = new LocalClassMetadataImpl(cm);
             cache.addMeta(new LocalClassMetadata[]{res});
@@ -493,7 +493,7 @@ public class CommunicationsStub {
                     return res;
             }
 
-            ClassInfo cm = port.getMetadataForClass(className,this.session.getSessionId());
+            ClassInfo cm = port.getClass(className,this.session.getSessionId());
 
             res = new LocalClassMetadataLightImpl(cm);
             cache.addLightMeta(new LocalClassMetadataLight[]{res});
@@ -515,7 +515,7 @@ public class CommunicationsStub {
 
     public List<LocalClassMetadataLight> getLightSubclasses(String className, boolean includeAbstractSubClasses, boolean includeSelf) {
         try{
-            List<ClassInfoLight> subClasses = port.getLightSubClasses(className, includeAbstractSubClasses, includeSelf, session.getSessionId());
+            List<ClassInfoLight> subClasses = port.getSubClassesLight(className, includeAbstractSubClasses, includeSelf, session.getSessionId());
             List <LocalClassMetadataLight> res = new ArrayList<LocalClassMetadataLight>();
 
             for (ClassInfoLight rol : subClasses){
@@ -530,7 +530,7 @@ public class CommunicationsStub {
     
      public List<LocalClassMetadataLight> getLightSubclassesNoRecursive(String className, boolean includeAbstractSubClasses, boolean includeSelf) {
         try{
-            List<ClassInfoLight> subClasses = port.getLightSubClassesNoRecursive(className, includeAbstractSubClasses, includeSelf, session.getSessionId());
+            List<ClassInfoLight> subClasses = port.getSubClassesLightNoRecursive(className, includeAbstractSubClasses, includeSelf, session.getSessionId());
             List <LocalClassMetadataLight> res = new ArrayList<LocalClassMetadataLight>();
 
             for (ClassInfoLight rol : subClasses){
@@ -627,7 +627,7 @@ public class CommunicationsStub {
             for (long pChild : possibleChildren){
                 pChildren.add(pChild);
             }
-            port.addPossibleChildren(parentClassId, pChildren,this.session.getSessionId());
+            port.addPossibleChildrenForClassWithId(parentClassId, pChildren,this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -647,7 +647,7 @@ public class CommunicationsStub {
             for (long pChild : childrenToBeDeleted){
                 pChildren.add(pChild);
             }
-            port.removePossibleChildren(parentClassId, pChildren,this.session.getSessionId());
+            port.removePossibleChildrenForClassWithId(parentClassId, pChildren,this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -883,14 +883,14 @@ public class CommunicationsStub {
             if (refreshMeta){
                 for (LocalClassMetadata lcm : cache.getMetadataIndex()){
                     LocalClassMetadata myLocal =
-                            new LocalClassMetadataImpl(port.getMetadataForClass(lcm.getClassName(),this.session.getSessionId()));
+                            new LocalClassMetadataImpl(port.getClass(lcm.getClassName(),this.session.getSessionId()));
                     if(myLocal!=null){
                         cache.addMeta(new LocalClassMetadata[]{myLocal});
                     }
                 }
             }
             if (refreshLightMeta){
-                List<ClassInfoLight> myLocalLight  = port.getLightMetadata(true, this.session.getSessionId());
+                List<ClassInfoLight> myLocalLight  = port.getAllClassesLight(true, this.session.getSessionId());
                 if (myLocalLight != null){
                     getAllLightMeta(true);
                 }
@@ -919,7 +919,7 @@ public class CommunicationsStub {
     public void setAttributePropertyValue(long classId, long attributeId, String name, String displayName,
             String type, String description, boolean administrative, boolean visible, boolean readOnly, boolean noCopy, boolean unique)  {
         try{
-            port.setClassAttributePropertiesById(classId, attributeId, name, displayName, type, description,
+            port.setAttributePropertiesForClassWithId(classId, attributeId, name, displayName, type, description,
                     administrative, visible, readOnly, unique, noCopy, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -928,7 +928,7 @@ public class CommunicationsStub {
         
     public boolean createClassMetadata(String className, String displayName, String description, String parentClassName, boolean custom, boolean countable, int color, boolean _abstract, boolean inDesign){
         try{
-            port.createClassMetadata(className, displayName, description, _abstract, custom, countable, inDesign, parentClassName, null, null, this.session.getSessionId());
+            port.createClass(className, displayName, description, _abstract, custom, countable, inDesign, parentClassName, null, null, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -938,7 +938,7 @@ public class CommunicationsStub {
     
     public boolean deleteClassMetadata(long classId){
         try{
-            port.deleteClassById(classId, this.session.getSessionId());
+            port.deleteClassWithId(classId, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -951,7 +951,7 @@ public class CommunicationsStub {
                                 boolean readOnly, boolean visible, boolean noCopy, 
                                 boolean unique){
         try{
-            port.addClassAttributeById(classId, name, displayName, type, description, administrative, visible, readOnly, noCopy, unique, this.session.getSessionId());
+            port.addAttributeForClassWithId(classId, name, displayName, type, description, administrative, visible, readOnly, noCopy, unique, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -964,7 +964,7 @@ public class CommunicationsStub {
                                 boolean readOnly, boolean visible, boolean noCopy, 
                                 boolean unique){
         try{
-            port.addClassAttribute(className, name, displayName, type, description, administrative, visible, readOnly, noCopy, unique, this.session.getSessionId());
+            port.addAttribute(className, name, displayName, type, description, administrative, visible, readOnly, noCopy, unique, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -974,7 +974,7 @@ public class CommunicationsStub {
     
     public boolean deleteAttribute(long oid, String attributeName){
         try{
-            port.deleteClassAttributeByClassId(oid, attributeName, this.session.getSessionId());
+            port.deleteAttributeForClassWithId(oid, attributeName, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -987,7 +987,7 @@ public class CommunicationsStub {
                                                  byte[] smallIcon, byte[] icon, 
                                                  boolean _abstract,boolean inDesign, boolean countable){
         try{
-            port.setClassMetadataProperties(classId, className, displayName, description, smallIcon , icon,
+            port.setClassProperties(classId, className, displayName, description, smallIcon , icon,
                     _abstract, inDesign, countable,this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();

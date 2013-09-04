@@ -68,6 +68,15 @@ public class LocalClassMetadataLightImpl implements LocalClassMetadataLight{
      */
     protected boolean listType;
     /**
+     * Shows if this is a core class (the ones provided in the official release) or a custom one
+     */
+    protected boolean custom;
+    /**
+     * Is the class "operational" or is it in design process?
+     */
+    protected boolean inDesign;
+
+    /**
      * Class icon for trees. This is the icon the instances of this class will show in trees
      */
     protected Image smallIcon;
@@ -80,14 +89,6 @@ public class LocalClassMetadataLightImpl implements LocalClassMetadataLight{
      */
     protected List<PropertyChangeListener> propertyChangeListeners;
     /**
-     * Shows if this is a core class (the ones provided in the official release) or a custom one
-     */
-    protected boolean custom;
-    /**
-     * Classmetada's state default false operational or in design true
-     */
-    protected boolean inDesign;
-    /**
      * This constructor is called to create dummy class metadata objects, such as that used to represent the Navigation Tree root
      */
     public LocalClassMetadataLightImpl() {  this.id = -1;  }
@@ -97,6 +98,8 @@ public class LocalClassMetadataLightImpl implements LocalClassMetadataLight{
         this._abstract = ci.isAbstract();
         this.viewable = ci.isViewable();
         this.listType = ci.isListType();
+        this.custom = ci.isCustom();
+        this.inDesign = ci.isInDesign();
         this.className = ci.getClassName();
         this.displayName = ci.getDisplayName();
         this.parentName = ci.getParentClassName();
@@ -117,23 +120,26 @@ public class LocalClassMetadataLightImpl implements LocalClassMetadataLight{
         this._abstract = cil.isAbstract();
         this.viewable = cil.isViewable();
         this.listType = cil.isListType();
+        this.custom = cil.isCustom();
+        this.inDesign = cil.isInDesign();
         this.className = cil.getClassName();
         this.displayName = cil.getDisplayName();
         this.parentName = cil.getParentClassName();
         this.smallIcon = cil.getSmallIcon()==null ? null : Utils.getImageFromByteArray(cil.getSmallIcon());
         this.validators = new HashMap<String, Integer>();
 
-        for (Validator validator : cil.getValidators()){
+        for (Validator validator : cil.getValidators())
             validators.put(validator.getLabel(), validator.getValue());
-        }
     }
 
     public LocalClassMetadataLightImpl(long id, String className, String displayName, String parentName,
-            byte[] smallIcon, boolean _abstract, boolean isViewable, boolean isListType, HashMap<String, Integer> validators){
+            byte[] smallIcon, boolean _abstract, boolean isViewable, boolean isListType, boolean isCustom, boolean isInDesign, HashMap<String, Integer> validators){
         this.id = id;
         this._abstract = _abstract;
         this.viewable = isViewable;
         this.listType = isListType;
+        this.custom = isCustom;
+        this.inDesign = isInDesign;
         this.className = className;
         this.displayName = displayName;
         this.parentName = parentName;

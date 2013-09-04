@@ -41,10 +41,10 @@ public class MainTest {
 
             System.out.println("Generating a containment hierarchy...");
             //Let's create the default containment hierarchy
-            port.addPossibleChildrenByClassName(null, Arrays.asList(new String[]{"City"}), session.getSessionId());
+            port.addPossibleChildren(null, Arrays.asList(new String[]{"City"}), session.getSessionId());
             for (String parentClass : c.containmentHierarchy.keySet()){
                 try{
-                    port.addPossibleChildrenByClassName(parentClass, Arrays.asList(c.containmentHierarchy.get(parentClass)), session.getSessionId());
+                    port.addPossibleChildren(parentClass, Arrays.asList(c.containmentHierarchy.get(parentClass)), session.getSessionId());
                 }catch (Exception ex){
                     System.out.println("ERROR: "+ex.getMessage());
                 }

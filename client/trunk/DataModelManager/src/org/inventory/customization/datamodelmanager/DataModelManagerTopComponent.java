@@ -49,9 +49,9 @@ persistenceType = TopComponent.PERSISTENCE_NEVER)
     displayName = "#CTL_DataModelManagerAction",
 preferredID = "DataModelManagerTopComponent")
 @Messages({
-    "CTL_DataModelManagerAction=DataModelManager",
-    "CTL_DataModelManagerTopComponent=DataModelManager Tools",
-    "HINT_DataModelManagerTopComponent=This is a DataModelManager Tools"
+    "CTL_DataModelManagerAction=Data Model Manager",
+    "CTL_DataModelManagerTopComponent=DataModel Manager",
+    "HINT_DataModelManagerTopComponent=Update the data model"
 })
 public final class DataModelManagerTopComponent extends TopComponent 
         implements ExplorerManager.Provider, RefreshableTopComponent{

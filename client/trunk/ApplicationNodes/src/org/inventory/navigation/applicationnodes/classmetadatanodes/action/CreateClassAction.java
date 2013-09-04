@@ -47,7 +47,7 @@ public class CreateClassAction extends AbstractAction {
         Random random = new Random();
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         boolean createClassMetadata = com.createClassMetadata(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_CLASS")+random.nextInt(10000), 
-                                                              "","", node.getName(), true, false, 0, false, true);
+                                                              "","", node.getName(), true, true, 0, false, true);
         if (!createClassMetadata)
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR,
                     com.getError());

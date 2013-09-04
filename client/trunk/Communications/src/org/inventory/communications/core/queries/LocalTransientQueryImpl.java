@@ -116,42 +116,52 @@ public class LocalTransientQueryImpl implements LocalTransientQuery{
         parseXML(localQuery.getStructure());
     }
 
+    @Override
     public ArrayList<String> getAttributeNames() {           
         return attributeNames;
     }
 
+    @Override
     public ArrayList<String> getAttributeValues() {           
         return attributeValues;
     }
 
+    @Override
     public String getClassName() {
         return className;
     }
 
+    @Override
     public ArrayList<Integer> getConditions() {           
         return conditions;
     }
 
+    @Override
     public boolean isJoin() {
         return isJoin;
     }
 
+    @Override
     public ArrayList<LocalTransientQuery> getJoins() {
         return joins;
     }
 
+    @Override
     public int getLimit() {
         return limit;
     }
 
+    @Override
     public int getPage() {
         return page;
     }
 
+    @Override
     public int getLogicalConnector() {
         return logicalConnector;
     }
 
+    @Override
     public ArrayList<String> getVisibleAttributeNames() {            
         return visibleAttributeNames;
     }

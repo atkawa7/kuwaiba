@@ -75,18 +75,22 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class does
         }
     }
 
+    @Override
     public String getClassName() {
         return className;
     }
 
+    @Override
     public long getOid() {
         return oid;
     }
 
+    @Override
     public void setOid(long id){
         this.oid = id;
     }
 
+    @Override
     public int getValidator(String label){
         if (this.validators == null)
             return 0;
@@ -97,15 +101,18 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class does
             return res;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
 
+    @Override
     public void addPropertyChangeListener(PropertyChangeListener newListener){
         if (propertyChangeListeners == null)
             propertyChangeListeners = new ArrayList<PropertyChangeListener>();
@@ -114,12 +121,14 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class does
         propertyChangeListeners.add(newListener);
     }
 
+    @Override
     public void removePropertyChangeListener(PropertyChangeListener listener){
         if (propertyChangeListeners == null)
             return;
         propertyChangeListeners.remove(listener);
     }
 
+    @Override
     public void firePropertyChangeEvent(String property, Object oldValue, Object newValue){
         for (PropertyChangeListener listener : propertyChangeListeners)
             listener.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
@@ -143,14 +152,17 @@ public class LocalObjectLightImpl implements LocalObjectLight{ //This class does
     }
 
     //Transferable methods
+    @Override
     public DataFlavor[] getTransferDataFlavors() {
         return new DataFlavor[]{DATA_FLAVOR};
     }
 
+    @Override
     public boolean isDataFlavorSupported(DataFlavor flavor) {
         return flavor == DATA_FLAVOR;
     }
 
+    @Override
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
         if(flavor == DATA_FLAVOR)
             return this;

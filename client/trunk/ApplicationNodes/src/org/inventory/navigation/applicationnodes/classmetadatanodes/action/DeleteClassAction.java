@@ -17,12 +17,11 @@ package org.inventory.navigation.applicationnodes.classmetadatanodes.action;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
-import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
-import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
 /**
@@ -31,23 +30,23 @@ import org.openide.util.Lookup;
  */
 public class DeleteClassAction extends AbstractAction {
 
-    private Node node;
+    private ClassMetadataNode node;
     private CommunicationsStub com;
 
-    public DeleteClassAction() {
+    public DeleteClassAction(ClassMetadataNode node) {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_CLASS"));
         com = CommunicationsStub.getInstance();
-    }
-
-    public DeleteClassAction(ClassMetadataNode node) {
-        this();
         this.node = node;
     }
         
     @Override
     public void actionPerformed(ActionEvent ae) {
-        LocalClassMetadata classMetaData = com.getMetaForClass(((JMenuItem)ae.getSource()).getName(), false);
+        LocalClassMetadata classMetaData = com.getMetaForClass(node.getClassMetadata().getClassName(), false);
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this class? All its instances will be (safely) deleted as well", 
+                "Data integrity", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
+            return;
+        
         if(classMetaData.isCustom()){
             if (com.deleteClassMetadata(classMetaData.getOid()))
                 nu.showSimplePopup("Operation Result", NotificationUtil.INFO, "The class was deleted successfully");
