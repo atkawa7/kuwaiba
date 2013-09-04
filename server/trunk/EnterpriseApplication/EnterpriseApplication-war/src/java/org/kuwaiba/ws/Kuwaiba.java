@@ -943,13 +943,13 @@ public class Kuwaiba {
      * @return An array of all the direct children of the provided object according with the current container hierarchy
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "getObjectChildren")
-    public RemoteObjectLight[] getObjectChildren(@WebParam(name = "oid") long oid,
+    @WebMethod(operationName = "getObjectChildrenForClassWithId")
+    public RemoteObjectLight[] getObjectChildrenForClassWithId(@WebParam(name = "oid") long oid,
             @WebParam(name = "objectClassId") long objectClassId,
             @WebParam(name = "maxResults") int maxResults,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            wsBean.validateCall("getObjectChildren", getIPAddress(), sessionId);
+            wsBean.validateCall("getObjectChildrenForClassWithId", getIPAddress(), sessionId);
             RemoteObjectLight[] res = wsBean.getObjectChildren(oid,objectClassId, maxResults);
             return res;
         }catch(Exception e){
@@ -971,13 +971,13 @@ public class Kuwaiba {
      * @return An array of all the direct children of the provided object according with the current container hierarchy
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "getObjectChildrenByClassName")
-    public RemoteObjectLight[] getObjectChildrenByClassName(@WebParam(name = "objectClassName") long objectClassName,
+    @WebMethod(operationName = "getObjectChildren")
+    public RemoteObjectLight[] getObjectChildren(@WebParam(name = "objectClassName") long objectClassName,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "maxResults") int maxResults,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            wsBean.validateCall("getObjectChildrenByClassName", getIPAddress(), sessionId);
+            wsBean.validateCall("getObjectChildren", getIPAddress(), sessionId);
             RemoteObjectLight[] res = wsBean.getObjectChildren(objectClassName, oid, maxResults);
             return res;
         }catch(Exception e){
@@ -1057,14 +1057,14 @@ public class Kuwaiba {
       * @return a representation of the entity as a RemoteObject
       * @throws Exception Generic exception encapsulating any possible error raised at runtime
       */
-    @WebMethod(operationName = "getObjectInfo")
-    public RemoteObject getObjectInfo(@WebParam(name = "objectClass") String objectClass,
+    @WebMethod(operationName = "getObject")
+    public RemoteObject getObject(@WebParam(name = "objectClass") String objectClass,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
 
         try{
-            wsBean.validateCall("getObjectInfo", getIPAddress(), sessionId);
-            return wsBean.getObjectInfo(objectClass, oid);
+            wsBean.validateCall("getObject", getIPAddress(), sessionId);
+            return wsBean.getObject(objectClass, oid);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -1083,13 +1083,65 @@ public class Kuwaiba {
      * @return a representation of the entity as a RemoteObjectLight
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "getObjectInfoLight")
-    public RemoteObjectLight getObjectInfoLight(@WebParam(name = "objectclass") String objectClass,
+    @WebMethod(operationName = "getObjectLight")
+    public RemoteObjectLight getObjectLight(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            wsBean.validateCall("getObjectInfoLight", getIPAddress(), sessionId);
-            return wsBean.getObjectInfoLight(objectClass, oid);
+            wsBean.validateCall("getObjectLight", getIPAddress(), sessionId);
+            return wsBean.getObjectLight(objectClass, oid);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    /**
+     * Gets the parent of a given object in the containment hierarchy
+     * @param objectClass Object class
+     * @param oid Object id
+     * @param sessionId Session id
+     * @return The parent object
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getParent")
+    public RemoteObject getParent(@WebParam(name = "objectclass") String objectClass,
+            @WebParam(name = "oid") long oid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("getParent", getIPAddress(), sessionId);
+            return wsBean.getParent(objectClass, oid);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    /**
+     * Gets the first parent of an object which matches the given class in the containment hierarchy
+     * @param objectClass Object class
+     * @param oid Object oid
+     * @param parentClass Class to be matched
+     * @param sessionId sssion Id
+     * @return
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getParentOfClass")
+    public RemoteObject getParentOfClass(@WebParam(name = "objectclass") String objectClass,
+            @WebParam(name = "oid") long oid,
+            @WebParam(name = "parentClass") String parentClass,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("getParentOfClass", getIPAddress(), sessionId);
+            return wsBean.getParentOfClass(objectClass, oid, parentClass);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -1362,8 +1414,8 @@ public class Kuwaiba {
      * @return the id of the new class metadata object
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "createClassMetadata")
-    public long createClassMetadata(@WebParam(name = "className")
+    @WebMethod(operationName = "createClass")
+    public long createClass(@WebParam(name = "className")
         String className, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "description")
         String description, @WebParam(name = "_abstract")
@@ -1377,7 +1429,7 @@ public class Kuwaiba {
         String sessionId) throws Exception {
         
         try{
-            wsBean.validateCall("createClassMetadata", getIPAddress(), sessionId);
+            wsBean.validateCall("createClass", getIPAddress(), sessionId);
             if (icon != null){
                 if (icon.length > Constants.MAX_ICON_SIZE){
                     throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
@@ -1396,6 +1448,9 @@ public class Kuwaiba {
             ci.setSmallIcon(smallIcon);
             ci.setParentClassName(parentClassName);
             ci.setAbstract(_abstract);
+            ci.setCountable(countable);
+            ci.setCustom(custom);
+            ci.setInDesign(inDesign);
 
             return wsBean.createClass(ci);
 
@@ -1421,8 +1476,8 @@ public class Kuwaiba {
      * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "setClassMetadataProperties")
-    public void setClassMetadataProperties(@WebParam(name = "classId")
+    @WebMethod(operationName = "setClassProperties")
+    public void setClassProperties(@WebParam(name = "classId")
         long ClassId, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "description")
@@ -1435,7 +1490,7 @@ public class Kuwaiba {
         String sessionId) throws Exception {
         try
         {
-            wsBean.validateCall("changeClassMetadataDefinition", getIPAddress(), sessionId);
+            wsBean.validateCall("setClassProperties", getIPAddress(), sessionId);
             if (icon != null){
                 if (icon.length > Constants.MAX_ICON_SIZE){
                     throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
@@ -1457,7 +1512,7 @@ public class Kuwaiba {
             ci.setInDesign(inDesign);
             ci.setCountable(countable);
 
-            wsBean.changeClassDefinition(ci);
+            wsBean.setClassProperties(ci);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -1476,13 +1531,13 @@ public class Kuwaiba {
      * @return the class attribute
      * @throws Exception 
      */
-    @WebMethod(operationName = "getClassAttribute")
-    public AttributeInfo getClassAttribute(@WebParam(name = "className")
+    @WebMethod(operationName = "getAttribute")
+    public AttributeInfo getAttribute(@WebParam(name = "className")
     String className, @WebParam(name = "attributeName")
     String attributeName, @WebParam(name = "sesionId")
     String sessionId) throws Exception{
             try {
-            wsBean.validateCall("getClassAttribute", getIPAddress(), sessionId);
+            wsBean.validateCall("getAttribute", getIPAddress(), sessionId);
             return wsBean.getAttribute(className, attributeName);
 
         }catch(Exception e){
@@ -1496,19 +1551,20 @@ public class Kuwaiba {
     }
     
     /**
-     * 
-     * @param classId
-     * @param sessionId
-     * @return
+     * Returns a class attribute, providing the class id
+     * @param classId Class id
+     * @param attributeName Attribute name
+     * @param sessionId 
+     * @return The attribute definition
      * @throws Exception 
      */
-    @WebMethod(operationName = "getClassAttributeById")
-    public AttributeInfo getClassAttributeById(@WebParam(name = "classId")
+    @WebMethod(operationName = "getAttributeForClassWithId")
+    public AttributeInfo getAttributeForClassWithId(@WebParam(name = "classId")
     String classId, @WebParam(name = "attributeName")
     String attributeName, @WebParam(name = "sesionId")
     String sessionId) throws Exception{
             try {
-            wsBean.validateCall("getClassAttribute", getIPAddress(), sessionId);
+            wsBean.validateCall("getAttributeForClassWithId", getIPAddress(), sessionId);
             
             wsBean.getAttribute(classId, attributeName);
             return null;
@@ -1537,8 +1593,8 @@ public class Kuwaiba {
      * @param sessionId session token
      * @throws Exception IN case something goes wrong
      */
-    @WebMethod(operationName = "addClassAttribute")
-    public void addClassAttribute(@WebParam(name = "className")
+    @WebMethod(operationName = "addAttribute")
+    public void addAttribute(@WebParam(name = "className")
         String className,  @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "type")
@@ -1552,7 +1608,7 @@ public class Kuwaiba {
         String sessionId) throws Exception {
 
         try {
-            wsBean.validateCall("addAttributeByClassId", getIPAddress(), sessionId);
+            wsBean.validateCall("addAttribute", getIPAddress(), sessionId);
             AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative, 
                     visible, readOnly, unique, description, noCopy);
 
@@ -1582,8 +1638,8 @@ public class Kuwaiba {
      * @param sessionId session token
      * @throws Exception IN case something goes wrong
      */
-    @WebMethod(operationName = "addClassAttributeById")
-    public void addClassAttributeById(@WebParam(name = "classId")
+    @WebMethod(operationName = "addAttributeForClassWithId")
+    public void addAttributeForClassWithId(@WebParam(name = "classId")
         long ClassId, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "type")
@@ -1597,7 +1653,7 @@ public class Kuwaiba {
         String sessionId) throws Exception {
 
         try {
-            wsBean.validateCall("addAttributeByClassId", getIPAddress(), sessionId);
+            wsBean.validateCall("addAttributeForClassWithId", getIPAddress(), sessionId);
             AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative, 
                                    visible, readOnly, unique, description, noCopy);
 
@@ -1629,8 +1685,8 @@ public class Kuwaiba {
      * @param sessionId session token
      * @throws Exception
      */
-    @WebMethod(operationName = "setClassAttributeProperties")
-    public void setClassAttributeProperties(@WebParam(name = "className")
+    @WebMethod(operationName = "setAttributeProperties")
+    public void setAttributeProperties(@WebParam(name = "className")
         String className, @WebParam(name = "attributeId")
         long attributeId, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
@@ -1649,7 +1705,7 @@ public class Kuwaiba {
             AttributeInfo ai = new AttributeInfo(attributeId, name, displayName, 
                     type, administrative, visible, readOnly, unique, description, noCopy);
 
-            wsBean.changeAttributeDefinition(className, ai);
+            wsBean.setAttributeProperties(className, ai);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -1677,8 +1733,8 @@ public class Kuwaiba {
      * @param sessionId session token
      * @throws Exception
      */
-    @WebMethod(operationName = "setClassAttributePropertiesById")
-    public void setClassAttributePropertiesById(@WebParam(name = "classid")
+    @WebMethod(operationName = "setAttributePropertiesForClassWithId")
+    public void setAttributePropertiesForClassWithId(@WebParam(name = "classid")
         long classid, @WebParam(name = "attributeId")
         long attributeId, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
@@ -1693,11 +1749,11 @@ public class Kuwaiba {
         String sessionId) throws Exception {
 
         try {
-            wsBean.validateCall("setClassAttributePropertiesById", getIPAddress(), sessionId);
+            wsBean.validateCall("setAttributePropertiesForClassWithId", getIPAddress(), sessionId);
             AttributeInfo ai = new AttributeInfo(attributeId, name, displayName, 
                     type, administrative, visible, readOnly, unique, description, noCopy);
 
-            wsBean.changeAttributeDefinition(classid, ai);
+            wsBean.setAttributeProperties(classid, ai);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -1717,13 +1773,13 @@ public class Kuwaiba {
      * @throws Exception 
      */
     
-    @WebMethod(operationName = "deleteClassAttribute")
-    public void deleteClassAttribute(@WebParam(name = "className") 
+    @WebMethod(operationName = "deleteAttribute")
+    public void deleteAttribute(@WebParam(name = "className") 
             String className, @WebParam(name = "attributeName")
             String attributeName, @WebParam(name = "sessionId")
             String sessionId) throws Exception{
         try {
-            wsBean.validateCall("deleteClassAttribute", getIPAddress(), sessionId);
+            wsBean.validateCall("deleteAttribute", getIPAddress(), sessionId);
             wsBean.deleteAttribute(className, attributeName);
         } catch(Exception e){
             Level level = Level.SEVERE;
@@ -1743,13 +1799,13 @@ public class Kuwaiba {
      * @param sessionId
      * @throws Exception 
      */
-    @WebMethod(operationName = "deleteClassAttributeByClassId")
-    public void deleteClassAttributeByClassId(@WebParam(name = "classId") 
+    @WebMethod(operationName = "deleteAttributeForClassWithId")
+    public void deleteAttributeForClassWithId(@WebParam(name = "classId") 
             long classId, @WebParam(name = "attributeName")
             String attributeName, @WebParam(name = "sessionId")
             String sessionId) throws Exception{
         try {
-            wsBean.validateCall("deleteClassAttributeById", getIPAddress(), sessionId);
+            wsBean.validateCall("deleteAttributeForClassWithId", getIPAddress(), sessionId);
             wsBean.deleteAttribute(classId, attributeName);
         } catch(Exception e){
             Level level = Level.SEVERE;
@@ -1769,14 +1825,14 @@ public class Kuwaiba {
      * @return The metadata as a ClassInfo instance
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "getMetadataForClass")
-    public ClassInfo getMetadataForClass(@WebParam(name = "className")
+    @WebMethod(operationName = "getClass")
+    public ClassInfo getClass(@WebParam(name = "className")
     String className, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
         try {
-            wsBean.validateCall("getMetadataForClass", getIPAddress(), sessionId);
-            return wsBean.getMetadataForClass(className);
+            wsBean.validateCall("getClass", getIPAddress(), sessionId);
+            return wsBean.getClass(className);
         } catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -1794,13 +1850,13 @@ public class Kuwaiba {
      * @return The metadata as a ClassInfo instance
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "getMetadataForClassById")
-    public ClassInfo getMetadataForClassById(@WebParam(name = "classId")
+    @WebMethod(operationName = "getClassWithId")
+    public ClassInfo getClassWithId(@WebParam(name = "classId")
     long classId, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
         try {
-            wsBean.validateCall("getMetadataForClassById", getIPAddress(), sessionId);
-            return wsBean.getMetadataForClass(classId);
+            wsBean.validateCall("getClassWithId", getIPAddress(), sessionId);
+            return wsBean.getClass(classId);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -1812,22 +1868,27 @@ public class Kuwaiba {
         }
     }
 
-     /**
-     * Retrieves the metadata for the entire class hierarchy as ClassInfoLight instances
+     
+    
+    /**
+     * Gets the subclasses of a given class
+     * @param className Class name
+     * @param includeAbstractClasses should the result include the abstract classes?
+     * @param includeSelf Should the list include the subclasses and the parent class?
      * @param sessionId Session token
-     * @param includeListTypes boolean to indicate if the list should include the subclasses of
-     * GenericObjectList
-     * @return An array with the metadata for the entire class hierarchy as ClassInfoLight instances
-     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     * @return The list of subclasses
+     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "getLightMetadata")
-    public List<ClassInfoLight> getLightMetadata(
-            @WebParam(name = "includeListTypes")boolean includeListTypes,
+    @WebMethod(operationName = "getSubClassesLight")
+    public List<ClassInfoLight> getSubClassesLight(
+            @WebParam(name = "className")String className,
+            @WebParam(name = "includeAbstractClasses")boolean includeAbstractClasses,
+            @WebParam(name = "includeSelf")boolean includeSelf,
             @WebParam(name = "sessionId") String sessionId) throws Exception{
         try
         {
-            wsBean.validateCall("getLightMetadata", getIPAddress(), sessionId);
-            return wsBean.getLightMetadata(includeListTypes);
+            wsBean.validateCall("getSubClassesLight", getIPAddress(), sessionId);
+            return wsBean.getSubClassesLight(className, includeAbstractClasses, includeSelf);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -1849,47 +1910,16 @@ public class Kuwaiba {
      * @return The list of subclasses
      * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "getLightSubClasses")
-    public List<ClassInfoLight> getLightSubClasses(
+    @WebMethod(operationName = "getSubClassesLightNoRecursive")
+    public List<ClassInfoLight> getSubClassesLightNoRecursive(
             @WebParam(name = "className")String className,
             @WebParam(name = "includeAbstractClasses")boolean includeAbstractClasses,
             @WebParam(name = "includeSelf")boolean includeSelf,
             @WebParam(name = "sessionId") String sessionId) throws Exception{
         try
         {
-            wsBean.validateCall("getLightSubclasses", getIPAddress(), sessionId);
-            return wsBean.getLightSubClasses(className, includeAbstractClasses, includeSelf);
-
-        }catch(Exception e){
-            Level level = Level.SEVERE;
-            if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(Kuwaiba.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-            throw e;
-        }
-
-    }
-    
-    /**
-     * Gets the subclasses of a given class
-     * @param className Class name
-     * @param includeAbstractClasses should the result include the abstract classes?
-     * @param includeSelf Should the list include the subclasses and the parent class?
-     * @param sessionId Session token
-     * @return The list of subclasses
-     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
-     */
-    @WebMethod(operationName = "getLightSubClassesNoRecursive")
-    public List<ClassInfoLight> getLightSubClassesNoRecursive(
-            @WebParam(name = "className")String className,
-            @WebParam(name = "includeAbstractClasses")boolean includeAbstractClasses,
-            @WebParam(name = "includeSelf")boolean includeSelf,
-            @WebParam(name = "sessionId") String sessionId) throws Exception{
-        try
-        {
-            wsBean.validateCall("getLightSubclassesNoRecursive", getIPAddress(), sessionId);
-            return wsBean.getLightSubClassesNoRecursive(className, includeAbstractClasses, includeSelf);
+            wsBean.validateCall("getSubClassesLightNoRecursive", getIPAddress(), sessionId);
+            return wsBean.getSubClassesLightNoRecursive(className, includeAbstractClasses, includeSelf);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -1910,14 +1940,14 @@ public class Kuwaiba {
      * @return An array with the metadata for the entire class hierarchy as ClassInfo instances
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "getMetadata")
-    public List<ClassInfo> getMetadata(
+    @WebMethod(operationName = "getAllClasses")
+    public List<ClassInfo> getAllClasses(
             @WebParam(name = "includeListTypes")boolean includeListTypes,
             @WebParam(name = "sessionId") String sessionId) throws Exception{
         try
         {
-            wsBean.validateCall("getMetadata", getIPAddress(), sessionId);
-            return wsBean.getMetadata(includeListTypes);
+            wsBean.validateCall("getAllClasses", getIPAddress(), sessionId);
+            return wsBean.getAllClasses(includeListTypes);
         } catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -1926,6 +1956,33 @@ public class Kuwaiba {
                     e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
             throw e;
         }
+    }
+    
+    /**
+     * Retrieves the metadata for the entire class hierarchy as ClassInfoLight instances
+     * @param sessionId Session token
+     * @param includeListTypes boolean to indicate if the list should include the subclasses of
+     * GenericObjectList
+     * @return An array with the metadata for the entire class hierarchy as ClassInfoLight instances
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getAllClassesLight")
+    public List<ClassInfoLight> getAllClassesLight(
+            @WebParam(name = "includeListTypes")boolean includeListTypes,
+            @WebParam(name = "sessionId") String sessionId) throws Exception{
+        try
+        {
+            wsBean.validateCall("getAllClassesLight", getIPAddress(), sessionId);
+            return wsBean.getAllClassesLight(includeListTypes);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+
     }
 
     /**
@@ -1943,7 +2000,6 @@ public class Kuwaiba {
         try {
             wsBean.validateCall("deleteClass", getIPAddress(), sessionId);
             wsBean.deleteClass(className);
-
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -1961,13 +2017,13 @@ public class Kuwaiba {
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
 
-    @WebMethod(operationName = "deleteClassById")
-    public void deleteClassById(@WebParam(name = "classId")
+    @WebMethod(operationName = "deleteClassWithId")
+    public void deleteClassWithId(@WebParam(name = "classId")
     long classId, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
         try {
-            wsBean.validateCall("deleteClassById", getIPAddress(), sessionId);
+            wsBean.validateCall("deleteClassWithId", getIPAddress(), sessionId);
             wsBean.deleteClass(classId);
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -2042,14 +2098,14 @@ public class Kuwaiba {
      * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "addPossibleChildren")
-    public void addPossibleChildren(@WebParam(name = "parentClassId")
+    @WebMethod(operationName = "addPossibleChildrenForClassWithId")
+    public void addPossibleChildrenForClassWithId(@WebParam(name = "parentClassId")
             long parentClassId, @WebParam(name = "childrenToBeAdded")
             long[] newPossibleChildren, @WebParam(name = "sessionId")
             String sessionId) throws Exception {
 
         try {
-            wsBean.validateCall("addPossibleChildren", getIPAddress(), sessionId);
+            wsBean.validateCall("addPossibleChildrenForClassWithId", getIPAddress(), sessionId);
             wsBean.addPossibleChildren(parentClassId, newPossibleChildren);
 
         }catch(Exception e){
@@ -2071,13 +2127,13 @@ public class Kuwaiba {
      * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "addPossibleChildrenByClassName")
-    public void addPossibleChildrenByClassName(@WebParam(name = "parentClassName")
+    @WebMethod(operationName = "addPossibleChildren")
+    public void addPossibleChildren(@WebParam(name = "parentClassName")
             String parentClassName, @WebParam(name = "childrenToBeAdded")
             String[] childrenToBeAdded, @WebParam(name = "sessionId")
             String sessionId) throws Exception {
         try {
-            wsBean.validateCall("addPossibleChildrenByClassName", getIPAddress(), sessionId);
+            wsBean.validateCall("addPossibleChildren", getIPAddress(), sessionId);
             wsBean.addPossibleChildren(parentClassName, childrenToBeAdded);
 
         }catch(Exception e){
@@ -2097,14 +2153,14 @@ public class Kuwaiba {
      * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
-    @WebMethod(operationName = "removePossibleChildren")
-    public void removePossibleChildren(@WebParam(name = "parentClassId")
+    @WebMethod(operationName = "removePossibleChildrenForClassWithId")
+    public void removePossibleChildrenForClassWithId(@WebParam(name = "parentClassId")
     long parentClassId, @WebParam(name = "childrenToBeRemoved")
     long[] childrenToBeRemoved, @WebParam(name = "sessionId")
     String sessionId) throws Exception {
 
         try{
-            wsBean.validateCall("removePossibleChildren", getIPAddress(), sessionId);
+            wsBean.validateCall("removePossibleChildrenForClassWithId", getIPAddress(), sessionId);
             wsBean.removePossibleChildren(parentClassId, childrenToBeRemoved);
 
         }catch(Exception e){

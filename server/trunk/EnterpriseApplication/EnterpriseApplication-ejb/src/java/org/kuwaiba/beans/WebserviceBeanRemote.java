@@ -82,7 +82,7 @@ public interface WebserviceBeanRemote {
      * @throws ClassNotFoundException if there is no class with such classId
      */
 
-    public void changeClassDefinition(ClassInfo newClassDefinition) throws ServerSideException;
+    public void setClassProperties (ClassInfo newClassDefinition) throws ServerSideException;
 
     /**
      * Deletes a classmetadata, its attributes and category relationships
@@ -107,7 +107,7 @@ public interface WebserviceBeanRemote {
      * @return the list of classes
      * @throws ServerSideException EntityManagerNotAvailableException or something unexpected
      */
-    public List<ClassInfoLight> getLightMetadata(boolean includeListTypes) throws ServerSideException;
+    public List<ClassInfoLight> getAllClassesLight(boolean includeListTypes) throws ServerSideException;
     
     /**
      * Gets the subclasses of a given class
@@ -118,7 +118,7 @@ public interface WebserviceBeanRemote {
      * @return The list of subclasses
      * @throws Exception If the class can not be found
      */
-    public List<ClassInfoLight> getLightSubClasses(String className, boolean includeAbstractClasses, boolean includeSelf) throws ServerSideException;
+    public List<ClassInfoLight> getSubClassesLight(String className, boolean includeAbstractClasses, boolean includeSelf) throws ServerSideException;
 
     /**
      * Gets the subclasses of a given class
@@ -129,7 +129,7 @@ public interface WebserviceBeanRemote {
      * @return The list of subclasses
      * @throws Exception If the class can not be found
      */
-    public List<ClassInfoLight> getLightSubClassesNoRecursive(String className, boolean includeAbstractClasses, boolean includeSelf) throws ServerSideException;
+    public List<ClassInfoLight> getSubClassesLightNoRecursive(String className, boolean includeAbstractClasses, boolean includeSelf) throws ServerSideException;
     
     /**
      * Retrieves all the class metadata except for classes marked as dummy
@@ -137,7 +137,7 @@ public interface WebserviceBeanRemote {
      * the subclasses of GenericObjectList
      * @return An array of classes
      */
-    public List<ClassInfo> getMetadata(boolean includeListTypes) throws ServerSideException;
+    public List<ClassInfo> getAllClasses(boolean includeListTypes) throws ServerSideException;
 
     /**
      * Gets Metadata For Class id its attributes and Category
@@ -145,15 +145,15 @@ public interface WebserviceBeanRemote {
      * @return A ClassMetadata with the className
      * @throws ClassNotFoundException there is no class with such className
      */
-    public ClassInfo getMetadataForClass(String className) throws ServerSideException;
+    public ClassInfo getClass(String className) throws ServerSideException;
 
     /**
-     * Gets Metadata For Class id its attributes and Category
+     * Gets the metadata for a class, providing its id
      * @param classId
      * @return
      * @throws Exception
      */
-    public ClassInfo getMetadataForClass(long classId) throws ServerSideException;
+    public ClassInfo getClass(long classId) throws ServerSideException;
 
     /**
      * Moves a class from one parentClass to an other parentClass
@@ -205,13 +205,13 @@ public interface WebserviceBeanRemote {
      * @param classId Class name this attribute belongs to
      * @param newAttributeDefinition
      */
-    public void changeAttributeDefinition(long classId, AttributeInfo newAttributeDefinition) throws ServerSideException;
+    public void setAttributeProperties(long classId, AttributeInfo newAttributeDefinition) throws ServerSideException;
     /**
      * Changes an attribute definition using name to get the class it belongs to
      * @param className Class name this attribute belongs to
      * @param newAttributeDefinition
      */
-    public void changeAttributeDefinition(String className, AttributeInfo newAttributeDefinition) throws ServerSideException;
+    public void setAttributeProperties(String className, AttributeInfo newAttributeDefinition) throws ServerSideException;
 
     /**
      * Deletes an attribute belonging to a classMetadata
@@ -225,7 +225,7 @@ public interface WebserviceBeanRemote {
      * @param classId
      * @param attributeName
      */
-    public void deleteAttribute(long classId,String attributeName) throws ServerSideException;
+    public void deleteAttribute(long classId, String attributeName) throws ServerSideException;
 
     /**
      * Creates a new category
@@ -248,13 +248,13 @@ public interface WebserviceBeanRemote {
      * @return CategoryMetadata
      * @throws MiscException if there is no Category with such cetegoryId
      */
-    public CategoryInfo getCategory(Integer categoryId) throws ServerSideException;
+    public CategoryInfo getCategory(long categoryId) throws ServerSideException;
 
     /**
      * Changes a category definition
      * @param categoryDefinition
      */
-    public void changeCategoryDefinition(CategoryInfo categoryDefinition) throws ServerSideException;
+    public void setCategoryProperties (CategoryInfo categoryDefinition) throws ServerSideException;
         
     /**
      * Gets all classes whose instances can be contained into the given parent class. This method
@@ -313,9 +313,12 @@ public interface WebserviceBeanRemote {
     public RemoteObject[] getChildrenOfClass(long parentOid, String parentClass,String classToFilter, int maxResults) throws ServerSideException;
     public RemoteObjectLight[] getChildrenOfClassLight(long parentOid, String parentClass,String classToFilter, int maxResults) throws ServerSideException;
 
-    public RemoteObject getObjectInfo(String objectClass, long oid) throws ServerSideException;
+    public RemoteObject getObject(String objectClass, long oid) throws ServerSideException;
 
-    public RemoteObjectLight getObjectInfoLight(String objectClass, long oid) throws ServerSideException;
+    public RemoteObjectLight getObjectLight(String objectClass, long oid) throws ServerSideException;
+    
+    public RemoteObject getParent(String objectClass, long oid) throws ServerSideException;
+    public RemoteObject getParentOfClass(String objectClass, long oid, String parentClass) throws ServerSideException;
 
     public String[] getSpecialAttribute(String objectClass, long objectId, String attributeName) throws ServerSideException;
 
