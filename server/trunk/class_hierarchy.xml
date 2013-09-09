@@ -1,4 +1,4 @@
-<hierarchy documentVersion="1.1" serverVersion="0.4" date="1330720263006">
+<hierarchy documentVersion="1.1" serverVersion="0.5" date="1330720263006">
   <inventory>
     <classes>
       <class name="RootObject" javaModifiers="1025" applicationModifiers="0" classType="4" classPackage="org.kuwaiba.entity.core">
@@ -75,7 +75,7 @@
                       </class>
                     </subclasses>
                   </class>
-                  <class name="GenericSoftware" javaModifiers="1025" applicationModifiers="0" classType="2" classPackage="org.kuwaiba.entity.multiple.software">
+                  <class name="GenericSoftwareType" javaModifiers="1025" applicationModifiers="0" classType="2" classPackage="org.kuwaiba.entity.multiple.software">
                     <attributes>
                       <attribute name="vendor" type="SoftwareVendor" javaModifiers="4" applicationModifiers="0"/>
                       <attribute name="displayName" type="String" javaModifiers="4" applicationModifiers="0"/>
@@ -567,14 +567,26 @@
               <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
             </attributes>
             <subclasses>
-		      <class name="SoftwareAsset" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.core">
+		      <class name="GenericSoftwareAsset" javaModifiers="1025" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.core">
 		        <attributes>
-		          <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
-		          <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+		                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+		                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
 				  <attribute name="vendor" type="SoftwareVendor" javaModifiers="4" applicationModifiers="0"/>
 				  <attribute name="type" type="SoftwareType" javaModifiers="4" applicationModifiers="0"/>
 		        </attributes>
-		        <subclasses/>
+		        <subclasses>
+				<class name="SoftwareLicense" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.core">
+					<attributes>
+						  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+						  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+						  <attribute name="vendor" type="SoftwareVendor" javaModifiers="4" applicationModifiers="0"/>
+						  <attribute name="type" type="SoftwareType" javaModifiers="4" applicationModifiers="0"/>
+						  <attribute name="expirationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+						  <attribute name="active" type="Boolean" javaModifiers="4" applicationModifiers="5"/>
+					</attributes>					
+					<subclasses/>
+				</class>
+                        </subclasses>
 			  </class>
               <class name="GenericPowerPart" javaModifiers="1025" applicationModifiers="2" classType="1" classPackage="org.kuwaiba.entity.equipment.physicallayer.power.parts">
                 <attributes>
@@ -746,7 +758,6 @@
                               <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                              
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                               <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                             </attributes>
@@ -1008,7 +1019,6 @@
                                   <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                                  
                                   <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                                   <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                                 </attributes>
@@ -2030,7 +2040,7 @@
                   </class>
                   <class name="VLAN" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.logical.misc">
                     <attributes>
-                      <attribute name="ports" type="List" javaModifiers="4" applicationModifiers="2"/>
+                      <attribute name="ports" type="String" javaModifiers="4" applicationModifiers="2"/>
                       <attribute name="customer" type="CorporateCustomer" javaModifiers="4" applicationModifiers="0"/>
                       <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                       <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
@@ -2094,7 +2104,6 @@
                   <class name="SLA" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos">
                     <attributes>
                       <attribute name="availability" type="Float" javaModifiers="4" applicationModifiers="0"/>
-                      <attribute name="service" type="GenericService" javaModifiers="4" applicationModifiers="0"/>
                       <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                       <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                     </attributes>
@@ -2102,7 +2111,6 @@
                       <class name="OLA" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos">
                         <attributes>
                           <attribute name="availability" type="Float" javaModifiers="4" applicationModifiers="0"/>
-                          <attribute name="service" type="GenericService" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                           <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                         </attributes>
