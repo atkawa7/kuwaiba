@@ -138,7 +138,20 @@
                         </attributes>
                         <subclasses/>
                       </class>
-
+		      <class name="BTSType" javaModifiers="1" applicationModifiers="0" classType="2" classPackage="org.kuwaiba.entity.multiple.mobile">
+                        <attributes>
+                          <attribute name="displayName" type="String" javaModifiers="4" applicationModifiers="0"/>
+                          <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                        </attributes>
+                        <subclasses/>
+                      </class>
+		      <class name="ValueAddedPlatformType" javaModifiers="1" applicationModifiers="0" classType="2" classPackage="org.kuwaiba.entity.multiple.mobile">
+                        <attributes>
+                          <attribute name="displayName" type="String" javaModifiers="4" applicationModifiers="0"/>
+                          <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                        </attributes>
+                        <subclasses/>
+                      </class>
                       <class name="WirelessContainerType" javaModifiers="1" applicationModifiers="0" classType="2" classPackage="org.kuwaiba.entity.multiple.types.links">
                         <attributes>
                           <attribute name="displayName" type="String" javaModifiers="4" applicationModifiers="0"/>
@@ -581,9 +594,10 @@
 						  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
 						  <attribute name="vendor" type="SoftwareVendor" javaModifiers="4" applicationModifiers="0"/>
 						  <attribute name="type" type="SoftwareType" javaModifiers="4" applicationModifiers="0"/>
-						  <attribute name="expirationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
-						  <attribute name="active" type="Boolean" javaModifiers="4" applicationModifiers="5"/>
-					</attributes>					
+						  <attribute name="expirationDate" type="Date" javaModifiers="4" applicationModifiers="0"/>
+						  <attribute name="active" type="Boolean" javaModifiers="4" applicationModifiers="0"/>
+						  <attribute name="constraints" type="String" javaModifiers="4" applicationModifiers="0"/>
+					</attributes>
 					<subclasses/>
 				</class>
                         </subclasses>
@@ -626,7 +640,7 @@
               </class>
               <class name="ViewableObject" javaModifiers="1025" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.core">
                 <attributes>
-                  
+
                   <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                   <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                 </attributes>
@@ -637,7 +651,7 @@
                       <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                       <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                       <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                      
+
                       <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                       <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                     </attributes>
@@ -648,7 +662,7 @@
                           <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                          
+
                           <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                           <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                         </attributes>
@@ -659,7 +673,7 @@
                               <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                              
+
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                               <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                             </attributes>
@@ -826,7 +840,7 @@
                               <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                              
+
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                               <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                             </attributes>
@@ -912,18 +926,30 @@
                               <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                              
+
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                               <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                             </attributes>
                             <subclasses>
+                              <class name="MobileNetworkElementBoard" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.physicallayer.parts.boards">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
                               <class name="HybridBoard" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.physicallayer.parts.boards">
                                 <attributes>
                                   <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
                                   <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                                  
+
                                   <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                                   <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                                 </attributes>
@@ -1387,7 +1413,7 @@
                               <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                              
+
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                               <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                             </attributes>
@@ -1486,7 +1512,7 @@
                               <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                              
+
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                               <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                             </attributes>
@@ -1513,18 +1539,259 @@
                           <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                          
+
                           <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                           <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                         </attributes>
                         <subclasses>
+                          <class name="GenericMobileNetworkElement" javaModifiers="1025" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                            <attributes>
+                              <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                              <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                              <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                              <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                              <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                              <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                            </attributes>
+                            <subclasses>
+                              <class name="BTS" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+				  <attribute name="type" type="BTSType" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="BSC" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="MGW" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="MSCServer" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="STP" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="SCP" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="HLR" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="SMSC" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="SGSN" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="GGSN" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="RNC" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="NodeB" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="PGW" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="SGW" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="ENodeB" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="MME" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="PCRF" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="HSS" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                              <class name="ValueAddedPlatformElement" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer.mobile">
+                                <attributes>
+                                  <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
+                                  <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="serviceType" type="ValueAddedPlatformType" javaModifiers="4" applicationModifiers="1"/>
+                                </attributes>
+                                <subclasses/>
+                              </class>
+                            </subclasses>
+                          </class>
                           <class name="Switch" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer">
                             <attributes>
                               <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
                               <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                              
+
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                               <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                             </attributes>
@@ -1536,7 +1803,7 @@
                               <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                              
+
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                               <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                             </attributes>
@@ -1559,7 +1826,7 @@
                                   <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                                  
+
                                   <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                                   <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                                 </attributes>
@@ -1567,12 +1834,12 @@
                               </class>
                               <class name="Firewall" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.networklayer">
                                 <attributes>
-                                  
+
                                   <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
                                   <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                                  
+
                                   <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                                   <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                                 </attributes>
@@ -1584,7 +1851,7 @@
                                   <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                                  
+
                                   <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                                   <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                                 </attributes>
@@ -1598,7 +1865,7 @@
                               <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                              
+
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                               <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                             </attributes>
@@ -1610,7 +1877,7 @@
                               <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="state" type="OperationalState" javaModifiers="4" applicationModifiers="0"/>
-                              
+
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                               <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                             </attributes>
@@ -1623,7 +1890,7 @@
                   <class name="Country" javaModifiers="1" applicationModifiers="2" classType="1" classPackage="org.kuwaiba.entity.location">
                     <attributes>
                       <attribute name="acronym" type="String" javaModifiers="4" applicationModifiers="0"/>
-                      
+
                       <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                       <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                     </attributes>
@@ -1631,7 +1898,7 @@
                   </class>
                   <class name="Continent" javaModifiers="1" applicationModifiers="2" classType="1" classPackage="org.kuwaiba.entity.location">
                     <attributes>
-                      
+
                       <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                       <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                     </attributes>
