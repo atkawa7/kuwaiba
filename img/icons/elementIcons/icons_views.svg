@@ -13,109 +13,8 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="icons_views.svg">
-  <defs
-     id="defs4">
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="-432.28736 : 1131.1963 : 1"
-       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
-       inkscape:vp_z="189.62782 : 153.73416 : 1"
-       inkscape:persp3d-origin="-3896.0731 : -1759.6323 : 1"
-       id="perspective3825" />
-    <inkscape:perspective
-       id="perspective2919"
-       inkscape:persp3d-origin="-531.66951 : 275.56633 : 1"
-       inkscape:vp_z="162.24396 : -19.205674 : 1"
-       inkscape:vp_y="1367.8973 : 782.80837 : 0"
-       inkscape:vp_x="-278.15822 : 914.99245 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="-49.232307 : 830.63764 : 1"
-       inkscape:vp_y="910.83479 : 412.7711 : 0"
-       inkscape:vp_z="145.54137 : 146.32979 : 1"
-       inkscape:persp3d-origin="-259.07494 : 413.57817 : 1"
-       id="perspective10" />
-    <inkscape:perspective
-       id="perspective3614"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective3636"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective3636-7"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective3636-1"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective3705"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective3727"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective3749"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective4479"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="-497.93081 : 1105.4402 : 1"
-       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
-       inkscape:vp_z="123.98437 : 127.97807 : 1"
-       inkscape:persp3d-origin="-3961.7166 : -1785.3884 : 1"
-       id="perspective3825-2" />
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="-423.43081 : 1087.1902 : 1"
-       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
-       inkscape:vp_z="198.48437 : 109.72807 : 1"
-       inkscape:persp3d-origin="-3887.2166 : -1803.6384 : 1"
-       id="perspective3825-8" />
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="-481.68081 : 1152.9402 : 1"
-       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
-       inkscape:vp_z="140.23437 : 175.47807 : 1"
-       inkscape:persp3d-origin="-3945.4666 : -1737.8884 : 1"
-       id="perspective3825-0" />
-  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -123,14 +22,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.35355339"
-     inkscape:cx="761.06625"
-     inkscape:cy="237.29504"
+     inkscape:zoom="1.4849242"
+     inkscape:cx="386.32591"
+     inkscape:cy="565.69297"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1280"
-     inkscape:window-height="752"
+     inkscape:window-height="750"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -138,9 +37,201 @@
      inkscape:guide-bbox="true"
      inkscape:snap-global="false">
     <inkscape:grid
-       type="xygrid"
-       id="grid4410" />
+       id="grid4410"
+       type="xygrid" />
   </sodipodi:namedview>
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       id="perspective3825"
+       inkscape:persp3d-origin="-3896.0731 : -1759.6323 : 1"
+       inkscape:vp_z="189.62782 : 153.73416 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="-432.28736 : 1131.1963 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="-278.15822 : 914.99245 : 1"
+       inkscape:vp_y="1367.8973 : 782.80837 : 0"
+       inkscape:vp_z="162.24396 : -19.205674 : 1"
+       inkscape:persp3d-origin="-531.66951 : 275.56633 : 1"
+       id="perspective2919" />
+    <inkscape:perspective
+       id="perspective10"
+       inkscape:persp3d-origin="-259.07494 : 413.57817 : 1"
+       inkscape:vp_z="145.54137 : 146.32979 : 1"
+       inkscape:vp_y="910.83479 : 412.7711 : 0"
+       inkscape:vp_x="-49.232307 : 830.63764 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective3614" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective3636" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective3636-7" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective3636-1" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective3705" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective3727" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective3749" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective4479" />
+    <inkscape:perspective
+       id="perspective3825-2"
+       inkscape:persp3d-origin="-3961.7166 : -1785.3884 : 1"
+       inkscape:vp_z="123.98437 : 127.97807 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="-497.93081 : 1105.4402 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3825-8"
+       inkscape:persp3d-origin="-3887.2166 : -1803.6384 : 1"
+       inkscape:vp_z="198.48437 : 109.72807 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="-423.43081 : 1087.1902 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3825-0"
+       inkscape:persp3d-origin="-3945.4666 : -1737.8884 : 1"
+       inkscape:vp_z="140.23437 : 175.47807 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="-481.68081 : 1152.9402 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3825-0-4"
+       inkscape:persp3d-origin="-3700.9186 : -1797.276 : 1"
+       inkscape:vp_z="384.78233 : 116.09046 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="-237.13285 : 1093.5526 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3825-3"
+       inkscape:persp3d-origin="-3652.7535 : -1776.6338 : 1"
+       inkscape:vp_z="432.94741 : 136.73265 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="-188.96777 : 1114.1948 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3825-3-7"
+       inkscape:persp3d-origin="-3593.5649 : -1778.3499 : 1"
+       inkscape:vp_z="492.13596 : 135.01661 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="-129.77922 : 1112.4787 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3825-3-7-8"
+       inkscape:persp3d-origin="-3542.4388 : -1778.6661 : 1"
+       inkscape:vp_z="543.26207 : 134.70034 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="-78.653106 : 1112.1625 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3825-0-4-1"
+       inkscape:persp3d-origin="-3500.7721 : -1802.2773 : 1"
+       inkscape:vp_z="584.92883 : 111.08918 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="-36.986357 : 1088.5513 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3825-0-4-1-7"
+       inkscape:persp3d-origin="-3455.6333 : -1804.3606 : 1"
+       inkscape:vp_z="630.06771 : 109.00587 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="8.1525234 : 1086.468 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3825-0-4-1-7-5"
+       inkscape:persp3d-origin="-4018.219 : -2128.4494 : 1"
+       inkscape:vp_z="617.15859 : -21.739463 : 1"
+       inkscape:vp_y="8996.6333 : 5378.9958 : 0"
+       inkscape:vp_x="-88.426984 : 1054.4941 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3825-3-7-8-1"
+       inkscape:persp3d-origin="-3462.5777 : -1977.6151 : 1"
+       inkscape:vp_z="623.1232 : -64.248678 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="1.2080217 : 913.21346 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3825-3-7-8-1-9"
+       inkscape:persp3d-origin="-3676.4666 : -1925.8884 : 1"
+       inkscape:vp_z="409.23434 : -12.521935 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="-212.68084 : 964.94025 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3825-0-4-1-7-5-5"
+       inkscape:persp3d-origin="-3619.5221 : -1928.6662 : 1"
+       inkscape:vp_z="466.17891 : -15.299679 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="-155.73628 : 962.16243 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3825-3-7-8-5"
+       inkscape:persp3d-origin="-3678.4936 : -1978.0843 : 1"
+       inkscape:vp_z="407.20728 : -64.717896 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="-214.70789 : 912.74426 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3825-2-5"
+       inkscape:persp3d-origin="-3594.0342 : -1778.0845 : 1"
+       inkscape:vp_z="491.66685 : 135.28209 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="-130.24833 : 1112.7441 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3825-2-5-9"
+       inkscape:persp3d-origin="-3679.1692 : -1979.4357 : 1"
+       inkscape:vp_z="406.53183 : -66.069099 : 1"
+       inkscape:vp_y="7929.7863 : 4885.3382 : 0"
+       inkscape:vp_x="-215.38335 : 911.39292 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -154,967 +245,2047 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
+     id="layer1"
      inkscape:groupmode="layer"
-     id="layer1">
+     inkscape:label="Layer 1">
     <g
-       sodipodi:type="inkscape:box3d"
-       style="color:#000000;fill:#aaccff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.90856755;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       id="g2816"
-       inkscape:perspectiveID="#perspective10"
-       inkscape:corner0="2.0043639 : 1.1550899 : 0 : 1"
-       inkscape:corner7="1.444122 : 0.9944541 : 0.45223209 : 1"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="10.782061"
-       inkscape:export-ydpi="10.782061">
+       transform="translate(-214.18298,-51.653173)"
+       id="g7797-4"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635">
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path2828"
-         style="fill:#ff2a2a"
-         inkscape:box3dsidetype="11"
-         d="m 219.91582,293.97415 52.06134,13.97525 -50.51616,22.89285 -43.87372,-17.6857 z" />
+         d="m 687.52396,619.22062 15.51447,10.85224 -15.26226,9.40269 -15.17709,-11.06009 z"
+         style="fill:#e9e9ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7497-2"
+         inkscape:connector-curvature="0" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path2818"
-         style="fill:#aa0000"
-         inkscape:box3dsidetype="6"
-         d="m 231.11104,201.84404 -48.70005,22.06984 -4.82371,89.24267 42.32854,-19.1824 z" />
+         d="m 689.20955,606.20222 -15.31552,9.4355 -1.29495,12.77774 14.92488,-9.19484 z"
+         style="fill:#353564;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7499-2"
+         inkscape:connector-curvature="0" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path2820"
-         style="fill:#d40000"
-         inkscape:box3dsidetype="5"
-         d="m 231.11104,201.84404 64.26033,-4.55701 -23.39421,110.66237 -52.06134,-13.97525 z" />
+         d="m 689.20955,606.20222 15.96909,10.8407 -2.14021,13.02994 -15.51447,-10.85224 z"
+         style="fill:#4d4d9f;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7501-0"
+         inkscape:connector-curvature="0" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path2826"
-         style="fill:#aa4400;fill-rule:evenodd;stroke:none"
-         inkscape:box3dsidetype="13"
-         d="m 182.41099,223.91388 53.0973,0.50184 -14.04729,106.42653 -43.87372,-17.6857 z" />
+         d="m 673.89403,615.63772 15.6136,11.0597 -1.73146,12.77813 -15.17709,-11.06009 z"
+         style="fill:#b45ba0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7503-12"
+         inkscape:connector-curvature="0" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path2824"
-         style="fill:#d45500;fill-rule:evenodd;stroke:none"
-         inkscape:box3dsidetype="14"
-         d="M 295.37137,197.28703 235.50829,224.41572 221.461,330.84225 271.97716,307.9494 z" />
+         d="m 705.17864,617.04292 -15.67101,9.6545 -1.73146,12.77813 15.26226,-9.40269 z"
+         style="fill:#d39fc9;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7505-7"
+         inkscape:connector-curvature="0" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path2822"
-         style="fill:#008000;fill-rule:evenodd;stroke:none"
-         inkscape:box3dsidetype="3"
-         d="m 231.11104,201.84404 64.26033,-4.55701 -59.86308,27.12869 -53.0973,-0.50184 z" />
+         d="m 689.20955,606.20222 15.96909,10.8407 -15.67101,9.6545 -15.6136,-11.0597 z"
+         style="fill:#af2d95;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7507-7"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       transform="translate(-190.65357,-202.24141)"
+       id="g7797-0"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635">
+      <path
+         d="m 687.52396,619.22062 15.51447,10.85224 -15.26226,9.40269 -15.17709,-11.06009 z"
+         style="fill:#e9e9ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7497-92"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 689.20955,606.20222 -15.31552,9.4355 -1.29495,12.77774 14.92488,-9.19484 z"
+         style="fill:#353564;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7499-49"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 689.20955,606.20222 15.96909,10.8407 -2.14021,13.02994 -15.51447,-10.85224 z"
+         style="fill:#4d4d9f;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7501-15"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 673.89403,615.63772 15.6136,11.0597 -1.73146,12.77813 -15.17709,-11.06009 z"
+         style="fill:#b45ba0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7503-7"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 705.17864,617.04292 -15.67101,9.6545 -1.73146,12.77813 15.26226,-9.40269 z"
+         style="fill:#d39fc9;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7505-3"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 689.20955,606.20222 15.96909,10.8407 -15.67101,9.6545 -15.6136,-11.0597 z"
+         style="fill:#af2d95;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7507-3"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       transform="translate(-80.418272,-199.30023)"
+       id="g7797-8"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635">
+      <path
+         d="m 687.52396,619.22062 15.51447,10.85224 -15.26226,9.40269 -15.17709,-11.06009 z"
+         style="fill:#e9e9ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7497-7"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 689.20955,606.20222 -15.31552,9.4355 -1.29495,12.77774 14.92488,-9.19484 z"
+         style="fill:#353564;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7499-3"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 689.20955,606.20222 15.96909,10.8407 -2.14021,13.02994 -15.51447,-10.85224 z"
+         style="fill:#4d4d9f;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7501-3"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 673.89403,615.63772 15.6136,11.0597 -1.73146,12.77813 -15.17709,-11.06009 z"
+         style="fill:#b45ba0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7503-1"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 705.17864,617.04292 -15.67101,9.6545 -1.73146,12.77813 15.26226,-9.40269 z"
+         style="fill:#d39fc9;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7505-0"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 689.20955,606.20222 15.96909,10.8407 -15.67101,9.6545 -15.6136,-11.0597 z"
+         style="fill:#af2d95;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7507-81"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       transform="translate(114.87501,150.66749)"
+       id="g7603-3-2-9-6-2"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635">
+      <g
+         id="g5117-4-8-6-3-3-3"
+         transform="matrix(0.30004038,0,0,0.24619733,503.125,472.36554)"
+         inkscape:label="Octahedron:x-80.00:y20.00:x0.00:x0.00:y0.00:x0.00">
+        <path
+           id="path5121-8-3-0-4-8-7"
+           d="M 4.1821897,-69.314134 -63.561381,32.848572 -30.018532,61.953082 z"
+           style="fill:#cf0000;fill-opacity:1;stroke:#000000;stroke-width:2.58388662;stroke-linejoin:round;stroke-opacity:1"
+           inkscape:label="Face:2"
+           inkscape:connector-curvature="0" />
+        <path
+           id="path5123-8-2-5-7-7-8"
+           d="m 4.1821897,-69.314134 -34.2007217,131.267216 93.579913,0 z"
+           style="fill:#c30000;fill-opacity:1;stroke:#000000;stroke-width:2.58388662;stroke-linejoin:round;stroke-opacity:1"
+           inkscape:label="Face:3"
+           inkscape:connector-curvature="0" />
+      </g>
+      <path
+         style="fill:#be7bb0;fill-opacity:1;stroke:#000000;stroke-width:0.34722221;stroke-opacity:1"
+         d="m 494.93462,486.77329 c 0.0872,-0.23872 2.24642,-7.03559 4.79837,-15.10417 2.55194,-8.06857 4.72391,-14.6677 4.82659,-14.66472 0.15247,0.004 16.2376,28.95181 16.62188,29.91332 0.0637,0.15928 -5.8515,0.2896 -13.14479,0.2896 -10.46146,0 -13.22708,-0.0916 -13.10205,-0.43403 z"
+         id="path5310-2-8-4-8-6-5"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill:#d35f5f;fill-opacity:1;stroke:#000000;stroke-width:0.34722221;stroke-opacity:1"
+         d="m 491.36598,484.54665 c -1.04362,-0.69385 -2.71844,-1.95417 -3.72182,-2.80072 l -1.82434,-1.53918 1.12989,-1.58328 c 1.68052,-2.35486 13.72657,-17.36929 14.14068,-17.62522 0.1965,-0.12144 0.35727,0.005 0.35727,0.28022 0,0.63977 -7.62298,23.93311 -7.94405,24.27442 -0.13208,0.14041 -1.09402,-0.3124 -2.13763,-1.00624 z"
+         id="path5314-5-6-6-8-1-8"
+         inkscape:connector-curvature="0" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path5304-5-01-7-1-7-5"
+         d="m 489.29487,483.54658 c -2.19618,-1.59926 -3.97447,-3.12987 -3.95176,-3.40136 0.0407,-0.48693 17.15162,-21.86769 17.34544,-21.67386 0.22129,0.22128 -8.73832,27.81863 -9.05713,27.89774 -0.18892,0.0469 -2.14037,-1.22326 -4.33655,-2.82252 z"
+         style="fill:#b71f9e;fill-opacity:1;stroke:#000000;stroke-width:0.34722221;stroke-opacity:1" />
+    </g>
+    <g
+       inkscape:label="Octahedron:x-80.00:y20.00:x0.00:x0.00:y0.00:x0.00"
+       transform="matrix(0.30004038,0,0,0.24619733,620.58823,573.85656)"
+       id="g5117-4-8-6-3-3"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635">
+      <path
+         inkscape:connector-curvature="0"
+         inkscape:label="Face:2"
+         style="fill:#cf0000;fill-opacity:1;stroke:#000000;stroke-width:2.58388662;stroke-linejoin:round;stroke-opacity:1"
+         d="M 4.1821897,-69.314134 -63.561381,32.848572 -30.018532,61.953082 z"
+         id="path5121-8-3-0-4-8" />
+      <path
+         inkscape:connector-curvature="0"
+         inkscape:label="Face:3"
+         style="fill:#c30000;fill-opacity:1;stroke:#000000;stroke-width:2.58388662;stroke-linejoin:round;stroke-opacity:1"
+         d="m 4.1821897,-69.314134 -34.2007217,131.267216 93.579913,0 z"
+         id="path5123-8-2-5-7-7" />
     </g>
     <path
-       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 245.11384,238.34721 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
-       id="path2832"
-       sodipodi:nodetypes="ccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="10.782061"
-       inkscape:export-ydpi="10.782061" />
+       inkscape:connector-curvature="0"
+       id="path5310-2-8-4-8-6"
+       d="m 612.39785,588.26431 c 0.0872,-0.23872 2.24642,-7.03559 4.79837,-15.10417 2.55194,-8.06857 4.72391,-14.6677 4.82659,-14.66472 0.15247,0.004 16.2376,28.95181 16.62188,29.91332 0.0637,0.15928 -5.8515,0.2896 -13.14479,0.2896 -10.46146,0 -13.22708,-0.0916 -13.10205,-0.43403 z"
+       style="fill:#5599ff;fill-opacity:1;stroke:#000000;stroke-width:0.34722220999999998;stroke-opacity:1"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635" />
     <path
-       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 271.07791,227.57488 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
-       id="path2832-4"
-       sodipodi:nodetypes="ccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="10.782061"
-       inkscape:export-ydpi="10.782061" />
+       inkscape:connector-curvature="0"
+       id="path5314-5-6-6-8-1"
+       d="m 608.82921,586.03767 c -1.04362,-0.69385 -2.71844,-1.95417 -3.72182,-2.80072 l -1.82434,-1.53918 1.12989,-1.58328 c 1.68052,-2.35486 13.72657,-17.36929 14.14068,-17.62522 0.1965,-0.12144 0.35727,0.005 0.35727,0.28022 0,0.63977 -7.62298,23.93311 -7.94405,24.27442 -0.13208,0.14041 -1.09402,-0.3124 -2.13763,-1.00624 z"
+       style="fill:#d35f5f;fill-opacity:1;stroke:#000000;stroke-width:0.34722221;stroke-opacity:1"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635" />
     <path
-       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 241.03714,266.93531 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
-       id="path2832-3"
-       sodipodi:nodetypes="ccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="10.782061"
-       inkscape:export-ydpi="10.782061" />
-    <path
-       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 267.00121,256.16298 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
-       id="path2832-4-0"
-       sodipodi:nodetypes="ccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="10.782061"
-       inkscape:export-ydpi="10.782061" />
-    <path
-       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 236.82743,293.17561 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
-       id="path2832-6"
-       sodipodi:nodetypes="ccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="10.782061"
-       inkscape:export-ydpi="10.782061" />
-    <path
-       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 262.7915,282.40328 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
-       id="path2832-4-8"
-       sodipodi:nodetypes="ccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="10.782061"
-       inkscape:export-ydpi="10.782061" />
-    <path
-       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 232.68422,317.4824 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
-       id="path2832-7"
-       sodipodi:nodetypes="ccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="10.782061"
-       inkscape:export-ydpi="10.782061" />
-    <path
-       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 258.64829,306.71007 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
-       id="path2832-4-9"
-       sodipodi:nodetypes="ccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="10.782061"
-       inkscape:export-ydpi="10.782061" />
+       style="fill:#002255;fill-opacity:1;stroke:#000000;stroke-width:0.34722220999999998;stroke-opacity:1"
+       d="m 606.7581,585.0376 c -2.19618,-1.59926 -3.97447,-3.12987 -3.95176,-3.40136 0.0407,-0.48693 17.15162,-21.86769 17.34544,-21.67386 0.22129,0.22128 -8.73832,27.81863 -9.05713,27.89774 -0.18892,0.0469 -2.14037,-1.22326 -4.33655,-2.82252 z"
+       id="path5304-5-01-7-1-7"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635" />
     <g
-       sodipodi:type="inkscape:box3d"
-       style="color:#000000;fill:#e9f400;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.90856755;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       id="g2905"
-       inkscape:perspectiveID="#perspective2919"
-       inkscape:corner0="-0.049270723 : 0.63363582 : 0 : 1"
-       inkscape:corner7="-0.087969803 : 0.61673391 : 0.040669238 : 1"
-       inkscape:transform-center-x="-20.3125"
-       inkscape:transform-center-y="-14.0625"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/shelter_32.png"
-       inkscape:export-xdpi="47.221161"
-       inkscape:export-ydpi="47.221161">
+       transform="translate(10.992648,54.43219)"
+       id="g7603-3-2"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635">
+      <g
+         id="g5117-4-8-6"
+         transform="matrix(0.30004038,0,0,0.24619733,503.125,472.36554)"
+         inkscape:label="Octahedron:x-80.00:y20.00:x0.00:x0.00:y0.00:x0.00">
+        <path
+           id="path5121-8-3-0"
+           d="M 4.1821897,-69.314134 -63.561381,32.848572 -30.018532,61.953082 z"
+           style="fill:#cf0000;fill-opacity:1;stroke:#000000;stroke-width:2.58388662;stroke-linejoin:round;stroke-opacity:1"
+           inkscape:label="Face:2"
+           inkscape:connector-curvature="0" />
+        <path
+           id="path5123-8-2-5"
+           d="m 4.1821897,-69.314134 -34.2007217,131.267216 93.579913,0 z"
+           style="fill:#c30000;fill-opacity:1;stroke:#000000;stroke-width:2.58388662;stroke-linejoin:round;stroke-opacity:1"
+           inkscape:label="Face:3"
+           inkscape:connector-curvature="0" />
+      </g>
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path2917"
-         style="fill:#ff2a2a"
-         inkscape:box3dsidetype="11"
-         d="m 358.46595,320.34743 25.85996,7.43264 -24.26796,13.88786 -24.91267,-7.97475 z" />
+         style="fill:#be7bb0;fill-opacity:1;stroke:#000000;stroke-width:0.34722221;stroke-opacity:1"
+         d="m 494.93462,486.77329 c 0.0872,-0.23872 2.24642,-7.03559 4.79837,-15.10417 2.55194,-8.06857 4.72391,-14.6677 4.82659,-14.66472 0.15247,0.004 16.2376,28.95181 16.62188,29.91332 0.0637,0.15928 -5.8515,0.2896 -13.14479,0.2896 -10.46146,0 -13.22708,-0.0916 -13.10205,-0.43403 z"
+         id="path5310-2-8-4"
+         inkscape:connector-curvature="0" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path2907"
-         style="fill:#aa0000"
-         inkscape:box3dsidetype="6"
-         d="m 366.85972,288.21256 -24.31826,13.91664 -7.39618,31.56398 23.32067,-13.34575 z" />
+         style="fill:#d35f5f;fill-opacity:1;stroke:#000000;stroke-width:0.34722221;stroke-opacity:1"
+         d="m 491.36598,484.54665 c -1.04362,-0.69385 -2.71844,-1.95417 -3.72182,-2.80072 l -1.82434,-1.53918 1.12989,-1.58328 c 1.68052,-2.35486 13.72657,-17.36929 14.14068,-17.62522 0.1965,-0.12144 0.35727,0.005 0.35727,0.28022 0,0.63977 -7.62298,23.93311 -7.94405,24.27442 -0.13208,0.14041 -1.09402,-0.3124 -2.13763,-1.00624 z"
+         id="path5314-5-6-6"
+         inkscape:connector-curvature="0" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path2909"
-         style="fill:#d40000"
-         inkscape:box3dsidetype="5"
-         d="m 366.85972,288.21256 27.36927,6.40054 -9.90308,33.16697 -25.85996,-7.43264 z" />
-      <path
-         sodipodi:type="inkscape:box3dside"
-         id="path2915"
-         style="fill:#37abc8"
-         inkscape:box3dsidetype="13"
-         d="m 342.54146,302.1292 26.33741,6.99104 -8.82092,32.54769 -24.91267,-7.97475 z" />
-      <path
-         sodipodi:type="inkscape:box3dside"
-         id="path2913"
-         style="fill:#d7eef4"
-         inkscape:box3dsidetype="14"
-         d="m 394.22899,294.6131 -25.35012,14.50714 -8.82092,32.54769 24.26796,-13.88786 z" />
-      <path
-         sodipodi:type="inkscape:box3dside"
-         id="path2911"
-         style="fill:#c83737"
-         inkscape:box3dsidetype="3"
-         d="m 366.85972,288.21256 27.36927,6.40054 -25.35012,14.50714 -26.33741,-6.99104 z" />
+         inkscape:connector-curvature="0"
+         id="path5304-5-01-7"
+         d="m 489.29487,483.54658 c -2.19618,-1.59926 -3.97447,-3.12987 -3.95176,-3.40136 0.0407,-0.48693 17.15162,-21.86769 17.34544,-21.67386 0.22129,0.22128 -8.73832,27.81863 -9.05713,27.89774 -0.18892,0.0469 -2.14037,-1.22326 -4.33655,-2.82252 z"
+         style="fill:#b71f9e;fill-opacity:1;stroke:#000000;stroke-width:0.34722221;stroke-opacity:1" />
     </g>
-    <path
-       style="fill:#c83737;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
-       d="m 384.96094,281.85437 8.00781,12.69531 -23.4375,13.28125 -7.22656,-14.0625 22.65625,-11.91406 z"
-       id="path2921"
-       sodipodi:nodetypes="ccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/shelter_32.png"
-       inkscape:export-xdpi="47.221161"
-       inkscape:export-ydpi="47.221161" />
-    <path
-       style="fill:#c83737;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
-       d="m 362.5,293.76843 -18.94531,8.39844 23.24219,-13.86719 17.77343,-6.64062 L 362.5,293.76843 z"
-       id="path3695"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/shelter_32.png"
-       inkscape:export-xdpi="47.221161"
-       inkscape:export-ydpi="47.221161" />
-    <path
-       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:0.80408186px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 380.86567,317.44928 6.196,-3.7659 2.9711,-9.61143 -6.97725,4.23446 -2.18985,9.14287 z"
-       id="path2832-3-2-8"
-       sodipodi:nodetypes="ccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/shelter_32.png"
-       inkscape:export-xdpi="47.221161"
-       inkscape:export-ydpi="47.221161" />
-    <path
-       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:0.80408186px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 368.46333,324.08991 6.196,-3.7659 2.9711,-9.61143 -6.97725,4.23446 -2.18985,9.14287 z"
-       id="path2832-3-2-8-0"
-       sodipodi:nodetypes="ccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/shelter_32.png"
-       inkscape:export-xdpi="47.221161"
-       inkscape:export-ydpi="47.221161" />
-    <rect
-       style="color:#000000;fill:#803300;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       id="rect3050"
-       width="21.661016"
-       height="39.050846"
-       x="516.185"
-       y="296.45135"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/floor_32.png"
-       inkscape:export-xdpi="73.750008"
-       inkscape:export-ydpi="73.750008" />
-    <rect
-       style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       id="rect3832"
-       width="15.254237"
-       height="8.5423727"
-       x="519.69348"
-       y="300.41745"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/floor_32.png"
-       inkscape:export-xdpi="73.750008"
-       inkscape:export-ydpi="73.750008" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="521.58331"
-       y="307.05304"
-       id="text3834"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/floor_32.png"
-       inkscape:export-xdpi="73.750008"
-       inkscape:export-ydpi="73.750008"><tspan
-         sodipodi:role="line"
-         id="tspan3836"
-         x="521.58331"
-         y="307.05304"
-         style="font-size:6px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Impact;-inkscape-font-specification:Impact Bold">DATA</tspan></text>
-    <rect
-       style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       id="rect3838"
-       width="1.9830508"
-       height="4.7288136"
-       x="534.87146"
-       y="313.61237"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/floor_32.png"
-       inkscape:export-xdpi="73.750008"
-       inkscape:export-ydpi="73.750008" />
-    <rect
-       style="color:#000000;fill:#00ff00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       id="rect3840"
-       width="1.1440678"
-       height="0.99152541"
-       x="535.25281"
-       y="314.14627"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/floor_32.png"
-       inkscape:export-xdpi="73.750008"
-       inkscape:export-ydpi="73.750008" />
-    <rect
-       style="fill:#8080ff;fill-opacity:1;stroke:none"
-       id="rect3432"
-       width="27.331116"
-       height="13.213974"
-       x="289.43146"
-       y="401.84076"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
-       inkscape:export-xdpi="44.998253"
-       inkscape:export-ydpi="44.998253" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#3737c8;fill-opacity:1;stroke:none"
-       id="path3412"
-       sodipodi:cx="312.94998"
-       sodipodi:cy="394.69766"
-       sodipodi:rx="23.478155"
-       sodipodi:ry="7.4577665"
-       d="m 336.42814,394.69766 a 23.478155,7.4577665 0 1 1 -46.95631,0 23.478155,7.4577665 0 1 1 46.95631,0 z"
-       transform="matrix(0.58205417,0,0,0.60679397,120.93653,162.65156)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
-       inkscape:export-xdpi="44.998253"
-       inkscape:export-ydpi="44.998253" />
-    <path
-       style="fill:none;stroke:#ffffff;stroke-width:0.93896365px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
-       d="m 311.07277,399.77463 -4.39378,-0.14545 -6.53285,4.3631 -4.68283,0.0728"
-       id="path3452-8"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
-       inkscape:export-xdpi="44.998253"
-       inkscape:export-ydpi="44.998253" />
-    <path
-       style="fill:none;stroke:#ffffff;stroke-width:0.93930733;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 295.52112,399.70192 4.39377,-0.14544 6.53285,4.3631 4.68284,0.0728"
-       id="path3452-8-4"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
-       inkscape:export-xdpi="44.998253"
-       inkscape:export-ydpi="44.998253" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#8080ff;fill-opacity:1;stroke:none"
-       id="path3412-5"
-       sodipodi:cx="312.94998"
-       sodipodi:cy="394.69766"
-       sodipodi:rx="23.478155"
-       sodipodi:ry="7.4577665"
-       d="m 336.42814,394.69766 a 23.478155,7.4577665 0 1 1 -46.95631,0 23.478155,7.4577665 0 1 1 46.95631,0 z"
-       transform="matrix(0.58205417,0,0,0.60679397,120.93667,175.60178)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
-       inkscape:export-xdpi="44.998253"
-       inkscape:export-ydpi="44.998253" />
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.25857273;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect3809"
-       width="12.778296"
-       height="4.4701252"
-       x="308.51651"
-       y="412.73431"
-       ry="0.71522009"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
-       inkscape:export-xdpi="44.998253"
-       inkscape:export-ydpi="44.998253" />
-    <text
-       xml:space="preserve"
-       style="font-size:34.34396744px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="310.37976"
-       y="413.8905"
-       id="text3805"
-       sodipodi:linespacing="125%"
-       transform="scale(0.99475695,1.0052707)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
-       inkscape:export-xdpi="44.998253"
-       inkscape:export-ydpi="44.998253"><tspan
-         sodipodi:role="line"
-         id="tspan3807"
-         x="310.37976"
-         y="413.8905"
-         style="font-size:3.43439627px;font-weight:bold">router</tspan></text>
     <g
-       sodipodi:type="inkscape:box3d"
+       inkscape:export-ydpi="381.10635"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:corner7="-0.16971789 : 0.50887482 : 0.022235729 : 1"
+       inkscape:corner0="-0.15044635 : 0.51051564 : 0 : 1"
+       inkscape:perspectiveID="#perspective3825-2-5-9"
+       id="g3811-6-4-8"
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="g3811"
+       sodipodi:type="inkscape:box3d">
+      <path
+         d="m 470.93244,621.04123 15.51447,10.85224 -15.26226,9.40269 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="11"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3823-7-0-2"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 472.61802,608.02283 -15.31551,9.4355 -1.29495,12.77774 14.92488,-9.19484 z"
+         inkscape:box3dsidetype="6"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3813-4-3-2"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 472.61802,608.02283 15.96909,10.8407 -2.1402,13.02994 -15.51447,-10.85224 z"
+         inkscape:box3dsidetype="5"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3815-7-4-7"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 457.30251,617.45833 15.6136,11.0597 -1.73146,12.77813 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="13"
+         style="fill:#99ff55;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3821-1-1-8"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 488.58711,618.86353 -15.671,9.6545 -1.73146,12.77813 15.26226,-9.40269 z"
+         inkscape:box3dsidetype="14"
+         style="fill:#ccffaa;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3819-1-2-5"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 472.61802,608.02283 15.96909,10.8407 -15.671,9.6545 -15.6136,-11.0597 z"
+         inkscape:box3dsidetype="3"
+         style="fill:#338000;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3817-8-2-8"
+         sodipodi:type="inkscape:box3dside" />
+    </g>
+    <g
+       inkscape:export-ydpi="381.10635"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:corner7="-0.16971789 : 0.50887482 : 0.022235729 : 1"
+       inkscape:corner0="-0.15044635 : 0.51051564 : 0 : 1"
+       inkscape:perspectiveID="#perspective3825-2-5"
+       id="g3811-6-4"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="inkscape:box3d">
+      <path
+         d="m 556.06744,419.69003 15.51447,10.85223 -15.26227,9.40269 -15.17708,-11.06009 z"
+         inkscape:box3dsidetype="11"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3823-7-0"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 557.75302,406.67163 -15.31552,9.43549 -1.29494,12.77774 14.92488,-9.19483 z"
+         inkscape:box3dsidetype="6"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3813-4-3"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 557.75302,406.67163 15.96908,10.8407 -2.14019,13.02993 -15.51447,-10.85223 z"
+         inkscape:box3dsidetype="5"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3815-7-4"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 542.4375,416.10712 15.6136,11.05971 -1.73146,12.77812 -15.17708,-11.06009 z"
+         inkscape:box3dsidetype="13"
+         style="fill:#99ff55;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3821-1-1"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 573.7221,417.51233 -15.671,9.6545 -1.73146,12.77812 15.26227,-9.40269 z"
+         inkscape:box3dsidetype="14"
+         style="fill:#ccffaa;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3819-1-2"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 557.75302,406.67163 15.96908,10.8407 -15.671,9.6545 -15.6136,-11.05971 z"
+         inkscape:box3dsidetype="3"
+         style="fill:#338000;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3817-8-2"
+         sodipodi:type="inkscape:box3dside" />
+    </g>
+    <g
+       inkscape:export-ydpi="10.782061"
+       inkscape:export-xdpi="10.782061"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       inkscape:corner7="1.444122 : 0.9944541 : 0.45223209 : 1"
+       inkscape:corner0="2.0043639 : 1.1550899 : 0 : 1"
+       inkscape:perspectiveID="#perspective10"
+       id="g2816"
+       style="color:#000000;fill:#aaccff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.90856755;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       sodipodi:type="inkscape:box3d">
+      <path
+         d="m 219.91582,293.97415 52.06134,13.97525 -50.51616,22.89285 -43.87372,-17.6857 z"
+         inkscape:box3dsidetype="11"
+         style="fill:#ff2a2a"
+         id="path2828"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 231.11104,201.84404 -48.70005,22.06984 -4.82371,89.24267 42.32854,-19.1824 z"
+         inkscape:box3dsidetype="6"
+         style="fill:#aa0000"
+         id="path2818"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 231.11104,201.84404 64.26033,-4.55701 -23.39421,110.66237 -52.06134,-13.97525 z"
+         inkscape:box3dsidetype="5"
+         style="fill:#d40000"
+         id="path2820"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 182.41099,223.91388 53.0973,0.50184 -14.04729,106.42653 -43.87372,-17.6857 z"
+         inkscape:box3dsidetype="13"
+         style="fill:#aa4400;fill-rule:evenodd;stroke:none"
+         id="path2826"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="M 295.37137,197.28703 235.50829,224.41572 221.461,330.84225 271.97716,307.9494 z"
+         inkscape:box3dsidetype="14"
+         style="fill:#d45500;fill-rule:evenodd;stroke:none"
+         id="path2824"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 231.11104,201.84404 64.26033,-4.55701 -59.86308,27.12869 -53.0973,-0.50184 z"
+         inkscape:box3dsidetype="3"
+         style="fill:#008000;fill-rule:evenodd;stroke:none"
+         id="path2822"
+         sodipodi:type="inkscape:box3dside" />
+    </g>
+    <path
+       inkscape:export-ydpi="10.782061"
+       inkscape:export-xdpi="10.782061"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="ccccc"
+       id="path2832"
+       d="m 245.11384,238.34721 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
+       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       inkscape:export-ydpi="10.782061"
+       inkscape:export-xdpi="10.782061"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="ccccc"
+       id="path2832-4"
+       d="m 271.07791,227.57488 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
+       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       inkscape:export-ydpi="10.782061"
+       inkscape:export-xdpi="10.782061"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="ccccc"
+       id="path2832-3"
+       d="m 241.03714,266.93531 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
+       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       inkscape:export-ydpi="10.782061"
+       inkscape:export-xdpi="10.782061"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="ccccc"
+       id="path2832-4-0"
+       d="m 267.00121,256.16298 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
+       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       inkscape:export-ydpi="10.782061"
+       inkscape:export-xdpi="10.782061"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="ccccc"
+       id="path2832-6"
+       d="m 236.82743,293.17561 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
+       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       inkscape:export-ydpi="10.782061"
+       inkscape:export-xdpi="10.782061"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="ccccc"
+       id="path2832-4-8"
+       d="m 262.7915,282.40328 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
+       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       inkscape:export-ydpi="10.782061"
+       inkscape:export-xdpi="10.782061"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="ccccc"
+       id="path2832-7"
+       d="m 232.68422,317.4824 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
+       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       inkscape:export-ydpi="10.782061"
+       inkscape:export-xdpi="10.782061"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="ccccc"
+       id="path2832-4-9"
+       d="m 258.64829,306.71007 9.87463,-4.55753 2.41687,-10.77233 -9.87464,3.65983 -2.41686,11.67003 z"
+       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <g
+       inkscape:export-ydpi="47.221161"
+       inkscape:export-xdpi="47.221161"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/shelter_32.png"
+       inkscape:transform-center-y="-14.0625"
+       inkscape:transform-center-x="-20.3125"
+       inkscape:corner7="-0.087969803 : 0.61673391 : 0.040669238 : 1"
+       inkscape:corner0="-0.049270723 : 0.63363582 : 0 : 1"
+       inkscape:perspectiveID="#perspective2919"
+       id="g2905"
+       style="color:#000000;fill:#e9f400;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.90856755;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       sodipodi:type="inkscape:box3d">
+      <path
+         d="m 358.46595,320.34743 25.85996,7.43264 -24.26796,13.88786 -24.91267,-7.97475 z"
+         inkscape:box3dsidetype="11"
+         style="fill:#ff2a2a"
+         id="path2917"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 366.85972,288.21256 -24.31826,13.91664 -7.39618,31.56398 23.32067,-13.34575 z"
+         inkscape:box3dsidetype="6"
+         style="fill:#aa0000"
+         id="path2907"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 366.85972,288.21256 27.36927,6.40054 -9.90308,33.16697 -25.85996,-7.43264 z"
+         inkscape:box3dsidetype="5"
+         style="fill:#d40000"
+         id="path2909"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 342.54146,302.1292 26.33741,6.99104 -8.82092,32.54769 -24.91267,-7.97475 z"
+         inkscape:box3dsidetype="13"
+         style="fill:#37abc8"
+         id="path2915"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 394.22899,294.6131 -25.35012,14.50714 -8.82092,32.54769 24.26796,-13.88786 z"
+         inkscape:box3dsidetype="14"
+         style="fill:#d7eef4"
+         id="path2913"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 366.85972,288.21256 27.36927,6.40054 -25.35012,14.50714 -26.33741,-6.99104 z"
+         inkscape:box3dsidetype="3"
+         style="fill:#c83737"
+         id="path2911"
+         sodipodi:type="inkscape:box3dside" />
+    </g>
+    <path
+       inkscape:export-ydpi="47.221161"
+       inkscape:export-xdpi="47.221161"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/shelter_32.png"
+       sodipodi:nodetypes="ccccc"
+       id="path2921"
+       d="m 384.96094,281.85437 8.00781,12.69531 -23.4375,13.28125 -7.22656,-14.0625 22.65625,-11.91406 z"
+       style="fill:#c83737;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1" />
+    <path
+       inkscape:export-ydpi="47.221161"
+       inkscape:export-xdpi="47.221161"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/shelter_32.png"
+       id="path3695"
+       d="m 362.5,293.76843 -18.94531,8.39844 23.24219,-13.86719 17.77343,-6.64062 L 362.5,293.76843 z"
+       style="fill:#c83737;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1" />
+    <path
+       inkscape:export-ydpi="47.221161"
+       inkscape:export-xdpi="47.221161"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/shelter_32.png"
+       sodipodi:nodetypes="ccccc"
+       id="path2832-3-2-8"
+       d="m 380.86567,317.44928 6.196,-3.7659 2.9711,-9.61143 -6.97725,4.23446 -2.18985,9.14287 z"
+       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:0.80408186px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       inkscape:export-ydpi="47.221161"
+       inkscape:export-xdpi="47.221161"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/shelter_32.png"
+       sodipodi:nodetypes="ccccc"
+       id="path2832-3-2-8-0"
+       d="m 368.46333,324.08991 6.196,-3.7659 2.9711,-9.61143 -6.97725,4.23446 -2.18985,9.14287 z"
+       style="fill:#e9f400;fill-opacity:1;stroke:#000000;stroke-width:0.80408186px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <rect
+       inkscape:export-ydpi="73.750008"
+       inkscape:export-xdpi="73.750008"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/floor_32.png"
+       y="296.45135"
+       x="516.185"
+       height="39.050846"
+       width="21.661016"
+       id="rect3050"
+       style="color:#000000;fill:#803300;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <rect
+       inkscape:export-ydpi="73.750008"
+       inkscape:export-xdpi="73.750008"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/floor_32.png"
+       y="300.41745"
+       x="519.69348"
+       height="8.5423727"
+       width="15.254237"
+       id="rect3832"
+       style="color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <text
+       inkscape:export-ydpi="73.750008"
+       inkscape:export-xdpi="73.750008"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/floor_32.png"
+       id="text3834"
+       y="307.05304"
+       x="521.58331"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="font-size:6px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Impact;-inkscape-font-specification:Impact Bold"
+         y="307.05304"
+         x="521.58331"
+         id="tspan3836"
+         sodipodi:role="line">DATA</tspan></text>
+    <rect
+       inkscape:export-ydpi="73.750008"
+       inkscape:export-xdpi="73.750008"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/floor_32.png"
+       y="313.61237"
+       x="534.87146"
+       height="4.7288136"
+       width="1.9830508"
+       id="rect3838"
+       style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <rect
+       inkscape:export-ydpi="73.750008"
+       inkscape:export-xdpi="73.750008"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/floor_32.png"
+       y="314.14627"
+       x="535.25281"
+       height="0.99152541"
+       width="1.1440678"
+       id="rect3840"
+       style="color:#000000;fill:#00ff00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    <rect
+       inkscape:export-ydpi="44.998253"
+       inkscape:export-xdpi="44.998253"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
+       y="401.84076"
+       x="289.43146"
+       height="13.213974"
+       width="27.331116"
+       id="rect3432"
+       style="fill:#8080ff;fill-opacity:1;stroke:none" />
+    <path
+       inkscape:export-ydpi="44.998253"
+       inkscape:export-xdpi="44.998253"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
+       transform="matrix(0.58205417,0,0,0.60679397,120.93653,162.65156)"
+       d="m 336.42814,394.69766 a 23.478155,7.4577665 0 1 1 -46.95631,0 23.478155,7.4577665 0 1 1 46.95631,0 z"
+       sodipodi:ry="7.4577665"
+       sodipodi:rx="23.478155"
+       sodipodi:cy="394.69766"
+       sodipodi:cx="312.94998"
+       id="path3412"
+       style="fill:#3737c8;fill-opacity:1;stroke:none"
+       sodipodi:type="arc" />
+    <path
+       inkscape:export-ydpi="44.998253"
+       inkscape:export-xdpi="44.998253"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
+       sodipodi:nodetypes="cccc"
+       inkscape:connector-curvature="0"
+       id="path3452-8"
+       d="m 311.07277,399.77463 -4.39378,-0.14545 -6.53285,4.3631 -4.68283,0.0728"
+       style="fill:none;stroke:#ffffff;stroke-width:0.93896365px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" />
+    <path
+       inkscape:export-ydpi="44.998253"
+       inkscape:export-xdpi="44.998253"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
+       sodipodi:nodetypes="cccc"
+       inkscape:connector-curvature="0"
+       id="path3452-8-4"
+       d="m 295.52112,399.70192 4.39377,-0.14544 6.53285,4.3631 4.68284,0.0728"
+       style="fill:none;stroke:#ffffff;stroke-width:0.93930733;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       inkscape:export-ydpi="44.998253"
+       inkscape:export-xdpi="44.998253"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
+       transform="matrix(0.58205417,0,0,0.60679397,120.93667,175.60178)"
+       d="m 336.42814,394.69766 a 23.478155,7.4577665 0 1 1 -46.95631,0 23.478155,7.4577665 0 1 1 46.95631,0 z"
+       sodipodi:ry="7.4577665"
+       sodipodi:rx="23.478155"
+       sodipodi:cy="394.69766"
+       sodipodi:cx="312.94998"
+       id="path3412-5"
+       style="fill:#8080ff;fill-opacity:1;stroke:none"
+       sodipodi:type="arc" />
+    <rect
+       inkscape:export-ydpi="44.998253"
+       inkscape:export-xdpi="44.998253"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
+       ry="0.71522009"
+       y="412.73431"
+       x="308.51651"
+       height="4.4701252"
+       width="12.778296"
+       id="rect3809"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.25857273;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <text
+       inkscape:export-ydpi="44.998253"
+       inkscape:export-xdpi="44.998253"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
+       transform="scale(0.99475695,1.0052707)"
+       sodipodi:linespacing="125%"
+       id="text3805"
+       y="413.8905"
+       x="310.37976"
+       style="font-size:34.34396744px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="font-size:3.43439627px;font-weight:bold"
+         y="413.8905"
+         x="310.37976"
+         id="tspan3807"
+         sodipodi:role="line">router</tspan></text>
+    <g
+       inkscape:export-ydpi="46.57262"
+       inkscape:export-xdpi="46.57262"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
+       inkscape:corner7="-0.16971789 : 0.50887482 : 0.022235729 : 1"
+       inkscape:corner0="-0.15044635 : 0.51051564 : 0 : 1"
        inkscape:perspectiveID="#perspective3825"
-       inkscape:corner0="-0.15044635 : 0.51051564 : 0 : 1"
-       inkscape:corner7="-0.16971789 : 0.50887482 : 0.022235729 : 1"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
-       inkscape:export-xdpi="46.57262"
-       inkscape:export-ydpi="46.57262">
+       id="g3811"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="inkscape:box3d">
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3823"
+         d="m 254.02856,401.23783 15.51447,10.85224 -15.26227,9.40269 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="11"
          style="fill:#e9e9ff;fill-rule:evenodd;stroke:none"
-         inkscape:box3dsidetype="11"
-         d="m 254.02856,401.23783 15.51447,10.85224 -15.26227,9.40269 -15.17709,-11.06009 z" />
+         id="path3823"
+         sodipodi:type="inkscape:box3dside" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3813"
+         d="m 255.71414,388.21943 -15.31551,9.43549 -1.29496,12.77775 14.92489,-9.19484 z"
+         inkscape:box3dsidetype="6"
          style="fill:#353564;fill-rule:evenodd;stroke:none"
-         inkscape:box3dsidetype="6"
-         d="m 255.71414,388.21943 -15.31551,9.43549 -1.29496,12.77775 14.92489,-9.19484 z" />
+         id="path3813"
+         sodipodi:type="inkscape:box3dside" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3815"
+         d="m 255.71414,388.21943 15.96909,10.8407 -2.1402,13.02994 -15.51447,-10.85224 z"
+         inkscape:box3dsidetype="5"
          style="fill:#4d4d9f;fill-rule:evenodd;stroke:none"
-         inkscape:box3dsidetype="5"
-         d="m 255.71414,388.21943 15.96909,10.8407 -2.1402,13.02994 -15.51447,-10.85224 z" />
+         id="path3815"
+         sodipodi:type="inkscape:box3dside" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3821"
+         d="m 240.39863,397.65492 15.6136,11.05971 -1.73147,12.77813 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="13"
          style="fill:#d35f5f;fill-rule:evenodd;stroke:none"
-         inkscape:box3dsidetype="13"
-         d="m 240.39863,397.65492 15.6136,11.05971 -1.73147,12.77813 -15.17709,-11.06009 z" />
+         id="path3821"
+         sodipodi:type="inkscape:box3dside" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3819"
+         d="m 271.68323,399.06013 -15.671,9.6545 -1.73147,12.77813 15.26227,-9.40269 z"
+         inkscape:box3dsidetype="14"
          style="fill:#f4d7d7;fill-rule:evenodd;stroke:none"
-         inkscape:box3dsidetype="14"
-         d="m 271.68323,399.06013 -15.671,9.6545 -1.73147,12.77813 15.26227,-9.40269 z" />
+         id="path3819"
+         sodipodi:type="inkscape:box3dside" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3817"
+         d="m 255.71414,388.21943 15.96909,10.8407 -15.671,9.6545 -15.6136,-11.05971 z"
+         inkscape:box3dsidetype="3"
          style="fill:#a02c2c;fill-rule:evenodd;stroke:none"
-         inkscape:box3dsidetype="3"
-         d="m 255.71414,388.21943 15.96909,10.8407 -15.671,9.6545 -15.6136,-11.05971 z" />
+         id="path3817"
+         sodipodi:type="inkscape:box3dside" />
     </g>
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.21688962;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect3809-0"
-       width="8.9905252"
-       height="4.4701252"
-       x="260.87646"
+       inkscape:export-ydpi="46.57262"
+       inkscape:export-xdpi="46.57262"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
+       ry="0.71522009"
        y="414.33026"
-       ry="0.71522009"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
-       inkscape:export-xdpi="46.57262"
-       inkscape:export-ydpi="46.57262" />
+       x="260.87646"
+       height="4.4701252"
+       width="8.9905252"
+       id="rect3809-0"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.21688962;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <text
-       xml:space="preserve"
-       style="font-size:34.34396744px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="262.48865"
-       y="415.47806"
+       inkscape:export-ydpi="46.57262"
+       inkscape:export-xdpi="46.57262"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
+       transform="scale(0.99475694,1.0052707)"
+       sodipodi:linespacing="125%"
        id="text3805-3"
-       sodipodi:linespacing="125%"
-       transform="scale(0.99475694,1.0052707)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
-       inkscape:export-xdpi="46.57262"
-       inkscape:export-ydpi="46.57262"><tspan
-         sodipodi:role="line"
-         id="tspan3807-6"
-         x="262.48865"
+       y="415.47806"
+       x="262.48865"
+       style="font-size:34.34396744px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="font-size:3.43439627px;font-weight:bold"
          y="415.47806"
-         style="font-size:3.43439627px;font-weight:bold">mux</tspan></text>
+         x="262.48865"
+         id="tspan3807-6"
+         sodipodi:role="line">mux</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.06013406;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 123.10982,462.52219 12.4589,2.90243 12.45889,-2.90243 0,-26.12186 -12.45889,2.90243 -12.4589,-2.90243 12.4589,-2.90243 12.45889,2.90243 -12.45889,2.90243 0,26.12186 0,-26.12186 -12.4589,-2.90243 z"
+       inkscape:export-ydpi="43.200001"
+       inkscape:export-xdpi="43.200001"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       inkscape:connector-curvature="0"
        id="path4928"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="43.200001"
-       inkscape:export-ydpi="43.200001" />
+       d="m 123.10982,462.52219 12.4589,2.90243 12.45889,-2.90243 0,-26.12186 -12.45889,2.90243 -12.4589,-2.90243 12.4589,-2.90243 12.45889,2.90243 -12.45889,2.90243 0,26.12186 0,-26.12186 -12.4589,-2.90243 z"
+       style="fill:none;stroke:#000000;stroke-width:0.06013406;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 97.75,336.11218 20,5 20,-5 0,-45 -20,5 -20,-5 20,-5 20,5 -20,5 0,45 0,-45 -20,-5 z"
+       inkscape:connector-curvature="0"
        id="path4928-8"
-       inkscape:connector-curvature="0" />
+       d="m 97.75,336.11218 20,5 20,-5 0,-45 -20,5 -20,-5 20,-5 20,5 -20,5 0,45 0,-45 -20,-5 z"
+       style="fill:none;stroke:#000000;stroke-width:0.1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#cccccc;fill-opacity:1;stroke:#cccccc;stroke-width:0.00751676;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 135.64359,452.35089 0.0197,-12.99305 6.13233,-1.42867 6.13232,-1.42867 -0.0197,12.99305 -0.0197,12.99303 -6.13232,1.42868 -6.13233,1.42867 0.0197,-12.99304 z"
+       inkscape:export-ydpi="43.200001"
+       inkscape:export-xdpi="43.200001"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       inkscape:connector-curvature="0"
        id="path4948"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="43.200001"
-       inkscape:export-ydpi="43.200001" />
+       d="m 135.64359,452.35089 0.0197,-12.99305 6.13233,-1.42867 6.13232,-1.42867 -0.0197,12.99305 -0.0197,12.99303 -6.13232,1.42868 -6.13233,1.42867 0.0197,-12.99304 z"
+       style="fill:#cccccc;fill-opacity:1;stroke:#cccccc;stroke-width:0.00751676;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#b3b3b3;fill-opacity:1;stroke:#b3b3b3;stroke-width:0.00751676;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 129.39489,463.91695 c -3.19065,-0.7475 -5.89754,-1.38187 -6.01531,-1.40971 l -0.21414,-0.0506 0,-12.99475 c 0,-10.36487 0.0197,-12.98814 0.0973,-12.96206 0.0535,0.018 2.82175,0.66614 6.15158,1.44035 l 6.05424,1.40769 0,12.9707 c 0,12.30718 -0.007,12.97036 -0.13626,12.9641 -0.075,-0.003 -2.7468,-0.61819 -5.93745,-1.36569 z"
+       inkscape:export-ydpi="43.200001"
+       inkscape:export-xdpi="43.200001"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       inkscape:connector-curvature="0"
        id="path4950"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="43.200001"
-       inkscape:export-ydpi="43.200001" />
+       d="m 129.39489,463.91695 c -3.19065,-0.7475 -5.89754,-1.38187 -6.01531,-1.40971 l -0.21414,-0.0506 0,-12.99475 c 0,-10.36487 0.0197,-12.98814 0.0973,-12.96206 0.0535,0.018 2.82175,0.66614 6.15158,1.44035 l 6.05424,1.40769 0,12.9707 c 0,12.30718 -0.007,12.97036 -0.13626,12.9641 -0.075,-0.003 -2.7468,-0.61819 -5.93745,-1.36569 z"
+       style="fill:#b3b3b3;fill-opacity:1;stroke:#b3b3b3;stroke-width:0.00751676;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#cccccc;fill-opacity:1;stroke:#cccccc;stroke-width:0.00751676;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 129.57585,437.83651 c -3.26242,-0.7646 -5.94971,-1.40727 -5.97174,-1.42817 -0.022,-0.0209 2.68226,-0.6677 6.00954,-1.43733 l 6.04962,-1.39932 5.99584,1.40987 c 3.29772,0.77544 5.94329,1.42947 5.87904,1.4534 -0.12951,0.0483 -11.97811,2.80892 -12.01037,2.79834 -0.0111,-0.003 -2.6895,-0.63221 -5.95193,-1.39679 l 0,0 z"
+       inkscape:export-ydpi="43.200001"
+       inkscape:export-xdpi="43.200001"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       inkscape:connector-curvature="0"
        id="path4952"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="43.200001"
-       inkscape:export-ydpi="43.200001" />
+       d="m 129.57585,437.83651 c -3.26242,-0.7646 -5.94971,-1.40727 -5.97174,-1.42817 -0.022,-0.0209 2.68226,-0.6677 6.00954,-1.43733 l 6.04962,-1.39932 5.99584,1.40987 c 3.29772,0.77544 5.94329,1.42947 5.87904,1.4534 -0.12951,0.0483 -11.97811,2.80892 -12.01037,2.79834 -0.0111,-0.003 -2.6895,-0.63221 -5.95193,-1.39679 l 0,0 z"
+       style="fill:#cccccc;fill-opacity:1;stroke:#cccccc;stroke-width:0.00751676;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 137.8868,442.60273 0.005,-2.01792 c 1.08283,-0.14791 2.10317,-0.60833 3.186,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08284,0.14791 -2.05629,0.56145 -3.13913,0.70938 z"
+       inkscape:export-ydpi="43.200001"
+       inkscape:export-xdpi="43.200001"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="cccccc"
+       inkscape:connector-curvature="0"
        id="path4948-9"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="43.200001"
-       inkscape:export-ydpi="43.200001" />
+       d="m 137.8868,442.60273 0.005,-2.01792 c 1.08283,-0.14791 2.10317,-0.60833 3.186,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08284,0.14791 -2.05629,0.56145 -3.13913,0.70938 z"
+       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 143.31597,441.18314 0.005,-2.01792 c 1.08284,-0.14791 2.10317,-0.60833 3.186,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08284,0.14791 -2.05629,0.56145 -3.13913,0.70938 z"
+       inkscape:export-ydpi="43.200001"
+       inkscape:export-xdpi="43.200001"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="cccccc"
+       inkscape:connector-curvature="0"
        id="path4948-9-3"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="43.200001"
-       inkscape:export-ydpi="43.200001" />
+       d="m 143.31597,441.18314 0.005,-2.01792 c 1.08284,-0.14791 2.10317,-0.60833 3.186,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08284,0.14791 -2.05629,0.56145 -3.13913,0.70938 z"
+       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 137.83844,449.12111 0.005,-2.01792 c 1.08284,-0.14791 2.10317,-0.60833 3.186,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08283,0.14791 -2.05629,0.56145 -3.13912,0.70938 z"
+       inkscape:export-ydpi="43.200001"
+       inkscape:export-xdpi="43.200001"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="cccccc"
+       inkscape:connector-curvature="0"
        id="path4948-9-9"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="43.200001"
-       inkscape:export-ydpi="43.200001" />
+       d="m 137.83844,449.12111 0.005,-2.01792 c 1.08284,-0.14791 2.10317,-0.60833 3.186,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08283,0.14791 -2.05629,0.56145 -3.13912,0.70938 z"
+       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 143.26761,447.70152 0.005,-2.01792 c 1.08284,-0.14791 2.10317,-0.60833 3.186,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08283,0.14791 -2.05629,0.56145 -3.13912,0.70938 z"
+       inkscape:export-ydpi="43.200001"
+       inkscape:export-xdpi="43.200001"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="cccccc"
+       inkscape:connector-curvature="0"
        id="path4948-9-3-7"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="43.200001"
-       inkscape:export-ydpi="43.200001" />
+       d="m 143.26761,447.70152 0.005,-2.01792 c 1.08284,-0.14791 2.10317,-0.60833 3.186,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08283,0.14791 -2.05629,0.56145 -3.13912,0.70938 z"
+       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 137.85958,455.6246 0.005,-2.01792 c 1.08283,-0.14791 2.10316,-0.60833 3.18599,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08283,0.14791 -2.05629,0.56145 -3.13912,0.70938 z"
+       inkscape:export-ydpi="43.200001"
+       inkscape:export-xdpi="43.200001"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="cccccc"
+       inkscape:connector-curvature="0"
        id="path4948-9-7"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="43.200001"
-       inkscape:export-ydpi="43.200001" />
+       d="m 137.85958,455.6246 0.005,-2.01792 c 1.08283,-0.14791 2.10316,-0.60833 3.18599,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08283,0.14791 -2.05629,0.56145 -3.13912,0.70938 z"
+       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 143.28875,454.20501 0.005,-2.01792 c 1.08283,-0.14791 2.10316,-0.60833 3.186,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08284,0.14791 -2.0563,0.56145 -3.13913,0.70938 z"
+       inkscape:export-ydpi="43.200001"
+       inkscape:export-xdpi="43.200001"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="cccccc"
+       inkscape:connector-curvature="0"
        id="path4948-9-3-3"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="43.200001"
-       inkscape:export-ydpi="43.200001" />
+       d="m 143.28875,454.20501 0.005,-2.01792 c 1.08283,-0.14791 2.10316,-0.60833 3.186,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08284,0.14791 -2.0563,0.56145 -3.13913,0.70938 z"
+       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 137.89961,461.73397 0.005,-2.01792 c 1.08283,-0.14791 2.10316,-0.60833 3.18599,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08283,0.14791 -2.05629,0.56145 -3.13912,0.70938 z"
+       inkscape:export-ydpi="43.200001"
+       inkscape:export-xdpi="43.200001"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="cccccc"
+       inkscape:connector-curvature="0"
        id="path4948-9-9-6"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="43.200001"
-       inkscape:export-ydpi="43.200001" />
+       d="m 137.89961,461.73397 0.005,-2.01792 c 1.08283,-0.14791 2.10316,-0.60833 3.18599,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08283,0.14791 -2.05629,0.56145 -3.13912,0.70938 z"
+       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 143.32878,460.31438 0.005,-2.01792 c 1.08283,-0.14791 2.10316,-0.60833 3.186,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08284,0.14791 -2.0563,0.56145 -3.13913,0.70938 z"
+       inkscape:export-ydpi="43.200001"
+       inkscape:export-xdpi="43.200001"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
+       sodipodi:nodetypes="cccccc"
+       inkscape:connector-curvature="0"
        id="path4948-9-3-7-0"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/building.png"
-       inkscape:export-xdpi="43.200001"
-       inkscape:export-ydpi="43.200001" />
+       d="m 143.32878,460.31438 0.005,-2.01792 c 1.08283,-0.14791 2.10316,-0.60833 3.186,-0.75626 0.0539,1.34511 -0.0532,2.73696 -0.0573,4.08272 -1.08284,0.14791 -2.0563,0.56145 -3.13913,0.70938 z"
+       style="fill:#918a6f;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.05117708;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 159.86364,382.84671 -15.94746,1.64233 0,14.78094 0,-14.78094 -15.94746,-1.64233 m 0,0 0,14.78094 15.94746,1.64233 15.94746,-1.64233 0,-14.78094 -15.94746,1.64233 -15.94746,-1.64233"
+       sodipodi:nodetypes="cccccccccccc"
+       inkscape:connector-curvature="0"
        id="path4928-8-7"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccccccccc" />
+       d="m 159.86364,382.84671 -15.94746,1.64233 0,14.78094 0,-14.78094 -15.94746,-1.64233 m 0,0 0,14.78094 15.94746,1.64233 15.94746,-1.64233 0,-14.78094 -15.94746,1.64233 -15.94746,-1.64233"
+       style="fill:none;stroke:#000000;stroke-width:0.05117708;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="M 127.98633,382.90884 137,376.36218 l 16,0 -9,8 15.80613,-1.45334 -6.80613,-6.54666 -16,0 c 2.50956,-1.84544 -8.24608,5.98841 -9.01367,6.54666 z"
+       sodipodi:nodetypes="cccccccc"
+       inkscape:connector-curvature="0"
        id="path5062"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccccc" />
+       d="M 127.98633,382.90884 137,376.36218 l 16,0 -9,8 15.80613,-1.45334 -6.80613,-6.54666 -16,0 c 2.50956,-1.84544 -8.24608,5.98841 -9.01367,6.54666 z"
+       style="fill:none;stroke:#000000;stroke-width:0.1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#d5d5ff;fill-opacity:1;stroke:#cccccc;stroke-width:0.01250000000000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 144.03199,391.85238 0,-7.28804 3.34375,-0.34485 c 1.83906,-0.18967 5.0875,-0.50803 7.21875,-0.70749 2.13125,-0.19945 4.17031,-0.39682 4.53125,-0.4386 l 0.65625,-0.076 0,7.25662 0,7.25661 -0.28125,0.0582 c -0.25861,0.0536 -15.16231,1.57917 -15.375,1.57387 -0.0516,-10e-4 -0.0937,-3.28196 -0.0937,-7.29039 z"
+       inkscape:connector-curvature="0"
        id="path5064"
-       inkscape:connector-curvature="0" />
+       d="m 144.03199,391.85238 0,-7.28804 3.34375,-0.34485 c 1.83906,-0.18967 5.0875,-0.50803 7.21875,-0.70749 2.13125,-0.19945 4.17031,-0.39682 4.53125,-0.4386 l 0.65625,-0.076 0,7.25662 0,7.25661 -0.28125,0.0582 c -0.25861,0.0536 -15.16231,1.57917 -15.375,1.57387 -0.0516,-10e-4 -0.0937,-3.28196 -0.0937,-7.29039 z"
+       style="fill:#d5d5ff;fill-opacity:1;stroke:#cccccc;stroke-width:0.01250000000000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#aaaaff;fill-opacity:1;stroke:#cccccc;stroke-width:0.01250000000000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 135.53199,398.32222 c -4.09063,-0.434 -7.45157,-0.79307 -7.46875,-0.79794 -0.0172,-0.005 -0.0312,-3.27135 -0.0312,-7.25885 l 0,-7.25 0.37393,0 c 0.20567,0 3.63739,0.3375 7.62607,0.75 3.98867,0.4125 7.36415,0.75 7.50106,0.75 0.24574,0 0.24894,0.0938 0.24894,7.3125 l 0,7.3125 -0.40625,-0.0146 c -0.22344,-0.008 -3.75313,-0.36965 -7.84375,-0.80365 z"
+       inkscape:connector-curvature="0"
        id="path5066"
-       inkscape:connector-curvature="0" />
+       d="m 135.53199,398.32222 c -4.09063,-0.434 -7.45157,-0.79307 -7.46875,-0.79794 -0.0172,-0.005 -0.0312,-3.27135 -0.0312,-7.25885 l 0,-7.25 0.37393,0 c 0.20567,0 3.63739,0.3375 7.62607,0.75 3.98867,0.4125 7.36415,0.75 7.50106,0.75 0.24574,0 0.24894,0.0938 0.24894,7.3125 l 0,7.3125 -0.40625,-0.0146 c -0.22344,-0.008 -3.75313,-0.36965 -7.84375,-0.80365 z"
+       style="fill:#aaaaff;fill-opacity:1;stroke:#cccccc;stroke-width:0.01250000000000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#aa0000;fill-opacity:1;stroke:#aa0000;stroke-width:0.01250000000000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 135.9482,383.59306 c -3.99921,-0.42082 -7.30523,-0.79928 -7.34673,-0.84102 -0.0415,-0.0417 1.83267,-1.46248 4.1648,-3.1572 l 4.24024,-3.08131 7.78137,0.0322 7.78136,0.0322 -4.39108,3.90625 c -3.19739,2.84437 -4.46822,3.90187 -4.67487,3.89013 -0.15609,-0.009 -3.55588,-0.36043 -7.55509,-0.78125 l 0,0 z"
+       inkscape:connector-curvature="0"
        id="path5068"
-       inkscape:connector-curvature="0" />
+       d="m 135.9482,383.59306 c -3.99921,-0.42082 -7.30523,-0.79928 -7.34673,-0.84102 -0.0415,-0.0417 1.83267,-1.46248 4.1648,-3.1572 l 4.24024,-3.08131 7.78137,0.0322 7.78136,0.0322 -4.39108,3.90625 c -3.19739,2.84437 -4.46822,3.90187 -4.67487,3.89013 -0.15609,-0.009 -3.55588,-0.36043 -7.55509,-0.78125 l 0,0 z"
+       style="fill:#aa0000;fill-opacity:1;stroke:#aa0000;stroke-width:0.01250000000000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#aa0000;fill-opacity:1;stroke:#aa0000;stroke-width:0.01250000000000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 144.53199,384.09728 c 0,-0.0938 8.32057,-7.42765 8.4375,-7.43689 0.23741,-0.0188 6.45054,6.02558 6.28381,6.11312 -0.0873,0.0459 -0.55256,0.1192 -1.03381,0.16299 -0.48125,0.0438 -3.60249,0.33258 -6.93608,0.64177 -5.85001,0.54259 -6.75142,0.61188 -6.75142,0.51901 z"
+       inkscape:connector-curvature="0"
        id="path5070"
-       inkscape:connector-curvature="0" />
+       d="m 144.53199,384.09728 c 0,-0.0938 8.32057,-7.42765 8.4375,-7.43689 0.23741,-0.0188 6.45054,6.02558 6.28381,6.11312 -0.0873,0.0459 -0.55256,0.1192 -1.03381,0.16299 -0.48125,0.0438 -3.60249,0.33258 -6.93608,0.64177 -5.85001,0.54259 -6.75142,0.61188 -6.75142,0.51901 z"
+       style="fill:#aa0000;fill-opacity:1;stroke:#aa0000;stroke-width:0.01250000000000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#552200;fill-opacity:1;stroke:#cccccc;stroke-width:0.00668001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 150,389.68801 c 2.05007,-0.42688 3.15154,-0.1245 5.04419,-0.50398 0,3.6461 -0.0442,5.08249 -0.0442,8.72859 -1.97608,0.24874 -3.00372,0.32715 -5,0.44956 0.0355,-3.60995 0,-4.8748 0,-8.67417 z"
+       sodipodi:nodetypes="ccccc"
+       inkscape:connector-curvature="0"
        id="path5064-5"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccccc" />
+       d="m 150,389.68801 c 2.05007,-0.42688 3.15154,-0.1245 5.04419,-0.50398 0,3.6461 -0.0442,5.08249 -0.0442,8.72859 -1.97608,0.24874 -3.00372,0.32715 -5,0.44956 0.0355,-3.60995 0,-4.8748 0,-8.67417 z"
+       style="fill:#552200;fill-opacity:1;stroke:#cccccc;stroke-width:0.00668001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#ffff00;fill-opacity:1;stroke:#000000;stroke-width:0.30199999000000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 145.91958,389.03221 0.005,-2.01792 c 1.08283,-0.14791 2.1805,-0.24373 3.26333,-0.39166 0.054,1.34511 -0.0421,2.61543 -0.0462,3.96119 -1.08283,0.14791 -2.14468,0.31838 -3.22751,0.46631 z"
+       sodipodi:nodetypes="cccccc"
+       inkscape:connector-curvature="0"
        id="path4948-9-3-74"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc" />
+       d="m 145.91958,389.03221 0.005,-2.01792 c 1.08283,-0.14791 2.1805,-0.24373 3.26333,-0.39166 0.054,1.34511 -0.0421,2.61543 -0.0462,3.96119 -1.08283,0.14791 -2.14468,0.31838 -3.22751,0.46631 z"
+       style="fill:#ffff00;fill-opacity:1;stroke:#000000;stroke-width:0.30199999000000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <path
-       style="fill:#ffff00;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 155.86835,388.58475 0.005,-2.01792 c 1.08283,-0.14791 2.1805,-0.24373 3.26333,-0.39166 0.054,1.34511 -0.0421,2.61543 -0.0462,3.96119 -1.08283,0.14791 -2.14468,0.31838 -3.22751,0.46631 z"
+       sodipodi:nodetypes="cccccc"
+       inkscape:connector-curvature="0"
        id="path4948-9-3-74-7"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccc" />
+       d="m 155.86835,388.58475 0.005,-2.01792 c 1.08283,-0.14791 2.1805,-0.24373 3.26333,-0.39166 0.054,1.34511 -0.0421,2.61543 -0.0462,3.96119 -1.08283,0.14791 -2.14468,0.31838 -3.22751,0.46631 z"
+       style="fill:#ffff00;fill-opacity:1;stroke:#000000;stroke-width:0.30199999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="246"
-       y="401.11218"
+       sodipodi:linespacing="125%"
        id="text5168"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan5170"
-         x="246"
+       y="401.11218"
+       x="246"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="font-size:8px;font-weight:bold;fill:#ffffff"
          y="401.11218"
-         style="font-size:8px;font-weight:bold;fill:#ffffff">SDH</tspan></text>
+         x="246"
+         id="tspan5170"
+         sodipodi:role="line">SDH</tspan></text>
     <g
-       sodipodi:type="inkscape:box3d"
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.30000000999999998;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="g3811-6"
+       inkscape:export-ydpi="46.57262"
+       inkscape:export-xdpi="46.57262"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
+       inkscape:corner7="-0.16971789 : 0.50887482 : 0.022235729 : 1"
+       inkscape:corner0="-0.15044635 : 0.51051564 : 0 : 1"
        inkscape:perspectiveID="#perspective3825-2"
-       inkscape:corner0="-0.15044635 : 0.51051564 : 0 : 1"
-       inkscape:corner7="-0.16971789 : 0.50887482 : 0.022235729 : 1"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
-       inkscape:export-xdpi="46.57262"
-       inkscape:export-ydpi="46.57262">
+       id="g3811-6"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="inkscape:box3d">
       <path
-         sodipodi:type="inkscape:box3dside"
+         d="m 188.38505,426.99393 15.51447,10.85224 -15.26226,9.40269 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="11"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
          id="path3823-7"
-         style="fill:#ffffff;fill-rule:evenodd;stroke:none;fill-opacity:1"
-         inkscape:box3dsidetype="11"
-         d="m 188.38505,426.99393 15.51447,10.85224 -15.26226,9.40269 -15.17709,-11.06009 z" />
+         sodipodi:type="inkscape:box3dside" />
       <path
-         sodipodi:type="inkscape:box3dside"
+         d="m 190.07063,413.97553 -15.31551,9.43549 -1.29495,12.77775 14.92488,-9.19484 z"
+         inkscape:box3dsidetype="6"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
          id="path3813-4"
-         style="fill:#ffffff;fill-rule:evenodd;stroke:none;fill-opacity:1"
-         inkscape:box3dsidetype="6"
-         d="m 190.07063,413.97553 -15.31551,9.43549 -1.29495,12.77775 14.92488,-9.19484 z" />
+         sodipodi:type="inkscape:box3dside" />
       <path
-         sodipodi:type="inkscape:box3dside"
+         d="m 190.07063,413.97553 15.96909,10.8407 -2.1402,13.02994 -15.51447,-10.85224 z"
+         inkscape:box3dsidetype="5"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
          id="path3815-7"
-         style="fill:#ffffff;fill-rule:evenodd;stroke:none;fill-opacity:1"
-         inkscape:box3dsidetype="5"
-         d="m 190.07063,413.97553 15.96909,10.8407 -2.1402,13.02994 -15.51447,-10.85224 z" />
+         sodipodi:type="inkscape:box3dside" />
       <path
-         sodipodi:type="inkscape:box3dside"
+         d="m 174.75512,423.41102 15.6136,11.05971 -1.73146,12.77813 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="13"
+         style="fill:#99ff55;fill-opacity:1;fill-rule:evenodd;stroke:none"
          id="path3821-1"
-         style="fill:#99ff55;fill-rule:evenodd;stroke:none;fill-opacity:1"
-         inkscape:box3dsidetype="13"
-         d="m 174.75512,423.41102 15.6136,11.05971 -1.73146,12.77813 -15.17709,-11.06009 z" />
+         sodipodi:type="inkscape:box3dside" />
       <path
-         sodipodi:type="inkscape:box3dside"
+         d="m 206.03972,424.81623 -15.671,9.6545 -1.73146,12.77813 15.26226,-9.40269 z"
+         inkscape:box3dsidetype="14"
+         style="fill:#ccffaa;fill-opacity:1;fill-rule:evenodd;stroke:none"
          id="path3819-1"
-         style="fill:#ccffaa;fill-rule:evenodd;stroke:none;fill-opacity:1"
-         inkscape:box3dsidetype="14"
-         d="m 206.03972,424.81623 -15.671,9.6545 -1.73146,12.77813 15.26226,-9.40269 z" />
+         sodipodi:type="inkscape:box3dside" />
       <path
-         sodipodi:type="inkscape:box3dside"
+         d="m 190.07063,413.97553 15.96909,10.8407 -15.671,9.6545 -15.6136,-11.05971 z"
+         inkscape:box3dsidetype="3"
+         style="fill:#338000;fill-opacity:1;fill-rule:evenodd;stroke:none"
          id="path3817-8"
-         style="fill:#338000;fill-rule:evenodd;stroke:none;fill-opacity:1"
-         inkscape:box3dsidetype="3"
-         d="m 190.07063,413.97553 15.96909,10.8407 -15.671,9.6545 -15.6136,-11.05971 z" />
+         sodipodi:type="inkscape:box3dside" />
     </g>
     <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="181.14648"
-       y="426.77429"
+       sodipodi:linespacing="125%"
        id="text5168-8"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan5170-7"
-         x="181.14648"
+       y="426.77429"
+       x="181.14648"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="font-size:8px;font-weight:bold;fill:#ffffff"
          y="426.77429"
-         style="font-size:8px;font-weight:bold;fill:#ffffff">ATM</tspan></text>
+         x="181.14648"
+         id="tspan5170-7"
+         sodipodi:role="line">ATM</tspan></text>
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.21688962;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect3809-0-0"
-       width="8.9905252"
-       height="4.4701252"
-       x="195.25473"
+       inkscape:export-ydpi="46.57262"
+       inkscape:export-xdpi="46.57262"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
+       ry="0.71522009"
        y="440.00211"
-       ry="0.71522009"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
-       inkscape:export-xdpi="46.57262"
-       inkscape:export-ydpi="46.57262" />
-    <text
-       xml:space="preserve"
-       style="font-size:34.34396744px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="196.52106"
-       y="441.01532"
-       id="text3805-3-6"
-       sodipodi:linespacing="125%"
-       transform="scale(0.99475694,1.0052707)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
-       inkscape:export-xdpi="46.57262"
-       inkscape:export-ydpi="46.57262"><tspan
-         sodipodi:role="line"
-         id="tspan3807-6-1"
-         x="196.52106"
-         y="441.01532"
-         style="font-size:3.43439627px;font-weight:bold">mux</tspan></text>
-    <g
-       sodipodi:type="inkscape:box3d"
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.30000000999999998;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="g3811-8"
-       inkscape:perspectiveID="#perspective3825-8"
-       inkscape:corner0="-0.15044635 : 0.51051564 : 0 : 1"
-       inkscape:corner7="-0.16971789 : 0.50887482 : 0.022235729 : 1"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
-       inkscape:export-xdpi="46.57262"
-       inkscape:export-ydpi="46.57262">
-      <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3823-5"
-         style="fill:#ffffff;fill-rule:evenodd;stroke:none;fill-opacity:1"
-         inkscape:box3dsidetype="11"
-         d="m 262.88505,445.24393 15.51447,10.85224 -15.26226,9.40269 -15.17709,-11.06009 z" />
-      <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3813-6"
-         style="fill:#ffffff;fill-rule:evenodd;stroke:none;fill-opacity:1"
-         inkscape:box3dsidetype="6"
-         d="m 264.57063,432.22553 -15.31551,9.43549 -1.29495,12.77775 14.92488,-9.19484 z" />
-      <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3815-4"
-         style="fill:#ffffff;fill-rule:evenodd;stroke:none;fill-opacity:1"
-         inkscape:box3dsidetype="5"
-         d="m 264.57063,432.22553 15.96909,10.8407 -2.1402,13.02994 -15.51447,-10.85224 z" />
-      <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3821-9"
-         style="fill:#5599ff;fill-rule:evenodd;stroke:none;fill-opacity:1"
-         inkscape:box3dsidetype="13"
-         d="m 249.25512,441.66102 15.6136,11.05971 -1.73146,12.77813 -15.17709,-11.06009 z" />
-      <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3819-2"
-         style="fill:#d5e5ff;fill-rule:evenodd;stroke:none;fill-opacity:1"
-         inkscape:box3dsidetype="14"
-         d="m 280.53972,443.06623 -15.671,9.6545 -1.73146,12.77813 15.26226,-9.40269 z" />
-      <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3817-3"
-         style="fill:#002255;fill-rule:evenodd;stroke:none;fill-opacity:1"
-         inkscape:box3dsidetype="3"
-         d="m 264.57063,432.22553 15.96909,10.8407 -15.671,9.6545 -15.6136,-11.05971 z" />
-    </g>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="253.36133"
-       y="444.0282"
-       id="text5168-8-5"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan5170-7-5"
-         x="253.36133"
-         y="444.0282"
-         style="font-size:6px;font-weight:bold;fill:#ffffff">DWDM</tspan></text>
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.21688962;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect3809-0-8"
-       width="8.9905252"
+       x="195.25473"
        height="4.4701252"
-       x="270.75473"
-       y="457.87711"
-       ry="0.71522009"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
-       inkscape:export-xdpi="46.57262"
-       inkscape:export-ydpi="46.57262" />
+       width="8.9905252"
+       id="rect3809-0-0"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.21688962;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <text
-       xml:space="preserve"
-       style="font-size:34.34396744px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="272.41898"
-       y="458.79657"
-       id="text3805-3-61"
-       sodipodi:linespacing="125%"
+       inkscape:export-ydpi="46.57262"
+       inkscape:export-xdpi="46.57262"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
        transform="scale(0.99475694,1.0052707)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
-       inkscape:export-xdpi="46.57262"
-       inkscape:export-ydpi="46.57262"><tspan
-         sodipodi:role="line"
-         id="tspan3807-6-0"
-         x="272.41898"
-         y="458.79657"
-         style="font-size:3.43439627px;font-weight:bold">mux</tspan></text>
+       sodipodi:linespacing="125%"
+       id="text3805-3-6"
+       y="441.01532"
+       x="196.52106"
+       style="font-size:34.34396744px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="font-size:3.43439627px;font-weight:bold"
+         y="441.01532"
+         x="196.52106"
+         id="tspan3807-6-1"
+         sodipodi:role="line">mux</tspan></text>
     <g
-       sodipodi:type="inkscape:box3d"
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.30000000999999998;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="g3811-7"
-       inkscape:perspectiveID="#perspective3825-0"
-       inkscape:corner0="-0.15044635 : 0.51051564 : 0 : 1"
-       inkscape:corner7="-0.16971789 : 0.50887482 : 0.022235729 : 1"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
+       inkscape:export-ydpi="46.57262"
        inkscape:export-xdpi="46.57262"
-       inkscape:export-ydpi="46.57262">
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
+       inkscape:corner7="-0.16971789 : 0.50887482 : 0.022235729 : 1"
+       inkscape:corner0="-0.15044635 : 0.51051564 : 0 : 1"
+       inkscape:perspectiveID="#perspective3825-8"
+       id="g3811-8"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="inkscape:box3d">
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3823-3"
-         style="fill:#ffffff;fill-rule:evenodd;stroke:none;fill-opacity:1"
+         d="m 262.88505,445.24393 15.51447,10.85224 -15.26226,9.40269 -15.17709,-11.06009 z"
          inkscape:box3dsidetype="11"
-         d="m 204.63505,379.49393 15.51447,10.85224 -15.26226,9.40269 -15.17709,-11.06009 z" />
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3823-5"
+         sodipodi:type="inkscape:box3dside" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3813-8"
-         style="fill:#ffffff;fill-rule:evenodd;stroke:none;fill-opacity:1"
+         d="m 264.57063,432.22553 -15.31551,9.43549 -1.29495,12.77775 14.92488,-9.19484 z"
          inkscape:box3dsidetype="6"
-         d="m 206.32063,366.47553 -15.31551,9.43549 -1.29495,12.77775 14.92488,-9.19484 z" />
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3813-6"
+         sodipodi:type="inkscape:box3dside" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3815-72"
-         style="fill:#ffffff;fill-rule:evenodd;stroke:none;fill-opacity:1"
+         d="m 264.57063,432.22553 15.96909,10.8407 -2.1402,13.02994 -15.51447,-10.85224 z"
          inkscape:box3dsidetype="5"
-         d="m 206.32063,366.47553 15.96909,10.8407 -2.1402,13.02994 -15.51447,-10.85224 z" />
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3815-4"
+         sodipodi:type="inkscape:box3dside" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3821-13"
-         style="fill:#9955ff;fill-rule:evenodd;stroke:none;fill-opacity:1"
+         d="m 249.25512,441.66102 15.6136,11.05971 -1.73146,12.77813 -15.17709,-11.06009 z"
          inkscape:box3dsidetype="13"
-         d="m 191.00512,375.91102 15.6136,11.05971 -1.73146,12.77813 -15.17709,-11.06009 z" />
+         style="fill:#5599ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3821-9"
+         sodipodi:type="inkscape:box3dside" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3819-3"
-         style="fill:#e5d5ff;fill-rule:evenodd;stroke:none;fill-opacity:1"
+         d="m 280.53972,443.06623 -15.671,9.6545 -1.73146,12.77813 15.26226,-9.40269 z"
          inkscape:box3dsidetype="14"
-         d="m 222.28972,377.31623 -15.671,9.6545 -1.73146,12.77813 15.26226,-9.40269 z" />
+         style="fill:#d5e5ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3819-2"
+         sodipodi:type="inkscape:box3dside" />
       <path
-         sodipodi:type="inkscape:box3dside"
-         id="path3817-9"
-         style="fill:#330080;fill-rule:evenodd;stroke:none;fill-opacity:1"
+         d="m 264.57063,432.22553 15.96909,10.8407 -15.671,9.6545 -15.6136,-11.05971 z"
          inkscape:box3dsidetype="3"
-         d="m 206.32063,366.47553 15.96909,10.8407 -15.671,9.6545 -15.6136,-11.05971 z" />
+         style="fill:#002255;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3817-3"
+         sodipodi:type="inkscape:box3dside" />
     </g>
     <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="197.02148"
-       y="379.02429"
-       id="text5168-3"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan5170-1"
-         x="197.02148"
-         y="379.02429"
-         style="font-size:8px;font-weight:bold;fill:#ffffff">RAD</tspan></text>
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.23690775;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect3809-6"
-       width="10.674961"
-       height="4.4917903"
-       x="209.28752"
-       y="391.55377"
-       ry="0.71868646"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router_32.png"
-       inkscape:export-xdpi="46.57262"
-       inkscape:export-ydpi="46.57262" />
-    <text
-       xml:space="preserve"
-       style="font-size:34.34396744px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="210.63866"
-       y="392.83182"
-       id="text3805-0"
        sodipodi:linespacing="125%"
+       id="text5168-8-5"
+       y="444.0282"
+       x="253.36133"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="font-size:6px;font-weight:bold;fill:#ffffff"
+         y="444.0282"
+         x="253.36133"
+         id="tspan5170-7-5"
+         sodipodi:role="line">DWDM</tspan></text>
+    <rect
+       inkscape:export-ydpi="46.57262"
+       inkscape:export-xdpi="46.57262"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
+       ry="0.71522009"
+       y="457.87711"
+       x="270.75473"
+       height="4.4701252"
+       width="8.9905252"
+       id="rect3809-0-8"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.21688962;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <text
+       inkscape:export-ydpi="46.57262"
+       inkscape:export-xdpi="46.57262"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
        transform="scale(0.99475694,1.0052707)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router_32.png"
-       inkscape:export-xdpi="46.57262"
-       inkscape:export-ydpi="46.57262"><tspan
-         sodipodi:role="line"
-         id="tspan3807-8"
-         x="210.63866"
-         y="392.83182"
-         style="font-size:3.43439627px;font-weight:bold">radio</tspan></text>
-    <rect
-       style="fill:#1c1f24;fill-opacity:1;stroke:#00000c;stroke-width:0.10372138000000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect5646"
-       width="31.871513"
-       height="31.868626"
-       x="183.49596"
-       y="460.10846"
-       ry="0"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/rack.png"
-       inkscape:export-xdpi="45.037281"
-       inkscape:export-ydpi="45.037281" />
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="182.78709"
-       y="478.89859"
-       id="text5648"
        sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/rack.png"
+       id="text3805-3-61"
+       y="458.79657"
+       x="272.41898"
+       style="font-size:34.34396744px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="font-size:3.43439627px;font-weight:bold"
+         y="458.79657"
+         x="272.41898"
+         id="tspan3807-6-0"
+         sodipodi:role="line">mux</tspan></text>
+    <g
+       inkscape:export-ydpi="46.57262"
+       inkscape:export-xdpi="46.57262"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/mux_32.png"
+       inkscape:corner7="-0.16971789 : 0.50887482 : 0.022235729 : 1"
+       inkscape:corner0="-0.15044635 : 0.51051564 : 0 : 1"
+       inkscape:perspectiveID="#perspective3825-0"
+       id="g3811-7"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.30000000999999998;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="inkscape:box3d">
+      <path
+         d="m 204.63505,379.49393 15.51447,10.85224 -15.26226,9.40269 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="11"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:none;fill-opacity:1"
+         id="path3823-3"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 206.32063,366.47553 -15.31551,9.43549 -1.29495,12.77775 14.92488,-9.19484 z"
+         inkscape:box3dsidetype="6"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:none;fill-opacity:1"
+         id="path3813-8"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 206.32063,366.47553 15.96909,10.8407 -2.1402,13.02994 -15.51447,-10.85224 z"
+         inkscape:box3dsidetype="5"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:none;fill-opacity:1"
+         id="path3815-72"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 191.00512,375.91102 15.6136,11.05971 -1.73146,12.77813 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="13"
+         style="fill:#9955ff;fill-rule:evenodd;stroke:none;fill-opacity:1"
+         id="path3821-13"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 222.28972,377.31623 -15.671,9.6545 -1.73146,12.77813 15.26226,-9.40269 z"
+         inkscape:box3dsidetype="14"
+         style="fill:#e5d5ff;fill-rule:evenodd;stroke:none;fill-opacity:1"
+         id="path3819-3"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 206.32063,366.47553 15.96909,10.8407 -15.671,9.6545 -15.6136,-11.05971 z"
+         inkscape:box3dsidetype="3"
+         style="fill:#330080;fill-rule:evenodd;stroke:none;fill-opacity:1"
+         id="path3817-9"
+         sodipodi:type="inkscape:box3dside" />
+    </g>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5168-3"
+       y="379.02429"
+       x="197.02148"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="font-size:8px;font-weight:bold;fill:#ffffff"
+         y="379.02429"
+         x="197.02148"
+         id="tspan5170-1"
+         sodipodi:role="line">RAD</tspan></text>
+    <rect
+       inkscape:export-ydpi="46.57262"
+       inkscape:export-xdpi="46.57262"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router_32.png"
+       ry="0.71868646"
+       y="391.55377"
+       x="209.28752"
+       height="4.4917903"
+       width="10.674961"
+       id="rect3809-6"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.23690775;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <text
+       inkscape:export-ydpi="46.57262"
+       inkscape:export-xdpi="46.57262"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router_32.png"
+       transform="scale(0.99475694,1.0052707)"
+       sodipodi:linespacing="125%"
+       id="text3805-0"
+       y="392.83182"
+       x="210.63866"
+       style="font-size:34.34396744px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="font-size:3.43439627px;font-weight:bold"
+         y="392.83182"
+         x="210.63866"
+         id="tspan3807-8"
+         sodipodi:role="line">radio</tspan></text>
+    <rect
+       inkscape:export-ydpi="45.037281"
        inkscape:export-xdpi="45.037281"
-       inkscape:export-ydpi="45.037281"><tspan
-         sodipodi:role="line"
-         id="tspan5650"
-         x="182.78709"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/rack.png"
+       ry="0"
+       y="460.10846"
+       x="183.49596"
+       height="31.868626"
+       width="31.871513"
+       id="rect5646"
+       style="fill:#1c1f24;fill-opacity:1;stroke:#00000c;stroke-width:0.10372138000000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <text
+       inkscape:export-ydpi="45.037281"
+       inkscape:export-xdpi="45.037281"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/rack.png"
+       sodipodi:linespacing="125%"
+       id="text5648"
+       y="478.89859"
+       x="182.78709"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"><tspan
+         style="font-size:12px;font-weight:bold;fill:#ffffff"
          y="478.89859"
-         style="font-size:12px;font-weight:bold;fill:#ffffff">Rack</tspan></text>
+         x="182.78709"
+         id="tspan5650"
+         sodipodi:role="line">Rack</tspan></text>
     <path
-       sodipodi:type="arc"
-       style="fill:#000000;fill-opacity:1;stroke:#00000c;stroke-width:0.10000000000000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="path3286"
-       sodipodi:cx="262.15985"
-       sodipodi:cy="495.51559"
-       sodipodi:rx="12.551146"
-       sodipodi:ry="11.667262"
-       d="m 274.711,495.51559 a 12.551146,11.667262 0 1 1 -25.10229,0 12.551146,11.667262 0 1 1 25.10229,0 z"
+       inkscape:export-ydpi="45.071266"
+       inkscape:export-xdpi="45.071266"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/ElectricalPort.png"
        transform="matrix(1.2682789,0,0,1.3649954,-66.945608,-185.13746)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/ElectricalPort.png"
-       inkscape:export-xdpi="45.071266"
-       inkscape:export-ydpi="45.071266" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#ffffff;fill-opacity:1;stroke:#00000c;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="path3286-9"
-       sodipodi:cx="262.15985"
-       sodipodi:cy="495.51559"
-       sodipodi:rx="12.551146"
-       sodipodi:ry="11.667262"
        d="m 274.711,495.51559 a 12.551146,11.667262 0 1 1 -25.10229,0 12.551146,11.667262 0 1 1 25.10229,0 z"
+       sodipodi:ry="11.667262"
+       sodipodi:rx="12.551146"
+       sodipodi:cy="495.51559"
+       sodipodi:cx="262.15985"
+       id="path3286"
+       style="fill:#000000;fill-opacity:1;stroke:#00000c;stroke-width:0.10000000000000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       inkscape:export-ydpi="45.071266"
+       inkscape:export-xdpi="45.071266"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/ElectricalPort.png"
        transform="matrix(0.99124316,0,0,1.0662894,5.698386,-37.125389)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/ElectricalPort.png"
-       inkscape:export-xdpi="45.071266"
-       inkscape:export-ydpi="45.071266" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#0000ff;fill-opacity:1;stroke:#00000c;stroke-width:0.10000000000000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="path3286-8"
-       sodipodi:cx="262.15985"
-       sodipodi:cy="495.51559"
-       sodipodi:rx="12.551146"
-       sodipodi:ry="11.667262"
        d="m 274.711,495.51559 a 12.551146,11.667262 0 1 1 -25.10229,0 12.551146,11.667262 0 1 1 25.10229,0 z"
+       sodipodi:ry="11.667262"
+       sodipodi:rx="12.551146"
+       sodipodi:cy="495.51559"
+       sodipodi:cx="262.15985"
+       id="path3286-9"
+       style="fill:#ffffff;fill-opacity:1;stroke:#00000c;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       inkscape:export-ydpi="45.071266"
+       inkscape:export-xdpi="45.071266"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/OpticalPort.png"
        transform="matrix(1.2682789,0,0,1.3649954,-21.011267,-186.51777)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/OpticalPort.png"
-       inkscape:export-xdpi="45.071266"
-       inkscape:export-ydpi="45.071266" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#ffffff;fill-opacity:1;stroke:#00000c;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="path3286-9-3"
-       sodipodi:cx="262.15985"
-       sodipodi:cy="495.51559"
-       sodipodi:rx="12.551146"
-       sodipodi:ry="11.667262"
        d="m 274.711,495.51559 a 12.551146,11.667262 0 1 1 -25.10229,0 12.551146,11.667262 0 1 1 25.10229,0 z"
+       sodipodi:ry="11.667262"
+       sodipodi:rx="12.551146"
+       sodipodi:cy="495.51559"
+       sodipodi:cx="262.15985"
+       id="path3286-8"
+       style="fill:#0000ff;fill-opacity:1;stroke:#00000c;stroke-width:0.10000000000000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       inkscape:export-ydpi="45.071266"
+       inkscape:export-xdpi="45.071266"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/OpticalPort.png"
        transform="matrix(0.99124316,0,0,1.0662894,51.632733,-38.505704)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/OpticalPort.png"
-       inkscape:export-xdpi="45.071266"
-       inkscape:export-ydpi="45.071266" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#d40000;fill-opacity:1;stroke:#00000c;stroke-width:0.10000000000000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="path3286-6"
-       sodipodi:cx="262.15985"
-       sodipodi:cy="495.51559"
-       sodipodi:rx="12.551146"
-       sodipodi:ry="11.667262"
        d="m 274.711,495.51559 a 12.551146,11.667262 0 1 1 -25.10229,0 12.551146,11.667262 0 1 1 25.10229,0 z"
+       sodipodi:ry="11.667262"
+       sodipodi:rx="12.551146"
+       sodipodi:cy="495.51559"
+       sodipodi:cx="262.15985"
+       id="path3286-9-3"
+       style="fill:#ffffff;fill-opacity:1;stroke:#00000c;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       inkscape:export-ydpi="45.071266"
+       inkscape:export-xdpi="45.071266"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/PowerPort.png"
        transform="matrix(1.2682789,0,0,1.3649954,-45.406452,-149.74822)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/PowerPort.png"
-       inkscape:export-xdpi="45.071266"
-       inkscape:export-ydpi="45.071266" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#ffffff;fill-opacity:1;stroke:#00000c;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="path3286-9-6"
-       sodipodi:cx="262.15985"
-       sodipodi:cy="495.51559"
-       sodipodi:rx="12.551146"
-       sodipodi:ry="11.667262"
        d="m 274.711,495.51559 a 12.551146,11.667262 0 1 1 -25.10229,0 12.551146,11.667262 0 1 1 25.10229,0 z"
+       sodipodi:ry="11.667262"
+       sodipodi:rx="12.551146"
+       sodipodi:cy="495.51559"
+       sodipodi:cx="262.15985"
+       id="path3286-6"
+       style="fill:#d40000;fill-opacity:1;stroke:#00000c;stroke-width:0.10000000000000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       inkscape:export-ydpi="45.071266"
+       inkscape:export-xdpi="45.071266"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/PowerPort.png"
        transform="matrix(0.99124316,0,0,1.0662894,27.237548,-1.7361509)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/PowerPort.png"
-       inkscape:export-xdpi="45.071266"
-       inkscape:export-ydpi="45.071266" />
-    <path
-       sodipodi:type="arc"
-       style="fill:#ff6600;fill-opacity:1;stroke:#00000c;stroke-width:0.10000000000000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="path3286-62"
-       sodipodi:cx="262.15985"
-       sodipodi:cy="495.51559"
-       sodipodi:rx="12.551146"
-       sodipodi:ry="11.667262"
        d="m 274.711,495.51559 a 12.551146,11.667262 0 1 1 -25.10229,0 12.551146,11.667262 0 1 1 25.10229,0 z"
-       transform="matrix(1.2682789,0,0,1.3649954,-10.05111,-150.45533)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/VirtualPort.png"
-       inkscape:export-xdpi="45.071266"
-       inkscape:export-ydpi="45.071266" />
-    <path
-       sodipodi:type="arc"
+       sodipodi:ry="11.667262"
+       sodipodi:rx="12.551146"
+       sodipodi:cy="495.51559"
+       sodipodi:cx="262.15985"
+       id="path3286-9-6"
        style="fill:#ffffff;fill-opacity:1;stroke:#00000c;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="path3286-9-5"
-       sodipodi:cx="262.15985"
-       sodipodi:cy="495.51559"
-       sodipodi:rx="12.551146"
-       sodipodi:ry="11.667262"
-       d="m 274.711,495.51559 a 12.551146,11.667262 0 1 1 -25.10229,0 12.551146,11.667262 0 1 1 25.10229,0 z"
-       transform="matrix(0.99124316,0,0,1.0662894,62.592887,-2.4432577)"
-       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/VirtualPort.png"
+       sodipodi:type="arc" />
+    <path
+       inkscape:export-ydpi="45.071266"
        inkscape:export-xdpi="45.071266"
-       inkscape:export-ydpi="45.071266" />
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/VirtualPort.png"
+       transform="matrix(1.2682789,0,0,1.3649954,-10.05111,-150.45533)"
+       d="m 274.711,495.51559 a 12.551146,11.667262 0 1 1 -25.10229,0 12.551146,11.667262 0 1 1 25.10229,0 z"
+       sodipodi:ry="11.667262"
+       sodipodi:rx="12.551146"
+       sodipodi:cy="495.51559"
+       sodipodi:cx="262.15985"
+       id="path3286-62"
+       style="fill:#ff6600;fill-opacity:1;stroke:#00000c;stroke-width:0.10000000000000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <path
+       inkscape:export-ydpi="45.071266"
+       inkscape:export-xdpi="45.071266"
+       inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/VirtualPort.png"
+       transform="matrix(0.99124316,0,0,1.0662894,62.592887,-2.4432577)"
+       d="m 274.711,495.51559 a 12.551146,11.667262 0 1 1 -25.10229,0 12.551146,11.667262 0 1 1 25.10229,0 z"
+       sodipodi:ry="11.667262"
+       sodipodi:rx="12.551146"
+       sodipodi:cy="495.51559"
+       sodipodi:cx="262.15985"
+       id="path3286-9-5"
+       style="fill:#ffffff;fill-opacity:1;stroke:#00000c;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="arc" />
+    <g
+       id="g3369"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635">
+      <g
+         id="g5117-4-8"
+         transform="matrix(0.30004038,0,0,0.24619733,452.94117,502.09185)"
+         inkscape:label="Octahedron:x-80.00:y20.00:x0.00:x0.00:y0.00:x0.00">
+        <path
+           id="path5121-8-3"
+           d="M 4.1821897,-69.314134 -63.561381,32.848572 -30.018532,61.953082 z"
+           style="fill:#cf0000;fill-opacity:1;stroke:#000000;stroke-width:2.58388662;stroke-linejoin:round;stroke-opacity:1"
+           inkscape:label="Face:2"
+           inkscape:connector-curvature="0" />
+        <path
+           id="path5123-8-2"
+           d="m 4.1821897,-69.314134 -34.2007217,131.267216 93.579913,0 z"
+           style="fill:#c30000;fill-opacity:1;stroke:#000000;stroke-width:2.58388662;stroke-linejoin:round;stroke-opacity:1"
+           inkscape:label="Face:3"
+           inkscape:connector-curvature="0" />
+      </g>
+      <path
+         style="fill:#d35f5f;fill-opacity:1;stroke:#000000;stroke-width:0.34722220999999998;stroke-opacity:1"
+         d="m 444.75079,516.4996 c 0.0872,-0.23872 2.24642,-7.03559 4.79837,-15.10417 2.55194,-8.06857 4.72391,-14.6677 4.82659,-14.66472 0.15247,0.004 16.2376,28.95181 16.62188,29.91332 0.0637,0.15928 -5.8515,0.2896 -13.14479,0.2896 -10.46146,0 -13.22708,-0.0916 -13.10205,-0.43403 z"
+         id="path5310-2-8"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill:#d35f5f;fill-opacity:1;stroke:#000000;stroke-width:0.34722221;stroke-opacity:1"
+         d="m 441.18215,514.27296 c -1.04362,-0.69385 -2.71844,-1.95417 -3.72182,-2.80072 l -1.82434,-1.53918 1.12989,-1.58328 c 1.68052,-2.35486 13.72657,-17.36929 14.14068,-17.62522 0.1965,-0.12144 0.35727,0.005 0.35727,0.28022 0,0.63977 -7.62298,23.93311 -7.94405,24.27442 -0.13208,0.14041 -1.09402,-0.3124 -2.13763,-1.00624 z"
+         id="path5314-5-6"
+         inkscape:connector-curvature="0" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path5304-5-01"
+         d="m 439.11104,513.27289 c -2.19618,-1.59926 -3.97447,-3.12987 -3.95176,-3.40136 0.0407,-0.48693 17.15162,-21.86769 17.34544,-21.67386 0.22129,0.22128 -8.73832,27.81863 -9.05713,27.89774 -0.18892,0.0469 -2.14037,-1.22326 -4.33655,-2.82252 z"
+         style="fill:#a02c2c;fill-opacity:1;stroke:#000000;stroke-width:0.34722220999999998;stroke-opacity:1" />
+      <text
+         xml:space="preserve"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         x="456.77484"
+         y="507.233"
+         id="text5168-8-5-4"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan5170-7-5-0"
+           x="456.77484"
+           y="507.233"
+           style="font-size:6px;font-style:normal;font-weight:bold;text-align:center;text-anchor:middle;fill:#ffffff;-inkscape-font-specification:Sans Bold">MSC</tspan><tspan
+           id="tspan5337"
+           sodipodi:role="line"
+           x="456.77484"
+           y="514.73303"
+           style="font-size:6px;font-style:normal;font-weight:bold;text-align:center;text-anchor:middle;fill:#ffffff;-inkscape-font-specification:Sans Bold">Server</tspan></text>
+    </g>
+    <path
+       inkscape:connector-curvature="0"
+       id="path5312-4"
+       d=""
+       style="fill:#d35f5f;fill-opacity:1;stroke:#000000;stroke-width:0.34722221;stroke-opacity:1" />
+    <g
+       id="g3306"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635">
+      <g
+         id="g5117-4"
+         transform="matrix(0.30004038,0,0,0.24619733,503.125,472.36554)"
+         inkscape:label="Octahedron:x-80.00:y20.00:x0.00:x0.00:y0.00:x0.00">
+        <path
+           id="path5121-8"
+           d="M 4.1821897,-69.314134 -63.561381,32.848572 -30.018532,61.953082 z"
+           style="fill:#cf0000;fill-opacity:1;stroke:#000000;stroke-width:2.58388662;stroke-linejoin:round;stroke-opacity:1"
+           inkscape:label="Face:2"
+           inkscape:connector-curvature="0" />
+        <path
+           id="path5123-8"
+           d="m 4.1821897,-69.314134 -34.2007217,131.267216 93.579913,0 z"
+           style="fill:#c30000;fill-opacity:1;stroke:#000000;stroke-width:2.58388662;stroke-linejoin:round;stroke-opacity:1"
+           inkscape:label="Face:3"
+           inkscape:connector-curvature="0" />
+      </g>
+      <path
+         style="fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:0.34722220999999998;stroke-opacity:1"
+         d="m 494.93462,486.77329 c 0.0872,-0.23872 2.24642,-7.03559 4.79837,-15.10417 2.55194,-8.06857 4.72391,-14.6677 4.82659,-14.66472 0.15247,0.004 16.2376,28.95181 16.62188,29.91332 0.0637,0.15928 -5.8515,0.2896 -13.14479,0.2896 -10.46146,0 -13.22708,-0.0916 -13.10205,-0.43403 z"
+         id="path5310-2"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill:#d35f5f;fill-opacity:1;stroke:#000000;stroke-width:0.34722221;stroke-opacity:1"
+         d="m 491.36598,484.54665 c -1.04362,-0.69385 -2.71844,-1.95417 -3.72182,-2.80072 l -1.82434,-1.53918 1.12989,-1.58328 c 1.68052,-2.35486 13.72657,-17.36929 14.14068,-17.62522 0.1965,-0.12144 0.35727,0.005 0.35727,0.28022 0,0.63977 -7.62298,23.93311 -7.94405,24.27442 -0.13208,0.14041 -1.09402,-0.3124 -2.13763,-1.00624 z"
+         id="path5314-5"
+         inkscape:connector-curvature="0" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path5304-5"
+         d="m 489.29487,483.54658 c -2.19618,-1.59926 -3.97447,-3.12987 -3.95176,-3.40136 0.0407,-0.48693 17.15162,-21.86769 17.34544,-21.67386 0.22129,0.22128 -8.73832,27.81863 -9.05713,27.89774 -0.18892,0.0469 -2.14037,-1.22326 -4.33655,-2.82252 z"
+         style="fill:#d40000;fill-opacity:1;stroke:#000000;stroke-width:0.34722220999999998;stroke-opacity:1" />
+      <text
+         xml:space="preserve"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         x="507.1322"
+         y="482.6579"
+         id="text5168-8-5-4-1"
+         sodipodi:linespacing="125%"><tspan
+           id="tspan5337-1"
+           sodipodi:role="line"
+           x="507.1322"
+           y="482.6579"
+           style="font-size:8px;font-weight:bold;text-align:center;text-anchor:middle;fill:#ffffff;-inkscape-font-specification:Sans Bold">STP</tspan></text>
+    </g>
+    <g
+       inkscape:export-ydpi="381.10635"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:corner7="-0.16971789 : 0.50887482 : 0.022235729 : 1"
+       inkscape:corner0="-0.15044635 : 0.51051564 : 0 : 1"
+       inkscape:perspectiveID="#perspective3825-0-4"
+       id="g3811-7-9"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="inkscape:box3d">
+      <path
+         d="m 449.18305,438.88153 15.51448,10.85224 -15.26227,9.40269 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="11"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3823-3-8"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 450.86864,425.86313 -15.31551,9.43549 -1.29496,12.77775 14.92488,-9.19484 z"
+         inkscape:box3dsidetype="6"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3813-8-2"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 450.86864,425.86313 15.96909,10.8407 -2.1402,13.02994 -15.51448,-10.85224 z"
+         inkscape:box3dsidetype="5"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3815-72-4"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 435.55313,435.29862 15.6136,11.05971 -1.73147,12.77813 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="13"
+         style="fill:#9955ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3821-13-5"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 466.83773,436.70383 -15.671,9.6545 -1.73147,12.77813 15.26227,-9.40269 z"
+         inkscape:box3dsidetype="14"
+         style="fill:#e5d5ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3819-3-2"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 450.86864,425.86313 15.96909,10.8407 -15.671,9.6545 -15.6136,-11.05971 z"
+         inkscape:box3dsidetype="3"
+         style="fill:#330080;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3817-9-9"
+         sodipodi:type="inkscape:box3dside" />
+    </g>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5168-3-9"
+       y="438.71808"
+       x="443.14838"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635"><tspan
+         style="font-size:8px;font-weight:bold;fill:#ffffff"
+         y="438.71808"
+         x="443.14838"
+         id="tspan5170-1-8"
+         sodipodi:role="line">BSC</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5168-6"
+       y="417.88651"
+       x="486.54355"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635"><tspan
+         style="font-size:8px;font-weight:bold;fill:#ffffff"
+         y="417.88651"
+         x="486.54355"
+         id="tspan5170-2"
+         sodipodi:role="line">MGW</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5168-8-5-4-1-2"
+       y="538.43115"
+       x="518.18701"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635"><tspan
+         style="font-size:8px;font-weight:bold;text-align:center;text-anchor:middle;fill:#ffffff;-inkscape-font-specification:Sans Bold"
+         y="538.43115"
+         x="518.18701"
+         sodipodi:role="line"
+         id="tspan5337-1-0">SCP</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#d208b1;fill-opacity:0.98557693;stroke:#f9f3f3;stroke-width:3.03933716000000010;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path6576"
+       sodipodi:cx="385.77982"
+       sodipodi:cy="520.94019"
+       sodipodi:rx="5.7334933"
+       sodipodi:ry="7.1502862"
+       d="m 381.77144,526.0527 a 5.7334933,7.1502862 0 1 1 9.23869,-2.18333 l -5.23031,-2.92918 z"
+       transform="matrix(0.47879859,0.19383162,-0.09515588,0.57927769,382.69869,149.58751)"
+       sodipodi:start="2.3449563"
+       sodipodi:end="6.7052656"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text5168-6-5"
+       y="420.05008"
+       x="544.36804"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635"><tspan
+         style="font-size:8px;font-weight:bold;fill:#ffffff"
+         y="420.05008"
+         x="544.36804"
+         id="tspan5170-2-8"
+         sodipodi:role="line">SMSC</tspan></text>
+    <g
+       id="g3410"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635">
+      <g
+         id="g5117-4-8-6-3"
+         transform="matrix(0.30004038,0,0,0.24619733,605.02433,527.26832)"
+         inkscape:label="Octahedron:x-80.00:y20.00:x0.00:x0.00:y0.00:x0.00">
+        <path
+           id="path5121-8-3-0-4"
+           d="M 4.1821897,-69.314134 -63.561381,32.848572 -30.018532,61.953082 z"
+           style="fill:#cf0000;fill-opacity:1;stroke:#000000;stroke-width:2.58388662;stroke-linejoin:round;stroke-opacity:1"
+           inkscape:label="Face:2"
+           inkscape:connector-curvature="0" />
+        <path
+           id="path5123-8-2-5-7"
+           d="m 4.1821897,-69.314134 -34.2007217,131.267216 93.579913,0 z"
+           style="fill:#c30000;fill-opacity:1;stroke:#000000;stroke-width:2.58388662;stroke-linejoin:round;stroke-opacity:1"
+           inkscape:label="Face:3"
+           inkscape:connector-curvature="0" />
+      </g>
+      <path
+         style="fill:#a7ac93;fill-opacity:1;stroke:#000000;stroke-width:0.34722221;stroke-opacity:1"
+         d="m 596.83395,541.67607 c 0.0872,-0.23872 2.24642,-7.03559 4.79837,-15.10417 2.55194,-8.06857 4.72391,-14.6677 4.82659,-14.66472 0.15247,0.004 16.2376,28.95181 16.62188,29.91332 0.0637,0.15928 -5.8515,0.2896 -13.14479,0.2896 -10.46146,0 -13.22708,-0.0916 -13.10205,-0.43403 z"
+         id="path5310-2-8-4-8"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill:#d35f5f;fill-opacity:1;stroke:#000000;stroke-width:0.34722221;stroke-opacity:1"
+         d="m 593.26531,539.44943 c -1.04362,-0.69385 -2.71844,-1.95417 -3.72182,-2.80072 l -1.82434,-1.53918 1.12989,-1.58328 c 1.68052,-2.35486 13.72657,-17.36929 14.14068,-17.62522 0.1965,-0.12144 0.35727,0.005 0.35727,0.28022 0,0.63977 -7.62298,23.93311 -7.94405,24.27442 -0.13208,0.14041 -1.09402,-0.3124 -2.13763,-1.00624 z"
+         id="path5314-5-6-6-8"
+         inkscape:connector-curvature="0" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path5304-5-01-7-1"
+         d="m 591.1942,538.44936 c -2.19618,-1.59926 -3.97447,-3.12987 -3.95176,-3.40136 0.0407,-0.48693 17.15162,-21.86769 17.34544,-21.67386 0.22129,0.22128 -8.73832,27.81863 -9.05713,27.89774 -0.18892,0.0469 -2.14037,-1.22326 -4.33655,-2.82252 z"
+         style="fill:#454837;fill-opacity:1;stroke:#000000;stroke-width:0.34722221;stroke-opacity:1" />
+      <text
+         xml:space="preserve"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         x="607.14355"
+         y="539.97247"
+         id="text5168-8-5-4-1-21"
+         sodipodi:linespacing="125%"><tspan
+           id="tspan5337-1-4"
+           sodipodi:role="line"
+           x="607.14355"
+           y="539.97247"
+           style="font-size:8px;font-weight:bold;text-align:center;text-anchor:middle;fill:#ffffff;-inkscape-font-specification:Sans Bold">SGSN</tspan></text>
+    </g>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5168-6-5-5"
+       y="419.80878"
+       x="597.43787"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635"><tspan
+         style="font-size:8px;font-weight:bold;fill:#ffffff"
+         y="419.80878"
+         x="597.43787"
+         id="tspan5170-2-8-5"
+         sodipodi:role="line">GGSN</tspan></text>
+    <g
+       inkscape:export-ydpi="381.10635"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:corner7="-0.16971789 : 0.50887482 : 0.022235729 : 1"
+       inkscape:corner0="-0.15044635 : 0.51051564 : 0 : 1"
+       inkscape:perspectiveID="#perspective3825-0-4-1"
+       id="g3811-7-9-4"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="inkscape:box3d">
+      <path
+         d="m 649.32955,443.88283 15.51448,10.85224 -15.26227,9.40269 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="11"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3823-3-8-9"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 651.01514,430.86443 -15.31551,9.43549 -1.29496,12.77775 14.92488,-9.19484 z"
+         inkscape:box3dsidetype="6"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3813-8-2-9"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 651.01514,430.86443 15.96909,10.8407 -2.1402,13.02994 -15.51448,-10.85224 z"
+         inkscape:box3dsidetype="5"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3815-72-4-0"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 635.69963,440.29992 15.6136,11.05971 -1.73147,12.77813 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="13"
+         style="fill:#9955ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3821-13-5-3"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 666.98423,441.70513 -15.671,9.6545 -1.73147,12.77813 15.26227,-9.40269 z"
+         inkscape:box3dsidetype="14"
+         style="fill:#e5d5ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3819-3-2-0"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 651.01514,430.86443 15.96909,10.8407 -15.671,9.6545 -15.6136,-11.05971 z"
+         inkscape:box3dsidetype="3"
+         style="fill:#330080;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3817-9-9-3"
+         sodipodi:type="inkscape:box3dside" />
+    </g>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5168-3-9-5"
+       y="444.11432"
+       x="642.32727"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635"><tspan
+         style="font-size:8px;font-weight:bold;fill:#ffffff"
+         y="444.11432"
+         x="642.32727"
+         id="tspan5170-1-8-0"
+         sodipodi:role="line">RNC</tspan></text>
+    <g
+       inkscape:export-ydpi="381.10635"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:corner7="-0.16971789 : 0.50887482 : 0.022235729 : 1"
+       inkscape:corner0="-0.15044635 : 0.51051564 : 0 : 1"
+       inkscape:perspectiveID="#perspective3825-0-4-1-7"
+       id="g3811-7-9-4-6"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="inkscape:box3d">
+      <path
+         d="m 694.46834,445.96613 15.51447,10.85224 -15.26226,9.40269 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="11"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3823-3-8-9-7"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 696.15393,432.94773 -15.31552,9.43549 -1.29495,12.77775 14.92488,-9.19484 z"
+         inkscape:box3dsidetype="6"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3813-8-2-9-8"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 696.15393,432.94773 15.96908,10.8407 -2.1402,13.02994 -15.51447,-10.85224 z"
+         inkscape:box3dsidetype="5"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3815-72-4-0-3"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 680.83841,442.38322 15.6136,11.05971 -1.73146,12.77813 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="13"
+         style="fill:#9955ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3821-13-5-3-6"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 712.12301,443.78843 -15.671,9.6545 -1.73146,12.77813 15.26226,-9.40269 z"
+         inkscape:box3dsidetype="14"
+         style="fill:#e5d5ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3819-3-2-0-4"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 696.15393,432.94773 15.96908,10.8407 -15.671,9.6545 -15.6136,-11.05971 z"
+         inkscape:box3dsidetype="3"
+         style="fill:#330080;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3817-9-9-3-4"
+         sodipodi:type="inkscape:box3dside" />
+    </g>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5168-3-9-5-1"
+       y="445.50327"
+       x="688.39606"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635"><tspan
+         style="font-size:8px;font-weight:bold;fill:#ffffff"
+         y="445.50327"
+         x="688.39606"
+         id="tspan5170-1-8-0-9"
+         sodipodi:role="line">BTS</tspan></text>
+    <g
+       inkscape:export-ydpi="381.10635"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:corner7="-0.16971789 : 0.50887482 : 0.022235729 : 1"
+       inkscape:corner0="-0.15044635 : 0.51051564 : 0 : 1"
+       inkscape:perspectiveID="#perspective3825-0-4-1-7-5"
+       id="g3811-7-9-4-6-5"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="inkscape:box3d">
+      <path
+         d="m 690.22348,526.45086 17.60173,11.94885 -17.3156,10.35282 -17.21896,-12.1777 z"
+         inkscape:box3dsidetype="11"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3823-3-8-9-7-7"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 692.13583,512.11697 -17.37601,10.38894 -1.46917,14.06892 16.93283,-10.12397 z"
+         inkscape:box3dsidetype="6"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3813-8-2-9-8-4"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 692.13583,512.11697 18.11752,11.93614 -2.42814,14.3466 -17.60173,-11.94885 z"
+         inkscape:box3dsidetype="5"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3815-72-4-0-3-7"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 674.75982,522.50591 17.7142,12.17728 -1.96441,14.06934 -17.21896,-12.1777 z"
+         inkscape:box3dsidetype="13"
+         style="fill:#9955ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3821-13-5-3-6-3"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 710.25335,524.05311 -17.77933,10.63008 -1.96441,14.06934 17.3156,-10.35282 z"
+         inkscape:box3dsidetype="14"
+         style="fill:#e5d5ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3819-3-2-0-4-4"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 692.13583,512.11697 18.11752,11.93614 -17.77933,10.63008 -17.7142,-12.17728 z"
+         inkscape:box3dsidetype="3"
+         style="fill:#330080;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3817-9-9-3-4-0"
+         sodipodi:type="inkscape:box3dside" />
+    </g>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5168-3-9-5-1-8"
+       y="526.05884"
+       x="677.54742"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635"><tspan
+         style="font-size:8px;font-weight:bold;fill:#ffffff"
+         y="526.05884"
+         x="677.54742"
+         id="tspan5170-1-8-0-9-8"
+         sodipodi:role="line">NodeB</tspan></text>
+    <g
+       id="g7797"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635">
+      <path
+         d="m 687.52396,619.22062 15.51447,10.85224 -15.26226,9.40269 -15.17709,-11.06009 z"
+         style="fill:#e9e9ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7497"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 689.20955,606.20222 -15.31552,9.4355 -1.29495,12.77774 14.92488,-9.19484 z"
+         style="fill:#353564;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7499"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 689.20955,606.20222 15.96909,10.8407 -2.14021,13.02994 -15.51447,-10.85224 z"
+         style="fill:#4d4d9f;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7501"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 673.89403,615.63772 15.6136,11.0597 -1.73146,12.77813 -15.17709,-11.06009 z"
+         style="fill:#b45ba0;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7503"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 705.17864,617.04292 -15.67101,9.6545 -1.73146,12.77813 15.26226,-9.40269 z"
+         style="fill:#d39fc9;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7505"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 689.20955,606.20222 15.96909,10.8407 -15.67101,9.6545 -15.6136,-11.0597 z"
+         style="fill:#af2d95;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path7507"
+         inkscape:connector-curvature="0" />
+    </g>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5168-6-5-5-6"
+       y="619.36902"
+       x="678.4873"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635"><tspan
+         style="font-size:8px;font-weight:bold;fill:#ffffff"
+         y="619.36902"
+         x="678.4873"
+         id="tspan5170-2-8-5-2"
+         sodipodi:role="line">PGW</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5168-8-5-4-1-21-9"
+       y="567.72546"
+       x="475.15048"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635"><tspan
+         style="font-size:8px;font-weight:bold;text-align:center;text-anchor:middle;fill:#ffffff;-inkscape-font-specification:Sans Bold"
+         y="567.72546"
+         x="475.15048"
+         sodipodi:role="line"
+         id="tspan5337-1-4-5">SGW</tspan></text>
+    <g
+       inkscape:export-ydpi="381.10635"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:corner7="-0.16971789 : 0.50887482 : 0.022235729 : 1"
+       inkscape:corner0="-0.15044635 : 0.51051564 : 0 : 1"
+       inkscape:perspectiveID="#perspective3825-0-4-1-7-5-5"
+       id="g3811-7-9-4-6-5-5"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       sodipodi:type="inkscape:box3d">
+      <path
+         d="m 530.57954,570.27173 15.51447,10.85224 -15.26226,9.40269 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="11"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3823-3-8-9-7-7-6"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 532.26513,557.25333 -15.31552,9.4355 -1.29495,12.77774 14.92488,-9.19484 z"
+         inkscape:box3dsidetype="6"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3813-8-2-9-8-4-0"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 532.26513,557.25333 15.96909,10.8407 -2.14021,13.02994 -15.51447,-10.85224 z"
+         inkscape:box3dsidetype="5"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3815-72-4-0-3-7-5"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 516.94961,566.68883 15.6136,11.05971 -1.73146,12.77812 -15.17709,-11.06009 z"
+         inkscape:box3dsidetype="13"
+         style="fill:#9955ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3821-13-5-3-6-3-9"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 548.23422,568.09403 -15.67101,9.65451 -1.73146,12.77812 15.26226,-9.40269 z"
+         inkscape:box3dsidetype="14"
+         style="fill:#e5d5ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3819-3-2-0-4-4-4"
+         sodipodi:type="inkscape:box3dside" />
+      <path
+         d="m 532.26513,557.25333 15.96909,10.8407 -15.67101,9.65451 -15.6136,-11.05971 z"
+         inkscape:box3dsidetype="3"
+         style="fill:#330080;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path3817-9-9-3-4-0-6"
+         sodipodi:type="inkscape:box3dside" />
+    </g>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5168-3-9-5-1-8-3"
+       y="570.4563"
+       x="525.08667"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635"><tspan
+         style="font-size:8px;font-weight:bold;fill:#ffffff"
+         y="570.4563"
+         x="525.08667"
+         id="tspan5170-1-8-0-9-8-4"
+         sodipodi:role="line">eNB</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5168-8-5-4-1-21-8"
+       y="585.00323"
+       x="624.62262"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635"><tspan
+         style="font-size:8px;font-weight:bold;text-align:center;text-anchor:middle;fill:#ffffff;-inkscape-font-specification:Sans Bold"
+         y="585.00323"
+         x="624.62262"
+         sodipodi:role="line"
+         id="tspan5337-1-4-8">MME</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5168-8-5-4-1-2-2"
+       y="635.85822"
+       x="621.8114"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635"><tspan
+         style="font-size:8px;font-weight:bold;text-align:center;text-anchor:middle;fill:#ffffff;-inkscape-font-specification:Sans Bold"
+         y="635.85822"
+         x="621.8114"
+         sodipodi:role="line"
+         id="tspan5337-1-0-2">PCRF</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#d502ad;fill-opacity:0.98557693;stroke:#f9f3f3;stroke-width:3.03933716000000010;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path6576-1"
+       sodipodi:cx="385.77982"
+       sodipodi:cy="520.94019"
+       sodipodi:rx="5.7334933"
+       sodipodi:ry="7.1502862"
+       d="m 381.77144,526.0527 a 5.7334933,7.1502862 0 1 1 9.23869,-2.18333 l -5.23031,-2.92918 z"
+       transform="matrix(0.47879859,0.19383162,-0.09515588,0.57927769,486.32311,244.29336)"
+       sodipodi:start="2.3449563"
+       sodipodi:end="6.7052656"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text5168-6-5-5-9"
+       y="620.79303"
+       x="464.6062"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       xml:space="preserve"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635"><tspan
+         style="font-size:8px;font-weight:bold;fill:#ffffff"
+         y="620.79303"
+         x="464.6062"
+         id="tspan5170-2-8-5-5"
+         sodipodi:role="line">VAP</tspan></text>
+    <g
+       id="g3356"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635">
+      <path
+         sodipodi:type="arc"
+         style="fill:#ff7f2a;fill-opacity:1;stroke:#1d0c0c;stroke-width:1.51439857000000000;stroke-miterlimit:4;stroke-opacity:0.98557691000000003;stroke-dasharray:none"
+         id="path3412-5-2-2"
+         sodipodi:cx="312.94998"
+         sodipodi:cy="394.69766"
+         sodipodi:rx="23.478155"
+         sodipodi:ry="7.4577665"
+         d="m 336.42814,394.69766 a 23.478155,7.4577665 0 1 1 -46.95631,0 23.478155,7.4577665 0 1 1 46.95631,0 z"
+         transform="matrix(0.65208931,0,0,0.77586026,337.10513,324.59652)"
+         inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
+         inkscape:export-xdpi="44.998253"
+         inkscape:export-ydpi="44.998253" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path6623-41"
+         d="m 537.19231,621.13647 c -5.85309,-0.60745 -11.02418,-2.9392 -11.02418,-4.97102 0,-2.14133 2.69666,-3.81709 7.93949,-4.93372 9.48026,-2.01914 22.38563,0.73316 22.37435,4.77173 -0.006,1.97365 -4.8829,4.40236 -9.89519,4.92734 -4.99206,0.52286 -6.10364,0.54719 -9.39447,0.20567 z"
+         style="fill:#d45500;fill-opacity:1;stroke:#110707;stroke-width:1.25510728000000005;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+      <text
+         xml:space="preserve"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         x="541.03247"
+         y="618.99768"
+         id="text5168-8-5-4-1-2-7-4"
+         sodipodi:linespacing="125%"><tspan
+           id="tspan5337-1-0-6-2"
+           sodipodi:role="line"
+           x="541.03247"
+           y="618.99768"
+           style="font-size:8px;font-weight:bold;text-align:center;text-anchor:middle;fill:#ffffff;-inkscape-font-specification:Sans Bold">HSS</tspan></text>
+      <path
+         inkscape:connector-curvature="0"
+         id="path6621-0"
+         d="m 525.8983,623.82452 0,-6.64563 1.48486,1.06473 c 3.92773,2.81644 12.30892,4.04761 19.71877,2.89663 3.95432,-0.61422 7.69811,-1.91966 8.80344,-3.06968 l 0.87807,-0.91359 0,6.63699 0,6.63698 -1.4101,-1.06867 c -5.58218,-4.23057 -22.2546,-4.22842 -27.98088,0.004 l -1.49416,1.10426 0,-6.64564 z"
+         style="fill:#ff9955;fill-opacity:1;stroke:#000000;stroke-width:0.65445023999999996;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    </g>
+    <g
+       id="g3349"
+       inkscape:export-filename="/home/zim/mobile_networks_icon_set.png"
+       inkscape:export-xdpi="381.10635"
+       inkscape:export-ydpi="381.10635">
+      <path
+         sodipodi:type="arc"
+         style="fill:#ff7f2a;fill-opacity:1;stroke:#1d0c0c;stroke-width:1.51439857;stroke-miterlimit:4;stroke-opacity:0.98557691;stroke-dasharray:none"
+         id="path3412-5-2-2-6"
+         sodipodi:cx="312.94998"
+         sodipodi:cy="394.69766"
+         sodipodi:rx="23.478155"
+         sodipodi:ry="7.4577665"
+         d="m 336.42814,394.69766 a 23.478155,7.4577665 0 1 1 -46.95631,0 23.478155,7.4577665 0 1 1 46.95631,0 z"
+         transform="matrix(0.65208931,0,0,0.77586026,354.9334,231.0391)"
+         inkscape:export-filename="/home/zim/docs/work/freelancing/Telcolabs/img/icons/elementIcons/router.png"
+         inkscape:export-xdpi="44.998253"
+         inkscape:export-ydpi="44.998253" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path6623-41-9"
+         d="m 555.02058,527.57905 c -5.85309,-0.60745 -11.02418,-2.9392 -11.02418,-4.97102 0,-2.14133 2.69666,-3.81709 7.93949,-4.93372 9.48026,-2.01914 22.38563,0.73316 22.37435,4.77173 -0.006,1.97365 -4.8829,4.40236 -9.89519,4.92734 -4.99206,0.52286 -6.10364,0.54719 -9.39447,0.20567 z"
+         style="fill:#d45500;fill-opacity:1;stroke:#110707;stroke-width:1.25510728;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path6621-0-2"
+         d="m 543.72657,530.2671 0,-6.64563 1.48486,1.06473 c 3.92773,2.81644 12.30892,4.04761 19.71877,2.89663 3.95432,-0.61422 7.69811,-1.91966 8.80344,-3.06968 l 0.87807,-0.91359 0,6.63699 0,6.63698 -1.4101,-1.06867 c -5.58218,-4.23057 -22.2546,-4.22842 -27.98088,0.004 l -1.49416,1.10426 0,-6.64564 z"
+         style="fill:#ff9955;fill-opacity:1;stroke:#000000;stroke-width:0.65445024;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+      <text
+         xml:space="preserve"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         x="559.23138"
+         y="524.92218"
+         id="text5168-8-5-4-1-2-7"
+         sodipodi:linespacing="125%"><tspan
+           id="tspan5337-1-0-6"
+           sodipodi:role="line"
+           x="559.23138"
+           y="524.92218"
+           style="font-size:8px;font-weight:bold;text-align:center;text-anchor:middle;fill:#ffffff;-inkscape-font-specification:Sans Bold">HLR</tspan></text>
+    </g>
   </g>
 </svg>
