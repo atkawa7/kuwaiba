@@ -60,7 +60,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @param classId
      * @throws RemoteException, Exception
      */
-    public void deleteClass(long classId) throws RemoteException, MetadataObjectNotFoundException;
+    public void deleteClass(long classId) throws RemoteException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Retrieves the simplified list of classes. This list won't include either

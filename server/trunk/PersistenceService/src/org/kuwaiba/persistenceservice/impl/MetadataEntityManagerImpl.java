@@ -42,14 +42,11 @@ import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
-import org.neo4j.graphdb.traversal.Evaluators;
 import org.neo4j.helpers.collection.IteratorUtil;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
-import org.neo4j.kernel.Traversal;
 
 /**
  * MetadataEntityManager implementation
@@ -272,45 +269,40 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws ClassNotFoundException if there is not a class with de ClassId
      */
     @Override
-    public void deleteClass(long classId) throws MetadataObjectNotFoundException {
+    public void deleteClass(long classId) throws MetadataObjectNotFoundException, InvalidArgumentException {
         Transaction tx = null;
         try {
             tx = graphDb.beginTx();
-            Node node = classIndex.get(Constants.PROPERTY_ID, String.valueOf(classId)).getSingle();
+            Node node = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
 
-            if (node == null){ 
+            if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
                         "Can not find a class with id %1s", classId));
-            }//deletes objects
-            for (Path nodes: Traversal.description().
-                    depthFirst().
-                    relationships(RelTypes.INSTANCE_OF, Direction.INCOMING).
-                    evaluator(Evaluators.all()).
-                    traverse(node)){
-                                
-                Iterator<Node> ObjectNodesToDelete = nodes.nodes().iterator();
-                while (ObjectNodesToDelete.hasNext()) {
-                    Node nodeToDelete = ObjectNodesToDelete.next();
-                    Util.deleteObject(nodeToDelete, true);
-                }
+            
+            if (!(Boolean)node.getProperty(Constants.PROPERTY_CUSTOM))
+                throw new InvalidArgumentException(String.format(
+                        "Core classes can not be deleted"), Level.SEVERE);
+            if (node.hasRelationship(RelTypes.INSTANCE_OF))
+                throw new InvalidArgumentException(String.format(
+                        "The class with id %1s has instances and can not be deleted", classId), Level.SEVERE);
+            
+            if (node.hasRelationship(Direction.INCOMING, RelTypes.EXTENDS))
+                throw new InvalidArgumentException(String.format(
+                        "The class with id %1s has subclasses and can not be deleted", classId), Level.SEVERE);
+            
+            //Deletes the attribute nodes and their relationships to the class node
+            Iterable<Relationship> attRelationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
+            for (Relationship rel : attRelationships){
+                rel.getEndNode().getSingleRelationship(RelTypes.HAS_ATTRIBUTE, Direction.INCOMING).delete();
+                rel.getEndNode().delete();
             }
-            for (Path nodes: Traversal.description().
-                    depthFirst().
-                    relationships(RelTypes.EXTENDS).
-                    relationships(RelTypes.HAS_ATTRIBUTE).
-                    relationships(RelTypes.POSSIBLE_CHILD).
-                    relationships(RelTypes.BELONGS_TO_CATEGORY).
-                    relationships(RelTypes.IMPLEMENTS).
-                    evaluator(Evaluators.all()).
-                    traverse(node)){
-                Iterator<Node> ObjectNodesToDelete = nodes.nodes().iterator();
-                while (ObjectNodesToDelete.hasNext()) {
-                    Node nodeToDelete = ObjectNodesToDelete.next();
-                    Util.deleteObject(nodeToDelete, true);
-                }
-            }
-            node.delete();
+            
+            //Release the rest of relationships
+            for (Relationship rel : node.getRelationships())
+                rel.delete();
+            
             classIndex.remove(node);
+            node.delete();
             tx.success();
 
         } catch(Exception ex){
@@ -320,9 +312,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             }
             throw new RuntimeException(ex.getMessage());
         } finally {
-            if (tx != null){
+            if (tx != null)
                 tx.finish();
-            }
         }
     }
 
@@ -334,28 +325,38 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      */
     @Override
     public void deleteClass(String className) throws MetadataObjectNotFoundException {
-        Transaction tx = null;
+                Transaction tx = null;
         try {
             tx = graphDb.beginTx();
             Node node = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
 
-            if (node == null) {
+            if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
                         "Can not find a class with name %1s", className));
+            
+            if (node.hasRelationship(RelTypes.INSTANCE_OF))
+                throw new InvalidArgumentException(String.format(
+                        "The class with name %1s has instances and can not be deleted", className), Level.SEVERE);
+            
+            if (node.hasRelationship(Direction.INCOMING, RelTypes.EXTENDS))
+                throw new InvalidArgumentException(String.format(
+                        "The class with name %1s has subclasses and can not be deleted", className), Level.SEVERE);
+            
+            //Deletes the attribute nodes and their relationships to the class node
+            Iterable<Relationship> attRelationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
+            for (Relationship rel : attRelationships){
+                rel.getEndNode().getSingleRelationship(RelTypes.HAS_ATTRIBUTE, Direction.INCOMING).delete();
+                rel.getEndNode().delete();
             }
-            Iterable<Relationship> relationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
-            for (Relationship relationship : relationships) {
-                Node atr = relationship.getEndNode();
-                atr.delete();
-                relationship.delete();
-            }
-            //Deleting other relationships
-            relationships = node.getRelationships();
-            for (Relationship relationship : relationships) {
-                relationship.delete();
-            }
+            
+            //Release the rest of relationships
+            for (Relationship rel : node.getRelationships())
+                rel.delete();
+            
+            classIndex.remove(node);
             node.delete();
             tx.success();
+
         } catch(Exception ex){
             Logger.getLogger("Delete class: "+ex.getMessage()); //NOI18N
             if(tx != null){
@@ -363,9 +364,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             }
             throw new RuntimeException(ex.getMessage());
         } finally {
-            if (tx != null){
+            if (tx != null)
                 tx.finish();
-            }
         }
     }
 

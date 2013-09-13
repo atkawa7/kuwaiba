@@ -63,7 +63,7 @@ public interface MetadataEntityManager {
      * @param classId
      * @throws ClassNotFoundException if there is not a class with de ClassName
      */
-    public void deleteClass(long classId) throws MetadataObjectNotFoundException;
+    public void deleteClass(long classId) throws MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
      * Retrieves the simplified list of classes. This list won't include either
