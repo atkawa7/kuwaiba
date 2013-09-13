@@ -104,9 +104,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
     @Override
     public long createClass(ClassInfo classDefinition) throws ServerSideException{
-        if (mem == null){
+        if (mem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        }
         try{
             ClassMetadata cm = new ClassMetadata();
 
