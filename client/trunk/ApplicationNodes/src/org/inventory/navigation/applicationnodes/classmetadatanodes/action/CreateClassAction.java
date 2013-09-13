@@ -19,8 +19,11 @@ import java.awt.event.ActionEvent;
 import java.util.Random;
 import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.LocalStuffFactory;
+import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
+import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
 /**
@@ -44,15 +47,24 @@ public class CreateClassAction extends AbstractAction {
    
     @Override
     public void actionPerformed(ActionEvent ae) {
-        Random random = new Random();
+        String className = java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_CLASS") + new Random().nextInt(10000);
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        boolean createClassMetadata = com.createClassMetadata(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_CLASS")+random.nextInt(10000), 
+        long classId = com.createClassMetadata(className, 
                                                               "","", node.getName(), true, true, 0, false, true);
-        if (!createClassMetadata)
+        if (classId == -1)
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR,
                     com.getError());
-        else
+        else{
+            LocalClassMetadataLight lcml = LocalStuffFactory.createLocalClassMetadataLight();
+            lcml.setClassName(className);
+            lcml.setAbstract(false);
+            lcml.setCustom(true);
+            lcml.setDisplayName(className);
+            lcml.setInDesign(true);
+            lcml.setOid(classId);
+            node.getChildren().add(new Node[]{new ClassMetadataNode(lcml)});
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO,
                     java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
+        }
     }
  }

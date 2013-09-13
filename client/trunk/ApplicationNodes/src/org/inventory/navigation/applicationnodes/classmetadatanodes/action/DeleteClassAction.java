@@ -22,6 +22,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
+import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
 /**
@@ -43,16 +44,15 @@ public class DeleteClassAction extends AbstractAction {
     public void actionPerformed(ActionEvent ae) {
         LocalClassMetadata classMetaData = com.getMetaForClass(node.getClassMetadata().getClassName(), false);
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this class? All its instances will be (safely) deleted as well", 
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this class?", 
                 "Data integrity", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
             return;
         
-        if(classMetaData.isCustom()){
-            if (com.deleteClassMetadata(classMetaData.getOid()))
+            if (com.deleteClassMetadata(classMetaData.getOid())){
+                node.getParentNode().getChildren().remove(new Node[]{node});
                 nu.showSimplePopup("Operation Result", NotificationUtil.INFO, "The class was deleted successfully");
+            }
             else
                 nu.showSimplePopup("Operation Result", NotificationUtil.ERROR, com.getError());
-        }else
-            nu.showSimplePopup("Operation Result", NotificationUtil.ERROR, "Core classes can not be deleted");
     }
 }

@@ -293,7 +293,7 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
     }//GEN-LAST:event_btnCloudActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current view?",
+        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current topology?",
                 "Delete saved view",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
             tvsrv.deleteView();
             scene.clear();
@@ -307,11 +307,11 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
             toggleButtons(true);
             return;
         }
-        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to clear the current view?",
+        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to clear the current topology?",
                     "Confirmation",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
             if(tvsrv.getTvId() == -1){ //It's a temporal view, not a saved one
                     scene.clear();
-            }else{ //It's a saved view, so we need to clear all
+            }else{ //It's a saved view, so we need to clear everything
                 scene.clear();
                 toggleButtons(true);
                 isSaved = false;

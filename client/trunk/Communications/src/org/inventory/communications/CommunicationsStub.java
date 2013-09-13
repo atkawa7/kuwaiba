@@ -926,14 +926,13 @@ public class CommunicationsStub {
         }
     }
         
-    public boolean createClassMetadata(String className, String displayName, String description, String parentClassName, boolean custom, boolean countable, int color, boolean _abstract, boolean inDesign){
+    public long createClassMetadata(String className, String displayName, String description, String parentClassName, boolean custom, boolean countable, int color, boolean _abstract, boolean inDesign){
         try{
-            port.createClass(className, displayName, description, _abstract, custom, countable, inDesign, parentClassName, null, null, this.session.getSessionId());
+            return port.createClass(className, displayName, description, _abstract, custom, countable, inDesign, parentClassName, null, null, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
-            return false;
+            return -1;
         }
-        return true;
     }
     
     public boolean deleteClassMetadata(long classId){
