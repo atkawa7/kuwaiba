@@ -1465,7 +1465,7 @@ public class Kuwaiba {
     }
 
      /**
-     * Updates a class metadata properties
+     * Updates a class metadata properties. Use null values for those properties that shouldn't be touched
      * @param class metadata id.
      * @param class metadata name. Null if unchanged
      * @param displayName New class metadata display name. Null if unchanged
@@ -1478,31 +1478,30 @@ public class Kuwaiba {
      */
     @WebMethod(operationName = "setClassProperties")
     public void setClassProperties(@WebParam(name = "classId")
-        long ClassId, @WebParam(name = "name")
+        long classId, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "description")
         String description, @WebParam(name = "smallIcon")
         byte[] smallIcon,  @WebParam(name = "icon")
         byte[] icon, @WebParam(name = "_abstract")
-        boolean _abstract, @WebParam(name = "inDesign")
-        boolean inDesign, @WebParam(name = "countable")
-        boolean countable, @WebParam(name = "sessionId")
+        Boolean _abstract, @WebParam(name = "inDesign")
+        Boolean inDesign, @WebParam(name = "custom")
+        Boolean custom, @WebParam(name = "countable")
+        Boolean countable, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
         try
         {
             wsBean.validateCall("setClassProperties", getIPAddress(), sessionId);
             if (icon != null){
-                if (icon.length > Constants.MAX_ICON_SIZE){
+                if (icon.length > Constants.MAX_ICON_SIZE)
                     throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
-                }
             }
             if (smallIcon != null){
-                if (smallIcon.length > Constants.MAX_ICON_SIZE){
+                if (smallIcon.length > Constants.MAX_ICON_SIZE)
                     throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
-                }
             }
             ClassInfo ci = new ClassInfo();
-            ci.setId(ClassId);
+            ci.setId(classId);
             ci.setClassName(name);
             ci.setDisplayName(displayName);
             ci.setDescription(description);
@@ -1511,6 +1510,7 @@ public class Kuwaiba {
             ci.setAbstract(_abstract);
             ci.setInDesign(inDesign);
             ci.setCountable(countable);
+            ci.setCustom(custom);
 
             wsBean.setClassProperties(ci);
 

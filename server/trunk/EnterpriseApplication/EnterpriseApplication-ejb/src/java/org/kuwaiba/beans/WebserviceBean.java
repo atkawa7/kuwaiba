@@ -120,6 +120,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
             cm.setIcon(classDefinition.getIcon());
             cm.setSmallIcon(classDefinition.getSmallIcon());
             cm.setCustom(classDefinition.isCustom());
+            cm.setViewable(classDefinition.isViewable());
+            cm.setInDesign(classDefinition.isInDesign());
             //TODO decode flags, set category
             //cm.setCategory(classDefinition.getCategory());
 
@@ -392,7 +394,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             cm.setParentClassName(newClassDefinition.getParentClassName());
             cm.setAbstract(newClassDefinition.isAbstract());
             cm.setCountable(newClassDefinition.isCountable());
-            cm.setInDesing(newClassDefinition.isInDesign());
+            cm.setInDesign(newClassDefinition.isInDesign());
             cm.setIcon(newClassDefinition.getIcon());
             cm.setSmallIcon(newClassDefinition.getSmallIcon());
             cm.setColor(cm.getColor());

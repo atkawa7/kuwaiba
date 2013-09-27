@@ -29,11 +29,11 @@ import org.kuwaiba.ws.toserialize.application.Validator;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ClassInfoLight implements Serializable {
     protected long id;
-    protected boolean _abstract;
-    protected boolean viewable;
-    protected boolean custom;
-    protected boolean inDesign;
-    protected boolean listType;
+    protected Boolean _abstract;
+    protected Boolean viewable;
+    protected Boolean custom;
+    protected Boolean inDesign;
+    protected Boolean listType;
     protected Validator[] validators;
     protected String className;
     protected String displayName;
@@ -56,7 +56,7 @@ public class ClassInfoLight implements Serializable {
         this.viewable = myClassLight.isViewable();
         this.listType = myClassLight.isListType();
         this.custom = myClassLight.isCustom();
-        this.inDesign = myClassLight.isInDesing();
+        this.inDesign = myClassLight.isInDesign();
     }
 
     public ClassInfoLight (long id, String className, String displayName, Validator[] validators, boolean viewable, boolean _abstract, boolean custom, boolean inDesign, String parentClassName, boolean listType, byte[] smallIcon){
@@ -121,43 +121,43 @@ public class ClassInfoLight implements Serializable {
         this.validators = validators;
     }
 
-    public boolean isAbstract() {
+    public Boolean isAbstract() {
         return _abstract;
     }
 
-    public void setAbstract(boolean _abstract) {
+    public void setAbstract(Boolean _abstract) {
         this._abstract = _abstract;
     }
 
-    public boolean isViewable() {
+    public Boolean isViewable() {
         return viewable;
     }
 
-    public void setViewable(boolean viewable) {
+    public void setViewable(Boolean viewable) {
         this.viewable = viewable;
     }
 
-    public boolean isCustom() {
+    public Boolean isCustom() {
         return custom;
     }
 
-    public void setCustom(boolean custom) {
+    public void setCustom(Boolean custom) {
         this.custom = custom;
     }
 
-    public boolean isInDesign() {
+    public Boolean isInDesign() {
         return inDesign;
     }
 
-    public void setInDesign(boolean inDesign) {
+    public void setInDesign(Boolean inDesign) {
         this.inDesign = inDesign;
     }
 
-    public boolean isListType() {
+    public Boolean isListType() {
         return listType;
     }
 
-    public void setListType(boolean listType) {
+    public void setListType(Boolean listType) {
         this.listType = listType;
     }
 

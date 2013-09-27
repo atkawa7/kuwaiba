@@ -76,7 +76,7 @@ public class ClassInfo extends ClassInfoLight{
      *  Classes marked with the annotation NoCount (Slot, Port and the like)
      *  have this attribute set as false
      */
-    private boolean countable;
+    private Boolean countable;
 
     public ClassInfo(){}
     public ClassInfo(ClassMetadata myClass, Validator[] validators){
@@ -189,11 +189,11 @@ public class ClassInfo extends ClassInfoLight{
         this.creationDate = creationDate;
     }
 
-    public boolean isCountable() {
+    public Boolean isCountable() {
         return countable;
     }
 
-    public void setCountable(boolean countable) {
+    public void setCountable(Boolean countable) {
         this.countable = countable;
     }
 }
