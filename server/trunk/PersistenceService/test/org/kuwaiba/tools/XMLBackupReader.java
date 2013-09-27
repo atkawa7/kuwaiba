@@ -187,7 +187,7 @@ public class XMLBackupReader {
             clmt.setName(lcw.getName());
             clmt.setParentClassName(parentClassName);
             clmt.setSmallIcon(new byte[0]);
-            clmt.setInDesing(false);
+            clmt.setInDesign(false);
             
             List<AttributeMetadata> attList = new ArrayList<AttributeMetadata>();
             

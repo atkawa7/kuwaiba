@@ -41,8 +41,9 @@ public interface MetadataEntityManager {
      * @return the Id of the newClassMetadata
      * @throws MetadataObjectNotFoundException if the specified parent class doesn't exist
      * @throws DatabaseException if the reference node doesn't exist
+     * @throws InvalidArgumentException if any of the fields of the class definition has an invalid value
      */
-    public long createClass(ClassMetadata classDefinition) throws DatabaseException, MetadataObjectNotFoundException;
+    public long createClass(ClassMetadata classDefinition) throws DatabaseException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Changes a classmetadata definiton

@@ -41,7 +41,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public long createClass(ClassMetadata classDefinition) throws RemoteException, MetadataObjectNotFoundException, DatabaseException;
+    public long createClass(ClassMetadata classDefinition) throws MetadataObjectNotFoundException, DatabaseException, InvalidArgumentException, RemoteException;
     /**
      * See Persistence Abstraction API documentation
      * @param newClassDefinition

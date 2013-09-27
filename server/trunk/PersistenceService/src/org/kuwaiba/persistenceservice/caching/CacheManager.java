@@ -193,7 +193,7 @@ public class CacheManager {
         ClassMetadata currentClass = getClass(className);
 
         if (currentClass == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
+            throw new MetadataObjectNotFoundException(String.format("Can not find a class with id %s", className));
 
         if (allegedParentClass.equals(className))
             return true;

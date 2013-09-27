@@ -107,18 +107,24 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws DatabaseException if the reference node does not exist
      */
     @Override
-    public long createClass(ClassMetadata classDefinition) throws MetadataObjectNotFoundException, DatabaseException {
+    public long createClass(ClassMetadata classDefinition) throws MetadataObjectNotFoundException, DatabaseException, InvalidArgumentException {
         Transaction tx = null;
-        long id;
+        long id;   
         classDefinition = Util.setDefaultsForClassMetadata(classDefinition);
+        if (!classDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
+            throw new InvalidArgumentException(String.format("Class %s contains invalid characters", classDefinition.getName()), Level.INFO);
+        
+        if(classDefinition.getName().isEmpty())
+                    throw new InvalidArgumentException("Class name can not be an empty string", Level.INFO);
+        
         try {
             tx = graphDb.beginTx();
-            if (graphDb.getReferenceNode() == null){//The reference node must exist
+            if (graphDb.getReferenceNode() == null)//The reference node must exist
                 throw new DatabaseException("Reference node does not exist. The database seems to be corrupted");
-            }
-            if (classIndex.get(Constants.PROPERTY_NAME, classDefinition.getName()).getSingle() != null){
-                throw new InvalidArgumentException(String.format("Class %1s already exists in the database", classDefinition.getName()), Level.INFO);
-            }
+            
+            if (classIndex.get(Constants.PROPERTY_NAME, classDefinition.getName()).getSingle() != null)
+                throw new InvalidArgumentException(String.format("Class %s already exists", classDefinition.getName()), Level.INFO);
+            
             Node classNode = graphDb.createNode();
 
             classNode.setProperty(Constants.PROPERTY_NAME, classDefinition.getName());
@@ -131,7 +137,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             classNode.setProperty(Constants.PROPERTY_ICON, classDefinition.getIcon());
             classNode.setProperty(Constants.PROPERTY_SMALL_ICON, classDefinition.getSmallIcon());
             classNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-            classNode.setProperty(Constants.PROPERTY_IN_DESIGN, classDefinition.isInDesing());
+            classNode.setProperty(Constants.PROPERTY_IN_DESIGN, classDefinition.isInDesign());
 
             id = classNode.getId();
             classIndex.putIfAbsent(classNode, Constants.PROPERTY_NAME, classDefinition.getName());
@@ -191,6 +197,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 }
             }
             tx.success();
+            cm.putClass(classDefinition);
             return id;
         } catch (Exception ex) {
             Logger.getLogger("Create class: "+ex.getMessage()); //NOI18N
@@ -222,6 +229,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             String formerName = (String)classMetadata.getProperty(Constants.PROPERTY_NAME);
             
             if(newClassDefinition.getName() != null){
+                if(newClassDefinition.getName().isEmpty())
+                    throw new InvalidArgumentException("Class name can not be an empty string", Level.INFO);
+                
+                if (!newClassDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
+            throw new InvalidArgumentException(String.format("Class %s contains invalid characters", newClassDefinition.getName()), Level.INFO);
+                
+                if (classIndex.get(Constants.PROPERTY_NAME, newClassDefinition.getName()).getSingle() != null)
+                   throw new InvalidArgumentException(String.format("Class %s already exists", newClassDefinition.getName()), Level.INFO);
+                
                 classIndex.remove(classMetadata, Constants.PROPERTY_NAME);
                 classMetadata.setProperty(Constants.PROPERTY_NAME, newClassDefinition.getName());
                 classIndex.add(classMetadata, Constants.PROPERTY_NAME, newClassDefinition.getName());
@@ -236,15 +252,18 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 classMetadata.setProperty(Constants.PROPERTY_SMALL_ICON, newClassDefinition.getSmallIcon());
             if(newClassDefinition.getColor() != -1)
                 classMetadata.setProperty(Constants.PROPERTY_COLOR, newClassDefinition.getColor());
-            classMetadata.setProperty(Constants.PROPERTY_COUNTABLE, newClassDefinition.isCountable());
-            classMetadata.setProperty(Constants.PROPERTY_ABSTRACT, newClassDefinition.isAbstract());
-            classMetadata.setProperty(Constants.PROPERTY_IN_DESIGN, newClassDefinition.isInDesing());
-            classMetadata.setProperty(Constants.PROPERTY_CUSTOM, newClassDefinition.isCustom());
+            if (newClassDefinition.isCountable() != null)
+                classMetadata.setProperty(Constants.PROPERTY_COUNTABLE, newClassDefinition.isCountable());
+            if (newClassDefinition.isAbstract() != null)
+                classMetadata.setProperty(Constants.PROPERTY_ABSTRACT, newClassDefinition.isAbstract());
+            if (newClassDefinition.isInDesign() != null)
+                classMetadata.setProperty(Constants.PROPERTY_IN_DESIGN, newClassDefinition.isInDesign());
+            if (newClassDefinition.isCustom() != null)
+                classMetadata.setProperty(Constants.PROPERTY_CUSTOM, newClassDefinition.isCustom());
             
             if(newClassDefinition.getAttributes() != null ){
-                for (AttributeMetadata attr : newClassDefinition.getAttributes()) {
+                for (AttributeMetadata attr : newClassDefinition.getAttributes())
                     setAttributeProperties(newClassDefinition.getId(), attr);
-                }
             }
             
             cm.removeClass(formerName);
@@ -1267,7 +1286,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         Transaction tx = null;
         Node parentNode;
 
-        //The dummy root
+        //It's NOT the dummy root
         if(parentClassId != -1) {
             parentNode = classIndex.get(Constants.PROPERTY_ID, parentClassId).getSingle();
 
@@ -1338,7 +1357,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }
     }
 
-    public void addPossibleChildren(String parentClassName, String[] _possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException {
+    public void addPossibleChildren(String parentClassName, String[] possibleChildren) throws MetadataObjectNotFoundException, InvalidArgumentException {
         Transaction tx = null;
         Node parentNode;
         boolean isDummyRoot = false;
@@ -1371,7 +1390,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         tx = graphDb.beginTx();
 
         try{
-            for (String possibleChildName : _possibleChildren) {
+            for (String possibleChildName : possibleChildren) {
                 Node childNode = classIndex.get(Constants.PROPERTY_NAME, possibleChildName).getSingle();
                 if (childNode == null){
                     throw new MetadataObjectNotFoundException(String.format(

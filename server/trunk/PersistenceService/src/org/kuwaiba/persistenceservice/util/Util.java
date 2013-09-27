@@ -278,7 +278,6 @@ public class Util {
      * @return
      */
     public static ClassMetadata setDefaultsForClassMetadata(ClassMetadata classDefinition) throws MetadataObjectNotFoundException{
-        Integer color = null;
         if(classDefinition.getName() == null){
             throw new MetadataObjectNotFoundException("Can not create a class metadata entry without a name");
         }
@@ -286,7 +285,7 @@ public class Util {
             classDefinition.setDisplayName("");
         }
         if(classDefinition.getDescription() == null){
-            classDefinition.setDisplayName("");
+            classDefinition.setDescription("");
         }
         if(classDefinition.getIcon() == null){
             classDefinition.setIcon(new byte[0]);
@@ -295,7 +294,7 @@ public class Util {
             classDefinition.setSmallIcon(new byte[0]);
         }
         try {
-            color = Integer.valueOf(classDefinition.getColor());
+            Integer.valueOf(classDefinition.getColor());
         } catch (NumberFormatException e) {
             classDefinition.setColor(0);
         }
@@ -349,7 +348,10 @@ public class Util {
         
         myClass.setAbstract((Boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT));
         myClass.setSmallIcon((byte[])classNode.getProperty(Constants.PROPERTY_SMALL_ICON));
+        myClass.setCustom((Boolean)classNode.getProperty(Constants.PROPERTY_CUSTOM));
+        myClass.setInDesign((Boolean)classNode.getProperty(Constants.PROPERTY_IN_DESIGN));
         myClass.setViewable((Boolean)isSubClass(Constants.CLASS_VIEWABLEOBJECT, classNode));
+        myClass.setListType((Boolean)isSubClass(Constants.CLASS_GENERICOBJECTLIST, classNode));
         myClass.setId(classNode.getId());
         
         //Parent
@@ -378,6 +380,7 @@ public class Util {
         myClass.setAbstract((Boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT));
         myClass.setColor((Integer)classNode.getProperty(Constants.PROPERTY_COLOR));
         myClass.setCountable((Boolean)classNode.getProperty(Constants.PROPERTY_COUNTABLE));
+        myClass.setInDesign((Boolean)classNode.getProperty(Constants.PROPERTY_IN_DESIGN));
         myClass.setCustom((Boolean)classNode.getProperty(Constants.PROPERTY_CUSTOM));
         myClass.setDescription((String)classNode.getProperty(Constants.PROPERTY_DESCRIPTION));
         myClass.setDisplayName((String)classNode.getProperty(Constants.PROPERTY_DISPLAY_NAME));

@@ -32,7 +32,7 @@ public class ClassMetadata extends ClassMetadataLight{
      *  Classes marked with the annotation NoCount (Slot, Port and the like)
      *  have this attribute set as false
      */
-    private boolean countable;
+    private Boolean countable;
     /**
      * List of interfaces this class implements
      */
@@ -80,11 +80,11 @@ public class ClassMetadata extends ClassMetadataLight{
         this.color = color;
     }
 
-    public boolean isCountable() {
+    public Boolean isCountable() {
         return countable;
     }
 
-    public void setCountable(boolean countable) {
+    public void setCountable(Boolean countable) {
         this.countable = countable;
     }
 
