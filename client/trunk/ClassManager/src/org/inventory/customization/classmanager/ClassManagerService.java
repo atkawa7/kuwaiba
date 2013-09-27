@@ -81,18 +81,13 @@ public class ClassManagerService extends FileFilter implements ActionListener{
 
     public boolean saveProperties(LocalClassMetadataLight modifiedClass, String displayName,
             String description, byte[] smallIcon, byte[] icon) {
-        boolean res =true;
         CommunicationsStub com = CommunicationsStub.getInstance();
-        LocalClassMetadata oldClass = com.getMetaForClass(modifiedClass.getOid(), true);
-        if (!displayName.equals(""))
-            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), null, displayName, oldClass.getDescription(), null, null, oldClass.isAbstract(), oldClass.isInDesign(), oldClass.isCountable());
-        if (!description.equals(""))
-            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), null, null, description, null, null, oldClass.isAbstract(), oldClass.isInDesign(), oldClass.isCountable());
-        if (smallIcon != null)
-            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), null, null, null, smallIcon, null, oldClass.isAbstract(), oldClass.isInDesign(), oldClass.isCountable());
-        if (icon != null)
-            res = res&&com.setClassMetadataProperties(modifiedClass.getOid(), null, null, null, null, icon, oldClass.isAbstract(), oldClass.isInDesign(), oldClass.isCountable());
-        return res;
+
+        return com.setClassMetadataProperties(modifiedClass.getOid(), null, 
+                displayName.equals("") ? null : displayName, 
+                description.equals("") ? null :  description, 
+                (smallIcon == null) ? null :  smallIcon, 
+                (icon == null) ? null :  icon, null, null, null, null);
     }
 
     public List<LocalClassMetadata> getAllMeta() {

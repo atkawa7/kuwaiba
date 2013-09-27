@@ -28,14 +28,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.services.utils.Utils;
-import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
 import org.openide.explorer.propertysheet.PropertyEnv;
 import org.openide.util.Lookup;
@@ -53,7 +51,7 @@ public class IconPropertyEditor extends PropertyEditorSupport
     /**
      * A reference to the notification mechanism
      */
-    private NotificationUtil nu;
+    private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
     /**
      * The complex dialog shown in the editor
      */
@@ -137,11 +135,6 @@ public class IconPropertyEditor extends PropertyEditorSupport
     }
     
     @Override
-    public void attachEnv(PropertyEnv pe) {
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-    }
-
-    @Override
     public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -168,7 +161,7 @@ public class IconPropertyEditor extends PropertyEditorSupport
                             icon = Utils.getByteArrayFromFile(fChooser.getSelectedFile());
                             setIcon(Utils.getImageFromByteArray(icon));
                             
-                            if(com.setClassMetadataProperties(id, null, null, null, null, icon, oldClassMetadata.isAbstract(), oldClassMetadata.isInDesign(), oldClassMetadata.isCountable()))
+                            if(com.setClassMetadataProperties(id, null, null, null, null, icon, null, null, null, null))
                                 getNotifier().showSimplePopup("Class Properties Modification", NotificationUtil.INFO, "Operation completed successfully");
                             else
                                 getNotifier().showSimplePopup("Class Properties Modification", NotificationUtil.ERROR, "Operation completed with errors. Check log for details");
@@ -201,7 +194,7 @@ public class IconPropertyEditor extends PropertyEditorSupport
                             setIcon(Utils.getImageFromByteArray(icon));
                             com = CommunicationsStub.getInstance();
 
-                            if(com.setClassMetadataProperties(id, null, null, null, icon, null, oldClassMetadata.isAbstract(), oldClassMetadata.isInDesign(), oldClassMetadata.isCountable()))
+                            if(com.setClassMetadataProperties(id, null, null, null, icon, null, null, null, null, null))
                                 getNotifier().showSimplePopup("Class Properties Modification", NotificationUtil.INFO, "Operation completed successfully");
                             else
                                 getNotifier().showSimplePopup("Class Properties Modification", NotificationUtil.ERROR, "Operation completed with errors. Check log for details");
@@ -228,5 +221,10 @@ public class IconPropertyEditor extends PropertyEditorSupport
         btnIconChooser.setText("");
         btnIconChooser.setSize(16, 16);
         btnIconChooser.setIcon(newIcon);
+    }
+
+    @Override
+    public void attachEnv(PropertyEnv pe) {
+        
     }
 }

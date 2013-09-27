@@ -16,14 +16,11 @@
 
 package org.inventory.customization.datamodelmanager;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.Constants;
-import org.openide.nodes.AbstractNode;
 
 /**
  * Data model manager Top component service.
@@ -33,14 +30,12 @@ public class DataModelManagerService {
 
     private DataModelManagerTopComponent dmmtc;
     private CommunicationsStub com = CommunicationsStub.getInstance();
-    private AbstractNode attributeRoot;
 
     public DataModelManagerService(DataModelManagerTopComponent dmmtc) {
         this.dmmtc = dmmtc;
     }
     
     public LocalClassMetadataLight[] getRootChildren(){
-        List<LocalClassMetadataLight> rootChildren = new ArrayList<LocalClassMetadataLight>(); 
         LocalClassMetadata inventoryObjectClass = com.getMetaForClass(Constants.CLASS_INVENTORYOBJECT, true);
         LocalClassMetadata genericObjectListClass = com.getMetaForClass(Constants.CLASS_GENERICOBJECTLIST, true);
         
@@ -48,17 +43,15 @@ public class DataModelManagerService {
             dmmtc.getNotifier().showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/datamodelmanager/Bundle").getString("LBL_TITLE_CREATION"), 
                     NotificationUtil.ERROR, 
                     String.format(java.util.ResourceBundle.getBundle("org/inventory/customization/datamodelmanager/Bundle").getString("DBG_CLASSNOTFOUND_ERROR"), Constants.CLASS_INVENTORYOBJECT));
-            return rootChildren.toArray(new LocalClassMetadataLight[0]);
+            return new LocalClassMetadataLight[0];
         }
         if(genericObjectListClass == null) {
             dmmtc.getNotifier().showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/datamodelmanager/Bundle").getString("LBL_TITLE_CREATION"), 
                     NotificationUtil.ERROR, 
                     String.format(java.util.ResourceBundle.getBundle("org/inventory/customization/datamodelmanager/Bundle").getString("DBG_CLASSNOTFOUND_ERROR"), Constants.CLASS_GENERICOBJECTLIST));
-            return rootChildren.toArray(new LocalClassMetadataLight[0]);
+            return new LocalClassMetadataLight[0];
         }
         
-        rootChildren.add(inventoryObjectClass);
-        rootChildren.add(genericObjectListClass);
-        return rootChildren.toArray(new LocalClassMetadataLight[0]);
+        return new LocalClassMetadataLight[]{genericObjectListClass, inventoryObjectClass};
     }
 }

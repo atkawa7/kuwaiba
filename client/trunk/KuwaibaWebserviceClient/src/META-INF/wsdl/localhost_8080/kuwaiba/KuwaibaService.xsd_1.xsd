@@ -356,11 +356,11 @@
 <xs:complexType name="classInfoLight">
 <xs:sequence>
 <xs:element name="id" type="xs:long"/>
-<xs:element name="_abstract" type="xs:boolean"/>
-<xs:element name="viewable" type="xs:boolean"/>
-<xs:element name="custom" type="xs:boolean"/>
-<xs:element name="inDesign" type="xs:boolean"/>
-<xs:element name="listType" type="xs:boolean"/>
+<xs:element name="_abstract" type="xs:boolean" minOccurs="0"/>
+<xs:element name="viewable" type="xs:boolean" minOccurs="0"/>
+<xs:element name="custom" type="xs:boolean" minOccurs="0"/>
+<xs:element name="inDesign" type="xs:boolean" minOccurs="0"/>
+<xs:element name="listType" type="xs:boolean" minOccurs="0"/>
 <xs:element name="validators" type="tns:validator" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
 <xs:element name="displayName" type="xs:string" minOccurs="0"/>
@@ -719,7 +719,7 @@
 <xs:element name="icon" type="xs:base64Binary" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="creationDate" type="xs:long"/>
-<xs:element name="countable" type="xs:boolean"/>
+<xs:element name="countable" type="xs:boolean" minOccurs="0"/>
 </xs:sequence>
 </xs:extension>
 </xs:complexContent>
@@ -1118,9 +1118,10 @@
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="smallIcon" type="xs:base64Binary" nillable="true" minOccurs="0"/>
 <xs:element name="icon" type="xs:base64Binary" nillable="true" minOccurs="0"/>
-<xs:element name="_abstract" type="xs:boolean"/>
-<xs:element name="inDesign" type="xs:boolean"/>
-<xs:element name="countable" type="xs:boolean"/>
+<xs:element name="_abstract" type="xs:boolean" minOccurs="0"/>
+<xs:element name="inDesign" type="xs:boolean" minOccurs="0"/>
+<xs:element name="custom" type="xs:boolean" minOccurs="0"/>
+<xs:element name="countable" type="xs:boolean" minOccurs="0"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>

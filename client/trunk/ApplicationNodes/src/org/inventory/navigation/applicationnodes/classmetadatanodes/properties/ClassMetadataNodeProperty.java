@@ -82,13 +82,10 @@ public class ClassMetadataNodeProperty extends ReadWrite implements PropertyChan
             if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_COUNTABLE")))
                 update.setCountable((Boolean)values[0]);
             
-    //            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SMALL_ICON")))
-    //                x = (String)values[0];
-    //            
-    //            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ICON")))
-    //                x = (String)values[0];
-            
-            if(!CommunicationsStub.getInstance().setClassMetadataProperties(update.getOid(), update.getClassName(), update.getDisplayName(), update.getDescription(), null, null, update.isAbstract(), update.isInDesign(), update.isCountable()))
+            if(attributes[0].equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CUSTOM")))
+                update.setCustom((Boolean)values[0]);
+                        
+            if(!CommunicationsStub.getInstance().setClassMetadataProperties(update.getOid(), update.getClassName(), update.getDisplayName(), update.getDescription(), null, null, update.isAbstract(), update.isInDesign(), update.isCountable(), update.isCustom()))
                 throw new Exception(CommunicationsStub.getInstance().getError());
            
 

@@ -984,10 +984,10 @@ public class CommunicationsStub {
     public boolean setClassMetadataProperties(long classId, String className, 
                                                  String displayName, String description, 
                                                  byte[] smallIcon, byte[] icon, 
-                                                 boolean _abstract,boolean inDesign, boolean countable){
+                                                 Boolean _abstract,Boolean inDesign, Boolean countable, Boolean custom){
         try{
             port.setClassProperties(classId, className, displayName, description, smallIcon , icon,
-                    _abstract, inDesign, countable,this.session.getSessionId());
+                    _abstract, inDesign, countable, custom, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;

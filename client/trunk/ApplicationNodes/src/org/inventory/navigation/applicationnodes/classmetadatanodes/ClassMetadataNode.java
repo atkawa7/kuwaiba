@@ -110,7 +110,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
     @Override
     public void setName(String newName) {
         if(com.setClassMetadataProperties(classMetadata.getOid(), newName, null, null, null, 
-                null, classMetadata.isAbstract(), classMetadata.isInDesign(), true)){
+                null, null, null, null, null)){
             classMetadata.setClassName(newName);
             refresh();
         }else
@@ -208,6 +208,26 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
         
         return sheet;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + (this.classMetadata != null ? this.classMetadata.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        return getClassMetadata().getOid() == ((ClassMetadataNode) obj).getClassMetadata().getOid();
+    }
+    
+    
               
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
