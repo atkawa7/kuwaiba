@@ -24,14 +24,14 @@ import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.attributemetadatanodes.AttributeMetadataNode;
+import org.inventory.core.services.utils.Constants;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.action.CreateAttributeAction;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.action.DeleteAttributeAction;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.properties.ClassAttributeMetadataProperty;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.action.CreateClassAction;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.action.DeleteClassAction;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.action.RefreshClassMetadataAction;
-import org.inventory.navigation.applicationnodes.classmetadatanodes.properties.ClassMetadataNodeProperty;
+import org.inventory.navigation.applicationnodes.classmetadatanodes.properties.ClassMetadataProperty;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
@@ -120,7 +120,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
     public void refresh(){
         LocalClassMetadataLight classMetadataRefresh;
         
-        classMetadataRefresh = com.getLightMetaForClass(classMetadata.getClassName(), true);
+        classMetadataRefresh = com.getLightMetaForClass(classMetadata.getOid(), true);
         
         if(classMetadataRefresh == null)
             nu.showSimplePopup("Error refreshing class metadata", NotificationUtil.ERROR, com.getError());
@@ -143,36 +143,36 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
             nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
             return sheet;
         }
-        ClassMetadataNodeProperty nameProp = new ClassMetadataNodeProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"), 
+        ClassMetadataProperty nameProp = new ClassMetadataProperty(Constants.PROPERTY_NAME, 
                                                                            String.class, lcm.getClassName(), 
                                                                            java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME")
                                                                            , "", this);
-        ClassMetadataNodeProperty displayNameProp = new ClassMetadataNodeProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME"), 
+        ClassMetadataProperty displayNameProp = new ClassMetadataProperty(Constants.PROPERTY_DISPLAYNAME, 
                                                                            String.class, lcm.getDisplayName(), 
                                                                            java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME")
                                                                            , "", this);
-        ClassMetadataNodeProperty descProp = new ClassMetadataNodeProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"), 
+        ClassMetadataProperty descProp = new ClassMetadataProperty(Constants.PROPERTY_DESCRIPTION, 
                                                                            String.class, lcm.getDescription(), 
                                                                            java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION")
                                                                            , "", this);
-        ClassMetadataNodeProperty abstractProp = new ClassMetadataNodeProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ABSTRACT"), 
+        ClassMetadataProperty abstractProp = new ClassMetadataProperty(Constants.PROPERTY_ABSTRACT, 
                                                                            Boolean.class, lcm.isAbstract(), 
                                                                            java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ABSTRACT")
                                                                            , "", this);
-        ClassMetadataNodeProperty inDesignProp = new ClassMetadataNodeProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_INDESIGN"), 
+        ClassMetadataProperty inDesignProp = new ClassMetadataProperty(Constants.PROPERTY_INDESIGN, 
                                                                            Boolean.class, lcm.isInDesign(), 
                                                                            java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_INDESIGN")
                                                                            , "", this);
-        ClassMetadataNodeProperty countableProp = new ClassMetadataNodeProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_COUNTABLE"), 
+        ClassMetadataProperty countableProp = new ClassMetadataProperty(Constants.PROPERTY_COUNTABLE, 
                                                                            Boolean.class, lcm.isCountable(), 
                                                                            java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_COUNTABLE")
                                                                            , "", this);
-        ClassMetadataNodeProperty smallIconProp = new ClassMetadataNodeProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SMALL_ICON"), 
-                                                                             String.class, "[Choose an Image]", 
+        ClassMetadataProperty smallIconProp = new ClassMetadataProperty(Constants.PROPERTY_SMALLICON, 
+                                                                             Byte.class, null, 
                                                                            java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SMALL_ICON")
                                                                            , "", this);
-        ClassMetadataNodeProperty iconProp = new ClassMetadataNodeProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ICON"), 
-                                                                           String.class, "[Choose an Image]", 
+        ClassMetadataProperty iconProp = new ClassMetadataProperty(Constants.PROPERTY_ICON, 
+                                                                           Byte.class, null, 
                                                                            java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ICON")
                                                                            , "", this);
         generalPropertySet.setName("1");
@@ -188,17 +188,17 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
         
         attributePropertySet.setName("2");
         attributePropertySet.setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CLASS_ATTRIBUTES"));
-        
+        attributePropertySet.setExpert(true);
         LocalAttributeMetadata[] attributes = lcm.getAttributes();
         
         if(attributes != null){
             for (LocalAttributeMetadata localAttributeMetadata : attributes){
                 ClassAttributeMetadataProperty attrPrprt =  new ClassAttributeMetadataProperty(
                                                                 localAttributeMetadata.getName(), String.class, 
-                                                                "Editable attribute", 
+                                                                "Click on the button to edit", 
+                                                                localAttributeMetadata.getDisplayName(), 
                                                                 localAttributeMetadata.getName(), 
-                                                                localAttributeMetadata.getName(), 
-                                                                new AttributeMetadataNode(localAttributeMetadata, classMetadata.getOid()), classMetadata.getOid());
+                                                                localAttributeMetadata, classMetadata.getOid());
                 attributePropertySet.put(attrPrprt);
             }
         }
@@ -227,15 +227,9 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
         return getClassMetadata().getOid() == ((ClassMetadataNode) obj).getClassMetadata().getOid();
     }
     
-    
-              
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getSource().equals(classMetadata)){
-            classMetadata = (LocalClassMetadata)evt.getSource();
-            if (evt.getPropertyName().equals(PROP_NAME)){
-                setName(evt.getNewValue().toString());
-            }
-        }
+        if (evt.getPropertyName().equals(Constants.PROPERTY_NAME))
+            fireNameChange("", (String)evt.getNewValue());
     }
 }

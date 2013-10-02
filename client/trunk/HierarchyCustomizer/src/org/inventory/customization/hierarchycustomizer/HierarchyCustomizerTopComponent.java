@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Charles Edward Bedon Cortazar <charles.bedon@zoho.com>.
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import java.awt.dnd.DragSource;
 import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import javax.swing.JList;
+import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataChildren;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataTransferManager;
 import org.openide.util.NbBundle;
@@ -33,15 +35,17 @@ import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.AbstractNode;
+import org.openide.util.Lookup;
 
 
 /**
  * Represents the GUI for customizing the container hierarchy
+ * @author Charles Edward bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ConvertAsProperties(dtd = "-//org.inventory.customization.hierarchycustomizer//HierarchyCustomizer//EN",
 autostore = false)
 public final class HierarchyCustomizerTopComponent extends TopComponent
-    implements ExplorerManager.Provider{
+    implements RefreshableTopComponent, ExplorerManager.Provider{
 
     private static HierarchyCustomizerTopComponent instance;
     static final String ICON_PATH = "org/inventory/customization/hierarchycustomizer/res/icon.png";
@@ -50,6 +54,7 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
     private HierarchyCustomizerService hml;
     private BeanTreeView bTreeView;
     private JList lstClasses;
+    private NotificationUtil nu;
 
     public HierarchyCustomizerTopComponent() {
         initComponents();
@@ -172,12 +177,15 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
 
     @Override
     public void componentOpened() {
+        hml.updateModels();
         em.setRootContext(new AbstractNode(new ClassMetadataChildren(hml.getTreeModel())));
+        lstClasses.setListData(hml.getListModel().toArray());
     }
 
     @Override
     public void componentClosed() {
         em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
+        lstClasses.removeAll();
     }
 
     void writeProperties(java.util.Properties p) {
@@ -203,6 +211,17 @@ public final class HierarchyCustomizerTopComponent extends TopComponent
     @Override
     protected String preferredID() {
         return PREFERRED_ID;
+    }
+
+    public void refresh() {
+        componentClosed();
+        componentOpened();
+    }
+    
+    public NotificationUtil getNotifier(){
+        if (nu == null)
+            nu = Lookup.getDefault().lookup(NotificationUtil.class);
+        return nu;
     }
 
     public ExplorerManager getExplorerManager() {

@@ -15,11 +15,10 @@
  */
 package org.inventory.navigation.applicationnodes.attributemetadatanodes.properties;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
-import org.inventory.navigation.applicationnodes.attributemetadatanodes.AttributeMetadataNode;
+import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
+import org.inventory.core.services.utils.Constants;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.customeditor.AttributeEditorSupport;
 import org.openide.nodes.PropertySupport;
 
@@ -27,20 +26,19 @@ import org.openide.nodes.PropertySupport;
  * Provides a property editor
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class ClassAttributeMetadataProperty extends PropertySupport.ReadWrite implements PropertyChangeListener{
+public class ClassAttributeMetadataProperty extends PropertySupport.ReadWrite {
 
     private Object value;
-    private AttributeMetadataNode node;
+    private LocalAttributeMetadata attributeMetadata;
     private long classId;
     
-    public ClassAttributeMetadataProperty(String _name, Class _valueType, Object _value,
-            String _displayName,String _toolTextTip, AttributeMetadataNode _node, long classId) {
-        super(_name,_valueType,_displayName,_toolTextTip);
-        setName(_name);
-        this.value = _value;
-        this.node = _node;
+    public ClassAttributeMetadataProperty(String name, Class valueType, Object value,
+            String displayName,String toolTextTip, LocalAttributeMetadata attributeMetadata, long classId) {
+        super(name,valueType,displayName,toolTextTip);
+        setName(name);
+        this.value = value;
+        this.attributeMetadata = attributeMetadata;
         this.classId = classId;
-        this.getPropertyEditor().addPropertyChangeListener(this);
     }
     
     @Override
@@ -50,36 +48,20 @@ public class ClassAttributeMetadataProperty extends PropertySupport.ReadWrite im
     
     @Override
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        
+        //We don't do anything here because the properties of this attribute will be set in the custom editor
     }
     
     @Override
     public PropertyEditor getPropertyEditor(){
-        return new AttributeEditorSupport(node.getObject(), classId);
+        return new AttributeEditorSupport(attributeMetadata, classId);
     }
 
     @Override
     public boolean canWrite(){
-        if (getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"))
-                || getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_DATE")))
+        //The atribute "name" can't be modified in any way to avoid future problems
+        if (getName().equals(Constants.PROPERTY_NAME))
             return false;
         else
             return true;
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        try {
-            if (this.getValue() == null) 
-                return;
-
-            if (this.getName().equals("name")){
-                node.getObject().setName((String)getPropertyEditor().getValue());
-                node.setDisplayName((String)getPropertyEditor().getValue());
-            }
-            
-        } catch (Exception ex) {
-            return;
-        }
     }
 }

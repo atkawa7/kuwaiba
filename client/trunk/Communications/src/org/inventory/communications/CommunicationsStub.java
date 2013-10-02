@@ -503,6 +503,31 @@ public class CommunicationsStub {
             return null;
         }
     }
+    
+    /**
+     * Retrieves the metadata for a given class providing its ide
+     * @param className the object class
+     * @return the metadata information
+     */
+    public LocalClassMetadataLight getLightMetaForClass(long classId, boolean ignoreCache){
+        try{
+            LocalClassMetadataLight res;
+            /*if (!ignoreCache){
+                res = cache.getLightMetaForClass(className);
+                if (res != null)
+                    return res;
+            }*/
+
+            ClassInfo cm = port.getClassWithId(classId,this.session.getSessionId());
+
+            res = new LocalClassMetadataLightImpl(cm);
+            cache.addLightMeta(new LocalClassMetadataLight[]{res});
+            return res;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
 
     public byte[] getClassHierarchy(boolean showAll) {
         try{
@@ -986,7 +1011,7 @@ public class CommunicationsStub {
                                                  byte[] smallIcon, byte[] icon, 
                                                  Boolean _abstract,Boolean inDesign, Boolean countable, Boolean custom){
         try{
-            port.setClassProperties(classId, className, displayName, description, smallIcon , icon,
+            port.setClassProperties(classId, className, displayName, description, smallIcon, icon,
                     _abstract, inDesign, countable, custom, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();

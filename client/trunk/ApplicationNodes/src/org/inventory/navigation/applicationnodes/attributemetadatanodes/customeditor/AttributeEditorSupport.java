@@ -18,20 +18,14 @@ package org.inventory.navigation.applicationnodes.attributemetadatanodes.custome
 import java.awt.Component;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyEditorSupport;
-import java.beans.PropertyVetoException;
-import java.beans.VetoableChangeListener;
-import java.lang.reflect.InvocationTargetException;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.AttributeMetadataNode;
-import org.inventory.navigation.applicationnodes.attributemetadatanodes.properties.ClassAttributeMetadataProperty;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
 import org.openide.explorer.propertysheet.PropertyEnv;
 import org.openide.explorer.propertysheet.PropertySheetView;
-import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 
 /**
@@ -39,7 +33,7 @@ import org.openide.util.Lookup;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class AttributeEditorSupport extends PropertyEditorSupport
-    implements ExPropertyEditor, VetoableChangeListener{
+    implements ExPropertyEditor{
     
     /**
      * A reference to the notification mechanism
@@ -59,7 +53,6 @@ public class AttributeEditorSupport extends PropertyEditorSupport
      */
     private CommunicationsStub com;
     private PropertySheetView psv;
-    private ClassAttributeMetadataProperty property;
     private long classId;
     
 
@@ -79,8 +72,6 @@ public class AttributeEditorSupport extends PropertyEditorSupport
     public Component getCustomEditor(){
         //if (psv == null ){
             this.psv = new PropertySheetView();
-            
-            env.addVetoableChangeListener(this);
             
             psv.addComponentListener(new ComponentListener() {
 
@@ -108,7 +99,7 @@ public class AttributeEditorSupport extends PropertyEditorSupport
     
     @Override
     public void setValue(Object o){
-        //Do nothing, because we set the password and make the validations in the vetoable event
+        
     }
     
     @Override
@@ -119,13 +110,7 @@ public class AttributeEditorSupport extends PropertyEditorSupport
     
     @Override
     public void attachEnv(PropertyEnv pe) {
-        this.env = pe;
-        this.env.addVetoableChangeListener(this);
+        //this.env = pe;
+        //this.env.addVetoableChangeListener(this);
     }
-
-    @Override
-    public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
-    
-    }
-    
 }
