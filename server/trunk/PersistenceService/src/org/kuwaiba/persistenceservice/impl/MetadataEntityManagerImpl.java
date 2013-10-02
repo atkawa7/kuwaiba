@@ -465,7 +465,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         }catch(Exception ex){
             throw new RuntimeException(ex.getMessage());
         }
-
         return cml;
     }
 
@@ -496,9 +495,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             if (includeSelf)
                 cml.add(aClass);
 
-            for (Node node : IteratorUtil.asIterable(n_column)){
+            for (Node node : IteratorUtil.asIterable(n_column))
                  cml.add(Util.createClassMetadataLightFromNode(node));
-            }
         }catch(Exception ex){
             throw new RuntimeException(ex.getMessage());
         }
