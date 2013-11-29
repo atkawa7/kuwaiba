@@ -63,10 +63,6 @@ public class AttributeInfo implements Serializable {
      */
     private String description;
     /**
-     * Indicates how this attribute should be mapped (into a primitive type, a relationship, etc)
-     */
-    private int mapping;
-    /**
      * Indicates if an attribute is copy when the copy/paste is made
      */
     private boolean noCopy;
@@ -145,14 +141,6 @@ public class AttributeInfo implements Serializable {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public int getMapping() {
-        return mapping;
-    }
-
-    public void setMapping(int mapping) {
-        this.mapping = mapping;
     }
 
     public String getName() {

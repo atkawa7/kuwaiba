@@ -51,10 +51,6 @@ public class ClassInfo extends ClassInfoLight{
      */
     private boolean [] attributesIsVisible;
     /**
-     * How the attribute should be rendered. Check AttributeMetadata documentation in the Persistence Abstraction API
-     */
-    private int [] attributesMapping;
-    /**
      * Attributes descriptions
      */
     private String [] attributesDescription;
@@ -89,7 +85,6 @@ public class ClassInfo extends ClassInfoLight{
         this.attributeTypes = new String[this.attributeNames.length];
         this.attributeDisplayNames = new String[this.attributeNames.length];
         this.attributesIsVisible = new boolean[this.attributeNames.length];
-        this.attributesMapping = new int[this.attributeNames.length];
         this.attributesDescription = new String[this.attributeNames.length];
         this.description = myClass.getDescription();
         this.countable = myClass.isCountable();
@@ -101,7 +96,6 @@ public class ClassInfo extends ClassInfoLight{
             this.attributeDisplayNames[i] = myAtt.getDisplayName() == null?
                 "":myAtt.getDisplayName();
             this.attributesIsVisible[i] = myAtt.isVisible();
-            this.attributesMapping[i] = myAtt.getMapping();
 
             this.attributesDescription[i] = myAtt.getDescription()==null?
                 "":myAtt.getDescription();
@@ -147,14 +141,6 @@ public class ClassInfo extends ClassInfoLight{
 
     public void setAttributesIsVisible(boolean[] attributesIsVisible) {
         this.attributesIsVisible = attributesIsVisible;
-    }
-
-    public int[] getAttributesMapping() {
-        return attributesMapping;
-    }
-
-    public void setAttributesMapping(int[] attributesMapping) {
-        this.attributesMapping = attributesMapping;
     }
 
     public long[] getAttributeIds() {

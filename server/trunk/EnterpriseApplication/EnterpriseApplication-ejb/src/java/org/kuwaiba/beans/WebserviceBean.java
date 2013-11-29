@@ -338,7 +338,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             atm.setName(attributeDefinition.getName());
             atm.setDisplayName(attributeDefinition.getDisplayName());
             atm.setDescription(attributeDefinition.getDescription());
-            atm.setMapping(attributeDefinition.getMapping());
             atm.setReadOnly(attributeDefinition.isReadOnly());
             atm.setType(attributeDefinition.getType());
             atm.setUnique(attributeDefinition.isUnique());
@@ -364,7 +363,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             atm.setName(attributeDefinition.getName());
             atm.setDisplayName(attributeDefinition.getDisplayName());
             atm.setDescription(attributeDefinition.getDescription());
-            atm.setMapping(attributeDefinition.getMapping());
             atm.setReadOnly(attributeDefinition.isReadOnly());
             atm.setType(attributeDefinition.getType());
             atm.setUnique(attributeDefinition.isUnique());
@@ -464,7 +462,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             attrMtdt.setDisplayName(newAttributeDefinition.getDisplayName());
             attrMtdt.setDescription(newAttributeDefinition.getDescription());
             attrMtdt.setType(newAttributeDefinition.getType());
-            attrMtdt.setMapping(newAttributeDefinition.getMapping());
             attrMtdt.setAdministrative(newAttributeDefinition.isAdministrative());
             attrMtdt.setUnique(newAttributeDefinition.isUnique());
             attrMtdt.setVisible(newAttributeDefinition.isVisible());
@@ -491,7 +488,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             attrMtdt.setDisplayName(newAttributeDefinition.getDisplayName());
             attrMtdt.setDescription(newAttributeDefinition.getDescription());
             attrMtdt.setType(newAttributeDefinition.getType());
-            attrMtdt.setMapping(newAttributeDefinition.getMapping());
             attrMtdt.setAdministrative(newAttributeDefinition.isAdministrative());
             attrMtdt.setUnique(newAttributeDefinition.isUnique());
             attrMtdt.setVisible(newAttributeDefinition.isVisible());
