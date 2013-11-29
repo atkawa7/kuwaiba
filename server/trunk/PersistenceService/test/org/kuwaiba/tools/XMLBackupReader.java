@@ -23,7 +23,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
-import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.persistenceservice.impl.ConnectionManagerImpl;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
@@ -200,14 +199,6 @@ public class XMLBackupReader {
                 attr.setDescription("");
                 attr.setType(law.getType());
                 attr.setAdministrative(false);
-
-                if(law.getType().equals("Float") || law.getType().equals("Long") || law.getType().equals("String")
-                    || law.getType().equals("Integer") || law.getType().equals("Boolean") || law.getType().equals("byte[]"))
-                    attr.setMapping(AttributeMetadata.MAPPING_PRIMITIVE);
-                else if(law.getType().equals("Date"))
-                    attr.setMapping(AttributeMetadata.MAPPING_DATE);
-                else
-                    attr.setMapping(AttributeMetadata.MAPPING_MANYTOONE);
                 
                 int applicationModifiers = law.getApplicationModifiers();
 
@@ -223,7 +214,7 @@ public class XMLBackupReader {
             try{
                 mem.createClass(clmt);
             }catch (Exception ex){
-                System.out.println(String.format("Class %1s was not created: %2s", lcw.getName(), ex.getMessage()));
+                System.out.println(String.format("Class %s could not be created: %s", lcw.getName(), ex.getMessage()));
             }
             //The subclasses are processed even if the parent class failed
             if(lcw.getDirectSubClasses().size() > 0)

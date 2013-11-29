@@ -1448,7 +1448,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_VISIBLE;
             if ((Boolean)attributeNode.getProperty(Constants.PROPERTY_ADMINISTRATIVE))
                 attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_ADMINISTRATIVE;
-            if ((Boolean)attributeNode.getProperty(Constants.PROPERTY_READONLY))
+            if ((Boolean)attributeNode.getProperty(Constants.PROPERTY_READ_ONLY))
                 attributeApplicationModifiers |= Constants.ATTRIBUTE_MODIFIER_READONLY;
             attributeTag.attr("applicationModifiers", attributeApplicationModifiers);
             attributeTag.end();

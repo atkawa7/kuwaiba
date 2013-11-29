@@ -170,63 +170,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         try{
 
             tx = graphDb.beginTx();
-            Node newObject = graphDb.createNode();
-            newObject.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
-
+            Node newObject = createObject(classNode, myClass, attributes, template);
             if (parentNode !=null)
                 newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
-
-            for (AttributeMetadata att : myClass.getAttributes()){
-                if (att.getName().equals(Constants.PROPERTY_CREATION_DATE)){
-                    newObject.setProperty(att.getName(), Calendar.getInstance().getTimeInMillis());
-                    continue;
-                }
-
-                if (attributes.get(att.getName()) == null)
-                    continue;
-
-                switch (att.getMapping()){
-                    case AttributeMetadata.MAPPING_PRIMITIVE:
-                    case AttributeMetadata.MAPPING_DATE:
-                    case AttributeMetadata.MAPPING_TIMESTAMP:
-                        if (attributes.get(att.getName()) != null){
-                            //If the array is empty, it means the attribute should be set to null
-                            if (!attributes.get(att.getName()).isEmpty()){
-                                if (attributes.get(att.getName()).get(0) != null)
-                                    newObject.setProperty(att.getName(),
-                                            Util.getRealValue(attributes.get(att.getName()).get(0),
-                                            myClass.getAttributeMapping(att.getName()),
-                                            myClass.getType(att.getName())));
-                            }
-                        }
-                    break;
-                    case AttributeMetadata.MAPPING_MANYTOMANY:
-                    case AttributeMetadata.MAPPING_MANYTOONE:
-                        List<Long> listTypeItems = new ArrayList<Long>();
-                        if (!cm.isSubClass("GenericObjectList", att.getType()))
-                            throw new InvalidArgumentException(String.format("Class %1s is not a list type", att.getName()), Level.WARNING);
-                        try{
-                            for (String value : attributes.get(att.getName()))
-                                listTypeItems.add(Long.valueOf(value));
-                        }catch(NumberFormatException ex){
-                            throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
-                        }
-                        Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, att.getType()).getSingle();
-                        List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
-
-                        //Create the new relationships
-                        for (Node item : listTypeNodes){
-                            Relationship newRelationship = newObject.createRelationshipTo(item, RelTypes.RELATED_TO);
-                            newRelationship.setProperty(Constants.PROPERTY_NAME, att.getName());
-                        }
-                    break;
-                    default:
-                        tx.failure();
-                        tx.finish();
-                        throw new InvalidArgumentException(
-                            String.format("The attribute %1s is binary so it can't be set using this method. Use setBinaryAttributes instead", att.getName()), Level.WARNING);
-                }
-            }
 
             //The object's name can't be null in N4J, it has to be set to ""
             if (attributes.get(Constants.PROPERTY_NAME) == null)
@@ -236,7 +182,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             tx.success();
             return newObject.getId();
         }catch(Exception ex){
-            Logger.getLogger("createObject: "+ex.getMessage()); //NOI18N
+            Logger.getLogger("createSpecialObject: "+ex.getMessage()); //NOI18N
             tx.failure();
             throw new RuntimeException(ex.getMessage());
         }finally{
@@ -348,7 +294,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
 
         if (classNode == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
+            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
         ClassMetadata myClass= cm.getClass(className);
 
@@ -357,67 +303,55 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
         for (String attributeName : attributes.keySet()){
             if(myClass.hasAttribute(attributeName)){
-
-                switch (myClass.getAttributeMapping(attributeName)){
-                    case AttributeMetadata.MAPPING_PRIMITIVE:
-                    case AttributeMetadata.MAPPING_DATE:
-                    case AttributeMetadata.MAPPING_TIMESTAMP:
-                        if (attributes.get(attributeName) == null)
+                if (AttributeMetadata.isPrimitive(myClass.getType(attributeName))){
+                    if (attributes.get(attributeName) == null)
+                        instance.removeProperty(attributeName);
+                    else{
+                        //If the array is empty, it means the attribute should be set to null
+                        if (attributes.get(attributeName).isEmpty())
                             instance.removeProperty(attributeName);
                         else{
-                            //If the array is empty, it means the attribute should be set to null
-                            if (attributes.get(attributeName).isEmpty())
+                            if (attributes.get(attributeName).get(0) == null)
                                 instance.removeProperty(attributeName);
-                            else{
-                                if (attributes.get(attributeName).get(0) == null)
-                                    instance.removeProperty(attributeName);
-                                else
-                                    instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName).get(0), myClass.getAttributeMapping(attributeName),myClass.getType(attributeName)));
-                            }
+                            else
+                                instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName).get(0),myClass.getType(attributeName)));
                         }
-                    break;
-                    case AttributeMetadata.MAPPING_MANYTOMANY:
-                    case AttributeMetadata.MAPPING_MANYTOONE:
-                        List<Long> listTypeItems = new ArrayList<Long>();
-                        if (!cm.getClass(myClass.getType(attributeName)).isListType())
-                            throw new InvalidArgumentException(String.format("Class %1s is not a list type", myClass.getType(attributeName)), Level.WARNING);
-                        
-                        if (attributes.get(attributeName) == null){
-                            Util.releaseRelationships(instance, RelTypes.RELATED_TO, Direction.OUTGOING, Constants.PROPERTY_NAME,
-                                attributeName);
-                            break;
-                        }
+                    }
+                }else { //If the attribute is not a primitive type, then it's a relationship
+                    List<Long> listTypeItems = new ArrayList<Long>();
+                    if (!cm.getClass(myClass.getType(attributeName)).isListType())
+                        throw new InvalidArgumentException(String.format("Class %1s is not a list type", myClass.getType(attributeName)), Level.WARNING);
 
-                        try{
-                            for (String value : attributes.get(attributeName))
-                                listTypeItems.add(Long.valueOf(value));
-                        }catch(NumberFormatException ex){
-                            throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
-                        }
-                        Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, myClass.getType(attributeName)).getSingle();
-                        List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
-
+                    if (attributes.get(attributeName) == null){
                         Util.releaseRelationships(instance, RelTypes.RELATED_TO, Direction.OUTGOING, Constants.PROPERTY_NAME,
-                                attributeName);
+                            attributeName);
+                        break;
+                    }
 
-                        //Create the new relationships
-                        for (Node item : listTypeNodes){
-                            Relationship newRelationship = instance.createRelationshipTo(item, RelTypes.RELATED_TO);
-                            newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
-                        }
-                    break;
-                    default:
-                        tx.failure();
-                        tx.finish();
-                        throw new InvalidArgumentException(
-                            String.format("The attribute %1s is binary so it can't be set using this method. Use setBinaryAttributes instead", attributeName), Level.WARNING);
+                    try{
+                        for (String value : attributes.get(attributeName))
+                            listTypeItems.add(Long.valueOf(value));
+                    }catch(NumberFormatException ex){
+                        throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
+                    }
+                    Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, myClass.getType(attributeName)).getSingle();
+                    List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
+
+                    Util.releaseRelationships(instance, RelTypes.RELATED_TO, Direction.OUTGOING, Constants.PROPERTY_NAME,
+                            attributeName);
+
+                    //Create the new relationships
+                    for (Node item : listTypeNodes){
+                        Relationship newRelationship = instance.createRelationshipTo(item, RelTypes.RELATED_TO);
+                        newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
+                    }
                 }
             }
             else{
                 tx.failure();
                 tx.finish();
                 throw new InvalidArgumentException(
-                        String.format("The attribute %1s does not exist in class %2s", attributeName, className), Level.WARNING);
+                        String.format("The attribute %s does not exist in class %s", attributeName, className), Level.WARNING);
             }
         }
         tx.success();
@@ -803,45 +737,33 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
             if (attributes.get(att.getName()) == null)
                 continue;
+            
+            //If the array is empty, it means the attribute should be set to null, that is, ignore it
+            if (!attributes.get(att.getName()).isEmpty()){
+                if (attributes.get(att.getName()).get(0) != null){
+                    if (AttributeMetadata.isPrimitive(classToMap.getType(att.getName())))
+                            newObject.setProperty(att.getName(), Util.getRealValue(attributes.get(att.getName()).get(0), classToMap.getType(att.getName())));
+                    else{
+                    //If it's not a primitive type, maybe it's a relationship
+                        List<Long> listTypeItems = new ArrayList<Long>();
+                        if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, att.getType()))
+                            throw new InvalidArgumentException(String.format("Type %s is not a primitive nor a list type", att.getName()), Level.WARNING);
+                        try{
+                            for (String value : attributes.get(att.getName()))
+                                listTypeItems.add(Long.valueOf(value));
+                        }catch(NumberFormatException ex){
+                            throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
+                        }
+                        Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, att.getType()).getSingle();
+                        List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
 
-            switch (att.getMapping()){
-                case AttributeMetadata.MAPPING_PRIMITIVE:
-                case AttributeMetadata.MAPPING_DATE:
-                case AttributeMetadata.MAPPING_TIMESTAMP:
-                    if (attributes.get(att.getName()) != null){
-                        //If the array is empty, it means the attribute should be set to null
-                        if (!attributes.get(att.getName()).isEmpty()){
-                            if (attributes.get(att.getName()).get(0) != null)
-                                newObject.setProperty(att.getName(),
-                                        Util.getRealValue(attributes.get(att.getName()).get(0),
-                                        classToMap.getAttributeMapping(att.getName()),
-                                        classToMap.getType(att.getName())));
+                        //Create the new relationships
+                        for (Node item : listTypeNodes){
+                            Relationship newRelationship = newObject.createRelationshipTo(item, RelTypes.RELATED_TO);
+                            newRelationship.setProperty(Constants.PROPERTY_NAME, att.getName());
                         }
                     }
-                break;
-                case AttributeMetadata.MAPPING_MANYTOMANY:
-                case AttributeMetadata.MAPPING_MANYTOONE:
-                    List<Long> listTypeItems = new ArrayList<Long>();
-                    if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, att.getType()))
-                        throw new InvalidArgumentException(String.format("Class %1s is not a list type", att.getName()), Level.WARNING);
-                    try{
-                        for (String value : attributes.get(att.getName()))
-                            listTypeItems.add(Long.valueOf(value));
-                    }catch(NumberFormatException ex){
-                        throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
-                    }
-                    Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, att.getType()).getSingle();
-                    List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
-
-                    //Create the new relationships
-                    for (Node item : listTypeNodes){
-                        Relationship newRelationship = newObject.createRelationshipTo(item, RelTypes.RELATED_TO);
-                        newRelationship.setProperty(Constants.PROPERTY_NAME, att.getName());
-                    }
-                break;
-                default:
-                    throw new InvalidArgumentException(
-                        String.format("The attribute %1s is binary so it can't be set using this method. Use setBinaryAttributes instead", att.getName()), Level.WARNING);
+                }
             }
         }
 

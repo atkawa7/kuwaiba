@@ -137,7 +137,7 @@ public class Constants {
     public static final String PROPERTY_ADMINISTRATIVE = "administrative"; //NOI18N
     public static final String PROPERTY_VISIBLE = "isVisible"; //NOI18N
     public static final String PROPERTY_DESCRIPTION = "description"; //NOI18N
-    public static final String PROPERTY_READONLY = "readOnly"; //NOI18N
+    public static final String PROPERTY_READ_ONLY = "readOnly"; //NOI18N
     public static final String PROPERTY_ID = "id"; //NOI18N
     public static final String PROPERTY_ABSTRACT = "abstract"; //NOI18N
     public static final String PROPERTY_CUSTOM = "custom"; //NOI18N

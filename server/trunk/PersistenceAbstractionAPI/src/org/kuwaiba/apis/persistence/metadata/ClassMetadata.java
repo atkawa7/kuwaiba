@@ -167,20 +167,6 @@ public class ClassMetadata extends ClassMetadataLight{
         return false;
     }
 
-    /**
-     * Gets the mapping for a given attribute
-     * @param attributeName
-     * @return
-     * @throws InvalidArgumentException
-     */
-    public int getAttributeMapping(String attributeName) throws InvalidArgumentException{
-        for (AttributeMetadata eachAttribute : attributes){
-            if (eachAttribute.getName().equals(attributeName))
-                return eachAttribute.getMapping();
-        }
-        throw new InvalidArgumentException("Attribute cannot be found in this class", Level.WARNING);
-    }
-
     public String getType(String attributeName)  throws InvalidArgumentException{
         for (AttributeMetadata eachAttribute : attributes){
             if (eachAttribute.getName().equals(attributeName))

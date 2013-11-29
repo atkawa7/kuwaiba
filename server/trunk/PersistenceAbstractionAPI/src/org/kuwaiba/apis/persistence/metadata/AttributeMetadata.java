@@ -23,30 +23,7 @@ import java.io.Serializable;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class AttributeMetadata implements Serializable{
-    /**
-     * int, Float, long, boolean, String or Text
-     */
-    public static final int MAPPING_PRIMITIVE = 1;
-    /**
-     * Dates
-     */
-    public static final int MAPPING_DATE = 2;
-    /**
-     * Timestamp
-     */
-    public static final int MAPPING_TIMESTAMP = 3;
-    /**
-     * Binary
-     */
-    public static final int MAPPING_BINARY = 4;
-    /**
-     * Many to one relationship (such as types)
-     */
-    public static final int MAPPING_MANYTOONE = 5;
-    /**
-     * Many to Many relationship (such as accountable persons for a given equipment)
-     */
-    public static final int MAPPING_MANYTOMANY = 6;
+
     /**
      * Attribute's id
      */
@@ -66,23 +43,19 @@ public class AttributeMetadata implements Serializable{
     /**
      * Flag to mark an attribute to be used for administrative purposes (beyond the operational inventory)
      */
-    private boolean administrative;
+    private Boolean administrative;
     /**
      * Should this be shown or hidden
      */
-    private boolean visible;
+    private Boolean visible;
     /**
      * Attribute's short description
      */
     private String description;
     /**
-     * Indicates how this attribute should be mapped (into a primitive type, a relationship, etc)
-     */
-    private int mapping;
-    /**
      * Marks the attribute as unique
      */
-    private boolean unique;
+    private Boolean unique;
     /**
      * Attribute's creation Date
      */
@@ -90,22 +63,22 @@ public class AttributeMetadata implements Serializable{
     /**
      * Indicates if an attribute could be copy in the copy/paste operation
      */
-    private boolean noCopy;
+    private Boolean noCopy;
     /**
      * Marks the attribute as read only
      */
-    private boolean readOnly;
+    private Boolean readOnly;
     /**
      * Cannot change or delete a locked attribute
      */
-    private boolean locked;
+    private Boolean locked;
 
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
-    public boolean isAdministrative() {
+    public Boolean isAdministrative() {
         return administrative;
     }
 
-    public void setAdministrative(boolean administrative) {
+    public void setAdministrative(Boolean administrative) {
         this.administrative = administrative;
     }
 
@@ -133,11 +106,11 @@ public class AttributeMetadata implements Serializable{
         this.name = name;
     }
 
-    public boolean isReadOnly() {
+    public Boolean isReadOnly() {
         return readOnly;
     }
 
-    public void setReadOnly(boolean readOnly) {
+    public void setReadOnly(Boolean readOnly) {
         this.readOnly = readOnly;
     }
 
@@ -149,19 +122,19 @@ public class AttributeMetadata implements Serializable{
         this.type = type;
     }
 
-    public boolean isVisible() {
+    public Boolean isVisible() {
         return visible;
     }
 
-    public void setVisible(boolean visible) {
+    public void setVisible(Boolean visible) {
         this.visible = visible;
     }
 
-    public boolean isUnique() {
+    public Boolean isUnique() {
         return unique;
     }
 
-    public void setUnique(boolean unique) {
+    public void setUnique(Boolean unique) {
         this.unique = unique;
     }
 
@@ -181,27 +154,19 @@ public class AttributeMetadata implements Serializable{
         this.creationDate = creationDate;
     }
 
-    public int getMapping() {
-        return mapping;
-    }
-
-    public void setMapping(int mapping) {
-        this.mapping = mapping;
-    }
-
-    public boolean isNoCopy() {
+    public Boolean isNoCopy() {
         return noCopy;
     }
 
-    public void setNoCopy(boolean noCopy) {
+    public void setNoCopy(Boolean noCopy) {
         this.noCopy = noCopy;
     }
     
-    public boolean isLocked() {
+    public Boolean isLocked() {
         return locked;
     }
 
-    public void setLocked(boolean locked) {
+    public void setLocked(Boolean locked) {
         this.locked = locked;
     }
     // </editor-fold>
@@ -213,26 +178,7 @@ public class AttributeMetadata implements Serializable{
         if (!(obj instanceof AttributeMetadata))
             return false;
         
-        if(this.getCreationDate() == ((AttributeMetadata)obj).getCreationDate() &&
-                this.getDescription().equals(((AttributeMetadata)obj).getDescription()) &&
-                this.getDisplayName().equals(((AttributeMetadata)obj).getDisplayName()) &&
-                this.getId() == ((AttributeMetadata)obj).getId() &&
-                this.getMapping() == ((AttributeMetadata)obj).getMapping() &&
-                this.getName().equals(((AttributeMetadata)obj).getName()) &&
-                this.getType().equals(((AttributeMetadata)obj).getType()) &&
-                this.isAdministrative() == ((AttributeMetadata)obj).isAdministrative() &&
-                this.isNoCopy() == ((AttributeMetadata)obj).isNoCopy() &&
-                this.isReadOnly() == ((AttributeMetadata)obj).isReadOnly() &&
-                this.isUnique() == ((AttributeMetadata)obj).isUnique() &&
-                this.isVisible() == ((AttributeMetadata)obj).isVisible()
-                // && this.isLocked() == ((AttributeMetadata)obj).isLocked()
-                )
-        {
-            return true;
-        }
-        else{
-            return false;
-        }
+        return this.getId() == ((AttributeMetadata)obj).getId();
     }
 
     @Override
@@ -240,5 +186,18 @@ public class AttributeMetadata implements Serializable{
         int hash = 7;
         hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
+    }
+    
+    /**
+     * Checks if a given type is primitive (String, Integer, Float, Long, Boolean, Date or Timestamp)
+     * @param type The type to be matched
+     * @return true if the given type is primitive, false otherwise
+     */
+    public static boolean isPrimitive(String type){
+        if (type.equals("String") || type.equals("Integer") || type.equals("Float") 
+                || type.equals("Long") || type.equals("Boolean") || type.equals("Date")
+                 || type.equals("Timestamp"))
+            return true;
+        return false;
     }
 }
