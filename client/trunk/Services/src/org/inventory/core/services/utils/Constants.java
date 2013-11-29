@@ -72,7 +72,70 @@ public class Constants {
     /**
      * Possible attributes types
      */
-    public static final String [] ATTRIBUTE_TYPES = new String[]{"String", "Integer", "Long", "Float", "Boolean", "Date"};
-    
+    public static final String [] ATTRIBUTE_TYPES = new String[]{"String", "Integer", "Long", "Float", "Boolean", "Date", "Timestamp"};
+    /**
+     * Property name
+     */
+    public static final String PROPERTY_NAME = "name";
+    /**
+     * Property display name
+     */
+    public static final String PROPERTY_DISPLAYNAME = "displayName";
+    /**
+     * Property description
+     */
+    public static final String PROPERTY_DESCRIPTION = "description";
+    /**
+     * Property abstract
+     */
+    public static final String PROPERTY_ABSTRACT = "abstract";
+    /**
+     * Property in design
+     */
+    public static final String PROPERTY_INDESIGN = "inDesign";
+    /**
+     * Property countable
+     */
+    public static final String PROPERTY_COUNTABLE = "countable";
+    /**
+     * Property custom
+     */
+    public static final String PROPERTY_CUSTOM = "custom";
+    /**
+     * Property small icon
+     */
+    public static final String PROPERTY_SMALLICON = "smallIcon";
+    /**
+     * Property icon
+     */
+    public static final String PROPERTY_ICON = "icon";
+    /**
+     * Property creation date
+     */
+    public static final String PROPERTY_CREATIONDATE = "creationDate";
+    /**
+     * Property type
+     */
+    public static final String PROPERTY_TYPE = "type";
+    /**
+     * Property administrative
+     */
+    public static final String PROPERTY_ADMINISTRATIVE = "administrative";
+    /**
+     * Property no copy
+     */
+    public static final String PROPERTY_NOCOPY = "noCopy";
+    /**
+     * Property unique
+     */
+    public static final String PROPERTY_UNIQUE = "unique";
+    /**
+     * Property visible
+     */
+    public static final String PROPERTY_VISIBLE = "visible";
+    /**
+     * Property read only
+     */
+    public static final String PROPERTY_READONLY = "readOnly";
     
 }

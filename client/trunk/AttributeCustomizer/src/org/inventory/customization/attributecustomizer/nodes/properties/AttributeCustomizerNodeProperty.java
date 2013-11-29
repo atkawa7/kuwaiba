@@ -19,24 +19,25 @@ import java.lang.reflect.InvocationTargetException;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.utils.Constants;
 import org.inventory.customization.attributecustomizer.nodes.AttributeMetadataNode;
 import org.inventory.customization.attributecustomizer.nodes.ClassMetadataNode;
 import org.openide.nodes.PropertySupport;
 import org.openide.util.Lookup;
 
 /**
- * Property associate to each attribute
+ * Property associated to each attribute
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class AttributeCustomizerNodeProperty extends PropertySupport.ReadWrite{
+public class AttributeCustomizerNodeProperty extends PropertySupport.ReadWrite {
     private Object value;
     private AttributeMetadataNode node;
 
-    public AttributeCustomizerNodeProperty(String _name, Object _value,
-            String _displayName,String _toolTextTip, AttributeMetadataNode _node) {
-        super(_name,_value.getClass(),_displayName,_toolTextTip);
-        this.value = _value;
-        this.node = _node;
+    public AttributeCustomizerNodeProperty(String name, Object value,
+            String displayName,String toolTextTip, AttributeMetadataNode node) {
+        super(name,value.getClass(),displayName,toolTextTip);
+        this.value = value;
+        this.node = node;
     }
 
     @Override
@@ -49,22 +50,19 @@ public class AttributeCustomizerNodeProperty extends PropertySupport.ReadWrite{
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         CommunicationsStub com = CommunicationsStub.getInstance();
         LocalClassMetadataLight myClass = ((ClassMetadataNode)node.getParentNode()).getObject();
-        boolean r = false;
 
-//        if(getName().equals("displayName"))
-//            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), t.toString(), null, null, false, node.getObject().isVisible(), node.getObject().getMapping(), false, false);
-//        if(getName().equals("isVisible"))
-//            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, null, false, Boolean.valueOf(t.toString()), node.getObject().getMapping(), false, false);
-//        if(getName().equals("administrative"))
-//            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, null, Boolean.valueOf(t.toString()), node.getObject().isVisible(), node.getObject().getMapping(), false, false);
-//        if(getName().equals("description"))
-//            r = com.setAttributePropertyValue(myClass.getOid(), node.getObject().getName(), null, null, t.toString(), false, node.getObject().isVisible(), node.getObject().getMapping(), false, false);
-
-        if(r){
+        if(com.setAttributeProperties(myClass.getOid(), node.getObject().getId(), getName().equals(Constants.PROPERTY_NAME) ? (String)t : null, 
+                getName().equals(Constants.PROPERTY_DISPLAYNAME) ? (String)t : null, 
+                getName().equals(Constants.PROPERTY_TYPE) ? (String)t : null, 
+                getName().equals(Constants.PROPERTY_DESCRIPTION) ? (String)t : null, 
+                getName().equals(Constants.PROPERTY_ADMINISTRATIVE) ? (Boolean)t : null,
+                getName().equals(Constants.PROPERTY_VISIBLE) ? (Boolean)t : null,
+                getName().equals(Constants.PROPERTY_READONLY) ? (Boolean)t : null,
+                getName().equals(Constants.PROPERTY_NOCOPY) ? (Boolean)t : null,
+                getName().equals(Constants.PROPERTY_UNIQUE) ? (Boolean)t : null)){
             this.value = t;
             //Refresh the cache
             com.getMetaForClass(myClass.getClassName(), true);
-            nu.showSimplePopup("Attribute Property Update", NotificationUtil.INFO, "Attribute modified successfully");
         }else
             nu.showSimplePopup("Attribute Property Update", NotificationUtil.ERROR, com.getError());
     }
