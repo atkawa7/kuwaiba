@@ -18,6 +18,7 @@ package org.inventory.navigation.applicationnodes.attributemetadatanodes;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
+import org.inventory.core.services.utils.Constants;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.properties.AttributeMetadataProperty;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
@@ -54,45 +55,30 @@ public class AttributeMetadataNode extends AbstractNode implements PropertyChang
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet();
 
         generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"), 
-                String.class, attribute.getName(), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"), this, classId));
+                attribute.getName(),this,classId));
         
         generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME"), 
-                String.class, attribute.getDisplayName(), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME"), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME"), this, classId));
-
-        generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"), 
-                String.class, attribute.getDescription(), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"), this, classId));
+                attribute.getDisplayName(),this,classId));
         
-        generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TYPE"), 
-                String.class, attribute.getType(), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TYPE"), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TYPE"), this, classId));
-
+        generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"), 
+                attribute.getDescription(),this,classId));
+        
+        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_TYPE, 
+                attribute.getType(),this,classId));
+        
         generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_VISIBLE"), 
-                Boolean.class, attribute.isVisible(), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_VISIBLE"), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_VISIBLE"), this, classId));
+                attribute.isVisible(),this,classId));
         
         generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ADMINISTRATIVE"), 
-                Boolean.class, attribute.isAdministrative(), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ADMINISTRATIVE"), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ADMINISTRATIVE"), this, classId));
-        
-        generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_UNIQUE"), 
-                Boolean.class, attribute.isUnique(), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_UNIQUE"), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_UNIQUE"), this, classId));
+                attribute.isAdministrative(),this,classId));
+
+//      Commented out for now 
+//      generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_UNIQUE"), 
+//              attribute.isUnique(),this,classId));
         
         generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_COPY"), 
-                Boolean.class, attribute.isNoCopy(), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_COPY"), 
-                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_COPY"), this, classId));
-        
+                attribute.isNoCopy(),this,classId));
+                
         generalPropertySet.setName("1");
 
         generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
@@ -110,7 +96,7 @@ public class AttributeMetadataNode extends AbstractNode implements PropertyChang
     }
    
     public boolean refresh(){
-        LocalAttributeMetadata attributeMetadataRefresh = null;
+        //LocalAttributeMetadata attributeMetadataRefresh = null;
         
 //        if(attributeMetadataRefresh == null)
 //            return false;

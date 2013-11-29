@@ -31,18 +31,20 @@ public class ListAttributeMetadataProperty extends PropertyEditorSupport{
     private List <String> attributeTypeslist;
     protected CommunicationsStub com;
 
-    public ListAttributeMetadataProperty() {
+    public ListAttributeMetadataProperty(String aValue) {
         com = CommunicationsStub.getInstance();
         LocalClassMetadataLight[] instanceableListTypes = com.getInstanceableListTypes();
         
         this.attributeTypeslist = new ArrayList<String>();
+        //Primitive types
+        for(String primitive : Constants.ATTRIBUTE_TYPES)
+            this.attributeTypeslist.add(primitive);
         
-        for(int j=0; j<Constants.ATTRIBUTE_TYPES.length; j++)
-            this.attributeTypeslist.add(Constants.ATTRIBUTE_TYPES[j]);
+        //List types
+        for(LocalClassMetadataLight listType : instanceableListTypes)
+            this.attributeTypeslist.add(listType.getClassName());
         
-        for(int i=0; i<instanceableListTypes.length; i++){
-            this.attributeTypeslist.add(instanceableListTypes[i].getClassName());
-        }
+        setValue(aValue);
     }
     
     @Override

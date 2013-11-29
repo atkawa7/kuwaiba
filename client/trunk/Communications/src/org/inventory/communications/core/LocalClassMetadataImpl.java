@@ -18,6 +18,7 @@ package org.inventory.communications.core;
 import java.awt.Image;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
+import org.inventory.core.services.utils.Constants;
 import org.inventory.core.services.utils.Utils;
 import org.kuwaiba.wsclient.ClassInfo;
 import org.openide.util.lookup.ServiceProvider;
@@ -54,20 +55,18 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         this.icon = (cm.getIcon()==null) ? null : Utils.getImageFromByteArray(cm.getIcon());
         this.description = cm.getDescription();
         this.attributeIds = new long[cm.getAttributeIds().size()];
+        this.attributeMappings = new int[cm.getAttributeIds().size()];
         for (int i = 0; i < cm.getAttributeIds().size(); i++){
             attributeIds[i] = cm.getAttributeIds().get(i).longValue();
+            attributeMappings[i] = getMappingFromType(cm.getAttributeTypes().get(i));
         }
         this.attributeNames = cm.getAttributeNames().toArray(new String[0]);
         this.attributeTypes = cm.getAttributeTypes().toArray(new String[0]);
         this.attributeDisplayNames = cm.getAttributeDisplayNames().toArray(new String[0]);
         this.attributesIsVisible = new boolean[cm.getAttributesIsVisible().size()];
-        for (int i = 0; i < cm.getAttributesIsVisible().size(); i++){
+        for (int i = 0; i < cm.getAttributesIsVisible().size(); i++)
             attributesIsVisible[i] = cm.getAttributesIsVisible().get(i).booleanValue();
-        }
-        this.attributeMappings = new int[cm.getAttributesMapping().size()];
-        for (int i = 0; i < cm.getAttributesMapping().size(); i++){
-            attributeMappings[i] = cm.getAttributesMapping().get(i).intValue();
-        }
+        
         this.attributesDescription = cm.getAttributesDescription().toArray(new String[0]);
     }
 
@@ -132,9 +131,8 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
     @Override
     public int getMappingForAttribute(String att){
         for (int i=0; i< this.attributeNames.length;i++){
-            if(this.attributeNames[i].equals(att)){
+            if(this.attributeNames[i].equals(att))
                 return this.attributeMappings[i];
-            }
         }
         return 0;
     }
@@ -167,6 +165,7 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         return "String";
     }
 
+    @Override
     public LocalAttributeMetadataImpl[] getAttributes(){
         LocalAttributeMetadataImpl[] res =
                 new LocalAttributeMetadataImpl[attributeNames.length];
@@ -234,4 +233,15 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
         this.creationDate = creationDate;
     }
     
+    private int getMappingFromType(String type){
+        if (type.equals("String") || type.equals("Integer") || type.equals("Float") || type.equals("Long"))
+            return Constants.MAPPING_PRIMITIVE;
+        if (type.equals("Timestamp"))
+            return Constants.MAPPING_TIMESTAMP;
+        if (type.equals("Date"))
+            return Constants.MAPPING_DATE;
+        if (type.equals("Binary"))
+            return Constants.MAPPING_BINARY;
+        return Constants.MAPPING_MANYTOONE;
+    }
 }

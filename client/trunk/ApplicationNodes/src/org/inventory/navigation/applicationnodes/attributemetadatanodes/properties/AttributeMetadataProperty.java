@@ -15,14 +15,12 @@
  */
 package org.inventory.navigation.applicationnodes.attributemetadatanodes.properties;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
-import org.inventory.core.services.api.metadata.LocalClassMetadata;
+import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.utils.Constants;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.AttributeMetadataNode;
 import org.openide.nodes.PropertySupport;
 import org.openide.util.Lookup;
@@ -31,114 +29,64 @@ import org.openide.util.Lookup;
  * Provides a property editor
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class AttributeMetadataProperty  extends PropertySupport.ReadWrite implements PropertyChangeListener {
+public class AttributeMetadataProperty extends PropertySupport.ReadWrite {
 
-    private Object _value;
-    private String _name;
-    private AttributeMetadataNode _node;
+    private Object value;
+    private AttributeMetadataNode node;
     private long classId;
-    private LocalClassMetadata lclm;
-    private LocalAttributeMetadata latm;
-    
-    public AttributeMetadataProperty(String _name, Class _valueType, Object _value,
-            String _displayName, String _toolTextTip, AttributeMetadataNode _node, long classId) {
-        super(_name,_valueType,_displayName,_toolTextTip);
-        this._name = _name;
-        this._value = _value;
-        this._node = _node;
+
+    public AttributeMetadataProperty(String name, Object value,
+            AttributeMetadataNode node, long classId) {
+        super(name,value.getClass(),name,name);
+        this.value = value;
+        this.node = node;
         this.classId = classId;
-        
-        this.getPropertyEditor().addPropertyChangeListener(this);
     }
 
     @Override
     public Object getValue() throws IllegalAccessException, InvocationTargetException {
-        return this._value;
-    }
-    
-    @Override
-    public PropertyEditor getPropertyEditor(){
-        if (_name.equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TYPE")))
-            return new ListAttributeMetadataProperty();
+        if (this.value == LocalObjectLight.class) //It's a list type
+            return node.getObject().getListAttributeClassName();
         else
-            return super.getPropertyEditor();
+            return this.value;
     }
-    
+
     @Override
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         CommunicationsStub com = CommunicationsStub.getInstance();
-        lclm = CommunicationsStub.getInstance().getMetaForClass(classId, true);
-        
-        
-        for(LocalAttributeMetadata attribute: lclm.getAttributes()){
-            if(attribute.getId() == _node.getObject().getId()){
-                attribute.setId(_node.getObject().getId());
-                if (getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"))) 
-                    attribute.setName(t.toString());
 
-                if (getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME"))) 
-                    attribute.setDisplayName(t.toString());
-
-                if (getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION")))
-                    attribute.setDescription(t.toString());
-                
-                if (getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TYPE"))) 
-                    attribute.setType(t.getClass());
-
-                if (getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_VISIBLE"))) 
-                    attribute.setVisible((Boolean) t);
-
-                if (getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ADMINISTRATIVE"))) 
-                    attribute.setAdministrative((Boolean) t);
-
-                if (getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_UNIQUE"))) 
-                    attribute.setUnique((Boolean) t);
-
-                if (getName().equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_COPY"))) 
-                    attribute.setNoCopy((Boolean) t);
-
-                try{
-                    CommunicationsStub.getInstance().setAttributePropertyValue(classId, attribute.getId(), 
-                            attribute.getName(), attribute.getDisplayName(), attribute.getType().toString(), 
-                            attribute.getDescription(), attribute.isAdministrative(), attribute.isVisible(), attribute.isReadOnly(), attribute.isNoCopy(), attribute.isUnique());
-            
-                    this._value = t;
-                }catch(Exception e){
-                    nu.showSimplePopup("Attribute Property Update", NotificationUtil.ERROR, com.getError());                    
-                }
-                break;
-            }
-        }
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        try {
-            if (this.getValue() == null) 
-                return;
-
-            if (this.getName().equals("name")){
-                _node.getObject().setName((String)getPropertyEditor().getValue());
-                _node.setDisplayName((String)getPropertyEditor().getValue());
-            }
-            
-        } catch (Exception ex) {
-            return;
-        }
+        if(com.setAttributeProperties(classId, node.getObject().getId(), getName().equals(Constants.PROPERTY_NAME) ? (String)t : null, 
+                getName().equals(Constants.PROPERTY_DISPLAYNAME) ? (String)t : null, 
+                getName().equals(Constants.PROPERTY_TYPE) ? (String)t : null, 
+                getName().equals(Constants.PROPERTY_DESCRIPTION) ? (String)t : null, 
+                getName().equals(Constants.PROPERTY_ADMINISTRATIVE) ? (Boolean)t : null,
+                getName().equals(Constants.PROPERTY_VISIBLE) ? (Boolean)t : null,
+                getName().equals(Constants.PROPERTY_READONLY) ? (Boolean)t : null,
+                getName().equals(Constants.PROPERTY_NOCOPY) ? (Boolean)t : null,
+                getName().equals(Constants.PROPERTY_UNIQUE) ? (Boolean)t : null)){
+            this.value = t;
+            //Refresh the cache
+            com.getMetaForClass(classId, true);
+            nu.showStatusMessage("Attribute updated successfully", true);
+        }else
+            nu.showSimplePopup("Attribute Property Update", NotificationUtil.ERROR, com.getError());
     }
     
     @Override
-    public boolean canWrite(){
-        if(_name.equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"))
-                && _value.equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"))
-                || _name.equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_DATE"))){
-            if(_name.equals(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TYPE")))
-                return false;
-            else 
-                return true;
+    public PropertyEditor getPropertyEditor(){
+        if (getName().equals(Constants.PROPERTY_TYPE)){
+            if (this.value == LocalObjectLight.class) //It's a list type
+                return new ListAttributeMetadataProperty(node.getObject().getListAttributeClassName());
+            else
+                return new ListAttributeMetadataProperty(((Class)this.value).getName());
         }
         else
-            return true;
+            return super.getPropertyEditor();
+    }
+
+    @Override
+    public boolean canWrite(){
+        return true;
     }
 }

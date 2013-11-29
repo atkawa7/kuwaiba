@@ -77,7 +77,7 @@ public class CommunicationsStub {
     private KuwaibaService service;
     private Kuwaiba port;
     private static URL serverURL = null;
-    private String error=java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_ERROR");
+    private String error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_ERROR");
     private Cache cache;
     private LocalSession session;
 
@@ -941,13 +941,15 @@ public class CommunicationsStub {
         }
     }
     
-    public void setAttributePropertyValue(long classId, long attributeId, String name, String displayName,
-            String type, String description, boolean administrative, boolean visible, boolean readOnly, boolean noCopy, boolean unique)  {
+    public boolean setAttributeProperties(long classId, long attributeId, String name, String displayName,
+            String type, String description, Boolean administrative, Boolean visible, Boolean readOnly, Boolean noCopy, Boolean unique)  {
         try{
             port.setAttributePropertiesForClassWithId(classId, attributeId, name, displayName, type, description,
                     administrative, visible, readOnly, unique, noCopy, this.session.getSessionId());
+            return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
+            return false;
         }
     }
         
