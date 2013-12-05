@@ -1693,11 +1693,11 @@ public class Kuwaiba {
         String displayName, @WebParam(name = "type")
         String type, @WebParam(name = "description")
         String description, @WebParam(name = "administrative")
-        boolean administrative, @WebParam(name = "visible")
-        boolean visible, @WebParam(name = "readOnly")
-        boolean readOnly, @WebParam(name = "unique")
-        boolean unique, @WebParam(name = "noCopy")
-        boolean noCopy, @WebParam(name = "sessionId")
+        Boolean administrative, @WebParam(name = "visible")
+        Boolean visible, @WebParam(name = "readOnly")
+        Boolean readOnly, @WebParam(name = "unique")
+        Boolean unique, @WebParam(name = "noCopy")
+        Boolean noCopy, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
 
         try {
@@ -1741,11 +1741,11 @@ public class Kuwaiba {
         String displayName, @WebParam(name = "type")
         String type, @WebParam(name = "description")
         String description, @WebParam(name = "administrative")
-        boolean administrative, @WebParam(name = "visible")
-        boolean visible, @WebParam(name = "readOnly")
-        boolean readOnly, @WebParam(name = "noCopy")
-        boolean noCopy, @WebParam(name = "unique")
-        boolean unique, @WebParam(name = "sessionId")
+        Boolean administrative, @WebParam(name = "visible")
+        Boolean visible, @WebParam(name = "readOnly")
+        Boolean readOnly, @WebParam(name = "noCopy")
+        Boolean noCopy, @WebParam(name = "unique")
+        Boolean unique, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
 
         try {

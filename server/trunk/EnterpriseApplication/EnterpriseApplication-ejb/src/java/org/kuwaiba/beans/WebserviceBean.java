@@ -344,7 +344,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             atm.setVisible(attributeDefinition.isVisible());
             atm.setNoCopy(attributeDefinition.isNoCopy());
 
-            mem.addAttribute(className, atm);
+            mem.createAttribute(className, atm);
 
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
@@ -369,7 +369,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             atm.setVisible(attributeDefinition.isVisible());
             atm.setNoCopy(attributeDefinition.isNoCopy());
             
-            mem.addAttribute(classId, atm);
+            mem.createAttribute(classId, atm);
 
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
@@ -466,6 +466,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             attrMtdt.setUnique(newAttributeDefinition.isUnique());
             attrMtdt.setVisible(newAttributeDefinition.isVisible());
             attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
+            attrMtdt.setNoCopy(newAttributeDefinition.isNoCopy());
 
             mem.setAttributeProperties(classId, attrMtdt);
 
@@ -492,6 +493,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             attrMtdt.setUnique(newAttributeDefinition.isUnique());
             attrMtdt.setVisible(newAttributeDefinition.isVisible());
             attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
+            attrMtdt.setNoCopy(newAttributeDefinition.isNoCopy());
 
             mem.setAttributeProperties(className, attrMtdt);
 

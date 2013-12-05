@@ -45,19 +45,19 @@ public class AttributeInfo implements Serializable {
     /**
      * Flag to mark an attribute to be used for administrative purposes (beyond the operational inventory)
      */
-    private boolean administrative;
+    private Boolean administrative;
     /**
      * Attribute's visibility
      */
-    private boolean visible;
+    private Boolean visible;
      /**
      * Marks the attribute as read only
      */
-    private boolean readOnly;
+    private Boolean readOnly;
     /**
      * Marks the attribute as unique
      */
-    private boolean unique;
+    private Boolean unique;
     /**
      * Attribute's short description
      */
@@ -65,14 +65,14 @@ public class AttributeInfo implements Serializable {
     /**
      * Indicates if an attribute is copy when the copy/paste is made
      */
-    private boolean noCopy;
+    private Boolean noCopy;
     /**
      * Cannot change or delete a locked attribute
      */
-    private boolean locked;
+    private Boolean locked;
 
     public AttributeInfo(String name, String displayName, String type, 
-            boolean administrative, boolean visible, String description) {
+            Boolean administrative, Boolean visible, String description) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
@@ -82,8 +82,8 @@ public class AttributeInfo implements Serializable {
     }
 
     public AttributeInfo(long id, String name, String displayName, String type, 
-            boolean administrative, boolean visible, boolean readOnly, 
-            boolean unique, String description, boolean noCopy) {
+            Boolean administrative, Boolean visible, Boolean readOnly, 
+            Boolean unique, String description, Boolean noCopy) {
         this.id = id;
         this.name = name;
         this.displayName = displayName;
@@ -97,9 +97,9 @@ public class AttributeInfo implements Serializable {
     }
     
     public AttributeInfo(String name, String displayName, String type, 
-                         boolean administrative, boolean visible, 
-                         boolean readOnly, boolean unique, String description, 
-                         boolean noCopy) {
+                         Boolean administrative, Boolean visible, 
+                         Boolean readOnly, Boolean unique, String description, 
+                         Boolean noCopy) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
@@ -111,11 +111,11 @@ public class AttributeInfo implements Serializable {
         this.noCopy = noCopy;
     }
 
-    public boolean isAdministrative() {
+    public Boolean isAdministrative() {
         return administrative;
     }
 
-    public void setAdministrative(boolean administrative) {
+    public void setAdministrative(Boolean administrative) {
         this.administrative = administrative;
     }
 
@@ -159,43 +159,43 @@ public class AttributeInfo implements Serializable {
         this.type = type;
     }
 
-    public boolean isVisible() {
+    public Boolean isVisible() {
         return visible;
     }
 
-    public void setVisible(boolean visible) {
+    public void setVisible(Boolean visible) {
         this.visible = visible;
     }
 
-    public boolean isReadOnly() {
+    public Boolean isReadOnly() {
         return readOnly;
     }
 
-    public void setReadOnly(boolean readOnly) {
+    public void setReadOnly(Boolean readOnly) {
         this.readOnly = readOnly;
     }
 
-    public boolean isUnique() {
+    public Boolean isUnique() {
         return unique;
     }
 
-    public void setUnique(boolean unique) {
+    public void setUnique(Boolean unique) {
         this.unique = unique;
     }
 
-    public boolean isNoCopy() {
+    public Boolean isNoCopy() {
         return noCopy;
     }
 
-    public void setNoCopy(boolean noCopy) {
+    public void setNoCopy(Boolean noCopy) {
         this.noCopy = noCopy;
     }
 
-    public boolean isLocked() {
+    public Boolean isLocked() {
         return locked;
     }
 
-    public void setLocked(boolean locked) {
+    public void setLocked(Boolean locked) {
         this.locked = locked;
     }
 }
