@@ -23,6 +23,7 @@ import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadat
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
@@ -44,7 +45,7 @@ iconBase = "org/inventory/customization/datamodelmanager/res/icon.png",
 persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.customization.datamodelmanager.DataModelManagerTopComponent")
-@ActionReference(path = "Menu/Tools/Administrative/Class Management" /*, position = 333 */)
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administrative/Class Management"),@ActionReference(path = "Toolbars/Tools")} /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_DataModelManagerAction",
 preferredID = "DataModelManagerTopComponent")

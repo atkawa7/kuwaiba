@@ -17,10 +17,15 @@ package org.inventory.navigation.applicationnodes.classmetadatanodes.action;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
+import org.inventory.core.services.api.metadata.LocalClassMetadata;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
-import org.openide.nodes.Node;
+import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter;
 
 /**
@@ -29,31 +34,49 @@ import org.openide.util.actions.Presenter;
  */
 public class DeleteAttributeAction extends AbstractAction implements Presenter.Popup{
 
-    private Node node;
+    private ClassMetadataNode classNode;
     private CommunicationsStub com;
-
+    private NotificationUtil nu;
     public DeleteAttributeAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_ATTRIBUTE"));
         com = CommunicationsStub.getInstance();
+        nu = Lookup.getDefault().lookup(NotificationUtil.class);
     }
 
-    public DeleteAttributeAction(Node node) {
+    public DeleteAttributeAction(ClassMetadataNode classNode) {
         this();
-        this.node = node;
+        this.classNode = classNode;
     }
     
     @Override
     public void actionPerformed(ActionEvent ae) {
-        //TODO
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to perform this operation? All subclasses will be modified as well", 
+                "Class metadata operation", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
+            if (com.deleteAttribute(this.classNode.getClassMetadata().getOid(), ((JMenuItem)ae.getSource()).getName()))
+                nu.showSimplePopup("Class meta data operation", NotificationUtil.INFO, "Attribute deleted successfully");
+            else
+                nu.showSimplePopup("Class meta data operation", NotificationUtil.ERROR, com.getError());
+        }
     }
 
     @Override
     public JMenuItem getPopupPresenter() {
-         JMenuItem smiChildren = new JMenuItem(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_ATTRIBUTE"));
-        smiChildren.setName(((ClassMetadataNode)node).getName());
-        smiChildren.addActionListener(this);
-                
-        return smiChildren;
+        JMenu deleteAttributeMenu = new JMenu (java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_ATTRIBUTE"));
+        LocalClassMetadata metaForThisClass = com.getMetaForClass(this.classNode.getClassMetadata().getOid(), false);
+        
+        if (metaForThisClass == null){
+            deleteAttributeMenu.setEnabled(false);
+            nu.showSimplePopup("Class metadata", NotificationUtil.ERROR, com.getError());
+        }else{
+            for (LocalAttributeMetadata anAttribute : metaForThisClass.getAttributes()){
+                JMenuItem menuEntry = new JMenuItem(anAttribute.getName());
+                menuEntry.setName(anAttribute.getName());
+                menuEntry.addActionListener(this);
+                deleteAttributeMenu.add (menuEntry);
+            }
+        }
+                      
+        return deleteAttributeMenu;
     }
     
 }
