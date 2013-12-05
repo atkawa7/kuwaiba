@@ -47,6 +47,7 @@ import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
+import org.kuwaiba.persistenceservice.caching.CacheManager;
 import org.kuwaiba.persistenceservice.impl.RelTypes;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -764,8 +765,10 @@ public class Util {
 
         for(Path p : UPDATE_TRAVERSAL.traverse(classNode)){
             for(Relationship rel : p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE)){
-                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeName))
+                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
                     rel.getEndNode().setProperty(Constants.PROPERTY_TYPE, newAttributeType);
+                    break;
+                }
             }
             
             for(Relationship rel : p.endNode().getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING)){
@@ -788,14 +791,31 @@ public class Util {
 
         for(Path p : UPDATE_TRAVERSAL.traverse(classNode)){
             for(Relationship rel : p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE)){
-                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeName))
+                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
                     rel.getEndNode().setProperty(Constants.PROPERTY_TYPE, newAttributeType);
+                    break;
+                }
             }
             
             for(Relationship rel : p.endNode().getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING)){
                 for(Relationship listTypeRel : rel.getStartNode().getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO, RelTypes.RELATED_TO_SPECIAL)){
                     if (listTypeRel.getProperty(Constants.PROPERTY_NAME).equals(attributeName))
                         listTypeRel.delete();
+                }
+            }
+        }//end for
+    }
+    
+    public static void changeAttributeProperty (Node classNode, String attributeName, String propertyName, Object propertyValue) throws InvalidArgumentException {
+        final TraversalDescription UPDATE_TRAVERSAL = Traversal.description().
+                    breadthFirst().
+                    relationships(RelTypes.EXTENDS, Direction.INCOMING);
+
+        for(Path p : UPDATE_TRAVERSAL.traverse(classNode)){
+            for(Relationship rel : p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE)) {
+                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
+                    rel.getEndNode().setProperty(propertyName, propertyValue);
+                    break;
                 }
             }
         }//end for
@@ -815,8 +835,10 @@ public class Util {
 
         for(Path p : UPDATE_TRAVERSAL.traverse(classNode)){
             for(Relationship rel : p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE)) {
-                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(oldAttributeName))
+                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(oldAttributeName)){
                     rel.getEndNode().setProperty(Constants.PROPERTY_NAME, newAttributeName);
+                    break;
+                }
             }
             
             for(Relationship rel : p.endNode().getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING)){
@@ -825,7 +847,7 @@ public class Util {
                     rel.getStartNode().removeProperty(oldAttributeName);
                     rel.getStartNode().setProperty(newAttributeName, currentValue);
                 }
-            }
+            }           
         }//end for
     }
     
@@ -904,8 +926,10 @@ public class Util {
                 return Boolean.valueOf(easierToHandleOldValue);
             if (convertTo.equals("Long") || convertTo.equals("Date") || convertTo.equals("Timestamp"))
                 return Integer.valueOf(easierToHandleOldValue);
-        }catch (NumberFormatException ex){return null;} //Does nothing
+        }catch (NumberFormatException ex){} //Does nothing
         
-        throw  new InvalidArgumentException(String.format("Can not convert %s into %s", oldValue, convertTo), Level.WARNING);
+        return null;
+        
+        //throw  new InvalidArgumentException(String.format("Can not convert %s into %s", oldValue, convertTo), Level.WARNING);
     }
 }

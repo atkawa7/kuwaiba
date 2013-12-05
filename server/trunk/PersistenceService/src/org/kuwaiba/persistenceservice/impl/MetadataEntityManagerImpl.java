@@ -42,11 +42,14 @@ import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.helpers.collection.IteratorUtil;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.kernel.Traversal;
 
 /**
  * MetadataEntityManager implementation
@@ -847,9 +850,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         Util.changeAttributeName(classNode, currentAttributeName, newAttributeDefinition.getName());
                     }
                     if(newAttributeDefinition.getDescription() != null)
-                        attrNode.setProperty(Constants.PROPERTY_DESCRIPTION, newAttributeDefinition.getDescription());
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_DESCRIPTION, newAttributeDefinition.getDescription());
                     if(newAttributeDefinition.getDisplayName() != null)
-                        attrNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, newAttributeDefinition.getDisplayName());
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_DISPLAY_NAME, newAttributeDefinition.getDisplayName());
                     if(newAttributeDefinition.getType() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
                             throw new InvalidArgumentException("Attribute \"name\" can only be a String", Level.INFO);
@@ -859,31 +862,28 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                             Util.changeAttributeTypeIfListType(classNode, currentAttributeName, newAttributeDefinition.getType());
                     }
                     if(newAttributeDefinition.isReadOnly() != null)
-                        attrNode.setProperty(Constants.PROPERTY_READ_ONLY, newAttributeDefinition.isReadOnly());
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_READ_ONLY, newAttributeDefinition.isReadOnly());
                     if(newAttributeDefinition.isVisible() != null)
-                        attrNode.setProperty(Constants.PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
                     if(newAttributeDefinition.isAdministrative() != null)
-                        attrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
                     if(newAttributeDefinition.isNoCopy() != null)
-                        attrNode.setProperty(Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
                     if(newAttributeDefinition.isUnique() != null)
-                        attrNode.setProperty(Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
                     tx.success();
-
-                    //Refresh cache
-                    cm.removeClass((String)classNode.getProperty(Constants.PROPERTY_NAME));
-                    cm.putClass(Util.createClassMetadataFromNode(classNode));
+                    tx.finish();
+                    //Refresh cache for the affected classes
+                    refreshCacheOn(classNode);
+                    return;
                 }catch(Exception ex){
-                    Logger.getLogger("setAttributeProperties: "+ex.getMessage()); //NOI18N
+                    Logger.getLogger("setAttributeProperties: " + ex.getMessage()); //NOI18N
                     if (tx != null){
                         tx.failure();
+                        tx.finish();
                     }
                     throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
-                } finally {
-                    if (tx != null)
-                        tx.finish();
-                    return;
-                }
+                } 
             }
         }//end for
         throw new MetadataObjectNotFoundException(String.format(
@@ -914,9 +914,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         Util.changeAttributeName(classNode, currentAttributeName, newAttributeDefinition.getName());
                     }
                     if(newAttributeDefinition.getDescription() != null)
-                        attrNode.setProperty(Constants.PROPERTY_DESCRIPTION, newAttributeDefinition.getDescription());
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_DESCRIPTION, newAttributeDefinition.getDescription());
                     if(newAttributeDefinition.getDisplayName() != null)
-                        attrNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, newAttributeDefinition.getDisplayName());
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_DISPLAY_NAME, newAttributeDefinition.getDisplayName());
                     if(newAttributeDefinition.getType() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
                             throw new InvalidArgumentException("Attribute \"name\" can only be a String", Level.INFO);
@@ -926,31 +926,28 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                             Util.changeAttributeTypeIfListType(classNode, currentAttributeName, newAttributeDefinition.getType());
                     }
                     if(newAttributeDefinition.isReadOnly() != null)
-                        attrNode.setProperty(Constants.PROPERTY_READ_ONLY, newAttributeDefinition.isReadOnly());
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_READ_ONLY, newAttributeDefinition.isReadOnly());
                     if(newAttributeDefinition.isVisible() != null)
-                        attrNode.setProperty(Constants.PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
                     if(newAttributeDefinition.isAdministrative() != null)
-                        attrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
                     if(newAttributeDefinition.isNoCopy() != null)
-                        attrNode.setProperty(Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
                     if(newAttributeDefinition.isUnique() != null)
-                        attrNode.setProperty(Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
                     tx.success();
-
-                    //Refresh cache
-                    cm.removeClass((String)classNode.getProperty(Constants.PROPERTY_NAME));
-                    cm.putClass(Util.createClassMetadataFromNode(classNode));
+                    tx.finish();
+                    //Refresh cache for the affected classes
+                    refreshCacheOn(classNode);
+                    return;
                 }catch(Exception ex){
-                    Logger.getLogger("setAttributeProperties: "+ex.getMessage()); //NOI18N
+                    Logger.getLogger("setAttributeProperties: " + ex.getMessage()); //NOI18N
                     if (tx != null){
                         tx.failure();
+                        tx.finish();
                     }
                     throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
-                } finally {
-                    if (tx != null)
-                        tx.finish();
-                    return;
-                }
+                } 
             }
         }//end for
         throw new MetadataObjectNotFoundException(String.format(
@@ -1391,17 +1388,17 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 Node childNode = classIndex.get(Constants.PROPERTY_NAME, possibleChildName).getSingle();
                 if (childNode == null){
                     throw new MetadataObjectNotFoundException(String.format(
-                            "Can not find class %1s", possibleChildName));
+                            "Can not find class %s", possibleChildName));
                 }
                 if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)childNode.getProperty(Constants.PROPERTY_NAME))){
                     throw new InvalidArgumentException(
-                            String.format("%1s is not a business class, thus can not be added to the containment hierarchy", (String)childNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
+                            String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)childNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
                 }
                 if ((Boolean)childNode.getProperty(Constants.PROPERTY_ABSTRACT)){
                    for (Node subclassNode : Util.getAllSubclasses(childNode)){
                        for (ClassMetadataLight possibleChild : currentPossibleChildren){
                             if (possibleChild.getId() == subclassNode.getId()){
-                                throw new InvalidArgumentException(String.format("A subclass of %1s is already a possible child for instances of %2s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
+                                throw new InvalidArgumentException(String.format("A subclass of %s is already a possible child for instances of %s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
                             }
                        }
                    }
@@ -1409,7 +1406,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 else{
                     for (ClassMetadataLight possibleChild : currentPossibleChildren){
                         if (possibleChild.getId() == childNode.getId()){
-                            throw new InvalidArgumentException(String.format("Class %1s is already a possible child for instances of %2s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
+                            throw new InvalidArgumentException(String.format("Class %s is already a possible child for instances of %s", (String)childNode.getProperty(Constants.PROPERTY_NAME), (String)parentNode.getProperty(Constants.PROPERTY_NAME)), Level.INFO);
                         }
                     }
                 }
@@ -1538,6 +1535,19 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             return cm.isSubClass(allegedParent, classToBeEvaluated);
         } catch (MetadataObjectNotFoundException ex) {
             return false;
+        }
+    }
+    
+    /**
+     * HELPERS
+     */
+    private void refreshCacheOn(Node rootClassNode){
+        TraversalDescription UPDATE_TRAVERSAL = Traversal.description().
+                    breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
+        
+        for(Path p : UPDATE_TRAVERSAL.traverse(rootClassNode)){
+            cm.removeClass((String)p.endNode().getProperty(Constants.PROPERTY_NAME));
+            cm.putClass(Util.createClassMetadataFromNode(p.endNode()));
         }
     }
 }
