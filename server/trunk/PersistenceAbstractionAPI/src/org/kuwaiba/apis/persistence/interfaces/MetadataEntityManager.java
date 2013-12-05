@@ -199,14 +199,14 @@ public interface MetadataEntityManager {
      * @param className
      * @param attributeName
      */
-    public void  deleteAttribute(String className, String attributeName) throws MetadataObjectNotFoundException;
+    public void  deleteAttribute(String className, String attributeName) throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Deletes an attribute belonging to a classMetadata
      * @param classId
      * @param attributeName
      */
-    public void deleteAttribute(long classId,String attributeName) throws MetadataObjectNotFoundException;
+    public void deleteAttribute(long classId,String attributeName) throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Creates a new category

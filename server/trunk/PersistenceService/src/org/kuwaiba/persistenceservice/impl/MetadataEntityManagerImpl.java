@@ -187,7 +187,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 }//end if there is a Parent
                 else{
                     throw new MetadataObjectNotFoundException(String.format(
-                            "Can not find parent class with name %1s", classDefinition.getParentClassName()));
+                            "Can not find parent class with name %s", classDefinition.getParentClassName()));
                 }
             }//end else not rootNode
             //Attributes
@@ -272,9 +272,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             cm.putClass(Util.createClassMetadataFromNode(classMetadata));
         }catch(Exception ex){
             Logger.getLogger("setClassProperties: "+ex.getMessage()); //NOI18N
-            if(tx != null){
+            if(tx != null)
                 tx.failure();
-            }
             throw new RuntimeException(ex.getMessage());
         } finally {
             if(tx != null){
@@ -962,43 +961,37 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws MetadataObjectNotFoundException if there is no a class with such className
      */
     @Override
-    public void deleteAttribute(String className, String attributeName) throws MetadataObjectNotFoundException {
+    public void deleteAttribute(String className, String attributeName) throws MetadataObjectNotFoundException, InvalidArgumentException {
         Transaction tx = null;
-        boolean couldDelAtt = false;
-            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
-            if (classNode == null) {
-                throw new MetadataObjectNotFoundException(String.format(
-                        "Can not find a class with name %1s", attributeName));
-            }
-            Iterable<Relationship> relationships = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE);
-            for (Relationship relationship : relationships) {
-                Node attrNode = relationship.getEndNode();
-                if (String.valueOf(attrNode.getProperty(Constants.PROPERTY_NAME)).equals(attributeName)){ 
-                    //&& !((Boolean)attrNode.getProperty(Constants.PROPERTY_LOCKED)).booleanValue()) {
-                    try {
-                        tx = graphDb.beginTx();
-                        Util.deleteAttribute(classNode, attributeName);
-                        attrNode.delete();
-                        relationship.delete();
-                        couldDelAtt = true;
-                        tx.success();
-                    }catch(Exception ex){
-                        Logger.getLogger("deleteAttribute: "+ex.getMessage()); //NOI18N
-                        if (tx != null){
-                            tx.failure();
-                        }
-                        throw new RuntimeException(ex.getMessage());
-                    } finally {
-                        if (tx != null){
-                            tx.finish();
-                        }
+        Node classNode = classIndex.get(Constants.PROPERTY_NAME, attributeName).getSingle();
+
+        if (attributeName.equals(Constants.PROPERTY_NAME))
+            throw new InvalidArgumentException("Attribute \"name\" can not be deleted", Level.INFO);
+        
+        if (classNode == null)
+            throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", className));
+        
+
+        for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
+            Node attrNode = relationship.getEndNode();
+            if (String.valueOf(attrNode.getProperty(Constants.PROPERTY_NAME)).equals(attributeName)){
+                try {
+                    tx = graphDb.beginTx();
+                    Util.deleteAttribute(classNode, attributeName);
+                    tx.success();
+                    tx.finish();
+                    return;
+                }catch(Exception ex){
+                    Logger.getLogger("deleteAttribute: "+ex.getMessage()); //NOI18N
+                    if (tx != null){
+                        tx.failure();
+                        tx.finish();
                     }
-                }//end for
+                    throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
+                } 
             }
-            if (!couldDelAtt) { //if the attribute doesn't exist
-                throw new MetadataObjectNotFoundException(String.format(
-                        "Can not find an attribute with the name %1s", attributeName));
-            }
+        }//end for
+        throw new MetadataObjectNotFoundException(String.format("Can not find an attribute with the name %1s", attributeName));
     }
 
     /**
@@ -1008,45 +1001,39 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws MetadataObjectNotFoundException if there is no a class with such classId
      */
     @Override
-    public void deleteAttribute(long classId, String attributeName) throws MetadataObjectNotFoundException {
+    public void deleteAttribute(long classId, String attributeName) throws MetadataObjectNotFoundException, InvalidArgumentException {
         Transaction tx = null;
-        boolean couldDelAtt = false;
 
         Node classNode = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
 
-        if (classNode == null){
-            throw new MetadataObjectNotFoundException(String.format(
-                    "Can not find a class with id %1s", classId));
-        }
-        Iterable<Relationship> relationships = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE);
-        for (Relationship relationship : relationships) {
+        if (attributeName.equals(Constants.PROPERTY_NAME))
+            throw new InvalidArgumentException("Attribute \"name\" can not be deleted", Level.INFO);
+        
+        if (classNode == null)
+            throw new MetadataObjectNotFoundException(String.format("Can not find a class with id %s", classId));
+        
+
+        for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
             Node attrNode = relationship.getEndNode();
             if (String.valueOf(attrNode.getProperty(Constants.PROPERTY_NAME)).equals(attributeName)){
-                    //&&!((Boolean)attrNode.getProperty(Constants.PROPERTY_LOCKED)).booleanValue()) {
                 try {
                     tx = graphDb.beginTx();
                     Util.deleteAttribute(classNode, attributeName);
-                    attrNode.delete();
-                    relationship.delete();
-                    couldDelAtt = true;
                     tx.success();
+                    tx.finish();
+                    return;
                 }catch(Exception ex){
                     Logger.getLogger("deleteAttribute: "+ex.getMessage()); //NOI18N
                     if (tx != null){
                         tx.failure();
-                    }
-                    throw new RuntimeException(ex.getMessage());
-                } finally {
-                    if (tx != null){
                         tx.finish();
                     }
-                }
+                    throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
+                } 
             }
         }//end for
-        if (!couldDelAtt) { //if the attribute doesn't exist
-            throw new MetadataObjectNotFoundException(String.format(
-                    "Can not find an attribute with name %1s", attributeName));
-        }
+        throw new MetadataObjectNotFoundException(String.format(
+                "Can not find an attribute with name %1s", attributeName));
     }
 
     /**

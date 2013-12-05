@@ -881,25 +881,23 @@ public class Util {
         }
     }
     
-    public static void deleteAttribute(Node node, String attributeName){
+    public static void deleteAttribute(Node classNode, String attributeName){
         final TraversalDescription TRAVERSAL = Traversal.description().
-                    breadthFirst().
-                    relationships(RelTypes.EXTENDS, Direction.INCOMING).
-                    relationships(RelTypes.INSTANCE_OF, Direction.INCOMING).
-                    evaluator(Evaluators.excludeStartPosition());
-        for(Path p : TRAVERSAL.traverse(node)){
-            if(p.endNode().hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)){
-                p.endNode().getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).delete();
-                p.endNode().delete();
-            }
-            else{
-                for (Relationship attrRel: p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING)){
-                    if(attrRel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
-                        attrRel.delete();
-                        attrRel.getEndNode().delete();
-                    }        
+                    breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
+        
+        for(Path p : TRAVERSAL.traverse(classNode)){
+            for(Relationship rel : p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE)) {
+                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
+                    rel.getEndNode().delete();
+                    rel.delete();
+                    break;
                 }
             }
+            
+            for(Relationship rel : p.endNode().getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING)){
+                if(rel.getStartNode().hasProperty(attributeName))
+                    rel.getStartNode().removeProperty(attributeName);
+            }           
         }//end for
     }
     

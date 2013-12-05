@@ -190,14 +190,14 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @param attributeName
      * @throws RemoteException, Exception
      */
-    public void  deleteAttribute(String className, String attributeName) throws RemoteException, MetadataObjectNotFoundException;
+    public void  deleteAttribute(String className, String attributeName) throws RemoteException, MetadataObjectNotFoundException, InvalidArgumentException;
     /**
      * See Persistence Abstraction API documentation
      * @param classId
      * @param attributeName
      * @throws RemoteException, Exception
      */
-    public void deleteAttribute(long classId,String attributeName) throws RemoteException, MetadataObjectNotFoundException;
+    public void deleteAttribute(long classId,String attributeName) throws RemoteException, MetadataObjectNotFoundException, InvalidArgumentException;
     /**
      * See Persistence Abstraction API documentation
      * @param categoryDefinition
