@@ -465,9 +465,7 @@ public class Util {
             //Only set the attributes existing in the current node. Please note that properties can't be null in
             //Neo4J, so a null value is actually a non-existing relationship/value
             if (instance.hasProperty(myAtt.getName())){
-               if (AttributeMetadata.isPrimitive(myAtt.getType())){
-                   continue;
-               }else{
+               if (AttributeMetadata.isPrimitive(myAtt.getType())) {
                    if (!myAtt.getType().equals("Binary")) {
                         List<String> attributeValue = new ArrayList<String>();
                         attributeValue.add(instance.getProperty(myAtt.getName()).toString());
@@ -731,7 +729,7 @@ public class Util {
        return false;
     }
     
-    public static void addAttribute(Node classNode, Node attributeNode) throws MetadataObjectNotFoundException{
+    public static void createAttribute(Node classNode, Node attributeNode) throws MetadataObjectNotFoundException{
         final TraversalDescription TRAVERSAL = Traversal.description().
                     breadthFirst().
                     relationships(RelTypes.EXTENDS, Direction.INCOMING).
@@ -759,21 +757,46 @@ public class Util {
      * @param attributeName
      * @param attributeType 
      */
-    public static void changeAttributeType(Node classNode, String attributeName, String newAttributeType) throws InvalidArgumentException {
+    public static void changeAttributeTypeIfPrimitive (Node classNode, String attributeName, String newAttributeType) throws InvalidArgumentException {
         final TraversalDescription UPDATE_TRAVERSAL = Traversal.description().
                     breadthFirst().
-                    relationships(RelTypes.EXTENDS, Direction.INCOMING).
-                    relationships(RelTypes.INSTANCE_OF, Direction.INCOMING).
-                    evaluator(Evaluators.excludeStartPosition());
+                    relationships(RelTypes.EXTENDS, Direction.INCOMING);
 
         for(Path p : UPDATE_TRAVERSAL.traverse(classNode)){
-            if(p.endNode().hasProperty(attributeName)){
-                Object currentValue = p.endNode().getProperty(attributeName);                   
-                Object newValue = convertIfPossible(currentValue, newAttributeType);
-                if (newValue != null)
-                    p.endNode().setProperty(attributeName, newValue);
-                else
-                    p.endNode().removeProperty(attributeName);
+            for(Relationship rel : p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE)){
+                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeName))
+                    rel.getEndNode().setProperty(Constants.PROPERTY_TYPE, newAttributeType);
+            }
+            
+            for(Relationship rel : p.endNode().getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING)){
+                if(rel.getStartNode().hasProperty(attributeName)){
+                    Object currentValue = rel.getStartNode().getProperty(attributeName);                   
+                    Object newValue = Util.convertIfPossible(currentValue, newAttributeType);
+                    if (newValue != null)
+                        rel.getStartNode().setProperty(attributeName, newValue);
+                    else
+                        rel.getStartNode().removeProperty(attributeName);
+                }
+            }
+        }//end for
+    }
+    
+    public static void changeAttributeTypeIfListType (Node classNode, String attributeName, String newAttributeType) throws InvalidArgumentException {
+        final TraversalDescription UPDATE_TRAVERSAL = Traversal.description().
+                    breadthFirst().
+                    relationships(RelTypes.EXTENDS, Direction.INCOMING);
+
+        for(Path p : UPDATE_TRAVERSAL.traverse(classNode)){
+            for(Relationship rel : p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE)){
+                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeName))
+                    rel.getEndNode().setProperty(Constants.PROPERTY_TYPE, newAttributeType);
+            }
+            
+            for(Relationship rel : p.endNode().getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING)){
+                for(Relationship listTypeRel : rel.getStartNode().getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO, RelTypes.RELATED_TO_SPECIAL)){
+                    if (listTypeRel.getProperty(Constants.PROPERTY_NAME).equals(attributeName))
+                        listTypeRel.delete();
+                }
             }
         }//end for
     }
@@ -785,23 +808,25 @@ public class Util {
      * @param newAttributeName
      * @throws InvalidArgumentException 
      */
-    public static void changeAttributeName(Node classNode, String oldAttributeName, String newAttributeName) throws InvalidArgumentException {
+    public static void changeAttributeName(Node classNode, String oldAttributeName, String newAttributeName) {
         final TraversalDescription UPDATE_TRAVERSAL = Traversal.description().
                     breadthFirst().
-                    relationships(RelTypes.EXTENDS, Direction.INCOMING).
-                    relationships(RelTypes.INSTANCE_OF, Direction.INCOMING).
-                    evaluator(Evaluators.excludeStartPosition());
+                    relationships(RelTypes.EXTENDS, Direction.INCOMING);
 
-        /*for(Path p : UPDATE_TRAVERSAL.traverse(classNode)){
-            if(p.endNode().hasProperty(attributeName)){
-                Object currentValue = p.endNode().getProperty(attributeName);                   
-                Object newValue = convertIfPossible(currentValue, newAttributeType);
-                if (newValue != null)
-                    p.endNode().setProperty(attributeName, newValue);
-                else
-                    p.endNode().removeProperty(attributeName);
+        for(Path p : UPDATE_TRAVERSAL.traverse(classNode)){
+            for(Relationship rel : p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE)) {
+                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(oldAttributeName))
+                    rel.getEndNode().setProperty(Constants.PROPERTY_NAME, newAttributeName);
             }
-        }*///end for
+            
+            for(Relationship rel : p.endNode().getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING)){
+                if(rel.getStartNode().hasProperty(oldAttributeName)){
+                    Object currentValue = rel.getStartNode().getProperty(oldAttributeName);
+                    rel.getStartNode().removeProperty(oldAttributeName);
+                    rel.getStartNode().setProperty(newAttributeName, currentValue);
+                }
+            }
+        }//end for
     }
     
     public static void show(Node node){

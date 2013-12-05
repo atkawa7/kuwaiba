@@ -146,7 +146,7 @@ public interface MetadataEntityManager {
      * @param attributeDefinition
      * @throws ClassNotFoundException if there is no a class with such className
      */
-    public void addAttribute(String className, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, OperationNotPermittedException;
+    public void createAttribute(String className, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, OperationNotPermittedException;
 
     /**
      * Adds an attribute to a class
@@ -154,7 +154,7 @@ public interface MetadataEntityManager {
      * @param attributeDefinition
      * @throws ClassNotFoundException if there is no a class with such classId
      */
-    public void addAttribute(long classId, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, OperationNotPermittedException;
+    public void createAttribute(long classId, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, OperationNotPermittedException;
 
     /**
      * Gets an attribute belonging to a class
@@ -177,19 +177,22 @@ public interface MetadataEntityManager {
     public AttributeMetadata getAttribute(long classId, long attributeId) throws MetadataObjectNotFoundException;
 
     /**
-     * Changes an attribute definition belonging to a classMetadata
+     * Changes an attribute definition belonging to a class metadata using the class id as key
      * @param ClassId
      * @param newAttributeDefinition
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException 
      */
-    public void setAttributeProperties(long ClassId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException;
+    public void setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
-     * Changes an attribute definition belonging to a classMetadata
+     * Changes an attribute definition belonging to a class metadata use the class name as id
      * @param className
      * @param newAttributeDefinition
-     * @throws MetadataObjectNotFoundException 
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException 
      */
-    public void setAttributeProperties(String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException;
+    public void setAttributeProperties(String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Deletes an attribute belonging to a classMetadata

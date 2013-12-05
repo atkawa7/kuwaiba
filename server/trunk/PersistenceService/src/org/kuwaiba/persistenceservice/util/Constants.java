@@ -153,10 +153,6 @@ public class Constants {
     public static final String PROPERTY_ENABLED = "enabled"; //NOI18N
     public static final String PROPERTY_PASSWORD = "password"; //NOI18N
     /**
-     * How an attribute should be mapped (as a Float, Integer, relationship, etc)
-     */
-    public static final String PROPERTY_MAPPING = "mapping"; //NOI18N
-    /**
      * Root for all business classes
      */
     public static final String CLASS_INVENTORYOBJECT = "InventoryObject"; //NOI18N ID 286

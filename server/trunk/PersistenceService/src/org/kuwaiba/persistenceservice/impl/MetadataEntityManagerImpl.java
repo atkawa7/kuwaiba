@@ -176,7 +176,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         newAttrNode.setProperty(Constants.PROPERTY_READ_ONLY, parentAttrNode.getProperty(Constants.PROPERTY_READ_ONLY));
                         newAttrNode.setProperty(Constants.PROPERTY_VISIBLE, parentAttrNode.getProperty(Constants.PROPERTY_VISIBLE));
                         newAttrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, parentAttrNode.getProperty(Constants.PROPERTY_ADMINISTRATIVE));
-                        newAttrNode.setProperty(Constants.PROPERTY_MAPPING, parentAttrNode.getProperty(Constants.PROPERTY_MAPPING));
                         newAttrNode.setProperty(Constants.PROPERTY_NO_COPY, parentAttrNode.getProperty(Constants.PROPERTY_NO_COPY));
                         newAttrNode.setProperty(Constants.PROPERTY_UNIQUE, parentAttrNode.getProperty(Constants.PROPERTY_UNIQUE));
                         //newAttrNode.setProperty(PROPERTY_LOCKED, parentAttrNode.getProperty(PROPERTY_LOCKED));
@@ -192,7 +191,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             if (classDefinition.getAttributes() != null) {
                 for (AttributeMetadata at : classDefinition.getAttributes()) {
                     if (getAttribute(classDefinition.getName(), at.getName()) == null){
-                        addAttribute(id, at);
+                        createAttribute(id, at);
                     }
                 }
             }
@@ -200,7 +199,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             cm.putClass(classDefinition);
             return id;
         } catch (Exception ex) {
-            Logger.getLogger("Create class: "+ex.getMessage()); //NOI18N
+            Logger.getLogger("createClass: "+ex.getMessage()); //NOI18N
             tx.failure();
             throw new RuntimeException(ex.getMessage());
         } finally {
@@ -211,7 +210,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     }
 
     /**
-     * Changes a class metadata definition. Attributes are not modified here, only intrinsic class meta data 
+     * Changes a class metadata definition
      * @param newClassDefinition
      * @return true if success
      * @throws MetadataObjectNotFoundException if there is no class with such classId
@@ -264,7 +263,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             if(newClassDefinition.getAttributes() != null ){
                 for (AttributeMetadata attr : newClassDefinition.getAttributes())
                     setAttributeProperties(newClassDefinition.getId(), attr);
-            }         
+            }        
             tx.success();
             cm.removeClass(formerName);
             cm.putClass(Util.createClassMetadataFromNode(classMetadata));
@@ -295,18 +294,18 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
-                        "Can not find a class with id %1s", classId));
+                        "Can not find a class with id %s", classId));
             
             if (!(Boolean)node.getProperty(Constants.PROPERTY_CUSTOM))
                 throw new InvalidArgumentException(String.format(
                         "Core classes can not be deleted"), Level.SEVERE);
             if (node.hasRelationship(RelTypes.INSTANCE_OF))
                 throw new InvalidArgumentException(String.format(
-                        "The class with id %1s has instances and can not be deleted", classId), Level.SEVERE);
+                        "The class with id %s has instances and can not be deleted", classId), Level.SEVERE);
             
             if (node.hasRelationship(Direction.INCOMING, RelTypes.EXTENDS))
                 throw new InvalidArgumentException(String.format(
-                        "The class with id %1s has subclasses and can not be deleted", classId), Level.SEVERE);
+                        "The class with id %s has subclasses and can not be deleted", classId), Level.SEVERE);
             
             //Deletes the attribute nodes and their relationships to the class node
             Iterable<Relationship> attRelationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
@@ -324,7 +323,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             tx.success();
 
         } catch(Exception ex){
-            Logger.getLogger("Delete class: "+ex.getMessage()); //NOI18N
+            Logger.getLogger("deleteClass: "+ex.getMessage()); //NOI18N
             if(tx != null){
                 tx.failure();
             }
@@ -350,15 +349,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
-                        "Can not find a class with name %1s", className));
+                        "Can not find a class with name %s", className));
             
             if (node.hasRelationship(RelTypes.INSTANCE_OF))
                 throw new InvalidArgumentException(String.format(
-                        "The class with name %1s has instances and can not be deleted", className), Level.SEVERE);
+                        "The class with name %s has instances and can not be deleted", className), Level.SEVERE);
             
             if (node.hasRelationship(Direction.INCOMING, RelTypes.EXTENDS))
                 throw new InvalidArgumentException(String.format(
-                        "The class with name %1s has subclasses and can not be deleted", className), Level.SEVERE);
+                        "The class with name %s has subclasses and can not be deleted", className), Level.SEVERE);
             
             //Deletes the attribute nodes and their relationships to the class node
             Iterable<Relationship> attRelationships = node.getRelationships(RelTypes.HAS_ATTRIBUTE);
@@ -376,7 +375,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             tx.success();
 
         } catch(Exception ex){
-            Logger.getLogger("Delete class: "+ex.getMessage()); //NOI18N
+            Logger.getLogger("deleteClass: "+ex.getMessage()); //NOI18N
             if(tx != null){
                 tx.failure();
             }
@@ -402,7 +401,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
 
             if(myClassNode == null){
                 throw new MetadataObjectNotFoundException(String.format(
-                         "Can not find a class with name %1s", Constants.CLASS_INVENTORYOBJECT));
+                         "Can not find a class with name %s", Constants.CLASS_INVENTORYOBJECT));
             }
             String cypherQuery = "START inventory = node:classes({className}) ".concat(
                                  "MATCH inventory <-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-classmetadata ").concat(
@@ -570,18 +569,17 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      */
     @Override
     public ClassMetadata getClass(String className) throws MetadataObjectNotFoundException {
-        ClassMetadata clmt = new ClassMetadata();
         try {
             Node node = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             if (node == null){
                 throw new MetadataObjectNotFoundException(String.format(
                         "Can not find a class with name %s", className));
             }
-            clmt = Util.createClassMetadataFromNode(node);
+            return Util.createClassMetadataFromNode(node);
         } catch (Exception ex) {
             throw new RuntimeException(ex.getMessage());
         }
-        return clmt;
+        
     }
 
     /**
@@ -667,7 +665,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws MetadataObjectNotFoundException if there is no a class with such className
      */
     @Override
-    public void addAttribute(String className, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, OperationNotPermittedException {
+    public void createAttribute(String className, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, OperationNotPermittedException {
         attributeDefinition = Util.createDefaultAttributeMetadata(attributeDefinition);
         Transaction tx = null;
         try {
@@ -693,13 +691,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 classNode.createRelationshipTo(attrNode, RelTypes.HAS_ATTRIBUTE);
 
                 tx.success();
-                Util.addAttribute(classNode, attrNode);
+                Util.createAttribute(classNode, attrNode);
             }else{
                 throw new MetadataObjectNotFoundException(String.format(
                         "Can not create attribute %s, an attribute with that name already exists", attributeDefinition.getName()));
             }
         } catch(Exception ex){
-            Logger.getLogger("addAttribute: "+ex.getMessage()); //NOI18N
+            Logger.getLogger("createAttribute: "+ex.getMessage()); //NOI18N
             if (tx != null){
                 tx.failure();
             }
@@ -718,7 +716,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws MetadataObjectNotFoundException if there is no a class with such classId
      */
     @Override
-    public void addAttribute(long classId, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, OperationNotPermittedException {
+    public void createAttribute(long classId, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, OperationNotPermittedException {
         attributeDefinition = Util.createDefaultAttributeMetadata(attributeDefinition);
         Transaction tx = null;
         try {
@@ -744,13 +742,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 classNode.createRelationshipTo(attrNode, RelTypes.HAS_ATTRIBUTE);
 
                 tx.success();
-                Util.addAttribute(classNode, attrNode);
+                Util.createAttribute(classNode, attrNode);
             }else{
                 throw new MetadataObjectNotFoundException(String.format(
                         "Can not create attribute %s, an attribute with that name already exists", attributeDefinition.getName()));
             }
         } catch(Exception ex){
-            Logger.getLogger("addAttribute: "+ex.getMessage()); //NOI18N
+            Logger.getLogger("createAttribute: "+ex.getMessage()); //NOI18N
             if(tx != null){
                 tx.failure();
             }
@@ -807,7 +805,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Node classNode = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
             if (classNode == null) {
                 throw new MetadataObjectNotFoundException(String.format(
-                        "Can not find a class with id %1s", classId));
+                        "Can not find a class with id %s", classId));
             }
             Iterable<Relationship> relationships = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE);
             for (Relationship relationship : relationships) {
@@ -830,15 +828,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @param newAttributeDefinition
      */
     @Override
-    public void setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException{
+    public void setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException{
         Transaction tx = null;
         Node classNode = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
         
         if (classNode == null)
             throw new MetadataObjectNotFoundException(String.format("Can not find a class with id %s", classId));
         
-        Iterable<Relationship> relationships = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE);
-        for (Relationship relationship : relationships) {
+        for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
             Node attrNode = relationship.getEndNode();
             if (attrNode.getId() == newAttributeDefinition.getId()) {
                 String currentAttributeName = (String)attrNode.getProperty(Constants.PROPERTY_NAME);
@@ -847,7 +844,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     if(newAttributeDefinition.getName() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
                             throw new InvalidArgumentException("Attribute \"name\" can not be renamed", Level.INFO);
-                        attrNode.setProperty(Constants.PROPERTY_NAME, newAttributeDefinition.getName());
                         Util.changeAttributeName(classNode, currentAttributeName, newAttributeDefinition.getName());
                     }
                     if(newAttributeDefinition.getDescription() != null)
@@ -857,8 +853,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     if(newAttributeDefinition.getType() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
                             throw new InvalidArgumentException("Attribute \"name\" can only be a String", Level.INFO);
-                        attrNode.setProperty(Constants.PROPERTY_TYPE, newAttributeDefinition.getType());
-                        Util.changeAttributeType(classNode, currentAttributeName, newAttributeDefinition.getType());
+                        if (AttributeMetadata.isPrimitive((String)attrNode.getProperty(Constants.PROPERTY_TYPE)))
+                            Util.changeAttributeTypeIfPrimitive(classNode, currentAttributeName, newAttributeDefinition.getType());
+                        else
+                            Util.changeAttributeTypeIfListType(classNode, currentAttributeName, newAttributeDefinition.getType());
                     }
                     if(newAttributeDefinition.isReadOnly() != null)
                         attrNode.setProperty(Constants.PROPERTY_READ_ONLY, newAttributeDefinition.isReadOnly());
@@ -868,27 +866,28 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                         attrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
                     if(newAttributeDefinition.isNoCopy() != null)
                         attrNode.setProperty(Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
+                    if(newAttributeDefinition.isUnique() != null)
+                        attrNode.setProperty(Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
                     tx.success();
 
                     //Refresh cache
                     cm.removeClass((String)classNode.getProperty(Constants.PROPERTY_NAME));
                     cm.putClass(Util.createClassMetadataFromNode(classNode));
-                    return;
                 }catch(Exception ex){
                     Logger.getLogger("setAttributeProperties: "+ex.getMessage()); //NOI18N
                     if (tx != null){
                         tx.failure();
                     }
-                    throw new RuntimeException(ex.getMessage());
+                    throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
                 } finally {
-                    if (tx != null){
+                    if (tx != null)
                         tx.finish();
-                    }
+                    return;
                 }
             }
         }//end for
         throw new MetadataObjectNotFoundException(String.format(
-                    "Can not find attribute %s in class with id %s", newAttributeDefinition.getName(), classId));
+                    "Can not find attribute %s in the class with id %s", newAttributeDefinition.getName(), classId));
     }
     /**
      * Changes an attribute definition belonging to a classMetadata
@@ -896,57 +895,61 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @param newAttributeDefinition
      */
     @Override
-    public void setAttributeProperties (String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException{
+    public void setAttributeProperties (String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException {
         Transaction tx = null;
         Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
         
         if (classNode == null)
             throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", className));
         
-        Iterable<Relationship> relationships = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE);
-        for (Relationship relationship : relationships) {
+        for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
             Node attrNode = relationship.getEndNode();
             if (attrNode.getId() == newAttributeDefinition.getId()) {
-                if(!newAttributeDefinition.equals(Util.createAttributeMetadataFromNode(attrNode))){
-                    String oldAttributeName = (String)attrNode.getProperty(Constants.PROPERTY_NAME);
-                    String oldAttributeType = (String)attrNode.getProperty(Constants.PROPERTY_TYPE);
-                    try {
-                        tx = graphDb.beginTx();
-                        if(newAttributeDefinition.getName() != null)
-                            attrNode.setProperty(Constants.PROPERTY_NAME, newAttributeDefinition.getName());
-                        if(newAttributeDefinition.getDescription() != null)
-                            attrNode.setProperty(Constants.PROPERTY_DESCRIPTION, newAttributeDefinition.getDescription());
-                        if(newAttributeDefinition.getDisplayName() != null)
-                            attrNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, newAttributeDefinition.getDisplayName());
-                        if(newAttributeDefinition.getType() != null){
-                            attrNode.setProperty(Constants.PROPERTY_TYPE, newAttributeDefinition.getType());
-                            Util.changeAttributeType(classNode, oldAttributeName, newAttributeDefinition.getType());
-                        }
-                        if(newAttributeDefinition.isReadOnly() != null)
-                            attrNode.setProperty(Constants.PROPERTY_READ_ONLY, newAttributeDefinition.isReadOnly());
-                        if(newAttributeDefinition.isVisible() != null)
-                            attrNode.setProperty(Constants.PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
-                        if(newAttributeDefinition.isAdministrative() != null)
-                            attrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
-                        if(newAttributeDefinition.isNoCopy() != null)
-                            attrNode.setProperty(Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
-                        tx.success();
-                        
-                        //Refresh cache
-                        cm.removeClass(className);
-                        cm.putClass(Util.createClassMetadataFromNode(classNode));
-                        return;
-                    }catch(Exception ex){
-                        Logger.getLogger("setAttributeProperties: "+ex.getMessage()); //NOI18N
-                        if (tx != null){
-                            tx.failure();
-                        }
-                        throw new RuntimeException(ex.getMessage());
-                    } finally {
-                        if (tx != null){
-                            tx.finish();
-                        }
+                String currentAttributeName = (String)attrNode.getProperty(Constants.PROPERTY_NAME);
+                try {
+                    tx = graphDb.beginTx();
+                    if(newAttributeDefinition.getName() != null){
+                        if (currentAttributeName.equals(Constants.PROPERTY_NAME))
+                            throw new InvalidArgumentException("Attribute \"name\" can not be renamed", Level.INFO);
+                        Util.changeAttributeName(classNode, currentAttributeName, newAttributeDefinition.getName());
                     }
+                    if(newAttributeDefinition.getDescription() != null)
+                        attrNode.setProperty(Constants.PROPERTY_DESCRIPTION, newAttributeDefinition.getDescription());
+                    if(newAttributeDefinition.getDisplayName() != null)
+                        attrNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, newAttributeDefinition.getDisplayName());
+                    if(newAttributeDefinition.getType() != null){
+                        if (currentAttributeName.equals(Constants.PROPERTY_NAME))
+                            throw new InvalidArgumentException("Attribute \"name\" can only be a String", Level.INFO);
+                        if (AttributeMetadata.isPrimitive((String)attrNode.getProperty(Constants.PROPERTY_TYPE)))
+                            Util.changeAttributeTypeIfPrimitive(classNode, currentAttributeName, newAttributeDefinition.getType());
+                        else
+                            Util.changeAttributeTypeIfListType(classNode, currentAttributeName, newAttributeDefinition.getType());
+                    }
+                    if(newAttributeDefinition.isReadOnly() != null)
+                        attrNode.setProperty(Constants.PROPERTY_READ_ONLY, newAttributeDefinition.isReadOnly());
+                    if(newAttributeDefinition.isVisible() != null)
+                        attrNode.setProperty(Constants.PROPERTY_VISIBLE, newAttributeDefinition.isVisible());
+                    if(newAttributeDefinition.isAdministrative() != null)
+                        attrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, newAttributeDefinition.isAdministrative());
+                    if(newAttributeDefinition.isNoCopy() != null)
+                        attrNode.setProperty(Constants.PROPERTY_NO_COPY, newAttributeDefinition.isNoCopy());
+                    if(newAttributeDefinition.isUnique() != null)
+                        attrNode.setProperty(Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
+                    tx.success();
+
+                    //Refresh cache
+                    cm.removeClass((String)classNode.getProperty(Constants.PROPERTY_NAME));
+                    cm.putClass(Util.createClassMetadataFromNode(classNode));
+                }catch(Exception ex){
+                    Logger.getLogger("setAttributeProperties: "+ex.getMessage()); //NOI18N
+                    if (tx != null){
+                        tx.failure();
+                    }
+                    throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
+                } finally {
+                    if (tx != null)
+                        tx.finish();
+                    return;
                 }
             }
         }//end for

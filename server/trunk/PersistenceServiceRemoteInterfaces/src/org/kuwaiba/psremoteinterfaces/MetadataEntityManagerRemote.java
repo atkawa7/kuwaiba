@@ -139,7 +139,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public void addAttribute(String className, AttributeMetadata attributeDefinition) throws RemoteException, MetadataObjectNotFoundException, OperationNotPermittedException;
+    public void createAttribute(String className, AttributeMetadata attributeDefinition) throws RemoteException, MetadataObjectNotFoundException, OperationNotPermittedException;
     /**
      * See Persistence Abstraction API documentation
      * @param classId
@@ -147,7 +147,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public void addAttribute(long classId, AttributeMetadata attributeDefinition) throws RemoteException, MetadataObjectNotFoundException, OperationNotPermittedException;
+    public void createAttribute(long classId, AttributeMetadata attributeDefinition) throws RemoteException, MetadataObjectNotFoundException, OperationNotPermittedException;
 
     /**
      * See Persistence Abstraction API documentation
@@ -174,7 +174,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public void setAttributeProperties (long classId, AttributeMetadata newAttributeDefinition) throws RemoteException, MetadataObjectNotFoundException;
+    public void setAttributeProperties (long classId, AttributeMetadata newAttributeDefinition) throws RemoteException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * See Persistence Abstraction API documentation
@@ -183,7 +183,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public void setAttributeProperties (String className, AttributeMetadata newAttributeDefinition) throws RemoteException, MetadataObjectNotFoundException;
+    public void setAttributeProperties (String className, AttributeMetadata newAttributeDefinition) throws RemoteException, MetadataObjectNotFoundException, InvalidArgumentException;
     /**
      * See Persistence Abstraction API documentation
      * @param className
