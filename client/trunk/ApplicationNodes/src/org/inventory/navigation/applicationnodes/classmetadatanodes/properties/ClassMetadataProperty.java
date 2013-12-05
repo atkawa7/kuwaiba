@@ -75,7 +75,7 @@ public class ClassMetadataProperty extends ReadWrite {
                 node.propertyChange(new PropertyChangeEvent(this, Constants.PROPERTY_NAME, null, value));
             }
             
-            Cache.getInstace().removeMeta(node.getName());
+            Cache.getInstace().resetAll();
             
         }catch(Exception e){
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);

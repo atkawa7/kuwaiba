@@ -65,8 +65,8 @@ public class Cache{
         return instance;
     }
 
-    public void setRootClass(Long _rootClassId){
-        this.rootClassId = _rootClassId;
+    public void setRootClass(Long rootClassId){
+        this.rootClassId = rootClassId;
     }
 
     public Long getRootClass(){
@@ -201,5 +201,12 @@ public class Cache{
      */
     public void resetMetadataIndex(){
         metadataIndex.clear();
+    }
+    
+    public void resetAll(){
+        listIndex.clear();
+        possibleChildrenIndex.clear();
+        metadataIndex.clear();
+        lightMetadataIndex.clear();
     }
 }

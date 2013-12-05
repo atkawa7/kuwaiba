@@ -64,11 +64,10 @@ public class AttributeMetadataProperty extends PropertySupport.ReadWrite {
             this.value = t;
 
             //Force a cache reload
-            Cache.getInstace().removeMeta(node.getClassNode().getName());
+            Cache.getInstace().resetAll();
             //Refresh the class node
             node.getClassNode().refresh();
-            
-            nu.showStatusMessage("Attribute updated successfully", true);
+            nu.showSimplePopup("Attribute Property Update", NotificationUtil.INFO, "Attribute updated successfully");
         }else
             nu.showSimplePopup("Attribute Property Update", NotificationUtil.ERROR, com.getError());
     }
