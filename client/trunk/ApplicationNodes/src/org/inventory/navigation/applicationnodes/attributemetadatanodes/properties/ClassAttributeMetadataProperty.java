@@ -18,8 +18,8 @@ package org.inventory.navigation.applicationnodes.attributemetadatanodes.propert
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
 import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
-import org.inventory.core.services.utils.Constants;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.customeditor.AttributeEditorSupport;
+import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
 import org.openide.nodes.PropertySupport;
 
 /**
@@ -28,22 +28,18 @@ import org.openide.nodes.PropertySupport;
  */
 public class ClassAttributeMetadataProperty extends PropertySupport.ReadWrite {
 
-    private Object value;
+    private ClassMetadataNode classNode;
     private LocalAttributeMetadata attributeMetadata;
-    private long classId;
     
-    public ClassAttributeMetadataProperty(String name, Class valueType, Object value,
-            String displayName,String toolTextTip, LocalAttributeMetadata attributeMetadata, long classId) {
-        super(name,valueType,displayName,toolTextTip);
-        setName(name);
-        this.value = value;
+    public ClassAttributeMetadataProperty(LocalAttributeMetadata attributeMetadata, ClassMetadataNode classNode) {
+        super(attributeMetadata.getName(), String.class, attributeMetadata.getDisplayName(), "Click on the button to edit");
         this.attributeMetadata = attributeMetadata;
-        this.classId = classId;
+        this.classNode = classNode;
     }
     
     @Override
     public Object getValue() throws IllegalAccessException, InvocationTargetException {
-        return this.value;
+        return "[Click on the button to edit]";
     }
     
     @Override
@@ -53,15 +49,18 @@ public class ClassAttributeMetadataProperty extends PropertySupport.ReadWrite {
     
     @Override
     public PropertyEditor getPropertyEditor(){
-        return new AttributeEditorSupport(attributeMetadata, classId);
+        return new AttributeEditorSupport(this);
     }
 
-    @Override
-    public boolean canWrite(){
-        //The atribute "name" can't be modified in any way to avoid future problems
-        if (getName().equals(Constants.PROPERTY_NAME))
-            return false;
-        else
-            return true;
+    public LocalAttributeMetadata getAttributeMetadata() {
+        return attributeMetadata;
+    }
+
+    public void setAttributeMetadata(LocalAttributeMetadata attributeMetadata) {
+        this.attributeMetadata = attributeMetadata;
+    }
+
+    public ClassMetadataNode getClassNode() {
+        return classNode;
     }
 }

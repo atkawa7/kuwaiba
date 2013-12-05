@@ -15,11 +15,11 @@
  */
 package org.inventory.navigation.applicationnodes.attributemetadatanodes;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.utils.Constants;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.properties.AttributeMetadataProperty;
+import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Sheet;
@@ -29,18 +29,18 @@ import org.openide.util.lookup.Lookups;
  * Represents an attribute as a node within the data model manager
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class AttributeMetadataNode extends AbstractNode implements PropertyChangeListener{
+public class AttributeMetadataNode extends AbstractNode  {
     
     static final String ICON_PATH = "org/inventory/customization/attributecustomizer/res/flag-blue.png";
     private LocalAttributeMetadata attribute;
+    private ClassMetadataNode classNode;
     private Sheet sheet;
-    private long classId;
 
-    public AttributeMetadataNode(LocalAttributeMetadata lam, long classId) {
+    public AttributeMetadataNode(LocalAttributeMetadata lam, ClassMetadataNode classNode) {
         super(Children.LEAF,Lookups.singleton(lam));
         setIconBaseWithExtension(ICON_PATH);
         this.attribute = lam;
-        this.classId = classId;
+        this.classNode = classNode;
     }
 
     @Override
@@ -54,38 +54,36 @@ public class AttributeMetadataNode extends AbstractNode implements PropertyChang
         
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet();
 
-        generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"), 
-                attribute.getName(),this,classId));
+        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"), 
+                attribute.getName(),this,classNode.getClassMetadata().getOid()));
         
-        generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME"), 
-                attribute.getDisplayName(),this,classId));
+        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_DISPLAYNAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME"), 
+                attribute.getDisplayName(),this,classNode.getClassMetadata().getOid()));
         
-        generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"), 
-                attribute.getDescription(),this,classId));
+        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_DESCRIPTION, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"), 
+                attribute.getDescription(),this,classNode.getClassMetadata().getOid()));
         
-        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_TYPE, 
-                attribute.getType(),this,classId));
+        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_TYPE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TYPE"), 
+               (attribute.getType() == LocalObjectLight.class) ? this.attribute.getListAttributeClassName() : attribute.getType().getSimpleName(),this, classNode.getClassMetadata().getOid()));
         
-        generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_VISIBLE"), 
-                attribute.isVisible(),this,classId));
+        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_VISIBLE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_VISIBLE"), 
+                attribute.isVisible(),this,classNode.getClassMetadata().getOid()));
         
-        generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ADMINISTRATIVE"), 
-                attribute.isAdministrative(),this,classId));
+        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_ADMINISTRATIVE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_ADMINISTRATIVE"), 
+                attribute.isAdministrative(),this,classNode.getClassMetadata().getOid()));
 
 //      Commented out for now 
 //      generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_UNIQUE"), 
 //              attribute.isUnique(),this,classId));
         
-        generalPropertySet.put(new AttributeMetadataProperty(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_COPY"), 
-                attribute.isNoCopy(),this,classId));
+        generalPropertySet.put(new AttributeMetadataProperty(Constants.PROPERTY_NOCOPY, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NO_COPY"), 
+                attribute.isNoCopy(),this,classNode.getClassMetadata().getOid()));
                 
         generalPropertySet.setName("1");
 
         generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
 
-        
         sheet.put(generalPropertySet);
-        
         return sheet;  
     }
 
@@ -96,24 +94,17 @@ public class AttributeMetadataNode extends AbstractNode implements PropertyChang
     }
    
     public boolean refresh(){
-        //LocalAttributeMetadata attributeMetadataRefresh = null;
-        
-//        if(attributeMetadataRefresh == null)
-//            return false;
-        
         if (this.sheet != null)
             setSheet(createSheet());
         
         return true;
     }
    
-    public LocalAttributeMetadata getObject(){
+    public LocalAttributeMetadata getAttributeMetadata(){
         return attribute;
     }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
     
+    public ClassMetadataNode getClassNode(){
+        return classNode;
+    }
 }

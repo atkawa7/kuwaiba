@@ -19,10 +19,9 @@ import java.awt.Component;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.beans.PropertyEditorSupport;
-import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.AttributeMetadataNode;
+import org.inventory.navigation.applicationnodes.attributemetadatanodes.properties.ClassAttributeMetadataProperty;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
 import org.openide.explorer.propertysheet.PropertyEnv;
 import org.openide.explorer.propertysheet.PropertySheetView;
@@ -33,7 +32,7 @@ import org.openide.util.Lookup;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class AttributeEditorSupport extends PropertyEditorSupport
-    implements ExPropertyEditor{
+    implements ExPropertyEditor {
     
     /**
      * A reference to the notification mechanism
@@ -41,25 +40,17 @@ public class AttributeEditorSupport extends PropertyEditorSupport
     private NotificationUtil nu;
 
     /**
-     * PropertyEnv instance
-     */
-    private PropertyEnv env;
-    /**
      * Reference to the AttributeMetadataProperty
      */
-    private LocalAttributeMetadata lam;
+    private ClassAttributeMetadataProperty parentProperty;
     /**
      * Reference to de CommunicationsStub singleton instance
      */
-    private CommunicationsStub com;
     private PropertySheetView psv;
-    private long classId;
     
 
-    public AttributeEditorSupport(LocalAttributeMetadata lam, long classId) {
-        this.lam = lam;
-        this.com = CommunicationsStub.getInstance();
-        this.classId = classId;
+    public AttributeEditorSupport(ClassAttributeMetadataProperty parentProperty) {
+        this.parentProperty = parentProperty;
         this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
     }
     
@@ -70,31 +61,29 @@ public class AttributeEditorSupport extends PropertyEditorSupport
     
     @Override
     public Component getCustomEditor(){
-        //if (psv == null ){
-            this.psv = new PropertySheetView();
-            
-            psv.addComponentListener(new ComponentListener() {
+        this.psv = new PropertySheetView();
 
-                @Override
-                public void componentResized(ComponentEvent e) {
-                    //setNodes can't be called until the component is added to the component containment hierarchy and fully resized
-                    psv.setNodes(new AttributeMetadataNode[]{new AttributeMetadataNode(lam,classId)});
-                }
+        psv.addComponentListener(new ComponentListener() {
 
-                @Override
-                public void componentMoved(ComponentEvent e) {
-                }
+            @Override
+            public void componentResized(ComponentEvent e) {
+                //setNodes can't be called until the component is added to the component containment hierarchy and fully resized
+                psv.setNodes(new AttributeMetadataNode[]{new AttributeMetadataNode(parentProperty.getAttributeMetadata(), parentProperty.getClassNode())});
+            }
 
-                @Override
-                public void componentShown(ComponentEvent e) {
-                }
+            @Override
+            public void componentMoved(ComponentEvent e) {
+            }
 
-                @Override
-                public void componentHidden(ComponentEvent e) {
-                }
-            });
-            return psv;
-        //}else return psv;
+            @Override
+            public void componentShown(ComponentEvent e) {
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+            }
+        });
+        return psv;
     }
     
     @Override
@@ -110,7 +99,5 @@ public class AttributeEditorSupport extends PropertyEditorSupport
     
     @Override
     public void attachEnv(PropertyEnv pe) {
-        //this.env = pe;
-        //this.env.addVetoableChangeListener(this);
     }
 }

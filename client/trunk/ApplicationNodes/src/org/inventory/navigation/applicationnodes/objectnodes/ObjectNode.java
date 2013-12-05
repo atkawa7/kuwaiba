@@ -125,7 +125,12 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     
     @Override
     public String getDisplayName(){
-        String className = CommunicationsStub.getInstance().getMetaForClass(object.getClassName(),false).getDisplayName();
+        String className;
+        LocalClassMetadata aClass = CommunicationsStub.getInstance().getMetaForClass(object.getClassName(),false);
+        if (aClass == null) //This is rare, but may happen. The cached object metadata is not synchronized with the server's due to a data model change
+            className = "";
+        else
+            className = aClass.getDisplayName();
         return getEditableText() + " ["+(className==null?object.getClassName():className)+"]";
     }
 

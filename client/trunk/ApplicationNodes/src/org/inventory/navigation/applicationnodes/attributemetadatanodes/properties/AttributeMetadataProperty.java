@@ -18,8 +18,8 @@ package org.inventory.navigation.applicationnodes.attributemetadatanodes.propert
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.caching.Cache;
 import org.inventory.core.services.utils.Constants;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.AttributeMetadataNode;
 import org.openide.nodes.PropertySupport;
@@ -35,20 +35,16 @@ public class AttributeMetadataProperty extends PropertySupport.ReadWrite {
     private AttributeMetadataNode node;
     private long classId;
 
-    public AttributeMetadataProperty(String name, Object value,
-            AttributeMetadataNode node, long classId) {
-        super(name,value.getClass(),name,name);
+    public AttributeMetadataProperty(String name, String displayName, Object value, AttributeMetadataNode node, long classId) {
+        super(name,value.getClass(),displayName,name);
         this.value = value;
         this.node = node;
         this.classId = classId;
     }
-
+    
     @Override
     public Object getValue() throws IllegalAccessException, InvocationTargetException {
-        if (this.value == LocalObjectLight.class) //It's a list type
-            return node.getObject().getListAttributeClassName();
-        else
-            return this.value;
+        return value;
     }
 
     @Override
@@ -56,7 +52,7 @@ public class AttributeMetadataProperty extends PropertySupport.ReadWrite {
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         CommunicationsStub com = CommunicationsStub.getInstance();
 
-        if(com.setAttributeProperties(classId, node.getObject().getId(), getName().equals(Constants.PROPERTY_NAME) ? (String)t : null, 
+        if(com.setAttributeProperties(classId, node.getAttributeMetadata().getId(), getName().equals(Constants.PROPERTY_NAME) ? (String)t : null, 
                 getName().equals(Constants.PROPERTY_DISPLAYNAME) ? (String)t : null, 
                 getName().equals(Constants.PROPERTY_TYPE) ? (String)t : null, 
                 getName().equals(Constants.PROPERTY_DESCRIPTION) ? (String)t : null, 
@@ -66,8 +62,12 @@ public class AttributeMetadataProperty extends PropertySupport.ReadWrite {
                 getName().equals(Constants.PROPERTY_NOCOPY) ? (Boolean)t : null,
                 getName().equals(Constants.PROPERTY_UNIQUE) ? (Boolean)t : null)){
             this.value = t;
-            //Refresh the cache
-            com.getMetaForClass(classId, true);
+
+            //Force a cache reload
+            Cache.getInstace().removeMeta(node.getClassNode().getName());
+            //Refresh the class node
+            node.getClassNode().refresh();
+            
             nu.showStatusMessage("Attribute updated successfully", true);
         }else
             nu.showSimplePopup("Attribute Property Update", NotificationUtil.ERROR, com.getError());
@@ -75,12 +75,8 @@ public class AttributeMetadataProperty extends PropertySupport.ReadWrite {
     
     @Override
     public PropertyEditor getPropertyEditor(){
-        if (getName().equals(Constants.PROPERTY_TYPE)){
-            if (this.value == LocalObjectLight.class) //It's a list type
-                return new ListAttributeMetadataProperty(node.getObject().getListAttributeClassName());
-            else
-                return new ListAttributeMetadataProperty(((Class)this.value).getName());
-        }
+        if (getName().equals(Constants.PROPERTY_TYPE))
+            return new ListAttributeMetadataProperty((String)this.value);
         else
             return super.getPropertyEditor();
     }
@@ -88,5 +84,5 @@ public class AttributeMetadataProperty extends PropertySupport.ReadWrite {
     @Override
     public boolean canWrite(){
         return true;
-    }
+    }   
 }

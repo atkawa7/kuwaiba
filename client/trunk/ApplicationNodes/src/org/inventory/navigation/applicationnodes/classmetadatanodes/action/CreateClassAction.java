@@ -47,7 +47,7 @@ public class CreateClassAction extends AbstractAction {
    
     @Override
     public void actionPerformed(ActionEvent ae) {
-        String className = java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_CLASS") + new Random().nextInt(10000);
+        String className = "NewClass" + new Random().nextInt(10000); //NOI8N
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         long classId = com.createClassMetadata(className, 
                                                               "","", node.getName(), true, true, 0, false, true);

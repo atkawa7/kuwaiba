@@ -193,12 +193,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
         
         if(attributes != null){
             for (LocalAttributeMetadata localAttributeMetadata : attributes){
-                ClassAttributeMetadataProperty attrPrprt =  new ClassAttributeMetadataProperty(
-                                                                localAttributeMetadata.getName(), String.class, 
-                                                                "Click on the button to edit", 
-                                                                localAttributeMetadata.getDisplayName(), 
-                                                                localAttributeMetadata.getName(), 
-                                                                localAttributeMetadata, classMetadata.getOid());
+                ClassAttributeMetadataProperty attrPrprt =  new ClassAttributeMetadataProperty(localAttributeMetadata, this);
                 attributePropertySet.put(attrPrprt);
             }
         }
