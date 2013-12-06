@@ -29,6 +29,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,7 +48,6 @@ import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
-import org.kuwaiba.persistenceservice.caching.CacheManager;
 import org.kuwaiba.persistenceservice.impl.RelTypes;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -285,24 +285,6 @@ public class Util {
         }
 
         return classDefinition;
-    }
-
-    /**
-     * Creates default values for a AttirbuteMetadata
-     * @param AttributeMetadata
-     * @return
-     */
-    public static AttributeMetadata createDefaultAttributeMetadata(AttributeMetadata AttributeDefinition) throws MetadataObjectNotFoundException{
-        //Integer mapping = null;
-        if(AttributeDefinition.getName() == null)
-            throw new MetadataObjectNotFoundException("Can not create an attribute without a name");
-        if(AttributeDefinition.getDisplayName() == null)
-            AttributeDefinition.setDisplayName("");
-        if(AttributeDefinition.getDescription() == null)
-            AttributeDefinition.setDescription("");
-        if(AttributeDefinition.getType() == null)
-            AttributeDefinition.setType("");
-        return AttributeDefinition;
     }
 
     public static CategoryMetadata createDefaultCategoryMetadata(CategoryMetadata categoryDefinition) throws MetadataObjectNotFoundException{
@@ -719,37 +701,35 @@ public class Util {
             return null;
         return (String)aClass.iterator().next().getEndNode().getProperty(Constants.PROPERTY_NAME);
     }
-    
-    public static boolean isAttributeName(Node node, AttributeMetadata attribute){
-        ClassMetadata classMetadata = createClassMetadataFromNode(node);
-        List<AttributeMetadata> attributes = classMetadata.getAttributes();
-        for (AttributeMetadata attributeMetadata : attributes){
-            if(attributeMetadata.getName().equals(attribute.getName()))
-                return true;
-        }
-       return false;
-    }
-    
-    public static void createAttribute(Node classNode, Node attributeNode) throws MetadataObjectNotFoundException{
-        final TraversalDescription TRAVERSAL = Traversal.description().
+       
+    public static void createAttribute(Node classNode, AttributeMetadata attributeDefinition) throws InvalidArgumentException{
+            final TraversalDescription UPDATE_TRAVERSAL = Traversal.description().
                     breadthFirst().
-                    relationships(RelTypes.EXTENDS, Direction.INCOMING).
-                    relationships(RelTypes.INSTANCE_OF, Direction.INCOMING).
-                    evaluator(Evaluators.excludeStartPosition());
-        
-        for(Path p : TRAVERSAL.traverse(classNode)){
-            if(!p.endNode().hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)){
-                for (Relationship attrRel: p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING)){
-                    if(attrRel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(
-                            attributeNode.getProperty(Constants.PROPERTY_NAME))){
-                        throw new MetadataObjectNotFoundException(String.format(
-                        "Can not create the attribute, an attribute with the name %s already exists", 
-                        attributeNode.getProperty(Constants.PROPERTY_NAME)));
-                    }   
-                }
-                p.endNode().createRelationshipTo(attributeNode, RelTypes.HAS_ATTRIBUTE);               
+                    relationships(RelTypes.EXTENDS, Direction.INCOMING);
+
+        for(Path p : UPDATE_TRAVERSAL.traverse(classNode)){
+            String currentClassName = (String) p.endNode().getProperty(Constants.PROPERTY_NAME);
+            for(Relationship rel : p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE)){
+                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeDefinition.getName()))
+                    throw new InvalidArgumentException(String.format("Class %s already has an attribute named %s", 
+                            currentClassName, attributeDefinition.getName()), Level.INFO);
+                
             }
-        }//end for
+            
+            Node attrNode = classNode.getGraphDatabase().createNode();
+            attrNode.setProperty(Constants.PROPERTY_NAME, attributeDefinition.getName()); //This should not be null. That should be checked in the caller
+            attrNode.setProperty(Constants.PROPERTY_DESCRIPTION, attributeDefinition.getDescription() ==  null ? "" : attributeDefinition.getDescription());
+            attrNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, attributeDefinition.getDisplayName() == null ? "" : attributeDefinition.getDisplayName());
+            attrNode.setProperty(Constants.PROPERTY_TYPE, attributeDefinition.getType() == null ? "String" : attributeDefinition.getType());
+            attrNode.setProperty(Constants.PROPERTY_READ_ONLY, attributeDefinition.isReadOnly() == null ? false : attributeDefinition.isReadOnly());
+            attrNode.setProperty(Constants.PROPERTY_VISIBLE, attributeDefinition.isVisible() == null ? true : attributeDefinition.isVisible());
+            attrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, attributeDefinition.isAdministrative() == null ? false : attributeDefinition.isAdministrative());
+            attrNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+            attrNode.setProperty(Constants.PROPERTY_NO_COPY, attributeDefinition.isNoCopy() == null ? false : attributeDefinition.isNoCopy());
+            attrNode.setProperty(Constants.PROPERTY_UNIQUE, attributeDefinition.isUnique() == null ? false : attributeDefinition.isUnique());
+
+            p.endNode().createRelationshipTo(attrNode, RelTypes.HAS_ATTRIBUTE);
+        }
     }
     
     /**
@@ -881,7 +861,7 @@ public class Util {
         }
     }
     
-    public static void deleteAttribute(Node classNode, String attributeName){
+    public static void deleteAttributeIfPrimitive(Node classNode, String attributeName){
         final TraversalDescription TRAVERSAL = Traversal.description().
                     breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
         
@@ -897,6 +877,28 @@ public class Util {
             for(Relationship rel : p.endNode().getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING)){
                 if(rel.getStartNode().hasProperty(attributeName))
                     rel.getStartNode().removeProperty(attributeName);
+            }           
+        }//end for
+    }
+    
+    public static void deleteAttributeIfListType(Node classNode, String attributeName){
+        final TraversalDescription TRAVERSAL = Traversal.description().
+                    breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
+        
+        for(Path p : TRAVERSAL.traverse(classNode)){
+            for(Relationship rel : p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE)) {
+                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
+                    rel.getEndNode().delete();
+                    rel.delete();
+                    break;
+                }
+            }
+            
+            for(Relationship rel : p.endNode().getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING)){
+                for (Relationship relatedElement : rel.getStartNode().getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO, RelTypes.RELATED_TO_SPECIAL)){
+                    if(relatedElement.getProperty(Constants.PROPERTY_NAME).equals(attributeName))
+                        relatedElement.delete();
+                }
             }           
         }//end for
     }

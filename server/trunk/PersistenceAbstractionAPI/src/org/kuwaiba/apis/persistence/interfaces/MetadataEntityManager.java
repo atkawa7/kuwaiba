@@ -144,17 +144,19 @@ public interface MetadataEntityManager {
      * Adds an attribute to the class
      * @param className
      * @param attributeDefinition
-     * @throws ClassNotFoundException if there is no a class with such className
+     * @throws MetadataObjectNotFoundException if there is no a class with such className
+     * @throws InvalidArgumentException if any of the parameters to create the attribute has a wrong value
      */
-    public void createAttribute(String className, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, OperationNotPermittedException;
+    public void createAttribute(String className, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Adds an attribute to a class
      * @param classId
      * @param attributeDefinition
-     * @throws ClassNotFoundException if there is no a class with such classId
+     * @throws MetadataObjectNotFoundException if there is no a class with such classId
+     * @throws InvalidArgumentException if any of the parameters to create the attribute has a wrong value
      */
-    public void createAttribute(long classId, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, OperationNotPermittedException;
+    public void createAttribute(long classId, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Gets an attribute belonging to a class
