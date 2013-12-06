@@ -27,7 +27,7 @@ import org.openide.util.Lookup;
  * Deletes a pool
  * @author Charles Edward Bedon Cortazar <charles.bedon@neotropic.co>
  */
-public class DeletePool extends AbstractAction{
+public class DeletePoolAction extends AbstractAction{
     /**
      * Reference to the communications stub singleton
      */
@@ -37,7 +37,7 @@ public class DeletePool extends AbstractAction{
      */
     private PoolNode pn;
 
-    public DeletePool(PoolNode pn){
+    public DeletePoolAction(PoolNode pn){
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE"));
         com = CommunicationsStub.getInstance();
         this.pn = pn;

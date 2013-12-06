@@ -34,7 +34,7 @@ import org.openide.util.Lookup;
  * Creates a new pool
  * @author Charles Edward Bedon Cortazar <charles.bedon@neotropic.co>
  */
-public class NewPool extends AbstractAction{
+public class NewPoolAction extends AbstractAction{
     /**
      * Reference to the communications stub singleton
      */
@@ -44,7 +44,7 @@ public class NewPool extends AbstractAction{
      */
     private PoolRootNode prn;
 
-    public NewPool(PoolRootNode prn){
+    public NewPoolAction(PoolRootNode prn){
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_POOL"));
         com = CommunicationsStub.getInstance();
         this.prn = prn;

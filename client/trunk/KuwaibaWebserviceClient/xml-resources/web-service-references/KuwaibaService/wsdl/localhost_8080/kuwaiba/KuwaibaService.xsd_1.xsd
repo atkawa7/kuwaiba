@@ -4,14 +4,6 @@
 
 <xs:element name="Exception" type="tns:Exception"/>
 
-<xs:element name="addAttribute" type="tns:addAttribute"/>
-
-<xs:element name="addAttributeForClassWithId" type="tns:addAttributeForClassWithId"/>
-
-<xs:element name="addAttributeForClassWithIdResponse" type="tns:addAttributeForClassWithIdResponse"/>
-
-<xs:element name="addAttributeResponse" type="tns:addAttributeResponse"/>
-
 <xs:element name="addPossibleChildren" type="tns:addPossibleChildren"/>
 
 <xs:element name="addPossibleChildrenForClassWithId" type="tns:addPossibleChildrenForClassWithId"/>
@@ -27,6 +19,14 @@
 <xs:element name="copyObjects" type="tns:copyObjects"/>
 
 <xs:element name="copyObjectsResponse" type="tns:copyObjectsResponse"/>
+
+<xs:element name="createAttribute" type="tns:createAttribute"/>
+
+<xs:element name="createAttributeForClassWithId" type="tns:createAttributeForClassWithId"/>
+
+<xs:element name="createAttributeForClassWithIdResponse" type="tns:createAttributeForClassWithIdResponse"/>
+
+<xs:element name="createAttributeResponse" type="tns:createAttributeResponse"/>
 
 <xs:element name="createClass" type="tns:createClass"/>
 
@@ -532,26 +532,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="addAttributeForClassWithId">
-<xs:sequence>
-<xs:element name="classId" type="xs:long"/>
-<xs:element name="name" type="xs:string" minOccurs="0"/>
-<xs:element name="displayName" type="xs:string" minOccurs="0"/>
-<xs:element name="type" type="xs:string" minOccurs="0"/>
-<xs:element name="description" type="xs:string" minOccurs="0"/>
-<xs:element name="administrative" type="xs:boolean"/>
-<xs:element name="visible" type="xs:boolean"/>
-<xs:element name="readOnly" type="xs:boolean"/>
-<xs:element name="noCopy" type="xs:boolean"/>
-<xs:element name="unique" type="xs:boolean"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="addAttributeForClassWithIdResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="deleteAttributeForClassWithId">
 <xs:sequence>
 <xs:element name="classId" type="xs:long"/>
@@ -928,26 +908,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="addAttribute">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="name" type="xs:string" minOccurs="0"/>
-<xs:element name="displayName" type="xs:string" minOccurs="0"/>
-<xs:element name="type" type="xs:string" minOccurs="0"/>
-<xs:element name="description" type="xs:string" minOccurs="0"/>
-<xs:element name="administrative" type="xs:boolean"/>
-<xs:element name="visible" type="xs:boolean"/>
-<xs:element name="readOnly" type="xs:boolean"/>
-<xs:element name="noCopy" type="xs:boolean"/>
-<xs:element name="unique" type="xs:boolean"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="addAttributeResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="createListTypeItem">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
@@ -1011,17 +971,17 @@
 
 <xs:complexType name="attributeInfo">
 <xs:sequence>
-<xs:element name="administrative" type="xs:boolean"/>
+<xs:element name="administrative" type="xs:boolean" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="displayName" type="xs:string" minOccurs="0"/>
 <xs:element name="id" type="xs:long"/>
-<xs:element name="locked" type="xs:boolean"/>
+<xs:element name="locked" type="xs:boolean" minOccurs="0"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
-<xs:element name="noCopy" type="xs:boolean"/>
-<xs:element name="readOnly" type="xs:boolean"/>
+<xs:element name="noCopy" type="xs:boolean" minOccurs="0"/>
+<xs:element name="readOnly" type="xs:boolean" minOccurs="0"/>
 <xs:element name="type" type="xs:string" minOccurs="0"/>
-<xs:element name="unique" type="xs:boolean"/>
-<xs:element name="visible" type="xs:boolean"/>
+<xs:element name="unique" type="xs:boolean" minOccurs="0"/>
+<xs:element name="visible" type="xs:boolean" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -1238,6 +1198,26 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="createAttribute">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="displayName" type="xs:string" minOccurs="0"/>
+<xs:element name="type" type="xs:string" minOccurs="0"/>
+<xs:element name="description" type="xs:string" minOccurs="0"/>
+<xs:element name="administrative" type="xs:boolean"/>
+<xs:element name="visible" type="xs:boolean"/>
+<xs:element name="readOnly" type="xs:boolean"/>
+<xs:element name="noCopy" type="xs:boolean"/>
+<xs:element name="unique" type="xs:boolean"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createAttributeResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="getObjectRelatedViews">
 <xs:sequence>
 <xs:element name="oid" type="xs:long"/>
@@ -1281,6 +1261,26 @@
 </xs:complexType>
 
 <xs:complexType name="setUserPropertiesResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="createAttributeForClassWithId">
+<xs:sequence>
+<xs:element name="classId" type="xs:long"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="displayName" type="xs:string" minOccurs="0"/>
+<xs:element name="type" type="xs:string" minOccurs="0"/>
+<xs:element name="description" type="xs:string" minOccurs="0"/>
+<xs:element name="administrative" type="xs:boolean"/>
+<xs:element name="visible" type="xs:boolean"/>
+<xs:element name="readOnly" type="xs:boolean"/>
+<xs:element name="noCopy" type="xs:boolean"/>
+<xs:element name="unique" type="xs:boolean"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createAttributeForClassWithIdResponse">
 <xs:sequence/>
 </xs:complexType>
 

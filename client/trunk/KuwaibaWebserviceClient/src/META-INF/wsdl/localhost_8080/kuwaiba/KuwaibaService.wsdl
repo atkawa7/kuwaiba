@@ -46,12 +46,6 @@
 <message name="createGroupResponse">
 <part name="parameters" element="tns:createGroupResponse"/>
 </message>
-<message name="addAttribute">
-<part name="parameters" element="tns:addAttribute"/>
-</message>
-<message name="addAttributeResponse">
-<part name="parameters" element="tns:addAttributeResponse"/>
-</message>
 <message name="getGroups">
 <part name="parameters" element="tns:getGroups"/>
 </message>
@@ -81,6 +75,12 @@
 </message>
 <message name="createObjectResponse">
 <part name="parameters" element="tns:createObjectResponse"/>
+</message>
+<message name="createAttribute">
+<part name="parameters" element="tns:createAttribute"/>
+</message>
+<message name="createAttributeResponse">
+<part name="parameters" element="tns:createAttributeResponse"/>
 </message>
 <message name="copyObjects">
 <part name="parameters" element="tns:copyObjects"/>
@@ -418,11 +418,11 @@
 <message name="getAttributeForClassWithIdResponse">
 <part name="parameters" element="tns:getAttributeForClassWithIdResponse"/>
 </message>
-<message name="addAttributeForClassWithId">
-<part name="parameters" element="tns:addAttributeForClassWithId"/>
+<message name="createAttributeForClassWithId">
+<part name="parameters" element="tns:createAttributeForClassWithId"/>
 </message>
-<message name="addAttributeForClassWithIdResponse">
-<part name="parameters" element="tns:addAttributeForClassWithIdResponse"/>
+<message name="createAttributeForClassWithIdResponse">
+<part name="parameters" element="tns:createAttributeForClassWithIdResponse"/>
 </message>
 <message name="setAttributePropertiesForClassWithId">
 <part name="parameters" element="tns:setAttributePropertiesForClassWithId"/>
@@ -491,11 +491,6 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createGroupResponse" message="tns:createGroupResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createGroup/Fault/Exception"/>
 </operation>
-<operation name="addAttribute">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeRequest" message="tns:addAttribute"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeResponse" message="tns:addAttributeResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttribute/Fault/Exception"/>
-</operation>
 <operation name="getGroups">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGroupsRequest" message="tns:getGroups"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGroupsResponse" message="tns:getGroupsResponse"/>
@@ -520,6 +515,11 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectRequest" message="tns:createObject"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectResponse" message="tns:createObjectResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObject/Fault/Exception"/>
+</operation>
+<operation name="createAttribute">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createAttributeRequest" message="tns:createAttribute"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createAttributeResponse" message="tns:createAttributeResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createAttribute/Fault/Exception"/>
 </operation>
 <operation name="copyObjects">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsRequest" message="tns:copyObjects"/>
@@ -801,10 +801,10 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getAttributeForClassWithIdResponse" message="tns:getAttributeForClassWithIdResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getAttributeForClassWithId/Fault/Exception"/>
 </operation>
-<operation name="addAttributeForClassWithId">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeForClassWithIdRequest" message="tns:addAttributeForClassWithId"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeForClassWithIdResponse" message="tns:addAttributeForClassWithIdResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/addAttributeForClassWithId/Fault/Exception"/>
+<operation name="createAttributeForClassWithId">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createAttributeForClassWithIdRequest" message="tns:createAttributeForClassWithId"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createAttributeForClassWithIdResponse" message="tns:createAttributeForClassWithIdResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createAttributeForClassWithId/Fault/Exception"/>
 </operation>
 <operation name="setAttributePropertiesForClassWithId">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setAttributePropertiesForClassWithIdRequest" message="tns:setAttributePropertiesForClassWithId"/>
@@ -911,18 +911,6 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="addAttribute">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
 <operation name="getGroups">
 <soap:operation soapAction=""/>
 <input>
@@ -972,6 +960,18 @@
 </fault>
 </operation>
 <operation name="createObject">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="createAttribute">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -1655,7 +1655,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="addAttributeForClassWithId">
+<operation name="createAttributeForClassWithId">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

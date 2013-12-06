@@ -24,6 +24,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.metadata.LocalAttributeMetadata;
 import org.inventory.core.services.api.metadata.LocalClassMetadata;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.caching.Cache;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
 import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter;
@@ -52,8 +53,13 @@ public class DeleteAttributeAction extends AbstractAction implements Presenter.P
     public void actionPerformed(ActionEvent ae) {
         if (JOptionPane.showConfirmDialog(null, "Are you sure you want to perform this operation? All subclasses will be modified as well", 
                 "Class metadata operation", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
-            if (com.deleteAttribute(this.classNode.getClassMetadata().getOid(), ((JMenuItem)ae.getSource()).getName()))
+            if (com.deleteAttribute(this.classNode.getClassMetadata().getOid(), ((JMenuItem)ae.getSource()).getName())){
                 nu.showSimplePopup("Class meta data operation", NotificationUtil.INFO, "Attribute deleted successfully");
+                //Force a cache reload
+                Cache.getInstace().resetAll();
+                //Refresh the class node
+                classNode.refresh();
+            }
             else
                 nu.showSimplePopup("Class meta data operation", NotificationUtil.ERROR, com.getError());
         }

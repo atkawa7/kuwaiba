@@ -19,8 +19,8 @@ import java.awt.Image;
 import javax.swing.Action;
 import org.inventory.core.services.api.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
-import org.inventory.navigation.applicationnodes.pools.actions.DeletePool;
-import org.inventory.navigation.applicationnodes.pools.actions.NewPoolItem;
+import org.inventory.navigation.applicationnodes.pools.actions.DeletePoolAction;
+import org.inventory.navigation.applicationnodes.pools.actions.NewPoolItemAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.util.ImageUtilities;
 /**
@@ -31,8 +31,8 @@ public class PoolNode extends AbstractNode {
     
     private static Image defaultIcon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/pool.png");
     private LocalObjectLight pool;
-    private NewPoolItem newPoolItemAction;
-    private DeletePool deletePoolAction;
+    private NewPoolItemAction newPoolItemAction;
+    private DeletePoolAction deletePoolAction;
     private ShowObjectIdAction showObjectIdAction;
 
     public PoolNode(LocalObjectLight lol) {
@@ -52,8 +52,8 @@ public class PoolNode extends AbstractNode {
     @Override
     public Action[] getActions(boolean context){
         if (newPoolItemAction == null){
-            newPoolItemAction = new NewPoolItem(this);
-            deletePoolAction = new DeletePool(this);
+            newPoolItemAction = new NewPoolItemAction(this);
+            deletePoolAction = new DeletePoolAction(this);
             showObjectIdAction = new ShowObjectIdAction (pool.getOid(), pool.getClassName());
         }
         return new Action[]{newPoolItemAction, deletePoolAction, showObjectIdAction};

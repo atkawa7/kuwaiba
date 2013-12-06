@@ -18,7 +18,7 @@ package org.inventory.navigation.applicationnodes.pools;
 import java.awt.Image;
 import javax.swing.Action;
 import org.inventory.core.services.api.LocalObjectLight;
-import org.inventory.navigation.applicationnodes.pools.actions.NewPool;
+import org.inventory.navigation.applicationnodes.pools.actions.NewPoolAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.ImageUtilities;
@@ -45,7 +45,7 @@ public class PoolRootNode extends AbstractNode {
 
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{new NewPool(this)};
+        return new Action[]{new NewPoolAction(this)};
     }
     
     @Override

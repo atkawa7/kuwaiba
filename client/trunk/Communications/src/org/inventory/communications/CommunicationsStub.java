@@ -972,12 +972,12 @@ public class CommunicationsStub {
         return true;
     }
     
-    public boolean addAttribute(long classId, String name, String displayName, 
+    public boolean createAttribute(long classId, String name, String displayName, 
                                 String description, String type, boolean administrative, 
                                 boolean readOnly, boolean visible, boolean noCopy, 
                                 boolean unique){
         try{
-            port.addAttributeForClassWithId(classId, name, displayName, type, description, administrative, visible, readOnly, noCopy, unique, this.session.getSessionId());
+            port.createAttributeForClassWithId(classId, name, displayName, type, description, administrative, visible, readOnly, noCopy, unique, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -985,12 +985,12 @@ public class CommunicationsStub {
         return true;
     }
     
-    public boolean addAttribute(String className, String name, String displayName, 
+    public boolean createAttribute(String className, String name, String displayName, 
                                 String description, String type, boolean administrative,
                                 boolean readOnly, boolean visible, boolean noCopy, 
                                 boolean unique){
         try{
-            port.addAttribute(className, name, displayName, type, description, administrative, visible, readOnly, noCopy, unique, this.session.getSessionId());
+            port.createAttribute(className, name, displayName, type, description, administrative, visible, readOnly, noCopy, unique, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -998,14 +998,14 @@ public class CommunicationsStub {
         return true;
     }
     
-    public boolean deleteAttribute(long oid, String attributeName){
+    public boolean deleteAttribute(long classId, String attributeName){
         try{
-            port.deleteAttributeForClassWithId(oid, attributeName, this.session.getSessionId());
+            port.deleteAttributeForClassWithId(classId, attributeName, this.session.getSessionId());
+            return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
         }
-        return true;
     }
     
     public boolean setClassMetadataProperties(long classId, String className, 

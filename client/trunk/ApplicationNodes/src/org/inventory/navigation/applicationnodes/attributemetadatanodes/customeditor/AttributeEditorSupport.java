@@ -19,13 +19,11 @@ import java.awt.Component;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.beans.PropertyEditorSupport;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.AttributeMetadataNode;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.properties.ClassAttributeMetadataProperty;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
 import org.openide.explorer.propertysheet.PropertyEnv;
 import org.openide.explorer.propertysheet.PropertySheetView;
-import org.openide.util.Lookup;
 
 /**
  * This is the editor to change the class attributes properties
@@ -34,11 +32,6 @@ import org.openide.util.Lookup;
 public class AttributeEditorSupport extends PropertyEditorSupport
     implements ExPropertyEditor {
     
-    /**
-     * A reference to the notification mechanism
-     */
-    private NotificationUtil nu;
-
     /**
      * Reference to the AttributeMetadataProperty
      */
@@ -51,7 +44,6 @@ public class AttributeEditorSupport extends PropertyEditorSupport
 
     public AttributeEditorSupport(ClassAttributeMetadataProperty parentProperty) {
         this.parentProperty = parentProperty;
-        this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
     }
     
     @Override
@@ -93,7 +85,7 @@ public class AttributeEditorSupport extends PropertyEditorSupport
     
     @Override
     public String getAsText(){
-        return "[Click on the button to edit]";
+        return "[Click the button to edit]";
     }
     
     

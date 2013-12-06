@@ -34,11 +34,11 @@ import org.openide.util.actions.Presenter;
  * Creates a new element in a pool
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class NewPoolItem extends AbstractAction implements Presenter.Popup{
+public class NewPoolItemAction extends AbstractAction implements Presenter.Popup{
     private PoolNode poolNode;
     private CommunicationsStub com;
 
-    public NewPoolItem(PoolNode node) {
+    public NewPoolItemAction(PoolNode node) {
         this.poolNode = node;
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
         com = CommunicationsStub.getInstance();

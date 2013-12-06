@@ -16,48 +16,87 @@
 package org.inventory.navigation.applicationnodes.classmetadatanodes.action;
 
 import java.awt.event.ActionEvent;
-import java.util.Random;
+import java.util.ArrayList;
 import javax.swing.AbstractAction;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.api.metadata.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.caching.Cache;
 import org.inventory.core.services.utils.Constants;
+import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
 import org.openide.util.Lookup;
 
 /**
- *  Creates an attributemetadata
+ *  Creates an attribute metadata
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class CreateAttributeAction extends AbstractAction {
     
-    private ClassMetadataNode node;
-    private CommunicationsStub com;
+    private ClassMetadataNode classNode;
 
     public CreateAttributeAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_ATTRIBUTE"));
-        com = CommunicationsStub.getInstance();
     }
 
-    public CreateAttributeAction(ClassMetadataNode node) {
+    public CreateAttributeAction(ClassMetadataNode classNode) {
         this();
-        this.node = node;
+        this.classNode = classNode;
     }
    
     @Override
     public void actionPerformed(ActionEvent ae) {
-        Random random = new Random();
+        
+        LocalClassMetadataLight[] instanceableListTypes = CommunicationsStub.getInstance().getInstanceableListTypes();
+        
+        ArrayList<String> attributeTypeslist = new ArrayList<String>();
+        
+        //Primitive types
+        for(String primitive : Constants.ATTRIBUTE_TYPES)
+            attributeTypeslist.add(primitive);
+        
+        //List types
+        for(LocalClassMetadataLight listType : instanceableListTypes)
+            attributeTypeslist.add(listType.getClassName());
+        
+        JTextField txtName = new JTextField();
+        txtName.setName("txtName");
+        JTextField txtDisplayName = new JTextField();
+        txtDisplayName.setName("txtDisplayName");
+        JTextField txtDescription = new JTextField();
+        txtDescription.setName("txtDescription");
+        JComboBox lstType = new JComboBox(attributeTypeslist.toArray());
+        lstType.setName("lstType");
+        
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        if(!com.addAttribute(node.getName(), 
-                             java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_ATTRIBUTE")+random.nextInt(1000), 
-                             java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME"), 
-                             java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"),
-                             Constants.DEFAULT_ATTRIBUTE_TYPE, false, false, true, false, false))
-            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR,
-                    com.getError());
-        else{
-            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO,
-                    java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
-            node.refresh();
+        
+        JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(
+                new String[]{java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"), 
+                    java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME"), 
+                    java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DESCRIPTION"), 
+                    java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TYPE")},
+                new JComponent []{txtName, txtDisplayName, txtDescription, lstType});
+        if (JOptionPane.showConfirmDialog(null,
+                pnlMyDialog,
+                java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_POOL"),
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
+                    if (CommunicationsStub.getInstance().createAttribute(classNode.getClassMetadata().getOid(), 
+                            ((JTextField)pnlMyDialog.getComponent("txtName")).getText(), 
+                            ((JTextField)pnlMyDialog.getComponent("txtDisplayName")).getText(), 
+                            ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), 
+                            (String)((JComboBox)pnlMyDialog.getComponent("lstType")).getSelectedItem(), 
+                            false, false, true, false, false)){
+                        nu.showSimplePopup("Class metadata operation", NotificationUtil.INFO, "Attribute added successfully");
+                        Cache.getInstace().resetAll();
+                        classNode.refresh();
+                    }
+                    else
+                        nu.showSimplePopup("Class metadata operation", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
         }
     }
 }
