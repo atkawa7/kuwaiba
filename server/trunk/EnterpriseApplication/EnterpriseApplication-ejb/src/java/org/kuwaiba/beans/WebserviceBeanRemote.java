@@ -175,14 +175,14 @@ public interface WebserviceBeanRemote {
      * @param className
      * @param attributeDefinition
      */
-    public void addAttribute(String className, AttributeInfo attributeDefinition) throws ServerSideException;
+    public void createAttribute(String className, AttributeInfo attributeDefinition) throws ServerSideException;
 
     /**
      * Adds an attribute to a class
      * @param classId
      * @param attributeDefinition
      */
-    public void addAttribute(long classId, AttributeInfo attributeDefinition) throws ServerSideException;
+    public void createAttribute(long classId, AttributeInfo attributeDefinition) throws ServerSideException;
 
     /**
      * Gets an attribute belonging to a class

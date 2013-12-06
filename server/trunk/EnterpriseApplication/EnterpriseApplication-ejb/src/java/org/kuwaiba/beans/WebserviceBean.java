@@ -328,7 +328,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void addAttribute(String className, AttributeInfo attributeDefinition) throws ServerSideException {
+    public void createAttribute(String className, AttributeInfo attributeDefinition) throws ServerSideException {
         if (mem == null){
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         }
@@ -353,7 +353,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void addAttribute(long classId, AttributeInfo attributeDefinition) throws ServerSideException {
+    public void createAttribute(long classId, AttributeInfo attributeDefinition) throws ServerSideException {
         if (mem == null){
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         }

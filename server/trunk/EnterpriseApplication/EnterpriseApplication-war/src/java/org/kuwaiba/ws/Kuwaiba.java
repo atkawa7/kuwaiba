@@ -1593,8 +1593,8 @@ public class Kuwaiba {
      * @param sessionId session token
      * @throws Exception IN case something goes wrong
      */
-    @WebMethod(operationName = "addAttribute")
-    public void addAttribute(@WebParam(name = "className")
+    @WebMethod(operationName = "createAttribute")
+    public void createAttribute(@WebParam(name = "className")
         String className,  @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "type")
@@ -1608,11 +1608,11 @@ public class Kuwaiba {
         String sessionId) throws Exception {
 
         try {
-            wsBean.validateCall("addAttribute", getIPAddress(), sessionId);
+            wsBean.validateCall("createAttribute", getIPAddress(), sessionId);
             AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative, 
                     visible, readOnly, unique, description, noCopy);
 
-            wsBean.addAttribute(className, ai);
+            wsBean.createAttribute(className, ai);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
@@ -1638,8 +1638,8 @@ public class Kuwaiba {
      * @param sessionId session token
      * @throws Exception IN case something goes wrong
      */
-    @WebMethod(operationName = "addAttributeForClassWithId")
-    public void addAttributeForClassWithId(@WebParam(name = "classId")
+    @WebMethod(operationName = "createAttributeForClassWithId")
+    public void createAttributeForClassWithId(@WebParam(name = "classId")
         long ClassId, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "type")
@@ -1653,11 +1653,11 @@ public class Kuwaiba {
         String sessionId) throws Exception {
 
         try {
-            wsBean.validateCall("addAttributeForClassWithId", getIPAddress(), sessionId);
+            wsBean.validateCall("createAttributeForClassWithId", getIPAddress(), sessionId);
             AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative, 
                                    visible, readOnly, unique, description, noCopy);
 
-            wsBean.addAttribute(ClassId, ai);
+            wsBean.createAttribute(ClassId, ai);
 
         }catch(Exception e){
             Level level = Level.SEVERE;
