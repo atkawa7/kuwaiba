@@ -234,7 +234,7 @@ public class LocalClassMetadataImpl extends LocalClassMetadataLightImpl
     }
     
     private int getMappingFromType(String type){
-        if (type.equals("String") || type.equals("Integer") || type.equals("Float") || type.equals("Long"))
+        if (type.equals("String") || type.equals("Integer") || type.equals("Float") || type.equals("Long") || type.equals("Boolean"))
             return Constants.MAPPING_PRIMITIVE;
         if (type.equals("Timestamp"))
             return Constants.MAPPING_TIMESTAMP;
