@@ -120,6 +120,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnConnect = new javax.swing.JToggleButton();
         btnZoomIn = new javax.swing.JButton();
         btnZoomOut = new javax.swing.JButton();
+        btnShowNodeLabels = new javax.swing.JToggleButton();
         sepMainSeparator = new javax.swing.JToolBar.Separator();
         btnWireContainer = new javax.swing.JToggleButton();
         btnWirelessContainer = new javax.swing.JToggleButton();
@@ -250,6 +251,21 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
             }
         });
         barToolMain.add(btnZoomOut);
+
+        btnShowNodeLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/hide_node_labels.png"))); // NOI18N
+        btnShowNodeLabels.setSelected(true);
+        org.openide.awt.Mnemonics.setLocalizedText(btnShowNodeLabels, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnShowNodeLabels.text")); // NOI18N
+        btnShowNodeLabels.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnShowNodeLabels.toolTipText")); // NOI18N
+        btnShowNodeLabels.setEnabled(false);
+        btnShowNodeLabels.setFocusable(false);
+        btnShowNodeLabels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnShowNodeLabels.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnShowNodeLabels.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnShowNodeLabelsActionPerformed(evt);
+            }
+        });
+        barToolMain.add(btnShowNodeLabels);
         barToolMain.add(sepMainSeparator);
 
         btnWireContainer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/wire-container.png"))); // NOI18N
@@ -375,7 +391,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         scene.clear();
-        scene.loadDefault();
+        scene.activateMap();
         gvs.setCurrentView(null);
         toggleButtons(true);
     }//GEN-LAST:event_btnNewActionPerformed
@@ -411,6 +427,10 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         gvs.deleteCurrentView();
     }//GEN-LAST:event_btnDeleteActionPerformed
 
+    private void btnShowNodeLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodeLabelsActionPerformed
+        gvs.toggleLabels(!btnShowNodeLabels.isSelected());
+    }//GEN-LAST:event_btnShowNodeLabelsActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barToolMain;
     private javax.swing.JToggleButton btnConnect;
@@ -422,6 +442,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     private javax.swing.JToggleButton btnOpticalLink;
     private javax.swing.JButton btnSave;
     private javax.swing.JToggleButton btnSelect;
+    private javax.swing.JToggleButton btnShowNodeLabels;
     private javax.swing.JToggleButton btnWireContainer;
     private javax.swing.JToggleButton btnWirelessContainer;
     private javax.swing.JToggleButton btnWirelessLink;
@@ -467,7 +488,6 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
     @Override
     public void componentOpened() {
-        scene.updateMapBounds();
         scene.paint();
     }
 
@@ -494,6 +514,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnZoomIn.setEnabled(enabled);
         btnZoomOut.setEnabled(enabled);
         btnDelete.setEnabled(enabled);
+        btnShowNodeLabels.setEnabled(enabled);
     }
 
     void writeProperties(java.util.Properties p) {

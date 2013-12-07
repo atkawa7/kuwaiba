@@ -130,14 +130,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         this.lookup = new SceneLookup(Lookup.EMPTY);
         this.connectProvider = new PhysicalConnectionProvider(this);
         
-        MapPanel myMap = new MapPanel();
-        myMap.setProvider(MapPanel.Providers.OSM);
-        myMap.getMainMap().setCenterPosition(DEFAULT_CENTER_POSITION);
-        myMap.addPropertyChangeListener("painted", this);
-        mapWidget = new ComponentWidget(this, myMap);
-
-        mapWidget.getActions().addAction(new MapWidgetPanAction(myMap, MouseEvent.BUTTON1));
-        mapLayer.addChild(mapWidget);
+        
 
         addObjectSceneListener(new ObjectSceneListener() {
             @Override
@@ -174,6 +167,8 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         myWidget.getActions(ObjectNodeWidget.ACTION_SELECT).addAction(createSelectAction());
         myWidget.getActions(ObjectNodeWidget.ACTION_SELECT).addAction(new MoveAction());
         myWidget.getActions(ObjectNodeWidget.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(connectionsLayer, connectProvider));
+        myWidget.setToolTipText(node.getName() + " [" + node.getClassName() + "]");
+        myWidget.setLabel(myWidget.getToolTipText());
         return myWidget;
     }
 
@@ -188,6 +183,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         myWidget.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         myWidget.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         myWidget.setRouter(RouterFactory.createFreeRouter());
+        myWidget.setToolTipText(edge.getName() + " [" + edge.getClassName() + "]");
         return myWidget;
     }
 
@@ -204,7 +200,18 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      * when the component is painted. If there are network problems, you could get some nasty exceptions.
      */
     public void activateMap(){
-        mapWidget.setVisible(true);
+        if (mapWidget == null){
+            MapPanel myMap = new MapPanel();
+            myMap.setProvider(MapPanel.Providers.OSM);
+            myMap.getMainMap().setCenterPosition(DEFAULT_CENTER_POSITION);
+            myMap.addPropertyChangeListener("painted", this);
+            mapWidget = new ComponentWidget(this, myMap);
+
+            mapWidget.getActions().addAction(new MapWidgetPanAction(myMap, MouseEvent.BUTTON1));
+        }
+        mapLayer.addChild(mapWidget);
+        ((MapPanel)mapWidget.getComponent()).getMainMap().setZoom(MapPanel.DEFAULT_ZOOM_LEVEL);
+        ((MapPanel)mapWidget.getComponent()).getMainMap().setCenterPosition(DEFAULT_CENTER_POSITION);
         updateMapBounds();
     }
 
@@ -212,8 +219,10 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      * Updates the map widget bounds to fit the container's ones
      */
     public void updateMapBounds() {
-        mapWidget.setPreferredSize(this.getBounds().getSize());
-        validate();
+        if (mapWidget != null){
+            mapWidget.setPreferredSize(this.getBounds().getSize());
+            validate();
+        }
     }
 
     /**
@@ -402,12 +411,10 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
 
         for (LocalObjectLight edge : clonedEdges)
             removeEdge(edge);
-
+        
+        mapLayer.removeChildren();
         labelsLayer.removeChildren();
-        //mapWidget.setVisible(false);
         polygonsLayer.removeChildren();
-        ((MapPanel)mapWidget.getComponent()).getMainMap().setZoom(MapPanel.DEFAULT_ZOOM_LEVEL);
-        ((MapPanel)mapWidget.getComponent()).getMainMap().setCenterPosition(DEFAULT_CENTER_POSITION);
     }
 
     public byte[] getAsXML() {
@@ -491,15 +498,14 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         }
     }
 
-    public void loadDefault() {
-        mapLayer.addChild(mapWidget);
-        validate();
-    }
-
     public boolean hasView() {
         return !mapLayer.getChildren().isEmpty();
     }
 
+    public LayerWidget getNodesLayer() {
+        return nodesLayer;
+    }
+    
     /**
      * Helper class to let us launch a lookup event every time a widget is selected
      */

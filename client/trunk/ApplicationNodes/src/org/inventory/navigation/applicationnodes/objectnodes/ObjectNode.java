@@ -185,11 +185,16 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                         }
                         LocalObjectListItem val = null;
 
-                        for (LocalObjectListItem loli : list)
-                            if(loli.getOid() == lo.getAttribute(lam.getName())){
-                                val = loli;
-                                break;
+                        if (lo.getAttribute(lam.getName()) == null)
+                            val = list.get(0); //None
+                        else{
+                            for (LocalObjectListItem loli : list){
+                                if(lo.getAttribute(lam.getName()).equals(loli.getOid())){
+                                    val = loli;
+                                    break;
+                                }
                             }
+                        }
                         property = new ObjectNodeProperty(
                                                lam.getName(),
                                                LocalObjectListItem.class,

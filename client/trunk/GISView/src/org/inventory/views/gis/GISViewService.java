@@ -252,4 +252,11 @@ public class GISViewService {
                 nu.showSimplePopup("Delete View", NotificationUtil.ERROR, com.getError());
         }
     }
+
+    void toggleLabels(boolean isVisible) {
+        for (Widget aNode :scene.getNodesLayer().getChildren())
+            ((GeoPositionedNodeWidget)aNode).getLabelWidget().setVisible(isVisible);
+                
+        scene.validate();
+    }
 }

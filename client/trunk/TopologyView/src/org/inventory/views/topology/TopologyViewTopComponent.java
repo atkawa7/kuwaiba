@@ -451,7 +451,7 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
 
     @Override
     public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_ALWAYS;
+        return TopComponent.PERSISTENCE_NEVER;
     }
 
     @Override
