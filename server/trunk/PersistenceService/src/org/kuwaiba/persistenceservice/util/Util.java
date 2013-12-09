@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
+import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
 import org.kuwaiba.persistenceservice.impl.RelTypes;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -541,6 +542,17 @@ public class Util {
                 null);
         group.setUsers(users);
         return group;
+    }
+    
+    /**
+     * Creates a generic object list (a list type) from a node
+     * @param listTypeNode the list type node
+     * @return a list type
+     */
+    public static GenericObjectList createGenericObjectListFromNode(Node listTypeNode){
+        GenericObjectList listType = new GenericObjectList(listTypeNode.getId(), 
+                (String)listTypeNode.getProperty(Constants.PROPERTY_NAME));
+        return listType;
     }
 
     /**

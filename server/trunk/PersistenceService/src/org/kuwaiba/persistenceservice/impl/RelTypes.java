@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,4 +41,6 @@ public enum RelTypes implements RelationshipType{
     HAS_HISTORY_ENTRY, //Used to link an object to a particular historic entry
     RELATED_TO_SPECIAL, //Used to implement relationships for domain specific models
     CHILD_OF_SPECIAL, //Used to implement the parent-child relationship for domain specific models
+    GROUPS_ROOT_NODE, //Used to associate root node whit the root group node
+    HAS_PRIVILEGE, //Used to associate the groups nodes with methods group node
 }

@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012, 2013 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import org.kuwaiba.apis.persistence.application.ResultRecord;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
@@ -50,6 +51,7 @@ import org.kuwaiba.apis.persistence.interfaces.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
+import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
 import org.kuwaiba.persistenceservice.caching.CacheManager;
 import org.kuwaiba.persistenceservice.queries.CypherQueryBuilder;
 import org.kuwaiba.persistenceservice.util.Constants;
@@ -111,7 +113,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
      */
     private CacheManager cm;
 
+    public ApplicationEntityManagerImpl() {
+        this.cm = CacheManager.getInstance();
+    }
+
+    
+    
     public ApplicationEntityManagerImpl(ConnectionManager cmn) {
+        this();
         this.graphDb = (EmbeddedGraphDatabase)cmn.getConnectionHandler();
         this.userIndex = graphDb.index().forNodes(Constants.INDEX_USERS);
         this.groupIndex = graphDb.index().forNodes(Constants.INDEX_GROUPS);
@@ -120,7 +129,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         this.listTypeItemsIndex = graphDb.index().forNodes(Constants.INDEX_LIST_TYPE_ITEMS);
         this.generalViewsIndex = graphDb.index().forNodes(Constants.INDEX_GENERAL_VIEWS);
         this.poolsIndex = graphDb.index().forNodes(Constants.INDEX_POOLS);
-        this.cm = CacheManager.getInstance();
+        
+        for (Node listTypeNode : listTypeItemsIndex.query(Constants.PROPERTY_ID, "*")){
+            GenericObjectList aListType = Util.createGenericObjectListFromNode(listTypeNode);
+            cm.putListType(aListType);
+        }
     }
 
     @Override
@@ -562,12 +575,29 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
+    @Override
+    public RemoteBusinessObjectLight getListTypeItem(String listTypeName) 
+            throws MetadataObjectNotFoundException, InvalidArgumentException{
+        if (listTypeName == null)
+           throw new InvalidArgumentException("Item name and class name can not be null", Level.INFO);
+        GenericObjectList listType = cm.getListType(listTypeName);
+        if(listType!=null){
+            RemoteBusinessObjectLight rol = new RemoteBusinessObject(listType.getId(), listType.getClassName(), "");
+            return rol;
+        }
+        else
+            return null;
+    }
+    
    //List type related methods
+    @Override
    public long createListTypeItem(String className, String name, String displayName)
             throws MetadataObjectNotFoundException, InvalidArgumentException {
+       
        if (name == null || className == null){
            throw new InvalidArgumentException("Item name and class name can not be null", Level.INFO);
        }
+       
        Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
        if (classNode ==  null){
            throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %1s",className));
@@ -585,6 +615,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
            newItem.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
            listTypeItemsIndex.putIfAbsent(newItem, Constants.PROPERTY_ID, newItem.getId());
            tx.success();
+           GenericObjectList newListType = new GenericObjectList(newItem.getId(), name);
+           cm.putListType(newListType);
            return newItem.getId();
         }catch(Exception ex){
             Logger.getLogger("createListTypeItem: "+ex.getMessage()); //NOI18N
@@ -597,6 +629,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
+    @Override
     public void deleteListTypeItem(String className, long oid, boolean realeaseRelationships) throws MetadataObjectNotFoundException, OperationNotPermittedException, ObjectNotFoundException{
         Transaction tx = null;
         try{
@@ -608,6 +641,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             Util.deleteObject(instance, realeaseRelationships);
 
             tx.success();
+            cm.removeListType(className);
+            
         }catch(Exception ex){
             Logger.getLogger("deleteListTypeItem: "+ex.getMessage()); //NOI18N
             if (tx != null)
@@ -619,6 +654,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
+    @Override
     public List<RemoteBusinessObjectLight> getListTypeItems(String className) throws MetadataObjectNotFoundException, InvalidArgumentException{
         Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
         if (classNode ==  null)
@@ -637,6 +673,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         return children;
     }
 
+    @Override
     public List<ClassMetadataLight> getInstanceableListTypes() throws ApplicationObjectNotFoundException {
         Node genericObjectListNode = classIndex.get(Constants.PROPERTY_NAME, "GenericObjectList").getSingle();
 
@@ -664,6 +701,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         return res;
     }
 
+    @Override
     public long createObjectRelatedView(long oid, String objectClass, String name, String description, int viewType, byte[] structure, byte[] background) throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         if (objectClass == null)
             throw new InvalidArgumentException("The root object can not be related to any view", Level.INFO);
@@ -712,6 +750,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
+    @Override
     public long createGeneralView(int viewType, String name, String description, byte[] structure, byte[] background) throws InvalidArgumentException {
         Transaction tx = null;
         try{
@@ -751,6 +790,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
+    @Override
     public void updateObjectRelatedView(long oid, String objectClass, long viewId, String name, String description, byte[] structure, byte[] background) throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         if (objectClass == null)
             throw new InvalidArgumentException("The root object does not have any view", Level.INFO);
@@ -813,6 +853,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
+    @Override
     public void updateGeneralView(long oid, String name, String description, byte[] structure, byte[] background) throws InvalidArgumentException, ObjectNotFoundException {
         Transaction tx = null;
         try{
@@ -854,6 +895,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
+    @Override
     public void deleteGeneralViews(long[] ids) throws ObjectNotFoundException {
         Transaction tx = null;
         try{
@@ -875,6 +917,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
+    @Override
     public ViewObject getObjectRelatedView(long oid, String objectClass, long viewId) throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         Node instance = getInstanceOfClass(objectClass, oid);
 
@@ -905,6 +948,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         throw new ObjectNotFoundException("View", viewId);
     }
 
+    @Override
     public List<ViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int limit) throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         Node instance = getInstanceOfClass(objectClass, oid);
         List<ViewObjectLight> res = new ArrayList<ViewObjectLight>();
@@ -924,6 +968,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         return res;
     }
 
+    @Override
     public List<ViewObjectLight> getGeneralViews(int viewType, int limit) throws InvalidArgumentException {
         String cypherQuery = "START gView=node:"+ Constants.INDEX_GENERAL_VIEWS +"('id:*')";
         if (viewType != -1)
@@ -952,6 +997,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         return myRes;
     }
 
+    @Override
     public ViewObject getGeneralView(long viewId) throws ObjectNotFoundException {
         Node gView = generalViewsIndex.get(Constants.PROPERTY_ID,viewId).getSingle();
 
@@ -999,6 +1045,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
         throw new ObjectNotFoundException(className, oid);
     }
+    
+    
+    
+    //end helpers
 
     //Queries
     public long createQuery(String queryName, long ownerOid, byte[] queryStructure,
@@ -1498,4 +1548,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             l.add(className);
         return className;
     }
+     
+    
 }
