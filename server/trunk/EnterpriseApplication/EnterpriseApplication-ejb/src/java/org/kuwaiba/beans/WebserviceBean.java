@@ -887,8 +887,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
-            RemoteObject res = new RemoteObject(bem.getObject(objectClass, oid));
-            return res;
+            return new RemoteObject(bem.getObject(objectClass, oid));
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
