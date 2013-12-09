@@ -1,5 +1,5 @@
 /**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -102,7 +102,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
 
             if (!cm.getPossibleChildren(parentClassName).contains(className))
-                throw new OperationNotPermittedException("Create Object", String.format("An instance of class %1s can't be created as child of class %2s", className, myParentObjectClass.getName()));
+                throw new OperationNotPermittedException("Create Object", String.format("An instance of class %s can't be created as child of class %s", className, myParentObjectClass.getName()));
         }
 
         Node parentNode;
@@ -139,21 +139,21 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
+            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
         if (myClass.isAbstract())
             throw new OperationNotPermittedException("Create Object", "Can't create objects from an abstract classes");
 
         Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
+            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
 
         //The object should be created under an instance other than the dummy root
         if (parentClassName != null){
             ClassMetadata myParentObjectClass= cm.getClass(parentClassName);
             if (myParentObjectClass == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
         }
 
         Node parentNode;
@@ -205,7 +205,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         //Perform benchmarks to see if accessing to the objects index is less expensive
         Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
+            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
         Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
         while (instances.iterator().hasNext()){
             Node instance = instances.iterator().next().getStartNode();
@@ -249,7 +249,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
                 if (parentNode.hasRelationship(RelTypes.DUMMY_ROOT))
                     return null;
-                else{  
+                else {
                     String thisNodeClass = Util.getClassName(parentNode);
                     if (cm.isSubClass(thisNodeClass, parentClass))
                         return Util.createRemoteObjectFromNode(parentNode, cm.getClass(thisNodeClass));
@@ -271,7 +271,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             for (String className : objects.keySet()){
                 for (long oid : objects.get(className)){
                     if (!cm.isSubClass("InventoryObject", className))
-                        throw new OperationNotPermittedException(className, String.format("Class %1s is not a business-related class", className));
+                        throw new OperationNotPermittedException(className, String.format("Class %s is not a business-related class", className));
 
                     Node instance = getInstanceOfClass(className, oid);
                     Util.deleteObject(instance, releaseRelationships);
@@ -396,7 +396,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         ClassMetadata newParentClass = cm.getClass(targetClassName);
         
         if (newParentClass == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", targetClassName));
+            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", targetClassName));
 
         Node newParentNode = getInstanceOfClass(targetClassName, targetOid);
 
@@ -405,11 +405,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             tx = graphDb.beginTx();
             for (String myClass : objects.keySet()){
                 if (!cm.canBeChild(targetClassName, myClass))
-                    throw new OperationNotPermittedException("moveObjects", String.format("An instance of class %1s can not be child of an instance of class %2s", myClass,targetClassName));
+                    throw new OperationNotPermittedException("moveObjects", String.format("An instance of class %s can not be child of an instance of class %s", myClass,targetClassName));
 
                 Node instanceClassNode = classIndex.get(Constants.PROPERTY_NAME, myClass).getSingle();
                 if (instanceClassNode == null)
-                    throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", myClass));
+                    throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
                 for (long oid : objects.get(myClass)){
                     Node instance = getInstanceOfClass(instanceClassNode, oid);
                     if (instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().hasNext())
@@ -438,7 +438,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         ClassMetadata newParentClass = cm.getClass(targetClassName);
 
         if (newParentClass == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", targetClassName));
+            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", targetClassName));
 
         Node newParentNode = getInstanceOfClass(targetClassName, targetOid);
 
@@ -450,11 +450,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             int i = 0;
             for (String myClass : objects.keySet()){
                 if (!cm.canBeChild(targetClassName, myClass))
-                    throw new OperationNotPermittedException("copyObjects", String.format("An instance of class %1s can not be child of an instance of class %2s", myClass,targetClassName));
+                    throw new OperationNotPermittedException("copyObjects", String.format("An instance of class %2s can not be child of an instance of class %s", myClass,targetClassName));
 
                 Node instanceClassNode = classIndex.get(Constants.PROPERTY_NAME, myClass).getSingle();
                 if (instanceClassNode == null)
-                    throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", myClass));
+                    throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
                 for (long oid : objects.get(myClass)){
                     Node templateObject = getInstanceOfClass(instanceClassNode, oid);
                     Node newInstance = copyObject(templateObject, recursive);
@@ -556,7 +556,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             Node child = children.iterator().next().getStartNode();
 
             if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
-                throw new MetadataObjectNotFoundException(String.format("Class for object with oid %1s could not be found",child.getId()));
+                throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found",child.getId()));
 
             Node classNode = child.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode();
 
@@ -605,7 +605,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             Node child = children.iterator().next().getStartNode();
 
             if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
-                throw new MetadataObjectNotFoundException(String.format("Class for object with oid %1s could not be found",child.getId()));
+                throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found",child.getId()));
 
             String className = Util.getClassName(child);
             if (cm.isSubClass(classToFilter, className)){
@@ -625,7 +625,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             Node child = specialChildren.iterator().next().getStartNode();
 
             if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
-                throw new MetadataObjectNotFoundException(String.format("Class for object with oid %1s could not be found",child.getId()));
+                throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found",child.getId()));
 
             String className = Util.getClassName(child);
 
@@ -670,7 +670,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
 
         if (classNode == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
+            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
         Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
         while (instances.iterator().hasNext()){
@@ -697,7 +697,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         Node classNode = classIndex.get(Constants.PROPERTY_ID,classId).getSingle();
 
         if (classNode == null)
-            throw new MetadataObjectNotFoundException(String.format("Class with id %1s can not be found", classId));
+            throw new MetadataObjectNotFoundException(String.format("Class with id %s can not be found", classId));
 
         Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
         while (instances.iterator().hasNext()){
@@ -722,10 +722,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throws InvalidArgumentException, MetadataObjectNotFoundException{
  
         if (classToMap.isAbstract())
-                throw new InvalidArgumentException(String.format("Can not create objects from abstract classes (%1s)", classToMap.getName()), Level.OFF);
+                throw new InvalidArgumentException(String.format("Can not create objects from abstract classes (%s)", classToMap.getName()), Level.OFF);
         
         if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, classToMap.getName()))
-            throw new InvalidArgumentException(String.format("Class %1s is not a subclass of %2s", classToMap.getName(), Constants.CLASS_INVENTORYOBJECT), Level.INFO);
+            throw new InvalidArgumentException(String.format("Class %s is not a subclass of %s", classToMap.getName(), Constants.CLASS_INVENTORYOBJECT), Level.INFO);
 
         Node newObject = graphDb.createNode();
 
