@@ -350,13 +350,13 @@ public interface WebserviceBeanRemote {
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
     /**
-     *
-     * @param userName
-     * @param password
-     * @param firstName
-     * @param lastName
-     * @param privileges
-     * @param groups
+     * Sets de user properties
+     * @param userName user name
+     * @param password user password
+     * @param firstName user's first name
+     * @param lastName user's last name
+     * @param privileges user's individual privileges
+     * @param groups groups to which the user belongs
      * @throws ServerSideException
      */
     public void setUserProperties(long oid, String userName, String password, String firstName,
@@ -366,9 +366,9 @@ public interface WebserviceBeanRemote {
 
     /**
      * Creates a group
-     * @param name
-     * @param description
-     * @param creationDate
+     * @param name group's name
+     * @param description group's name
+     * @param creationDate group's creation date
      * @throws InvalidArgumentException
      * @throws ObjectNotFoundException
      */
@@ -377,14 +377,14 @@ public interface WebserviceBeanRemote {
 
     /**
      * Get all users
-     * @return
-     * @throws ServerSideException
+     * @return an array with all the users info
+     * @throws ServerSideException 
      */
     public UserInfo[] getUsers() throws ServerSideException;
 
     /**
      * Get All Groups
-     * @return
+     * @return an array with all the groups info
      * @throws ServerSideException
      */
     public UserGroupInfo[] getGroups() throws ServerSideException;
@@ -528,7 +528,6 @@ public interface WebserviceBeanRemote {
      * @throws NotAuthorizedException if the session id doesn't belong to an active session
      */
     public Session validateCall(String methodName, String ipAddress, String sessionId) throws NotAuthorizedException;
-    
     //Pools
     public long createPool(String name, String description, String instancesOfClass, long owner) throws ServerSideException;
     
@@ -539,8 +538,29 @@ public interface WebserviceBeanRemote {
     public RemoteObjectLight[] getPools(int limit) throws ServerSideException;
     
     public RemoteObjectLight[] getPoolItems(long poolId, int limit) throws ServerSideException;
-
     // </editor-fold>
-   
-
+    
+    // <editor-fold defaultstate="collapsed" desc="Sync/Load data methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Loads data from a csv file
+     * @param choosenFile the csv file as a byte array
+     * @return 
+     */
+    public String loadDataFromFile(byte[] choosenFile, long userId) throws ServerSideException;
+    /**
+     * Returns a file with the wrong lines of the load file
+     * @param fileName
+     * @return
+     * @throws ServerSideException 
+     */
+    public byte[] downloadLog(String fileName) throws ServerSideException;
+    
+    /**
+     * Returns a file with the errors in the lines of the load file
+     * @param fileName
+     * @return
+     * @throws ServerSideException 
+     */
+    public byte[] downloadErrors(String fileName) throws ServerSideException;
+    // </editor-fold>
 }

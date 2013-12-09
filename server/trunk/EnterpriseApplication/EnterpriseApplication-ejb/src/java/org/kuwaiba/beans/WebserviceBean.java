@@ -46,6 +46,7 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
+import org.kuwaiba.sync.SyncServicesManager;
 import org.kuwaiba.util.Util;
 import org.kuwaiba.util.bre.TempBusinessRulesEngine;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
@@ -92,11 +93,16 @@ public class WebserviceBean implements WebserviceBeanRemote {
      * Business rules engine reference
      */
     private TempBusinessRulesEngine bre;
-
+    /**
+     * Sync/load data reference
+     */
+    private SyncServicesManager ssm;
+    
     public WebserviceBean() {
         super();
         sessions = new HashMap<String, Session>();
         bre = new TempBusinessRulesEngine();
+        ssm = new SyncServicesManager();
         connect();
     }
 
@@ -1556,6 +1562,44 @@ public class WebserviceBean implements WebserviceBeanRemote {
         return aSession;
     }
 
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Sync/Load data methods. Click on the + sign on the left to edit the code.">
+    @Override
+    public String loadDataFromFile(byte[] choosenFile, long userId) throws ServerSideException{
+        if (ssm == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            return ssm.loadDataFromFile(choosenFile, userId);
+        }catch (Exception ex){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
+    @Override
+    public byte[] downloadLog(String fileName) throws ServerSideException{
+        if (ssm == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            return ssm.downloadLog(fileName);
+        }catch (Exception ex){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
+    @Override
+    public byte[] downloadErrors(String fileName) throws ServerSideException{
+        if (ssm == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            return ssm.downloadErrors(fileName);
+        }catch (Exception ex){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">
