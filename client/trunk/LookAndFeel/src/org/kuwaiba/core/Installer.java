@@ -31,34 +31,32 @@ public class Installer extends ModuleInstall {
     @Override
     public void restored() {
         try{
-           //UIManager.setLookAndFeel("org.pushingpixels.substance.api.skin.SubstanceNebulaBrickWallLookAndFeel");
-           //UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-            
-//            if (System.getProperty("no-laf") == null){
-//                NimRODTheme nt = new NimRODTheme();
-//                //Shades, button border, scroll bar border
-//                nt.setPrimary1( new Color(199,199,199));
-//                //Border of elements with focus, selected menu item background, scroll bar
-//                nt.setPrimary2( new Color(157,157,157));
-//                //Main color (window, menu background)
-//                nt.setPrimary3( new Color(225,225,225));
-//                //Stuff accompanying the menu items (hints)
-//                nt.setSecondary1( new Color(207,207,207));
-//                //Disabled menu entries, read only text boxes
-//                nt.setSecondary2( new Color(207,207,207));
-//                //
-//                nt.setSecondary3( new Color(225,225,225));
-//                //
-//                nt.setWhite(new Color(250, 250, 250));
-//                //
-//                nt.setBlack(Color.BLACK);
-//                //
-//                nt.setMenuOpacity(195);
-//                nt.setFrameOpacity(180);
-//                NimRODLookAndFeel NimRODLF = new NimRODLookAndFeel();
-//                NimRODLookAndFeel.setCurrentTheme( nt);
-//                UIManager.setLookAndFeel( NimRODLF);
-//            }           
+            //if (System.getProperty("no-laf") == null) {
+            if (false){
+                NimRODTheme nt = new NimRODTheme();
+                //Shades, button border, scroll bar border
+                nt.setPrimary1( new Color(199,199,199));
+                //Border of elements with focus, selected menu item background, scroll bar
+                nt.setPrimary2( new Color(157,157,157));
+                //Main color (window, menu background)
+                nt.setPrimary3( new Color(225,225,225));
+                //Stuff accompanying the menu items (hints)
+                nt.setSecondary1( new Color(207,207,207));
+                //Disabled menu entries, read only text boxes
+                nt.setSecondary2( new Color(207,207,207));
+                //
+                nt.setSecondary3( new Color(225,225,225));
+                //
+                nt.setWhite(new Color(250, 250, 250));
+                //
+                nt.setBlack(Color.BLACK);
+                //
+                nt.setMenuOpacity(195);
+                nt.setFrameOpacity(180);
+                NimRODLookAndFeel NimRODLF = new NimRODLookAndFeel();
+                NimRODLookAndFeel.setCurrentTheme( nt);
+                UIManager.setLookAndFeel( NimRODLF);
+            }           
         }catch(Exception ex){
             System.out.println("Error loading LaF: " + ex.getMessage());
         }

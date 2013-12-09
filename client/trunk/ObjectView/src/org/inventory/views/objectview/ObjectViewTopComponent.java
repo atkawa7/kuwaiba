@@ -414,7 +414,7 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_btnZoomOutActionPerformed
 
     private void btnRemoveBackgroundActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveBackgroundActionPerformed
-        vrs.removeBackground();
+        scene.removeBackground();
     }//GEN-LAST:event_btnRemoveBackgroundActionPerformed
 
     private void btnElectricalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnElectricalLinkActionPerformed
@@ -463,8 +463,8 @@ public final class ObjectViewTopComponent extends TopComponent
                 if (e.getSource() == DialogDescriptor.OK_OPTION){
                     if (pnlFormat.getNodesFontColor() != null)
                         currentColor = pnlFormat.getNodesFontColor();
-                    if (pnlFormat.getNodesFontType() != null)
-                        currentFont = pnlFormat.getNodesFontType();
+//                    if (pnlFormat.getNodesFontType() != null)
+//                        currentFont = pnlFormat.getNodesFontType();
                     if (pnlFormat.getNodesFontSize() != -1)
                         currentFont = currentFont.deriveFont(Float.valueOf(pnlFormat.getNodesFontSize()+".0")); //NOI18N
 
@@ -472,12 +472,12 @@ public final class ObjectViewTopComponent extends TopComponent
                         if (pnlFormat.getNodesFontColor() != null)
                             ((ObjectNodeWidget)node).getLabelWidget().setForeground(pnlFormat.getNodesFontColor());
 
-                        if (pnlFormat.getNodesFontType() != null){
-                            Font newFont = new Font(pnlFormat.getNodesFontType().getFontName(),
-                                    ((ObjectNodeWidget)node).getLabelWidget().getFont().getStyle(),
-                                    ((ObjectNodeWidget)node).getLabelWidget().getFont().getSize());
-                            ((ObjectNodeWidget)node).getLabelWidget().setFont(newFont);
-                        }
+//                        if (pnlFormat.getNodesFontType() != null){
+//                            Font newFont = new Font(pnlFormat.getNodesFontType().getFontName(),
+//                                    ((ObjectNodeWidget)node).getLabelWidget().getFont().getStyle(),
+//                                    ((ObjectNodeWidget)node).getLabelWidget().getFont().getSize());
+//                            ((ObjectNodeWidget)node).getLabelWidget().setFont(newFont);
+//                        }
                         if (pnlFormat.getNodesFontSize() != -1){
                             Font newFont = new Font(((ObjectNodeWidget)node).getLabelWidget().getFont().getFontName(),
                                     ((ObjectNodeWidget)node).getLabelWidget().getFont().getStyle(),
@@ -632,15 +632,15 @@ public final class ObjectViewTopComponent extends TopComponent
     @Override
     public String getDisplayName(){
         if (super.getDisplayName() == null)
-            return "<No Name>";
-        return super.getDisplayName().trim().equals("")?"<No Name>":super.getDisplayName();
+            return "Untitled view";
+        return super.getDisplayName().trim().equals("")?"Untitled view":super.getDisplayName();
     }
 
-    public boolean getIsSaved() {
+    public boolean isSaved() {
         return isSaved;
     }
 
-    public void setIsSaved(boolean value){
+    public void setSaved(boolean value){
         this.isSaved = value;
         if (value)
             this.setHtmlDisplayName(this.getDisplayName());
@@ -659,7 +659,7 @@ public final class ObjectViewTopComponent extends TopComponent
     public void actionPerformed(ActionEvent e) {
         switch (e.getID()){
             case ViewScene.SCENE_CHANGE:
-                this.setIsSaved(false);
+                this.setSaved(false);
                 break;
             case ViewScene.SCENE_CHANGETOSAVE:
                 btnSaveActionPerformed(e);

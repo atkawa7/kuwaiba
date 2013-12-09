@@ -18,8 +18,8 @@ package org.inventory.views.objectview.dialogs;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
+//import java.awt.Font;
+//import java.awt.GraphicsEnvironment;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -44,9 +44,9 @@ public class FormatTextPanel extends javax.swing.JPanel {
         return ((SingleFormatPanel)pnlTabMain.getComponent(0)).getSelectedColor();
     }
 
-    public Font getNodesFontType(){
-        return ((SingleFormatPanel)pnlTabMain.getComponent(0)).getSelectedType();
-    }
+//    public Font getNodesFontType(){
+//        return ((SingleFormatPanel)pnlTabMain.getComponent(0)).getSelectedType();
+//    }
 
     public Integer getNodesFontSize(){
         return ((SingleFormatPanel)pnlTabMain.getComponent(0)).getSelectedSize();
@@ -56,9 +56,9 @@ public class FormatTextPanel extends javax.swing.JPanel {
         return ((SingleFormatPanel)pnlTabMain.getComponent(1)).getSelectedColor();
     }
 
-    public Font getEdgesFontType(){
-        return ((SingleFormatPanel)pnlTabMain.getComponent(1)).getSelectedType();
-    }
+//    public Font getEdgesFontType(){
+//        return ((SingleFormatPanel)pnlTabMain.getComponent(1)).getSelectedType();
+//    }
 
     public Integer getEdgesFontSize(){
         return ((SingleFormatPanel)pnlTabMain.getComponent(1)).getSelectedSize();
@@ -101,10 +101,10 @@ public class FormatTextPanel extends javax.swing.JPanel {
     private class SingleFormatPanel extends JPanel{
         private javax.swing.JComboBox cmbFontColor;
         private javax.swing.JComboBox cmbFontSize;
-        private javax.swing.JComboBox cmbFontType;
+//        private javax.swing.JComboBox cmbFontType;
         private javax.swing.JLabel lblFontColor;
         private javax.swing.JLabel lblFontSize;
-        private javax.swing.JLabel lblFontType;
+//        private javax.swing.JLabel lblFontType;
 
         public SingleFormatPanel() {
             initComponents();
@@ -116,14 +116,14 @@ public class FormatTextPanel extends javax.swing.JPanel {
         // <editor-fold defaultstate="collapsed" desc="Default code">
         private void initComponents() {
 
-            lblFontType = new javax.swing.JLabel();
+//            lblFontType = new javax.swing.JLabel();
             lblFontColor = new javax.swing.JLabel();
-            cmbFontType = new javax.swing.JComboBox();
+//            cmbFontType = new javax.swing.JComboBox();
             cmbFontColor = new javax.swing.JComboBox();
             cmbFontSize = new javax.swing.JComboBox();
             lblFontSize = new javax.swing.JLabel();
 
-            lblFontType.setText(org.openide.util.NbBundle.getMessage(FormatTextPanel.class, "FormatTextPanel.lblFontType.text")); // NOI18N
+//            lblFontType.setText(org.openide.util.NbBundle.getMessage(FormatTextPanel.class, "FormatTextPanel.lblFontType.text")); // NOI18N
 
             lblFontColor.setText(org.openide.util.NbBundle.getMessage(FormatTextPanel.class, "FormatTextPanel.lblFontColor.text")); // NOI18N
 
@@ -136,10 +136,10 @@ public class FormatTextPanel extends javax.swing.JPanel {
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(lblFontType)
-                            .addGap(32, 32, 32)
-                            .addComponent(cmbFontType, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
+//                        .addGroup(layout.createSequentialGroup()
+//                            .addComponent(lblFontType)
+//                            .addGap(32, 32, 32)
+//                            .addComponent(cmbFontType, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(lblFontColor)
@@ -155,9 +155,9 @@ public class FormatTextPanel extends javax.swing.JPanel {
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(22, 22, 22)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lblFontType)
-                        .addComponent(cmbFontType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+//                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+//                        .addComponent(lblFontType)
+//                        .addComponent(cmbFontType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(lblFontColor)
@@ -218,37 +218,37 @@ public class FormatTextPanel extends javax.swing.JPanel {
                 }
             });
 
-            cmbFontType.addItem(null);
-            for (Font font : GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts())
-                cmbFontType.addItem(font);
-
-            cmbFontType.setRenderer(new ListCellRenderer() {
-
-                public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                    JLabel item = new JLabel();
-                    if (value != null){
-                        if (value instanceof Font){ //Weird, the -1 index is a String, not null
-                            item.setFont(new Font(((Font)value).getFontName(),Font.PLAIN,12));
-                            item.setText(((Font)value).getFontName());
-                        }
-                    }else
-                        item.setText("Current Value");
-
-                    item.setBackground(UIManager.getColor("ComboBox.selectionBackground")); //NOI18N
-                    
-                    item.setOpaque(isSelected);
-                    return item;
-                }
-            });
+//            cmbFontType.addItem(null);
+//            for (Font font : GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts())
+//                cmbFontType.addItem(font);
+//
+//            cmbFontType.setRenderer(new ListCellRenderer() {
+//
+//                public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+//                    JLabel item = new JLabel();
+//                    if (value != null){
+//                        if (value instanceof Font){ //Weird, the -1 index is a String, not null
+//                            item.setFont(new Font(((Font)value).getFontName(),Font.PLAIN,12));
+//                            item.setText(((Font)value).getFontName());
+//                        }
+//                    }else
+//                        item.setText("Current Value");
+//
+//                    item.setBackground(UIManager.getColor("ComboBox.selectionBackground")); //NOI18N
+//                    
+//                    item.setOpaque(isSelected);
+//                    return item;
+//                }
+//            });
         }// </editor-fold>
 
         public Color getSelectedColor(){
             return (Color)cmbFontColor.getSelectedItem();
         }
 
-        public Font getSelectedType(){
-            return (Font)cmbFontType.getSelectedItem();
-        }
+//        public Font getSelectedType(){
+//            return (Font)cmbFontType.getSelectedItem();
+//        }
 
         public int getSelectedSize(){
             return cmbFontSize.getSelectedItem() == null? -1: (Integer)cmbFontSize.getSelectedItem();

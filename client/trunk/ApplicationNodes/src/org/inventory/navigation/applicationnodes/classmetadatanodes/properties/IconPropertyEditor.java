@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.caching.Cache;
 import org.inventory.core.services.utils.Constants;
 import org.inventory.core.services.utils.Utils;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
@@ -105,9 +106,13 @@ public class IconPropertyEditor extends PropertyEditorSupport
                         if (attribute.equals(Constants.PROPERTY_ICON)){
                             if(!com.setClassMetadataProperties(id, null, null, null, null, icon, null, null, null, null))
                                 nu.showSimplePopup("Class Properties", NotificationUtil.ERROR, com.getError());
+                            else
+                                Cache.getInstace().resetAll();
                         }else{
                             if(!com.setClassMetadataProperties(id, null, null, null, icon, null, null, null, null, null))
                                 nu.showSimplePopup("Class Properties", NotificationUtil.ERROR, com.getError());
+                            else
+                                Cache.getInstace().resetAll();
                         }
                     } catch (IOException ex) {
                         icon = null;

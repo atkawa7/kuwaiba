@@ -144,7 +144,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
      * Default notifier
      */
     private NotificationUtil notifier;
-
+    
     public ViewScene (NotificationUtil notifier){
         interactionLayer = new LayerWidget(this);
         backgroundLayer = new LayerWidget(this);
@@ -152,10 +152,12 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
         edgesLayer = new LayerWidget(this);
         labelsLayer = new LayerWidget(this);
         myConnectionProvider = new PhysicalConnectionProvider();
+        
         addChild(backgroundLayer);
         addChild(nodesLayer);
         addChild(edgesLayer);
         addChild(labelsLayer);
+        
         getActions().addAction(ActionFactory.createZoomAction());
         getActions().addAction(ActionFactory.createPanAction());
         //getActions().addAction(ActionFactory.createRectangularSelectAction(this, backgroundLayer));
@@ -275,7 +277,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
         synchronized (getSceneAnimator()) {
             double zoom = getSceneAnimator().isAnimatingZoomFactor () ? getSceneAnimator().getTargetZoomFactor () : getZoomFactor ();
             if(zoom < 4){
-                getSceneAnimator().animateZoomFactor (zoom+0.5);
+                getSceneAnimator().animateZoomFactor (zoom + 0.5);
                 validate();
             }
         }
@@ -285,7 +287,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
         synchronized (getSceneAnimator()) {
             double zoom = getSceneAnimator().isAnimatingZoomFactor () ? getSceneAnimator().getTargetZoomFactor () : getZoomFactor ();
             if(zoom > 0)
-                getSceneAnimator().animateZoomFactor (zoom-0.5);
+                getSceneAnimator().animateZoomFactor (zoom - 0.5);
         }
     }
 
@@ -344,12 +346,15 @@ public final class ViewScene extends GraphScene<LocalObjectLight,LocalObject>{
     public void setBackgroundImage(Image im){
         if (im == null) //Do nothing
             return;
-        if (!backgroundLayer.getChildren().isEmpty())
-            backgroundLayer.removeChildren(); //Clean the layer
-
-        ImageWidget background = new ImageWidget(this,im);
-        background.bringToBack();
-        backgroundLayer.addChild(background);
+        backgroundLayer.removeChildren();
+        backgroundLayer.addChild(new ImageWidget(this, im));
+        validate();
+    }
+    
+    public void removeBackground() {
+        backgroundLayer.removeChildren();
+        fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "Remove Background"));
+        validate();
     }
 
     public byte[] getAsXML() {

@@ -17,10 +17,12 @@
 package org.inventory.views.objectview;
 
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.LocalStuffFactory;
@@ -176,24 +178,16 @@ public class ObjectViewService implements LookupListener{
         fChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fChooser.setFileFilter(Utils.getImageFileFilter());
         if (fChooser.showOpenDialog(vrtc.getScene().getView()) == JFileChooser.APPROVE_OPTION){
-            Image myBackgroundImage = Toolkit.getDefaultToolkit().createImage(fChooser.getSelectedFile().getAbsolutePath());
-            if (myBackgroundImage == null)
-                 vrtc.getNotifier().showSimplePopup("Image load", NotificationUtil.ERROR, "Error loading image. Please try another");
-            else{
+            Image myBackgroundImage;
+            try {
+                myBackgroundImage = ImageIO.read(new File(fChooser.getSelectedFile().getAbsolutePath()));
                 vrtc.getScene().setBackgroundImage(myBackgroundImage);
-                vrtc.getScene().validate();
                 vrtc.getScene().fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "Add Background"));
+            } catch (IOException ex) {
+                vrtc.getNotifier().showSimplePopup("Image load", NotificationUtil.ERROR, ex.getMessage());
             }
         }
-    }
-
-    /**
-     * Removes the current background
-     */
-    public void removeBackground() {
-        vrtc.getScene().getBackgroundLayer().removeChildren();
-        vrtc.getScene().fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "Remove Background"));
-    }
+    }  
 
     /**
      * Saves the view to a XML representation at server side
