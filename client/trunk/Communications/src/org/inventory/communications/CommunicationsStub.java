@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -80,7 +80,6 @@ public class CommunicationsStub {
     private String error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_ERROR");
     private Cache cache;
     private LocalSession session;
-
     
     private CommunicationsStub(){
         if (serverURL == null){
@@ -1473,8 +1472,38 @@ public class CommunicationsStub {
             this.error =  ex.getMessage();
             return null;
         }
+    }// </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Sync methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Load data from a file 
+     * @param choosenFile csv file with the data
+     * @return percent  of progress
+     */
+    public String loadDataFromFile(byte[] choosenFile){
+        try{
+            return port.loadDataFromFile(choosenFile, this.session.getSessionId());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return "";
+        }
     }
+     public byte[] downloadErrors(String fileName){
+        try{
+            return port.downloadErrors(fileName, this.session.getSessionId());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }    
     
-    
-    // </editor-fold>
+    public byte[] downloadLog(String fileName){
+        try{
+            return port.downloadLog(fileName, this.session.getSessionId());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    // </editor-fold>   
 }
