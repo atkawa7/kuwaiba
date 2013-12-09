@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -179,7 +179,16 @@ public interface ApplicationEntityManager {
     public List<RemoteBusinessObjectLight> getListTypeItems(String className)
             throws MetadataObjectNotFoundException, InvalidArgumentException;
 
-
+    /**
+     * Retrieves all the list type items to a given list item name
+     * @param listTypeName
+     * @return the 
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException 
+     */
+    public RemoteBusinessObjectLight getListTypeItem(String listTypeName) 
+            throws MetadataObjectNotFoundException, InvalidArgumentException;
+    
     /**
      * Deletes a list type item
      * @param className List type item class
