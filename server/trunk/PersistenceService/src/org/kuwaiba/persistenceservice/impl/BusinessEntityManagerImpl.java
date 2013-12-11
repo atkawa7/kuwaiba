@@ -85,21 +85,30 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException {
 
         ClassMetadata myClass= cm.getClass(className);
-        if (myClass == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
-
+        
         Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
+            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
+        if (myClass == null){
+            myClass = Util.createClassMetadataFromNode(classNode);
+            cm.putClass(myClass);
+        }
+        
+        if (myClass.isInDesign())
+            throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
+        
+        if (myClass.isAbstract())
+            throw new OperationNotPermittedException("Create Object", "Can not create instances of abstract classes");
+        
         if (!cm.isSubClass("InventoryObject", className))
-            throw new OperationNotPermittedException("Create Object", "Can't create non-inventory objects");
+            throw new OperationNotPermittedException("Create Object", "Can not create non-inventory objects");
 
         //The object should be created under an instance other than the dummy root
         if (parentClassName != null){
             ClassMetadata myParentObjectClass= cm.getClass(parentClassName);
             if (myParentObjectClass == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
             if (!cm.getPossibleChildren(parentClassName).contains(className))
                 throw new OperationNotPermittedException("Create Object", String.format("An instance of class %s can't be created as child of class %s", className, myParentObjectClass.getName()));
@@ -141,6 +150,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         if (myClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
+        if (myClass.isInDesign())
+            throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
+        
         if (myClass.isAbstract())
             throw new OperationNotPermittedException("Create Object", "Can't create objects from an abstract classes");
 

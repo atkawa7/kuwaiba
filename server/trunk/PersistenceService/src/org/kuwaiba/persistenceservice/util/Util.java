@@ -364,19 +364,22 @@ public class Util {
             myClass.setParentClassName(null);
         
         //Attributes
-        String cypherQuery = "START metadataclass = node({classid}) ".concat(
-                             "MATCH metadataclass -[:").concat(RelTypes.HAS_ATTRIBUTE.toString()).concat("]->attribute ").concat(
-                             "RETURN attribute ").concat(
-                             "ORDER BY attribute.name ASC");
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("classid", classNode.getId());//NOI18N
-
-        ExecutionEngine engine = new ExecutionEngine(classNode.getGraphDatabase());
-        ExecutionResult result = engine.execute(cypherQuery, params);
-        Iterator<Node> n_column = result.columnAs("attribute");
-        for (Node attributeNode : IteratorUtil.asIterable(n_column))
-             listAttributes.add(createAttributeMetadataFromNode(attributeNode));
+//        String cypherQuery = "START metadataclass = node({classid}) ".concat(
+//                             "MATCH metadataclass -[:").concat(RelTypes.HAS_ATTRIBUTE.toString()).concat("]->attribute ").concat(
+//                             "RETURN attribute ").concat(
+//                             "ORDER BY attribute.name ASC");
+//
+//        Map<String, Object> params = new HashMap<String, Object>();
+//        params.put("classid", classNode.getId());//NOI18N
+//
+//        ExecutionEngine engine = new ExecutionEngine(classNode.getGraphDatabase());
+//        ExecutionResult result = engine.execute(cypherQuery, params);
+//        Iterator<Node> n_column = result.columnAs("attribute");
+//        for (Node attributeNode : IteratorUtil.asIterable(n_column))
+//             listAttributes.add(createAttributeMetadataFromNode(attributeNode));
+        
+        for (Relationship rel : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE))
+            listAttributes.add(createAttributeMetadataFromNode(rel.getEndNode()));
         
         myClass.setAttributes(listAttributes);
 

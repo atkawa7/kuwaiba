@@ -23,6 +23,7 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
+import org.kuwaiba.persistenceservice.util.Constants;
 
 /**
  * Manages the caching strategy
@@ -122,8 +123,12 @@ public class CacheManager {
 
     public List<String> getPossibleChildren(String parent){
         if (parent == null)
-            return possibleChildrenIndex.get("");
+            return possibleChildrenIndex.get(Constants.DUMMYROOT);
         return possibleChildrenIndex.get(parent);
+    }
+    
+    public void clearContainmentCache(){
+        possibleChildrenIndex.clear();
     }
 
     /**
