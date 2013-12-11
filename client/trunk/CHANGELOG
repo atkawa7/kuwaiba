@@ -68,3 +68,6 @@
 * Support for topology views
 0.5.1 (? 2013)
 * Support for Pools
+* Support for bulk data uploads
+* Multiple bug fixes
+* Data model manager

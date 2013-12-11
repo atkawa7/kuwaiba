@@ -73,7 +73,7 @@ public class IconPropertyEditor extends PropertyEditorSupport
 
     @Override
     public String getAsText() {
-        return "[Click on the button to choose a file]";
+        return "[Click the button to choose a file]";
     }
     
     @Override

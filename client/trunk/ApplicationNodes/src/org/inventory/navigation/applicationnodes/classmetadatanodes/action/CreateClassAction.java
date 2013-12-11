@@ -64,7 +64,7 @@ public class CreateClassAction extends AbstractAction {
             lcml.setOid(classId);
             node.getChildren().add(new Node[]{new ClassMetadataNode(lcml)});
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO,
-                    java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
+                    java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CLASS_CREATED"));
         }
     }
  }

@@ -124,6 +124,14 @@
 
 <xs:element name="deleteUsersResponse" type="tns:deleteUsersResponse"/>
 
+<xs:element name="downloadErrors" type="tns:downloadErrors"/>
+
+<xs:element name="downloadErrorsResponse" type="tns:downloadErrorsResponse"/>
+
+<xs:element name="downloadLog" type="tns:downloadLog"/>
+
+<xs:element name="downloadLogResponse" type="tns:downloadLogResponse"/>
+
 <xs:element name="executeQuery" type="tns:executeQuery"/>
 
 <xs:element name="executeQueryResponse" type="tns:executeQueryResponse"/>
@@ -259,6 +267,10 @@
 <xs:element name="getUsers" type="tns:getUsers"/>
 
 <xs:element name="getUsersResponse" type="tns:getUsersResponse"/>
+
+<xs:element name="loadDataFromFile" type="tns:loadDataFromFile"/>
+
+<xs:element name="loadDataFromFileResponse" type="tns:loadDataFromFileResponse"/>
 
 <xs:element name="moveObjects" type="tns:moveObjects"/>
 
@@ -658,6 +670,19 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="loadDataFromFile">
+<xs:sequence>
+<xs:element name="chossenFile" type="xs:base64Binary" nillable="true" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="loadDataFromFileResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="updateObject">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
@@ -756,6 +781,19 @@
 
 <xs:complexType name="moveObjectsResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="downloadErrors">
+<xs:sequence>
+<xs:element name="fileName" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="downloadErrorsResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:base64Binary" nillable="true" minOccurs="0"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="createPoolItem">
@@ -1550,6 +1588,19 @@
 
 <xs:complexType name="addPossibleChildrenResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="downloadLog">
+<xs:sequence>
+<xs:element name="fileName" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="downloadLogResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:base64Binary" nillable="true" minOccurs="0"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getObjectChildren">
