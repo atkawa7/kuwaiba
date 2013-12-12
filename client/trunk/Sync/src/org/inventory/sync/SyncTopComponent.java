@@ -16,7 +16,6 @@ import javax.swing.JOptionPane;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.inventory.core.services.utils.Utils;
@@ -37,22 +36,20 @@ iconBase = "org/inventory/sync/res/sync.png",
 persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.sync.SyncTopComponent")
-@ActionReference(path = "Menu/Tools" /*, position = 333 */)
+/*@ActionReference(path = "Menu/Tools" /*, position = 333 )*/
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_SyncAction",
 preferredID = "SyncTopComponent")
 @Messages({
     "CTL_SyncAction=Bulk upload",
     "CTL_SyncTopComponent=Bulk upload",
-    "HINT_SyncTopComponent=This is the bulk upload window"
+    "HINT_SyncTopComponent=Create objects from a text file"
 })
 public final class SyncTopComponent extends TopComponent {
     
     private JFileChooser fChooser;
     private SyncService ss;
-    //private NotificationUtil nu;
     private byte[] choosenFile = null;
-    private String fileName = "";
 
     public SyncTopComponent() {
         initComponents();
