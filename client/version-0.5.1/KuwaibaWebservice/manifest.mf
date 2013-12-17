@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.inventory.communications.libraries
+OpenIDE-Module-Localizing-Bundle: org/inventory/communications/libraries/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+

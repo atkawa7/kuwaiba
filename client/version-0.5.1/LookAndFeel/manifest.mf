@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.kuwaiba.core
+OpenIDE-Module-Install: org/kuwaiba/core/Installer.class
+OpenIDE-Module-Localizing-Bundle: org/kuwaiba/core/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.0
+
