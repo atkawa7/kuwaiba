@@ -71,6 +71,9 @@ public class AttributeInfo implements Serializable {
      */
     private Boolean locked;
 
+    public AttributeInfo() {
+    }
+
     public AttributeInfo(String name, String displayName, String type, 
             Boolean administrative, Boolean visible, String description) {
         this.name = name;
