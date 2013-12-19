@@ -100,7 +100,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
     public long createClass(ClassMetadata classDefinition) throws MetadataObjectNotFoundException, DatabaseException, InvalidArgumentException {
         Transaction tx = null;
         long id;   
-        classDefinition = Util.setDefaultsForClassMetadata(classDefinition);
+        if (classDefinition.getName() == null)
+            throw new InvalidArgumentException("Class name can not be null", Level.INFO);
+            
         if (!classDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
             throw new InvalidArgumentException(String.format("Class %s contains invalid characters", classDefinition.getName()), Level.INFO);
         
@@ -118,16 +120,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Node classNode = graphDb.createNode();
 
             classNode.setProperty(Constants.PROPERTY_NAME, classDefinition.getName());
-            classNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, classDefinition.getDisplayName());
-            classNode.setProperty(Constants.PROPERTY_CUSTOM, classDefinition.isCustom());
-            classNode.setProperty(Constants.PROPERTY_COUNTABLE, classDefinition.isCountable());
+            classNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, classDefinition.getDisplayName() == null ? "" : classDefinition.getDisplayName());
+            classNode.setProperty(Constants.PROPERTY_CUSTOM, classDefinition.isCustom() == null ? true : classDefinition.isCustom());
+            classNode.setProperty(Constants.PROPERTY_COUNTABLE, classDefinition.isCountable() == null ? true : classDefinition.isCountable());
             classNode.setProperty(Constants.PROPERTY_COLOR, classDefinition.getColor());
-            classNode.setProperty(Constants.PROPERTY_DESCRIPTION, classDefinition.getDescription());
-            classNode.setProperty(Constants.PROPERTY_ABSTRACT, classDefinition.isAbstract());
-            classNode.setProperty(Constants.PROPERTY_ICON, classDefinition.getIcon());
-            classNode.setProperty(Constants.PROPERTY_SMALL_ICON, classDefinition.getSmallIcon());
+            classNode.setProperty(Constants.PROPERTY_DESCRIPTION, classDefinition.getDescription() == null ? "" : classDefinition.getDescription());
+            classNode.setProperty(Constants.PROPERTY_ABSTRACT, classDefinition.isAbstract() == null ? false : classDefinition.isAbstract());
+            classNode.setProperty(Constants.PROPERTY_ICON, classDefinition.getIcon() == null ? new byte[0] : classDefinition.getIcon());
+            classNode.setProperty(Constants.PROPERTY_SMALL_ICON, classDefinition.getSmallIcon() ==  null ? new byte[0] : classDefinition.getSmallIcon());
             classNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-            classNode.setProperty(Constants.PROPERTY_IN_DESIGN, classDefinition.isInDesign());
+            classNode.setProperty(Constants.PROPERTY_IN_DESIGN, classDefinition.isInDesign() == null ? false : classDefinition.isInDesign());
 
             id = classNode.getId();
             classIndex.putIfAbsent(classNode, Constants.PROPERTY_NAME, classDefinition.getName());
@@ -186,17 +188,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                 }
             }
             tx.success();
+            tx.finish();
             cm.putClass(classDefinition);
             buildContainmentCache();
             return id;
         } catch (Exception ex) {
             Logger.getLogger("createClass: "+ex.getMessage()); //NOI18N
             tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        } finally {
-            if(tx != null){
-                tx.finish();
-            }
         }
     }
 
@@ -257,17 +257,16 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     setAttributeProperties(newClassDefinition.getId(), attr);
             }        
             tx.success();
+            tx.finish();
             cm.removeClass(formerName);
             cm.putClass(Util.createClassMetadataFromNode(classMetadata));
         }catch(Exception ex){
             Logger.getLogger("setClassProperties: "+ex.getMessage()); //NOI18N
-            if(tx != null)
-                tx.failure();
-            throw new RuntimeException(ex.getMessage());
-        } finally {
             if(tx != null){
+                tx.failure();
                 tx.finish();
             }
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -314,6 +313,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             classIndex.remove(node);
             node.delete();
             tx.success();
+            tx.finish();
             cm.removeClass(currentClassName);
             buildContainmentCache();
 
@@ -321,11 +321,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Logger.getLogger("deleteClass: "+ex.getMessage()); //NOI18N
             if(tx != null){
                 tx.failure();
+                tx.finish();
             }
             throw new RuntimeException(ex.getMessage());
-        } finally {
-            if (tx != null)
-                tx.finish();
         }
     }
 
@@ -368,6 +366,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             classIndex.remove(node);
             node.delete();
             tx.success();
+            tx.finish();
             cm.removeClass(className);
             buildContainmentCache();
 
@@ -375,11 +374,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Logger.getLogger("deleteClass: "+ex.getMessage()); //NOI18N
             if(tx != null){
                 tx.failure();
+                tx.finish();
             }
             throw new RuntimeException(ex.getMessage());
-        } finally {
-            if (tx != null)
-                tx.finish();
         }
     }
 

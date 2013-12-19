@@ -34,12 +34,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
+import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
@@ -50,20 +49,15 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
 import org.kuwaiba.persistenceservice.impl.RelTypes;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ReturnableEvaluator;
 import org.neo4j.graphdb.StopEvaluator;
-import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.Traverser.Order;
-import org.neo4j.graphdb.traversal.Evaluators;
 import org.neo4j.graphdb.traversal.TraversalDescription;
-import org.neo4j.helpers.collection.IteratorUtil;
 import org.neo4j.kernel.Traversal;
 
 /**
@@ -134,7 +128,7 @@ public class Util {
      * @param propertyName Relationship's property to be used as filter
      * @param propertyValue Relationship's property value to be used as filter
      */
-    public static void releaseRelationships(Node instance, RelTypes relationshipType,
+    public static void releaseRelationshipss(Node instance, RelTypes relationshipType,
             Direction relationshipDirection, String propertyName, String propertyValue) {
         Iterable<Relationship> relatedItems = instance.getRelationships(relationshipType, relationshipDirection);
         for (Relationship relatedItemRelationship : relatedItems){
@@ -232,38 +226,11 @@ public class Util {
     }
 
     /**
-     * Converts a String value to an object value based on a give mapping. This method
-     * does not convert binary or relationship-like attributes
-     * @param value Value as String
-     * @param type Mapping. The allowed values are the AttributeMetadata.MAPPING_XXX
-     * @return the converted value
-     * @throws InvalidArgumentException If the type can't be converted
-     */
-    /*public Integer setRealValue(String value, int mapping, String type) throws InvalidArgumentException{
-
-        try{
-            if(type.equals("Float") || type.equals("Long")
-                    || type.equals("Integer") || type.equals("Boolean"))
-                return AttributeMetadata.MAPPING_PRIMITIVE;
-            else if(type.equals("Date"))
-                return AttributeMetadata.MAPPING_DATE;
-            else if (type.equals("byte[]"))
-                return AttributeMetadata.MAPPING_BINARY;
-            else
-                return AttributeMetadata.MAPPING_MANYTOONE;
-//            throw new InvalidArgumentException("Can not retrieve the correct value for ("+
-//                value+" "+type+"). Please check your mappings", Level.WARNING);
-        }catch (Exception e){
-            throw new InvalidArgumentException(String.format("Can not retrieve the correct value for %s (%s). Please check your mappings", value, type), Level.WARNING);
-        }
-    }*/
-
-    /**
      * Creates a ClassMetadata with default values
      * @param classMetadata
      * @return
      */
-    public static ClassMetadata setDefaultsForClassMetadata(ClassMetadata classDefinition) throws MetadataObjectNotFoundException{
+    public static ClassMetadata setDefaultsForClassMetadatas(ClassMetadata classDefinition) throws MetadataObjectNotFoundException{
         if(classDefinition.getName() == null){
             throw new MetadataObjectNotFoundException("Can not create a class metadata entry without a name");
         }
@@ -362,21 +329,6 @@ public class Util {
         }
         else
             myClass.setParentClassName(null);
-        
-        //Attributes
-//        String cypherQuery = "START metadataclass = node({classid}) ".concat(
-//                             "MATCH metadataclass -[:").concat(RelTypes.HAS_ATTRIBUTE.toString()).concat("]->attribute ").concat(
-//                             "RETURN attribute ").concat(
-//                             "ORDER BY attribute.name ASC");
-//
-//        Map<String, Object> params = new HashMap<String, Object>();
-//        params.put("classid", classNode.getId());//NOI18N
-//
-//        ExecutionEngine engine = new ExecutionEngine(classNode.getGraphDatabase());
-//        ExecutionResult result = engine.execute(cypherQuery, params);
-//        Iterator<Node> n_column = result.columnAs("attribute");
-//        for (Node attributeNode : IteratorUtil.asIterable(n_column))
-//             listAttributes.add(createAttributeMetadataFromNode(attributeNode));
         
         for (Relationship rel : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE))
             listAttributes.add(createAttributeMetadataFromNode(rel.getEndNode()));
@@ -846,36 +798,6 @@ public class Util {
         }//end for
     }
     
-    public static void show(Node node){
-        String output = "";
-        Transaction tx = node.getGraphDatabase().beginTx();
-        try{
-        final TraversalDescription TRAVERSAL = Traversal.description().
-                    breadthFirst().
-                    relationships(RelTypes.EXTENDS, Direction.INCOMING).
-                    relationships(RelTypes.INSTANCE_OF, Direction.INCOMING).
-                    evaluator(Evaluators.all());
-            for(Path p : TRAVERSAL.traverse(node)){
-                if(p.endNode().hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)){
-                    output += "Instance: " ;
-                }
-                output += p.endNode().getProperty("name") +" id: "+ p.endNode().getId() +"\n";
-                for (Relationship attrRel: p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING)){
-                    output += "-" + attrRel.getEndNode().getProperty("name") + "\n";
-                }
-            }
-        System.out.println("stop");
-        }catch(Exception ex){
-            Logger.getLogger("Delete attribute: "+ex.getMessage()); //NOI18N
-            if (tx != null)
-                tx.failure();
-            throw new RuntimeException(ex.getMessage());
-        } finally {
-            if (tx != null)
-                tx.finish();
-        }
-    }
-    
     public static void deleteAttributeIfPrimitive(Node classNode, String attributeName){
         final TraversalDescription TRAVERSAL = Traversal.description().
                     breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
@@ -914,8 +836,41 @@ public class Util {
                     if(relatedElement.getProperty(Constants.PROPERTY_NAME).equals(attributeName))
                         relatedElement.delete();
                 }
-            }           
+            }
         }//end for
+    }
+    
+    /**
+     * Creates a new log entry upon an action performed by an user. Transactions are not managed here
+     * @param object The object that was affected by the action. Provide the db's root node if it's a general activity log entry (that is, it's not related to any specific object)
+     * @param user User that performed the action
+     * @param logEntry The information to be logged
+     * @throws ApplicationObjectNotFoundException If the user or the root of all log entries can't be found
+     */
+    public static Node createActivityLogEntry(Node object, Node logRoot, String userName, 
+            int type, long timestamp, String oldValue, String newValue, String notes) throws ApplicationObjectNotFoundException {
+        
+        Node userNode = logRoot.getGraphDatabase().index().forNodes(Constants.INDEX_USERS).get(Constants.PROPERTY_NAME, userName).getSingle();
+        
+        if (userNode == null)
+            throw new ApplicationObjectNotFoundException(String.format("User %s can not be found", userName));
+        
+        Node newEntry = object.getGraphDatabase().createNode();
+        
+        newEntry.setProperty(Constants.PROPERTY_TYPE, type);
+        newEntry.setProperty(Constants.PROPERTY_CREATION_DATE, timestamp);
+        if (oldValue != null)
+            newEntry.setProperty(Constants.PROPERTY_OLD_VALUE, oldValue);
+        if (newValue != null)
+            newEntry.setProperty(Constants.PROPERTY_NEW_VALUE, newValue);
+        if (notes != null)
+            newEntry.setProperty(Constants.PROPERTY_NOTES, notes);
+        
+        newEntry.createRelationshipTo(logRoot, RelTypes.CHILD_OF_SPECIAL);
+        newEntry.createRelationshipTo(userNode, RelTypes.PERFORMED_BY);
+        if (object != null)
+            object.createRelationshipTo(object, RelTypes.HAS_HISTORY_ENTRY);
+        return newEntry;
     }
     
     /**
@@ -944,7 +899,5 @@ public class Util {
         }catch (NumberFormatException ex){} //Does nothing
         
         return null;
-        
-        //throw  new InvalidArgumentException(String.format("Can not convert %s into %s", oldValue, convertTo), Level.WARNING);
     }
 }

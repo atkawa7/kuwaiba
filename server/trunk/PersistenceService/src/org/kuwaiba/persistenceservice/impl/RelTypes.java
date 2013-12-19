@@ -43,4 +43,5 @@ public enum RelTypes implements RelationshipType{
     CHILD_OF_SPECIAL, //Used to implement the parent-child relationship for domain specific models
     GROUPS_ROOT_NODE, //Used to associate root node whit the root group node
     HAS_PRIVILEGE, //Used to associate the groups nodes with methods group node
+    PERFORMED_BY, //Connects a log entry node with a user
 }

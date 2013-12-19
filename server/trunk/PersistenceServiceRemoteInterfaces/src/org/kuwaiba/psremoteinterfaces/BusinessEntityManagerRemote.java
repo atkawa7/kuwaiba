@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -62,7 +63,7 @@ public interface BusinessEntityManagerRemote extends Remote{
 
     public void updateObject(String className, long oid, HashMap<String,List<String>> attributes)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
-                WrongMappingException, InvalidArgumentException, RemoteException;
+                WrongMappingException, InvalidArgumentException, ApplicationObjectNotFoundException, RemoteException;
     public long createObject(String className, String parentClassName, long parentOid,
             HashMap<String,List<String>> attributes, long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException, DatabaseException, RemoteException;

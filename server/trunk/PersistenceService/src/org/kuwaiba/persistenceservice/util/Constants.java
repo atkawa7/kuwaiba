@@ -28,7 +28,7 @@ public class Constants {
     /**
      * Persistence Service version
      */
-    public static final String PERSISTENCE_SERVICE_VERSION = "0.4";
+    public static final String PERSISTENCE_SERVICE_VERSION = "0.5.1";
     /**
      * Class type for RootObject
      */
@@ -118,6 +118,10 @@ public class Constants {
      */
     public static final String INDEX_CATEGORY = "categories"; //NOI18N
     /**
+     * Label used for the special nodes index
+     */
+    public static final String INDEX_SPECIAL_NODES = "specialNodes"; //NOI18N
+    /**
      * Property "background path" for views
      */
     public static final String PROPERTY_BACKGROUND_FILE_NAME = "backgroundPath";
@@ -152,6 +156,10 @@ public class Constants {
     public static final String PROPERTY_LAST_NAME = "lastName"; //NOI18N
     public static final String PROPERTY_ENABLED = "enabled"; //NOI18N
     public static final String PROPERTY_PASSWORD = "password"; //NOI18N
+    public static final String PROPERTY_OLD_VALUE = "oldValue"; //NOI18N
+    public static final String PROPERTY_NEW_VALUE = "newValue"; //NOI18N
+    public static final String PROPERTY_NOTES = "notes"; //NOI18N
+
     /**
      * Root for all business classes
      */
@@ -172,6 +180,14 @@ public class Constants {
      * Dummy root node name
      */
     public static final String DUMMYROOT = "DummyRoot"; //NOI18N
+    /**
+     * General activity log root node name
+     */
+    public static final String NODE_GENERAL_ACTIVITY_LOG = "GeneralActivityLog"; //NOI18N
+    /**
+     * Object specific activity log root node name
+     */
+    public static final String NODE_OBJECT_ACTIVITY_LOG = "ObjectActivityLog"; //NOI18N
     /**
      * Date format for queries
      */

@@ -22,8 +22,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -66,6 +68,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
      */
     private Index<Node> objectIndex;
     /**
+     * Speial nodes index
+     */
+    private Index<Node> specialNodesIndex;
+    /**
      * Reference to the CacheManager
      */
     private CacheManager cm;
@@ -79,6 +85,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         this.graphDb = (EmbeddedGraphDatabase)cmn.getConnectionHandler();
         this.classIndex = graphDb.index().forNodes(Constants.INDEX_CLASS);
         this.objectIndex = graphDb.index().forNodes(Constants.INDEX_OBJECTS);
+        this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
     }
 
     public long createObject(String className, String parentClassName, long parentOid, HashMap<String,List<String>> attributes, long template)
@@ -129,15 +136,20 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             tx = graphDb.beginTx();
             Node newObject = createObject(classNode, myClass, attributes, template);
             newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
+            
+            //Creates an activity log entry
+            Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
+                    "", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                    Calendar.getInstance().getTimeInMillis(), null, null, String.valueOf(newObject.getId()));
+            
             tx.success();
+            tx.finish();
             return newObject.getId();
         }catch(Exception ex){
-            Logger.getLogger("createObject: "+ex.getMessage()); //NOI18N
+            Logger.getLogger(getClass().getName()).log(Level.OFF, "createObject: {0}", ex.getMessage()); //NOI18N
             tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
         }
     }
     
@@ -191,15 +203,20 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 newObject.setProperty(Constants.PROPERTY_NAME, "");
 
             objectIndex.putIfAbsent(newObject, Constants.PROPERTY_ID, newObject.getId());
+            
+            //Creates an activity log entry
+            Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
+                    "", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                    Calendar.getInstance().getTimeInMillis(), null, null, String.valueOf(newObject.getId()));
+            
             tx.success();
+            tx.finish();
             return newObject.getId();
         }catch(Exception ex){
-            Logger.getLogger("createSpecialObject: "+ex.getMessage()); //NOI18N
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "createSpecialObject: {0}", ex.getMessage()); //NOI18N
             tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
         }
     }
 
@@ -287,21 +304,27 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
                     Node instance = getInstanceOfClass(className, oid);
                     Util.deleteObject(instance, releaseRelationships);
+                    
+                    //Creates an activity log entry
+                    Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
+                            "", ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
+                            Calendar.getInstance().getTimeInMillis(), null, null, String.valueOf(instance.getId()));
+            
                 }
             }
             tx.success();
+            tx.finish();
         }catch(Exception ex){
-            Logger.getLogger("deleteObject: "+ex.getMessage()); //NOI18N
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "deleteObject: {0}", ex.getMessage()); //NOI18N
             tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
         }
     }
 
     public void updateObject(String className, long oid, HashMap<String,List<String>> attributes)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, WrongMappingException, InvalidArgumentException {
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, 
+            WrongMappingException, InvalidArgumentException, ApplicationObjectNotFoundException {
 
         Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
 
@@ -313,9 +336,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         Transaction tx = graphDb.beginTx();
         Node instance = getInstanceOfClass(className, oid);
 
+        String oldValue = null, newValue = null;
+        
         for (String attributeName : attributes.keySet()){
             if(myClass.hasAttribute(attributeName)){
                 if (AttributeMetadata.isPrimitive(myClass.getType(attributeName))){
+                    oldValue = String.valueOf(instance.getProperty(attributeName));
                     if (attributes.get(attributeName) == null)
                         instance.removeProperty(attributeName);
                     else{
@@ -323,6 +349,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                         if (attributes.get(attributeName).isEmpty())
                             instance.removeProperty(attributeName);
                         else{
+                            newValue = attributes.get(attributeName).get(0);
                             if (attributes.get(attributeName).get(0) == null)
                                 instance.removeProperty(attributeName);
                             else
@@ -332,39 +359,48 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 }else { //If the attribute is not a primitive type, then it's a relationship
                     List<Long> listTypeItems = new ArrayList<Long>();
                     if (!cm.getClass(myClass.getType(attributeName)).isListType())
-                        throw new InvalidArgumentException(String.format("Class %1s is not a list type", myClass.getType(attributeName)), Level.WARNING);
+                        throw new InvalidArgumentException(String.format("Class %s is not a list type", myClass.getType(attributeName)), Level.WARNING);
 
-                    if (attributes.get(attributeName) == null){
-                        Util.releaseRelationships(instance, RelTypes.RELATED_TO, Direction.OUTGOING, Constants.PROPERTY_NAME,
-                            attributeName);
-                        break;
+                    //Release all previous relationships
+                    oldValue = "";
+                    for (Relationship rel : instance.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)){
+                        if (rel.getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
+                            oldValue += rel.getEndNode().getProperty(Constants.PROPERTY_NAME);
+                            rel.delete();
+                        }
                     }
+                    if (attributes.get(attributeName) != null){ //If the new value is different than null, then create the new relationships
+                        try{
+                            for (String value : attributes.get(attributeName))
+                                listTypeItems.add(Long.valueOf(value));
+                        }catch(NumberFormatException ex){
+                            throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
+                        }
 
-                    try{
-                        for (String value : attributes.get(attributeName))
-                            listTypeItems.add(Long.valueOf(value));
-                    }catch(NumberFormatException ex){
-                        throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
-                    }
-                    Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, myClass.getType(attributeName)).getSingle();
-                    List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
+                        Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, myClass.getType(attributeName)).getSingle();
+                        List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
 
-                    Util.releaseRelationships(instance, RelTypes.RELATED_TO, Direction.OUTGOING, Constants.PROPERTY_NAME,
-                            attributeName);
-
-                    //Create the new relationships
-                    for (Node item : listTypeNodes){
-                        Relationship newRelationship = instance.createRelationshipTo(item, RelTypes.RELATED_TO);
-                        newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
+                        newValue = "";
+                        //Create the new relationships
+                        for (Node item : listTypeNodes){
+                            newValue += " " + item.getProperty(Constants.PROPERTY_NAME);
+                            Relationship newRelationship = instance.createRelationshipTo(item, RelTypes.RELATED_TO);
+                            newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
+                        }
                     }
                 }
-            }
-            else{
+            } else{
                 tx.failure();
                 tx.finish();
                 throw new InvalidArgumentException(
                         String.format("The attribute %s does not exist in class %s", attributeName, className), Level.WARNING);
             }
+            
+            //Creates an activity log entry
+            Util.createActivityLogEntry(instance, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
+                    "", ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, 
+                    Calendar.getInstance().getTimeInMillis(), oldValue, newValue, null);
+            
         }
         tx.success();
         tx.finish();
@@ -392,13 +428,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             Relationship rel = nodeA.createRelationshipTo(nodeB, RelTypes.RELATED_TO_SPECIAL);
             rel.setProperty(Constants.PROPERTY_NAME, name);
             tx.success();
+            tx.finish();
         }catch(Exception ex){
-            Logger.getLogger("createSpecialRelationship: "+ex.getMessage()); //NOI18N
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "createSpecialRelationship: {0}", ex.getMessage()); //NOI18N
             tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
         }
     }
 
@@ -424,23 +459,35 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
                 for (long oid : objects.get(myClass)){
                     Node instance = getInstanceOfClass(instanceClassNode, oid);
-                    if (instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().hasNext())
-                        instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().next().delete();
+                    String oldValue = null;
+                    if (instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().hasNext()){
+                        Relationship rel = instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().next();
+                        oldValue = String.valueOf(rel.getEndNode().getId());
+                        rel.delete();
+                    }
                     //If the object was child of a pool
-                    if (instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().hasNext())
-                        instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().next().delete();
+                    if (instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().hasNext()){
+                        Relationship rel = instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().next();
+                        oldValue = String.valueOf(rel.getEndNode().getId());
+                        rel.delete();
+                    }
                     
                     instance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF);
+                    
+                //Creates an activity log entry
+                Util.createActivityLogEntry(instance, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
+                        "", ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
+                        Calendar.getInstance().getTimeInMillis(), oldValue, String.valueOf(newParentNode.getId()), null);
+            
                 }
             }
             tx.success();
+            tx.finish();
         }catch(Exception ex){
-            Logger.getLogger("moveObjects: "+ex.getMessage()); //NOI18N
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "moveObjects: {0}", ex.getMessage()); //NOI18N
             tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
         }
     }
 
@@ -462,7 +509,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             int i = 0;
             for (String myClass : objects.keySet()){
                 if (!cm.canBeChild(targetClassName, myClass))
-                    throw new OperationNotPermittedException("copyObjects", String.format("An instance of class %2s can not be child of an instance of class %s", myClass,targetClassName));
+                    throw new OperationNotPermittedException("copyObjects", String.format("An instance of class %s can not be child of an instance of class %s", myClass,targetClassName));
 
                 Node instanceClassNode = classIndex.get(Constants.PROPERTY_NAME, myClass).getSingle();
                 if (instanceClassNode == null)
@@ -471,19 +518,24 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     Node templateObject = getInstanceOfClass(instanceClassNode, oid);
                     Node newInstance = copyObject(templateObject, recursive);
                     newInstance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF);
-                    res[i] =newInstance.getId();
+                    res[i] = newInstance.getId();
                     i++;
+                    
+                    //Creates an activity log entry
+                    Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
+                            "", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                            Calendar.getInstance().getTimeInMillis(), null, null, String.valueOf(newInstance.getId()));
+            
                 }
             }
             tx.success();
+            tx.finish();
             return res;
         }catch(Exception ex){
-            Logger.getLogger("copyObjects: "+ex.getMessage()); //NOI18N
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "copyObjects: {0}", ex.getMessage()); //NOI18N
             tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
         }        
     }
 
@@ -590,7 +642,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             Node child = specialChildren.iterator().next().getStartNode();
 
             if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
-                throw new MetadataObjectNotFoundException(String.format("Class for object with oid %1s could not be found",child.getId()));
+                throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found",child.getId()));
 
             Node classNode = child.getRelationships(RelTypes.INSTANCE_OF).iterator().next().getEndNode();
 

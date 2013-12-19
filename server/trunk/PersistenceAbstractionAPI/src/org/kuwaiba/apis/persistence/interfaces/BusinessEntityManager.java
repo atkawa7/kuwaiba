@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -145,10 +146,11 @@ public interface BusinessEntityManager {
      * @throws ObjectNotFoundException If the object can't be found
      * @throws OperationNotPermittedException If the update can't be performed due a business rule or because the object is blocked
      * @throws InvalidArgumentException If any of the names provided does not exist or can't be set using this method
+     * @throws ApplicationObjectNotFoundException If it's not possible to create the log entry because the user couldn't be found
      */
     public void updateObject(String className, long oid, HashMap<String,List<String>> attributes)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
-                WrongMappingException, InvalidArgumentException;
+                WrongMappingException, InvalidArgumentException, ApplicationObjectNotFoundException;
 
     /**
      * Updates an object binary attributes.
