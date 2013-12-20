@@ -58,6 +58,7 @@ public class DataIntegrityService{
                 graphDb.getReferenceNode().createRelationshipTo(dummyRootNode, RelTypes.DUMMY_ROOT);
                 graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).add(dummyRootNode, Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
                 tx.success();
+                tx.finish();
             }catch(Exception ex) {
                 Logger.getLogger(getClass().getName()).log(Level.SEVERE, "createDummyroot: {0}", ex.getMessage()); //NOI18N
                 if (tx != null){

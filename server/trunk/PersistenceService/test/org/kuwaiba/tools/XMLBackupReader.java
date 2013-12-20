@@ -159,15 +159,8 @@ public class XMLBackupReader {
     public void readRoots(List<LocalClassWrapper> listNodes, String parentClassName) throws Exception{
 
         ClassMetadata clmt = new ClassMetadata();
-//        CategoryMetadata ctgry = new CategoryMetadata();
-
-
         for (LocalClassWrapper lcw: listNodes) {
 
-//            ctgry.setName(lcw.getClassPackage());
-//            ctgry.setDescription(null);
-//            ctgry.setDisplayName(null);
-            
             clmt.setAbstract(Modifier.isAbstract(lcw.getJavaModifiers()));
             clmt.setCategory(null);
             clmt.setColor(0);

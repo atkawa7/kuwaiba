@@ -136,23 +136,22 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             classIndex.putIfAbsent(classNode, Constants.PROPERTY_ID, classNode.getId());
             //Is this class the root of all class hierarchy
             if (classDefinition.getParentClassName() == null){
-                if (graphDb.getReferenceNode().getSingleRelationship(RelTypes.ROOT, Direction.BOTH) == null){
+                
+                if (classDefinition.getName().equals(Constants.CLASS_ROOTOBJECT))
                     classNode.createRelationshipTo(graphDb.getReferenceNode(), RelTypes.ROOT);
-                }
-                else{
-                    throw new MetadataObjectNotFoundException("Parent class can not be null, or if it is, only one root class is permitted");
-                }
+                else
+                    throw new MetadataObjectNotFoundException(String.format("Only %s can be the root superclass", Constants.CLASS_ROOTOBJECT));
             }
             else { //Category
-                if (classDefinition.getCategory() != null) //if the category already exists
-                { 
-                    Node ctgrNode = categoryIndex.get(Constants.PROPERTY_NAME, classDefinition.getCategory().getName()).getSingle();
-                    if (ctgrNode == null) {
-                        long ctgrId = createCategory(classDefinition.getCategory());
-                        ctgrNode = categoryIndex.get(Constants.PROPERTY_ID, ctgrId).getSingle();
-                    }
-                    classNode.createRelationshipTo(ctgrNode, RelTypes.BELONGS_TO_GROUP);
-                }//end if is category null
+//                if (classDefinition.getCategory() != null) //if the category already exists
+//                { 
+//                    Node ctgrNode = categoryIndex.get(Constants.PROPERTY_NAME, classDefinition.getCategory().getName()).getSingle();
+//                    if (ctgrNode == null) {
+//                        long ctgrId = createCategory(classDefinition.getCategory());
+//                        ctgrNode = categoryIndex.get(Constants.PROPERTY_ID, ctgrId).getSingle();
+//                    }
+//                    classNode.createRelationshipTo(ctgrNode, RelTypes.BELONGS_TO_GROUP);
+//                }//end if is category null
                 Node parentNode = classIndex.get(Constants.PROPERTY_NAME, classDefinition.getParentClassName()).getSingle();
                 if (parentNode != null) {
                     classNode.createRelationshipTo(parentNode, RelTypes.EXTENDS);
