@@ -848,7 +848,7 @@ public class Util {
      * @throws ApplicationObjectNotFoundException If the user or the root of all log entries can't be found
      */
     public static Node createActivityLogEntry(Node object, Node logRoot, String userName, 
-            int type, long timestamp, String oldValue, String newValue, String notes) throws ApplicationObjectNotFoundException {
+            int type, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) throws ApplicationObjectNotFoundException {
         
         Node userNode = logRoot.getGraphDatabase().index().forNodes(Constants.INDEX_USERS).get(Constants.PROPERTY_NAME, userName).getSingle();
         
@@ -859,6 +859,8 @@ public class Util {
         
         newEntry.setProperty(Constants.PROPERTY_TYPE, type);
         newEntry.setProperty(Constants.PROPERTY_CREATION_DATE, timestamp);
+        if (affectedProperty != null)
+            newEntry.setProperty(Constants.PROPERTY_AFFECTED_PROPERTY, affectedProperty);
         if (oldValue != null)
             newEntry.setProperty(Constants.PROPERTY_OLD_VALUE, oldValue);
         if (newValue != null)

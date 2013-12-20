@@ -1189,7 +1189,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         
         try {
             String cypherQuery;
-            if (parentClassName == null || parentClassName.equals(Constants.DUMMYROOT)){
+            if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT)){
                 cypherQuery = "START rootNode = node(0) ".concat(
                                  "MATCH rootNode -[:DUMMY_ROOT]->dummyRootNode-[:POSSIBLE_CHILD]->directChild<-[?:EXTENDS*]-subClass ").concat(
                                  "WHERE subClass.abstract=false OR subClass IS NULL ").concat(
@@ -1235,7 +1235,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         List<ClassMetadataLight> cml = new ArrayList<ClassMetadataLight>();
         try {
             String cypherQuery;
-            if (parentClassName == null || parentClassName.equals(Constants.DUMMYROOT)){//The Dummy Rooot
+            if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT)){//The Dummy Rooot
                 cypherQuery = "START rootNode = node(0) ".concat(
                                  "MATCH rootNode -[:DUMMY_ROOT]->dummyRootNode-[:POSSIBLE_CHILD]->directChild ").concat(
                                  "RETURN directChild ").concat(
@@ -1361,7 +1361,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Relationship rel = referenceNode.getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
             parentNode = rel.getEndNode();
 
-            if(!(Constants.DUMMYROOT).equals((String)parentNode.getProperty(Constants.PROPERTY_NAME))){
+            if(!(Constants.NODE_DUMMYROOT).equals((String)parentNode.getProperty(Constants.PROPERTY_NAME))){
                     throw new MetadataObjectNotFoundException("DummyRoot node is corrupted");
             }
             else{
@@ -1497,7 +1497,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
         
         String cypherQuery = "START classNode=node:classes(name=\""+className+"\") "+
                              "MATCH possibleParentClassNode-[:POSSIBLE_CHILD"+(recursive ? "*" : "")+ "]->classNode "+
-                             "WHERE possibleParentClassNode.name <> \""+ Constants.DUMMYROOT +
+                             "WHERE possibleParentClassNode.name <> \""+ Constants.NODE_DUMMYROOT +
                              "\" RETURN distinct possibleParentClassNode "+
                              "ORDER BY possibleParentClassNode.name ASC";
 
@@ -1549,7 +1549,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             List<String> possibleChildrenOfRoot = new ArrayList<String>();
             for (ClassMetadataLight aClass : getPossibleChildren(null))
                 possibleChildrenOfRoot.add(aClass.getName());
-            cm.putPossibleChildren(Constants.DUMMYROOT, possibleChildrenOfRoot);
+            cm.putPossibleChildren(Constants.NODE_DUMMYROOT, possibleChildrenOfRoot);
         }catch(Exception e){}
    }
 }

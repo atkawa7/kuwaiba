@@ -21,11 +21,12 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
+import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.persistenceservice.impl.ConnectionManagerImpl;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
+import org.kuwaiba.persistenceservice.integrity.DataIntegrityService;
 
 /**
  *
@@ -38,19 +39,8 @@ public class XMLBackupReader {
     private Date date;
     private List<LocalClassWrapper> roots;
 
-    MetadataEntityManagerImpl mem;
-    ConnectionManagerImpl cm;
-    String sub= "";
-
-    public XMLBackupReader() {
-        try {
-            cm = new ConnectionManagerImpl();
-            cm.openConnection();
-            mem = new MetadataEntityManagerImpl(cm);
-        } catch (ConnectionException ex) {
-            Logger.getLogger(XMLBackupReader.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+    private MetadataEntityManagerImpl mem;
+    private ConnectionManagerImpl cm;
 
     public void read(byte[] xmlDocument) throws Exception{
         QName hierarchyTag = new QName("hierarchy"); //NOI18N
@@ -155,7 +145,12 @@ public class XMLBackupReader {
 
     public void load(){
         try {
+            cm = new ConnectionManagerImpl();
+            cm.openConnection();
+            mem = new MetadataEntityManagerImpl(cm);
+            createSchema();
             readRoots(roots, null);
+            cm.closeConnection();
         } catch (Exception ex) {
             Logger.getLogger(XMLBackupReader.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -220,5 +215,12 @@ public class XMLBackupReader {
             if(lcw.getDirectSubClasses().size() > 0)
                 readRoots(lcw.getDirectSubClasses(), lcw.getName());
         }
+    }
+
+    public void createSchema() throws DatabaseException {
+        DataIntegrityService dis = new DataIntegrityService(cm);
+        dis.createDummyroot();
+        dis.createGroupsRootNode();
+        dis.createActivityLogRootNodes();
     }
 }

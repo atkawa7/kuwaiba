@@ -159,7 +159,8 @@ public class Constants {
     public static final String PROPERTY_OLD_VALUE = "oldValue"; //NOI18N
     public static final String PROPERTY_NEW_VALUE = "newValue"; //NOI18N
     public static final String PROPERTY_NOTES = "notes"; //NOI18N
-
+    public static final String PROPERTY_AFFECTED_PROPERTY = "affectedProperty"; //NOI18N
+    
     /**
      * Root for all business classes
      */
@@ -179,7 +180,7 @@ public class Constants {
     /**
      * Dummy root node name
      */
-    public static final String DUMMYROOT = "DummyRoot"; //NOI18N
+    public static final String NODE_DUMMYROOT = "DummyRoot"; //NOI18N
     /**
      * General activity log root node name
      */
@@ -191,11 +192,11 @@ public class Constants {
     /**
      * Group root node name
      */
-    public static final String GROUPROOT = "GroupRoot"; //NOI18N
+    public static final String NODE_GROUPS = "Groups"; //NOI18N
     /**
      * Users root node name
      */
-    public static final String USERSROOT = "users";
+    public static final String NODE_USERS = "Users";
     /**
      * Date format for queries
      */

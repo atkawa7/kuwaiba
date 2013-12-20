@@ -25,7 +25,6 @@ import org.kuwaiba.persistence.factory.PersistenceLayerFactory;
 import org.kuwaiba.persistenceservice.impl.ApplicationEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.BusinessEntityManagerImpl;
 import org.kuwaiba.persistenceservice.impl.MetadataEntityManagerImpl;
-import org.kuwaiba.persistenceservice.integrity.DataIntegrityService;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
@@ -44,17 +43,13 @@ public class Main {
             System.setSecurityManager(new SecurityManager());
         try{
 
-            System.out.println(String.format("[%1s] Current working directory: %2s", Calendar.getInstance().getTime(), System.getProperty("user.dir")));
+            System.out.println(String.format("[%s] Current working directory: %s", Calendar.getInstance().getTime(), System.getProperty("user.dir")));
             PersistenceLayerFactory plf = new PersistenceLayerFactory();
             final ConnectionManager cm = plf.createConnectionManager();
-            System.out.println(String.format("[%1s] Establishing connection to the database...", Calendar.getInstance().getTime()));
+            System.out.println(String.format("[%s] Establishing connection to the database...", Calendar.getInstance().getTime()));
             cm.openConnection();
-            System.out.println(String.format("[%1s] Connection established", Calendar.getInstance().getTime()));
+            System.out.println(String.format("[%s] Connection established", Calendar.getInstance().getTime()));
             cm.printConnectionDetails();
-            
-            DataIntegrityService dis = new DataIntegrityService(cm);
-            dis.createDummyroot();
-            dis.createGroupRootNode();
             
             MetadataEntityManagerRemote meri = new MetadataEntityManagerImpl(cm);
             MetadataEntityManagerRemote memStub = (MetadataEntityManagerRemote)UnicastRemoteObject.exportObject(meri,0);
@@ -69,27 +64,27 @@ public class Main {
             ApplicationEntityManagerRemote aemStub = (ApplicationEntityManagerRemote)UnicastRemoteObject.exportObject(aemri,0);
             
             Registry registry = LocateRegistry.getRegistry();
-            System.out.println(String.format("[%1s] Registry obtained", Calendar.getInstance().getTime()));
+            System.out.println(String.format("[%s] Registry obtained", Calendar.getInstance().getTime()));
 
             registry.rebind(MetadataEntityManagerRemote.REFERENCE_MEM, memStub);
             registry.rebind(BusinessEntityManagerRemote.REFERENCE_BEM, bemStub);
             registry.rebind(ApplicationEntityManagerRemote.REFERENCE_AEM, aemStub);
-            System.out.println(String.format("[%1s] Remote Interface bound", Calendar.getInstance().getTime()));
-            System.out.println(String.format("[%1s] Persistence Service is up and running", Calendar.getInstance().getTime()));
+            System.out.println(String.format("[%s] Remote Interface bound", Calendar.getInstance().getTime()));
+            System.out.println(String.format("[%s] Persistence Service is up and running", Calendar.getInstance().getTime()));
 
             Runtime.getRuntime().addShutdownHook(new Thread() {
 
                     @Override
                     public void run() {
-                       System.out.println(String.format("[%1s] Closing connection...", Calendar.getInstance().getTime()));
+                       System.out.println(String.format("[%s] Closing connection...", Calendar.getInstance().getTime()));
                        cm.closeConnection();
-                       System.out.println(String.format("[%1s] Connection closed", Calendar.getInstance().getTime()));
+                       System.out.println(String.format("[%s] Connection closed", Calendar.getInstance().getTime()));
                     }
             });
 
         }catch(Exception e){
             e.printStackTrace();
-            System.out.println(String.format("[%1s] Abnormal program termination. See log file for details", Calendar.getInstance().getTime()));
+            System.out.println(String.format("[%s] Abnormal program termination. See log file for details", Calendar.getInstance().getTime()));
             System.exit(1);
         }
     }

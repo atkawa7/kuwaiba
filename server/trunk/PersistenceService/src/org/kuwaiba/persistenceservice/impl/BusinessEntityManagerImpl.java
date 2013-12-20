@@ -16,6 +16,7 @@
 
 package org.kuwaiba.persistenceservice.impl;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -140,7 +141,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             //Creates an activity log entry
             Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
                     "", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                    Calendar.getInstance().getTimeInMillis(), null, null, String.valueOf(newObject.getId()));
+                    Calendar.getInstance().getTimeInMillis(), null, null, null, String.valueOf(newObject.getId()));
             
             tx.success();
             tx.finish();
@@ -207,7 +208,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             //Creates an activity log entry
             Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
                     "", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                    Calendar.getInstance().getTimeInMillis(), null, null, String.valueOf(newObject.getId()));
+                    Calendar.getInstance().getTimeInMillis(), null, null, null, String.valueOf(newObject.getId()));
             
             tx.success();
             tx.finish();
@@ -256,7 +257,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             
             //If the direct parent is DummyRoot, return a dummy RemoteBusinessObject with oid = -1
             if (parentNode.hasRelationship(RelTypes.DUMMY_ROOT))
-                return new RemoteBusinessObject(-1L, Constants.DUMMYROOT, Constants.DUMMYROOT);
+                return new RemoteBusinessObject(-1L, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT);
             else    
                 return Util.createRemoteObjectFromNode(parentNode, cm.getClass(Util.getClassName(parentNode)));
         }
@@ -308,7 +309,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     //Creates an activity log entry
                     Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
                             "", ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
-                            Calendar.getInstance().getTimeInMillis(), null, null, String.valueOf(instance.getId()));
+                            Calendar.getInstance().getTimeInMillis(), null, null, null, String.valueOf(instance.getId()));
             
                 }
             }
@@ -399,7 +400,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             //Creates an activity log entry
             Util.createActivityLogEntry(instance, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
                     "", ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, 
-                    Calendar.getInstance().getTimeInMillis(), oldValue, newValue, null);
+                    Calendar.getInstance().getTimeInMillis(), attributeName, oldValue, newValue, null);
             
         }
         tx.success();
@@ -477,7 +478,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 //Creates an activity log entry
                 Util.createActivityLogEntry(instance, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
                         "", ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
-                        Calendar.getInstance().getTimeInMillis(), oldValue, String.valueOf(newParentNode.getId()), null);
+                        Calendar.getInstance().getTimeInMillis(), "parent", oldValue, String.valueOf(newParentNode.getId()), null); //NOI18N
             
                 }
             }
@@ -524,7 +525,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     //Creates an activity log entry
                     Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
                             "", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
-                            Calendar.getInstance().getTimeInMillis(), null, null, String.valueOf(newInstance.getId()));
+                            Calendar.getInstance().getTimeInMillis(), null, null, null, String.valueOf(newInstance.getId()));
             
                 }
             }
@@ -714,6 +715,29 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         return res;
     }
 
+    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, long limit) throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException {
+        Node instanceNode = getInstanceOfClass(objectClass, objectId);
+        List<ActivityLogEntry> log = new ArrayList<ActivityLogEntry>();
+        int i = 0;
+        for (Relationship rel : instanceNode.getRelationships(RelTypes.HAS_HISTORY_ENTRY)){
+            if (limit != 0){
+                if (i < limit)
+                    i++;
+                else
+                    break;
+            }
+            Node logEntry = rel.getEndNode();
+            log.add(new ActivityLogEntry(logEntry.getId(), (Integer)logEntry.getProperty(Constants.PROPERTY_TYPE), 
+                    (String)logEntry.getRelationships(RelTypes.PERFORMED_BY).iterator().next().getProperty(Constants.PROPERTY_NAME), 
+                    (Long)logEntry.getProperty(Constants.PROPERTY_CREATION_DATE), 
+                    (String)logEntry.getProperty(Constants.PROPERTY_AFFECTED_PROPERTY), 
+                    (String)logEntry.getProperty(Constants.PROPERTY_OLD_VALUE), 
+                    (String)logEntry.getProperty(Constants.PROPERTY_NEW_VALUE), 
+                    (String)logEntry.getProperty(Constants.PROPERTY_NOTES)));
+        }
+        return log;
+    }
+    
     /**
      * Helpers
      */

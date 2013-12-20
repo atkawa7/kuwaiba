@@ -51,14 +51,15 @@ public class DataIntegrityService{
             try{
                 tx = graphDb.beginTx();
                 Node dummyRootNode = graphDb.createNode();
-                dummyRootNode.setProperty(Constants.PROPERTY_NAME, Constants.DUMMYROOT);
-                dummyRootNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, Constants.DUMMYROOT);
+                dummyRootNode.setProperty(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
+                dummyRootNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, Constants.NODE_DUMMYROOT);
                 dummyRootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
                 
                 graphDb.getReferenceNode().createRelationshipTo(dummyRootNode, RelTypes.DUMMY_ROOT);
+                graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).add(dummyRootNode, Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
                 tx.success();
             }catch(Exception ex) {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Create Dummy root: {0}", ex.getMessage()); //NOI18N
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "createDummyroot: {0}", ex.getMessage()); //NOI18N
                 if (tx != null){
                     tx.failure();
                     tx.finish();
@@ -67,27 +68,78 @@ public class DataIntegrityService{
         }
     }
     
-    public void createGroupRootNode(){
+    public void createGroupsRootNode(){
         Node referenceNode = graphDb.getReferenceNode();
-        Relationship rel = referenceNode.getSingleRelationship(RelTypes.GROUPS_ROOT, Direction.OUTGOING);
-        if(rel == null){
-            Transaction tx = null;
-            try{
-                tx = graphDb.beginTx();
-                Node groupRootNode = graphDb.createNode();
-                groupRootNode.setProperty(Constants.PROPERTY_NAME, Constants.GROUPROOT);
-                groupRootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-                
-                graphDb.getReferenceNode().createRelationshipTo(groupRootNode, RelTypes.GROUPS_ROOT);
-                tx.success();
-            }catch(Exception ex) {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Create Group root node: {0}", ex.getMessage()); //NOI18N
-                if (tx != null){
-                    tx.failure();
-                    tx.finish();
-                }
+        
+        //Don't create it if it already exists
+        for (Relationship rel : referenceNode.getRelationships(RelTypes.ROOT)){
+            if (Constants.NODE_GROUPS.equals(rel.getEndNode().getProperty(Constants.PROPERTY_NAME)))
+                return;
+        }
+        
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            Node groupRootNode = graphDb.createNode();
+            groupRootNode.setProperty(Constants.PROPERTY_NAME, Constants.NODE_GROUPS);
+            groupRootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+
+            referenceNode.createRelationshipTo(groupRootNode, RelTypes.ROOT);
+            graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).add(groupRootNode, Constants.PROPERTY_NAME, Constants.NODE_GROUPS);
+            tx.success();
+            tx.finish();
+        }catch(Exception ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "createGroupsRootNode: {0}", ex.getMessage()); //NOI18N
+            if (tx != null){
+                tx.failure();
+                tx.finish();
             }
         }
+        
+    }
+    
+    public void createActivityLogRootNodes() {
+        boolean generalActivityRootNodeExists = false, objectActivityRootNodeExists = false;
+        
+        //Don't create it if it already exists
+        for (Relationship rel : graphDb.getReferenceNode().getRelationships(RelTypes.ROOT)){
+            if (Constants.NODE_GENERAL_ACTIVITY_LOG.equals(rel.getEndNode().getProperty(Constants.PROPERTY_NAME)))
+                generalActivityRootNodeExists = true;
+            else
+                if (Constants.NODE_OBJECT_ACTIVITY_LOG.equals(rel.getEndNode().getProperty(Constants.PROPERTY_NAME)))
+                objectActivityRootNodeExists = true;
+        }
+        
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            
+            if (generalActivityRootNodeExists){
+                Node generalActivityRootNode = graphDb.createNode();
+                generalActivityRootNode.setProperty(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG);
+                generalActivityRootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+                graphDb.getReferenceNode().createRelationshipTo(generalActivityRootNode, RelTypes.ROOT);
+                graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).add(generalActivityRootNode, Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG);
+            }
+            
+            if (objectActivityRootNodeExists){
+                Node objectActivityRootNode = graphDb.createNode();
+                objectActivityRootNode.setProperty(Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG);
+                objectActivityRootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+                graphDb.getReferenceNode().createRelationshipTo(objectActivityRootNode, RelTypes.ROOT);
+                graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).add(objectActivityRootNode, Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG);
+            }
+            
+            tx.success();
+            tx.finish();
+        }catch(Exception ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Create Group root node: {0}", ex.getMessage()); //NOI18N
+            if (tx != null){
+                tx.failure();
+                tx.finish();
+            }
+        }
+        
     }
         
     public void checkIntegrity() {

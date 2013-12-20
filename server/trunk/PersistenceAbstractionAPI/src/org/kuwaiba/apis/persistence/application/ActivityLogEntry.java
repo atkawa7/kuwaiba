@@ -63,7 +63,7 @@ public class ActivityLogEntry {
     public static final int ACTIVITY_TYPE_UPDATE_METADATA_OBJECT = 9;
     public static final int ACTIVITY_TYPE_CHANGE_PARENT = 10;
 
-    public ActivityLogEntry(long id, int type, String userName, long timestamp, String oldValue, String newValue, String notes) {
+    public ActivityLogEntry(long id, int type, String userName, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) {
         this.id = id;
         this.type = type;
         this.userName = userName;
@@ -71,6 +71,7 @@ public class ActivityLogEntry {
         this.oldValue = oldValue;
         this.newValue = newValue;
         this.notes = notes;
+        this.affectedProperty = affectedProperty;
     }
 
     public long getId() {

@@ -123,7 +123,7 @@ public class CacheManager {
 
     public List<String> getPossibleChildren(String parent){
         if (parent == null)
-            return possibleChildrenIndex.get(Constants.DUMMYROOT);
+            return possibleChildrenIndex.get(Constants.NODE_DUMMYROOT);
         return possibleChildrenIndex.get(parent);
     }
     
