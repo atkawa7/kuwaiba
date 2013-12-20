@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Represents the privileges associated to a user
+ * Represents the privileges a user profile
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class UserProfile implements Serializable{
@@ -71,8 +71,31 @@ public class UserProfile implements Serializable{
     public UserProfile() {
     }
 
-    public UserProfile(Long id, String userName, String firstName, String lastName, Boolean enabled, Long creationDate,
-            int[] privileges) {
+    public UserProfile(Long id, String userName, String firstName, String lastName, 
+            Long creationDate, Boolean enabled, List<GroupProfile> groups, int[] privileges) {
+        this.id = id;
+        this.userName = userName;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.creationDate = creationDate;
+        this.enabled = enabled;
+        this.groups = groups;
+        this.privileges = privileges;
+    }
+
+    public UserProfile(Long id, String userName, String firstName, String lastName, 
+            Long creationDate, Boolean enabled, List<GroupProfile> groups) {
+        this.id = id;
+        this.userName = userName;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.creationDate = creationDate;
+        this.enabled = enabled;
+        this.groups = groups;
+    }
+ 
+    public UserProfile(Long id, String userName, String firstName, String lastName, 
+            Boolean enabled, Long creationDate, int[] privileges) {
         this.id = id;
         this.userName = userName;
         this.firstName = firstName;
