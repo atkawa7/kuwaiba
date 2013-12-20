@@ -189,6 +189,14 @@ public class Constants {
      */
     public static final String NODE_OBJECT_ACTIVITY_LOG = "ObjectActivityLog"; //NOI18N
     /**
+     * Group root node name
+     */
+    public static final String GROUPROOT = "GroupRoot"; //NOI18N
+    /**
+     * Users root node name
+     */
+    public static final String USERSROOT = "users";
+    /**
      * Date format for queries
      */
     public static final String DATE_FORMAT = "yyyy-MM-dd";

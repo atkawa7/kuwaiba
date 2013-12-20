@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012, 2013 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 package org.kuwaiba.persistenceservice.integrity;
 
 import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.persistenceservice.impl.RelTypes;
@@ -52,14 +54,38 @@ public class DataIntegrityService{
                 dummyRootNode.setProperty(Constants.PROPERTY_NAME, Constants.DUMMYROOT);
                 dummyRootNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, Constants.DUMMYROOT);
                 dummyRootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-
-                if (graphDb.getReferenceNode() == null) {
-                    throw new DatabaseException("Reference node does not exists. The database seems to be corrupted");
-                }
+                
                 graphDb.getReferenceNode().createRelationshipTo(dummyRootNode, RelTypes.DUMMY_ROOT);
                 tx.success();
-            }finally {
-                tx.finish();
+            }catch(Exception ex) {
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Create Dummy root: {0}", ex.getMessage()); //NOI18N
+                if (tx != null){
+                    tx.failure();
+                    tx.finish();
+                }
+            }
+        }
+    }
+    
+    public void createGroupRootNode(){
+        Node referenceNode = graphDb.getReferenceNode();
+        Relationship rel = referenceNode.getSingleRelationship(RelTypes.GROUPS_ROOT, Direction.OUTGOING);
+        if(rel == null){
+            Transaction tx = null;
+            try{
+                tx = graphDb.beginTx();
+                Node groupRootNode = graphDb.createNode();
+                groupRootNode.setProperty(Constants.PROPERTY_NAME, Constants.GROUPROOT);
+                groupRootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+                
+                graphDb.getReferenceNode().createRelationshipTo(groupRootNode, RelTypes.GROUPS_ROOT);
+                tx.success();
+            }catch(Exception ex) {
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Create Group root node: {0}", ex.getMessage()); //NOI18N
+                if (tx != null){
+                    tx.failure();
+                    tx.finish();
+                }
             }
         }
     }

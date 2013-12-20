@@ -54,6 +54,7 @@ public class Main {
             
             DataIntegrityService dis = new DataIntegrityService(cm);
             dis.createDummyroot();
+            dis.createGroupRootNode();
             
             MetadataEntityManagerRemote meri = new MetadataEntityManagerImpl(cm);
             MetadataEntityManagerRemote memStub = (MetadataEntityManagerRemote)UnicastRemoteObject.exportObject(meri,0);
