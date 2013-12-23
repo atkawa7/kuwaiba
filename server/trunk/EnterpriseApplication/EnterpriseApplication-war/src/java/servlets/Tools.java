@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.kuwaiba.beans.ToolsBeanRemote;
-import org.kuwaiba.exceptions.ServerSideException;
 
 /**
  * Servlet to serve the main requests from the Tools Portal
@@ -77,18 +76,6 @@ public class Tools extends HttpServlet {
         switch (tool){
             case 1:
                 try {
-                    out.println("<h1>Create default groups</h1>");
-                    tbr.createDefaultGroups();
-                    out.println("<h2>Success</h2>");
-                    out.println("<div id=\"content\">Default groups created successfully</div>");
-                } catch (ServerSideException ex) {
-                    Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, ex.getMessage());
-                    out.println("<h2 class=\"error\">Error</h2>");
-                    out.println("<div id=\"content\">"+ex.getMessage()+"</div>");
-                }
-                break;
-            case 2:
-                try {
                     out.println("<h1>Create/Reset Admin Account</h1>");
                     tbr.resetAdmin();
                     out.println("<h2>Success</h2>");
@@ -100,20 +87,13 @@ public class Tools extends HttpServlet {
                 }
                 break;
             case 3:
-                try {
-                    out.println("<h1>Create/Reset Admin Account</h1>");
-                    tbr.connect();
-                    out.println("<h2>Success</h2>");
-                    out.println("<div id=\"content\">Admin account reset successfully</div>");
-                } catch (Exception ex) {
-                    Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, ex.getMessage());
-                    out.println("<h2 class=\"error\">Error</h2>");
-                    out.println("<div id=\"content\">"+ex.getMessage()+"</div>");
-                }
+                out.println("<h2 class=\"error\">Error</h2>");
+                out.println("<div id=\"content\">Unknown option</div>");
+               
                 break;
             default:
                 out.println("<h2 class=\"error\">Error</h2>");
-                out.println("<div id=\"content\">Unknown tool</div>");
+                out.println("<div id=\"content\">Unknown or unimplemented tool</div>");
         }
         
     }

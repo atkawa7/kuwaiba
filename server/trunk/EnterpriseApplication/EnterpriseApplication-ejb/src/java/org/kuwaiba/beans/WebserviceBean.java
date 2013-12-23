@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Singleton;
+import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
@@ -50,6 +51,7 @@ import org.kuwaiba.sync.SyncServicesManager;
 import org.kuwaiba.util.Util;
 import org.kuwaiba.util.bre.TempBusinessRulesEngine;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
+import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
@@ -1072,7 +1074,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     public long createPhysicalConnection(String aObjectClass, long aObjectId,
             String bObjectClass, long bObjectId, String parentClass, long parentId,
             String[] attributeNames, String[][] attributeValues, String connectionClass) throws ServerSideException {
-        if (bem == null)
+        if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
 
         if (attributeNames.length != attributeValues.length)
@@ -1085,7 +1087,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         long newConnectionId = -1;
         try {
             if (!mem.isSubClass("GenericPhysicalConnection", connectionClass))
-                throw new ServerSideException(Level.SEVERE, "Class %1s is not subclass of GenericPhysicalConnection");
+                throw new ServerSideException(Level.SEVERE, "Class %s is not subclass of GenericPhysicalConnection");
 
             String aSideString, bSideString;
             boolean isLink = false;
@@ -1102,10 +1104,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             //Check if the endpoints are already connected, but only if the connection is a link (the endpoints are ports)
             if (isLink){
                 if (!bem.getSpecialAttribute(aObjectClass, aObjectId, aSideString).isEmpty())
-                    throw new ServerSideException(Level.INFO, Util.formatString("The selected endpoint (%1s, %2s) is already connected", aObjectClass, aObjectId));
+                    throw new ServerSideException(Level.INFO, Util.formatString("The selected endpoint (%s, %s) is already connected", aObjectClass, aObjectId));
 
                 if (!bem.getSpecialAttribute(bObjectClass, bObjectId, bSideString).isEmpty())
-                    throw new ServerSideException(Level.INFO, Util.formatString("The selected endpoint (%1s, %2s) is already connected", bObjectClass, bObjectId));
+                    throw new ServerSideException(Level.INFO, Util.formatString("The selected endpoint (%s, %s) is already connected", bObjectClass, bObjectId));
             }
 
             newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, 0);
@@ -1127,6 +1129,30 @@ public class WebserviceBean implements WebserviceBeanRemote {
     public void deletePhysicalConnection(String objectClass, long objectId) throws ServerSideException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public ApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long objectId, long limit) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try {
+            List<ActivityLogEntry> entries = bem.getBusinessObjectAuditTrail(objectClass, objectId, limit);
+            ApplicationLogEntry[] res = new ApplicationLogEntry[entries.size()];
+            for (int i = 0; i< entries.size(); i++)
+                res[i] = new ApplicationLogEntry(entries.get(i));
+            
+            return res;
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.INFO, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public ApplicationLogEntry[] getApplicationObjectAuditTrail(String objectClass, long objectId, long limit) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    
 
     // </editor-fold>
 

@@ -22,6 +22,7 @@ import org.kuwaiba.beans.sessions.Session;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
+import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
@@ -339,6 +340,10 @@ public interface WebserviceBeanRemote {
     public void moveObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids) throws ServerSideException;
 
     public long[] copyObjects(String targetClass, long targetOid, String[] templateClasses, long[] templateOids, boolean recursive) throws ServerSideException;
+    
+    public ApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long objectId, long limit) throws ServerSideException;
+
+    public ApplicationLogEntry[] getApplicationObjectAuditTrail(String objectClass, long objectId, long limit) throws ServerSideException;
 
     /**
      * Models

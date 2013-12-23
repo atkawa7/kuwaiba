@@ -1397,6 +1397,61 @@ public class Kuwaiba {
             throw e;
         }
     }
+    
+    /**
+     * Retrieves the log entries for a given [business] object
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param limit Max number of results (0 for all)
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getBusinessObjectAuditTrail")
+    public void getBusinessObjectAuditTrail (
+            @WebParam(name = "objectClass")String objectClass,
+            @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "limit")long limit,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("getBusinessObjectAuditTrail", getIPAddress(), sessionId);
+            wsBean.getBusinessObjectAuditTrail (objectClass, objectId, limit);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    /**
+     * Retrieves the log entries for a given [application] object (Users, Pools, etc)
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param limit Max number of results (0 for all)
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getApplicationObjectAuditTrail")
+    public void getApplicationObjectAuditTrail (
+            @WebParam(name = "objectClass")String objectClass,
+            @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "limit")long limit,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("getApplicationObjectAuditTrail", getIPAddress(), sessionId);
+            wsBean.getApplicationObjectAuditTrail (objectClass, objectId, limit);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Metadata Methods. Click on the + sign on the left to edit the code.">
