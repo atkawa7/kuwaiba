@@ -140,14 +140,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             
             //Creates an activity log entry
             Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
-                    "", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                    "admin", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
                     Calendar.getInstance().getTimeInMillis(), null, null, null, String.valueOf(newObject.getId()));
             
             tx.success();
             tx.finish();
             return newObject.getId();
         }catch(Exception ex){
-            Logger.getLogger(getClass().getName()).log(Level.OFF, "createObject: {0}", ex.getMessage()); //NOI18N
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "createObject: {0}", ex.getMessage()); //NOI18N
             tx.failure();
             tx.finish();
             throw new RuntimeException(ex.getMessage());
@@ -207,7 +207,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             
             //Creates an activity log entry
             Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
-                    "", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                    "admin", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
                     Calendar.getInstance().getTimeInMillis(), null, null, null, String.valueOf(newObject.getId()));
             
             tx.success();
@@ -308,7 +308,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     
                     //Creates an activity log entry
                     Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
-                            "", ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
+                            "admin", ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
                             Calendar.getInstance().getTimeInMillis(), null, null, null, String.valueOf(instance.getId()));
             
                 }
@@ -327,84 +327,92 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, 
             WrongMappingException, InvalidArgumentException, ApplicationObjectNotFoundException {
 
-        Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
-
-        if (classNode == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+        //Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
 
         ClassMetadata myClass= cm.getClass(className);
-
-        Transaction tx = graphDb.beginTx();
-        Node instance = getInstanceOfClass(className, oid);
-
-        String oldValue = null, newValue = null;
         
-        for (String attributeName : attributes.keySet()){
-            if(myClass.hasAttribute(attributeName)){
-                if (AttributeMetadata.isPrimitive(myClass.getType(attributeName))){
-                    oldValue = String.valueOf(instance.getProperty(attributeName));
-                    if (attributes.get(attributeName) == null)
-                        instance.removeProperty(attributeName);
-                    else{
-                        //If the array is empty, it means the attribute should be set to null
-                        if (attributes.get(attributeName).isEmpty())
+        if (myClass == null)
+            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+        
+            Node instance = getInstanceOfClass(className, oid);
+
+            String oldValue = null, newValue = null;
+
+            for (String attributeName : attributes.keySet()){
+                if(myClass.hasAttribute(attributeName)){
+                    if (AttributeMetadata.isPrimitive(myClass.getType(attributeName))){
+                        oldValue = instance.hasProperty(attributeName) ? String.valueOf(instance.getProperty(attributeName)) : null;
+                        if (attributes.get(attributeName) == null)
                             instance.removeProperty(attributeName);
                         else{
-                            newValue = attributes.get(attributeName).get(0);
-                            if (attributes.get(attributeName).get(0) == null)
+                            //If the array is empty, it means the attribute should be set to null
+                            if (attributes.get(attributeName).isEmpty())
                                 instance.removeProperty(attributeName);
-                            else
-                                instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName).get(0),myClass.getType(attributeName)));
+                            else{
+                                newValue = attributes.get(attributeName).get(0);
+                                if (attributes.get(attributeName).get(0) == null)
+                                    instance.removeProperty(attributeName);
+                                else
+                                    instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName).get(0),myClass.getType(attributeName)));
+                            }
+                        }
+                    }else { //If the attribute is not a primitive type, then it's a relationship
+                        List<Long> listTypeItems = new ArrayList<Long>();
+                        if (!cm.getClass(myClass.getType(attributeName)).isListType())
+                            throw new InvalidArgumentException(String.format("Class %s is not a list type", myClass.getType(attributeName)), Level.WARNING);
+
+                        //Release all previous relationships
+                        oldValue = "";
+                        for (Relationship rel : instance.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)){
+                            if (rel.getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
+                                oldValue += rel.getEndNode().getProperty(Constants.PROPERTY_NAME);
+                                rel.delete();
+                            }
+                        }
+                        if (attributes.get(attributeName) != null){ //If the new value is different than null, then create the new relationships
+                            try{
+                                for (String value : attributes.get(attributeName))
+                                    listTypeItems.add(Long.valueOf(value));
+                            }catch(NumberFormatException ex){
+                                throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
+                            }
+
+                            Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, myClass.getType(attributeName)).getSingle();
+                            List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
+
+                            newValue = "";
+                            //Create the new relationships
+                            for (Node item : listTypeNodes){
+                                newValue += " " + item.getProperty(Constants.PROPERTY_NAME);
+                                Relationship newRelationship = instance.createRelationshipTo(item, RelTypes.RELATED_TO);
+                                newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
+                            }
                         }
                     }
-                }else { //If the attribute is not a primitive type, then it's a relationship
-                    List<Long> listTypeItems = new ArrayList<Long>();
-                    if (!cm.getClass(myClass.getType(attributeName)).isListType())
-                        throw new InvalidArgumentException(String.format("Class %s is not a list type", myClass.getType(attributeName)), Level.WARNING);
-
-                    //Release all previous relationships
-                    oldValue = "";
-                    for (Relationship rel : instance.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)){
-                        if (rel.getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
-                            oldValue += rel.getEndNode().getProperty(Constants.PROPERTY_NAME);
-                            rel.delete();
-                        }
-                    }
-                    if (attributes.get(attributeName) != null){ //If the new value is different than null, then create the new relationships
-                        try{
-                            for (String value : attributes.get(attributeName))
-                                listTypeItems.add(Long.valueOf(value));
-                        }catch(NumberFormatException ex){
-                            throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
-                        }
-
-                        Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, myClass.getType(attributeName)).getSingle();
-                        List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
-
-                        newValue = "";
-                        //Create the new relationships
-                        for (Node item : listTypeNodes){
-                            newValue += " " + item.getProperty(Constants.PROPERTY_NAME);
-                            Relationship newRelationship = instance.createRelationshipTo(item, RelTypes.RELATED_TO);
-                            newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
-                        }
-                    }
+                } else{
+                    tx.failure();
+                    tx.finish();
+                    throw new InvalidArgumentException(
+                            String.format("The attribute %s does not exist in class %s", attributeName, className), Level.WARNING);
                 }
-            } else{
-                tx.failure();
-                tx.finish();
-                throw new InvalidArgumentException(
-                        String.format("The attribute %s does not exist in class %s", attributeName, className), Level.WARNING);
+
+                //Creates an activity log entry
+                Util.createActivityLogEntry(instance, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG).getSingle(), 
+                        "admin", ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, 
+                        Calendar.getInstance().getTimeInMillis(), attributeName, oldValue, newValue, null);
             }
-            
-            //Creates an activity log entry
-            Util.createActivityLogEntry(instance, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
-                    "", ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, 
-                    Calendar.getInstance().getTimeInMillis(), attributeName, oldValue, newValue, null);
-            
+            tx.success();
+            tx.finish();
+        }catch(Exception ex){
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "updateObject: {0}", ex.getMessage()); //NOI18N
+            tx.failure();
+            tx.finish();
+            throw new RuntimeException(ex.getMessage());
         }
-        tx.success();
-        tx.finish();
     }
 
     public boolean setBinaryAttributes(String className, long oid, List<String> attributeNames, List<byte[]> attributeValues)
@@ -476,8 +484,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     instance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF);
                     
                 //Creates an activity log entry
-                Util.createActivityLogEntry(instance, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
-                        "", ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
+                Util.createActivityLogEntry(instance, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG).getSingle(), 
+                        "admin", ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
                         Calendar.getInstance().getTimeInMillis(), "parent", oldValue, String.valueOf(newParentNode.getId()), null); //NOI18N
             
                 }
@@ -524,7 +532,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     
                     //Creates an activity log entry
                     Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
-                            "", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                            "admin", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
                             Calendar.getInstance().getTimeInMillis(), null, null, null, String.valueOf(newInstance.getId()));
             
                 }

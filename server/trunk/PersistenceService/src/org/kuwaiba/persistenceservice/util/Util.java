@@ -855,7 +855,7 @@ public class Util {
         if (userNode == null)
             throw new ApplicationObjectNotFoundException(String.format("User %s can not be found", userName));
         
-        Node newEntry = object.getGraphDatabase().createNode();
+        Node newEntry = logRoot.getGraphDatabase().createNode();
         
         newEntry.setProperty(Constants.PROPERTY_TYPE, type);
         newEntry.setProperty(Constants.PROPERTY_CREATION_DATE, timestamp);
