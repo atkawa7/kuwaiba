@@ -50,7 +50,7 @@ import org.openide.windows.WindowManager;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ComplexQueryResultTopComponent extends TopComponent{
-    private JToolBar barMain ;
+    private JToolBar barMain;
     private JButton btnNext;
     private JButton btnPrevious;
     private JButton btnAll;

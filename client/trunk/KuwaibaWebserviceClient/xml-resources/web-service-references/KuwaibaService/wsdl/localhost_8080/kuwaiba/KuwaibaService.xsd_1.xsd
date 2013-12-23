@@ -682,13 +682,28 @@
 <xs:sequence>
 <xs:element name="objectClass" type="xs:string" minOccurs="0"/>
 <xs:element name="objectId" type="xs:long"/>
-<xs:element name="limit" type="xs:long"/>
+<xs:element name="limit" type="xs:int"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getBusinessObjectAuditTrailResponse">
-<xs:sequence/>
+<xs:sequence>
+<xs:element name="return" type="tns:applicationLogEntry" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="applicationLogEntry" final="extension restriction">
+<xs:sequence>
+<xs:element name="id" type="xs:long"/>
+<xs:element name="type" type="xs:int"/>
+<xs:element name="userName" type="xs:string" minOccurs="0"/>
+<xs:element name="timestamp" type="xs:long"/>
+<xs:element name="affectedProperty" type="xs:string" minOccurs="0"/>
+<xs:element name="oldValue" type="xs:string" minOccurs="0"/>
+<xs:element name="newValue" type="xs:string" minOccurs="0"/>
+<xs:element name="notes" type="xs:string" minOccurs="0"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="loadDataFromFile">
@@ -1198,7 +1213,7 @@
 <xs:sequence>
 <xs:element name="objectClass" type="xs:string" minOccurs="0"/>
 <xs:element name="objectId" type="xs:long"/>
-<xs:element name="limit" type="xs:long"/>
+<xs:element name="limit" type="xs:int"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>

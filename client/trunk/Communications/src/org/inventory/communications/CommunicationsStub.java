@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 import javax.xml.ws.soap.SOAPFaultException;
+import org.inventory.communications.core.LocalApplicationLogEntry;
 import org.inventory.communications.core.LocalClassMetadataImpl;
 import org.inventory.communications.core.LocalClassMetadataLightImpl;
 import org.inventory.communications.core.LocalObjectImpl;
@@ -52,6 +53,7 @@ import org.inventory.core.services.api.visual.LocalObjectView;
 import org.inventory.core.services.api.visual.LocalObjectViewLight;
 import org.inventory.core.services.caching.Cache;
 import org.inventory.core.services.factories.ObjectFactory;
+import org.kuwaiba.wsclient.ApplicationLogEntry;
 import org.kuwaiba.wsclient.ClassInfo;
 import org.kuwaiba.wsclient.ClassInfoLight;
 import org.kuwaiba.wsclient.Kuwaiba;
@@ -111,10 +113,10 @@ public class CommunicationsStub {
 
     /**
      * Sets the webservice URL
-     * @param _URL A valid URL
+     * @param URL A valid URL
      */
-    public static void setServerURL(URL _URL){
-        serverURL = _URL;
+    public static void setServerURL(URL URL){
+        serverURL = URL;
     }
     
     // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
@@ -289,6 +291,19 @@ public class CommunicationsStub {
         try{
             RemoteObjectLight myLocalObject = port.getObjectLight(objectClass, oid,this.session.getSessionId());
             return new LocalObjectLightImpl(myLocalObject);
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public LocalApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long oid){
+        try{
+            List<ApplicationLogEntry> myEntries = port.getBusinessObjectAuditTrail(objectClass, oid, 0, this.session.getSessionId());
+            LocalApplicationLogEntry[] res = new LocalApplicationLogEntry[myEntries.size()];
+            for (int i = 0; i < myEntries.size(); i++)
+                res[i] = new LocalApplicationLogEntry(myEntries.get(i));
+            return res;
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
