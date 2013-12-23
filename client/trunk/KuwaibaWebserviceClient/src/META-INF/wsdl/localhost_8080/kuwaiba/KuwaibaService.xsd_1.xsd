@@ -144,6 +144,10 @@
 
 <xs:element name="getAllClassesResponse" type="tns:getAllClassesResponse"/>
 
+<xs:element name="getApplicationObjectAuditTrail" type="tns:getApplicationObjectAuditTrail"/>
+
+<xs:element name="getApplicationObjectAuditTrailResponse" type="tns:getApplicationObjectAuditTrailResponse"/>
+
 <xs:element name="getAttribute" type="tns:getAttribute"/>
 
 <xs:element name="getAttributeForClassWithId" type="tns:getAttributeForClassWithId"/>
@@ -151,6 +155,10 @@
 <xs:element name="getAttributeForClassWithIdResponse" type="tns:getAttributeForClassWithIdResponse"/>
 
 <xs:element name="getAttributeResponse" type="tns:getAttributeResponse"/>
+
+<xs:element name="getBusinessObjectAuditTrail" type="tns:getBusinessObjectAuditTrail"/>
+
+<xs:element name="getBusinessObjectAuditTrailResponse" type="tns:getBusinessObjectAuditTrailResponse"/>
 
 <xs:element name="getChildrenOfClass" type="tns:getChildrenOfClass"/>
 
@@ -640,17 +648,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="deleteClass">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteClassResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="createObjectRelatedView">
 <xs:sequence>
 <xs:element name="objectId" type="xs:long"/>
@@ -668,6 +665,30 @@
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteClass">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteClassResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getBusinessObjectAuditTrail">
+<xs:sequence>
+<xs:element name="objectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="objectId" type="xs:long"/>
+<xs:element name="limit" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getBusinessObjectAuditTrailResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="loadDataFromFile">
@@ -1173,6 +1194,19 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="getApplicationObjectAuditTrail">
+<xs:sequence>
+<xs:element name="objectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="objectId" type="xs:long"/>
+<xs:element name="limit" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getApplicationObjectAuditTrailResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="createPool">
 <xs:sequence>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
@@ -1605,7 +1639,7 @@
 
 <xs:complexType name="getObjectChildren">
 <xs:sequence>
-<xs:element name="objectClassName" type="xs:long"/>
+<xs:element name="objectClassName" type="xs:string" minOccurs="0"/>
 <xs:element name="oid" type="xs:long"/>
 <xs:element name="maxResults" type="xs:int"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>

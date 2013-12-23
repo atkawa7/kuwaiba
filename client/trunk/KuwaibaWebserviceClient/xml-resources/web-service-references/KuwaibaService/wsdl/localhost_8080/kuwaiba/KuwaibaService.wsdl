@@ -274,6 +274,18 @@
 <message name="deletePhysicalConnectionResponse">
 <part name="parameters" element="tns:deletePhysicalConnectionResponse"/>
 </message>
+<message name="getBusinessObjectAuditTrail">
+<part name="parameters" element="tns:getBusinessObjectAuditTrail"/>
+</message>
+<message name="getBusinessObjectAuditTrailResponse">
+<part name="parameters" element="tns:getBusinessObjectAuditTrailResponse"/>
+</message>
+<message name="getApplicationObjectAuditTrail">
+<part name="parameters" element="tns:getApplicationObjectAuditTrail"/>
+</message>
+<message name="getApplicationObjectAuditTrailResponse">
+<part name="parameters" element="tns:getApplicationObjectAuditTrailResponse"/>
+</message>
 <message name="getUsers">
 <part name="parameters" element="tns:getUsers"/>
 </message>
@@ -406,6 +418,24 @@
 <message name="getPoolItemsResponse">
 <part name="parameters" element="tns:getPoolItemsResponse"/>
 </message>
+<message name="loadDataFromFile">
+<part name="parameters" element="tns:loadDataFromFile"/>
+</message>
+<message name="loadDataFromFileResponse">
+<part name="parameters" element="tns:loadDataFromFileResponse"/>
+</message>
+<message name="downloadLog">
+<part name="parameters" element="tns:downloadLog"/>
+</message>
+<message name="downloadLogResponse">
+<part name="parameters" element="tns:downloadLogResponse"/>
+</message>
+<message name="downloadErrors">
+<part name="parameters" element="tns:downloadErrors"/>
+</message>
+<message name="downloadErrorsResponse">
+<part name="parameters" element="tns:downloadErrorsResponse"/>
+</message>
 <message name="getObjectChildrenForClassWithId">
 <part name="parameters" element="tns:getObjectChildrenForClassWithId"/>
 </message>
@@ -459,24 +489,6 @@
 </message>
 <message name="removePossibleChildrenForClassWithIdResponse">
 <part name="parameters" element="tns:removePossibleChildrenForClassWithIdResponse"/>
-</message>
-<message name="loadDataFromFile">
-<part name="parameters" element="tns:loadDataFromFile"/>
-</message>
-<message name="loadDataFromFileResponse">
-<part name="parameters" element="tns:loadDataFromFileResponse"/>
-</message>
-<message name="downloadLog">
-<part name="parameters" element="tns:downloadLog"/>
-</message>
-<message name="downloadLogResponse">
-<part name="parameters" element="tns:downloadLogResponse"/>
-</message>
-<message name="downloadErrors">
-<part name="parameters" element="tns:downloadErrors"/>
-</message>
-<message name="downloadErrorsResponse">
-<part name="parameters" element="tns:downloadErrorsResponse"/>
 </message>
 <portType name="Kuwaiba">
 <operation name="getClass">
@@ -699,6 +711,16 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deletePhysicalConnectionResponse" message="tns:deletePhysicalConnectionResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deletePhysicalConnection/Fault/Exception"/>
 </operation>
+<operation name="getBusinessObjectAuditTrail">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getBusinessObjectAuditTrailRequest" message="tns:getBusinessObjectAuditTrail"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getBusinessObjectAuditTrailResponse" message="tns:getBusinessObjectAuditTrailResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getBusinessObjectAuditTrail/Fault/Exception"/>
+</operation>
+<operation name="getApplicationObjectAuditTrail">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getApplicationObjectAuditTrailRequest" message="tns:getApplicationObjectAuditTrail"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getApplicationObjectAuditTrailResponse" message="tns:getApplicationObjectAuditTrailResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getApplicationObjectAuditTrail/Fault/Exception"/>
+</operation>
 <operation name="getUsers">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getUsersRequest" message="tns:getUsers"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getUsersResponse" message="tns:getUsersResponse"/>
@@ -809,6 +831,21 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPoolItemsResponse" message="tns:getPoolItemsResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPoolItems/Fault/Exception"/>
 </operation>
+<operation name="loadDataFromFile">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/loadDataFromFileRequest" message="tns:loadDataFromFile"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/loadDataFromFileResponse" message="tns:loadDataFromFileResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/loadDataFromFile/Fault/Exception"/>
+</operation>
+<operation name="downloadLog">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadLogRequest" message="tns:downloadLog"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadLogResponse" message="tns:downloadLogResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadLog/Fault/Exception"/>
+</operation>
+<operation name="downloadErrors">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadErrorsRequest" message="tns:downloadErrors"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadErrorsResponse" message="tns:downloadErrorsResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadErrors/Fault/Exception"/>
+</operation>
 <operation name="getObjectChildrenForClassWithId">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectChildrenForClassWithIdRequest" message="tns:getObjectChildrenForClassWithId"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectChildrenForClassWithIdResponse" message="tns:getObjectChildrenForClassWithIdResponse"/>
@@ -853,21 +890,6 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenForClassWithIdRequest" message="tns:removePossibleChildrenForClassWithId"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenForClassWithIdResponse" message="tns:removePossibleChildrenForClassWithIdResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenForClassWithId/Fault/Exception"/>
-</operation>
-<operation name="loadDataFromFile">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/loadDataFromFileRequest" message="tns:loadDataFromFile"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/loadDataFromFileResponse" message="tns:loadDataFromFileResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/loadDataFromFile/Fault/Exception"/>
-</operation>
-<operation name="downloadLog">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadLogRequest" message="tns:downloadLog"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadLogResponse" message="tns:downloadLogResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadLog/Fault/Exception"/>
-</operation>
-<operation name="downloadErrors">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadErrorsRequest" message="tns:downloadErrors"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadErrorsResponse" message="tns:downloadErrorsResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadErrors/Fault/Exception"/>
 </operation>
 </portType>
 <binding name="KuwaibaPortBinding" type="tns:Kuwaiba">
@@ -1400,6 +1422,30 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="getBusinessObjectAuditTrail">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getApplicationObjectAuditTrail">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="getUsers">
 <soap:operation soapAction=""/>
 <input>
@@ -1664,6 +1710,42 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="loadDataFromFile">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="downloadLog">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="downloadErrors">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="getObjectChildrenForClassWithId">
 <soap:operation soapAction=""/>
 <input>
@@ -1761,42 +1843,6 @@
 </fault>
 </operation>
 <operation name="removePossibleChildrenForClassWithId">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
-<operation name="loadDataFromFile">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
-<operation name="downloadLog">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
-<operation name="downloadErrors">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
