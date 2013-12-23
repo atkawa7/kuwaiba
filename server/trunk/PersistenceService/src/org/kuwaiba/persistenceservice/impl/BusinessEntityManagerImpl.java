@@ -327,8 +327,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, 
             WrongMappingException, InvalidArgumentException, ApplicationObjectNotFoundException {
 
-        //Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
-
         ClassMetadata myClass= cm.getClass(className);
         
         if (myClass == null)
@@ -393,12 +391,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                             }
                         }
                     }
-                } else{
-                    tx.failure();
-                    tx.finish();
+                } else
                     throw new InvalidArgumentException(
                             String.format("The attribute %s does not exist in class %s", attributeName, className), Level.WARNING);
-                }
 
                 //Creates an activity log entry
                 Util.createActivityLogEntry(instance, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG).getSingle(), 
