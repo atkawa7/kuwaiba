@@ -32,6 +32,7 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
 import org.kuwaiba.util.Util;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
+import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
@@ -48,7 +49,7 @@ import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
 
 /**
  * Main webservice
- * @author Adrian Martinez Molina <Adrian.Martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @WebService()
 public class Kuwaiba {
@@ -1402,19 +1403,19 @@ public class Kuwaiba {
      * Retrieves the log entries for a given [business] object
      * @param objectClass Object class
      * @param objectId Object id
-     * @param limit Max number of results (0 for all)
+     * @param limit Max number of results (0 to retrieve all)
      * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getBusinessObjectAuditTrail")
-    public void getBusinessObjectAuditTrail (
+    public ApplicationLogEntry[] getBusinessObjectAuditTrail (
             @WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "objectId")long objectId,
-            @WebParam(name = "limit")long limit,
-            @WebParam(name = "sessionId")String sessionId) throws Exception{
+            @WebParam(name = "limit")int limit,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
         try{
             wsBean.validateCall("getBusinessObjectAuditTrail", getIPAddress(), sessionId);
-            wsBean.getBusinessObjectAuditTrail (objectClass, objectId, limit);
+            return wsBean.getBusinessObjectAuditTrail (objectClass, objectId, limit);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -1437,7 +1438,7 @@ public class Kuwaiba {
     public void getApplicationObjectAuditTrail (
             @WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "objectId")long objectId,
-            @WebParam(name = "limit")long limit,
+            @WebParam(name = "limit")int limit,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.validateCall("getApplicationObjectAuditTrail", getIPAddress(), sessionId);
