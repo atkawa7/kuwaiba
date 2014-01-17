@@ -22,9 +22,83 @@ import org.kuwaiba.wsclient.ApplicationLogEntry;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class LocalApplicationLogEntry {
-
-    public LocalApplicationLogEntry(ApplicationLogEntry get) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+    /**
+     * Entry id
+     */
+    private long id;
+    /**
+     * Entry type (see possible values below)
+     */
+    private int type;
+    /**
+     * Who performed the action
+     */
+    private String userName;
+    /**
+     * Entry timestamp
+     */
+    private long timestamp;
+    /**
+     * Property/field that was modified, if any
+     */
+    private String affectedProperty;
+    /**
+     * Old value of the modified property, if any
+     */
+    private String oldValue;
+    /**
+     * New value of the modified property, if any
+     */
+    private String newValue;
+    /**
+     * Additional notes to this action, if any
+     */
+    private String notes;
     
+    public static String[] types = {"Create Application Object", "Delete Application Object", "Update Application Object", 
+                           "Create Inventory Object", "Delete Inventory Object", "Update Inventory Object", 
+                           "Create Metadata Object", "Delete Metadata Object", "Update Metadata Object", "Move object"};
+    
+    
+    public LocalApplicationLogEntry(ApplicationLogEntry ale) {
+        this.id = ale.getId();
+        this.type = ale.getType();
+        this.userName = ale.getUserName();
+        this.timestamp = ale.getTimestamp();
+        this.affectedProperty = ale.getAffectedProperty();
+        this.oldValue = ale.getOldValue();
+        this.newValue = ale.getNewValue();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public String getAffectedProperty() {
+        return affectedProperty;
+    }
+
+    public String getOldValue() {
+        return oldValue;
+    }
+
+    public String getNewValue() {
+        return newValue;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
 }

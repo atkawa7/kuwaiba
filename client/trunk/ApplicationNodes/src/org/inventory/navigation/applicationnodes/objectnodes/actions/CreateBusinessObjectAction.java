@@ -45,14 +45,14 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
         com = CommunicationsStub.getInstance();
     }
 
-    public CreateBusinessObjectAction(ObjectNode _node) {
+    public CreateBusinessObjectAction(ObjectNode node) {
         this();
-        this.node = _node;
+        this.node = node;
     }
 
-    public CreateBusinessObjectAction (RootObjectNode _ron){
+    public CreateBusinessObjectAction (RootObjectNode ron){
         this();
-        node = _ron;
+        node = ron;
     }
 
     @Override

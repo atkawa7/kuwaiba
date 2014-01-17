@@ -18,19 +18,22 @@ package org.inventory.navigation.applicationnodes.objectnodes.actions;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalApplicationLogEntry;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.applicationnodes.objectnodes.windows.ObjectAuditTrailTopComponent;
 import org.openide.util.Lookup;
+import org.openide.windows.TopComponent;
 
 /**
  * Retrieves the activity log related to an object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class RetrieveAudittrailAction extends AbstractAction {
+public final class ShowObjectAuditTrailAction extends AbstractAction {
     private ObjectNode node;
     private CommunicationsStub com;
 
-    public RetrieveAudittrailAction(ObjectNode node) {
+    public ShowObjectAuditTrailAction(ObjectNode node) {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_AUDIT_TRAIL"));
         com = CommunicationsStub.getInstance();
         this.node = node;
@@ -39,6 +42,14 @@ public final class RetrieveAudittrailAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent ev) {
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        
+        LocalApplicationLogEntry[] entries = com.getBusinessObjectAuditTrail(node.getObject().getClassName(), node.getObject().getOid());
+        if (entries == null)
+            nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+        else{
+            TopComponent tc = new ObjectAuditTrailTopComponent(node.getObject().getName(), node.getObject().getClassName(), entries);
+            tc.open();
+            tc.requestActive();
+            tc.requestAttention(true);
+        }
     }
 }

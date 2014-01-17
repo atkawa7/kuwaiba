@@ -56,7 +56,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
     private JButton btnAll;
     private JButton btnExport;
     private JScrollPane pnlScrollMain;
-    private ETable myTable;
+    private ETable aTable;
     private int currentPage = 1;
     private int pageSize;
     /**
@@ -70,9 +70,9 @@ public class ComplexQueryResultTopComponent extends TopComponent{
         this.qbs = qbs;
         this.pageSize = pageSize;
         TableModel model = new QueryResultTableModel(res);
-        myTable = new ETable(model);
+        aTable = new ETable(model);
         initComponents();
-        myTable.addMouseListener(new PopupProvider());
+        aTable.addMouseListener(new PopupProvider());
     }
 
     private void initComponents(){
@@ -84,7 +84,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
         pnlScrollMain = new JScrollPane();
         setLayout(new BorderLayout());
 
-        pnlScrollMain.setViewportView(myTable);
+        pnlScrollMain.setViewportView(aTable);
 
         btnExport.setIcon(new ImageIcon(getClass().getResource("/org/inventory/queries/res/export.png"))); //NOI18N
         btnExport.setToolTipText("Export...");
@@ -143,7 +143,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
 
     @Override
     protected void componentClosed() {
-        myTable.removeAll();
+        aTable.removeAll();
     }
 
     /**
@@ -162,7 +162,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
                 currentPage--;
             }
             else{
-                ((QueryResultTableModel)myTable.getModel()).updateTableModel(res);
+                ((QueryResultTableModel)aTable.getModel()).updateTableModel(res);
                 pnlScrollMain.repaint();
             }
         }else currentPage--;
@@ -174,7 +174,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
             if (currentPage == 1)
                 btnPrevious.setEnabled(false);
             btnNext.setEnabled(true);
-            ((QueryResultTableModel)myTable.getModel()).updateTableModel(res);
+            ((QueryResultTableModel)aTable.getModel()).updateTableModel(res);
             pnlScrollMain.repaint();
         }else currentPage++;
     }
@@ -187,7 +187,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
             //For some reason I can't figure out, updateTableModel *only here*
             //makes the rendering to throw a IndexOutOfBoundsException
             //((QueryResultTableModel)myTable.getModel()).updateTableModel(res);
-            myTable.setModel(new QueryResultTableModel(res));
+            aTable.setModel(new QueryResultTableModel(res));
             pnlScrollMain.repaint();
         }
         
@@ -211,7 +211,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
     }
 
     public Object[][] getCurrentResults(){
-        return ((QueryResultTableModel)myTable.getModel()).getCurrentResults();
+        return ((QueryResultTableModel)aTable.getModel()).getCurrentResults();
     }
 
     private class PopupProvider extends MouseAdapter{
@@ -226,7 +226,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
         }
         private void showPopup(MouseEvent e) {
           if (e.isPopupTrigger()) {
-            LocalObjectLight singleRecord = (LocalObjectLight)myTable.getValueAt(myTable.rowAtPoint(new Point(e.getX(), e.getY())), 0);
+            LocalObjectLight singleRecord = (LocalObjectLight)aTable.getValueAt(aTable.rowAtPoint(new Point(e.getX(), e.getY())), 0);
             JPopupMenu  menu = new JPopupMenu();
             try{
                 menu.add(ObjectActionFactory.createEditAction(singleRecord));

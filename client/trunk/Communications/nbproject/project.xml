@@ -41,6 +41,7 @@
             </module-dependencies>
             <public-packages>
                 <package>org.inventory.communications</package>
+                <package>org.inventory.communications.core</package>
             </public-packages>
         </data>
     </configuration>

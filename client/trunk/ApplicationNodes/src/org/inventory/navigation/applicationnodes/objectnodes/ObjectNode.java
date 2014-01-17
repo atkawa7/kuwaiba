@@ -40,6 +40,7 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateBusin
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectAuditTrailAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.inventory.navigation.applicationnodes.objectnodes.properties.ObjectNodeProperty;
 import org.openide.actions.CopyAction;
@@ -76,26 +77,20 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     protected RefreshObjectAction refreshAction;
     protected EditObjectAction editAction;
     protected ShowObjectIdAction showObjectIdAction;
+    private  ShowObjectAuditTrailAction showObjectAuditTrailAction;
 
     protected Sheet sheet;
     protected Image icon;
     private final Image defaultIcon = ImageUtilities.loadImage(GENERIC_ICON_PATH);
     private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
 
-    public ObjectNode(LocalObjectLight _lol, boolean isLeaf){
-        super(Children.LEAF, Lookups.singleton(_lol));
-        this.object = _lol;
+    public ObjectNode(LocalObjectLight lol, boolean isLeaf){
+        super(Children.LEAF, Lookups.singleton(lol));
+        this.object = lol;
         this.object.addPropertyChangeListener(this);
-
         com = CommunicationsStub.getInstance();
-
-        icon = (com.getMetaForClass(_lol.getClassName(),false)).getSmallIcon();
-
+        icon = (com.getMetaForClass(lol.getClassName(),false)).getSmallIcon();
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
-        editAction = new EditObjectAction(this);
-        deleteAction = new DeleteBusinessObjectAction(this);
-        refreshAction = new RefreshObjectAction(this);
-        showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName());
     }
     
     public ObjectNode(LocalObjectLight lol){
@@ -107,12 +102,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
         icon = (com.getMetaForClass(lol.getClassName(),false)).getSmallIcon();
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
-
-        createAction = new CreateBusinessObjectAction(this);
-        deleteAction = new DeleteBusinessObjectAction(this);
-        editAction = new EditObjectAction(this);
-        refreshAction = new RefreshObjectAction(this);
-        showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName());
     }
 
     /*
@@ -290,17 +279,18 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     //then called everytime
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{createAction,
-                            refreshAction,
-                            editAction,
-                            deleteAction,
+        return new Action[]{createAction == null ? createAction = new CreateBusinessObjectAction(this) : createAction,
+                            refreshAction == null ? refreshAction = new RefreshObjectAction(this) : refreshAction,
+                            editAction == null ? editAction = new EditObjectAction(this) : editAction,
+                            deleteAction == null ? deleteAction = new DeleteBusinessObjectAction(this) : deleteAction,
                             null, //Separator
                             SystemAction.get(CopyAction.class),
                             SystemAction.get(CutAction.class),
                             SystemAction.get(PasteAction.class),
                             null, //Separator
                             explorerAction,
-                            showObjectIdAction
+                            showObjectAuditTrailAction == null ? showObjectAuditTrailAction = new ShowObjectAuditTrailAction(this) : showObjectAuditTrailAction,
+                            showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction,
                             };
 
     }

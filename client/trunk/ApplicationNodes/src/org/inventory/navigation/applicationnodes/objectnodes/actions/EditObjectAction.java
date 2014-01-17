@@ -43,10 +43,9 @@ public final class EditObjectAction extends AbstractAction implements ObjectActi
         putValue(MNEMONIC_KEY,KeyEvent.VK_E);
     }
 
-
-    public EditObjectAction(Node _node) {
+    public EditObjectAction(Node node) {
         this();
-        this.node = _node;
+        this.node = node;
     }
 
     @Override

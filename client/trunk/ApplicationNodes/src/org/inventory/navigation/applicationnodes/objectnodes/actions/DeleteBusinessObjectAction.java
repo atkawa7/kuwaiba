@@ -46,10 +46,9 @@ public final class DeleteBusinessObjectAction extends AbstractAction implements 
         putValue(MNEMONIC_KEY,KeyEvent.VK_D);
     }
 
-
-    public DeleteBusinessObjectAction(ObjectNode _node) {
+    public DeleteBusinessObjectAction(ObjectNode node) {
         this();
-        this.node = _node;
+        this.node = node;
     }
 
     @Override
