@@ -1128,31 +1128,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     @Override
     public void deletePhysicalConnection(String objectClass, long objectId) throws ServerSideException {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public ApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long objectId, long limit) throws ServerSideException {
-        if (bem == null)
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try {
-            List<ActivityLogEntry> entries = bem.getBusinessObjectAuditTrail(objectClass, objectId, limit);
-            ApplicationLogEntry[] res = new ApplicationLogEntry[entries.size()];
-            for (int i = 0; i< entries.size(); i++)
-                res[i] = new ApplicationLogEntry(entries.get(i));
-            
-            return res;
-        } catch (Exception ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.INFO, ex.getMessage());
-            throw new ServerSideException(Level.SEVERE, ex.getMessage());
-        }
-    }
-
-    @Override
-    public ApplicationLogEntry[] getApplicationObjectAuditTrail(String objectClass, long objectId, long limit) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
-    
+    }   
 
     // </editor-fold>
 
@@ -1580,14 +1556,36 @@ public class WebserviceBean implements WebserviceBeanRemote {
     public Session validateCall(String methodName, String ipAddress, String sessionId) throws NotAuthorizedException{
         Session aSession = sessions.get(sessionId);
         if (aSession == null)
-            throw new NotAuthorizedException(Util.formatString("The session token provided to call %1s is not valid",methodName));
+            throw new NotAuthorizedException(Util.formatString("The session token provided to call %s is not valid",methodName));
 
         if (!aSession.getIpAddress().equals(ipAddress))
-            throw new NotAuthorizedException(Util.formatString("This IP is not allowed to perform this operation: %1s", methodName));
+            throw new NotAuthorizedException(Util.formatString("IP %s is not allowed to perform this operation (%s)", ipAddress, methodName));
         
         return aSession;
     }
 
+    @Override
+    public ApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long objectId, long limit) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try {
+            List<ActivityLogEntry> entries = aem.getBusinessObjectAuditTrail(objectClass, objectId, limit);
+            ApplicationLogEntry[] res = new ApplicationLogEntry[entries.size()];
+            for (int i = 0; i< entries.size(); i++)
+                res[i] = new ApplicationLogEntry(entries.get(i));
+            
+            return res;
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.INFO, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    @Override
+    public ApplicationLogEntry[] getApplicationObjectAuditTrail(String objectClass, long objectId, long limit) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/Load data methods. Click on the + sign on the left to edit the code.">
