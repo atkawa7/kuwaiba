@@ -16,7 +16,6 @@
 
 package org.kuwaiba.persistenceservice.impl;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -54,7 +53,7 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
  * Business entity manager reference implementation (using Neo4J as backend)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class BusinessEntityManagerImpl implements BusinessEntityManager, BusinessEntityManagerRemote{
+public class BusinessEntityManagerImpl implements BusinessEntityManager, BusinessEntityManagerRemote {
 
     /**
      * Reference to the db handler
@@ -709,6 +708,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         return res;
     }
 
+    @Override
     public List<String> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) throws ObjectNotFoundException, MetadataObjectNotFoundException {
         Node instance = getInstanceOfClass(objectClass, objectId);
         List<String> res = new ArrayList<String>();
@@ -716,29 +716,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName))
                 res.add(String.valueOf(rel.getEndNode().getId() == objectId ? rel.getStartNode().getId() : rel.getEndNode().getId()));
         return res;
-    }
-
-    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, long limit) throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException {
-        Node instanceNode = getInstanceOfClass(objectClass, objectId);
-        List<ActivityLogEntry> log = new ArrayList<ActivityLogEntry>();
-        int i = 0;
-        for (Relationship rel : instanceNode.getRelationships(RelTypes.HAS_HISTORY_ENTRY)){
-            if (limit != 0){
-                if (i < limit)
-                    i++;
-                else
-                    break;
-            }
-            Node logEntry = rel.getEndNode();
-            log.add(new ActivityLogEntry(logEntry.getId(), (Integer)logEntry.getProperty(Constants.PROPERTY_TYPE), 
-                    (String)logEntry.getRelationships(RelTypes.PERFORMED_BY).iterator().next().getProperty(Constants.PROPERTY_NAME), 
-                    (Long)logEntry.getProperty(Constants.PROPERTY_CREATION_DATE), 
-                    (String)logEntry.getProperty(Constants.PROPERTY_AFFECTED_PROPERTY), 
-                    (String)logEntry.getProperty(Constants.PROPERTY_OLD_VALUE), 
-                    (String)logEntry.getProperty(Constants.PROPERTY_NEW_VALUE), 
-                    (String)logEntry.getProperty(Constants.PROPERTY_NOTES)));
-        }
-        return log;
     }
     
     /**

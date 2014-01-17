@@ -85,7 +85,4 @@ public interface BusinessEntityManagerRemote extends Remote{
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
     public List<String> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
-
-    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, long limit)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
 }

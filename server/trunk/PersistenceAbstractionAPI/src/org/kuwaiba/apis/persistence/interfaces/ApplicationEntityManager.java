@@ -17,6 +17,7 @@
 package org.kuwaiba.apis.persistence.interfaces;
 
 import java.util.List;
+import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
@@ -437,6 +438,18 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the pool id provided is not valid
      */
     public List<RemoteBusinessObjectLight> getPoolItems(long poolId, int limit) throws ApplicationObjectNotFoundException;
+    
+    /**
+     * Gets a business object audit trail
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param limit Max number of results to be shown
+     * @return The list of activity entries
+     * @throws ObjectNotFoundException If the object can not be found
+     * @throws MetadataObjectNotFoundException If the provided class couldn't be found
+     */
+    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, long limit)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException;
 }
 
 

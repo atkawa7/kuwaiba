@@ -15,11 +15,13 @@
  */
 package org.kuwaiba.apis.persistence.application;
 
+import java.io.Serializable;
+
 /**
  * Represents an activity log entry
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ActivityLogEntry {
+public class ActivityLogEntry implements Serializable {
     /**
      * Entry id
      */

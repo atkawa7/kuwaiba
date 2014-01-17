@@ -19,6 +19,7 @@ package org.kuwaiba.psremoteinterfaces;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
@@ -437,4 +438,17 @@ public interface ApplicationEntityManagerRemote extends Remote {
      * @throws RemoteException 
      */
     public List<RemoteBusinessObjectLight> getPoolItems(long poolId, int limit) throws ApplicationObjectNotFoundException, RemoteException;
+    
+    /**
+     * Gets a business object audit trail
+     * @param objectClass
+     * @param objectId
+     * @param limit
+     * @return
+     * @throws ObjectNotFoundException
+     * @throws MetadataObjectNotFoundException
+     * @throws RemoteException 
+     */
+    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, long limit)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
 }

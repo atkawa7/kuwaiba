@@ -871,7 +871,7 @@ public class Util {
         newEntry.createRelationshipTo(logRoot, RelTypes.CHILD_OF_SPECIAL);
         newEntry.createRelationshipTo(userNode, RelTypes.PERFORMED_BY);
         if (object != null)
-            object.createRelationshipTo(object, RelTypes.HAS_HISTORY_ENTRY);
+            object.createRelationshipTo(newEntry, RelTypes.HAS_HISTORY_ENTRY);
         return newEntry;
     }
     

@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Modifier;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
@@ -183,7 +185,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
         Node storedUser = userIndex.get(Constants.PROPERTY_NAME,userName).getSingle();
         if (storedUser != null){
-            throw new InvalidArgumentException(String.format("The username %1s is already in use", userName), Level.WARNING);
+            throw new InvalidArgumentException(String.format("User name %s already exists", userName), Level.WARNING);
         }
         try{
             tx = graphDb.beginTx();
@@ -216,7 +218,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     else{
                         tx.failure();
                         tx.finish();
-                        throw new InvalidArgumentException(String.format("Group with id %1s can't be found",groupId), Level.OFF);
+                        throw new InvalidArgumentException(String.format("Group with id %s can not be found",groupId), Level.OFF);
                     }
                 }
             }
@@ -250,11 +252,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         Transaction tx = null;
         if(userName != null){
             if (userName.trim().equals("")){
-                throw new InvalidArgumentException("Username can not be an empty string", Level.INFO);
+                throw new InvalidArgumentException("User name can not be an empty string", Level.INFO);
             }
             Node storedUser = userIndex.get(Constants.PROPERTY_NAME,userName).getSingle();
             if (storedUser != null){
-                throw new InvalidArgumentException(String.format("The username %1s is already in use", userName), Level.WARNING);
+                throw new InvalidArgumentException(String.format("User name %s already exists", userName), Level.WARNING);
             }
         }
         if(password != null){
@@ -264,7 +266,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
         Node userNode = userIndex.get(Constants.PROPERTY_ID, oid).getSingle();
         if(userNode == null){
-            throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %1s",oid));
+            throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %s",oid));
         }
         try{
             tx =  graphDb.beginTx();
@@ -295,7 +297,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             }
             tx.success();
         }catch(Exception ex){
-            Logger.getLogger("Set user properties: "+ex.getMessage()); //NOI18N
+            Logger.getLogger("setUserProperties: "+ex.getMessage()); //NOI18N
             if (tx != null){
                 tx.failure();
             }
@@ -313,7 +315,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             throws InvalidArgumentException, ApplicationObjectNotFoundException {
         Transaction tx = null;
         if(oldUserName == null){
-            throw new InvalidArgumentException("Username can not be null", Level.INFO);
+            throw new InvalidArgumentException("The user name can not be null", Level.INFO);
         }
         if(newUserName != null){
             if (newUserName.trim().equals("")){
@@ -321,17 +323,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             }
             Node storedUser = userIndex.get(Constants.PROPERTY_NAME,newUserName).getSingle();
             if (storedUser != null){
-                throw new InvalidArgumentException(String.format("The username %1s is already in use", newUserName), Level.WARNING);
+                throw new InvalidArgumentException(String.format("User %s already exists", newUserName), Level.WARNING);
             }
         }
         if(password != null){
             if (password.trim().equals("")){
-                throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
+                throw new InvalidArgumentException("Password can not be an empty string", Level.INFO);
             }
         }
         Node userNode = userIndex.get(Constants.PROPERTY_NAME, oldUserName).getSingle();
         if(userNode == null){
-            throw new ApplicationObjectNotFoundException(String.format("Can not find a user with name %1s",oldUserName));
+            throw new ApplicationObjectNotFoundException(String.format("Can not find a user with name %s",oldUserName));
         }
         try{
             tx =  graphDb.beginTx();
@@ -362,7 +364,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             }
             tx.success();
         }catch(Exception ex){
-            Logger.getLogger("Set user properties: "+ex.getMessage()); //NOI18N
+            Logger.getLogger("setUserProperties: "+ex.getMessage()); //NOI18N
             if (tx != null){
                 tx.failure();
             }
@@ -382,11 +384,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             throw new InvalidArgumentException("Group name can not be null", Level.INFO);
         }
         if (groupName.trim().equals("")){
-            throw new InvalidArgumentException("User name can't be an empty string", Level.INFO);
+            throw new InvalidArgumentException("Group name can not be an empty string", Level.INFO);
         }
         Node storedGroup = groupIndex.get(Constants.PROPERTY_NAME,groupName).getSingle();
         if (storedGroup != null){
-            throw new InvalidArgumentException(String.format("The group name %1s is already in use", groupName), Level.WARNING);
+            throw new InvalidArgumentException(String.format("Group %s already exists", groupName), Level.WARNING);
         }
         try{
             tx = graphDb.beginTx();
@@ -409,7 +411,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             return newGroup.getId();
             
         }catch(Exception ex){
-            Logger.getLogger("Create group: "+ex.getMessage()); //NOI18N
+            Logger.getLogger("createGroup: "+ex.getMessage()); //NOI18N
             if (tx != null){
                 tx.failure();
             }
@@ -439,9 +441,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
         List<GroupProfile> groups =  new ArrayList<GroupProfile>();
         for (Node node : groupsNodes)
-        {
             groups.add((Util.createGroupProfileFromNode(node)));
-        }
         return groups;
     }
 
@@ -491,16 +491,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             }
 
             tx.success();
+            tx.finish();
         }catch(Exception ex){
-            Logger.getLogger("Set group properties: "+ex.getMessage()); //NOI18N
-            if (tx != null){
-                tx.failure();
-            }
-        throw new RuntimeException(ex.getMessage());
-        } finally {
-            if (tx != null){
-                tx.finish();
-            }
+            Logger.getLogger("setGroupProperties: "+ex.getMessage()); //NOI18N
+            tx.failure();
+            tx.finish();
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -515,7 +511,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 {
                     Node userNode = userIndex.get(Constants.PROPERTY_ID, id).getSingle();
                     if(userNode == null){
-                        throw new ApplicationObjectNotFoundException(String.format("Can not find the user with id %1s",id));
+                        throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %s",id));
                     }
                     cm.removeUser((String)userNode.getProperty(Constants.PROPERTY_NAME));
                     Iterable<Relationship> relationships = userNode.getRelationships();
@@ -527,16 +523,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 }
             }
             tx.success();
+            tx.finish();
         }catch(Exception ex){
-            Logger.getLogger("Delete users: "+ex.getMessage()); //NOI18N
-            if (tx != null){
-                tx.failure();
-            }
-        throw new RuntimeException(ex.getMessage());
-        } finally {
-            if (tx != null){
-                tx.finish();
-            }
+            Logger.getLogger("deleteUsers: "+ex.getMessage()); //NOI18N
+            tx.failure();
+            tx.finish();    
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -561,17 +553,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     groupNode.delete();
                 }
                 tx.success();
-            }
-        }catch(Exception ex){
-            Logger.getLogger("Delete groups: "+ex.getMessage()); //NOI18N
-            if (tx != null){
-                tx.failure();
-            }
-        throw new RuntimeException(ex.getMessage());
-        } finally {
-            if (tx != null){
                 tx.finish();
             }
+        }catch(Exception ex){
+            Logger.getLogger("deleteGroups: "+ex.getMessage()); //NOI18N
+            tx.failure();
+            tx.finish();
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -600,10 +588,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
        
        Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
        if (classNode ==  null){
-           throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %1s",className));
+           throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s",className));
        }
-       if (!cm.isSubClass("GenericObjectList", className)){
-            throw new InvalidArgumentException(String.format("Class %1s is not a list type", className), Level.WARNING);
+       if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className)){
+            throw new InvalidArgumentException(String.format("Class %s is not a list type", className), Level.WARNING);
        }
        Transaction tx = null;
        try{
@@ -615,17 +603,15 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
            newItem.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
            listTypeItemsIndex.putIfAbsent(newItem, Constants.PROPERTY_ID, newItem.getId());
            tx.success();
+           tx.finish();
            GenericObjectList newListType = new GenericObjectList(newItem.getId(), name);
            cm.putListType(newListType);
            return newItem.getId();
         }catch(Exception ex){
             Logger.getLogger("createListTypeItem: "+ex.getMessage()); //NOI18N
-            if (tx != null)
-                tx.failure();
+            tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
         }
     }
 
@@ -634,23 +620,21 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         Transaction tx = null;
         try{
             tx = graphDb.beginTx();
-            if (!cm.isSubClass("GenericObjectList", className))
-                throw new InvalidArgumentException(String.format("Class %1s is not a list type", className), Level.WARNING);
+            if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
+                throw new InvalidArgumentException(String.format("Class %s is not a list type", className), Level.WARNING);
 
             Node instance = getInstanceOfClass(className, oid);
             Util.deleteObject(instance, realeaseRelationships);
 
             tx.success();
+            tx.finish();
             cm.removeListType(className);
             
         }catch(Exception ex){
             Logger.getLogger("deleteListTypeItem: "+ex.getMessage()); //NOI18N
-            if (tx != null)
-                tx.failure();
+            tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
         }
     }
 
@@ -658,10 +642,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     public List<RemoteBusinessObjectLight> getListTypeItems(String className) throws MetadataObjectNotFoundException, InvalidArgumentException{
         Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
         if (classNode ==  null)
-            throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %1s",className));
+            throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s",className));
 
-        if (!Util.isSubClass("GenericObjectList", classNode))
-            throw new InvalidArgumentException(String.format("Class %1s is not a list type", className), Level.WARNING);
+        if (!Util.isSubClass(Constants.CLASS_GENERICOBJECTLIST, classNode))
+            throw new InvalidArgumentException(String.format("Class %s is not a list type", className), Level.WARNING);
 
         Iterable<Relationship> childrenAsRelationships = classNode.getRelationships(RelTypes.INSTANCE_OF);
         List<RemoteBusinessObjectLight> children = new ArrayList<RemoteBusinessObjectLight>();
@@ -675,7 +659,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
     @Override
     public List<ClassMetadataLight> getInstanceableListTypes() throws ApplicationObjectNotFoundException {
-        Node genericObjectListNode = classIndex.get(Constants.PROPERTY_NAME, "GenericObjectList").getSingle();
+        Node genericObjectListNode = classIndex.get(Constants.PROPERTY_NAME, Constants.CLASS_GENERICOBJECTLIST).getSingle();
 
         if (genericObjectListNode == null)
             throw new ApplicationObjectNotFoundException("ClassGenericObjectList not found");
@@ -730,7 +714,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     Util.saveFile(props.getProperty("background_path"), fileName, background);
                     viewNode.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
                 }catch(Exception ex){
-                    throw new InvalidArgumentException(String.format("Background image for view %1s couldn't be saved",oid), Level.SEVERE);
+                    throw new InvalidArgumentException(String.format("Background image for view %s could not be saved",oid), Level.SEVERE);
                 }
             }
 
@@ -738,15 +722,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 viewNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
 
             tx.success();
+            tx.finish();
             return viewNode.getId();
         }catch (Exception ex){
             Logger.getLogger("createObjectRelatedView: "+ex.getMessage()); //NOI18N
-            if (tx != null)
-                tx.failure();
+            tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
         }
     }
 
@@ -883,15 +865,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 gView.removeProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME);
 
             tx.success();
+            tx.finish();
             
         }catch (Exception ex){
             Logger.getLogger("updateGeneralView: "+ex.getMessage()); //NOI18N
-            if (tx != null)
-                tx.failure();
+            tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
         }
     }
 
@@ -906,14 +886,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 gView.delete();
             }
             tx.success();
+            tx.finish();
         }catch (Exception ex){
             Logger.getLogger("deleteGeneralView: "+ex.getMessage()); //NOI18N
-            if (tx != null)
-                tx.failure();
+            tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
         }
     }
 
@@ -1409,7 +1387,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
 
         if (poolNode == null)
-            throw new ApplicationObjectNotFoundException(String.format("The pool with id %1s could not be found", poolId));
+            throw new ApplicationObjectNotFoundException(String.format("The pool with id %s could not be found", poolId));
         
         List<RemoteBusinessObjectLight> poolItems  = new ArrayList<RemoteBusinessObjectLight>();
         
@@ -1428,6 +1406,30 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
                    
         return poolItems;
+    }
+    
+    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, long limit) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException {
+        Node instanceNode = getInstanceOfClass(objectClass, objectId);
+        List<ActivityLogEntry> log = new ArrayList<ActivityLogEntry>();
+        int i = 0;
+        for (Relationship rel : instanceNode.getRelationships(RelTypes.HAS_HISTORY_ENTRY)){
+            if (limit != 0){
+                if (i < limit)
+                    i++;
+                else
+                    break;
+            }
+            Node logEntry = rel.getEndNode();
+            log.add(new ActivityLogEntry(logEntry.getId(), (Integer)logEntry.getProperty(Constants.PROPERTY_TYPE), 
+                    (String)logEntry.getSingleRelationship(RelTypes.PERFORMED_BY, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME), 
+                    (Long)logEntry.getProperty(Constants.PROPERTY_CREATION_DATE), 
+                    logEntry.hasProperty(Constants.PROPERTY_AFFECTED_PROPERTY) ? (String)logEntry.getProperty(Constants.PROPERTY_AFFECTED_PROPERTY) : null, 
+                    logEntry.hasProperty(Constants.PROPERTY_OLD_VALUE) ? (String)logEntry.getProperty(Constants.PROPERTY_OLD_VALUE) :  null, 
+                    logEntry.hasProperty(Constants.PROPERTY_NEW_VALUE) ? (String)logEntry.getProperty(Constants.PROPERTY_NEW_VALUE) : null, 
+                    logEntry.hasProperty(Constants.PROPERTY_NOTES) ? (String)logEntry.getProperty(Constants.PROPERTY_NOTES) : null));
+        }
+        return log;
     }
     
     public void setBusinessEntityManager(BusinessEntityManagerImpl bem) {
