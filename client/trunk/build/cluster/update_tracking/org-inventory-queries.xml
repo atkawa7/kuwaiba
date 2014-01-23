@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module codename="org.inventory.queries">
-    <module_version install_time="1390423755188" last="true" origin="installer" specification_version="1.0">
-        <file crc="2409659730" name="config/Modules/org-inventory-queries.xml"/>
-        <file crc="3007280157" name="modules/org-inventory-queries.jar"/>
-    </module_version>
-</module>

@@ -1,7 +1,0 @@
-home=1370378774000
-cluster=1390423758000
-platform=1370378774000
-user=1390423758000
-crc=7
-locale=en_US
-branding=kuwaiba

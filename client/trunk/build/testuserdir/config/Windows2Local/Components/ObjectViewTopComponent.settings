@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE properties PUBLIC "-//org.inventory.views.objectview//ObjectView//EN" "http://www.netbeans.org/dtds/properties-1_0.dtd">
-<properties>
-    <property name="version" value="1.0"/>
-    <property name="fontColor" value="-16777216"/>
-    <property name="fontName" value="SansSerif.bold"/>
-    <property name="fontSize" value="12"/>
-</properties>

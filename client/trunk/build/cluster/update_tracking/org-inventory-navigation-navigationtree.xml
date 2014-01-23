@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module codename="org.inventory.navigation.navigationtree">
-    <module_version install_time="1390423754070" last="true" origin="installer" specification_version="1.0">
-        <file crc="3895948420" name="config/Modules/org-inventory-navigation-navigationtree.xml"/>
-        <file crc="3653010214" name="modules/org-inventory-navigation-navigationtree.jar"/>
-    </module_version>
-</module>
