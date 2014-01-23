@@ -22,7 +22,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Modifier;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -260,10 +259,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             }
         }
         if(password != null){
-            if (password.trim().equals("")){
+            if (password.trim().isEmpty())
                 throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
-            }
         }
+        
         Node userNode = userIndex.get(Constants.PROPERTY_ID, oid).getSingle();
         if(userNode == null){
             throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %s",oid));
@@ -276,15 +275,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 userNode.setProperty(Constants.PROPERTY_NAME, userName);
                 userIndex.putIfAbsent(userNode, Constants.PROPERTY_NAME, userName);
             }
-            if (password != null){
+            if (password != null)
                 userNode.setProperty(Constants.PROPERTY_PASSWORD, Util.getMD5Hash(password));
-            }
-            if(firstName != null){
+            if(firstName != null)
                 userNode.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
-            }
-            if(lastName != null){
+            if(lastName != null)
                 userNode.setProperty(Constants.PROPERTY_LAST_NAME, lastName);
-            }
             if(groups != null){
                 Iterable<Relationship> relationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP);
                 for (Relationship relationship : relationships){
@@ -296,16 +292,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 }
             }
             tx.success();
+            tx.finish();
         }catch(Exception ex){
             Logger.getLogger("setUserProperties: "+ex.getMessage()); //NOI18N
-            if (tx != null){
-                tx.failure();
-            }
+            tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        } finally {
-            if (tx != null){
-                tx.finish();
-            }
         }
     }
     
