@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module codename="org.inventory.customization.listmanager">
+    <module_version install_time="1390423753720" last="true" origin="installer" specification_version="1.0">
+        <file crc="3502402777" name="config/Modules/org-inventory-customization-listmanager.xml"/>
+        <file crc="2179622363" name="modules/org-inventory-customization-listmanager.jar"/>
+    </module_version>
+</module>

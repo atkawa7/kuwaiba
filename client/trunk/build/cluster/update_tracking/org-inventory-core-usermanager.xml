@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module codename="org.inventory.core.usermanager">
+    <module_version install_time="1390423754937" last="true" origin="installer" specification_version="1.0">
+        <file crc="3469048049" name="config/Modules/org-inventory-core-usermanager.xml"/>
+        <file crc="1240351478" name="modules/org-inventory-core-usermanager.jar"/>
+    </module_version>
+</module>

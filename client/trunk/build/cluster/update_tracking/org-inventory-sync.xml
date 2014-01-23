@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module codename="org.inventory.sync">
+    <module_version install_time="1390423755382" last="true" origin="installer" specification_version="1.0">
+        <file crc="2509055039" name="config/Modules/org-inventory-sync.xml"/>
+        <file crc="1327536952" name="modules/org-inventory-sync.jar"/>
+    </module_version>
+</module>

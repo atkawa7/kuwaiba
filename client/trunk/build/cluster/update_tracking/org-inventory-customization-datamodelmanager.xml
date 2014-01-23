@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module codename="org.inventory.customization.datamodelmanager">
+    <module_version install_time="1390423753554" last="true" origin="installer" specification_version="1.0">
+        <file crc="2087320484" name="config/Modules/org-inventory-customization-datamodelmanager.xml"/>
+        <file crc="13929161" name="modules/org-inventory-customization-datamodelmanager.jar"/>
+    </module_version>
+</module>

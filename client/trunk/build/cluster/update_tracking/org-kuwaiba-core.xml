@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module codename="org.kuwaiba.core">
+    <module_version install_time="1390423756556" last="true" origin="installer" specification_version="1.0">
+        <file crc="3560339043" name="config/Modules/org-kuwaiba-core.xml"/>
+        <file crc="2139116200" name="modules/ext/nimrodlf-1.2.jar"/>
+        <file crc="1521969700" name="modules/org-kuwaiba-core.jar"/>
+    </module_version>
+</module>

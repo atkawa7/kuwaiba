@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module codename="org.inventory.core.authentication">
+    <module_version install_time="1390423752881" last="true" origin="installer" specification_version="1.0">
+        <file crc="3272161992" name="config/Modules/org-inventory-core-authentication.xml"/>
+        <file crc="2060546557" name="modules/org-inventory-core-authentication.jar"/>
+    </module_version>
+</module>

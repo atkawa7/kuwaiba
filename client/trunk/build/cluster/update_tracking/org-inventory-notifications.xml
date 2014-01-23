@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module codename="org.inventory.notifications">
+    <module_version install_time="1390423754176" last="true" origin="installer" specification_version="1.0">
+        <file crc="1519791877" name="config/Modules/org-inventory-notifications.xml"/>
+        <file crc="1170571739" name="modules/org-inventory-notifications.jar"/>
+    </module_version>
+</module>

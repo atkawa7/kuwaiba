@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module codename="org.kuwaiba.management.services">
+    <module_version install_time="1390423756649" last="true" origin="installer" specification_version="1.0">
+        <file crc="525928663" name="config/Modules/org-kuwaiba-management-services.xml"/>
+        <file crc="984317305" name="modules/org-kuwaiba-management-services.jar"/>
+    </module_version>
+</module>

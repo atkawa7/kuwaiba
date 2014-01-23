@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module codename="org.inventory.core.history">
+    <module_version install_time="1390423752742" last="true" origin="installer" specification_version="1.0">
+        <file crc="3966410705" name="config/Modules/org-inventory-core-history.xml"/>
+        <file crc="3757893574" name="modules/org-inventory-core-history.jar"/>
+    </module_version>
+</module>

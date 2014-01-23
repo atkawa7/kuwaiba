@@ -1,0 +1,110 @@
+-------------------------------------------------------------------------------
+>Log Session: Wednesday, January 22, 2014 3:49:19 PM COT
+>System Info: 
+  Product Version         = Kuwaiba Open Inventory Desktop Client 201210100934
+  Operating System        = Linux version 3.10.19-1-MANJARO running on amd64
+  Java; VM; Vendor        = 1.6.0_31; Java HotSpot(TM) 64-Bit Server VM 20.6-b01; Sun Microsystems Inc.
+  Runtime                 = Java(TM) SE Runtime Environment 1.6.0_31-b04
+  Java Home               = /programs/jdk1.6.0_31/jre
+  System Locale; Encoding = en_US (kuwaiba); UTF-8
+  Home Directory          = /home/gir
+  Current Directory       = /home/gir/workspace/java/RCP
+  User Directory          = /home/gir/workspace/java/RCP/build/testuserdir
+  Cache Directory         = /home/gir/workspace/java/RCP/build/testuserdir/var/cache
+  Installation            = /home/gir/workspace/java/RCP/build/cluster
+                            /programs/netbeans72/platform
+                            /programs/netbeans72/platform
+  Boot & Ext. Classpath   = /programs/jdk1.6.0_31/jre/lib/resources.jar:/programs/jdk1.6.0_31/jre/lib/rt.jar:/programs/jdk1.6.0_31/jre/lib/sunrsasign.jar:/programs/jdk1.6.0_31/jre/lib/jsse.jar:/programs/jdk1.6.0_31/jre/lib/jce.jar:/programs/jdk1.6.0_31/jre/lib/charsets.jar:/programs/jdk1.6.0_31/jre/lib/modules/jdk.boot.jar:/programs/jdk1.6.0_31/jre/classes:/programs/jdk1.6.0_31/jre/lib/ext/sunpkcs11.jar:/programs/jdk1.6.0_31/jre/lib/ext/localedata.jar:/programs/jdk1.6.0_31/jre/lib/ext/dnsns.jar:/programs/jdk1.6.0_31/jre/lib/ext/sunjce_provider.jar
+  Application Classpath   = /programs/netbeans72/platform/lib/boot.jar:/programs/netbeans72/platform/lib/org-openide-modules.jar:/programs/netbeans72/platform/lib/org-openide-util.jar:/programs/netbeans72/platform/lib/org-openide-util-lookup.jar:/programs/netbeans72/platform/lib/locale/boot_ja.jar:/programs/netbeans72/platform/lib/locale/boot_pt_BR.jar:/programs/netbeans72/platform/lib/locale/boot_ru.jar:/programs/netbeans72/platform/lib/locale/boot_zh_CN.jar:/programs/netbeans72/platform/lib/locale/org-openide-modules_ja.jar:/programs/netbeans72/platform/lib/locale/org-openide-modules_pt_BR.jar:/programs/netbeans72/platform/lib/locale/org-openide-modules_ru.jar:/programs/netbeans72/platform/lib/locale/org-openide-modules_zh_CN.jar:/programs/netbeans72/platform/lib/locale/org-openide-util_ja.jar:/programs/netbeans72/platform/lib/locale/org-openide-util-lookup_ja.jar:/programs/netbeans72/platform/lib/locale/org-openide-util-lookup_pt_BR.jar:/programs/netbeans72/platform/lib/locale/org-openide-util-lookup_ru.jar:/programs/netbeans72/platform/lib/locale/org-openide-util-lookup_zh_CN.jar:/programs/netbeans72/platform/lib/locale/org-openide-util_pt_BR.jar:/programs/netbeans72/platform/lib/locale/org-openide-util_ru.jar:/programs/netbeans72/platform/lib/locale/org-openide-util_zh_CN.jar:/programs/jdk1.6.0_31/lib/dt.jar:/programs/jdk1.6.0_31/lib/tools.jar
+  Startup Classpath       = /programs/netbeans72/platform/core/core.jar:/programs/netbeans72/platform/core/org-openide-filesystems.jar:/programs/netbeans72/platform/core/locale/org-openide-filesystems_ru.jar:/programs/netbeans72/platform/core/locale/org-openide-filesystems_zh_CN.jar:/programs/netbeans72/platform/core/locale/core_ja.jar:/programs/netbeans72/platform/core/locale/core_zh_CN.jar:/programs/netbeans72/platform/core/locale/core_ru.jar:/programs/netbeans72/platform/core/locale/core_pt_BR.jar:/programs/netbeans72/platform/core/locale/org-openide-filesystems_ja.jar:/programs/netbeans72/platform/core/locale/org-openide-filesystems_pt_BR.jar:/home/gir/workspace/java/RCP/build/cluster/core/locale/core_kuwaiba.jar
+-------------------------------------------------------------------------------
+WARNING [org.netbeans.core.modules]: had to upgrade dependencies for module org.inventory.navigation.applicationnodes: added = [module org.openide.awt] removed = []; details: [SaveCookie extends Savable. To compile you need to include openide.awt on classpath.]
+INFO [org.netbeans.core.startup.NbEvents]: Turning on modules:
+	org.openide.util.lookup [8.15.2 201210100934]
+	org.openide.util [8.25.2 201210100934]
+	org.openide.modules [7.32.1 201210100934]
+	org.openide.filesystems [7.62.1 201210100934]
+	org.netbeans.api.annotations.common/1 [1.14.1 201210100934]
+	org.openide.awt [7.46.1 201210100934]
+	org.netbeans.api.progress/1 [1.28.1 201210100934]
+	org.openide.dialogs [7.25.1 201210100934]
+	org.openide.nodes [7.28.1 201210100934]
+	org.openide.windows [6.55.2 201210100934]
+	org.netbeans.modules.editor.mimelookup/1 [1.26.1 201210100934]
+	org.openide.text [6.49.3 201210100934]
+	org.netbeans.swing.tabcontrol [1.36.1 201210100934]
+	org.netbeans.swing.outline [1.20.1 201210100934]
+	org.openide.explorer [6.45.1 201210100934]
+	org.openide.actions [6.26.1 201210100934]
+	org.netbeans.modules.queries/1 [1.28.1 201210100934]
+	org.openide.loaders [7.37.3 201210100934]
+	org.openide.io [1.31.2 201210100934]
+	org.netbeans.swing.plaf [1.25.1 201210100934]
+	org.netbeans.spi.quicksearch [1.14.1 201210100934]
+	org.netbeans.bootstrap/1 [2.52.3 201210100934]
+	org.netbeans.core.startup/1 [1.40.1 201210100934]
+	org.netbeans.modules.settings/1 [1.35.1 201210100934]
+	org.netbeans.modules.sampler [1.1.1 201210100934]
+	org.netbeans.modules.keyring [1.11.1 201210100934]
+	org.netbeans.core/2 [3.33.1 201210100934]
+	org.netbeans.modules.options.api/1 [1.26.1 201210100934]
+	org.netbeans.libs.osgi [1.9.1 201210100934]
+	org.netbeans.core.netigso [1.16.1 201210100934]
+	org.netbeans.modules.netbinox [1.26.2 201210100934]
+	org.netbeans.modules.masterfs/2 [2.38.2 201210100934]
+	org.netbeans.libs.jna/1 [1.21.1 201210100934]
+	org.netbeans.modules.masterfs.linux [1.1.1 201210100934]
+	org.netbeans.modules.keyring.impl [1.7.1 201210100934]
+	org.netbeans.core.windows/2 [2.49.3 201210100934]
+	org.netbeans.core.ui/1 [1.31.1 201210100934]
+	org.netbeans.api.visual [2.32.1 201210100934]
+	org.kuwaiba.management.services [1.0 140122]
+	org.kuwaiba.core [1.0 140122]
+	org.inventory.ext.wax [1.0 140122]
+	org.inventory.communications.libraries [1.0 140122]
+	org.inventory.communications [1.0 140122]
+	org.inventory.core.services [1.0 140122]
+	org.inventory.core.visual [1.0 140122]
+	org.inventory.notifications [1.0 140122]
+	org.inventory.navigation.applicationnodes [1.0 140122]
+	org.inventory.views.topology [1.0 140122]
+	org.inventory.core.wizards [1.0 140122]
+	org.inventory.views.objectview [1.0 140122]
+	org.inventory.views.gis [1.0 140122]
+	org.inventory.sync [1.0 140122]
+	org.inventory.queries [1.0 140122]
+	org.inventory.navigation.pools [1.0 140122]
+	org.inventory.navigation.navigationtree [1.0 140122]
+	org.inventory.misc.trash [1.0 140122]
+	org.inventory.customization.listmanager [1.0 140122]
+	org.inventory.customization.hierarchycustomizer [1.0 140122]
+	org.inventory.customization.datamodelmanager [1.0 140122]
+	org.inventory.core.usermanager [1.0 140122]
+	org.inventory.core.history [1.0 140122]
+	org.inventory.core.authentication [1.0 140122]
+WARNING [org.openide.filesystems.Ordering]: Not all children in Toolbars/ marked with the position attribute: [Edit, System, Tools], but some are: [Clipboard, Memory, Standard.xml]
+Diagnostic information
+Input arguments:
+	-Djdk.home=/programs/jdk1.6.0_31
+	-Dnetbeans.dirs=/home/gir/workspace/java/RCP/build/cluster:/programs/netbeans72/platform
+	-Dnetbeans.home=/programs/netbeans72/platform
+	-Dnetbeans.logger.console=true
+	-ea
+	-Xdebug
+	-Xrunjdwp:transport=dt_socket,suspend=y,server=n,address=localhost:45247
+	-XX:+HeapDumpOnOutOfMemoryError
+	-XX:HeapDumpPath=/home/gir/workspace/java/RCP/build/testuserdir/var/log/heapdump.hprof
+Compiler: HotSpot 64-Bit Tiered Compilers
+Heap memory usage: initial 58.7MB maximum 835.6MB
+Non heap memory usage: initial 23.2MB maximum 130.0MB
+Garbage collector: PS Scavenge (Collections=8 Total time spent=0s)
+Garbage collector: PS MarkSweep (Collections=0 Total time spent=0s)
+Classes: loaded=5653 total loaded=5653 unloaded 0
+INFO [org.netbeans.core.ui.warmup.DiagnosticTask]: Total memory 3,938,377,728
+INFO [null]: Total physical memory 3,938,377,728
+WARNING [org.openide.filesystems.Ordering]: Not all children in Menu/Edit/ marked with the position attribute: [QueryManagerAction.shadow], but some are: [org-inventory-queries-actions-ShowQueryManager.shadow, org-openide-actions-UndoAction.shadow, org-openide-actions-RedoAction.shadow, Separator1.instance, org-openide-actions-CutAction.shadow, org-openide-actions-CopyAction.shadow, org-openide-actions-PasteAction.shadow, org-openide-actions-DeleteAction.shadow, Separator2.instance]
+WARNING [org.openide.filesystems.Ordering]: Not all children in Menu/Tools/ marked with the position attribute: [Administrative, NavigationTreeAction.shadow, ObjectViewAction.shadow, TopologyViewAction.shadow, org-inventory-core-services-caching-RefreshLocalCache.shadow, org-inventory-navigation-pools-PoolsTopComponent.shadow], but some are: [org-openide-actions-ToolsAction.shadow, Separator1.instance, Separator2.instance, org-netbeans-modules-options-OptionsWindowAction-separatorBefore.instance, org-netbeans-modules-options-OptionsWindowAction.shadow]
+INFO [org.netbeans.modules.sampler.InternalSampler]: Slowness detector disabled - running in debug mode
+WARNING [org.netbeans.core.TimableEventQueue]: too much time in AWT thread null
+WARNING [org.netbeans.modules.progress.spi.InternalHandle]: Cannot switch to silent mode when not running at org.netbeans.core.ui.warmup.MenuWarmUpTask$NbWindowsAdapter$1HandleBridge.run(MenuWarmUpTask.java:269)
+WARNING [org.netbeans.core.TimableEventQueue]: too much time in AWT thread null

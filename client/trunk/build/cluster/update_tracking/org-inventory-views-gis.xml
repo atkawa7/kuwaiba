@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module codename="org.inventory.views.gis">
+    <module_version install_time="1390423755844" last="true" origin="installer" specification_version="1.0">
+        <file crc="2413274192" name="config/Modules/org-inventory-views-gis.xml"/>
+        <file crc="4684788" name="modules/ext/swingx-all-1.6.3.jar"/>
+        <file crc="460958457" name="modules/ext/swingx-ws.jar"/>
+        <file crc="3617304352" name="modules/org-inventory-views-gis.jar"/>
+    </module_version>
+</module>
