@@ -172,3 +172,4 @@
 * Renamed class GenericSoftware to GenericSoftwareType
 * Added class SoftwareLicense
 * Added all classes related to the Mobile Networks model (see corresponding design document)
+* Added class Subnet

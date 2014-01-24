@@ -65,6 +65,10 @@ public class ClassMetadataLight implements Serializable{
      *  Shows if this is a core class (the ones provided in the official release) or a custom one
      */
     private Boolean custom;
+    /**
+     * Is this attribute going to be used for administrative purposes?
+     */
+    private Boolean administrative;
 
     public ClassMetadataLight(){
     }
@@ -75,15 +79,17 @@ public class ClassMetadataLight implements Serializable{
         this.displayName = displayName;
     }
 
-    public ClassMetadataLight(long id, String name, Boolean inDesign, Boolean custom) {
+    public ClassMetadataLight(long id, String name, Boolean inDesign, Boolean custom, Boolean administrative) {
         this.id = id;
         this.name = name;
         this.inDesign = inDesign;
         this.custom = custom;
+        this.administrative = administrative;
     }
 
     
-    public ClassMetadataLight(long id, String name, Boolean viewable, Boolean _abstract, Boolean listType, String parentClassName, Boolean inDesign, Boolean custom) {
+    public ClassMetadataLight(long id, String name, Boolean viewable, Boolean _abstract, 
+            Boolean listType, String parentClassName, Boolean inDesign, Boolean custom, Boolean administrative) {
         this.id = id;
         this.name = name;
         this.viewable = viewable;
@@ -92,6 +98,7 @@ public class ClassMetadataLight implements Serializable{
         this.parentClassName = parentClassName;
         this.inDesign = inDesign;
         this.custom = custom;
+        this.administrative = administrative;
     }
         
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
@@ -173,5 +180,16 @@ public class ClassMetadataLight implements Serializable{
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }// </editor-fold>
+    }
+    
+    public Boolean isAdministrative() {
+        return administrative;
+    }
+
+    public void setAdministrative(Boolean administrative) {
+        this.administrative = administrative;
+    }
+    // </editor-fold>
+
+    
 }

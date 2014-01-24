@@ -371,20 +371,17 @@ public class Util {
     public static AttributeMetadata createAttributeMetadataFromNode(Node attributeNode)
     {
         AttributeMetadata attribute =  new AttributeMetadata();
-        try{
-            attribute.setName((String)attributeNode.getProperty(Constants.PROPERTY_NAME));
-            attribute.setDescription((String)attributeNode.getProperty(Constants.PROPERTY_DESCRIPTION));
-            attribute.setDisplayName((String)attributeNode.getProperty(Constants.PROPERTY_DISPLAY_NAME));
-            attribute.setReadOnly((Boolean)attributeNode.getProperty(Constants.PROPERTY_READ_ONLY));
-            attribute.setType((String)attributeNode.getProperty(Constants.PROPERTY_TYPE));
-            attribute.setVisible((Boolean)attributeNode.getProperty(Constants.PROPERTY_VISIBLE));
-            attribute.setAdministrative((Boolean)attributeNode.getProperty(Constants.PROPERTY_ADMINISTRATIVE));
-            attribute.setNoCopy((Boolean)attributeNode.getProperty(Constants.PROPERTY_NO_COPY));
-            attribute.setUnique((Boolean)attributeNode.getProperty(Constants.PROPERTY_UNIQUE));
-            attribute.setId(attributeNode.getId());
-        }catch(Exception e){
-            return null;
-        }
+
+        attribute.setName((String)attributeNode.getProperty(Constants.PROPERTY_NAME));
+        attribute.setDescription((String)attributeNode.getProperty(Constants.PROPERTY_DESCRIPTION));
+        attribute.setDisplayName((String)attributeNode.getProperty(Constants.PROPERTY_DISPLAY_NAME));
+        attribute.setReadOnly((Boolean)attributeNode.getProperty(Constants.PROPERTY_READ_ONLY));
+        attribute.setType((String)attributeNode.getProperty(Constants.PROPERTY_TYPE));
+        attribute.setVisible((Boolean)attributeNode.getProperty(Constants.PROPERTY_VISIBLE));
+        attribute.setAdministrative((Boolean)attributeNode.getProperty(Constants.PROPERTY_ADMINISTRATIVE));
+        attribute.setNoCopy((Boolean)attributeNode.getProperty(Constants.PROPERTY_NO_COPY));
+        attribute.setUnique((Boolean)attributeNode.getProperty(Constants.PROPERTY_UNIQUE));
+        attribute.setId(attributeNode.getId());
 
         return attribute;
     }

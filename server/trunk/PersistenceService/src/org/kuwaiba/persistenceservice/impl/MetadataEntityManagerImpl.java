@@ -213,7 +213,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             Node classMetadata = classIndex.get(Constants.PROPERTY_ID, newClassDefinition.getId()).getSingle();
             if (classMetadata == null)
                 throw new MetadataObjectNotFoundException(String.format(
-                        "Can not find a class with id %1s", newClassDefinition.getName()));
+                        "Can not find a class with id %s", newClassDefinition.getName()));
             
             String formerName = (String)classMetadata.getProperty(Constants.PROPERTY_NAME);
             

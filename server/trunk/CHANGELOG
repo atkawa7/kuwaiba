@@ -58,8 +58,15 @@
 * Fixed a bug that made getMultipleChoice to return also the abstract list types
 
 0.4
-0.5
+0.5.1 (12122013)
 * Added method getUpstreamContainmentHierarchy to the ws API
 * Added capabilities for searching objects by id and parent
 * Added methods getObjectRelatedViews and getGeneralViews to the webservice API
 * APIs use now primitive types (boolean, long, etc) instead of wrappers (Long, Boolean) to improve type safety
+* Added support to modify dynamically the data model
+* Added support to manipulate pools
+* Many performance and bugfixes
+
+0.6
+* Support for activity logs
+* Improved permissions support

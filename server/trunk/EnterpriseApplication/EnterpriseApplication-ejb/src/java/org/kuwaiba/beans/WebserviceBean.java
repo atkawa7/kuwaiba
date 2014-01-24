@@ -177,9 +177,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
             ClassMetadata myClass = mem.getClass(className);
             List<Validator> validators = new ArrayList<Validator>();
             for (String mapping : bre.getSubclassOfValidators().keySet()){
-                if (mem.isSubClass(mapping, className)){
+                if (mem.isSubClass(mapping, className))
                     validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
-                }
             }
             return new ClassInfo(myClass, validators.toArray(new Validator[0]));
         } catch (Exception ex) {

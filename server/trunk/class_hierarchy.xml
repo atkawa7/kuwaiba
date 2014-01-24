@@ -1,4 +1,4 @@
-<hierarchy documentVersion="1.1" serverVersion="0.5" date="1330720263006">
+<hierarchy documentVersion="1.1" serverVersion="0.5.1" date="1330720263006">
   <inventory>
     <classes>
       <class name="RootObject" javaModifiers="1025" applicationModifiers="0" classType="4" classPackage="org.kuwaiba.entity.core">
@@ -1930,18 +1930,15 @@
                     <subclasses>
                       <class name="Room" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.location">
                         <attributes>
-                          
-                          
-                          <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                           <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                          <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                          <attribute name="raisedFloor" type="Boolean" javaModifiers="4" applicationModifiers="0"/>
                         </attributes>
                         <subclasses/>
                       </class>
                       <class name="Floor" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.location">
                         <attributes>
-                          <attribute name="raisedFloor" type="Boolean" javaModifiers="4" applicationModifiers="0"/>
-                          
-                          
+                          <attribute name="secured" type="Boolean" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                           <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                         </attributes>
@@ -2303,6 +2300,14 @@
                         </attributes>
                         <subclasses/>
                       </class>
+                      <class name="Subnet" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.logical.addressing">
+                        <attributes>
+                          <attribute name="customer" type="CorporateCustomer" javaModifiers="4" applicationModifiers="0"/>
+                          <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                          <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                        </attributes>
+                        <subclasses/>
+                      </class>
                     </subclasses>
                   </class>
                   <class name="VLAN" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.logical.misc">
@@ -2402,7 +2407,7 @@
                       </class>
                       <class name="GenericDataService" javaModifiers="1025" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos.services.data">
                         <attributes>
-                          <attribute name="bandwidth" type="float" javaModifiers="4" applicationModifiers="0"/>
+                          <attribute name="bandwidth" type="Float" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="rate" type="RateType" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
@@ -2411,7 +2416,7 @@
                         <subclasses>
                           <class name="FTTHService" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos.services.data">
                             <attributes>
-                              <attribute name="bandwidth" type="float" javaModifiers="4" applicationModifiers="0"/>
+                              <attribute name="bandwidth" type="Float" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="rate" type="RateType" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
@@ -2421,7 +2426,7 @@
                           </class>
                           <class name="PDHService" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos.services.data">
                             <attributes>
-                              <attribute name="bandwidth" type="float" javaModifiers="4" applicationModifiers="0"/>
+                              <attribute name="bandwidth" type="Float" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="rate" type="RateType" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
@@ -2431,7 +2436,7 @@
                           </class>
                           <class name="GenericXDSLService" javaModifiers="1025" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos.services.data.xdsl">
                             <attributes>
-                              <attribute name="bandwidth" type="float" javaModifiers="4" applicationModifiers="0"/>
+                              <attribute name="bandwidth" type="Float" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="rate" type="RateType" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
@@ -2440,7 +2445,7 @@
                             <subclasses>
                               <class name="SDSLService" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos.services.data.xdsl">
                                 <attributes>
-                                  <attribute name="bandwidth" type="float" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="bandwidth" type="Float" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="rate" type="RateType" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
@@ -2450,7 +2455,7 @@
                               </class>
                               <class name="ADSLService" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos.services.data.xdsl">
                                 <attributes>
-                                  <attribute name="bandwidth" type="float" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="bandwidth" type="Float" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="rate" type="RateType" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
@@ -2460,7 +2465,7 @@
                               </class>
                               <class name="VDSLService" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos.services.data.xdsl">
                                 <attributes>
-                                  <attribute name="bandwidth" type="float" javaModifiers="4" applicationModifiers="0"/>
+                                  <attribute name="bandwidth" type="Float" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="rate" type="RateType" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
@@ -2472,7 +2477,7 @@
                           </class>
                           <class name="SDHService" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos.services.data">
                             <attributes>
-                              <attribute name="bandwidth" type="float" javaModifiers="4" applicationModifiers="0"/>
+                              <attribute name="bandwidth" type="Float" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="rate" type="RateType" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
@@ -2482,7 +2487,7 @@
                           </class>
                           <class name="CableDataService" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos.services.data">
                             <attributes>
-                              <attribute name="bandwidth" type="float" javaModifiers="4" applicationModifiers="0"/>
+                              <attribute name="bandwidth" type="Float" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="rate" type="RateType" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
@@ -2492,7 +2497,7 @@
                           </class>
                           <class name="GigaEthernetService" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos.services.data">
                             <attributes>
-                              <attribute name="bandwidth" type="float" javaModifiers="4" applicationModifiers="0"/>
+                              <attribute name="bandwidth" type="Float" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="rate" type="RateType" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
@@ -2502,7 +2507,7 @@
                           </class>
                           <class name="SatelliteDataService" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos.services.data">
                             <attributes>
-                              <attribute name="bandwidth" type="float" javaModifiers="4" applicationModifiers="0"/>
+                              <attribute name="bandwidth" type="Float" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="rate" type="RateType" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
@@ -2512,7 +2517,7 @@
                           </class>
                           <class name="SONETService" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos.services.data">
                             <attributes>
-                              <attribute name="bandwidth" type="float" javaModifiers="4" applicationModifiers="0"/>
+                              <attribute name="bandwidth" type="Float" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="rate" type="RateType" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
@@ -2522,7 +2527,7 @@
                           </class>
                           <class name="BurstableService" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos.services.data">
                             <attributes>
-                              <attribute name="bandwidth" type="float" javaModifiers="4" applicationModifiers="0"/>
+                              <attribute name="bandwidth" type="Float" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="rate" type="RateType" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
@@ -2532,7 +2537,7 @@
                           </class>
                           <class name="MobileDataService" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos.services.data">
                             <attributes>
-                              <attribute name="bandwidth" type="float" javaModifiers="4" applicationModifiers="0"/>
+                              <attribute name="bandwidth" type="Float" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="rate" type="RateType" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>

@@ -59,7 +59,9 @@ public class ClassInfoLight implements Serializable {
         this.inDesign = myClassLight.isInDesign();
     }
 
-    public ClassInfoLight (long id, String className, String displayName, Validator[] validators, boolean viewable, boolean _abstract, boolean custom, boolean inDesign, String parentClassName, boolean listType, byte[] smallIcon){
+    public ClassInfoLight (long id, String className, String displayName, 
+            Validator[] validators, boolean viewable, boolean _abstract, boolean custom, 
+            boolean inDesign, String parentClassName, boolean listType, byte[] smallIcon){
         this.id = id;
         this.className = className;
         this.displayName = displayName;
@@ -160,7 +162,6 @@ public class ClassInfoLight implements Serializable {
     public void setListType(Boolean listType) {
         this.listType = listType;
     }
-
 
     @Override
     public boolean equals(Object obj){
