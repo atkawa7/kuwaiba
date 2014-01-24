@@ -139,14 +139,13 @@ public class PhysicalConnectionProvider implements ConnectProvider{
         if (myWizard.getNewConnection() != null){
 
             ViewScene scene =(ViewScene)sourceWidget.getScene();
-            ObjectConnectionWidget line = new ObjectConnectionWidget(scene,
-                    myWizard.getNewConnection(), scene.getFreeRouter(), getCurrentLineColor());
+            ObjectConnectionWidget line = (ObjectConnectionWidget)scene.addEdge(myWizard.getNewConnection());
 
-            line.setTargetAnchor(AnchorFactory.createRectangularAnchor(targetWidget,true));
-            line.setSourceAnchor(AnchorFactory.createRectangularAnchor(sourceWidget,true));
+            line.setTargetAnchor(AnchorFactory.createCenterAnchor(targetWidget));
+            line.setSourceAnchor(AnchorFactory.createCenterAnchor(sourceWidget));
+            
+            scene.validate();
 
-            scene.getEdgesLayer().addChild(line);
-            scene.addObject(line.getObject(), line);
             scene.fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "New Connection"));
         }
     }

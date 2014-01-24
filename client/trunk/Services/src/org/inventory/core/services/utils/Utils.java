@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileFilter;
@@ -131,7 +132,7 @@ public class Utils {
      * @param groupB
      * @return An array of two positions with the remaining elements in the conjunct A and the second with the B's elements
      */
-    public static Object[] inverseIntersection(List groupA, List groupB){
+    public static Collection[] inverseIntersection(Collection groupA, Collection groupB){
         for (Object elementA : groupA){
             for (Object elementB : groupB){
                 if (elementA.equals(elementB)){
@@ -143,7 +144,7 @@ public class Utils {
                 }
             }
         }
-        return new Object[]{groupA,groupB};
+        return new Collection[]{groupA,groupB};
     }
 
     /**

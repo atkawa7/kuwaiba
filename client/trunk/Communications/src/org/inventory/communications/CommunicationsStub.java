@@ -1216,7 +1216,7 @@ public class CommunicationsStub {
                                 cil.getDisplayName(),
                                 cil.getParentClassName(),
                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
-                                cil.isCustom(), cil.isInDesign(),
+                                cil.isCustom(), cil.isInDesign(), 
                                 cil.getSmallIcon(), validators);
                 i++;
             }

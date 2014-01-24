@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.util.Constants;
@@ -54,7 +53,7 @@ import org.netbeans.api.visual.widget.Widget;
  * This is the main scene for an object's view
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class ViewScene extends GraphScene<LocalObjectLight, LocalObject>{
+public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>{
 
     /**
      * This layer is used to paint the auxiliary elements 
@@ -154,8 +153,8 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObject>{
         myConnectionProvider = new PhysicalConnectionProvider();
         
         addChild(backgroundLayer);
-        addChild(nodesLayer);
         addChild(edgesLayer);
+        addChild(nodesLayer);
         addChild(labelsLayer);
         
         getActions().addAction(ActionFactory.createZoomAction());
@@ -187,12 +186,16 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObject>{
      */
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
-        return null;
+        ObjectNodeWidget widget = new ObjectNodeWidget(this, node);
+        nodesLayer.addChild(widget);
+        return widget;
     }
 
     @Override
-    protected Widget attachEdgeWidget(LocalObject edge) {
-        return null;
+    protected Widget attachEdgeWidget(LocalObjectLight edge) {
+        ObjectConnectionWidget widget = new ObjectConnectionWidget(this, edge, freeRouter);
+        edgesLayer.addChild(widget);
+        return widget;
     }
 
     /**
@@ -202,11 +205,11 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObject>{
      * @param sourceNode
      */
     @Override
-    protected void attachEdgeSourceAnchor(LocalObject edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
+    protected void attachEdgeSourceAnchor(LocalObjectLight edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
     }
 
     @Override
-    protected void attachEdgeTargetAnchor(LocalObject edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
+    protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
     }
 
     public LayerWidget getInteractionLayer() {
@@ -277,7 +280,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObject>{
         synchronized (getSceneAnimator()) {
             double zoom = getSceneAnimator().isAnimatingZoomFactor () ? getSceneAnimator().getTargetZoomFactor () : getZoomFactor ();
             if(zoom < 4){
-                getSceneAnimator().animateZoomFactor (zoom + 0.5);
+                getSceneAnimator().animateZoomFactor (zoom + 0.1);
                 validate();
             }
         }
@@ -287,7 +290,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObject>{
         synchronized (getSceneAnimator()) {
             double zoom = getSceneAnimator().isAnimatingZoomFactor () ? getSceneAnimator().getTargetZoomFactor () : getZoomFactor ();
             if(zoom > 0)
-                getSceneAnimator().animateZoomFactor (zoom - 0.5);
+                getSceneAnimator().animateZoomFactor (zoom - 0.1);
         }
     }
 
@@ -322,9 +325,13 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObject>{
     }
 
     public void clear(){
-        List myClone = new ArrayList(getObjects());
-        for(Object obj : myClone)
-            removeObject(obj);
+        List<LocalObjectLight> clonedNodes = new ArrayList(getNodes());
+        List<LocalObjectLight> clonedEdges = new ArrayList(getEdges());
+        
+        for(LocalObjectLight lol : clonedNodes)
+            removeNode(lol);
+        for(LocalObjectLight lol : clonedEdges)
+            removeEdge(lol);
 
         moveAction.clearActionListeners();
         addRemoveControlPointAction.clearActionListeners();

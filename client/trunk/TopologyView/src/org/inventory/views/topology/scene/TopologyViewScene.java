@@ -192,7 +192,7 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
     @Override
     protected Widget attachNodeWidget(Object node) {
         if(node instanceof LocalObjectLight){
-            if(!((LocalObjectLight)node).getName().contains(CLOUD_ICON)){
+            if(((LocalObjectLight)node).getName() == null || !((LocalObjectLight)node).getName().contains(CLOUD_ICON)){
                 ObjectNodeWidget myWidget = new ObjectNodeWidget(this, (LocalObjectLight)node);
                 nodesLayer.addChild(myWidget);
                 Image myIcon = CommunicationsStub.getInstance().getMetaForClass(((LocalObjectLight)node).getClassName(), false).getIcon();

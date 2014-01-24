@@ -31,6 +31,8 @@ import org.openide.nodes.AbstractNode;
 import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
+import org.openide.windows.Mode;
+import org.openide.windows.WindowManager;
 
 /**
  * Data model manager Top component.
@@ -101,6 +103,10 @@ public final class DataModelManagerTopComponent extends TopComponent
     public void componentClosed() {
         ExplorerUtils.activateActions(em, false);
         em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
+        //Workaround, because when you close a TC whose mode is "explorer" and open it again,
+        //it docks as "explorer". This forces the TC to be always docked "explorer"
+        Mode myMode = WindowManager.getDefault().findMode("explorer"); //NOI18N
+        myMode.dockInto(this);
     }
 
     void writeProperties(java.util.Properties p) {

@@ -33,6 +33,7 @@ import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.Node;
 import org.openide.util.NbBundle;
+import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
@@ -130,6 +131,10 @@ public final class PoolsTopComponent extends TopComponent implements ExplorerMan
     @Override
     public void componentClosed() {
         em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
+        //Workaround, because when you close a TC whose mode is "explorer" and open it again,
+        //it docks as "explorer". This forces the TC to be always docked "explorer"
+        Mode myMode = WindowManager.getDefault().findMode("explorer"); //NOI18N
+        myMode.dockInto(this);
     }
 
     void writeProperties(java.util.Properties p) {

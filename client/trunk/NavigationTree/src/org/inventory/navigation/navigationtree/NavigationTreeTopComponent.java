@@ -34,6 +34,7 @@ import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
+import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
@@ -152,6 +153,10 @@ public final class NavigationTreeTopComponent extends TopComponent
         em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
         TopComponent propertiesWindow = WindowManager.getDefault().findTopComponent("properties");
         propertiesWindow.close();
+        //Workaround, because when you close a TC whose mode is "explorer" and open it again,
+        //it docks as "explorer". This forces the TC to be always docked "explorer"
+        Mode myMode = WindowManager.getDefault().findMode("explorer"); //NOI18N
+        myMode.dockInto(this);
     }
 
     void writeProperties(java.util.Properties p) {

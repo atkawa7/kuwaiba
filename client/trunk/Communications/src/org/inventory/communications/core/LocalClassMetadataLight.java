@@ -70,7 +70,6 @@ public class LocalClassMetadataLight implements Transferable {
      * Is the class "operational" or is it in design process?
      */
     protected boolean inDesign;
-
     /**
      * Class icon for trees. This is the icon the instances of this class will show in trees
      */
@@ -92,7 +91,7 @@ public class LocalClassMetadataLight implements Transferable {
 
     public LocalClassMetadataLight(long id, String className, String displayName, 
             String parentName, boolean _abstract, boolean viewable, boolean listType, 
-            boolean custom, boolean inDesign, byte[] smallIcon, HashMap<String, Integer> validators) {
+            boolean custom, boolean inDesign,byte[] smallIcon, HashMap<String, Integer> validators) {
         this.id = id;
         this.className = className;
         this.displayName = displayName;

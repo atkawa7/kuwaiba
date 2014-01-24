@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -96,11 +97,7 @@ public class ObjectViewService implements LookupListener{
            vrtc.setHtmlDisplayName(null); //Clear the displayname in case it was set to another value
 
             //We clean the scene...
-           vrtc.getScene().getNodesLayer().removeChildren();
-           vrtc.getScene().getEdgesLayer().removeChildren();
-           vrtc.getScene().getBackgroundLayer().removeChildren();
-           vrtc.getScene().getInteractionLayer().removeChildren();
-           vrtc.getScene().getLabelsLayer().removeChildren();
+           vrtc.getScene().clear();
 
            if (myObject.getOid() != -1){ //Other nodes than the root one
                if(!com.getMetaForClass(myObject.getClassName(), false).isViewable()){
@@ -218,25 +215,16 @@ public class ObjectViewService implements LookupListener{
                 com.getMetaForClass(vrtc.getScene().getCurrentObject().getClassName(), false).getOid());
         List<LocalObject> childrenEdges = com.getChildrenOfClass(vrtc.getScene().getCurrentObject().getOid(),
                 vrtc.getScene().getCurrentObject().getClassName(),Constants.CLASS_GENERICCONNECTION);
+
+        Collection[] nodesIntersection = Utils.inverseIntersection(childrenNodes, vrtc.getScene().getNodes());
+        Collection[] edgesIntersection = Utils.inverseIntersection(childrenEdges, vrtc.getScene().getEdges());
         
-        List<LocalObjectLight> currentNodes = new ArrayList<LocalObjectLight>();
-        List<LocalObjectLight> currentEdges = new ArrayList<LocalObjectLight>();
-
-        for (Widget widget : vrtc.getScene().getNodesLayer().getChildren())
-            currentNodes.add(((ObjectNodeWidget)widget).getObject());
-
-        for (Widget widget : vrtc.getScene().getEdgesLayer().getChildren())
-            currentEdges.add(((ObjectConnectionWidget)widget).getObject());
-
-        Object[] nodesIntersection = Utils.inverseIntersection(childrenNodes, currentNodes);
-        Object[] edgesIntersection = Utils.inverseIntersection(childrenEdges, currentEdges);
-        
-        viewBuilder.refreshView((List<LocalObjectLight>)nodesIntersection[0], (List<LocalObjectLight>)edgesIntersection[0],
-                (List<LocalObjectLight>)nodesIntersection[1], (List<LocalObjectLight>)edgesIntersection[1]);
+        viewBuilder.refreshView((Collection<LocalObjectLight>)nodesIntersection[0], (Collection<LocalObjectLight>)edgesIntersection[0],
+                (Collection<LocalObjectLight>)nodesIntersection[1], (Collection<LocalObjectLight>)edgesIntersection[1]);
         vrtc.getScene().validate();
         vrtc.getScene().repaint();
-        if (!((List)nodesIntersection[0]).isEmpty() || !((List)nodesIntersection[1]).isEmpty()
-                || !((List)edgesIntersection[0]).isEmpty() || !((List)edgesIntersection[1]).isEmpty())
+        if (!nodesIntersection[0].isEmpty() || !nodesIntersection[1].isEmpty()
+                || !edgesIntersection[0].isEmpty() || !edgesIntersection[1].isEmpty())
             vrtc.getScene().fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "Refresh result"));
     }
 }

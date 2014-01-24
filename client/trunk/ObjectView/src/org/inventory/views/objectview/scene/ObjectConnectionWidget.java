@@ -56,14 +56,13 @@ public class ObjectConnectionWidget extends FreeConnectionWidget implements Acti
      * @param connection
      * @param router
      */
-    public ObjectConnectionWidget(ViewScene scene, LocalObjectLight connection,
-            Router router, Color lineColor){
+    public ObjectConnectionWidget(ViewScene scene, LocalObjectLight connection, Router router){
         super(scene);
         this.object = connection;
         setToolTipText((String)connection.getName()+" ["+connection.getClassName()+"]"); //NOI18N
         setRouter(router);
-        setStroke(new BasicStroke(3));
-        setLineColor(lineColor);
+        setStroke(new BasicStroke(2));
+        setLineColor(getConnectionColor(connection.getClassName()));
         setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         getActions().addAction(scene.createSelectAction());
