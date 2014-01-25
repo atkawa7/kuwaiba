@@ -27,7 +27,7 @@ import org.openide.util.Lookup;
 
 /**
  * Action that requests a metadata class creation
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class CreateClassAction extends AbstractAction {
     

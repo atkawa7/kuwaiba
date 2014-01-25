@@ -27,7 +27,7 @@ import org.openide.util.lookup.Lookups;
 
 /**
  * Represents an attribute as a node within the data model manager
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class AttributeMetadataNode extends AbstractNode  {
     

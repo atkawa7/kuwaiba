@@ -30,7 +30,7 @@ import org.openide.util.Lookup;
 
 /**
  * ClassMetadata properties
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class ClassMetadataProperty extends ReadWrite {
 

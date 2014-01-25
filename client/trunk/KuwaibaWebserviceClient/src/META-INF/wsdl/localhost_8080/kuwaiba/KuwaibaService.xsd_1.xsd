@@ -180,6 +180,10 @@
 
 <xs:element name="getClassWithIdResponse" type="tns:getClassWithIdResponse"/>
 
+<xs:element name="getGeneralActivityAuditTrail" type="tns:getGeneralActivityAuditTrail"/>
+
+<xs:element name="getGeneralActivityAuditTrailResponse" type="tns:getGeneralActivityAuditTrailResponse"/>
+
 <xs:element name="getGeneralView" type="tns:getGeneralView"/>
 
 <xs:element name="getGeneralViewResponse" type="tns:getGeneralViewResponse"/>
@@ -696,6 +700,7 @@
 <xs:complexType name="applicationLogEntry" final="extension restriction">
 <xs:sequence>
 <xs:element name="id" type="xs:long"/>
+<xs:element name="objectId" type="xs:long"/>
 <xs:element name="type" type="xs:int"/>
 <xs:element name="userName" type="xs:string" minOccurs="0"/>
 <xs:element name="timestamp" type="xs:long"/>
@@ -1160,6 +1165,20 @@
 
 <xs:complexType name="setClassPropertiesResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getGeneralActivityAuditTrail">
+<xs:sequence>
+<xs:element name="page" type="xs:int"/>
+<xs:element name="limit" type="xs:int"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getGeneralActivityAuditTrailResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:applicationLogEntry" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getAttribute">

@@ -70,7 +70,7 @@ public class LocalAttributeMetadata {
     }
 
     public String getDisplayName() {
-        return displayName.equals("") ? name : displayName;
+        return displayName == null || displayName.equals("") ? name : displayName;
     }
 
     public boolean isVisible() {

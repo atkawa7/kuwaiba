@@ -141,7 +141,6 @@ public class ComplexQueryResultTopComponent extends TopComponent{
 
         Mode myMode = WindowManager.getDefault().findMode("bottomSlidingSide"); //NOI18N
         myMode.dockInto(this);
-        revalidate();
     }
 
     @Override
@@ -233,9 +232,9 @@ public class ComplexQueryResultTopComponent extends TopComponent{
             JPopupMenu  menu = new JPopupMenu();
             menu.add(new EditObjectAction(null));
             if (CommunicationsStub.getInstance().getMetaForClass(singleRecord.getClassName(),false).isListType())
-                menu.add(new DeleteListTypeAction(null));
+                menu.add(new DeleteListTypeAction(singleRecord));
             else
-                menu.add(new DeleteBusinessObjectAction(null));
+                menu.add(new DeleteBusinessObjectAction(singleRecord));
             
             menu.show(e.getComponent(), e.getX(), e.getY());
           }

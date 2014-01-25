@@ -22,6 +22,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
@@ -35,7 +36,8 @@ import org.openide.util.Lookup;
 public final class DeleteListTypeAction extends AbstractAction {
 
     private ListTypeItemNode node;
-
+    private LocalObjectLight lol;
+    
     public DeleteListTypeAction(ListTypeItemNode node) {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE"));
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
@@ -43,6 +45,17 @@ public final class DeleteListTypeAction extends AbstractAction {
         this.node = node;
     }
 
+    /**
+     * Dirty quick fix. This should be the only constructor, and no nodes should be manipulated here
+     * @param lol 
+     */
+    public DeleteListTypeAction(LocalObjectLight lol) {
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE"));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
+        putValue(MNEMONIC_KEY,KeyEvent.VK_D);
+        this.lol = lol;
+    }
+    
     @Override
     public void actionPerformed(ActionEvent ev) {
 
@@ -50,13 +63,14 @@ public final class DeleteListTypeAction extends AbstractAction {
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CONFIRMATION"),JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
 
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-            if (CommunicationsStub.getInstance().deleteListTypeItem(node.getObject().getClassName(),
-                    node.getObject().getOid(),false)){
-                if (node.getParentNode() != null) //DeleteListTypeAction can be called for nodes outside the tree structure
-                                                  //e.g. In a search result list
+            if (CommunicationsStub.getInstance().deleteListTypeItem(node == null ?  lol.getClassName() : node.getObject().getClassName(),
+                    node == null ? lol.getOid() : node.getObject().getOid(),false)){
+                if (node != null)
                     ((ObjectChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
+                
                 nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
                 
+                //Refresh cache
                 CommunicationsStub.getInstance().getList(node.getObject().getClassName(), false, true);
             }
             else

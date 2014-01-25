@@ -25,6 +25,10 @@ public class LocalApplicationLogEntry {
      */
     private long id;
     /**
+     * The id of the object related to the give action
+     */
+    private long objectId;
+    /**
      * Entry type (see possible values below)
      */
     private int type;
@@ -57,8 +61,9 @@ public class LocalApplicationLogEntry {
                            "Create Inventory Object", "Delete Inventory Object", "Update Inventory Object", 
                            "Create Metadata Object", "Delete Metadata Object", "Update Metadata Object", "Move object"};
 
-    public LocalApplicationLogEntry(long id, int type, String userName, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) {
+    public LocalApplicationLogEntry(long id, long objectId, int type, String userName, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) {
         this.id = id;
+        this.objectId = objectId;
         this.type = type;
         this.userName = userName;
         this.timestamp = timestamp;
@@ -72,6 +77,10 @@ public class LocalApplicationLogEntry {
         return id;
     }
 
+    public long getObjectId() {
+        return objectId;
+    }
+    
     public int getType() {
         return type;
     }

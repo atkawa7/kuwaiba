@@ -33,7 +33,7 @@ import org.openide.util.Lookup;
 
 /**
  *  Creates an attribute metadata
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class CreateAttributeAction extends AbstractAction {
     

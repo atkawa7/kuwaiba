@@ -22,6 +22,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.Node;
@@ -34,12 +35,20 @@ import org.openide.util.Lookup;
 public final class DeleteBusinessObjectAction extends AbstractAction {
 
     private ObjectNode node;
+    private LocalObjectLight lol;
 
     public DeleteBusinessObjectAction(ObjectNode node) {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE"));
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
         putValue(MNEMONIC_KEY,KeyEvent.VK_D);
         this.node = node;
+    }
+    
+    public DeleteBusinessObjectAction(LocalObjectLight lol) {
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE"));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
+        putValue(MNEMONIC_KEY,KeyEvent.VK_D);
+        this.lol = lol;
     }
 
     @Override
@@ -49,11 +58,12 @@ public final class DeleteBusinessObjectAction extends AbstractAction {
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CONFIRMATION"),JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
 
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-            if (CommunicationsStub.getInstance().deleteObject(node.getObject().getClassName(),
-                    node.getObject().getOid())){
-                if (node.getParentNode() != null) //Delete can be called for nodes outside the tree structure
-                                                  //e.g. In a search result list
+            if (CommunicationsStub.getInstance().deleteObject(node == null ? lol.getClassName() : node.getObject().getClassName(),
+                    node == null ? lol.getOid() : node.getObject().getOid())){
+                
+                if (node != null && node.getParentNode() != null) 
                     node.getParentNode().getChildren().remove(new Node[]{node});
+                
                 nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
             }
             else

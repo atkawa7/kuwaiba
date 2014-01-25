@@ -26,7 +26,7 @@ import org.openide.util.Lookup;
 
 /**
  * Represents the children for the navigation tree
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class ClassMetadataChildren extends Array{
     

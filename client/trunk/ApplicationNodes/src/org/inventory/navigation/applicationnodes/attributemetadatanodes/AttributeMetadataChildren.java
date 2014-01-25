@@ -17,7 +17,7 @@ package org.inventory.navigation.applicationnodes.attributemetadatanodes;
 
 /**
  *
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <acharles.bedon@kuwaiba.org>
  */
 public class AttributeMetadataChildren {
     

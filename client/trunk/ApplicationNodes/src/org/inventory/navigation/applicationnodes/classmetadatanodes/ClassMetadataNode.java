@@ -40,7 +40,7 @@ import org.openide.util.lookup.Lookups;
 
 /**
  * Represents a ClassMetadata entity as a node within the data model manager
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class ClassMetadataNode extends AbstractNode implements PropertyChangeListener{
     

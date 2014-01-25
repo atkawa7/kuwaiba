@@ -27,7 +27,7 @@ import org.openide.util.Lookup;
 
 /**
  * Provides a property editor
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class AttributeMetadataProperty extends PropertySupport.ReadWrite {
 

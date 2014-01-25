@@ -24,7 +24,7 @@ import org.openide.nodes.PropertySupport;
 
 /**
  * Provides a property editor
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class ClassAttributeMetadataProperty extends PropertySupport.ReadWrite {
 

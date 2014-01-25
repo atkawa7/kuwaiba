@@ -27,7 +27,7 @@ import org.openide.explorer.propertysheet.PropertySheetView;
 
 /**
  * This is the editor to change the class attributes properties
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class AttributeEditorSupport extends PropertyEditorSupport
     implements ExPropertyEditor {

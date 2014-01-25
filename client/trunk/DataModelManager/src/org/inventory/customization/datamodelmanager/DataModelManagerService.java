@@ -24,7 +24,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 
 /**
  * Data model manager Top component service.
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class DataModelManagerService {
 

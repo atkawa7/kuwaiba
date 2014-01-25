@@ -24,7 +24,7 @@ import org.inventory.communications.util.Constants;
 
 /**
  * Provides a custom property editor for list-type values where you can choose one item
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class ListAttributeMetadataProperty extends PropertyEditorSupport{
     

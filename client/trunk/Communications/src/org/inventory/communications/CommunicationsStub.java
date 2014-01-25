@@ -307,8 +307,6 @@ public class CommunicationsStub {
     public LocalApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long oid){
         try{
             List<ApplicationLogEntry> myEntries = port.getBusinessObjectAuditTrail(objectClass, oid, 0, this.session.getSessionId());
-            if (myEntries.isEmpty())
-                return new LocalApplicationLogEntry[]{};
             
             LocalApplicationLogEntry[] res = new LocalApplicationLogEntry[myEntries.size()];
             
@@ -325,6 +323,7 @@ public class CommunicationsStub {
             
             for (int i = 0; i < myEntries.size(); i++)
                 res[i] = new LocalApplicationLogEntry(myEntries.get(i).getId(),
+                                                        myEntries.get(i).getObjectId(),
                                                         myEntries.get(i).getType(),
                                                         myEntries.get(i).getUserName(),
                                                         myEntries.get(i).getTimestamp(),
@@ -340,6 +339,41 @@ public class CommunicationsStub {
         }
     }
 
+    public LocalApplicationLogEntry[] getGeneralActivityAuditTrail(int page, int limit){
+        try{
+            List<ApplicationLogEntry> myEntries = port.getGeneralActivityAuditTrail(page, limit, this.session.getSessionId());
+            
+            LocalApplicationLogEntry[] res = new LocalApplicationLogEntry[myEntries.size()];
+            
+            //We sort the array here, since it's not from the source
+            Collections.sort(myEntries, new Comparator<ApplicationLogEntry>(){
+
+                @Override
+                public int compare(ApplicationLogEntry o1, ApplicationLogEntry o2) {
+                    if (o1.getTimestamp() < o2.getTimestamp())
+                        return -1;
+                    return 1;
+                }
+            });
+            
+            for (int i = 0; i < myEntries.size(); i++)
+                res[i] = new LocalApplicationLogEntry(myEntries.get(i).getId(),
+                                                        myEntries.get(i).getObjectId(),
+                                                        myEntries.get(i).getType(),
+                                                        myEntries.get(i).getUserName(),
+                                                        myEntries.get(i).getTimestamp(),
+                                                        myEntries.get(i).getAffectedProperty(),
+                                                        myEntries.get(i).getOldValue(),
+                                                        myEntries.get(i).getNewValue(),
+                                                        myEntries.get(i).getNotes());
+            
+            return res;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
     /**
      * Returns the last error
      * @return The error string

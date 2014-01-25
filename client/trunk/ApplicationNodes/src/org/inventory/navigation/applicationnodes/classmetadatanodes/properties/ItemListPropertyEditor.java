@@ -19,7 +19,7 @@ import java.beans.PropertyEditorSupport;
 
 /**
  * Provides a custom property editor for list-type values
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class ItemListPropertyEditor extends PropertyEditorSupport{
     

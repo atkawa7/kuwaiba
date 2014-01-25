@@ -31,7 +31,7 @@ import org.openide.util.actions.Presenter;
 
 /**
  *
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class DeleteAttributeAction extends AbstractAction implements Presenter.Popup{
 
