@@ -27,6 +27,10 @@ public class ActivityLogEntry implements Serializable {
      */
     private long id;
     /**
+     * The id of the object related to the action
+     */
+    private long objectId;
+    /**
      * Entry type (see possible values below)
      */
     private int type;
@@ -65,8 +69,9 @@ public class ActivityLogEntry implements Serializable {
     public static final int ACTIVITY_TYPE_UPDATE_METADATA_OBJECT = 9;
     public static final int ACTIVITY_TYPE_CHANGE_PARENT = 10;
 
-    public ActivityLogEntry(long id, int type, String userName, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) {
+    public ActivityLogEntry(long id, long objectId, int type, String userName, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) {
         this.id = id;
+        this.objectId = objectId;
         this.type = type;
         this.userName = userName;
         this.timestamp = timestamp;
@@ -84,6 +89,14 @@ public class ActivityLogEntry implements Serializable {
         this.id = id;
     }
 
+    public long getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(long objectId) {
+        this.objectId = objectId;
+    }
+    
     public int getType() {
         return type;
     }

@@ -16,6 +16,7 @@
 
 package org.kuwaiba.apis.persistence.interfaces;
 
+import java.rmi.RemoteException;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
@@ -447,9 +448,18 @@ public interface ApplicationEntityManager {
      * @return The list of activity entries
      * @throws ObjectNotFoundException If the object can not be found
      * @throws MetadataObjectNotFoundException If the provided class couldn't be found
+     * @throws InvalidArgumentException If the class provided is not subclass of  InventoryObject
      */
-    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, long limit)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException;
+    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, int limit)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Retrieves the list of activity log entries
+     * @param page current page
+     * @param limit limit of results per page. 0 to retrieve them all
+     * @return The list of activity log entries
+     */
+    public List<ActivityLogEntry> getGeneralActivityAuditTrail(int page, int limit) throws RemoteException;
 }
 
 

@@ -1400,8 +1400,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         return poolItems;
     }
     
-    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, long limit) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException {
+    public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, int limit) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+        if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, objectClass))
+            throw new InvalidArgumentException(String.format("Class %s is not subclass of %s",
+                    objectClass, Constants.CLASS_INVENTORYOBJECT), Level.INFO);
         Node instanceNode = getInstanceOfClass(objectClass, objectId);
         List<ActivityLogEntry> log = new ArrayList<ActivityLogEntry>();
         int i = 0;
@@ -1413,7 +1416,48 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     break;
             }
             Node logEntry = rel.getEndNode();
-            log.add(new ActivityLogEntry(logEntry.getId(), (Integer)logEntry.getProperty(Constants.PROPERTY_TYPE), 
+            log.add(new ActivityLogEntry(logEntry.getId(), instanceNode.getId(), (Integer)logEntry.getProperty(Constants.PROPERTY_TYPE), 
+                    (String)logEntry.getSingleRelationship(RelTypes.PERFORMED_BY, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME), 
+                    (Long)logEntry.getProperty(Constants.PROPERTY_CREATION_DATE), 
+                    logEntry.hasProperty(Constants.PROPERTY_AFFECTED_PROPERTY) ? (String)logEntry.getProperty(Constants.PROPERTY_AFFECTED_PROPERTY) : null, 
+                    logEntry.hasProperty(Constants.PROPERTY_OLD_VALUE) ? (String)logEntry.getProperty(Constants.PROPERTY_OLD_VALUE) :  null, 
+                    logEntry.hasProperty(Constants.PROPERTY_NEW_VALUE) ? (String)logEntry.getProperty(Constants.PROPERTY_NEW_VALUE) : null, 
+                    logEntry.hasProperty(Constants.PROPERTY_NOTES) ? (String)logEntry.getProperty(Constants.PROPERTY_NOTES) : null));
+        }
+        return log;
+    }
+    
+    /**
+     * Retrieves the list of activity log entries
+     * @param page current page
+     * @param limit limit of results per page. 0 to retrieve them all
+     * @return The list of activity log entries
+     */
+    public List<ActivityLogEntry> getGeneralActivityAuditTrail(int page, int limit) {
+        
+        Node generalActivityLogNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).
+                get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle();
+        
+        List<ActivityLogEntry> log = new ArrayList<ActivityLogEntry>();
+        int i = 0, toBeSkipped = 0;
+        int lowerLimit = page * limit - limit;
+        for (Relationship rel : generalActivityLogNode.getRelationships(Direction.INCOMING,RelTypes.CHILD_OF_SPECIAL)){
+            if (toBeSkipped < lowerLimit){
+                toBeSkipped++;
+                continue;
+            }
+            
+            if (limit != 0){
+                if (i < limit)
+                    i++;
+                else
+                    break;
+            }
+            Node logEntry = rel.getStartNode();
+            Node relatedObject = logEntry.hasRelationship(Direction.INCOMING, RelTypes.HAS_HISTORY_ENTRY) ?
+                                    logEntry.getSingleRelationship(RelTypes.HAS_HISTORY_ENTRY, Direction.INCOMING).getStartNode() : null;
+            
+            log.add(new ActivityLogEntry(logEntry.getId(), relatedObject == null ? 0 : relatedObject.getId(), (Integer)logEntry.getProperty(Constants.PROPERTY_TYPE), 
                     (String)logEntry.getSingleRelationship(RelTypes.PERFORMED_BY, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME), 
                     (Long)logEntry.getProperty(Constants.PROPERTY_CREATION_DATE), 
                     logEntry.hasProperty(Constants.PROPERTY_AFFECTED_PROPERTY) ? (String)logEntry.getProperty(Constants.PROPERTY_AFFECTED_PROPERTY) : null, 
