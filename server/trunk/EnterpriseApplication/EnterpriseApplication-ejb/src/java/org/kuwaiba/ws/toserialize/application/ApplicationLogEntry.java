@@ -32,6 +32,10 @@ public final class ApplicationLogEntry implements Serializable {
      */
     private long id;
     /**
+     * Id of the object related to the given action
+     */
+    private long objectId;
+    /**
      * Entry type (see possible values below)
      */
     private int type;
@@ -65,6 +69,7 @@ public final class ApplicationLogEntry implements Serializable {
     
     public ApplicationLogEntry(ActivityLogEntry logEntry) {
         this.id = logEntry.getId();
+        this.objectId = logEntry.getObjectId();
         this.type = logEntry.getType();
         this.userName = logEntry.getUserName();
         this.timestamp = logEntry.getTimestamp();
@@ -74,8 +79,9 @@ public final class ApplicationLogEntry implements Serializable {
         this.affectedProperty = logEntry.getAffectedProperty();
     }
     
-    public ApplicationLogEntry(long id, int type, String userName, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) {
+    public ApplicationLogEntry(long id, long objectId, int type, String userName, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) {
         this.id = id;
+        this.objectId = objectId;
         this.type = type;
         this.userName = userName;
         this.timestamp = timestamp;
@@ -87,6 +93,10 @@ public final class ApplicationLogEntry implements Serializable {
 
     public long getId() {
         return id;
+    }
+
+    public long getObjectId() {
+        return objectId;
     }
 
     public int getType() {

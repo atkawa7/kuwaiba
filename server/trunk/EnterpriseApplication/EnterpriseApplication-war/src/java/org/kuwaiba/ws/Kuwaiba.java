@@ -1427,6 +1427,30 @@ public class Kuwaiba {
     }
     
     /**
+     * Retrieves the list of activity log entries
+     * @param page current page
+     * @param limit limit of results per page. 0 to retrieve them all
+     * @return The list of activity log entries
+     */
+    @WebMethod(operationName = "getGeneralActivityAuditTrail")
+    public ApplicationLogEntry[] getGeneralActivityAuditTrail (
+            @WebParam(name = "page")int page,
+            @WebParam(name = "limit")int limit,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            wsBean.validateCall("getGeneralActivityAuditTrail", getIPAddress(), sessionId);
+            return wsBean.getGeneralActivityAuditTrail (page, limit);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    /**
      * Retrieves the log entries for a given [application] object (Users, Pools, etc)
      * @param objectClass Object class
      * @param objectId Object id

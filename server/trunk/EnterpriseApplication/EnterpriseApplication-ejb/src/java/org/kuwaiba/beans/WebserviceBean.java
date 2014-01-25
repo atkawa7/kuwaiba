@@ -1564,8 +1564,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public ApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long objectId, long limit) throws ServerSideException {
-        if (bem == null)
+    public ApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long objectId, int limit) throws ServerSideException {
+        if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
             List<ActivityLogEntry> entries = aem.getBusinessObjectAuditTrail(objectClass, objectId, limit);
@@ -1581,8 +1581,25 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public ApplicationLogEntry[] getApplicationObjectAuditTrail(String objectClass, long objectId, long limit) {
+    public ApplicationLogEntry[] getApplicationObjectAuditTrail(String objectClass, long objectId, int limit) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public ApplicationLogEntry[] getGeneralActivityAuditTrail(int page, int limit) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try {
+            List<ActivityLogEntry> entries = aem.getGeneralActivityAuditTrail(page, limit);
+            ApplicationLogEntry[] res = new ApplicationLogEntry[entries.size()];
+            for (int i = 0; i< entries.size(); i++)
+                res[i] = new ApplicationLogEntry(entries.get(i));
+            
+            return res;
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.INFO, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
     }
     
     // </editor-fold>

@@ -340,11 +340,6 @@ public interface WebserviceBeanRemote {
     public void moveObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids) throws ServerSideException;
 
     public long[] copyObjects(String targetClass, long targetOid, String[] templateClasses, long[] templateOids, boolean recursive) throws ServerSideException;
-    
-    public ApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long objectId, long limit) throws ServerSideException;
-
-    public ApplicationLogEntry[] getApplicationObjectAuditTrail(String objectClass, long objectId, long limit) throws ServerSideException;
-
     /**
      * Models
      */
@@ -543,6 +538,14 @@ public interface WebserviceBeanRemote {
     public RemoteObjectLight[] getPools(int limit) throws ServerSideException;
     
     public RemoteObjectLight[] getPoolItems(long poolId, int limit) throws ServerSideException;
+    
+    public ApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long objectId, int limit) throws ServerSideException;
+
+    public ApplicationLogEntry[] getApplicationObjectAuditTrail(String objectClass, long objectId, int limit) throws ServerSideException;
+    
+    public ApplicationLogEntry[] getGeneralActivityAuditTrail(int page, int limit) throws ServerSideException;
+    
+    
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/Load data methods. Click on the + sign on the left to edit the code.">
@@ -568,4 +571,6 @@ public interface WebserviceBeanRemote {
      */
     public byte[] downloadErrors(String fileName) throws ServerSideException;
     // </editor-fold>
+
+    
 }
