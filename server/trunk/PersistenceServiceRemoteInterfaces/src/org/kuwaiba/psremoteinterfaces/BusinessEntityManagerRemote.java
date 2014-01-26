@@ -43,6 +43,9 @@ public interface BusinessEntityManagerRemote extends Remote{
 
     public List<RemoteBusinessObjectLight> getObjectChildren(long oid, long classId, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
+    
+    public List<RemoteBusinessObjectLight> getSiblings(String className, long oid, int maxResults)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
 
     public List<RemoteBusinessObject> getChildrenOfClass(long parentOid, String parentClass, String myClass, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, RemoteException;
@@ -83,6 +86,14 @@ public interface BusinessEntityManagerRemote extends Remote{
 
     public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
+    public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
     public List<String> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
+
+    public boolean hasRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
+    
+    public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;    
 }

@@ -225,6 +225,18 @@ public interface BusinessEntityManager {
             throws MetadataObjectNotFoundException, ObjectNotFoundException;
 
     /**
+     * Gets the siblings of a given object in the containment hierarchy
+     * @param className Object class
+     * @param oid Object oid
+     * @param maxResults Max number of results to be returned
+     * @return List of siblings
+     * @throws MetadataObjectNotFoundException If the class does not exist
+     * @throws ObjectNotFoundException If the object does not exist
+     */
+    public List<RemoteBusinessObjectLight> getSiblings(String className, long oid, int maxResults)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException;
+    
+    /**
      * Creates a relationship between two elements and labels it
      * @param aObjectClass a side object class
      * @param aObjectId a side object id
@@ -237,6 +249,17 @@ public interface BusinessEntityManager {
      */
     public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException;
+    
+    /**
+     * Release all special relationships with a given name
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param relationshipName Relationship name
+     * @throws ObjectNotFoundException If the object can not be found
+     * @throws MetadataObjectNotFoundException  If the class can not be found
+     */
+    public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException;
 
     /**
      * Gets the value of a special attribute. A special attribute is one belonging to a business domain specific attribute
@@ -249,5 +272,30 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException if either the object class or the attribute can not be found
      */
     public List<String> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException;
+    
+    /**
+     * Checks if an object has a given number of standard relationships with another object
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param relationshipName Relationship name
+     * @param numberOfRelationships Number of relationships
+     * @return True if the object has numberOfRelationships relationships with another object
+     * @throws ObjectNotFoundException If the object can not be found
+     * @throws MetadataObjectNotFoundException  if objectClass does not exist
+     */
+    public boolean hasRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException;
+    /**
+     * Checks if an object has a given number of special relationships with another object
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param relationshipName Relationship name
+     * @param numberOfRelationships Number of relationships
+     * @return True if the object has numberOfRelationships relationships with another object
+     * @throws ObjectNotFoundException If the object can not be found
+     * @throws MetadataObjectNotFoundException  if objectClass does not exist
+     */
+    public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException;
 }

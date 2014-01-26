@@ -108,7 +108,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
         connect();
     }
 
-
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
     @Override
     public long createClass(ClassInfo classDefinition) throws ServerSideException{
@@ -862,6 +861,19 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
+    
+    @Override
+    public RemoteObjectLight[] getSiblings(String className, long oid, int maxResults)
+            throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try {
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getSiblings(className, oid, maxResults));
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
 
     @Override
     public RemoteObject[] getChildrenOfClass(long parentOid, String parentClass, String classToFilter, int maxResults)
@@ -1069,6 +1081,51 @@ public class WebserviceBean implements WebserviceBeanRemote {
      * Models
      */
     //Physical connections
+    @Override
+    public void connectMirrorPort(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        
+        if (aObjectId == bObjectId)
+            throw new ServerSideException(Level.INFO, "A port can not be mirror to itself");
+
+        try {
+            if (!mem.isSubClass("GenericPort", aObjectClass))
+                throw new ServerSideException(Level.WARNING, String.format("Object %s [%s] is not a port", aObjectId, aObjectClass));
+            if (!mem.isSubClass("GenericPort", bObjectClass))
+                throw new ServerSideException(Level.WARNING, String.format("Object %s [%s] is not a port", bObjectId, bObjectClass));
+            
+            if (bem.hasSpecialRelationship(aObjectClass, aObjectId, "mirror", 1))
+                throw new ServerSideException(Level.INFO, String.format("Object %s [%s] already has a mirror port", aObjectId, aObjectClass));
+            
+            if (bem.hasSpecialRelationship(bObjectClass, bObjectId, "mirror", 1))
+                throw new ServerSideException(Level.INFO, String.format("Object %s [%s] already has a mirror port", bObjectId, bObjectClass));
+            
+            bem.createSpecialRelationship(aObjectClass, aObjectId, bObjectClass, bObjectId, "mirror");
+            
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void releaseMirrorPort(String objectClass, long objectId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        
+        try {
+            if (!mem.isSubClass("GenericPort", objectClass))
+                throw new ServerSideException(Level.WARNING, String.format("Object %s [%s] is not a port", objectId, objectClass));
+                        
+            bem.releaseSpecialRelationship(objectClass, objectId, "mirror");
+            
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
     @Override
     public long createPhysicalConnection(String aObjectClass, long aObjectId,
             String bObjectClass, long bObjectId, String parentClass, long parentId,

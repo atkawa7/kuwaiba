@@ -107,7 +107,7 @@ public class RemoteObjectLight implements Serializable {
         this.validators.add(newValidator);
     }
 
-    public final static RemoteObjectLight[] toRemoteObjectLightArray(List<RemoteBusinessObjectLight> toBeWrapped){
+    public static RemoteObjectLight[] toRemoteObjectLightArray(List<RemoteBusinessObjectLight> toBeWrapped){
         if (toBeWrapped == null)
             return null;
 

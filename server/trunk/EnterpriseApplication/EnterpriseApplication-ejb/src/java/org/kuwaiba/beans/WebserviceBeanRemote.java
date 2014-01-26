@@ -310,6 +310,7 @@ public interface WebserviceBeanRemote {
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">
     public RemoteObjectLight[] getObjectChildren(long oid, long objectClassId, int maxResults) throws ServerSideException;
     public RemoteObjectLight[] getObjectChildren(String objectClassName, long oid, int maxResults) throws ServerSideException;
+    public RemoteObjectLight[] getSiblings(String objectClassName, long oid, int maxResults) throws ServerSideException;
 
     public RemoteObject[] getChildrenOfClass(long parentOid, String parentClass,String classToFilter, int maxResults) throws ServerSideException;
     public RemoteObjectLight[] getChildrenOfClassLight(long parentOid, String parentClass,String classToFilter, int maxResults) throws ServerSideException;
@@ -344,6 +345,8 @@ public interface WebserviceBeanRemote {
      * Models
      */
     //Physical connections
+    public void connectMirrorPort(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId) throws ServerSideException;
+    public void releaseMirrorPort(String objectClass, long objectId) throws ServerSideException;
     public long createPhysicalConnection(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String parentClass, long parentId, String[] attributeNames, String[][] attributeValues, String connectionClass) throws ServerSideException;
     public void deletePhysicalConnection(String objectClass, long objectId) throws ServerSideException;
     // </editor-fold>
@@ -571,6 +574,5 @@ public interface WebserviceBeanRemote {
      */
     public byte[] downloadErrors(String fileName) throws ServerSideException;
     // </editor-fold>
-
     
 }

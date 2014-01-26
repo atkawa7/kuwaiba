@@ -990,6 +990,34 @@ public class Kuwaiba {
             throw e;
         }
     }
+    
+    /**
+     * Returns the siblings of an object in the containment hierarchy
+     * @param objectClassName Object class
+     * @param oid Object oid
+     * @param maxResults Max number of results to be returned
+     * @param sessionId Session token
+     * @return List of siblings
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "getSiblings")
+    public RemoteObjectLight[] getSiblings(@WebParam(name = "objectClassName") String objectClassName,
+            @WebParam(name = "oid") long oid,
+            @WebParam(name = "maxResults") int  maxResults,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("getSiblings", getIPAddress(), sessionId);
+            RemoteObjectLight[] res = wsBean.getSiblings(objectClassName, oid, maxResults);
+            return res;
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
 
     /**
      * Gets all children of an object of a given class
@@ -1332,6 +1360,51 @@ public class Kuwaiba {
      */
 
     //Physical connections
+    @WebMethod(operationName = "connectMirrorPort")
+    public void connectMirrorPort(
+            @WebParam(name = "aObjectClass")String aObjectClass,
+            @WebParam(name = "aObjectId")long aObjectId,
+            @WebParam(name = "bObjectClass")String bObjectClass,
+            @WebParam(name = "bObjectId")long bObjectId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("connectMirrorPort", getIPAddress(), sessionId);
+            wsBean.connectMirrorPort(aObjectClass, aObjectId, bObjectClass, bObjectId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    /**
+     * Releases a port mirroring relationship between two ports, receiving one of the ports as parameter
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param sessionId Session token
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "releaseMirrorPort")
+    public void releaseMirrorPort(
+            @WebParam(name = "objectClass")String objectClass,
+            @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("releaseMirrorPort", getIPAddress(), sessionId);
+            wsBean.releaseMirrorPort(objectClass, objectId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
     /**
      * Creates a physical connection (a container or a link). The validations are made at server side (this is,
      * if the connection can be established between the two endpoints, if they're not already connected, etc)

@@ -439,6 +439,27 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throw new RuntimeException(ex.getMessage());
         }
     }
+    
+    public void releaseSpecialRelationship(String objectClass, long objectId, String name)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException {
+
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            Node node = getInstanceOfClass(objectClass, objectId);
+            for (Relationship rel : node.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
+                if (rel.getProperty(Constants.PROPERTY_NAME).equals(name))
+                    rel.delete();
+            }
+            tx.success();
+            tx.finish();
+        }catch(Exception ex){
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "releaseSpecialRelationship: {0}", ex.getMessage()); //NOI18N
+            tx.failure();
+            tx.finish();
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
 
     public void moveObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
@@ -583,7 +604,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throws ObjectNotFoundException, MetadataObjectNotFoundException {
         try{
             Node parentNode;
-            if(classId == -1 && oid == -1){
+            if(oid == -1){
                 Relationship rel = graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
                 parentNode = rel.getEndNode();
             }else
@@ -604,6 +625,39 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
                 }
             }
+            return res;
+        }catch(Exception ex){
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+    
+    public List<RemoteBusinessObjectLight> getSiblings(String className, long oid, int maxResults)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException{
+        try{
+            Node node = getInstanceOfClass(className, oid);
+            List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
+            
+            if (!node.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF))
+                return res;
+            
+            Node parentNode = node.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
+            
+            int resultCounter = 0;
+            for (Relationship rel : parentNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF)){
+                if (maxResults > 0){
+                    if (resultCounter < maxResults)
+                        resultCounter ++;
+                    else
+                        break;
+                }
+                
+                Node child = rel.getStartNode();
+                if (child.getId() == oid)
+                    continue;
+                
+                res.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
+            }
+                       
             return res;
         }catch(Exception ex){
             throw new RuntimeException(ex.getMessage());
@@ -717,6 +771,32 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 res.add(String.valueOf(rel.getEndNode().getId() == objectId ? rel.getStartNode().getId() : rel.getEndNode().getId()));
         return res;
     }
+
+    public boolean hasRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) throws ObjectNotFoundException, MetadataObjectNotFoundException {
+        Node object = getInstanceOfClass(objectClass, objectId);
+        int relationshipsCounter = 0;
+        for (Relationship rel : object.getRelationships(RelTypes.RELATED_TO)){
+            if (rel.getProperty(Constants.PROPERTY_NAME).equals(relationshipName))
+                relationshipsCounter++;
+            if (relationshipsCounter == numberOfRelationships)
+                return true;
+        }
+        return false;
+    }
+    
+    public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) throws ObjectNotFoundException, MetadataObjectNotFoundException {
+        Node object = getInstanceOfClass(objectClass, objectId);
+        int relationshipsCounter = 0;
+        for (Relationship rel : object.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
+            if (rel.getProperty(Constants.PROPERTY_NAME).equals(relationshipName))
+                relationshipsCounter++;
+            if (relationshipsCounter == numberOfRelationships)
+                return true;
+        }
+        return false;
+    }
+    
+    
     
     /**
      * Helpers
