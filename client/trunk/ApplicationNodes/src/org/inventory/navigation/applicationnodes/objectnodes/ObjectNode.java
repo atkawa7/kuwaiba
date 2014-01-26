@@ -36,10 +36,12 @@ import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ConnectMirrorPortAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ReleaseMirrorPortAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectAuditTrailAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.inventory.navigation.applicationnodes.objectnodes.properties.ObjectNodeProperty;
@@ -288,6 +290,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                             SystemAction.get(CutAction.class),
                             SystemAction.get(PasteAction.class),
                             null, //Separator
+                            com.getMetaForClass(object.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_ENDPOINT) == 1 ? new ConnectMirrorPortAction(object.getClassName(), object.getOid()) : null,
+                            com.getMetaForClass(object.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_ENDPOINT) == 1 ? new ReleaseMirrorPortAction(object.getClassName(), object.getOid()) : null,
+                            null,
                             showObjectAuditTrailAction == null ? showObjectAuditTrailAction = new ShowObjectAuditTrailAction(this) : showObjectAuditTrailAction,
                             explorerAction,
                             showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction,

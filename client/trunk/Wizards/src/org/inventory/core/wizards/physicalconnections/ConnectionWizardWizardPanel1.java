@@ -77,8 +77,8 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
                                         }else{
                                             switch(wizardType){
                                                 case ConnectionWizard.WIZARDTYPE_CONTAINERS:
-                                                    if (com.getMetaForClass(aSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_NODE_VALIDATOR) == 1){
-                                                        if(com.getMetaForClass(bSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_NODE_VALIDATOR) == 1)
+                                                    if (com.getMetaForClass(aSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_NODE) == 1){
+                                                        if(com.getMetaForClass(bSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_NODE) == 1)
                                                             isValid = true;
                                                         else{
                                                             errorStr = "The object selected in the right tree cannot be connected using a container";
@@ -91,8 +91,8 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
                                                     }
                                                     break;
                                                 case ConnectionWizard.WIZARDTYPE_CONNECTIONS:
-                                                    if (com.getMetaForClass(aSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_ENDPOINT_VALIDATOR) == 1){
-                                                        if(com.getMetaForClass(bSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_ENDPOINT_VALIDATOR) == 1)
+                                                    if (com.getMetaForClass(aSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_ENDPOINT) == 1){
+                                                        if(com.getMetaForClass(bSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_ENDPOINT) == 1)
                                                             isValid = true;
                                                         else{
                                                             errorStr = "The object selected in the right tree cannot be connected using a link";
@@ -138,8 +138,8 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
                                         }else{
                                             switch(wizardType){
                                                 case ConnectionWizard.WIZARDTYPE_CONTAINERS:
-                                                    if (com.getMetaForClass(aSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_NODE_VALIDATOR) == 1){
-                                                        if(com.getMetaForClass(bSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_NODE_VALIDATOR) == 1)
+                                                    if (com.getMetaForClass(aSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_NODE) == 1){
+                                                        if(com.getMetaForClass(bSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_NODE) == 1)
                                                             isValid = true;
                                                         else{
                                                             errorStr = "The object selected in the right tree cannot be connected using a container";
@@ -152,8 +152,8 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
                                                     }
                                                     break;
                                                 case ConnectionWizard.WIZARDTYPE_CONNECTIONS:
-                                                    if (com.getMetaForClass(aSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_ENDPOINT_VALIDATOR) == 1){
-                                                        if(com.getMetaForClass(bSelection.getClassName(), false).getValidator(Constants.IS_PHYSICAL_ENDPOINT_VALIDATOR) == 1)
+                                                    if (com.getMetaForClass(aSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_ENDPOINT) == 1){
+                                                        if(com.getMetaForClass(bSelection.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_ENDPOINT) == 1)
                                                             isValid = true;
                                                         else{
                                                             errorStr = "The object selected in the right tree cannot be connected using a link";

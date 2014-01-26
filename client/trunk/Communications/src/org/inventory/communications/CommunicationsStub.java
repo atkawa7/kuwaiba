@@ -164,6 +164,27 @@ public class CommunicationsStub {
         }
     }
     
+    public LocalObjectLight[] getSiblings(String objectClass, long objectId) {
+        try{
+            List <RemoteObjectLight> siblings = port.getSiblings(objectClass, objectId, 0,this.session.getSessionId());
+            LocalObjectLight[] res = new LocalObjectLight[siblings.size()];
+            
+            int i = 0;
+            for (RemoteObjectLight rol : siblings){
+                HashMap<String, Integer> validators = new HashMap<String, Integer>();
+                for (Validator validator : rol.getValidators())
+                    validators.put(validator.getLabel(), validator.getValue());
+                
+                res[i] = new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getOid(), validators);
+                i++;
+            }
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
     /**
      * Retrieves an object children providing the object class name
      * @param oid object id
@@ -928,7 +949,29 @@ public class CommunicationsStub {
             return null;
         }
     }
-        /**
+    
+    
+    public boolean connectMirrorPort (String aObjectClass, long aObjectId, String bObjectClass, long bObjectId) {
+        try{
+            port.connectMirrorPort(aObjectClass, aObjectId, bObjectClass, bObjectId, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public boolean releaseMirrorPort (String objectClass, long objectId) {
+        try{
+            port.releaseMirrorPort (objectClass, objectId, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
      * Creates a physical link (cable, fiber optics, mw link) or container (pipe, conduit, ditch)
      * @param endpointAClass source object class name
      * @param endpointAId source object oid

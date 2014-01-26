@@ -208,6 +208,12 @@
 <message name="getObjectChildrenResponse">
 <part name="parameters" element="tns:getObjectChildrenResponse"/>
 </message>
+<message name="getSiblings">
+<part name="parameters" element="tns:getSiblings"/>
+</message>
+<message name="getSiblingsResponse">
+<part name="parameters" element="tns:getSiblingsResponse"/>
+</message>
 <message name="getChildrenOfClass">
 <part name="parameters" element="tns:getChildrenOfClass"/>
 </message>
@@ -261,6 +267,18 @@
 </message>
 <message name="getInstanceableListTypesResponse">
 <part name="parameters" element="tns:getInstanceableListTypesResponse"/>
+</message>
+<message name="connectMirrorPort">
+<part name="parameters" element="tns:connectMirrorPort"/>
+</message>
+<message name="connectMirrorPortResponse">
+<part name="parameters" element="tns:connectMirrorPortResponse"/>
+</message>
+<message name="releaseMirrorPort">
+<part name="parameters" element="tns:releaseMirrorPort"/>
+</message>
+<message name="releaseMirrorPortResponse">
+<part name="parameters" element="tns:releaseMirrorPortResponse"/>
 </message>
 <message name="createPhysicalConnection">
 <part name="parameters" element="tns:createPhysicalConnection"/>
@@ -662,6 +680,11 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectChildrenResponse" message="tns:getObjectChildrenResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectChildren/Fault/Exception"/>
 </operation>
+<operation name="getSiblings">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSiblingsRequest" message="tns:getSiblings"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSiblingsResponse" message="tns:getSiblingsResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSiblings/Fault/Exception"/>
+</operation>
 <operation name="getChildrenOfClass">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getChildrenOfClassRequest" message="tns:getChildrenOfClass"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getChildrenOfClassResponse" message="tns:getChildrenOfClassResponse"/>
@@ -706,6 +729,16 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getInstanceableListTypesRequest" message="tns:getInstanceableListTypes"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getInstanceableListTypesResponse" message="tns:getInstanceableListTypesResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getInstanceableListTypes/Fault/Exception"/>
+</operation>
+<operation name="connectMirrorPort">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/connectMirrorPortRequest" message="tns:connectMirrorPort"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/connectMirrorPortResponse" message="tns:connectMirrorPortResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/connectMirrorPort/Fault/Exception"/>
+</operation>
+<operation name="releaseMirrorPort">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/releaseMirrorPortRequest" message="tns:releaseMirrorPort"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/releaseMirrorPortResponse" message="tns:releaseMirrorPortResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/releaseMirrorPort/Fault/Exception"/>
 </operation>
 <operation name="createPhysicalConnection">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createPhysicalConnectionRequest" message="tns:createPhysicalConnection"/>
@@ -1301,6 +1334,18 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="getSiblings">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="getChildrenOfClass">
 <soap:operation soapAction=""/>
 <input>
@@ -1398,6 +1443,30 @@
 </fault>
 </operation>
 <operation name="getInstanceableListTypes">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="connectMirrorPort">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="releaseMirrorPort">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

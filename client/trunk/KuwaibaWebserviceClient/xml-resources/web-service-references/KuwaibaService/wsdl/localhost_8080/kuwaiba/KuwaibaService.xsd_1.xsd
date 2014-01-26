@@ -16,6 +16,10 @@
 
 <xs:element name="closeSessionResponse" type="tns:closeSessionResponse"/>
 
+<xs:element name="connectMirrorPort" type="tns:connectMirrorPort"/>
+
+<xs:element name="connectMirrorPortResponse" type="tns:connectMirrorPortResponse"/>
+
 <xs:element name="copyObjects" type="tns:copyObjects"/>
 
 <xs:element name="copyObjectsResponse" type="tns:copyObjectsResponse"/>
@@ -260,6 +264,10 @@
 
 <xs:element name="getQueryResponse" type="tns:getQueryResponse"/>
 
+<xs:element name="getSiblings" type="tns:getSiblings"/>
+
+<xs:element name="getSiblingsResponse" type="tns:getSiblingsResponse"/>
+
 <xs:element name="getSpecialAttribute" type="tns:getSpecialAttribute"/>
 
 <xs:element name="getSpecialAttributeResponse" type="tns:getSpecialAttributeResponse"/>
@@ -287,6 +295,10 @@
 <xs:element name="moveObjects" type="tns:moveObjects"/>
 
 <xs:element name="moveObjectsResponse" type="tns:moveObjectsResponse"/>
+
+<xs:element name="releaseMirrorPort" type="tns:releaseMirrorPort"/>
+
+<xs:element name="releaseMirrorPortResponse" type="tns:releaseMirrorPortResponse"/>
 
 <xs:element name="removePossibleChildrenForClassWithId" type="tns:removePossibleChildrenForClassWithId"/>
 
@@ -464,6 +476,20 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="connectMirrorPort">
+<xs:sequence>
+<xs:element name="aObjectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="aObjectId" type="xs:long"/>
+<xs:element name="bObjectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="bObjectId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="connectMirrorPortResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="setGroupProperties">
 <xs:sequence>
 <xs:element name="oid" type="xs:long"/>
@@ -500,6 +526,17 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="deleteUsers">
+<xs:sequence>
+<xs:element name="oids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteUsersResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="getQuery">
 <xs:sequence>
 <xs:element name="queryOid" type="xs:long"/>
@@ -530,17 +567,6 @@
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="isPublic" type="xs:boolean"/>
 </xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteUsers">
-<xs:sequence>
-<xs:element name="oids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteUsersResponse">
-<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getQueries">
@@ -652,17 +678,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="deleteClass">
-<xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="deleteClassResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="createObjectRelatedView">
 <xs:sequence>
 <xs:element name="objectId" type="xs:long"/>
@@ -680,6 +695,17 @@
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteClass">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteClassResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getBusinessObjectAuditTrail">
@@ -911,6 +937,18 @@
 </xs:complexType>
 
 <xs:complexType name="deleteListTypeItemResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="releaseMirrorPort">
+<xs:sequence>
+<xs:element name="objectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="objectId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="releaseMirrorPortResponse">
 <xs:sequence/>
 </xs:complexType>
 
@@ -1510,6 +1548,21 @@
 
 <xs:complexType name="deleteAttributeResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getSiblings">
+<xs:sequence>
+<xs:element name="objectClassName" type="xs:string" minOccurs="0"/>
+<xs:element name="oid" type="xs:long"/>
+<xs:element name="maxResults" type="xs:int"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSiblingsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="setAttributePropertiesForClassWithId">

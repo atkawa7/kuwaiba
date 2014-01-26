@@ -24,15 +24,15 @@ public class Constants {
      /**
      * Name of the validator to indicate if a given class is a link
      */
-    public static String IS_PHYSICAL_LINK_VALIDATOR = "physicalLink";
+    public static String VALIDATOR__PHYSICAL_LINK = "physicalLink";
     /**
      * Name of the validator to indicate if a given class is the endpoint to a connection
      */
-    public static String IS_PHYSICAL_NODE_VALIDATOR = "physicalNode";
+    public static String VALIDATOR_PHYSICAL_NODE = "physicalNode";
     /**
      * Name of the validator to indicate if a given class is the endpoint to a link
      */
-    public static String IS_PHYSICAL_ENDPOINT_VALIDATOR = "physicalEndpoint";
+    public static String VALIDATOR_PHYSICAL_ENDPOINT = "physicalEndpoint";
     /**
      * Name for the class InventoryObject
      */
