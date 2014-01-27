@@ -350,6 +350,7 @@ public interface WebserviceBeanRemote {
     public long createPhysicalConnection(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String parentClass, long parentId, String[] attributeNames, String[][] attributeValues, String connectionClass) throws ServerSideException;
     public long[] createBulkPhysicalConnections(String connectionClass, int numberOfChildren, String parentClass, long parentId) throws ServerSideException;
     public void deletePhysicalConnection(String objectClass, long objectId) throws ServerSideException;
+    public RemoteObjectLight[] getConnectionEndpoints(String connectionClass, long connectionId) throws ServerSideException;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">

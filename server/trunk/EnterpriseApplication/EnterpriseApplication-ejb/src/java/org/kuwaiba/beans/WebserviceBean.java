@@ -1145,30 +1145,18 @@ public class WebserviceBean implements WebserviceBeanRemote {
             if (!mem.isSubClass("GenericPhysicalConnection", connectionClass))
                 throw new ServerSideException(Level.SEVERE, "Class %s is not subclass of GenericPhysicalConnection");
 
-            String aSideString, bSideString;
-            boolean isLink = false;
-
-            if (mem.isSubClass("GenericPhysicalContainer", connectionClass)){
-                aSideString = "nodeA";
-                bSideString = "nodeB";
-            }else{
-                aSideString = "endpointA";
-                bSideString = "endpointB";
-                isLink = true;
-            }
-
             //Check if the endpoints are already connected, but only if the connection is a link (the endpoints are ports)
-            if (isLink){
-                if (!bem.getSpecialAttribute(aObjectClass, aObjectId, aSideString).isEmpty())
+            if (mem.isSubClass("GenericPhysicalLink", connectionClass)){
+                if (!bem.getSpecialAttribute(aObjectClass, aObjectId, "endpointA").isEmpty())
                     throw new ServerSideException(Level.INFO, Util.formatString("The selected endpoint (%s, %s) is already connected", aObjectClass, aObjectId));
 
-                if (!bem.getSpecialAttribute(bObjectClass, bObjectId, bSideString).isEmpty())
+                if (!bem.getSpecialAttribute(bObjectClass, bObjectId, "endpointB").isEmpty())
                     throw new ServerSideException(Level.INFO, Util.formatString("The selected endpoint (%s, %s) is already connected", bObjectClass, bObjectId));
             }
 
             newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, 0);
-            bem.createSpecialRelationship(aObjectClass, aObjectId, connectionClass, newConnectionId, aSideString);
-            bem.createSpecialRelationship(bObjectClass, bObjectId, connectionClass, newConnectionId, bSideString);
+            bem.createSpecialRelationship(aObjectClass, aObjectId, connectionClass, newConnectionId, "endpointA");
+            bem.createSpecialRelationship(bObjectClass, bObjectId, connectionClass, newConnectionId, "endpointB");
             return newConnectionId;
         } catch (Exception e) {
             //If the new connection was successfully created, but there's a problem creating the relationships,
@@ -1199,6 +1187,25 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
 
+    @Override
+    public RemoteObjectLight[] getConnectionEndpoints(String connectionClass, long connectionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            if (!mem.isSubClass("GenericPhysicalConnection", connectionClass))
+                throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a physical connection", connectionClass));
+            List<RemoteBusinessObjectLight> endpointA = bem.getSpecialAttribute(connectionClass, connectionId, "endpointA");
+            List<RemoteBusinessObjectLight> endpointB = bem.getSpecialAttribute(connectionClass, connectionId, "endpointB");
+            return new RemoteObjectLight[]{endpointA.isEmpty() ? null : new RemoteObjectLight(endpointA.get(0)), 
+                                            endpointB.isEmpty() ? null : new RemoteObjectLight(endpointB.get(0))};
+
+        } catch (Exception ex) {
+
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
     @Override
     public void deletePhysicalConnection(String objectClass, long objectId) throws ServerSideException {
         throw new UnsupportedOperationException("Not supported yet.");

@@ -827,12 +827,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
 
     @Override
-    public List<String> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) throws ObjectNotFoundException, MetadataObjectNotFoundException {
+    public List<RemoteBusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) throws ObjectNotFoundException, MetadataObjectNotFoundException {
         Node instance = getInstanceOfClass(objectClass, objectId);
-        List<String> res = new ArrayList<String>();
+        List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
         for (Relationship rel : instance.getRelationships(RelTypes.RELATED_TO_SPECIAL))
             if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName))
-                res.add(String.valueOf(rel.getEndNode().getId() == objectId ? rel.getStartNode().getId() : rel.getEndNode().getId()));
+                res.add(rel.getEndNode().getId() == objectId ? 
+                        Util.createRemoteObjectLightFromNode(rel.getStartNode()) : Util.createRemoteObjectLightFromNode(rel.getEndNode()));
         return res;
     }
 

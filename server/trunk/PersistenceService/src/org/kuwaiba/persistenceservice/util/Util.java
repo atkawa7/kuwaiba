@@ -38,6 +38,7 @@ import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -386,6 +387,12 @@ public class Util {
         return attribute;
     }
     
+    public static RemoteBusinessObjectLight createRemoteObjectLightFromNode (Node instance) {
+        Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
+        return new RemoteBusinessObjectLight(instance.getId(), 
+                (String)instance.getProperty(Constants.PROPERTY_NAME), (String)classNode.getProperty(Constants.PROPERTY_NAME));
+    }
+    
     /**
      * Builds a RemoteBusinessObject instance from a node representing a business object
      * @param instance
@@ -410,7 +417,7 @@ public class Util {
                 }
             }
         }
-
+        
         //Iterates through relationships and transform the into "plain" attributes
         Iterable<Relationship> relationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
         while(relationships.iterator().hasNext()){

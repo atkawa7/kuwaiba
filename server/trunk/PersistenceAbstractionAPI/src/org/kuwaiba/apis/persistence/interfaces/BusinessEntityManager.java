@@ -16,6 +16,7 @@
 
 package org.kuwaiba.apis.persistence.interfaces;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
@@ -282,11 +283,11 @@ public interface BusinessEntityManager {
      * @param objectClass object's class
      * @param objectId object's id
      * @param specialAttributeName Special attribute name
-     * @return A list of string with the value associated to such object (typically a list of longs)
+     * @return A list of objects related to the object through a special relationship
      * @throws ObjectNotFoundException if the object can not be found
      * @throws MetadataObjectNotFoundException if either the object class or the attribute can not be found
-     */
-    public List<String> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName)
+     */    
+    public List<RemoteBusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException;
     
     /**

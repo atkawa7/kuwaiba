@@ -1447,6 +1447,16 @@ public class Kuwaiba {
         }
     }
     
+    /**
+     * Allows to create multiple connections at once
+     * @param connectionClass Class all the connections are going to be instance of
+     * @param numberOfChildren Number of connections to be created
+     * @param parentClass Class of the parent object to the connections. Null for none, anything for DummyRoot
+     * @param parentId Id of the parent object to the connections. Anything none, -1 for DummyRoot
+     * @param sessionId Session token
+     * @return The  ids of the new objects
+     * @throws Exception In case something goes wrong
+     */
     public long[] createBulkPhysicalConnections(@WebParam(name = "connectionClass")String connectionClass, 
             @WebParam(name = "numberOfChildren")int numberOfChildren, 
             @WebParam(name = "parentClass")String parentClass, 
@@ -1456,6 +1466,30 @@ public class Kuwaiba {
             wsBean.validateCall("createBulkPhysicalConnections", getIPAddress(), sessionId);
            return wsBean.createBulkPhysicalConnections(connectionClass, numberOfChildren,
                    parentClass, parentId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    /**
+     * Returns the endpoints of a physical connection
+     * @param connectionClass Connection class
+     * @param connectionId Connection id
+     * @param sessionId Session token
+     * @return An array of two positions: the first is the A endpoint and the second is the B endpoint
+     * @throws Exception In case something goes wrong
+     */
+    public RemoteObjectLight[] getConnectionEndpoints(@WebParam(name = "connectionClass")String connectionClass, 
+            @WebParam(name = "connectionId")long connectionId, 
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("getConnectionEndpoints", getIPAddress(), sessionId);
+           return wsBean.getConnectionEndpoints(connectionClass, connectionId);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)

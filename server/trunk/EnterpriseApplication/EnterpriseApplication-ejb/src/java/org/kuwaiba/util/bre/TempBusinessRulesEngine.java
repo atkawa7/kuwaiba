@@ -41,14 +41,14 @@ public class TempBusinessRulesEngine {
         links.add(new String[]{"GenericPort", "GenericPort"});
         relationshipMappings.put("GenericPhysicalLink", links);
 
-        List<String[]> containers = new ArrayList<String[]>();
-        containers.add(new String[]{"GenericLocation", "GenericLocation"});
+        //List<String[]> containers = new ArrayList<String[]>();
+        //containers.add(new String[]{"GenericLocation", "GenericLocation"});
         relationshipMappings.put("GenericPhysicalContainer", links);
 
         subClassOfValidators = new HashMap<String, String>();
         subClassOfValidators.put("GenericPhysicalNode", "physicalNode");
         subClassOfValidators.put("GenericPort", "physicalEndpoint");
-        //subClassOfValidators.put("GenericPhysicalLink", new String[]{"physicalLink"});
+        subClassOfValidators.put("GenericPhysicalContainer", "physicalContainer");
     }
 
     public HashMap<String, List<String[]>> getMappings(){       
