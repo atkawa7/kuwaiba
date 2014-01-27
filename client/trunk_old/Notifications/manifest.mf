@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-OpenIDE-Module: org.inventory.notifications
-OpenIDE-Module-Localizing-Bundle: org/inventory/notifications/Bundle.properties
-OpenIDE-Module-Specification-Version: 1.0
-OpenIDE-Module-Provides: org.inventory.core.services.interfaces.NotificationUtil

@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-OpenIDE-Module: org.inventory.customization.hierarchycustomizer
-OpenIDE-Module-Layer: org/inventory/customization/hierarchycustomizer/layer.xml
-OpenIDE-Module-Localizing-Bundle: org/inventory/customization/hierarchycustomizer/Bundle.properties
-OpenIDE-Module-Specification-Version: 1.0
-
