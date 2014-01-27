@@ -1130,7 +1130,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     public long createPhysicalConnection(String aObjectClass, long aObjectId,
             String bObjectClass, long bObjectId, String parentClass, long parentId,
             String[] attributeNames, String[][] attributeValues, String connectionClass) throws ServerSideException {
-        if (aem == null)
+        if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
 
         if (attributeNames.length != attributeValues.length)
@@ -1170,11 +1170,29 @@ public class WebserviceBean implements WebserviceBeanRemote {
             bem.createSpecialRelationship(aObjectClass, aObjectId, connectionClass, newConnectionId, aSideString);
             bem.createSpecialRelationship(bObjectClass, bObjectId, connectionClass, newConnectionId, bSideString);
             return newConnectionId;
-        } catch (Exception ex) {
+        } catch (Exception e) {
             //If the new connection was successfully created, but there's a problem creating the relationships,
             //delete the connection and throw an exception
             if (newConnectionId != -1)
                 deleteObjects(new String[]{connectionClass}, new long[]{newConnectionId}, true);
+
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, e.getMessage());
+            throw new ServerSideException(Level.SEVERE, e.getMessage());
+        }
+    }
+    
+    @Override
+    public long[] createBulkPhysicalConnections(String connectionClass, int numberOfChildren,
+            String parentClass, long parentId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            if (!mem.isSubClass("GenericPhysicalConnection", connectionClass))
+                throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a physical connection", connectionClass));
+            
+            return bem.createBulkSpecialObjects(connectionClass, numberOfChildren, parentClass, parentId);
+
+        } catch (Exception ex) {
 
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());

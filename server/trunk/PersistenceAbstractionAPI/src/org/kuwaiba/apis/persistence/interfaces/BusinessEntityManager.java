@@ -72,6 +72,21 @@ public interface BusinessEntityManager {
     public long createSpecialObject(String className, String parentClassName, long parentOid,
             HashMap<String,List<String>> attributes,long template)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, DatabaseException;
+    
+    /**
+     * Create massively objects related to their parent using a child_of_special relationship.
+     * The name of the objects is automatically set numerically from1 to numberOfChildren
+     * @param objectClass Object class
+     * @param numberOfObjects Number of objets
+     * @param parentClass Parent class
+     * @param parentId parent id
+     * @return A list of ids of the newly created objects 
+     * @throws MetadataObjectNotFoundException If any of the classes provided can't be found
+     * @throws ObjectNotFoundException if the parent can not be found
+     * @throws OperationNotPermittedException If due to business rules, the operation can't be performed
+     */
+    public long[] createBulkSpecialObjects(String objectClass, int numberOfChildren, String parentClass, long parentId)
+           throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
     /**
      * Gets the detailed information about an object
      * @param className Object class name

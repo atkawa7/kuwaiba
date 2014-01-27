@@ -1446,6 +1446,25 @@ public class Kuwaiba {
             throw e;
         }
     }
+    
+    public long[] createBulkPhysicalConnections(@WebParam(name = "connectionClass")String connectionClass, 
+            @WebParam(name = "numberOfChildren")int numberOfChildren, 
+            @WebParam(name = "parentClass")String parentClass, 
+            @WebParam(name = "parentId")long parentId, 
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("createBulkPhysicalConnections", getIPAddress(), sessionId);
+           return wsBean.createBulkPhysicalConnections(connectionClass, numberOfChildren,
+                   parentClass, parentId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
 
     /**
      * Deletes a physical connection

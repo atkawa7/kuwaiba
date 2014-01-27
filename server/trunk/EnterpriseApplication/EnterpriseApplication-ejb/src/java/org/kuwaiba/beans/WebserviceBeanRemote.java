@@ -348,6 +348,7 @@ public interface WebserviceBeanRemote {
     public void connectMirrorPort(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId) throws ServerSideException;
     public void releaseMirrorPort(String objectClass, long objectId) throws ServerSideException;
     public long createPhysicalConnection(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String parentClass, long parentId, String[] attributeNames, String[][] attributeValues, String connectionClass) throws ServerSideException;
+    public long[] createBulkPhysicalConnections(String connectionClass, int numberOfChildren, String parentClass, long parentId) throws ServerSideException;
     public void deletePhysicalConnection(String objectClass, long objectId) throws ServerSideException;
     // </editor-fold>
 
@@ -574,5 +575,4 @@ public interface WebserviceBeanRemote {
      */
     public byte[] downloadErrors(String fileName) throws ServerSideException;
     // </editor-fold>
-    
 }

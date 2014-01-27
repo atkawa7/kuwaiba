@@ -162,6 +162,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         if (myClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
+        if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
+            throw new OperationNotPermittedException("Create Object", String.format("Class %s is not an business class"));
+        
         if (myClass.isInDesign())
             throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
         
@@ -198,10 +201,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             if (parentNode !=null)
                 newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
 
-            //The object's name can't be null in N4J, it has to be set to ""
-            if (attributes.get(Constants.PROPERTY_NAME) == null)
-                newObject.setProperty(Constants.PROPERTY_NAME, "");
-
             objectIndex.putIfAbsent(newObject, Constants.PROPERTY_ID, newObject.getId());
             
             //Creates an activity log entry
@@ -212,6 +211,71 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             tx.success();
             tx.finish();
             return newObject.getId();
+        }catch(Exception ex){
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "createSpecialObject: {0}", ex.getMessage()); //NOI18N
+            tx.failure();
+            tx.finish();
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+
+    public long[] createBulkSpecialObjects(String className, int numberOfObjects, String parentClassName, long parentId) throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException {
+        ClassMetadata myClass= cm.getClass(className);
+        if (myClass == null)
+            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+
+        if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
+            throw new OperationNotPermittedException("Create Object", String.format("Class %s is not an business class"));
+        
+        if (myClass.isInDesign())
+            throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
+        
+        if (myClass.isAbstract())
+            throw new OperationNotPermittedException("Create Object", "Can't create objects from an abstract classes");
+
+        Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
+        if (classNode == null)
+            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+
+
+        //The object should be created under an instance other than the dummy root
+        if (parentClassName != null){
+            ClassMetadata myParentObjectClass= cm.getClass(parentClassName);
+            if (myParentObjectClass == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+        }
+
+        Node parentNode;
+        if (parentId != -1){
+             parentNode = getInstanceOfClass(parentClassName, parentId);
+            if (parentNode == null)
+                throw new ObjectNotFoundException(parentClassName, parentId);
+        }else{
+            Relationship rel = graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
+            parentNode = rel.getEndNode();
+        }
+
+        Transaction tx = null;
+        try{
+
+            tx = graphDb.beginTx();
+            long res[] = new long[numberOfObjects];
+            for (int i = 0; i < numberOfObjects; i++){
+                Node newObject = createObject(classNode, myClass, null, 0);
+                newObject.setProperty(Constants.PROPERTY_NAME, i + 1);
+                if (parentNode != null)
+                    newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
+                
+                objectIndex.putIfAbsent(newObject, Constants.PROPERTY_ID, newObject.getId());
+                //Creates an activity log entry
+                Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
+                        "admin", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                        Calendar.getInstance().getTimeInMillis(), null, null, null, String.valueOf(newObject.getId()));
+            }
+            
+            tx.success();
+            tx.finish();
+            return res;
         }catch(Exception ex){
             Logger.getLogger(getClass().getName()).log(Level.INFO, "createSpecialObject: {0}", ex.getMessage()); //NOI18N
             tx.failure();
@@ -876,48 +940,47 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throw new InvalidArgumentException(String.format("Class %s is not a subclass of %s", classToMap.getName(), Constants.CLASS_INVENTORYOBJECT), Level.INFO);
 
         Node newObject = graphDb.createNode();
+        newObject.setProperty(Constants.PROPERTY_NAME, ""); //The default value is an empty string 
 
-        for (AttributeMetadata att : classToMap.getAttributes()){
-            if (att.getName().equals(Constants.PROPERTY_CREATION_DATE)){
-                newObject.setProperty(att.getName(), Calendar.getInstance().getTimeInMillis());
-                continue;
-            }
+        if (attributes != null){
+            for (AttributeMetadata att : classToMap.getAttributes()){
+                if (att.getName().equals(Constants.PROPERTY_CREATION_DATE)){
+                    newObject.setProperty(att.getName(), Calendar.getInstance().getTimeInMillis());
+                    continue;
+                }
 
-            if (attributes.get(att.getName()) == null)
-                continue;
-            
-            //If the array is empty, it means the attribute should be set to null, that is, ignore it
-            if (!attributes.get(att.getName()).isEmpty()){
-                if (attributes.get(att.getName()).get(0) != null){
-                    if (AttributeMetadata.isPrimitive(classToMap.getType(att.getName())))
-                            newObject.setProperty(att.getName(), Util.getRealValue(attributes.get(att.getName()).get(0), classToMap.getType(att.getName())));
-                    else{
-                    //If it's not a primitive type, maybe it's a relationship
-                        List<Long> listTypeItems = new ArrayList<Long>();
-                        if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, att.getType()))
-                            throw new InvalidArgumentException(String.format("Type %s is not a primitive nor a list type", att.getName()), Level.WARNING);
-                        try{
-                            for (String value : attributes.get(att.getName()))
-                                listTypeItems.add(Long.valueOf(value));
-                        }catch(NumberFormatException ex){
-                            throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
-                        }
-                        Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, att.getType()).getSingle();
-                        List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
+                if (attributes.get(att.getName()) == null)
+                    continue;
 
-                        //Create the new relationships
-                        for (Node item : listTypeNodes){
-                            Relationship newRelationship = newObject.createRelationshipTo(item, RelTypes.RELATED_TO);
-                            newRelationship.setProperty(Constants.PROPERTY_NAME, att.getName());
+                //If the array is empty, it means the attribute should be set to null, that is, ignore it
+                if (!attributes.get(att.getName()).isEmpty()){
+                    if (attributes.get(att.getName()).get(0) != null){
+                        if (AttributeMetadata.isPrimitive(classToMap.getType(att.getName())))
+                                newObject.setProperty(att.getName(), Util.getRealValue(attributes.get(att.getName()).get(0), classToMap.getType(att.getName())));
+                        else{
+                        //If it's not a primitive type, maybe it's a relationship
+                            List<Long> listTypeItems = new ArrayList<Long>();
+                            if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, att.getType()))
+                                throw new InvalidArgumentException(String.format("Type %s is not a primitive nor a list type", att.getName()), Level.WARNING);
+                            try{
+                                for (String value : attributes.get(att.getName()))
+                                    listTypeItems.add(Long.valueOf(value));
+                            }catch(NumberFormatException ex){
+                                throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
+                            }
+                            Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, att.getType()).getSingle();
+                            List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
+
+                            //Create the new relationships
+                            for (Node item : listTypeNodes){
+                                Relationship newRelationship = newObject.createRelationshipTo(item, RelTypes.RELATED_TO);
+                                newRelationship.setProperty(Constants.PROPERTY_NAME, att.getName());
+                            }
                         }
                     }
                 }
             }
-        }
-
-        //The object's name can't be null in N4J, it has to be set to ""
-        if (attributes.get(Constants.PROPERTY_NAME) == null)
-            newObject.setProperty(Constants.PROPERTY_NAME, "");
+        }            
 
         objectIndex.putIfAbsent(newObject, Constants.PROPERTY_ID, newObject.getId());
         newObject.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
