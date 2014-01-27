@@ -286,6 +286,12 @@
 <message name="createPhysicalConnectionResponse">
 <part name="parameters" element="tns:createPhysicalConnectionResponse"/>
 </message>
+<message name="createBulkPhysicalConnections">
+<part name="parameters" element="tns:createBulkPhysicalConnections"/>
+</message>
+<message name="createBulkPhysicalConnectionsResponse">
+<part name="parameters" element="tns:createBulkPhysicalConnectionsResponse"/>
+</message>
 <message name="deletePhysicalConnection">
 <part name="parameters" element="tns:deletePhysicalConnection"/>
 </message>
@@ -514,11 +520,11 @@
 <message name="removePossibleChildrenForClassWithIdResponse">
 <part name="parameters" element="tns:removePossibleChildrenForClassWithIdResponse"/>
 </message>
-<message name="createBulkPhysicalConnections">
-<part name="parameters" element="tns:createBulkPhysicalConnections"/>
+<message name="getConnectionEndpoints">
+<part name="parameters" element="tns:getConnectionEndpoints"/>
 </message>
-<message name="createBulkPhysicalConnectionsResponse">
-<part name="parameters" element="tns:createBulkPhysicalConnectionsResponse"/>
+<message name="getConnectionEndpointsResponse">
+<part name="parameters" element="tns:getConnectionEndpointsResponse"/>
 </message>
 <portType name="Kuwaiba">
 <operation name="getClass">
@@ -751,6 +757,11 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createPhysicalConnectionResponse" message="tns:createPhysicalConnectionResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createPhysicalConnection/Fault/Exception"/>
 </operation>
+<operation name="createBulkPhysicalConnections">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createBulkPhysicalConnectionsRequest" message="tns:createBulkPhysicalConnections"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createBulkPhysicalConnectionsResponse" message="tns:createBulkPhysicalConnectionsResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createBulkPhysicalConnections/Fault/Exception"/>
+</operation>
 <operation name="deletePhysicalConnection">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deletePhysicalConnectionRequest" message="tns:deletePhysicalConnection"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deletePhysicalConnectionResponse" message="tns:deletePhysicalConnectionResponse"/>
@@ -941,10 +952,10 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenForClassWithIdResponse" message="tns:removePossibleChildrenForClassWithIdResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenForClassWithId/Fault/Exception"/>
 </operation>
-<operation name="createBulkPhysicalConnections">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createBulkPhysicalConnectionsRequest" message="tns:createBulkPhysicalConnections"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createBulkPhysicalConnectionsResponse" message="tns:createBulkPhysicalConnectionsResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createBulkPhysicalConnections/Fault/Exception"/>
+<operation name="getConnectionEndpoints">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getConnectionEndpointsRequest" message="tns:getConnectionEndpoints"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getConnectionEndpointsResponse" message="tns:getConnectionEndpointsResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getConnectionEndpoints/Fault/Exception"/>
 </operation>
 </portType>
 <binding name="KuwaibaPortBinding" type="tns:Kuwaiba">
@@ -1501,6 +1512,18 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="createBulkPhysicalConnections">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="deletePhysicalConnection">
 <soap:operation soapAction=""/>
 <input>
@@ -1957,7 +1980,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="createBulkPhysicalConnections">
+<operation name="getConnectionEndpoints">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

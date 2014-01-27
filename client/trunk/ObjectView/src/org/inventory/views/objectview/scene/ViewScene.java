@@ -194,6 +194,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLig
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         ObjectConnectionWidget widget = new ObjectConnectionWidget(this, edge, freeRouter);
+        widget.getActions().addAction(ActionFactory.createPopupMenuAction(new EdgeMenu()));
         edgesLayer.addChild(widget);
         return widget;
     }

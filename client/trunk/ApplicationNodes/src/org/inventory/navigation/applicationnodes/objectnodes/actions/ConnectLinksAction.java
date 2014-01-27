@@ -20,6 +20,7 @@ import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.objectnodes.windows.ConnectLinksFrame;
 import org.openide.util.Lookup;
 
 /**
@@ -34,19 +35,20 @@ public class ConnectLinksAction extends AbstractAction {
         this.objectClass = objectClass;
         this.objectId = objectId;
         this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_RELEASE_MIRROR_PORT"));
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CONNECT_LINKS"));
     }
 
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        //LocalObjectLight[] links = CommunicationsStub.getInstance().getObjectSpecialChildren(objectClass, objectId);
-        //LocalObjectLight[] containerEndpoints = CommunicationsStub.getInstance().getConnectionEndpoints(objectClass, objectId);
+        LocalObjectLight[] links = CommunicationsStub.getInstance().getObjectSpecialChildren(objectClass, objectId);
+        LocalObjectLight[] containerEndpoints = CommunicationsStub.getInstance().getConnectionEndpoints(objectClass, objectId);
+        ConnectLinksFrame frame = new ConnectLinksFrame(containerEndpoints[0],containerEndpoints[1], links);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
         
-        if (CommunicationsStub.getInstance().releaseMirrorPort(objectClass, objectId))
-            nu.showSimplePopup("Success", NotificationUtil.INFO, "Miror port released successfully");
-        else
-            nu.showSimplePopup("Error", NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());        
+//            nu.showSimplePopup("Success", NotificationUtil.INFO, "Miror port released successfully");
+//            nu.showSimplePopup("Error", NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());        
     }
     
 }

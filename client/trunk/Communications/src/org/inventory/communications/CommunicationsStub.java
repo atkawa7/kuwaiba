@@ -1013,6 +1013,30 @@ public class CommunicationsStub {
             return null;
         }
     }
+    
+    public LocalObjectLight[] getConnectionEndpoints(String connectionClass, long connectionId) {
+        try{
+            List<RemoteObjectLight> endpoints = port.getConnectionEndpoints(connectionClass, connectionId, session.getSessionId());
+            LocalObjectLight[] res = new LocalObjectLight[]{endpoints.get(0) == null ? 
+                    null : new LocalObjectLight(endpoints.get(0).getOid(), endpoints.get(0).getName(), endpoints.get(0).getClassName()),
+                    endpoints.get(1) == null ? 
+                    null : new LocalObjectLight(endpoints.get(1).getOid(), endpoints.get(1).getName(), endpoints.get(1).getClassName())};
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    public LocalObjectLight[] getObjectSpecialChildren(String connectionClass, long connectionId) {
+        try{
+            return null; //port.getObjectSpecialChildren (connectionClass, connectionId, session.getSessionId());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Query methods. Click on the + sign on the left to edit the code.">
@@ -1782,7 +1806,5 @@ public class CommunicationsStub {
             return null;
         }
     }
-    // </editor-fold>   
-
-    
+    // </editor-fold>    
 }

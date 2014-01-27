@@ -21,6 +21,10 @@ package org.inventory.communications.util;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class Constants {
+    /**
+     * Name of the validator to indicate if a given class is a container
+     */
+    public static String VALIDATOR__PHYSICAL_CONTAINER = "physicalContainer";
      /**
      * Name of the validator to indicate if a given class is a link
      */

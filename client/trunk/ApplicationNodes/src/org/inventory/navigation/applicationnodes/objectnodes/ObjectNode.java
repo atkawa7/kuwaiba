@@ -36,6 +36,7 @@ import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ConnectLinksAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ConnectMirrorPortAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
@@ -292,6 +293,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                             null, //Separator
                             com.getMetaForClass(object.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_ENDPOINT) == 1 ? new ConnectMirrorPortAction(object.getClassName(), object.getOid()) : null,
                             com.getMetaForClass(object.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_ENDPOINT) == 1 ? new ReleaseMirrorPortAction(object.getClassName(), object.getOid()) : null,
+                            com.getMetaForClass(object.getClassName(), false).getValidator(Constants.VALIDATOR__PHYSICAL_CONTAINER) == 1 ? new ConnectLinksAction(object.getClassName(), object.getOid()) : null,
                             null,
                             showObjectAuditTrailAction == null ? showObjectAuditTrailAction = new ShowObjectAuditTrailAction(this) : showObjectAuditTrailAction,
                             explorerAction,

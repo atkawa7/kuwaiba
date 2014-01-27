@@ -188,6 +188,10 @@
 
 <xs:element name="getClassWithIdResponse" type="tns:getClassWithIdResponse"/>
 
+<xs:element name="getConnectionEndpoints" type="tns:getConnectionEndpoints"/>
+
+<xs:element name="getConnectionEndpointsResponse" type="tns:getConnectionEndpointsResponse"/>
+
 <xs:element name="getGeneralActivityAuditTrail" type="tns:getGeneralActivityAuditTrail"/>
 
 <xs:element name="getGeneralActivityAuditTrailResponse" type="tns:getGeneralActivityAuditTrailResponse"/>
@@ -480,20 +484,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="connectMirrorPort">
-<xs:sequence>
-<xs:element name="aObjectClass" type="xs:string" minOccurs="0"/>
-<xs:element name="aObjectId" type="xs:long"/>
-<xs:element name="bObjectClass" type="xs:string" minOccurs="0"/>
-<xs:element name="bObjectId" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="connectMirrorPortResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="setGroupProperties">
 <xs:sequence>
 <xs:element name="oid" type="xs:long"/>
@@ -506,6 +496,20 @@
 </xs:complexType>
 
 <xs:complexType name="setGroupPropertiesResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="connectMirrorPort">
+<xs:sequence>
+<xs:element name="aObjectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="aObjectId" type="xs:long"/>
+<xs:element name="bObjectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="bObjectId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="connectMirrorPortResponse">
 <xs:sequence/>
 </xs:complexType>
 
@@ -1027,6 +1031,20 @@
 <xs:complexType name="createBulkPhysicalConnectionsResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getConnectionEndpoints">
+<xs:sequence>
+<xs:element name="connectionClass" type="xs:string" minOccurs="0"/>
+<xs:element name="connectionId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getConnectionEndpointsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 

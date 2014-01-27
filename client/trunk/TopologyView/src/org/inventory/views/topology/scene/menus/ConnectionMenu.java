@@ -48,7 +48,7 @@ public class ConnectionMenu implements PopupMenuProvider, ActionListener {
 
     public ConnectionMenu(TopologyViewScene scene) {
         this.scene = scene;
-        menu = new JPopupMenu("Connecttion Menu"); //NOI18N
+        menu = new JPopupMenu("Connection Menu"); //NOI18N
         JMenuItem item;
 
         item = new JMenuItem("Delete Control Point");

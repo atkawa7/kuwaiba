@@ -15,6 +15,7 @@
  */
 package org.inventory.core.wizards.physicalconnections;
 
+import org.inventory.core.services.utils.ExplorablePanel;
 import javax.swing.JPanel;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
