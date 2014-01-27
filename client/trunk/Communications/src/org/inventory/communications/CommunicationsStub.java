@@ -1003,6 +1003,16 @@ public class CommunicationsStub {
             return null;
         }
     }
+    
+    public List<Long> createBulkPhysicalConnections(String connectionClass, int integer, String parentClass, long parentId) {
+        try{
+            return port.createBulkPhysicalConnections(connectionClass, 
+                        integer, parentClass, parentId, session.getSessionId());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Query methods. Click on the + sign on the left to edit the code.">
@@ -1773,4 +1783,6 @@ public class CommunicationsStub {
         }
     }
     // </editor-fold>   
+
+    
 }

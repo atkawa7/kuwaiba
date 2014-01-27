@@ -32,6 +32,10 @@
 
 <xs:element name="createAttributeResponse" type="tns:createAttributeResponse"/>
 
+<xs:element name="createBulkPhysicalConnections" type="tns:createBulkPhysicalConnections"/>
+
+<xs:element name="createBulkPhysicalConnectionsResponse" type="tns:createBulkPhysicalConnectionsResponse"/>
+
 <xs:element name="createClass" type="tns:createClass"/>
 
 <xs:element name="createClassResponse" type="tns:createClassResponse"/>
@@ -1008,6 +1012,22 @@
 
 <xs:complexType name="deletePhysicalConnectionResponse">
 <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="createBulkPhysicalConnections">
+<xs:sequence>
+<xs:element name="connectionClass" type="xs:string" minOccurs="0"/>
+<xs:element name="numberOfChildren" type="xs:int"/>
+<xs:element name="parentClass" type="xs:string" minOccurs="0"/>
+<xs:element name="parentId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createBulkPhysicalConnectionsResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getObjectRelatedView">

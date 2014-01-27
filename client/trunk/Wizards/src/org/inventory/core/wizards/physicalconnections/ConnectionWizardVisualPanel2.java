@@ -17,13 +17,16 @@ package org.inventory.core.wizards.physicalconnections;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
 public final class ConnectionWizardVisualPanel2 extends JPanel {
 
     /** Creates new form ConnectionWizardVisualPanel2 */
     public ConnectionWizardVisualPanel2() {
         initComponents();
+        spnNumberOfChildren.setModel(new SpinnerNumberModel(0, 0, 1000, 1));
     }
 
     @Override
@@ -31,8 +34,16 @@ public final class ConnectionWizardVisualPanel2 extends JPanel {
         return "Edit connection settings";
     }
 
-    public JComboBox getCmbType() {
-        return cmbType;
+    public JComboBox getCmbConnectionType() {
+        return cmbConnectionType;
+    }
+    
+    public JComboBox getCmbChildrenType() {
+        return cmbChildrenType;
+    }
+    
+    public JSpinner getSpnNumberOfChildren() {
+        return spnNumberOfChildren;
     }
 
     public JTextField getTxtName() {
@@ -48,48 +59,72 @@ public final class ConnectionWizardVisualPanel2 extends JPanel {
 
         lblName = new javax.swing.JLabel();
         txtName = new javax.swing.JTextField();
-        lblType = new javax.swing.JLabel();
-        cmbType = new javax.swing.JComboBox();
+        lblConnectionType = new javax.swing.JLabel();
+        cmbConnectionType = new javax.swing.JComboBox();
+        lblChildrenType = new javax.swing.JLabel();
+        lblNumberOfchildren = new javax.swing.JLabel();
+        cmbChildrenType = new javax.swing.JComboBox();
+        spnNumberOfChildren = new javax.swing.JSpinner();
 
         org.openide.awt.Mnemonics.setLocalizedText(lblName, org.openide.util.NbBundle.getMessage(ConnectionWizardVisualPanel2.class, "ConnectionWizardVisualPanel2.lblName.text")); // NOI18N
 
         txtName.setText(org.openide.util.NbBundle.getMessage(ConnectionWizardVisualPanel2.class, "ConnectionWizardVisualPanel2.txtName.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(lblType, org.openide.util.NbBundle.getMessage(ConnectionWizardVisualPanel2.class, "ConnectionWizardVisualPanel2.lblType.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(lblConnectionType, org.openide.util.NbBundle.getMessage(ConnectionWizardVisualPanel2.class, "ConnectionWizardVisualPanel2.lblConnectionType.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(lblChildrenType, org.openide.util.NbBundle.getMessage(ConnectionWizardVisualPanel2.class, "ConnectionWizardVisualPanel2.lblChildrenType.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(lblNumberOfchildren, org.openide.util.NbBundle.getMessage(ConnectionWizardVisualPanel2.class, "ConnectionWizardVisualPanel2.lblNumberOfchildren.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(41, 41, 41)
+                .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblName)
-                    .addComponent(lblType))
-                .addGap(18, 18, 18)
+                    .addComponent(lblConnectionType)
+                    .addComponent(lblChildrenType)
+                    .addComponent(lblNumberOfchildren))
+                .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cmbType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(103, Short.MAX_VALUE))
+                    .addComponent(cmbChildrenType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbConnectionType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(spnNumberOfChildren, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(166, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(46, 46, 46)
+                .addGap(38, 38, 38)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblName)
                     .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblType)
-                    .addComponent(cmbType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(183, Short.MAX_VALUE))
+                    .addComponent(lblConnectionType)
+                    .addComponent(cmbConnectionType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblChildrenType)
+                    .addComponent(cmbChildrenType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblNumberOfchildren)
+                    .addComponent(spnNumberOfChildren, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(122, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox cmbType;
+    private javax.swing.JComboBox cmbChildrenType;
+    private javax.swing.JComboBox cmbConnectionType;
+    private javax.swing.JLabel lblChildrenType;
+    private javax.swing.JLabel lblConnectionType;
     private javax.swing.JLabel lblName;
-    private javax.swing.JLabel lblType;
+    private javax.swing.JLabel lblNumberOfchildren;
+    private javax.swing.JSpinner spnNumberOfChildren;
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
 }

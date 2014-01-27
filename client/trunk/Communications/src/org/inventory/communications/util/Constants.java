@@ -42,6 +42,14 @@ public class Constants {
      */
     public static String CLASS_GENERICOBJECTLIST = "GenericObjectList";
     /**
+     * Root class to all ports
+     */
+    public static String CLASS_GENERICPORT = "GenericPort";
+    /**
+     * Root class to all physical links (cables, fibers, etc)
+     */
+    public static String CLASS_GENERICPHYSICALLINK = "GenericPhysicalLink";
+    /**
      * Name for the class User
      */
     public static String CLASS_USER = "User";

@@ -19,7 +19,9 @@ import java.awt.Component;
 import java.util.List;
 import javax.swing.event.ChangeListener;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectListItem;
+import org.inventory.communications.util.Constants;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 
@@ -57,11 +59,6 @@ public class ConnectionWizardWizardPanel2 implements WizardDescriptor.Panel {
     public boolean isValid() {
         // If it is always OK to press Next or Finish, then:
         return true;
-        // If it depends on some condition (form filled out...), then:
-        // return someCondition();
-        // and when this condition changes (last form field filled in...) then:
-        // fireChangeEvent();
-        // and uncomment the complicated stuff below.
     }
 
     @Override
@@ -71,29 +68,6 @@ public class ConnectionWizardWizardPanel2 implements WizardDescriptor.Panel {
     @Override
     public final void removeChangeListener(ChangeListener l) {
     }
-    /*
-    private final Set<ChangeListener> listeners = new HashSet<ChangeListener>(1); // or can use ChangeSupport in NB 6.0
-    public final void addChangeListener(ChangeListener l) {
-    synchronized (listeners) {
-    listeners.add(l);
-    }
-    }
-    public final void removeChangeListener(ChangeListener l) {
-    synchronized (listeners) {
-    listeners.remove(l);
-    }
-    }
-    protected final void fireChangeEvent() {
-    Iterator<ChangeListener> it;
-    synchronized (listeners) {
-    it = new HashSet<ChangeListener>(listeners).iterator();
-    }
-    ChangeEvent ev = new ChangeEvent(this);
-    while (it.hasNext()) {
-    it.next().stateChanged(ev);
-    }
-    }
-     */
 
     // You can use a settings object to keep track of state. Normally the
     // settings object will be the WizardDescriptor, so you can use
@@ -103,15 +77,24 @@ public class ConnectionWizardWizardPanel2 implements WizardDescriptor.Panel {
     public void readSettings(Object settings) {
         this.connectionTypeClass = (String)((WizardDescriptor)settings).getProperty("connectionTypeClass");
         List<LocalObjectListItem> types = com.getList(connectionTypeClass, true, false);
-            if (types != null){
-                for(LocalObjectListItem type : types)
-                    ((ConnectionWizardVisualPanel2)component).getCmbType().addItem(type);
-            }
+        if (types != null){
+            for(LocalObjectListItem type : types)
+                ((ConnectionWizardVisualPanel2)component).getCmbConnectionType().addItem(type);
+        }
+        
+        LocalClassMetadataLight[] portClasses = com.getLightSubclasses(Constants.CLASS_GENERICPHYSICALLINK, false, false);
+        if (portClasses != null){
+            for(LocalClassMetadataLight portClass : portClasses)
+                ((ConnectionWizardVisualPanel2)component).getCmbChildrenType().addItem(portClass);
+        }
     }
 
     @Override
     public void storeSettings(Object settings) {
-        ((WizardDescriptor)settings).putProperty("type", ((ConnectionWizardVisualPanel2)component).getCmbType().getSelectedItem());//NOI18N
-        ((WizardDescriptor)settings).putProperty("name", ((ConnectionWizardVisualPanel2)component).getTxtName().getText());//NOI18N
+        ((WizardDescriptor)settings).putProperty(Constants.PROPERTY_NAME, ((ConnectionWizardVisualPanel2)component).getTxtName().getText());
+        ((WizardDescriptor)settings).putProperty(Constants.PROPERTY_TYPE, ((ConnectionWizardVisualPanel2)component).getCmbConnectionType().getSelectedItem());
+        ((WizardDescriptor)settings).putProperty("childrenType", ((ConnectionWizardVisualPanel2)component).getCmbChildrenType().getSelectedItem().toString());//NOI18N
+        ((WizardDescriptor)settings).putProperty("numberOfChildren", ((ConnectionWizardVisualPanel2)component).getSpnNumberOfChildren().getValue());//NOI18N
+        
     }
 }
