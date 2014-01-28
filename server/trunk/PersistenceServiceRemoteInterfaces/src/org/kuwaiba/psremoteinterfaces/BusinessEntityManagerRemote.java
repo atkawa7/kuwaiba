@@ -92,6 +92,8 @@ public interface BusinessEntityManagerRemote extends Remote{
             throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
     public List<RemoteBusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
+    public List<RemoteBusinessObjectLight> getObjectSpecialChildren(String objectClass, long objectId)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
 
     public boolean hasRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;

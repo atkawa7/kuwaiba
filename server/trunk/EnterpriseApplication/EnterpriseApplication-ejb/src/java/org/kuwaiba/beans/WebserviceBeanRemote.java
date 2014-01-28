@@ -322,7 +322,8 @@ public interface WebserviceBeanRemote {
     public RemoteObject getParent(String objectClass, long oid) throws ServerSideException;
     public RemoteObject getParentOfClass(String objectClass, long oid, String parentClass) throws ServerSideException;
 
-    public String[] getSpecialAttribute(String objectClass, long objectId, String attributeName) throws ServerSideException;
+    public RemoteObjectLight[] getSpecialAttribute(String objectClass, long objectId, String attributeName) throws ServerSideException;
+    public RemoteObjectLight[] getObjectSpecialChildren(String objectClass, long objectId) throws ServerSideException;
 
     public void updateObject(String className, long oid, String[] attributeNames, String[][] attributeValues) throws ServerSideException;
 
@@ -351,6 +352,7 @@ public interface WebserviceBeanRemote {
     public long[] createBulkPhysicalConnections(String connectionClass, int numberOfChildren, String parentClass, long parentId) throws ServerSideException;
     public void deletePhysicalConnection(String objectClass, long objectId) throws ServerSideException;
     public RemoteObjectLight[] getConnectionEndpoints(String connectionClass, long connectionId) throws ServerSideException;
+    public void connectPhysicalLinks(String[] sideAClassNames, Long[] sideAIds, String[] linksClassNames, Long[] linksIds, String[] sideBClassNames, Long[] sideBIds) throws ServerSideException;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">

@@ -30,7 +30,6 @@ import org.kuwaiba.beans.WebserviceBeanRemote;
 import org.kuwaiba.beans.sessions.Session;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
-import org.kuwaiba.util.Util;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
 import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.RemoteQuery;
@@ -1192,13 +1191,30 @@ public class Kuwaiba {
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getSpecialAttribute")
-    public String[] getSpecialAttribute(@WebParam(name = "objectclass") String objectClass,
+    public RemoteObjectLight[] getSpecialAttribute(@WebParam(name = "objectclass") String objectClass,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "attributename") String attributeName,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
             wsBean.validateCall("getSpecialAttribute", getIPAddress(), sessionId);
             return wsBean.getSpecialAttribute(objectClass, oid, attributeName);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    @WebMethod(operationName = "getObjectSpecialChildren")
+    public RemoteObjectLight[] getObjectSpecialChildren (@WebParam(name = "objectclass") String objectClass,
+            @WebParam(name = "objectId") long objectId,
+            @WebParam(name = "sessionId") String sessionId) throws Exception {
+        try{
+            wsBean.validateCall("getObjectSpecialChildren", getIPAddress(), sessionId);
+            return wsBean.getObjectSpecialChildren(objectClass, objectId);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -1499,6 +1515,37 @@ public class Kuwaiba {
             throw e;
         }
     }
+    
+    /**
+     * Connect pairs of ports (if they are not connected already) using physical link (cable, fibers, all subclasses of GenericPhysicalConnection)
+     * @param sideAClassNames The list of classes of one of the sides of the connection
+     * @param sideAIds The list of ids the objects on one side of the connection
+     * @param linksClassNames the classes of the links that will connect the two sides
+     * @param linksIds The ids of these links
+     * @param sideBClassNames The list of classes of the other side of the connection
+     * @param sideBIds The list of ids the objects on the other side of the connection
+     * @param sessionId Session token
+     * @throws Exception In case something goes wrong
+     */
+    public void connectPhysicalLinks (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
+                                      @WebParam(name = "linksClassNames")String[] linksClassNames, @WebParam(name = "linksIds")Long[] linksIds,
+                                      @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")Long[] sideBIds,
+                                      @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            wsBean.validateCall("connectPhysicalLinks", getIPAddress(), sessionId);
+            if ((sideAClassNames.length + sideAIds.length + linksClassNames.length + linksIds.length + sideBClassNames.length + sideBIds.length) / 4 != sideAClassNames.length)
+                throw new Exception("The array sizes don't match");
+            
+            wsBean.connectPhysicalLinks(sideAClassNames, sideAIds, linksClassNames, linksIds, sideBClassNames, sideBIds);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
 
     /**
      * Deletes a physical connection
@@ -1638,12 +1685,12 @@ public class Kuwaiba {
             wsBean.validateCall("createClass", getIPAddress(), sessionId);
             if (icon != null){
                 if (icon.length > Constants.MAX_ICON_SIZE){
-                    throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
+                    throw new ServerSideException(Level.WARNING, String.format("The uploaded file exceeds the max file size (%s)", Constants.MAX_BACKGROUND_SIZE));
                 }
             }
             if (smallIcon != null){
                 if (smallIcon.length > Constants.MAX_ICON_SIZE){
-                    throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
+                    throw new ServerSideException(Level.WARNING, String.format("The uploaded file exceeds the max file size (%s)", Constants.MAX_BACKGROUND_SIZE));
                 }
             }
             ClassInfo ci = new ClassInfo();
@@ -1700,11 +1747,11 @@ public class Kuwaiba {
             wsBean.validateCall("setClassProperties", getIPAddress(), sessionId);
             if (icon != null){
                 if (icon.length > Constants.MAX_ICON_SIZE)
-                    throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
+                    throw new ServerSideException(Level.WARNING, String.format("The file exceeds the file size limits (%s)", Constants.MAX_BACKGROUND_SIZE));
             }
             if (smallIcon != null){
                 if (smallIcon.length > Constants.MAX_ICON_SIZE)
-                    throw new ServerSideException(Level.WARNING, Util.formatString("The uploaded file exceeds the max file size (%1s)", Constants.MAX_BACKGROUND_SIZE));
+                    throw new ServerSideException(Level.WARNING, String.format("The file exceeds the file size limits (%s)", Constants.MAX_BACKGROUND_SIZE));
             }
             ClassInfo ci = new ClassInfo();
             ci.setId(classId);

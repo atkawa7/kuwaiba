@@ -48,7 +48,6 @@ import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
 import org.kuwaiba.sync.SyncServicesManager;
-import org.kuwaiba.util.Util;
 import org.kuwaiba.util.bre.TempBusinessRulesEngine;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
 import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
@@ -800,7 +799,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             }
             for (Session aSession : sessions.values()){
                 if (aSession.getUser().getUserName().equals(user)){
-                    Logger.getLogger(WebserviceBean.class.getName()).log(Level.INFO, Util.formatString("An existing session for user %1s has been dropped", aSession.getUser().getUserName()));
+                    Logger.getLogger(WebserviceBean.class.getName()).log(Level.INFO, String.format("An existing session for user %1s has been dropped", aSession.getUser().getUserName()));
                     sessions.remove(aSession.getToken());
                     break;
                 }
@@ -950,17 +949,29 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public String[] getSpecialAttribute(String objectClass, long objectId, String attributeName) throws ServerSideException{
+    public RemoteObjectLight[] getSpecialAttribute(String objectClass, long objectId, String attributeName) throws ServerSideException{
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
-            return bem.getSpecialAttribute(objectClass, objectId, attributeName).toArray(new String[0]);
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getSpecialAttribute(objectClass, objectId, attributeName));
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
 
+    @Override
+    public RemoteObjectLight[] getObjectSpecialChildren (String objectClass, long objectId) throws ServerSideException{
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try {
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectSpecialChildren(objectClass, objectId));
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
     @Override
     public long createObject(String className, String parentClassName, long parentOid, String[] attributeNames,
             String[][] attributeValues, long template) throws ServerSideException{
@@ -1148,10 +1159,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             //Check if the endpoints are already connected, but only if the connection is a link (the endpoints are ports)
             if (mem.isSubClass("GenericPhysicalLink", connectionClass)){
                 if (!bem.getSpecialAttribute(aObjectClass, aObjectId, "endpointA").isEmpty())
-                    throw new ServerSideException(Level.INFO, Util.formatString("The selected endpoint (%s, %s) is already connected", aObjectClass, aObjectId));
+                    throw new ServerSideException(Level.INFO, String.format("The selected endpoint %s [%s] is already connected", aObjectClass, aObjectId));
 
                 if (!bem.getSpecialAttribute(bObjectClass, bObjectId, "endpointB").isEmpty())
-                    throw new ServerSideException(Level.INFO, Util.formatString("The selected endpoint (%s, %s) is already connected", bObjectClass, bObjectId));
+                    throw new ServerSideException(Level.INFO, String.format("The selected endpoint %s [%s] is already connected", bObjectClass, bObjectId));
             }
 
             newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, 0);
@@ -1200,7 +1211,53 @@ public class WebserviceBean implements WebserviceBeanRemote {
                                             endpointB.isEmpty() ? null : new RemoteObjectLight(endpointB.get(0))};
 
         } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void connectPhysicalLinks(String[] sideAClassNames, Long[] sideAIds, 
+                String[] linksClassNames, Long[] linksIds, String[] sideBClassNames, 
+                Long[] sideBIds) throws ServerSideException{
 
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            for (int i = 0; i < sideAClassNames.length; i++){
+                
+                if (linksClassNames[i] != null && !mem.isSubClass("GenericPhysicalLink", linksClassNames[i]))
+                    throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a physical link", linksClassNames[i]));
+                if (sideAClassNames[i] != null && !mem.isSubClass("GenericPort", sideAClassNames[i]))
+                    throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a port", sideAClassNames[i]));
+                if (sideBClassNames[i] != null && !mem.isSubClass("GenericPort", sideBClassNames[i]))
+                    throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a port", sideBClassNames[i]));
+                
+                if (sideAIds[i] == sideBIds[i])
+                    throw new ServerSideException(Level.SEVERE, "Can not connect a port to itself");
+                
+                if (!bem.getSpecialAttribute(sideAClassNames[i], sideAIds[i], "endpointA").isEmpty() || 
+                        !bem.getSpecialAttribute(sideAClassNames[i], sideAIds[i], "endpointB").isEmpty())
+                    throw new ServerSideException(Level.INFO, String.format("The selected endpoint %s [%s] is already connected", sideAClassNames[i], sideAIds[i]));
+
+                if (!bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], "endpointB").isEmpty() || 
+                        !bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], "endpointA").isEmpty())
+                    throw new ServerSideException(Level.INFO, String.format("The selected endpoint %s [%s] is already connected", sideBClassNames[i], sideBIds[i]));
+                
+                if (sideAIds[i] != null){
+                    if (bem.getSpecialAttribute(linksClassNames[i], linksIds[i], "endpointA").isEmpty())
+                        bem.createSpecialRelationship(sideAClassNames[i], sideAIds[i], linksClassNames[i], linksIds[i], "endpointA");
+                    else
+                        throw new ServerSideException(Level.INFO, String.format("Link %s [%s] already has an aEndpoint", linksIds[i], linksClassNames[i]));
+                }
+                if (sideBIds[i] != null){
+                    if (bem.getSpecialAttribute(linksClassNames[i], linksIds[i], "endpointB").isEmpty())
+                        bem.createSpecialRelationship(sideBClassNames[i], sideBIds[i], linksClassNames[i], linksIds[i], "endpointB");
+                    else
+                        throw new ServerSideException(Level.INFO, String.format("Link %s [%s] already has a bEndpoint", linksIds[i], linksClassNames[i]));
+                }
+            }
+        } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
@@ -1637,10 +1694,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
     public Session validateCall(String methodName, String ipAddress, String sessionId) throws NotAuthorizedException{
         Session aSession = sessions.get(sessionId);
         if (aSession == null)
-            throw new NotAuthorizedException(Util.formatString("The session token provided to call %s is not valid",methodName));
+            throw new NotAuthorizedException(String.format("The session token provided to call %s is not valid",methodName));
 
         if (!aSession.getIpAddress().equals(ipAddress))
-            throw new NotAuthorizedException(Util.formatString("IP %s is not allowed to perform this operation (%s)", ipAddress, methodName));
+            throw new NotAuthorizedException(String.format("IP %s is not allowed to perform this operation (%s)", ipAddress, methodName));
         
         return aSession;
     }

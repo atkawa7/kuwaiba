@@ -151,7 +151,7 @@ public class Util {
                 throw new OperationNotPermittedException("deleteObject",String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
         }
 
-        for (Relationship rel : instance.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING))
+        for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
             deleteObject(rel.getStartNode(), releaseAll);
 
         for (Relationship rel : instance.getRelationships())

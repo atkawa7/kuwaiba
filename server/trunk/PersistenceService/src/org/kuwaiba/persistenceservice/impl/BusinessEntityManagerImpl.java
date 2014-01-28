@@ -262,7 +262,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             long res[] = new long[numberOfObjects];
             for (int i = 0; i < numberOfObjects; i++){
                 Node newObject = createObject(classNode, myClass, null, 0);
-                newObject.setProperty(Constants.PROPERTY_NAME, i + 1);
+                newObject.setProperty(Constants.PROPERTY_NAME, String.valueOf(i + 1));
                 if (parentNode != null)
                     newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
                 
@@ -834,6 +834,16 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName))
                 res.add(rel.getEndNode().getId() == objectId ? 
                         Util.createRemoteObjectLightFromNode(rel.getStartNode()) : Util.createRemoteObjectLightFromNode(rel.getEndNode()));
+        return res;
+    }
+    
+    @Override
+    public List<RemoteBusinessObjectLight> getObjectSpecialChildren(String objectClass, long objectId)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException {
+        Node instance = getInstanceOfClass(objectClass, objectId);
+        List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
+        for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL))
+            res.add(Util.createRemoteObjectLightFromNode(rel.getStartNode()));
         return res;
     }
 
