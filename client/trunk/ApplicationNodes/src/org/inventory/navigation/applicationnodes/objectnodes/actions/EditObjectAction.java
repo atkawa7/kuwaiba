@@ -21,6 +21,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.windows.ObjectEditorTopComponent;
 
@@ -38,6 +39,13 @@ public final class EditObjectAction extends AbstractAction {
         this.node = node;
     }
 
+    public EditObjectAction(LocalObjectLight object) {
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EDIT"));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E,InputEvent.CTRL_MASK));
+        putValue(MNEMONIC_KEY,KeyEvent.VK_E);
+        this.node = new ObjectNode(object);
+    }
+    
     @Override
     public void actionPerformed(ActionEvent ev) {
         ObjectEditorTopComponent component = new ObjectEditorTopComponent(node);

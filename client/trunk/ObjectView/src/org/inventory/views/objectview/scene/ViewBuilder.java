@@ -195,30 +195,17 @@ public class ViewBuilder {
         //TODO: This algorithm to find the endpoints for a connection could be improved in many ways
         for (LocalObject container : myPhysicalConnections){
 
-            String aSideString, bSideString;
-
-            //Hardcoded for now
-            if (container.getClassName().equals("WireContainer") || container.getClassName().equals("WirelessContainer")){ //NOI18N
-                aSideString = "nodeA";
-                bSideString = "nodeB";
-            }else{
-                aSideString = "endpointA";
-                bSideString = "endpointB";
-            }
-
-            long[] aSide = com.getSpecialAttribute(container.getClassName(), container.getOid(),aSideString);
+            LocalObjectLight[] aSide = com.getSpecialAttribute(container.getClassName(), container.getOid(),"endpointA");
             if (aSide == null)
                 return;
 
-            LocalObjectLight aSideObject = new LocalObjectLight(aSide[0], null, null);
-            Widget aSideWidget = scene.findWidget(aSideObject);
+            Widget aSideWidget = scene.findWidget(aSide[0]);
 
-            long[] bSide = com.getSpecialAttribute(container.getClassName(), container.getOid(),bSideString);
+            LocalObjectLight[] bSide = com.getSpecialAttribute(container.getClassName(), container.getOid(),"endpointB");
             if (bSide == null)
                 return;
 
-            LocalObjectLight bSideObject = new LocalObjectLight(bSide[0], null, null);
-            Widget bSideWidget = scene.findWidget(bSideObject);
+            Widget bSideWidget = scene.findWidget(bSide[0]);
 
             ObjectConnectionWidget newEdge = (ObjectConnectionWidget)scene.addEdge(container);
             newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
@@ -257,28 +244,18 @@ public class ViewBuilder {
         }
 
         for (LocalObjectLight toAdd : newPhysicalConnections){
-            String aSideString, bSideString;
-            //Hardcoded for now
-            if (toAdd.getClassName().equals("WireContainer") || toAdd.getClassName().equals("WirelessContainer")){ //NOI18N
-                aSideString = "nodeA";
-                bSideString = "nodeB";
-            }else{
-                aSideString = "endpointA";
-                bSideString = "endpointB";
-            }
-            long[] aSide = com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(),aSideString);
+            
+            LocalObjectLight[] aSide = com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(), "endpointA");
             if (aSide == null)
                 return;
 
-            LocalObjectLight aSideObject = new LocalObjectLight(aSide[0], null, null);
-            Widget aSideWidget = scene.findWidget(aSideObject);
+            Widget aSideWidget = scene.findWidget(aSide[0]);
 
-            long[] bSide = com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(),bSideString);
+            LocalObjectLight[] bSide = com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(),"endpointB");
             if (bSide == null)
                 return;
 
-            LocalObjectLight bSideObject = new LocalObjectLight(bSide[0], null, null);
-            Widget bSideWidget = scene.findWidget(bSideObject);
+            Widget bSideWidget = scene.findWidget(bSide[0]);
 
             ObjectConnectionWidget newEdge = (ObjectConnectionWidget)scene.addEdge(toAdd);
             newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));

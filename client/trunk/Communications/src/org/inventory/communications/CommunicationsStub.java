@@ -289,13 +289,13 @@ public class CommunicationsStub {
         }
     }
 
-    public long[] getSpecialAttribute(String objectClass, long objectId, String attributeName){
+    public LocalObjectLight[] getSpecialAttribute(String objectClass, long objectId, String attributeName){
         try{
 
-            List<String> values = port.getSpecialAttribute(objectClass, objectId,attributeName, session.getSessionId());
-            long[] res = new long[values.size()];
+            List<RemoteObjectLight> values = port.getSpecialAttribute(objectClass, objectId,attributeName, session.getSessionId());
+            LocalObjectLight[] res = new LocalObjectLight[values.size()];
             for (int i = 0; i < values.size(); i++)
-                res[i]= Long.valueOf(values.get(i));
+                res[i]= new LocalObjectLight(values.get(i).getOid(), values.get(i).getName(), values.get(i).getClassName());
 
             return res;
         }catch(Exception ex){
@@ -1028,9 +1028,42 @@ public class CommunicationsStub {
         }
     }
     
+    
+    public boolean connectPhysicalLinks(String[] sideAClassNames, Long[] sideAIds, 
+                String[] linksClassNames, Long[] linksIds, String[] sideBClassNames, 
+                Long[] sideBIds) {
+        try{
+            List<String> sideAClassNamesList = new ArrayList<String>();
+            List<String> linksClassNamesList = new ArrayList<String>();
+            List<String> sideBClassNamesList = new ArrayList<String>();
+            List<Long> sideAIdsList = new ArrayList<Long>();
+            List<Long> linksIdsList = new ArrayList<Long>();
+            List<Long> sideBIdsList = new ArrayList<Long>();
+            sideAClassNamesList.addAll(Arrays.asList(sideAClassNames));
+            linksClassNamesList.addAll(Arrays.asList(linksClassNames));
+            sideBClassNamesList.addAll(Arrays.asList(sideBClassNames));
+            sideAIdsList.addAll(Arrays.asList(sideAIds));
+            linksIdsList.addAll(Arrays.asList(linksIds));
+            sideBIdsList.addAll(Arrays.asList(sideBIds));
+            
+            port.connectPhysicalLinks(sideAClassNamesList, sideAIdsList, linksClassNamesList, linksIdsList, sideBClassNamesList, sideBIdsList, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
+    }
+    
     public LocalObjectLight[] getObjectSpecialChildren(String connectionClass, long connectionId) {
         try{
-            return null; //port.getObjectSpecialChildren (connectionClass, connectionId, session.getSessionId());
+            List<RemoteObjectLight> specialChildren = port.getObjectSpecialChildren (connectionClass, connectionId, session.getSessionId());
+            LocalObjectLight[] res = new LocalObjectLight[specialChildren.size()];
+            int i = 0;
+            for (RemoteObjectLight rol : specialChildren){
+                res[i] = new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName());
+                i++;
+            }
+            return res;
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;

@@ -238,6 +238,12 @@
 <message name="getSpecialAttributeResponse">
 <part name="parameters" element="tns:getSpecialAttributeResponse"/>
 </message>
+<message name="getObjectSpecialChildren">
+<part name="parameters" element="tns:getObjectSpecialChildren"/>
+</message>
+<message name="getObjectSpecialChildrenResponse">
+<part name="parameters" element="tns:getObjectSpecialChildrenResponse"/>
+</message>
 <message name="deleteObjects">
 <part name="parameters" element="tns:deleteObjects"/>
 </message>
@@ -291,6 +297,12 @@
 </message>
 <message name="createBulkPhysicalConnectionsResponse">
 <part name="parameters" element="tns:createBulkPhysicalConnectionsResponse"/>
+</message>
+<message name="getConnectionEndpoints">
+<part name="parameters" element="tns:getConnectionEndpoints"/>
+</message>
+<message name="getConnectionEndpointsResponse">
+<part name="parameters" element="tns:getConnectionEndpointsResponse"/>
 </message>
 <message name="deletePhysicalConnection">
 <part name="parameters" element="tns:deletePhysicalConnection"/>
@@ -520,11 +532,11 @@
 <message name="removePossibleChildrenForClassWithIdResponse">
 <part name="parameters" element="tns:removePossibleChildrenForClassWithIdResponse"/>
 </message>
-<message name="getConnectionEndpoints">
-<part name="parameters" element="tns:getConnectionEndpoints"/>
+<message name="connectPhysicalLinks">
+<part name="parameters" element="tns:connectPhysicalLinks"/>
 </message>
-<message name="getConnectionEndpointsResponse">
-<part name="parameters" element="tns:getConnectionEndpointsResponse"/>
+<message name="connectPhysicalLinksResponse">
+<part name="parameters" element="tns:connectPhysicalLinksResponse"/>
 </message>
 <portType name="Kuwaiba">
 <operation name="getClass">
@@ -717,6 +729,11 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSpecialAttributeResponse" message="tns:getSpecialAttributeResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSpecialAttribute/Fault/Exception"/>
 </operation>
+<operation name="getObjectSpecialChildren">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectSpecialChildrenRequest" message="tns:getObjectSpecialChildren"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectSpecialChildrenResponse" message="tns:getObjectSpecialChildrenResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectSpecialChildren/Fault/Exception"/>
+</operation>
 <operation name="deleteObjects">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteObjectsRequest" message="tns:deleteObjects"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteObjectsResponse" message="tns:deleteObjectsResponse"/>
@@ -761,6 +778,11 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createBulkPhysicalConnectionsRequest" message="tns:createBulkPhysicalConnections"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createBulkPhysicalConnectionsResponse" message="tns:createBulkPhysicalConnectionsResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createBulkPhysicalConnections/Fault/Exception"/>
+</operation>
+<operation name="getConnectionEndpoints">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getConnectionEndpointsRequest" message="tns:getConnectionEndpoints"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getConnectionEndpointsResponse" message="tns:getConnectionEndpointsResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getConnectionEndpoints/Fault/Exception"/>
 </operation>
 <operation name="deletePhysicalConnection">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deletePhysicalConnectionRequest" message="tns:deletePhysicalConnection"/>
@@ -952,10 +974,10 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenForClassWithIdResponse" message="tns:removePossibleChildrenForClassWithIdResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenForClassWithId/Fault/Exception"/>
 </operation>
-<operation name="getConnectionEndpoints">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getConnectionEndpointsRequest" message="tns:getConnectionEndpoints"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getConnectionEndpointsResponse" message="tns:getConnectionEndpointsResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getConnectionEndpoints/Fault/Exception"/>
+<operation name="connectPhysicalLinks">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/connectPhysicalLinksRequest" message="tns:connectPhysicalLinks"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/connectPhysicalLinksResponse" message="tns:connectPhysicalLinksResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/connectPhysicalLinks/Fault/Exception"/>
 </operation>
 </portType>
 <binding name="KuwaibaPortBinding" type="tns:Kuwaiba">
@@ -1416,6 +1438,18 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="getObjectSpecialChildren">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="deleteObjects">
 <soap:operation soapAction=""/>
 <input>
@@ -1513,6 +1547,18 @@
 </fault>
 </operation>
 <operation name="createBulkPhysicalConnections">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getConnectionEndpoints">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -1980,7 +2026,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="getConnectionEndpoints">
+<operation name="connectPhysicalLinks">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

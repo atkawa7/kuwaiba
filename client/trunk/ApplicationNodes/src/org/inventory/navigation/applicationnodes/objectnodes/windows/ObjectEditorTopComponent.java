@@ -36,13 +36,11 @@ public class ObjectEditorTopComponent extends TopComponent{
     private PropertySheetView editor;
     private Node node;
 
-    public ObjectEditorTopComponent(){}
-
-    public ObjectEditorTopComponent(Node _node) {
+    public ObjectEditorTopComponent(Node node) {
 
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         editor = new PropertySheetView();
-        this.node = _node;
+        this.node = node;
 
         this.setDisplayName(node.getDisplayName());
 

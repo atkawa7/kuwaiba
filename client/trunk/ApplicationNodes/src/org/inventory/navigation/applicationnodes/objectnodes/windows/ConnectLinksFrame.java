@@ -16,6 +16,9 @@
 package org.inventory.navigation.applicationnodes.objectnodes.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,37 +26,79 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.utils.ExplorablePanel;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.explorer.view.BeanTreeView;
+import org.openide.util.Lookup;
+import org.openide.util.Lookup.Result;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
 
 /**
  * Show the activity log associated to an object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ConnectLinksFrame extends JFrame{
-    private JButton btnConnect;
-    private JButton btnClose;
-    
+    JLabel lblResults;
     private JScrollPane pnlScrollLeft;
     private JScrollPane pnlScrollRight;
     private JScrollPane pnlScrollCenter;
     private JList lstAvailableConnections;
     private BeanTreeView leftTree;
     private BeanTreeView rightTree;
+    private LocalObjectLight aSelectedObject;
+    private LocalObjectLight bSelectedObject;
 
     public ConnectLinksFrame(LocalObjectLight aSideRoot, LocalObjectLight bSideRoot, LocalObjectLight[] connections) {
         setLayout(new BorderLayout());
         setTitle(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TITLE_CONNECT_LINKS"));
         setSize(1000, 700);
         
-        JLabel instructions = new JLabel(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_INSTRUCTIONS_CONNECT_LINKS"));
-        instructions.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
-        add(instructions, BorderLayout.NORTH);
+        JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_INSTRUCTIONS_CONNECT_LINKS"));
+        lblInstructions.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
+        add(lblInstructions, BorderLayout.NORTH);
+        
+        lblResults = new JLabel();
+        lblResults.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
+        lblResults.setForeground(Color.RED);
+        add(lblResults, BorderLayout.SOUTH);
         
         ExplorablePanel pnlLeft = new ExplorablePanel();
         ExplorablePanel pnlRight = new ExplorablePanel();
+        Result<LocalObjectLight> aResult = pnlLeft.getLookup().lookupResult(LocalObjectLight.class);
+        aResult.addLookupListener(new LookupListener() {
+
+            @Override
+            public void resultChanged(LookupEvent ev) {
+                if (((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().hasNext())
+                    aSelectedObject = ((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().next();
+                else
+                    aSelectedObject = null;
+                lblResults.setForeground(Color.MAGENTA);
+                lblResults.setText((aSelectedObject == null ? "Free" : aSelectedObject.getName() + " [" + aSelectedObject.getClassName() + "]") + " -> " +
+                        (lstAvailableConnections.getSelectedValue() ==  null ? "No connection" : ((LocalObjectLight)lstAvailableConnections.getSelectedValue()).getName() + "[" + ((LocalObjectLight)lstAvailableConnections.getSelectedValue()).getClassName() + "]") + " -> " +
+                        (bSelectedObject == null ? "Free" : bSelectedObject.getName() + " [" + bSelectedObject.getClassName() + "]"));
+            }
+        });
+        
+        Result<LocalObjectLight> bResult = pnlRight.getLookup().lookupResult(LocalObjectLight.class);
+        bResult.addLookupListener(new LookupListener() {
+
+            @Override
+            public void resultChanged(LookupEvent ev) {
+                if (((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().hasNext())
+                    bSelectedObject = ((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().next();
+                else
+                    bSelectedObject = null;
+                lblResults.setForeground(Color.MAGENTA);
+                lblResults.setText((aSelectedObject == null ? "Free" : aSelectedObject.getName() + " [" + aSelectedObject.getClassName() + "]") + " -> " +
+                        (lstAvailableConnections.getSelectedValue() ==  null ? "No connection" : ((LocalObjectLight)lstAvailableConnections.getSelectedValue()).getName() + "[" + ((LocalObjectLight)lstAvailableConnections.getSelectedValue()).getClassName() + "]") + " -> " +
+                        (bSelectedObject == null ? "Free" : bSelectedObject.getName() + " [" + bSelectedObject.getClassName() + "]"));
+            }
+        });
                   
         pnlLeft.getExplorerManager().setRootContext(new ObjectNode(aSideRoot));
         pnlRight.getExplorerManager().setRootContext(new ObjectNode(bSideRoot));
@@ -62,7 +107,6 @@ public class ConnectLinksFrame extends JFrame{
         rightTree.setSize(400, 0);
         pnlRight.add(rightTree);
         pnlScrollRight = new JScrollPane();
-        pnlScrollRight.setSize(400, 700);
         pnlScrollRight.setViewportView(pnlRight);
         add(pnlScrollRight, BorderLayout.EAST);
         
@@ -70,9 +114,13 @@ public class ConnectLinksFrame extends JFrame{
         centralPanel.setLayout(new BorderLayout());
         lstAvailableConnections = new JList(connections);
         centralPanel.add(lstAvailableConnections,BorderLayout.CENTER);
-        centralPanel.add(new JButton("Connect"), BorderLayout.SOUTH);
+        JButton btnConnect = new JButton("Connect");
+        btnConnect.addActionListener(new BtnConnectActionListener());
+        centralPanel.add(btnConnect, BorderLayout.SOUTH);
+        
         pnlScrollCenter = new JScrollPane();
         pnlScrollCenter.setViewportView(centralPanel);
+        pnlScrollCenter.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         add(pnlScrollCenter, BorderLayout.CENTER);
         
         leftTree = new BeanTreeView();
@@ -82,5 +130,28 @@ public class ConnectLinksFrame extends JFrame{
         pnlScrollLeft = new JScrollPane();
         pnlScrollLeft.setViewportView(pnlLeft);
         add(pnlScrollLeft, BorderLayout.WEST);
+    }
+    
+    private class BtnConnectActionListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (lstAvailableConnections.getSelectedValue() == null)
+                lblResults.setText("Select a link from the list");
+            else{
+                if (CommunicationsStub.getInstance().connectPhysicalLinks(new String[]{aSelectedObject == null ? null :aSelectedObject.getClassName()}, 
+                        new Long[]{aSelectedObject == null ? null : aSelectedObject.getOid()}, 
+                        new String[]{((LocalObjectLight)lstAvailableConnections.getSelectedValue()).getClassName()}, 
+                        new Long[]{((LocalObjectLight)lstAvailableConnections.getSelectedValue()).getOid()}, 
+                        new String[]{bSelectedObject == null ? null :bSelectedObject.getClassName()}, 
+                        new Long[]{bSelectedObject == null ? null : bSelectedObject.getOid()})){
+                    lblResults.setForeground(Color.BLUE);
+                    lblResults.setText("Connection was made successfully");
+                } else{
+                    lblResults.setForeground(Color.RED);
+                    lblResults.setText(CommunicationsStub.getInstance().getError());
+                }
+            }
+        }
     }
 }

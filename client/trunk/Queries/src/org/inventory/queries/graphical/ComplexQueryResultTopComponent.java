@@ -230,7 +230,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
           if (e.isPopupTrigger()) {
             LocalObjectLight singleRecord = (LocalObjectLight)aTable.getValueAt(aTable.rowAtPoint(new Point(e.getX(), e.getY())), 0);
             JPopupMenu  menu = new JPopupMenu();
-            menu.add(new EditObjectAction(null));
+            menu.add(new EditObjectAction(singleRecord));
             if (CommunicationsStub.getInstance().getMetaForClass(singleRecord.getClassName(),false).isListType())
                 menu.add(new DeleteListTypeAction(singleRecord));
             else

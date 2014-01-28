@@ -159,7 +159,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                     case Constants.MAPPING_TIMESTAMP:
                     case Constants.MAPPING_PRIMITIVE:
                         //Those attributes that are not multiple, but reference another object
-                        //like nodeA or endpointB in physicalConnections should be ignored, at least by now
+                        //like endpointX in physicalConnections should be ignored, at least by now
                         if (!lam.getType().equals(LocalObjectLight.class))
                             property = new ObjectNodeProperty(
                                                                 lam.getName(),

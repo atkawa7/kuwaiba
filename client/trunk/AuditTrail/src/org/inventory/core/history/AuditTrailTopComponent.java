@@ -165,8 +165,7 @@ public final class AuditTrailTopComponent extends TopComponent {
 
     @Override
     public void componentClosed() {
-        myTable.removeAll();
-        myTable.setModel(null);        
+        myTable.removeAll();   
     }
 
     void writeProperties(java.util.Properties p) {
