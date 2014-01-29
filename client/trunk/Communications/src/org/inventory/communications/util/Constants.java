@@ -54,6 +54,10 @@ public class Constants {
      */
     public static String CLASS_GENERICPHYSICALLINK = "GenericPhysicalLink";
     /**
+     * Class Rack
+     */
+    public static String CLASS_RACK = "Rack";
+    /**
      * Name for the class User
      */
     public static String CLASS_USER = "User";
@@ -161,6 +165,14 @@ public class Constants {
      * Property id
      */
     public static final String PROPERTY_ID = "id";
+    /**
+     * Property rackUnits
+     */
+    public static final String PROPERTY_RACKUNITS = "rackUnits";
+    /**
+     * Property startRackUnit
+     */
+    public static final String PROPERTY_POSITION = "position";
     /**
      * Generic classes
      */

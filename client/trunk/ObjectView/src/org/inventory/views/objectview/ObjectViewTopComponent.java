@@ -54,7 +54,7 @@ import org.openide.util.Lookup;
 @ConvertAsProperties(dtd = "-//org.inventory.views.objectview//ObjectView//EN",
 autostore = false)
 public final class ObjectViewTopComponent extends TopComponent 
-        implements Provider, ActionListener,RefreshableTopComponent {
+        implements Provider, ActionListener, RefreshableTopComponent {
 
     private static ObjectViewTopComponent instance;
     /** path to the icon used by the component and its open action */
@@ -459,6 +459,7 @@ public final class ObjectViewTopComponent extends TopComponent
         final FormatTextPanel pnlFormat = new FormatTextPanel();
         DialogDescriptor dd = new DialogDescriptor(pnlFormat,"Text Settings",true,new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == DialogDescriptor.OK_OPTION){
                     if (pnlFormat.getNodesFontColor() != null)
@@ -581,9 +582,6 @@ public final class ObjectViewTopComponent extends TopComponent
     }
 
     void writeProperties(java.util.Properties p) {
-        // better to version settings since initial version as advocated at
-        // http://wiki.apidesign.org/wiki/PropertyFiles
-        p.setProperty("version", "1.0");
         p.setProperty("fontName", currentFont.getFontName());
         p.setProperty("fontSize", String.valueOf(currentFont.getSize()));
         p.setProperty("fontColor", String.valueOf(currentColor.getRGB()));
@@ -615,6 +613,7 @@ public final class ObjectViewTopComponent extends TopComponent
         return checkForUnsavedView(true);
     }
 
+    @Override
     public ExplorerManager getExplorerManager() {
         return em;
     }
@@ -656,6 +655,7 @@ public final class ObjectViewTopComponent extends TopComponent
         return currentFont;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         switch (e.getID()){
             case ViewScene.SCENE_CHANGE:

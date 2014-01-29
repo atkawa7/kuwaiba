@@ -188,6 +188,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLig
     protected Widget attachNodeWidget(LocalObjectLight node) {
         ObjectNodeWidget widget = new ObjectNodeWidget(this, node);
         nodesLayer.addChild(widget);
+        validate();
         return widget;
     }
 
@@ -196,6 +197,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLig
         ObjectConnectionWidget widget = new ObjectConnectionWidget(this, edge, freeRouter);
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(new EdgeMenu()));
         edgesLayer.addChild(widget);
+        validate();
         return widget;
     }
 

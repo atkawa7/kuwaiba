@@ -193,14 +193,13 @@ public class CommunicationsStub {
      */
     public List<LocalObjectLight> getObjectChildren(long oid, String className) {
         try{
-//            List <RemoteObjectLight> children = port.getObjectChildren(oid, className, 0,this.session.getSessionId());
-//            List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
-//
-//            for (RemoteObjectLight rol : children)
-//                res.add(new LocalObjectLightImpl(rol));
-//
-//            return res;
-            return null;
+            List <RemoteObjectLight> children = port.getObjectChildren(className, oid, 0,this.session.getSessionId());
+            List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
+
+            for (RemoteObjectLight rol : children)
+                res.add(new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName()));
+
+            return res;
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;

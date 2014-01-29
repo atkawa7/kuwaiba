@@ -20,7 +20,6 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -33,7 +32,6 @@ import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
-import org.inventory.views.objectview.scene.ObjectConnectionWidget;
 import org.inventory.views.objectview.scene.ObjectNodeWidget;
 import org.inventory.views.objectview.scene.ViewBuilder;
 import org.inventory.views.objectview.scene.ViewScene;
@@ -82,6 +80,7 @@ public class ObjectViewService implements LookupListener{
      * Updates the view when a new object is selected
      * @param ev
      */
+    @Override
     public void resultChanged(LookupEvent ev) {
         Lookup.Result lookupResult = (Lookup.Result)ev.getSource();
         if(lookupResult.allInstances().size() == 1){

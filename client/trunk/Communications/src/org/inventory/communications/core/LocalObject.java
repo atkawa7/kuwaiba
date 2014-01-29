@@ -17,6 +17,7 @@ package org.inventory.communications.core;
 
 import java.util.HashMap;
 import java.util.List;
+import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
 
 /**
@@ -76,16 +77,16 @@ public class LocalObject extends LocalObjectLight {
         return attributes.get(name).getClass();
     }   
 
-    @Override
-    public String toString(){
-        return this.getAttribute("name")==null?"":this.getAttribute("name").toString();
-    }
-
     public HashMap<String,Object> getAttributes() {
         return this.attributes;
     }
 
     public Object getAttribute(String name){
         return attributes.get(name);
+    }
+    
+    @Override
+    public String toString(){
+        return getAttribute(Constants.PROPERTY_NAME) + "[" + getClassName() + "]";
     }
 }
