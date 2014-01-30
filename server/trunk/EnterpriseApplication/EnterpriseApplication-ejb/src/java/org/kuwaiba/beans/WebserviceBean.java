@@ -1070,6 +1070,18 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
+    
+    @Override
+    public RemoteObjectLight[] getObjectsOfClassLight(String className, int maxResults) throws ServerSideException{
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try {
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectsOfClassLight(className, maxResults));
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
 
     @Override
     public ClassInfoLight[] getInstanceableListTypes() throws ServerSideException{
@@ -1266,7 +1278,53 @@ public class WebserviceBean implements WebserviceBeanRemote {
     @Override
     public void deletePhysicalConnection(String objectClass, long objectId) throws ServerSideException {
         throw new UnsupportedOperationException("Not supported yet.");
-    }   
+    }
+    
+    @Override
+    public void associateObjectToService(String objectClass, long objectId, String serviceClass, long serviceId) 
+            throws ServerSideException{
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            if (!mem.isSubClass("GenericService", serviceClass))
+                throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a service", serviceClass));
+            bem.createSpecialRelationship(serviceClass, serviceId, objectClass, objectId, "uses");
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void releaseObjectFromService(String serviceClass, long serviceId, long objectId) 
+            throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            if (!mem.isSubClass("GenericService", serviceClass))
+                throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a service", serviceClass));
+            bem.releaseSpecialRelationship(serviceClass, serviceId, "uses", objectId);
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteObjectLight[] getServiceResources(String serviceClass, long serviceId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            if (!mem.isSubClass("GenericService", serviceClass))
+                throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a service", serviceClass));
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getSpecialAttribute(serviceClass, serviceId, "uses"));
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
+    
 
     // </editor-fold>
 
@@ -1625,11 +1683,11 @@ public class WebserviceBean implements WebserviceBeanRemote {
     
     //Pools
     @Override
-    public long createPool(String name, String description, String instancesOfClass, long owner) throws ServerSideException{
+    public long createPool(long parentId, String name, String description, String instancesOfClass) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            return aem.createPool(name, description, instancesOfClass, owner);
+            return aem.createPool(parentId, name, description, instancesOfClass);
         }catch (Exception ex){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());

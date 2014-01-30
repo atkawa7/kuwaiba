@@ -334,7 +334,7 @@ public interface WebserviceBeanRemote {
     public void deleteListTypeItem(String className, long oid, boolean releaseRelationships) throws ServerSideException;
 
     public RemoteObjectLight[] getListTypeItems(String className) throws ServerSideException;
-
+    public RemoteObjectLight[] getObjectsOfClassLight(String className, int maxResults) throws ServerSideException;
     public ClassInfoLight[] getInstanceableListTypes() throws ServerSideException;
 
     public void deleteObjects(String classNames[], long[] oids, boolean releaseRelationships) throws ServerSideException;
@@ -353,6 +353,10 @@ public interface WebserviceBeanRemote {
     public void deletePhysicalConnection(String objectClass, long objectId) throws ServerSideException;
     public RemoteObjectLight[] getConnectionEndpoints(String connectionClass, long connectionId) throws ServerSideException;
     public void connectPhysicalLinks(String[] sideAClassNames, Long[] sideAIds, String[] linksClassNames, Long[] linksIds, String[] sideBClassNames, Long[] sideBIds) throws ServerSideException;
+    //Service Manager
+    public void associateObjectToService(String objectClass, long objectId, String serviceClass, long serviceId) throws ServerSideException;
+    public void releaseObjectFromService(String serviceClass, long serviceId, long objectId) throws ServerSideException;
+    public RemoteObjectLight[] getServiceResources(String serviceClass, long serviceId) throws ServerSideException;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
@@ -536,7 +540,7 @@ public interface WebserviceBeanRemote {
      */
     public Session validateCall(String methodName, String ipAddress, String sessionId) throws NotAuthorizedException;
     //Pools
-    public long createPool(String name, String description, String instancesOfClass, long owner) throws ServerSideException;
+    public long createPool(long parentId, String name, String description, String instancesOfClass) throws ServerSideException;
     
     public long createPoolItem(long poolId, String className, String[] attributeNames, String[][] attributeValues, long templateId) throws ServerSideException;
 

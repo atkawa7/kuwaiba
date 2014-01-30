@@ -1176,7 +1176,7 @@
                           </class>
                           <class name="Rack" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.equipment.containers">
                             <attributes>
-                              <attribute name="rackUnits" type="Integer" javaModifiers="4" applicationModifiers="0"/>
+                              <attribute name="rackUnits" type="Float" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="type" type="RackType" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="height" type="Float" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="width" type="Float" javaModifiers="4" applicationModifiers="0"/>

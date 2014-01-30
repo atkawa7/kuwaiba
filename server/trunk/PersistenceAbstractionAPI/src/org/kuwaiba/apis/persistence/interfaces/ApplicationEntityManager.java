@@ -393,16 +393,17 @@ public interface ApplicationEntityManager {
     //Pools
     /**
      * Creates a pool
+     * @param parentId Id of the parent object. -1 
      * @param name Pool name
      * @param description Pool description
      * @param instancesOfClass What kind of objects can this pool contain? 
-     * @param owner Pool owner id
      * @return The id of the new pool
      * @throws MetadataObjectNotFoundException If instancesOfClass is not a valid subclass of InventoryObject
      * @throws InvalidArgumentException If the owner doesn't exist
+     * @throws ObjectNotFoundException If the parent can not be found
      */
-    public long createPool(String name, String description, String instancesOfClass, long owner) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException;
+    public long createPool(long parentId, String name, String description, String instancesOfClass) 
+            throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
 
     /**
      * Creates an object inside a pool

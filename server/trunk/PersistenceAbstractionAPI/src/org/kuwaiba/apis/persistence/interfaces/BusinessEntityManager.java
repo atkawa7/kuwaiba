@@ -16,7 +16,6 @@
 
 package org.kuwaiba.apis.persistence.interfaces;
 
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
@@ -253,6 +252,17 @@ public interface BusinessEntityManager {
             throws MetadataObjectNotFoundException, ObjectNotFoundException;
     
     /**
+     * Recursively gets all the instances of  given class
+     * @param className Class name. It mist be a subclass of InventoryObject
+     * @param maxResults Max number of results. 0 to get all
+     * @return a list of instances 
+     * @throws MetadataObjectNotFoundException if the class can not be found
+     * @throws InvalidArgumentException If the class is not subclass of InventoryObject
+     */
+    public List<RemoteBusinessObjectLight> getObjectsOfClassLight(String className, int maxResults)
+            throws MetadataObjectNotFoundException, InvalidArgumentException;
+    
+    /**
      * Creates a relationship between two elements and labels it
      * @param aObjectClass a side object class
      * @param aObjectId a side object id
@@ -275,6 +285,18 @@ public interface BusinessEntityManager {
      * @throws MetadataObjectNotFoundException  If the class can not be found
      */
     public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException;
+    
+    /**
+     * Release all special relationships with a given name whose target object id matches with teh one provided
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param relationshipName Relationship name
+     * @param targetId Id of the object at the end of the relationship
+     * @throws ObjectNotFoundException If the object can not be found
+     * @throws MetadataObjectNotFoundException  If the class can not be found
+     */
+    public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName, long targetId)
             throws ObjectNotFoundException, MetadataObjectNotFoundException;
 
     /**

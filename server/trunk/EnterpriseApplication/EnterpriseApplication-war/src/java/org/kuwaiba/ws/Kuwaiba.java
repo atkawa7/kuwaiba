@@ -27,7 +27,6 @@ import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import org.kuwaiba.beans.WebserviceBeanRemote;
-import org.kuwaiba.beans.sessions.Session;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
 import org.kuwaiba.ws.todeserialize.TransientQuery;
@@ -76,7 +75,7 @@ public class Kuwaiba {
             @WebParam(name = "password") String password) throws Exception{
         try{
             String remoteAddress = getIPAddress();
-            return wsBean.createSession(username,password, remoteAddress);
+            return wsBean.createSession(username, password, remoteAddress);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -804,6 +803,7 @@ public class Kuwaiba {
      */
     /**
      * Creates a pool
+     * @param parentId Id of the parent of this pool. -1 for none
      * @param name Pool name
      * @param description Pool description
      * @param instancesOfClass What kind of objects can this pool contain? 
@@ -812,14 +812,14 @@ public class Kuwaiba {
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createPool")
-    public long createPool(@WebParam(name = "name")String name,
+    public long createPool(@WebParam(name = "parentid")long parentId,
+            @WebParam(name = "name")String name,
             @WebParam(name = "description")String description,
             @WebParam(name = "instancesOfClass")String instancesOfClass,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            Session session = wsBean.validateCall("createPool", getIPAddress(), sessionId); //NOI18N
-            UserInfo user = wsBean.getUserInSession(sessionId);
-            return wsBean.createPool(name, description, instancesOfClass, user.getOid());
+            wsBean.validateCall("createPool", getIPAddress(), sessionId); //NOI18N
+            return wsBean.createPool(parentId, name, description, instancesOfClass);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -1118,6 +1118,23 @@ public class Kuwaiba {
         try{
             wsBean.validateCall("getObjectLight", getIPAddress(), sessionId);
             return wsBean.getObjectLight(objectClass, oid);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    @WebMethod(operationName = "getObjectsOfClassLight")
+    public RemoteObjectLight[] getObjectsOfClassLight(@WebParam(name = "objectclass") String objectClass,
+            @WebParam(name = "maxResults")int maxResults,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("getObjectsOfClassLight", getIPAddress(), sessionId);
+            return wsBean.getObjectsOfClassLight(objectClass, maxResults);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -1572,6 +1589,75 @@ public class Kuwaiba {
         }
     }
     
+    //Services manager
+    /**
+     * Associates an object (a resource) to an existing service
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param serviceClass service class
+     * @param serviceId service id
+     * @param sessionId Session token
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "associateObjectToService")
+    public void associateObjectToService (
+            @WebParam(name = "objectClass")String objectClass,
+            @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "serviceClass")String serviceClass,
+            @WebParam(name = "serviceId")long serviceId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            wsBean.validateCall("associateObjectToService", getIPAddress(), sessionId);
+            wsBean.associateObjectToService(objectClass, objectId, serviceClass, serviceId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    @WebMethod(operationName = "releaseObjectFromService")
+    public void releaseObjectFromService (
+            @WebParam(name = "serviceClass")String serviceClass,
+            @WebParam(name = "serviceId")long serviceId,
+            @WebParam(name = "objectId")long targetId,           
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            wsBean.validateCall("releaseObjectFromService", getIPAddress(), sessionId);
+            wsBean.releaseObjectFromService(serviceClass, serviceId, targetId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    @WebMethod(operationName = "getServiceResources")
+    public RemoteObjectLight[] getServiceResources (
+            @WebParam(name = "serviceClass")String serviceClass,
+            @WebParam(name = "serviceId")long serviceId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            wsBean.validateCall("getServiceResources", getIPAddress(), sessionId);
+            return wsBean.getServiceResources(serviceClass, serviceId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    
+    //Audit Trail
     /**
      * Retrieves the log entries for a given [business] object
      * @param objectClass Object class

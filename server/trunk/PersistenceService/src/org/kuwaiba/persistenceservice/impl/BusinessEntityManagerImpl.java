@@ -44,10 +44,13 @@ import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.kernel.Traversal;
 
 /**
  * Business entity manager reference implementation (using Neo4J as backend)
@@ -524,6 +527,27 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throw new RuntimeException(ex.getMessage());
         }
     }
+    
+    public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName, long targetId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException {
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            Node node = getInstanceOfClass(objectClass, objectId);
+            for (Relationship rel : node.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO_SPECIAL)){
+                if (rel.getProperty(Constants.PROPERTY_NAME).equals(relationshipName) &&
+                            rel.getEndNode().getId() == targetId)
+                    rel.delete();
+            }
+            tx.success();
+            tx.finish();
+        }catch(Exception ex){
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "releaseSpecialRelationship: {0}", ex.getMessage()); //NOI18N
+            tx.failure();
+            tx.finish();
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
 
     public void moveObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
@@ -727,6 +751,35 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throw new RuntimeException(ex.getMessage());
         }
     }
+    
+    @Override
+    public List<RemoteBusinessObjectLight> getObjectsOfClassLight(String parentClass, int maxResults)
+            throws MetadataObjectNotFoundException, InvalidArgumentException {
+        
+        if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, parentClass))
+            throw new InvalidArgumentException(String.format("Class %s is not subclass of InventoryObject", parentClass), Level.INFO);
+        
+        Node classMetadataNode = classIndex.get(Constants.PROPERTY_NAME, parentClass).getSingle();
+        if (classMetadataNode == null)
+            throw new MetadataObjectNotFoundException(parentClass);
+        
+        List<RemoteBusinessObjectLight> instances = new ArrayList<RemoteBusinessObjectLight>();
+        
+        TraversalDescription traversal = Traversal.description().breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
+        int counter = 0;
+        for(Path p : traversal.traverse(classMetadataNode)){
+            for (Relationship rel : p.endNode().getRelationships(RelTypes.INSTANCE_OF)){
+                if (maxResults > 0){
+                    if (counter < maxResults)
+                        counter ++;
+                    else break;
+                }
+                instances.add(Util.createRemoteObjectLightFromNode(rel.getStartNode()));
+            }
+        }
+        
+        return instances;
+    }
 
     @Override
     public List<RemoteBusinessObject> getChildrenOfClass(long parentOid, String parentClass, String classToFilter, int maxResults)
@@ -830,7 +883,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     public List<RemoteBusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) throws ObjectNotFoundException, MetadataObjectNotFoundException {
         Node instance = getInstanceOfClass(objectClass, objectId);
         List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
-        for (Relationship rel : instance.getRelationships(RelTypes.RELATED_TO_SPECIAL))
+        for (Relationship rel : instance.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO_SPECIAL))
             if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName))
                 res.add(rel.getEndNode().getId() == objectId ? 
                         Util.createRemoteObjectLightFromNode(rel.getStartNode()) : Util.createRemoteObjectLightFromNode(rel.getEndNode()));

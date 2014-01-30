@@ -85,6 +85,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
      */
     private Index<Node> classIndex;
     /**
+     * Object index
+     */
+    private Index<Node> objectIndex;
+    /**
      * Users index
      */
     private Index<Node> userIndex;
@@ -128,6 +132,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         this.queryIndex = graphDb.index().forNodes(Constants.INDEX_QUERIES);
         this.classIndex = graphDb.index().forNodes(Constants.INDEX_CLASS);
         this.listTypeItemsIndex = graphDb.index().forNodes(Constants.INDEX_LIST_TYPE_ITEMS);
+        this.objectIndex = graphDb.index().forNodes(Constants.INDEX_OBJECTS);
         this.generalViewsIndex = graphDb.index().forNodes(Constants.INDEX_GENERAL_VIEWS);
         this.poolsIndex = graphDb.index().forNodes(Constants.INDEX_POOLS);
         
@@ -1217,10 +1222,29 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     }
     
     //Pools
-    public long createPool(String name, String description, String instancesOfClass, long owner) throws MetadataObjectNotFoundException, InvalidArgumentException {
+    /**
+     * Creates a pool
+     * @param parentId Parent id. -1 for none
+     * @param name Pool name
+     * @param description Pool description
+     * @param instancesOfClass What kind of elements can be contained in this pool
+     * @return the id of the new pool
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException 
+     */
+    public long createPool(long parentId, String name, String description, String instancesOfClass)
+            throws MetadataObjectNotFoundException, InvalidArgumentException {
         Transaction tx = null;
         try{
             tx = graphDb.beginTx();
+            
+            Node parentNode = null;
+            if (parentId != -1){
+                parentNode = objectIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
+
+                if (parentNode == null)
+                    throw new ObjectNotFoundException("N/A", parentId);
+            }
             
             Node poolNode =  graphDb.createNode();
             if (name != null)
@@ -1230,32 +1254,28 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             
             ClassMetadata classMetadata = cm.getClass(instancesOfClass);
             if (classMetadata == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", instancesOfClass));
-            
-            Node user = userIndex.get(Constants.PROPERTY_ID, owner).getSingle();
-            if (user == null)
-                throw new InvalidArgumentException(String.format("User with id %1 doesn't exist", owner), Level.SEVERE);
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", instancesOfClass));
             
             poolNode.setProperty(Constants.PROPERTY_CLASS_NAME, instancesOfClass);
-            poolNode.createRelationshipTo(user, RelTypes.OWNS_POOL);
+            
+            if (parentNode != null)
+                poolNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
             
             poolsIndex.putIfAbsent(poolNode, Constants.PROPERTY_ID, poolNode.getId());
             tx.success();
+            tx.finish();
             return poolNode.getId();
-
         }catch(Exception ex){
             Logger.getLogger("createPool: "+ex.getMessage()); //NOI18N
             tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
         }
     }
 
     /**
      * Creates an object inside a pool
-     * @param poolId Parent pool id
+     * @param poolId Parent pool id. 
      * @param attributeNames Attributes to be set
      * @param attributeValues Attribute values to be set
      * @param templateId Template used to create the object, if applicable. -1 for none
@@ -1278,19 +1298,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             Node pool = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
             
             if (pool == null)
-                throw new ApplicationObjectNotFoundException(String.format("Pool with id %1s can not be found", poolId));
+                throw new ApplicationObjectNotFoundException(String.format("Pool with id %s can not be found", poolId));
             
             if (!pool.hasProperty(Constants.PROPERTY_CLASS_NAME))
                 throw new InvalidArgumentException("This pool has not set his class name attribute", Level.INFO);
             
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %1s can not be found", className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
             
             ClassMetadata classMetadata = cm.getClass(className);
             
             if (!cm.isSubClass((String)pool.getProperty(Constants.PROPERTY_CLASS_NAME), className))
-                throw new InvalidArgumentException(String.format("Class %1s is not subclass of %2s", className, (String)pool.getProperty(Constants.PROPERTY_CLASS_NAME)), Level.OFF);
+                throw new InvalidArgumentException(String.format("Class %s is not subclass of %s", className, (String)pool.getProperty(Constants.PROPERTY_CLASS_NAME)), Level.OFF);
             
             HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
             if (attributeNames != null && attributeValues != null){
@@ -1320,7 +1340,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             for (long id : ids){
                 Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, id).getSingle();
                 if (poolNode == null)
-                    throw new InvalidArgumentException(String.format("A pool with id %1 does not exist", id),Level.INFO);
+                    throw new InvalidArgumentException(String.format("A pool with id %s does not exist", id),Level.INFO);
                 
                 //Let's delete the objects inside, if possible
                 HashMap<String, long[]> toBeDeleted = new HashMap<String, long[]>();
