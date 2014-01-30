@@ -305,6 +305,20 @@ public class CommunicationsStub {
             return null;
         }
     }
+    
+    public LocalObjectLight[] getParents(String objectClass, long objectId) {
+        try{
+            List<RemoteObjectLight> values = port.getParents(objectClass, objectId, session.getSessionId());
+            LocalObjectLight[] res = new LocalObjectLight[values.size()];
+            for (int i = 0; i < values.size(); i++)
+                res[i]= new LocalObjectLight(values.get(i).getOid(), values.get(i).getName(), values.get(i).getClassName());
+
+            return res;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
 
     public LocalObjectLight[] getSpecialAttribute(String objectClass, long objectId, String attributeName){
         try{
@@ -1045,6 +1059,22 @@ public class CommunicationsStub {
         }
     }
     
+    public LocalObjectLight[] getPhysicalPath(String objectClass, long objectId) {
+        try{
+            List<RemoteObjectLight> trace = port.getPhysicalPath(objectClass, objectId, session.getSessionId());
+            LocalObjectLight[] res = new LocalObjectLight[trace.size()];
+            int i = 0;
+            for (RemoteObjectLight element : trace){
+                res[i] = new LocalObjectLight(element.getOid(), element.getName(), element.getClassName());
+                i++;
+            }
+            
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
     
     public boolean connectPhysicalLinks(String[] sideAClassNames, Long[] sideAIds, 
                 String[] linksClassNames, Long[] linksIds, String[] sideBClassNames, 

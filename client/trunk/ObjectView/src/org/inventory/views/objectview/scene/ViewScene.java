@@ -205,7 +205,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLig
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         ObjectConnectionWidget widget = new ObjectConnectionWidget(this, edge, freeRouter);
         LocalClassMetadataLight cm = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
-        if (cm.getValidator(Constants.VALIDATOR__PHYSICAL_CONTAINER) == 1)
+        if (cm.getValidator(Constants.VALIDATOR_PHYSICAL_CONTAINER) == 1)
             widget.getActions().addAction(ActionFactory.createPopupMenuAction(new EdgeMenu()));
         edgesLayer.addChild(widget);
         validate();
@@ -339,8 +339,8 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLig
     }
 
     public void clear(){
-        List<LocalObjectLight> clonedNodes = new ArrayList(getNodes());
-        List<LocalObjectLight> clonedEdges = new ArrayList(getEdges());
+        List<LocalObjectLight> clonedNodes = new ArrayList<LocalObjectLight>(getNodes());
+        List<LocalObjectLight> clonedEdges = new ArrayList<LocalObjectLight>(getEdges());
         
         for(LocalObjectLight lol : clonedNodes)
             removeNode(lol);

@@ -19,6 +19,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObjectLight;
 
 /**
  * Gets the selected object oid
@@ -36,8 +38,14 @@ public final class ShowObjectIdAction extends AbstractAction{
 
     @Override
     public void actionPerformed(ActionEvent ev) {
+        LocalObjectLight[] parents = CommunicationsStub.getInstance().getParents(className, id);
+        String msg = "";
+        if (parents != null){
+            for (LocalObjectLight parent : parents)
+                msg +=  ":" +parent;
+        }
         JOptionPane.showMessageDialog(null, 
-                new SelectableLabel(id + " ["+ className +"]"), //NOI18N
+                new SelectableLabel(id + " ["+ className +"]" + msg), //NOI18N
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SHOW_OBJECT_ID_ACTION_TITLE"),
                 JOptionPane.INFORMATION_MESSAGE);
     }

@@ -22,16 +22,16 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.windows.ConnectLinksFrame;
 
 /**
- * This action allows to connect the links (cables, fibers) inside a container
+ * This action allows the user relate the current object to a service as a resource
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ConnectLinksAction extends AbstractAction {
+public class RelateToServiceAction extends AbstractAction {
     private String objectClass;
     private long objectId;
-    public ConnectLinksAction(String objectClass, long objectId) {
+    public RelateToServiceAction(String objectClass, long objectId) {
         this.objectClass = objectClass;
         this.objectId = objectId;
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CONNECT_LINKS"));
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_RELATE_TO_SERVICE"));
     }
 
     

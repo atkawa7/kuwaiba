@@ -232,6 +232,12 @@
 <message name="getObjectLightResponse">
 <part name="parameters" element="tns:getObjectLightResponse"/>
 </message>
+<message name="getParents">
+<part name="parameters" element="tns:getParents"/>
+</message>
+<message name="getParentsResponse">
+<part name="parameters" element="tns:getParentsResponse"/>
+</message>
 <message name="getParentOfClass">
 <part name="parameters" element="tns:getParentOfClass"/>
 </message>
@@ -315,6 +321,12 @@
 </message>
 <message name="connectPhysicalLinksResponse">
 <part name="parameters" element="tns:connectPhysicalLinksResponse"/>
+</message>
+<message name="getPhysicalPath">
+<part name="parameters" element="tns:getPhysicalPath"/>
+</message>
+<message name="getPhysicalPathResponse">
+<part name="parameters" element="tns:getPhysicalPathResponse"/>
 </message>
 <message name="deletePhysicalConnection">
 <part name="parameters" element="tns:deletePhysicalConnection"/>
@@ -748,6 +760,11 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectLightResponse" message="tns:getObjectLightResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectLight/Fault/Exception"/>
 </operation>
+<operation name="getParents">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getParentsRequest" message="tns:getParents"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getParentsResponse" message="tns:getParentsResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getParents/Fault/Exception"/>
+</operation>
 <operation name="getParentOfClass">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getParentOfClassRequest" message="tns:getParentOfClass"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getParentOfClassResponse" message="tns:getParentOfClassResponse"/>
@@ -817,6 +834,11 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/connectPhysicalLinksRequest" message="tns:connectPhysicalLinks"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/connectPhysicalLinksResponse" message="tns:connectPhysicalLinksResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/connectPhysicalLinks/Fault/Exception"/>
+</operation>
+<operation name="getPhysicalPath">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPhysicalPathRequest" message="tns:getPhysicalPath"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPhysicalPathResponse" message="tns:getPhysicalPathResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPhysicalPath/Fault/Exception"/>
 </operation>
 <operation name="deletePhysicalConnection">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deletePhysicalConnectionRequest" message="tns:deletePhysicalConnection"/>
@@ -1470,6 +1492,18 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="getParents">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="getParentOfClass">
 <soap:operation soapAction=""/>
 <input>
@@ -1627,6 +1661,18 @@
 </fault>
 </operation>
 <operation name="connectPhysicalLinks">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getPhysicalPath">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

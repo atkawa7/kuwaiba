@@ -45,6 +45,7 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObje
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ReleaseMirrorPortAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectAuditTrailAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowPhysicalPathAction;
 import org.inventory.navigation.applicationnodes.objectnodes.properties.ObjectNodeProperty;
 import org.openide.actions.CopyAction;
 import org.openide.actions.CutAction;
@@ -293,7 +294,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                             null, //Separator
                             com.getMetaForClass(object.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_ENDPOINT) == 1 ? new ConnectMirrorPortAction(object.getClassName(), object.getOid()) : null,
                             com.getMetaForClass(object.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_ENDPOINT) == 1 ? new ReleaseMirrorPortAction(object.getClassName(), object.getOid()) : null,
-                            com.getMetaForClass(object.getClassName(), false).getValidator(Constants.VALIDATOR__PHYSICAL_CONTAINER) == 1 ? new ConnectLinksAction(object.getClassName(), object.getOid()) : null,
+                            com.getMetaForClass(object.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_CONTAINER) == 1 ? new ConnectLinksAction(object.getClassName(), object.getOid()) : null,
+                            com.getMetaForClass(object.getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_ENDPOINT) == 1 ? new ShowPhysicalPathAction(object.getClassName(), object.getOid()) : null,
                             null,
                             showObjectAuditTrailAction == null ? showObjectAuditTrailAction = new ShowObjectAuditTrailAction(this) : showObjectAuditTrailAction,
                             explorerAction,

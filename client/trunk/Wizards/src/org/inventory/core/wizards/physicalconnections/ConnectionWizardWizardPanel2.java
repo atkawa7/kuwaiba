@@ -81,7 +81,7 @@ public class ConnectionWizardWizardPanel2 implements WizardDescriptor.Panel {
             for(LocalObjectListItem type : types)
                 ((ConnectionWizardVisualPanel2)component).getCmbConnectionType().addItem(type);
         }
-        if (com.getMetaForClass(connectionTypeClass, false).getValidator(Constants.VALIDATOR__PHYSICAL_CONTAINER) == 1){
+        if (com.getMetaForClass(connectionTypeClass, false).getValidator(Constants.VALIDATOR_PHYSICAL_CONTAINER) == 1){
             LocalClassMetadataLight[] portClasses = com.getLightSubclasses(Constants.CLASS_GENERICPHYSICALLINK, false, false);
             if (portClasses != null){
                 for(LocalClassMetadataLight portClass : portClasses)

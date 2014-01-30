@@ -264,6 +264,14 @@
 
 <xs:element name="getParentResponse" type="tns:getParentResponse"/>
 
+<xs:element name="getParents" type="tns:getParents"/>
+
+<xs:element name="getParentsResponse" type="tns:getParentsResponse"/>
+
+<xs:element name="getPhysicalPath" type="tns:getPhysicalPath"/>
+
+<xs:element name="getPhysicalPathResponse" type="tns:getPhysicalPathResponse"/>
+
 <xs:element name="getPoolItems" type="tns:getPoolItems"/>
 
 <xs:element name="getPoolItemsResponse" type="tns:getPoolItemsResponse"/>
@@ -555,6 +563,20 @@
 <xs:complexType name="createPhysicalConnectionResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getParents">
+<xs:sequence>
+<xs:element name="objectclass" type="xs:string" minOccurs="0"/>
+<xs:element name="oid" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getParentsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -1367,6 +1389,20 @@
 <xs:complexType name="createObjectResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getPhysicalPath">
+<xs:sequence>
+<xs:element name="objectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="objectId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getPhysicalPathResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 

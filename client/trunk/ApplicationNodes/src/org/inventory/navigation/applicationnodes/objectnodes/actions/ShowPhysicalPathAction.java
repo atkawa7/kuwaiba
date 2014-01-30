@@ -19,29 +19,36 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.navigation.applicationnodes.objectnodes.windows.ConnectLinksFrame;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.objectnodes.windows.PhysicalPathTopComponent;
+import org.openide.util.Lookup;
 
 /**
- * This action allows to connect the links (cables, fibers) inside a container
+ * This action shows the physical trace from a port
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ConnectLinksAction extends AbstractAction {
+public class ShowPhysicalPathAction extends AbstractAction {
     private String objectClass;
     private long objectId;
-    public ConnectLinksAction(String objectClass, long objectId) {
+    private NotificationUtil nu;
+    public ShowPhysicalPathAction(String objectClass, long objectId) {
         this.objectClass = objectClass;
         this.objectId = objectId;
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CONNECT_LINKS"));
+        this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SHOW_PHYSICAL_PATH"));
     }
 
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight[] links = CommunicationsStub.getInstance().getObjectSpecialChildren(objectClass, objectId);
-        LocalObjectLight[] containerEndpoints = CommunicationsStub.getInstance().getConnectionEndpoints(objectClass, objectId);
-        ConnectLinksFrame frame = new ConnectLinksFrame(containerEndpoints[0],containerEndpoints[1], links);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        LocalObjectLight[] trace = CommunicationsStub.getInstance().getPhysicalPath(objectClass, objectId);
+        if (trace == null)
+            nu.showSimplePopup("Error", NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());
+        else{
+            PhysicalPathTopComponent tc = new PhysicalPathTopComponent(trace);
+            tc.open();
+            tc.requestActive();
+        }
     }
     
 }
