@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.util.Constants;
@@ -163,17 +165,24 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLig
         setActiveTool(ACTION_SELECT);
         addObjectSceneListener(new ObjectSceneListener() {
 
+            @Override
             public void objectAdded(ObjectSceneEvent ose, Object o) {}
+            @Override
             public void objectRemoved(ObjectSceneEvent ose, Object o) {}
+            @Override
             public void objectStateChanged(ObjectSceneEvent ose, Object o, ObjectState os, ObjectState os1) {}
+            @Override
             public void selectionChanged(ObjectSceneEvent ose, Set<Object> oldSelection, Set<Object> newSelection) {
                 if (newSelection.size() == 1){
                     fireChangeEvent(new ActionEvent(newSelection.iterator().next(),
                             SCENE_OBJECTSELECTED, "object-selected-operation"));
                 }
             }
+            @Override
             public void highlightingChanged(ObjectSceneEvent ose, Set<Object> set, Set<Object> set1) {}
+            @Override
             public void hoverChanged(ObjectSceneEvent ose, Object o, Object o1) {}
+            @Override
             public void focusChanged(ObjectSceneEvent ose, Object o, Object o1) {}
         }, ObjectSceneEventType.OBJECT_SELECTION_CHANGED);
         this.notifier = notifier;
@@ -195,7 +204,9 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLig
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         ObjectConnectionWidget widget = new ObjectConnectionWidget(this, edge, freeRouter);
-        widget.getActions().addAction(ActionFactory.createPopupMenuAction(new EdgeMenu()));
+        LocalClassMetadataLight cm = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
+        if (cm.getValidator(Constants.VALIDATOR__PHYSICAL_CONTAINER) == 1)
+            widget.getActions().addAction(ActionFactory.createPopupMenuAction(new EdgeMenu()));
         edgesLayer.addChild(widget);
         validate();
         return widget;

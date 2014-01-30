@@ -71,7 +71,7 @@ public class RackViewService implements LookupListener {
         if (rack == null)
             rvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
         
-        Float rackUnits = (Float)rack.getAttribute(Constants.PROPERTY_RACKUNITS);
+        Integer rackUnits = (Integer)rack.getAttribute(Constants.PROPERTY_RACKUNITS);
         if (rackUnits == null || rackUnits == 0){
             rvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, 
                     String.format("attribute %s in rack %s doesn not exist or is not set correctly", Constants.PROPERTY_RACKUNITS, lol.toString()));
@@ -88,8 +88,8 @@ public class RackViewService implements LookupListener {
                         scene.clear();
                         return;
                     }
-                    Float elementRackUnits = (Float)theWholeChild.getAttribute(Constants.PROPERTY_RACKUNITS);
-                    Float position = (Float)theWholeChild.getAttribute(Constants.PROPERTY_POSITION);
+                    Integer elementRackUnits = (Integer)theWholeChild.getAttribute(Constants.PROPERTY_RACKUNITS);
+                    Integer position = (Integer)theWholeChild.getAttribute(Constants.PROPERTY_POSITION);
                     
                     if (elementRackUnits == null ||  position == null || elementRackUnits == 0 || position == 0) {
                         rvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, 
@@ -101,7 +101,7 @@ public class RackViewService implements LookupListener {
                     
                     Widget newElement = scene.addNode(theWholeChild);
                     newElement.setPreferredSize(new Dimension(RackViewScene.STANDARD_RACK_WIDTH, (int)(RackViewScene.RACK_UNIT_IN_PX * elementRackUnits)));
-                    newElement.setPreferredLocation(new Point(0, (int)(RackViewScene.RACK_UNIT_IN_PX * position)));
+                    newElement.setPreferredLocation(new Point(0, RackViewScene.RACK_UNIT_IN_PX * position - RackViewScene.RACK_UNIT_IN_PX));
                     rackUnitsCounter += elementRackUnits;
                 }
                 
@@ -112,10 +112,10 @@ public class RackViewService implements LookupListener {
                     return;
                 }
                 
-                scene.getRackWidget().setPreferredSize(new Dimension(RackViewScene.STANDARD_RACK_WIDTH, (int)(RackViewScene.RACK_UNIT_IN_PX * rackUnits)));
+                scene.getRackWidget().setPreferredSize(new Dimension(RackViewScene.STANDARD_RACK_WIDTH , (int)(RackViewScene.RACK_UNIT_IN_PX * rackUnits)));
                 for (String attribute : rack.getObjectMetadata().getAttributeNames())
                     scene.addInfoLabel(attribute +": " + (rack.getAttribute(attribute) == null ? "" : rack.getAttribute(attribute).toString()), false);
-                scene.addInfoLabel("Usage Percentage: "+ Math.round((rackUnitsCounter/rackUnits) * 100) +"%", true);
+                scene.addInfoLabel("Usage Percentage: "+ Math.round((float)rackUnitsCounter * 100/rackUnits) +"% (" + rackUnitsCounter + "U/" + rackUnits + "U)", true);
             }
         }
     }

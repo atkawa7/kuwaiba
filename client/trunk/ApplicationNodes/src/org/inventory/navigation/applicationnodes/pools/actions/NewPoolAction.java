@@ -72,7 +72,7 @@ public class NewPoolAction extends AbstractAction{
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
         
-                    LocalObjectLight newPool = com.createPool(((JTextField)pnlMyDialog.getComponent("txtName")).getText(), 
+                    LocalObjectLight newPool = com.createPool(-1, ((JTextField)pnlMyDialog.getComponent("txtName")).getText(), 
                             ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), 
                             ((LocalClassMetadataLight)((JComboBox)pnlMyDialog.getComponent("lstType")).getSelectedItem()).getClassName());
                     

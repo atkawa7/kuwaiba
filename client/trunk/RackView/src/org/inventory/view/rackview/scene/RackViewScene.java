@@ -21,8 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
+import org.netbeans.api.visual.border.Border;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.graph.GraphScene;
+import org.netbeans.api.visual.layout.Layout;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Widget;
@@ -36,8 +38,12 @@ public class RackViewScene extends GraphScene<LocalObject, LocalObject> {
     public static final int RACK_UNIT_IN_PX = 20;
     private Widget rackWidget;
     private Widget infoWidget;
+    private Layout verticalLayout;
+    private Border elementBorder;
 
     public RackViewScene() {
+        this.verticalLayout = LayoutFactory.createVerticalFlowLayout();
+        this.elementBorder = BorderFactory.createEmptyBorder(5, 10, 0, 10);
         this.rackWidget = new Widget(this);
         this.rackWidget.setOpaque(true);
         this.rackWidget.setLayout(LayoutFactory.createAbsoluteLayout());
@@ -56,13 +62,13 @@ public class RackViewScene extends GraphScene<LocalObject, LocalObject> {
         Widget widget = new Widget(this);
         widget.setPreferredSize(new Dimension(STANDARD_RACK_WIDTH, 50));
         widget.setOpaque(true);
-        widget.setBorder(BorderFactory.createEmptyBorder(10,10));
+        widget.setBorder(elementBorder);
         widget.setBackground(new Color(136, 170, 0));
-        widget.setLayout(LayoutFactory.createVerticalFlowLayout());
+        widget.setLayout(verticalLayout);
         LabelWidget txtName = new LabelWidget(this, node.toString());
         LabelWidget txtInfo  = new LabelWidget(this, "Position: "+ 
-                node.getAttribute(Constants.PROPERTY_POSITION) + " - " + 
-                "Size: " +node.getAttribute(Constants.PROPERTY_RACKUNITS));
+                node.getAttribute(Constants.PROPERTY_POSITION) + "U - " + 
+                "Size: " + node.getAttribute(Constants.PROPERTY_RACKUNITS) + "U");
         txtName.setForeground(Color.WHITE);
         txtInfo.setForeground(Color.WHITE);
         widget.addChild(txtName);

@@ -41,14 +41,23 @@ public final class ConnectionWizardVisualPanel2 extends JPanel {
     public JComboBox getCmbChildrenType() {
         return cmbChildrenType;
     }
-    
-    public JSpinner getSpnNumberOfChildren() {
-        return spnNumberOfChildren;
-    }
 
     public JTextField getTxtName() {
         return txtName;
     }
+
+    public JSpinner getSpnNumberOfChildren() {
+        return spnNumberOfChildren;
+    }
+
+    public void hideLinksRelatedInfo() {
+        this.spnNumberOfChildren.setVisible(false);
+        this.cmbChildrenType.setVisible(false);
+        this.lblChildrenType.setVisible(false);
+        this.lblNumberOfchildren.setVisible(false);
+    }
+    
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

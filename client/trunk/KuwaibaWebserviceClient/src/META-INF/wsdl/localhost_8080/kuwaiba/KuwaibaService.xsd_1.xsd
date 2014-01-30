@@ -12,6 +12,10 @@
 
 <xs:element name="addPossibleChildrenResponse" type="tns:addPossibleChildrenResponse"/>
 
+<xs:element name="associateObjectToService" type="tns:associateObjectToService"/>
+
+<xs:element name="associateObjectToServiceResponse" type="tns:associateObjectToServiceResponse"/>
+
 <xs:element name="closeSession" type="tns:closeSession"/>
 
 <xs:element name="closeSessionResponse" type="tns:closeSessionResponse"/>
@@ -248,6 +252,10 @@
 
 <xs:element name="getObjectSpecialChildrenResponse" type="tns:getObjectSpecialChildrenResponse"/>
 
+<xs:element name="getObjectsOfClassLight" type="tns:getObjectsOfClassLight"/>
+
+<xs:element name="getObjectsOfClassLightResponse" type="tns:getObjectsOfClassLightResponse"/>
+
 <xs:element name="getParent" type="tns:getParent"/>
 
 <xs:element name="getParentOfClass" type="tns:getParentOfClass"/>
@@ -279,6 +287,10 @@
 <xs:element name="getQuery" type="tns:getQuery"/>
 
 <xs:element name="getQueryResponse" type="tns:getQueryResponse"/>
+
+<xs:element name="getServiceResources" type="tns:getServiceResources"/>
+
+<xs:element name="getServiceResourcesResponse" type="tns:getServiceResourcesResponse"/>
 
 <xs:element name="getSiblings" type="tns:getSiblings"/>
 
@@ -315,6 +327,10 @@
 <xs:element name="releaseMirrorPort" type="tns:releaseMirrorPort"/>
 
 <xs:element name="releaseMirrorPortResponse" type="tns:releaseMirrorPortResponse"/>
+
+<xs:element name="releaseObjectFromService" type="tns:releaseObjectFromService"/>
+
+<xs:element name="releaseObjectFromServiceResponse" type="tns:releaseObjectFromServiceResponse"/>
 
 <xs:element name="removePossibleChildrenForClassWithId" type="tns:removePossibleChildrenForClassWithId"/>
 
@@ -1105,19 +1121,17 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="createListTypeItem">
+<xs:complexType name="releaseObjectFromService">
 <xs:sequence>
-<xs:element name="className" type="xs:string" minOccurs="0"/>
-<xs:element name="name" type="xs:string" minOccurs="0"/>
-<xs:element name="displayName" type="xs:string" minOccurs="0"/>
+<xs:element name="serviceClass" type="xs:string" minOccurs="0"/>
+<xs:element name="serviceId" type="xs:long"/>
+<xs:element name="objectId" type="xs:long"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="createListTypeItemResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:long"/>
-</xs:sequence>
+<xs:complexType name="releaseObjectFromServiceResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getConnectionEndpoints">
@@ -1131,6 +1145,21 @@
 <xs:complexType name="getConnectionEndpointsResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createListTypeItem">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="displayName" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createListTypeItemResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -1162,6 +1191,34 @@
 <xs:element name="unique" type="xs:boolean" minOccurs="0"/>
 <xs:element name="visible" type="xs:boolean" minOccurs="0"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getServiceResources">
+<xs:sequence>
+<xs:element name="serviceClass" type="xs:string" minOccurs="0"/>
+<xs:element name="serviceId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getServiceResourcesResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="associateObjectToService">
+<xs:sequence>
+<xs:element name="objectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="objectId" type="xs:long"/>
+<xs:element name="serviceClass" type="xs:string" minOccurs="0"/>
+<xs:element name="serviceId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="associateObjectToServiceResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="createSession">
@@ -1343,6 +1400,7 @@
 
 <xs:complexType name="createPool">
 <xs:sequence>
+<xs:element name="parentid" type="xs:long"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="instancesOfClass" type="xs:string" minOccurs="0"/>
@@ -1547,6 +1605,20 @@
 <xs:complexType name="getChildrenOfClassResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObject" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getObjectsOfClassLight">
+<xs:sequence>
+<xs:element name="objectclass" type="xs:string" minOccurs="0"/>
+<xs:element name="maxResults" type="xs:int"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getObjectsOfClassLightResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 

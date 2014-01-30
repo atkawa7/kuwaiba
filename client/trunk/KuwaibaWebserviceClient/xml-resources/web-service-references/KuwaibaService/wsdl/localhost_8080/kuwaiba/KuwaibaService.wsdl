@@ -64,17 +64,29 @@
 <message name="executeQueryResponse">
 <part name="parameters" element="tns:executeQueryResponse"/>
 </message>
-<message name="createAttribute">
-<part name="parameters" element="tns:createAttribute"/>
+<message name="getClassHierarchy">
+<part name="parameters" element="tns:getClassHierarchy"/>
 </message>
-<message name="createAttributeResponse">
-<part name="parameters" element="tns:createAttributeResponse"/>
+<message name="getClassHierarchyResponse">
+<part name="parameters" element="tns:getClassHierarchyResponse"/>
 </message>
 <message name="createObject">
 <part name="parameters" element="tns:createObject"/>
 </message>
 <message name="createObjectResponse">
 <part name="parameters" element="tns:createObjectResponse"/>
+</message>
+<message name="createAttribute">
+<part name="parameters" element="tns:createAttribute"/>
+</message>
+<message name="createAttributeResponse">
+<part name="parameters" element="tns:createAttributeResponse"/>
+</message>
+<message name="copyObjects">
+<part name="parameters" element="tns:copyObjects"/>
+</message>
+<message name="copyObjectsResponse">
+<part name="parameters" element="tns:copyObjectsResponse"/>
 </message>
 <message name="setUserProperties">
 <part name="parameters" element="tns:setUserProperties"/>
@@ -184,12 +196,6 @@
 <message name="getListTypeItemsResponse">
 <part name="parameters" element="tns:getListTypeItemsResponse"/>
 </message>
-<message name="getClassHierarchy">
-<part name="parameters" element="tns:getClassHierarchy"/>
-</message>
-<message name="getClassHierarchyResponse">
-<part name="parameters" element="tns:getClassHierarchyResponse"/>
-</message>
 <message name="closeSession">
 <part name="parameters" element="tns:closeSession"/>
 </message>
@@ -256,17 +262,17 @@
 <message name="moveObjectsResponse">
 <part name="parameters" element="tns:moveObjectsResponse"/>
 </message>
-<message name="copyObjects">
-<part name="parameters" element="tns:copyObjects"/>
-</message>
-<message name="copyObjectsResponse">
-<part name="parameters" element="tns:copyObjectsResponse"/>
-</message>
 <message name="updateObject">
 <part name="parameters" element="tns:updateObject"/>
 </message>
 <message name="updateObjectResponse">
 <part name="parameters" element="tns:updateObjectResponse"/>
+</message>
+<message name="getObjectsOfClassLight">
+<part name="parameters" element="tns:getObjectsOfClassLight"/>
+</message>
+<message name="getObjectsOfClassLightResponse">
+<part name="parameters" element="tns:getObjectsOfClassLightResponse"/>
 </message>
 <message name="getInstanceableListTypes">
 <part name="parameters" element="tns:getInstanceableListTypes"/>
@@ -304,11 +310,35 @@
 <message name="getConnectionEndpointsResponse">
 <part name="parameters" element="tns:getConnectionEndpointsResponse"/>
 </message>
+<message name="connectPhysicalLinks">
+<part name="parameters" element="tns:connectPhysicalLinks"/>
+</message>
+<message name="connectPhysicalLinksResponse">
+<part name="parameters" element="tns:connectPhysicalLinksResponse"/>
+</message>
 <message name="deletePhysicalConnection">
 <part name="parameters" element="tns:deletePhysicalConnection"/>
 </message>
 <message name="deletePhysicalConnectionResponse">
 <part name="parameters" element="tns:deletePhysicalConnectionResponse"/>
+</message>
+<message name="associateObjectToService">
+<part name="parameters" element="tns:associateObjectToService"/>
+</message>
+<message name="associateObjectToServiceResponse">
+<part name="parameters" element="tns:associateObjectToServiceResponse"/>
+</message>
+<message name="releaseObjectFromService">
+<part name="parameters" element="tns:releaseObjectFromService"/>
+</message>
+<message name="releaseObjectFromServiceResponse">
+<part name="parameters" element="tns:releaseObjectFromServiceResponse"/>
+</message>
+<message name="getServiceResources">
+<part name="parameters" element="tns:getServiceResources"/>
+</message>
+<message name="getServiceResourcesResponse">
+<part name="parameters" element="tns:getServiceResourcesResponse"/>
 </message>
 <message name="getUsers">
 <part name="parameters" element="tns:getUsers"/>
@@ -532,12 +562,6 @@
 <message name="removePossibleChildrenForClassWithIdResponse">
 <part name="parameters" element="tns:removePossibleChildrenForClassWithIdResponse"/>
 </message>
-<message name="connectPhysicalLinks">
-<part name="parameters" element="tns:connectPhysicalLinks"/>
-</message>
-<message name="connectPhysicalLinksResponse">
-<part name="parameters" element="tns:connectPhysicalLinksResponse"/>
-</message>
 <portType name="Kuwaiba">
 <operation name="getClass">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassRequest" message="tns:getClass"/>
@@ -584,15 +608,25 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQueryResponse" message="tns:executeQueryResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/executeQuery/Fault/Exception"/>
 </operation>
-<operation name="createAttribute">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createAttributeRequest" message="tns:createAttribute"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createAttributeResponse" message="tns:createAttributeResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createAttribute/Fault/Exception"/>
+<operation name="getClassHierarchy">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchyRequest" message="tns:getClassHierarchy"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchyResponse" message="tns:getClassHierarchyResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchy/Fault/Exception"/>
 </operation>
 <operation name="createObject">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectRequest" message="tns:createObject"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObjectResponse" message="tns:createObjectResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createObject/Fault/Exception"/>
+</operation>
+<operation name="createAttribute">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createAttributeRequest" message="tns:createAttribute"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createAttributeResponse" message="tns:createAttributeResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createAttribute/Fault/Exception"/>
+</operation>
+<operation name="copyObjects">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsRequest" message="tns:copyObjects"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsResponse" message="tns:copyObjectsResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjects/Fault/Exception"/>
 </operation>
 <operation name="setUserProperties">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/setUserPropertiesRequest" message="tns:setUserProperties"/>
@@ -684,11 +718,6 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getListTypeItemsResponse" message="tns:getListTypeItemsResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getListTypeItems/Fault/Exception"/>
 </operation>
-<operation name="getClassHierarchy">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchyRequest" message="tns:getClassHierarchy"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchyResponse" message="tns:getClassHierarchyResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getClassHierarchy/Fault/Exception"/>
-</operation>
 <operation name="closeSession">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/closeSessionRequest" message="tns:closeSession"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/closeSessionResponse" message="tns:closeSessionResponse"/>
@@ -744,15 +773,15 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/moveObjectsResponse" message="tns:moveObjectsResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/moveObjects/Fault/Exception"/>
 </operation>
-<operation name="copyObjects">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsRequest" message="tns:copyObjects"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjectsResponse" message="tns:copyObjectsResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/copyObjects/Fault/Exception"/>
-</operation>
 <operation name="updateObject">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/updateObjectRequest" message="tns:updateObject"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/updateObjectResponse" message="tns:updateObjectResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/updateObject/Fault/Exception"/>
+</operation>
+<operation name="getObjectsOfClassLight">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectsOfClassLightRequest" message="tns:getObjectsOfClassLight"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectsOfClassLightResponse" message="tns:getObjectsOfClassLightResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectsOfClassLight/Fault/Exception"/>
 </operation>
 <operation name="getInstanceableListTypes">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getInstanceableListTypesRequest" message="tns:getInstanceableListTypes"/>
@@ -784,10 +813,30 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getConnectionEndpointsResponse" message="tns:getConnectionEndpointsResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getConnectionEndpoints/Fault/Exception"/>
 </operation>
+<operation name="connectPhysicalLinks">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/connectPhysicalLinksRequest" message="tns:connectPhysicalLinks"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/connectPhysicalLinksResponse" message="tns:connectPhysicalLinksResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/connectPhysicalLinks/Fault/Exception"/>
+</operation>
 <operation name="deletePhysicalConnection">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deletePhysicalConnectionRequest" message="tns:deletePhysicalConnection"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deletePhysicalConnectionResponse" message="tns:deletePhysicalConnectionResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deletePhysicalConnection/Fault/Exception"/>
+</operation>
+<operation name="associateObjectToService">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/associateObjectToServiceRequest" message="tns:associateObjectToService"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/associateObjectToServiceResponse" message="tns:associateObjectToServiceResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/associateObjectToService/Fault/Exception"/>
+</operation>
+<operation name="releaseObjectFromService">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/releaseObjectFromServiceRequest" message="tns:releaseObjectFromService"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/releaseObjectFromServiceResponse" message="tns:releaseObjectFromServiceResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/releaseObjectFromService/Fault/Exception"/>
+</operation>
+<operation name="getServiceResources">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getServiceResourcesRequest" message="tns:getServiceResources"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getServiceResourcesResponse" message="tns:getServiceResourcesResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getServiceResources/Fault/Exception"/>
 </operation>
 <operation name="getUsers">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getUsersRequest" message="tns:getUsers"/>
@@ -974,11 +1023,6 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenForClassWithIdResponse" message="tns:removePossibleChildrenForClassWithIdResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenForClassWithId/Fault/Exception"/>
 </operation>
-<operation name="connectPhysicalLinks">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/connectPhysicalLinksRequest" message="tns:connectPhysicalLinks"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/connectPhysicalLinksResponse" message="tns:connectPhysicalLinksResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/connectPhysicalLinks/Fault/Exception"/>
-</operation>
 </portType>
 <binding name="KuwaibaPortBinding" type="tns:Kuwaiba">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
@@ -1090,7 +1134,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="createAttribute">
+<operation name="getClassHierarchy">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -1103,6 +1147,30 @@
 </fault>
 </operation>
 <operation name="createObject">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="createAttribute">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="copyObjects">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -1330,18 +1398,6 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="getClassHierarchy">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
 <operation name="closeSession">
 <soap:operation soapAction=""/>
 <input>
@@ -1474,7 +1530,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="copyObjects">
+<operation name="updateObject">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -1486,7 +1542,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="updateObject">
+<operation name="getObjectsOfClassLight">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -1570,7 +1626,55 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="connectPhysicalLinks">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="deletePhysicalConnection">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="associateObjectToService">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="releaseObjectFromService">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="getServiceResources">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -2015,18 +2119,6 @@
 </fault>
 </operation>
 <operation name="removePossibleChildrenForClassWithId">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
-<operation name="connectPhysicalLinks">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

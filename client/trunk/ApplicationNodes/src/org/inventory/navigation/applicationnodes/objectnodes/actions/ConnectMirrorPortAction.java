@@ -45,6 +45,10 @@ public class ConnectMirrorPortAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         LocalObjectLight[] siblings = CommunicationsStub.getInstance().getSiblings(objectClass, objectId);
+        if (siblings == null){
+            nu.showSimplePopup("Error", NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());
+            return;
+        }
         JComboBox cmbSiblings = new JComboBox(siblings);
         cmbSiblings.setName("cmbSiblings");
         JComplexDialogPanel dialog = new JComplexDialogPanel(new String[]{"The other ports in the parent device are"},
