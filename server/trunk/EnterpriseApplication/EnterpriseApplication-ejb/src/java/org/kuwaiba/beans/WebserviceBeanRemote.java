@@ -320,6 +320,7 @@ public interface WebserviceBeanRemote {
     public RemoteObjectLight getObjectLight(String objectClass, long oid) throws ServerSideException;
     
     public RemoteObject getParent(String objectClass, long oid) throws ServerSideException;
+    public RemoteObjectLight[] getParents(String objectClass, long oid) throws ServerSideException;
     public RemoteObject getParentOfClass(String objectClass, long oid, String parentClass) throws ServerSideException;
 
     public RemoteObjectLight[] getSpecialAttribute(String objectClass, long objectId, String attributeName) throws ServerSideException;
@@ -353,6 +354,7 @@ public interface WebserviceBeanRemote {
     public void deletePhysicalConnection(String objectClass, long objectId) throws ServerSideException;
     public RemoteObjectLight[] getConnectionEndpoints(String connectionClass, long connectionId) throws ServerSideException;
     public void connectPhysicalLinks(String[] sideAClassNames, Long[] sideAIds, String[] linksClassNames, Long[] linksIds, String[] sideBClassNames, Long[] sideBIds) throws ServerSideException;
+    public RemoteObjectLight[] getPhysicalPath(String objectClass, long objectId) throws ServerSideException;
     //Service Manager
     public void associateObjectToService(String objectClass, long objectId, String serviceClass, long serviceId) throws ServerSideException;
     public void releaseObjectFromService(String serviceClass, long serviceId, long objectId) throws ServerSideException;

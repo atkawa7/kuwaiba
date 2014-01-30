@@ -123,6 +123,17 @@ public interface BusinessEntityManager {
      */
     public RemoteBusinessObject getParent(String objectClass, long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Retrieves recursively the list of parents of an object in the containment hierarchy
+     * @param oid Object id 
+     * @param objectClassName Object class
+     * @return The list of parents
+     * @throws ObjectNotFoundException If the object does not exist
+     * @throws MetadataObjectNotFoundException if the class can not be found
+     */
+    public List<RemoteBusinessObjectLight> getParents(String objectClassName, long oid)
+        throws ObjectNotFoundException, MetadataObjectNotFoundException;
 
     /**
      * Gets the first parent of an object which matches the given class in the containment hierarchy
@@ -237,6 +248,32 @@ public interface BusinessEntityManager {
      * @throws OperationNotPermittedException If the update can't be performed due to a business rule
      */
     public List<RemoteBusinessObjectLight> getObjectChildren(String className, long oid, int maxResults)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException;
+    
+    /**
+     * Gets the direct children of a given object of a given class
+     * @param parentOid parent id
+     * @param parentClass Parent class
+     * @param classToFilter Class to be match against
+     * @param maxResults max number of results. 0 to get all
+     * @return A list of children of parentid/parentClass instance, instances of classToFilter
+     * @throws MetadataObjectNotFoundException If any of the classes can not be found
+     * @throws ObjectNotFoundException If parent object can not be found
+     */
+    public List<RemoteBusinessObject> getChildrenOfClass(long parentOid, String parentClass, String classToFilter, int maxResults)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Same as getChildrenOfClass, but returns only the light version of the objects
+     * @param parentOid parent id
+     * @param parentClass Parent class
+     * @param classToFilter Class to be match against
+     * @param maxResults max number of results. 0 to get all
+     * @return A list of children of parentid/parentClass instance, instances of classToFilter
+     * @throws MetadataObjectNotFoundException If any of the classes can not be found
+     * @throws ObjectNotFoundException If parent object can not be found
+     */
+    public List<RemoteBusinessObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults)
             throws MetadataObjectNotFoundException, ObjectNotFoundException;
 
     /**

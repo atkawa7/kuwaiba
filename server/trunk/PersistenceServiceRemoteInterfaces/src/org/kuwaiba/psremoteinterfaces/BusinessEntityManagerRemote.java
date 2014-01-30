@@ -62,6 +62,8 @@ public interface BusinessEntityManagerRemote extends Remote{
     
     public RemoteBusinessObject getParent(String objectClass, long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+    public List<RemoteBusinessObjectLight> getParents (String objectClassName, long oid)
+        throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
 
     public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
@@ -104,5 +106,8 @@ public interface BusinessEntityManagerRemote extends Remote{
             throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
     
     public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;    
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
+    //TO DELETE
+    public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
 }

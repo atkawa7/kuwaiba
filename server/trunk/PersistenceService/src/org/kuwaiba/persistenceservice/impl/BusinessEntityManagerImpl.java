@@ -19,7 +19,9 @@ package org.kuwaiba.persistenceservice.impl;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
@@ -41,6 +43,8 @@ import org.kuwaiba.persistenceservice.caching.CacheManager;
 import org.kuwaiba.persistenceservice.util.Constants;
 import org.kuwaiba.persistenceservice.util.Util;
 import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -49,6 +53,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.traversal.TraversalDescription;
+import org.neo4j.helpers.collection.IteratorUtil;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.Traversal;
 
@@ -332,6 +337,33 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             return Util.createRemoteObjectFromNode(parentNode, cm.getClass(Util.getClassName(parentNode)));
         }
         return null;
+    }
+    
+    @Override
+    public List<RemoteBusinessObjectLight> getParents (String objectClassName, long oid)
+        throws ObjectNotFoundException, MetadataObjectNotFoundException {
+        List<RemoteBusinessObjectLight> parents =  new ArrayList<RemoteBusinessObjectLight>();
+      
+        String cypherQuery = "START n=node({oid})" +
+                             "MATCH n-[:"+RelTypes.CHILD_OF.toString()+"*]->m " +
+                             "RETURN m as parents";
+      
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("oid", oid);
+        try {
+            ExecutionEngine engine = new ExecutionEngine(graphDb);
+            ExecutionResult result = engine.execute(cypherQuery, params);
+            Iterator<Node> column = result.columnAs("parents");
+            for (Node node : IteratorUtil.asIterable(column)){
+                if (node.getProperty(Constants.PROPERTY_NAME).equals(Constants.NODE_DUMMYROOT))
+                    parents.add(new RemoteBusinessObjectLight((long)-1, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT));
+                else
+                    parents.add(Util.createRemoteObjectLightFromNode(node));
+            }
+        }catch(Exception ex){
+            throw new RuntimeException(ex.getMessage());
+        }
+        return parents;
     }
 
     public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass) 
@@ -925,6 +957,39 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
     
     
+    //TO DELETE
+    public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId) {
+        Node lastNode = null;
+        List<RemoteBusinessObjectLight> path;
+        String cypherQuery = "START o=node({oid}) "+ 
+                             "MATCH path = o-[r:"+RelTypes.RELATED_TO_SPECIAL.toString()+"*]-c "+
+                             "RETURN collect(distinct c) as path";
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("oid", objectId);
+        try {
+            ExecutionEngine engine = new ExecutionEngine(graphDb);
+            ExecutionResult result = engine.execute(cypherQuery, params);
+            Iterator<List<Node>> column = result.columnAs("path");
+
+            for (List<Node> list : IteratorUtil.asIterable(column))
+                lastNode = list.get(list.size()-1);
+            params.clear();
+            params.put("oid", lastNode.getId());
+
+            engine = new ExecutionEngine(graphDb);
+            result = engine.execute(cypherQuery, params);
+            column = result.columnAs("path");
+            path = new ArrayList<RemoteBusinessObjectLight>();
+            path.add(Util.createRemoteObjectLightFromNode(lastNode));
+            for (List<Node> listOfNodes : IteratorUtil.asIterable(column)){
+                for(Node node : listOfNodes)
+                    path.add(Util.createRemoteObjectLightFromNode(node));
+            }
+        }catch(Exception ex){
+            throw new RuntimeException(ex.getMessage());
+        }
+        return path;
+    }
     
     /**
      * Helpers

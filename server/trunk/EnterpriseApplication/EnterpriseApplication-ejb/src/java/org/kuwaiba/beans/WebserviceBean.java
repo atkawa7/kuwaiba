@@ -937,6 +937,18 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
+    public RemoteObjectLight[] getParents(String objectClass, long oid) throws ServerSideException{
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try {
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getParents(objectClass, oid));
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
+    @Override
     public RemoteObject getParentOfClass(String objectClass, long oid, String parentClass) throws ServerSideException{
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
@@ -1276,10 +1288,27 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
+    public RemoteObjectLight[] getPhysicalPath(String objectClass, long objectId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            if (!mem.isSubClass("GenericPort", objectClass))
+                throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a port", objectClass));
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getPhysicalPath(objectClass, objectId));
+
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
+    @Override
     public void deletePhysicalConnection(String objectClass, long objectId) throws ServerSideException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
+    
+    //Service Manager
     @Override
     public void associateObjectToService(String objectClass, long objectId, String serviceClass, long serviceId) 
             throws ServerSideException{

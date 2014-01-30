@@ -1170,6 +1170,23 @@ public class Kuwaiba {
         }
     }
     
+    @WebMethod(operationName = "getParents")
+    public RemoteObjectLight[] getParents(@WebParam(name = "objectclass") String objectClass,
+            @WebParam(name = "oid") long oid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("getParents", getIPAddress(), sessionId);
+            return wsBean.getParents(objectClass, oid);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
     /**
      * Gets the first parent of an object which matches the given class in the containment hierarchy
      * @param objectClass Object class
@@ -1532,6 +1549,30 @@ public class Kuwaiba {
             throw e;
         }
     }
+    
+    /**
+     * Gets the physical trace of connections and ports from a port
+     * @param objectClass Object class
+     * @param objectId Object id
+     * @param sessionId Session token
+     * @throws Exception In case something goes wrong
+     */
+    @WebMethod(operationName = "getPhysicalPath")
+    public RemoteObjectLight[] getPhysicalPath (@WebParam(name = "objectClass")String objectClass,
+            @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("getPhysicalPath", getIPAddress(), sessionId);
+            return wsBean.getPhysicalPath(objectClass, objectId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    } 
     
     /**
      * Connect pairs of ports (if they are not connected already) using physical link (cable, fibers, all subclasses of GenericPhysicalConnection)
