@@ -1330,9 +1330,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            if (!mem.isSubClass("GenericService", serviceClass))
+            /**if (!mem.isSubClass("GenericService", serviceClass))
                 throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a service", serviceClass));
-            bem.releaseSpecialRelationship(serviceClass, serviceId, "uses", objectId);
+            bem.releaseSpecialRelationship(serviceClass, serviceId, "uses", objectId);*/
+            bem.releaseSpecialRelationship(serviceClass, serviceId, "uses");
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
@@ -1353,7 +1354,53 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
     
+    @Override
+    public long createService(String serviceClass, String customerClass, 
+            long customerId, String[] attributes, String[] attributeValues) throws ServerSideException{
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            if (!mem.isSubClass("GenericCustomer", customerClass))
+                throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a customer", customerClass));
+            if (!mem.isSubClass("GenericService", serviceClass))
+                throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a customer", serviceClass));
+            
+            return bem.createSpecialObject(serviceClass, customerClass, customerId, null, 0);
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
     
+    @Override
+    public long createCustomer(String customerClass, String[] attributes, 
+            String[] attributeValues) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            if (!mem.isSubClass("GenericCustomer", customerClass))
+                throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a customer", customerClass));
+            
+            return bem.createSpecialObject(customerClass, null, -1, null, 0);
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteObjectLight[] getServices(String customerClass, long customerId) throws ServerSideException{
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            if (!mem.isSubClass("GenericCustomer", customerClass))
+                throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a customer", customerClass));
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectSpecialChildren(customerClass, customerId));
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
 
     // </editor-fold>
 

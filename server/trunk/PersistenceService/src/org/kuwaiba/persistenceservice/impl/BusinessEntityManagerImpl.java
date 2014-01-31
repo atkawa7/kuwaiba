@@ -170,14 +170,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         if (myClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
-        if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
-            throw new OperationNotPermittedException("Create Object", String.format("Class %s is not an business class"));
+        //if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
+        //    throw new OperationNotPermittedException("Create Object", String.format("Class %s is not an business class", className));
         
         if (myClass.isInDesign())
             throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
         
         if (myClass.isAbstract())
-            throw new OperationNotPermittedException("Create Object", "Can't create objects from an abstract classes");
+            throw new OperationNotPermittedException("Create Object", "Can not create objects of abstract classes");
 
         Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
@@ -191,14 +191,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
         }
 
-        Node parentNode;
+        Node parentNode = null;
         if (parentOid != -1){
              parentNode = getInstanceOfClass(parentClassName, parentOid);
             if (parentNode == null)
                 throw new ObjectNotFoundException(parentClassName, parentOid);
-        }else{
-            Relationship rel = graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.OUTGOING);
-            parentNode = rel.getEndNode();
         }
 
         Transaction tx = null;
@@ -788,8 +785,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     public List<RemoteBusinessObjectLight> getObjectsOfClassLight(String parentClass, int maxResults)
             throws MetadataObjectNotFoundException, InvalidArgumentException {
         
-        if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, parentClass))
-            throw new InvalidArgumentException(String.format("Class %s is not subclass of InventoryObject", parentClass), Level.INFO);
+        //if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, parentClass))
+        //    throw new InvalidArgumentException(String.format("Class %s is not subclass of InventoryObject", parentClass), Level.INFO);
         
         Node classMetadataNode = classIndex.get(Constants.PROPERTY_NAME, parentClass).getSingle();
         if (classMetadataNode == null)
@@ -915,7 +912,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     public List<RemoteBusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) throws ObjectNotFoundException, MetadataObjectNotFoundException {
         Node instance = getInstanceOfClass(objectClass, objectId);
         List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
-        for (Relationship rel : instance.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO_SPECIAL))
+        for (Relationship rel : instance.getRelationships(RelTypes.RELATED_TO_SPECIAL))
             if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName))
                 res.add(rel.getEndNode().getId() == objectId ? 
                         Util.createRemoteObjectLightFromNode(rel.getStartNode()) : Util.createRemoteObjectLightFromNode(rel.getEndNode()));
@@ -960,7 +957,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     //TO DELETE
     public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId) {
         Node lastNode = null;
-        List<RemoteBusinessObjectLight> path;
+        List<RemoteBusinessObjectLight> path = new ArrayList<RemoteBusinessObjectLight>();;
         String cypherQuery = "START o=node({oid}) "+ 
                              "MATCH path = o-[r:"+RelTypes.RELATED_TO_SPECIAL.toString()+"*]-c "+
                              "RETURN collect(distinct c) as path";
@@ -970,16 +967,18 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             ExecutionEngine engine = new ExecutionEngine(graphDb);
             ExecutionResult result = engine.execute(cypherQuery, params);
             Iterator<List<Node>> column = result.columnAs("path");
-
-            for (List<Node> list : IteratorUtil.asIterable(column))
+            
+            for (List<Node> list : IteratorUtil.asIterable(column)){
+                if (list.isEmpty())
+                    return path;
                 lastNode = list.get(list.size()-1);
+            }
             params.clear();
             params.put("oid", lastNode.getId());
 
             engine = new ExecutionEngine(graphDb);
             result = engine.execute(cypherQuery, params);
             column = result.columnAs("path");
-            path = new ArrayList<RemoteBusinessObjectLight>();
             path.add(Util.createRemoteObjectLightFromNode(lastNode));
             for (List<Node> listOfNodes : IteratorUtil.asIterable(column)){
                 for(Node node : listOfNodes)
@@ -1065,9 +1064,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         if (classToMap.isAbstract())
                 throw new InvalidArgumentException(String.format("Can not create objects from abstract classes (%s)", classToMap.getName()), Level.OFF);
         
-        if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, classToMap.getName()))
-            throw new InvalidArgumentException(String.format("Class %s is not a subclass of %s", classToMap.getName(), Constants.CLASS_INVENTORYOBJECT), Level.INFO);
-
         Node newObject = graphDb.createNode();
         newObject.setProperty(Constants.PROPERTY_NAME, ""); //The default value is an empty string 
 

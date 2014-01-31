@@ -144,10 +144,10 @@ public class Util {
      */
     public static void deleteObject(Node instance, boolean releaseAll) throws OperationNotPermittedException {
         if(!releaseAll){
-            if (instance.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING).iterator().hasNext())
+            if (instance.getRelationships(RelTypes.RELATED_TO).iterator().hasNext())
                 throw new OperationNotPermittedException("deleteObject",String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
 
-            if (instance.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.OUTGOING).iterator().hasNext())
+            if (instance.getRelationships(RelTypes.RELATED_TO_SPECIAL).iterator().hasNext())
                 throw new OperationNotPermittedException("deleteObject",String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
         }
 

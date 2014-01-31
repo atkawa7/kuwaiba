@@ -1697,6 +1697,87 @@ public class Kuwaiba {
         }
     }
     
+    /**
+     * Creates a customer (with no parent in the containment hierarchy)
+     * @param serviceClass
+     * @param attributes
+     * @param attributeValues
+     * @param sessionId
+     * @return
+     * @throws Exception 
+     */
+    @WebMethod(operationName = "createCustomer")
+    public long createCustomer (
+            @WebParam(name = "customerClass")String customerClass,
+            @WebParam(name = "attributes")String[] attributes,
+            @WebParam(name = "attributeValues")String[] attributeValues,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            wsBean.validateCall("createCustomer", getIPAddress(), sessionId);
+            return wsBean.createCustomer(customerClass, attributes, attributeValues);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    /**
+     * Creates a service and relates it to a customer
+     * @param serviceClass
+     * @param attributes
+     * @param attributeValues
+     * @param sessionId
+     * @return
+     * @throws Exception 
+     */
+    @WebMethod(operationName = "createService")
+    public long createService (
+            @WebParam(name = "serviceClass")String serviceClass,
+            @WebParam(name = "customerClass")String customerClass,
+            @WebParam(name = "customerId")long customerId,
+            @WebParam(name = "attributes")String[] attributes,
+            @WebParam(name = "attributeValues")String[] attributeValues,
+            @WebParam(name = "sessionId")String sessionId) throws Exception {
+        try{
+            wsBean.validateCall("createService", getIPAddress(), sessionId);
+            return wsBean.createService(serviceClass, customerClass, customerId, attributes, attributeValues);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    /**
+     * Returns the services associated to a customer
+     * @param customerClass Customer class
+     * @param customerId Customer Id
+     * @param sessionId session token
+     * @return The list of services related to the give customer
+     */
+    @WebMethod(operationName = "getServices")
+    public RemoteObjectLight[] getServices(@WebParam(name = "customerClass")String customerClass, 
+            @WebParam(name = "customerId")long customerId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("getServices", getIPAddress(), sessionId);
+            return wsBean.getServices(customerClass, customerId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
     
     //Audit Trail
     /**

@@ -359,6 +359,9 @@ public interface WebserviceBeanRemote {
     public void associateObjectToService(String objectClass, long objectId, String serviceClass, long serviceId) throws ServerSideException;
     public void releaseObjectFromService(String serviceClass, long serviceId, long objectId) throws ServerSideException;
     public RemoteObjectLight[] getServiceResources(String serviceClass, long serviceId) throws ServerSideException;
+    public long createService(String serviceClass, String customerClass, long customerId, String[] attributes, String[] attributeValues) throws ServerSideException;
+    public long createCustomer(String serviceClass, String[] attributes, String[] attributeValues) throws ServerSideException;
+    public RemoteObjectLight[] getServices(String customerClass, long customerId) throws ServerSideException;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
@@ -584,4 +587,6 @@ public interface WebserviceBeanRemote {
      */
     public byte[] downloadErrors(String fileName) throws ServerSideException;
     // </editor-fold>
+
+    
 }
