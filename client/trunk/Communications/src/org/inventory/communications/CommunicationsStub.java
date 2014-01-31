@@ -232,8 +232,10 @@ public class CommunicationsStub {
             LocalObjectLight[] res = new LocalObjectLight[instances.size()];
 
             int i = 0;
-            for (RemoteObjectLight rol : instances)
+            for (RemoteObjectLight rol : instances){
                 res[i] = new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName());
+                i++;
+            }
 
             return res;
         }catch(Exception ex){
@@ -1128,8 +1130,10 @@ public class CommunicationsStub {
             LocalObjectLight[] res = new LocalObjectLight[instances.size()];
 
             int i = 0;
-            for (RemoteObjectLight rol : instances)
+            for (RemoteObjectLight rol : instances){
                 res[i] = new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName());
+                i++;
+            }
 
             return res;
         }catch(Exception ex){
@@ -1138,6 +1142,45 @@ public class CommunicationsStub {
         }
     }
     
+    public LocalObjectLight createService (String serviceClass, String customerClass, long customerId, String attributes[], String attributeValues) {
+        try{
+            long newServiceId = port.createService(serviceClass, customerClass, 
+                    customerId, null, null, this.session.getSessionId());
+            return new LocalObjectLight(newServiceId, null, serviceClass);
+
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+
+    public LocalObjectLight createCustomer (String customerClass, String attributes[], String attributeValues) {
+        try{
+            long newServiceId = port.createCustomer(customerClass, null, null, this.session.getSessionId());
+            return new LocalObjectLight(newServiceId, null, customerClass);
+
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public LocalObjectLight[] getServices(String customerClass, long customerId) {
+        try{
+            List <RemoteObjectLight> instances = port.getServices(customerClass, customerId, this.session.getSessionId());
+            LocalObjectLight[] res = new LocalObjectLight[instances.size()];
+
+            int i = 0;
+            for (RemoteObjectLight rol : instances){
+                res[i] = new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName());
+                i++;
+            }
+            return res;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
     //End Service Manager
     
     public LocalObjectLight[] getObjectSpecialChildren(String connectionClass, long connectionId) {
@@ -1790,24 +1833,7 @@ public class CommunicationsStub {
     }// </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Services methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Relates a resource to a service
-     * @param resourceClassName
-     * @param resourceId
-     * @param serviceClassName
-     * @param serviceId
-     * @return
-     */
-    public boolean relateResourceToService(String resourceClassName, long resourceId, String serviceClassName, long serviceId){
-//        try{
-//            return port.relateResourceToService(resourceClassName, resourceId,
-//                    serviceClassName,serviceId,this.session.getSessionId());
-//        }catch(Exception ex){
-//            this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
-//            return false;
-//        }
-        return false;
-    }// </editor-fold>
+// </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Pools methods. Click on the + sign on the left to edit the code.">
     /**

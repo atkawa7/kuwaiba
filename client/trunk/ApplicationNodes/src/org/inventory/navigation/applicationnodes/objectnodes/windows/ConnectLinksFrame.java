@@ -89,9 +89,9 @@ public class ConnectLinksFrame extends JFrame{
 
             @Override
             public void resultChanged(LookupEvent ev) {
-//                if (((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().hasNext())
-//                    bSelectedObject = ((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().next();
-//                else
+                if (((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().hasNext())
+                   bSelectedObject = ((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().next();
+                else
                     bSelectedObject = null;
                 lblResults.setForeground(Color.MAGENTA);
                 lblResults.setText((aSelectedObject == null ? "Free" : aSelectedObject.getName() + " [" + aSelectedObject.getClassName() + "]") + " -> " +

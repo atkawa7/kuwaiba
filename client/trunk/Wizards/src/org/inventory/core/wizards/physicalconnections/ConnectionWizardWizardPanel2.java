@@ -76,12 +76,13 @@ public class ConnectionWizardWizardPanel2 implements WizardDescriptor.Panel {
     @Override
     public void readSettings(Object settings) {
         this.connectionTypeClass = (String)((WizardDescriptor)settings).getProperty("connectionTypeClass");
+        int wizardType = (Integer)((WizardDescriptor)settings).getProperty("wizardType");
         List<LocalObjectListItem> types = com.getList(connectionTypeClass, true, false);
         if (types != null){
             for(LocalObjectListItem type : types)
                 ((ConnectionWizardVisualPanel2)component).getCmbConnectionType().addItem(type);
         }
-        if (com.getMetaForClass(connectionTypeClass, false).getValidator(Constants.VALIDATOR_PHYSICAL_CONTAINER) == 1){
+        if (wizardType == ConnectionWizard.WIZARDTYPE_CONTAINERS){
             LocalClassMetadataLight[] portClasses = com.getLightSubclasses(Constants.CLASS_GENERICPHYSICALLINK, false, false);
             if (portClasses != null){
                 for(LocalClassMetadataLight portClass : portClasses)

@@ -242,6 +242,7 @@ public class ConnectionWizardWizardPanel1 implements WizardDescriptor.Validating
             ((WizardDescriptor)settings).putProperty("bSide", bSelection.getOid());//NOI18N
             ((WizardDescriptor)settings).putProperty("aSideClass", aSelection.getClassName());//NOI18N
             ((WizardDescriptor)settings).putProperty("bSideClass", bSelection.getClassName());//NOI18N
+            ((WizardDescriptor)settings).putProperty("wizardType", wizardType);//NOI18N
         }
     }
 

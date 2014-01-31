@@ -39,7 +39,7 @@ autostore = false)
 @TopComponent.Description(
     preferredID = "ServiceManagerTopComponent",
 iconBase = "org/kuwaiba/management/services/res/icon.png",
-persistenceType = TopComponent.PERSISTENCE_ALWAYS)
+persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.kuwaiba.management.services.ServiceManagerTopComponent")
 @ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administrative"),

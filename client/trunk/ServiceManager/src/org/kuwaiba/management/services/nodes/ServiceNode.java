@@ -15,9 +15,13 @@
  */
 package org.kuwaiba.management.services.nodes;
 
+import java.awt.Image;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
 import org.openide.nodes.AbstractNode;
-import org.openide.nodes.Children;
+import org.openide.util.ImageUtilities;
 import org.openide.util.lookup.Lookups;
 
 /**
@@ -26,9 +30,47 @@ import org.openide.util.lookup.Lookups;
  */
 public class ServiceNode extends AbstractNode {
     private LocalObjectLight service;
-    public ServiceNode(Children children, LocalObjectLight service) {
-        super(children, Lookups.singleton(service));
+    private Image icon;
+    
+    public ServiceNode(LocalObjectLight service) {
+        super(new ServiceChildren(service), Lookups.singleton(service));
         this.service = service;
+        icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/service.png");
+    }
+
+    public LocalObjectLight getService() {
+        return service;
     }
     
+    @Override
+    public String getDisplayName(){
+        return service.toString();
+    }
+    
+    @Override
+    public boolean canRename(){
+        return true;
+    }
+    
+    @Override
+    public void setName(String newName){
+        LocalObject lo = new LocalObject(service.getClassName(), service.getOid(), 
+                new String[]{Constants.PROPERTY_NAME}, new String[]{newName});
+        if (CommunicationsStub.getInstance().saveObject(lo)){
+            this.service.setName(newName);
+            setDisplayName(newName);
+            fireDisplayNameChange(newName, newName);
+        }
+        
+    }
+    
+    @Override
+    public Image getIcon(int i){
+        return icon;
+    }
+    
+    @Override
+    public Image getOpenedIcon(int i){
+        return getIcon(i);
+    }
 }

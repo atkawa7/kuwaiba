@@ -43,6 +43,7 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusin
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RelateToServiceAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ReleaseFromServiceAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ReleaseMirrorPortAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectAuditTrailAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
@@ -84,6 +85,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     protected ShowObjectIdAction showObjectIdAction;
     protected ShowObjectAuditTrailAction showObjectAuditTrailAction;
     protected RelateToServiceAction relateToServiceAction;
+    protected ReleaseFromServiceAction relateFromServiceAction;
     
     protected Sheet sheet;
     protected Image icon;
@@ -290,6 +292,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                             editAction == null ? editAction = new EditObjectAction(this) : editAction,
                             deleteAction == null ? deleteAction = new DeleteBusinessObjectAction(this) : deleteAction,
                             relateToServiceAction == null ? relateToServiceAction = new RelateToServiceAction(this.getObject()) : relateToServiceAction,
+                            relateFromServiceAction == null ? relateFromServiceAction = new ReleaseFromServiceAction(this) : relateFromServiceAction,
                             null, //Separator
                             SystemAction.get(CopyAction.class),
                             SystemAction.get(CutAction.class),
@@ -417,7 +420,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
     @Override
     public Image getIcon(int i){
-        if (icon==null)
+        if (icon == null)
             return defaultIcon;
         return icon;
     }

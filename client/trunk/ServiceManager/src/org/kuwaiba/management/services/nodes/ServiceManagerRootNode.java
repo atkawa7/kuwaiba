@@ -15,18 +15,41 @@
  */
 package org.kuwaiba.management.services.nodes;
 
+import java.awt.Image;
+import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
+import org.kuwaiba.management.services.nodes.actions.CreateCustomerAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
-import org.openide.util.lookup.Lookups;
+import org.openide.util.ImageUtilities;
 
 /**
  * Node representing a customer
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ServiceManagerRootNode extends AbstractNode {
-    public ServiceManagerRootNode(Children children, LocalObjectLight customer) {
-        super(children, Lookups.singleton(customer));
+    private Image icon;
+  
+    public ServiceManagerRootNode(LocalObjectLight[] customers) {
+        super(new Children.Array());
+        icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/root.png");
+        setDisplayName("Root");
+        for (LocalObjectLight customer : customers)
+            getChildren().add(new CustomerNode[]{new CustomerNode(customer)});
+    }
+
+    @Override
+    public Action[] getActions(boolean context){
+        return new Action[]{new CreateCustomerAction(this)};
     }
     
+    @Override
+    public Image getIcon(int i){
+        return icon;
+    }
+    
+    @Override
+    public Image getOpenedIcon(int i){
+        return getIcon(i);
+    }
 }

@@ -44,7 +44,7 @@ public class ServicesFrame extends JFrame{
         setLayout(new BorderLayout());
         setTitle(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TITLE_AVAILABLE_SERVICES"));
         setSize(300, 700);
-        
+        setLocationRelativeTo(null);
         JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_INSTRUCTIONS_SELECT_SERVICE"));
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
         add(lblInstructions, BorderLayout.NORTH);
@@ -56,8 +56,9 @@ public class ServicesFrame extends JFrame{
         
         JPanel pnlButtons = new JPanel();
         pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JButton btnConnect = new JButton("Make relationship");
-        btnConnect.addActionListener(new BtnConnectActionListener());
+        JButton btnRelate = new JButton("Make relationship");
+        pnlButtons.add(btnRelate);
+        btnRelate.addActionListener(new BtnConnectActionListener());
         JButton btnClose = new JButton("Close");
         btnClose.addActionListener(new ActionListener() {
 
