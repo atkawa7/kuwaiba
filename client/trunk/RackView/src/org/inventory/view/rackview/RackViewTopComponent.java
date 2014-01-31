@@ -16,6 +16,8 @@
 package org.inventory.view.rackview;
 
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.visual.actions.ExportSceneAction;
+import org.inventory.view.rackview.scene.RackViewScene;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -53,7 +55,8 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
     private ExplorerManager em = new ExplorerManager();
     private RackViewService rvs;
     private NotificationUtil nu;
-
+    private RackViewScene scene;
+    
     public RackViewTopComponent() {
         initComponents();
         setName(Bundle.CTL_RackViewTopComponent());
@@ -61,7 +64,8 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
         this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
         this.rvs = new RackViewService(this);
-        pnlScrollMain.setViewportView(rvs.getScene().createView());
+        scene = rvs.getScene();
+        pnlScrollMain.setViewportView(scene.createView());
     }
 
     /**
@@ -72,13 +76,48 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        pnlMain = new javax.swing.JPanel();
         pnlScrollMain = new javax.swing.JScrollPane();
+        barMain = new javax.swing.JToolBar();
+        btnExport = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
-        add(pnlScrollMain, java.awt.BorderLayout.CENTER);
+
+        pnlMain.setPreferredSize(new java.awt.Dimension(426, 334));
+        pnlMain.setLayout(new java.awt.BorderLayout());
+
+        pnlScrollMain.setMinimumSize(new java.awt.Dimension(100, 100));
+        pnlScrollMain.setPreferredSize(new java.awt.Dimension(200, 300));
+        pnlMain.add(pnlScrollMain, java.awt.BorderLayout.CENTER);
+
+        barMain.setRollover(true);
+        barMain.setPreferredSize(new java.awt.Dimension(100, 34));
+
+        btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/view/rackview/res/export.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnExport.text")); // NOI18N
+        btnExport.setFocusable(false);
+        btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportActionPerformed(evt);
+            }
+        });
+        barMain.add(btnExport);
+
+        pnlMain.add(barMain, java.awt.BorderLayout.PAGE_START);
+
+        add(pnlMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
+        new ExportSceneAction(scene).actionPerformed(evt);
+    }//GEN-LAST:event_btnExportActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToolBar barMain;
+    private javax.swing.JButton btnExport;
+    private javax.swing.JPanel pnlMain;
     private javax.swing.JScrollPane pnlScrollMain;
     // End of variables declaration//GEN-END:variables
     @Override
