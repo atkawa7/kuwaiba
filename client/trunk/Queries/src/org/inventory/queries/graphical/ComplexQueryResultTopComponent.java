@@ -37,6 +37,7 @@ import org.inventory.navigation.applicationnodes.listmanagernodes.actions.Delete
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RelateToServiceAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.inventory.queries.QueryManagerService;
 import org.inventory.queries.graphical.dialogs.ExportSettingsPanel;
 import org.netbeans.swing.etable.ETable;
@@ -236,6 +237,7 @@ public class ComplexQueryResultTopComponent extends TopComponent{
                 menu.add(new DeleteListTypeAction(singleRecord));
             else{
                 menu.add(new RelateToServiceAction(singleRecord));
+                menu.add(new ShowObjectIdAction(singleRecord.getOid(), singleRecord.getClassName()));
                 menu.add(new DeleteBusinessObjectAction(singleRecord));
             }
             
