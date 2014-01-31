@@ -19,29 +19,34 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.navigation.applicationnodes.objectnodes.windows.ConnectLinksFrame;
+import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.objectnodes.windows.ServicesFrame;
+import org.openide.util.Lookup;
 
 /**
  * This action allows the user relate the current object to a service as a resource
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class RelateToServiceAction extends AbstractAction {
-    private String objectClass;
-    private long objectId;
-    public RelateToServiceAction(String objectClass, long objectId) {
-        this.objectClass = objectClass;
-        this.objectId = objectId;
+    private LocalObjectLight element;
+
+    public RelateToServiceAction(LocalObjectLight element) {
+        this.element = element;
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_RELATE_TO_SERVICE"));
     }
 
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight[] links = CommunicationsStub.getInstance().getObjectSpecialChildren(objectClass, objectId);
-        LocalObjectLight[] containerEndpoints = CommunicationsStub.getInstance().getConnectionEndpoints(objectClass, objectId);
-        ConnectLinksFrame frame = new ConnectLinksFrame(containerEndpoints[0],containerEndpoints[1], links);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
+        LocalObjectLight[] services = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_GENERICSERVICE);
+        if (services ==  null)
+            nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+        else{
+            ServicesFrame frame = new ServicesFrame(element, services);
+            frame.setVisible(true);
+        }
     }
     
 }

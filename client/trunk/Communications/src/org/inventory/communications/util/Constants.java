@@ -46,6 +46,10 @@ public class Constants {
      */
     public static String CLASS_GENERICOBJECTLIST = "GenericObjectList";
     /**
+     * Name for the class GenericService
+     */
+    public static String CLASS_GENERICSERVICE = "GenericService";
+    /**
      * Root class to all ports
      */
     public static String CLASS_GENERICPORT = "GenericPort";

@@ -42,6 +42,7 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateBusin
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.RelateToServiceAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ReleaseMirrorPortAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectAuditTrailAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
@@ -82,7 +83,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     protected EditObjectAction editAction;
     protected ShowObjectIdAction showObjectIdAction;
     protected ShowObjectAuditTrailAction showObjectAuditTrailAction;
-
+    protected RelateToServiceAction relateToServiceAction;
+    
     protected Sheet sheet;
     protected Image icon;
     private final Image defaultIcon = ImageUtilities.loadImage(GENERIC_ICON_PATH);
@@ -287,6 +289,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                             refreshAction == null ? refreshAction = new RefreshObjectAction(this) : refreshAction,
                             editAction == null ? editAction = new EditObjectAction(this) : editAction,
                             deleteAction == null ? deleteAction = new DeleteBusinessObjectAction(this) : deleteAction,
+                            relateToServiceAction == null ? relateToServiceAction = new RelateToServiceAction(this.getObject()) : relateToServiceAction,
                             null, //Separator
                             SystemAction.get(CopyAction.class),
                             SystemAction.get(CutAction.class),
