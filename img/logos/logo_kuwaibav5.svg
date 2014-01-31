@@ -14,7 +14,7 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.1 r9760"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="logo_kuwaibav5.svg">
   <defs
      id="defs4">
@@ -110,14 +110,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="794.90243"
-     inkscape:cy="126.61529"
+     inkscape:zoom="1.979899"
+     inkscape:cx="1070.1741"
+     inkscape:cy="3.6027645"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="1358"
-     inkscape:window-height="716"
+     inkscape:window-width="1280"
+     inkscape:window-height="756"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1" />
@@ -1014,5 +1014,141 @@
          y="1043.8496"
          style="font-size:15px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#666666;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
          id="tspan3127-4-1-0">www.neotropic.co</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="1029.505"
+       y="1084.3036"
+       id="text3174-7-4-5-5"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/gir/header_site.png"
+       inkscape:export-xdpi="120.30939"
+       inkscape:export-ydpi="120.30939"><tspan
+         sodipodi:role="line"
+         x="1029.505"
+         y="1084.3036"
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#55d400;fill-opacity:1;font-family:Ubuntu;-inkscape-font-specification:Ubuntu Bold"
+         id="tspan3190-2-6-9-1">kuwaiba</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#666666;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="1031.177"
+       y="1103.6088"
+       id="text3174-7-5-8-6"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/gir/header_site.png"
+       inkscape:export-xdpi="120.30939"
+       inkscape:export-ydpi="120.30939"><tspan
+         sodipodi:role="line"
+         x="1031.177"
+         y="1103.6088"
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#666666;font-family:Ubuntu;-inkscape-font-specification:Ubuntu"
+         id="tspan3619-2">Network Inventory for the masses</tspan></text>
+    <g
+       id="g3581-7"
+       transform="matrix(0,0.80049329,-0.78849416,0,1597.552,460.76823)"
+       inkscape:export-filename="/home/gir/header_site.png"
+       inkscape:export-xdpi="120.30939"
+       inkscape:export-ydpi="120.30939">
+      <path
+         inkscape:export-ydpi="600.04883"
+         inkscape:export-xdpi="600.04883"
+         inkscape:export-filename="/home/zim/logo_large.png"
+         d="m 511.42857,409.50504 c 0,59.96234 -48.60908,108.57142 -108.57142,108.57142 -59.96235,0 -108.57143,-48.60908 -108.57143,-108.57142 0,-59.96235 48.60908,-108.57143 108.57143,-108.57143 59.96234,0 108.57142,48.60908 108.57142,108.57143 z"
+         sodipodi:ry="108.57143"
+         sodipodi:rx="108.57143"
+         sodipodi:cy="409.50504"
+         sodipodi:cx="402.85715"
+         id="path3755-2-9-0-0-1-2"
+         style="fill:#55d400;fill-opacity:1;stroke:#55d400;stroke-opacity:1"
+         sodipodi:type="arc"
+         transform="matrix(0.45835438,0,0,0.46512004,589.2772,591.2222)" />
+      <path
+         inkscape:export-ydpi="600.04883"
+         inkscape:export-xdpi="600.04883"
+         inkscape:export-filename="/home/zim/logo_large.png"
+         transform="matrix(0.45835438,0,0,0.46512004,691.42475,425.1079)"
+         d="m 154.28572,718.07648 c 0,11.04569 -9.5939,20 -21.42857,20 -11.83468,0 -21.42857,-8.95431 -21.42857,-20 0,-11.0457 9.59389,-20 21.42857,-20 11.83467,0 21.42857,8.9543 21.42857,20 z"
+         sodipodi:ry="20"
+         sodipodi:rx="21.428572"
+         sodipodi:cy="718.07648"
+         sodipodi:cx="132.85715"
+         id="path3783-6-0-3-6-7-1"
+         style="fill:#ffffff;fill-opacity:1;stroke:none"
+         sodipodi:type="arc" />
+      <path
+         inkscape:export-ydpi="600.04883"
+         inkscape:export-xdpi="600.04883"
+         inkscape:export-filename="/home/zim/logo_large.png"
+         d="m 154.28572,718.07648 c 0,11.04569 -9.5939,20 -21.42857,20 -11.83468,0 -21.42857,-8.95431 -21.42857,-20 0,-11.0457 9.59389,-20 21.42857,-20 11.83467,0 21.42857,8.9543 21.42857,20 z"
+         sodipodi:ry="20"
+         sodipodi:rx="21.428572"
+         sodipodi:cy="718.07648"
+         sodipodi:cx="132.85715"
+         id="path3783-7-1-4-2-3-7-5"
+         style="fill:#ffffff;fill-opacity:1;stroke:none"
+         sodipodi:type="arc"
+         transform="matrix(0.45835438,0,0,0.46512004,706.81235,480.25787)" />
+      <path
+         inkscape:export-ydpi="600.04883"
+         inkscape:export-xdpi="600.04883"
+         inkscape:export-filename="/home/zim/logo_large.png"
+         d="m 154.28572,718.07648 c 0,11.04569 -9.5939,20 -21.42857,20 -11.83468,0 -21.42857,-8.95431 -21.42857,-20 0,-11.0457 9.59389,-20 21.42857,-20 11.83467,0 21.42857,8.9543 21.42857,20 z"
+         sodipodi:ry="20"
+         sodipodi:rx="21.428572"
+         sodipodi:cy="718.07648"
+         sodipodi:cx="132.85715"
+         id="path3783-8-5-8-0-8-1-1"
+         style="fill:#ffffff;fill-opacity:1;stroke:none"
+         sodipodi:type="arc"
+         transform="matrix(0.45835438,0,0,0.46512004,684.2875,457.06828)" />
+      <path
+         inkscape:export-ydpi="600.04883"
+         inkscape:export-xdpi="600.04883"
+         inkscape:export-filename="/home/zim/logo_large.png"
+         d="m 154.28572,718.07648 c 0,11.04569 -9.5939,20 -21.42857,20 -11.83468,0 -21.42857,-8.95431 -21.42857,-20 0,-11.0457 9.59389,-20 21.42857,-20 11.83467,0 21.42857,8.9543 21.42857,20 z"
+         sodipodi:ry="20"
+         sodipodi:rx="21.428572"
+         sodipodi:cy="718.07648"
+         sodipodi:cx="132.85715"
+         id="path3783-7-4-5-7-6-5-1-5"
+         style="fill:#ffffff;fill-opacity:1;stroke:none"
+         sodipodi:type="arc"
+         transform="matrix(0.45835438,0,0,0.46512004,736.27801,470.95544)" />
+      <path
+         inkscape:export-ydpi="600.04883"
+         inkscape:export-xdpi="600.04883"
+         inkscape:export-filename="/home/zim/logo_large.png"
+         d="m 154.28572,718.07648 c 0,11.04569 -9.5939,20 -21.42857,20 -11.83468,0 -21.42857,-8.95431 -21.42857,-20 0,-11.0457 9.59389,-20 21.42857,-20 11.83467,0 21.42857,8.9543 21.42857,20 z"
+         sodipodi:ry="20"
+         sodipodi:rx="21.428572"
+         sodipodi:cy="718.07648"
+         sodipodi:cx="132.85715"
+         id="path3783-7-5-4-1-1-6-5-6"
+         style="fill:#ffffff;fill-opacity:1;stroke:none"
+         sodipodi:type="arc"
+         transform="matrix(0.45835438,0,0,0.46512004,740.86154,439.72598)" />
+      <path
+         inkscape:export-ydpi="600.04883"
+         inkscape:export-xdpi="600.04883"
+         inkscape:export-filename="/home/zim/logo_large.png"
+         d="m 154.28572,718.07648 c 0,11.04569 -9.5939,20 -21.42857,20 -11.83468,0 -21.42857,-8.95431 -21.42857,-20 0,-11.0457 9.59389,-20 21.42857,-20 11.83467,0 21.42857,8.9543 21.42857,20 z"
+         sodipodi:ry="20"
+         sodipodi:rx="21.428572"
+         sodipodi:cy="718.07648"
+         sodipodi:cx="132.85715"
+         id="path3783-7-0-7-7-5-1-9-5"
+         style="fill:#ffffff;fill-opacity:1;stroke:none"
+         sodipodi:type="arc"
+         transform="matrix(0.45835438,0,0,0.46512004,721.87258,417.79887)" />
+      <path
+         inkscape:export-filename="/home/zim/logo_large.png"
+         inkscape:export-ydpi="600.04883"
+         inkscape:export-xdpi="600.04883"
+         inkscape:connector-curvature="0"
+         id="path3844-6-2-5-1-7-6"
+         d="m 744.79031,791.32586 6.87529,-32.89063 31.43003,-7.309 19.31638,22.2593 -5.23834,32.22616 -29.13826,8.97016 z"
+         style="fill:none;stroke:#ffffff;stroke-width:6.04859591;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    </g>
   </g>
 </svg>
