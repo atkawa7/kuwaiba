@@ -345,7 +345,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         List<RemoteBusinessObjectLight> parents =  new ArrayList<RemoteBusinessObjectLight>();
       
         String cypherQuery = "START n=node({oid})" +
-                             "MATCH n-[:"+RelTypes.CHILD_OF.toString()+"*]->m " +
+                             "MATCH n-[:" + RelTypes.CHILD_OF.toString() + "|"+RelTypes.CHILD_OF_SPECIAL.toString() + "*]->m " +
                              "RETURN m as parents";
       
         Map<String, Object> params = new HashMap<String, Object>();
