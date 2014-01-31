@@ -16,9 +16,15 @@
 package org.inventory.navigation.applicationnodes.objectnodes.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JPopupMenu;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.RelateToServiceAction;
 import org.netbeans.swing.etable.ETable;
 import org.openide.explorer.ExplorerManager;
 import org.openide.windows.Mode;
@@ -84,6 +90,7 @@ public class PhysicalPathTopComponent extends TopComponent implements ExplorerMa
         Mode myMode = WindowManager.getDefault().findMode("properties");
         myMode.dockInto(this);
         add(aTable, BorderLayout.CENTER);
+        aTable.addMouseListener(new PopupProvider());
     }
 
     @Override
@@ -107,4 +114,22 @@ public class PhysicalPathTopComponent extends TopComponent implements ExplorerMa
         return em;
     }
     
+    private class PopupProvider extends MouseAdapter{
+        @Override
+        public void mousePressed(MouseEvent e) {
+          showPopup(e);
+        }
+        @Override
+        public void mouseReleased(MouseEvent e) {
+          showPopup(e);
+        }
+        private void showPopup(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                LocalObjectLight singleRecord = (LocalObjectLight)aTable.getValueAt(aTable.rowAtPoint(new Point(e.getX(), e.getY())), 0);
+                JPopupMenu  menu = new JPopupMenu();
+                menu.add(new RelateToServiceAction(singleRecord));
+                menu.show(e.getComponent(), e.getX(), e.getY());
+            }
+        }
+    }
 }
