@@ -25,6 +25,7 @@ import javax.swing.table.TableModel;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RelateToServiceAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.netbeans.swing.etable.ETable;
 import org.openide.explorer.ExplorerManager;
 import org.openide.windows.Mode;
@@ -128,6 +129,7 @@ public class PhysicalPathTopComponent extends TopComponent implements ExplorerMa
                 LocalObjectLight singleRecord = (LocalObjectLight)aTable.getValueAt(aTable.rowAtPoint(new Point(e.getX(), e.getY())), 0);
                 JPopupMenu  menu = new JPopupMenu();
                 menu.add(new RelateToServiceAction(singleRecord));
+                menu.add(new ShowObjectIdAction(singleRecord.getOid(), singleRecord.getClassName()));
                 menu.show(e.getComponent(), e.getX(), e.getY());
             }
         }
