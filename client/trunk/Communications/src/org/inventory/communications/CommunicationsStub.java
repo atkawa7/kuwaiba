@@ -73,22 +73,13 @@ public class CommunicationsStub {
     private LocalSession session;
     
     private CommunicationsStub(){
-        if (serverURL == null){
-            try{
-                //Default values
-                serverURL = new URL("http", "localhost", 8080,"/kuwaiba/KuwaibaService?wsdl"); //NOI18n
-            }catch (MalformedURLException mue){
-                Logger.getAnonymousLogger("Malformed URL: "+mue.getMessage());
-            }
-        }
-        this.service = new KuwaibaService(serverURL);
-        this.port = service.getKuwaibaPort();
         cache = Cache.getInstace();
     }
 
     //Implements the singleton pattern
     public static CommunicationsStub getInstance(){
-            if(instance==null) instance = new CommunicationsStub();
+            if(instance==null)
+                instance = new CommunicationsStub();
             return instance;
     }
 
@@ -126,13 +117,18 @@ public class CommunicationsStub {
     }
 
     /**
-     *
+     * Creates a session
      * @param user The user for this session
      * @param password The password for the user
      * @return Success or failure
      */
     public boolean createSession(String user, String password){
         try{
+            if (serverURL == null)
+                serverURL = new URL("http", "localhost", 8080,"/kuwaiba/KuwaibaService?wsdl"); //NOI18n
+
+            this.service = new KuwaibaService(serverURL);
+            this.port = service.getKuwaibaPort();
             this.session = new LocalSession(port.createSession(user, password));
             return true;
         }catch(Exception ex){ 
