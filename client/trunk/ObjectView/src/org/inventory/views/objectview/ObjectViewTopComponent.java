@@ -596,7 +596,6 @@ public final class ObjectViewTopComponent extends TopComponent
     }
 
     private void readPropertiesImpl(java.util.Properties p) {
-        String version = p.getProperty("version");
         currentFont = new Font(p.getProperty("fontName") == null ? ObjectNodeWidget.defaultFont.getFontName() : p.getProperty("fontName"),
                 ObjectNodeWidget.defaultFont.getStyle(),
                 p.getProperty("fontSize")== null ? ObjectNodeWidget.defaultFont.getSize() : Integer.valueOf(p.getProperty("fontSize")));
@@ -687,6 +686,7 @@ public final class ObjectViewTopComponent extends TopComponent
         return true;
     }
 
+    @Override
     public void refresh() {
         btnRefreshActionPerformed(null);
     }

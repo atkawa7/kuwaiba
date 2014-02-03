@@ -19,6 +19,7 @@ package org.inventory.core.authentication;
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Properties;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -35,11 +36,15 @@ import javax.swing.border.TitledBorder;
  */
 public class AuthenticationPanel extends javax.swing.JPanel {
     private String detailedError;
+    private Properties loginProperties;
 
     /** Creates new form AuthenticationPanel */
-    public AuthenticationPanel() {
+    public AuthenticationPanel(Properties loginProperties) {
+        this.loginProperties = loginProperties;
         initComponents();
         initCustomComponents();
+        if (loginProperties != null)
+            txtUser.setText(loginProperties.get("user") == null ? "" : (String)loginProperties.get("user"));
     }
     
     private void initCustomComponents(){
@@ -72,7 +77,7 @@ public class AuthenticationPanel extends javax.swing.JPanel {
         });
 
         //Finally we embed the connections settings into the collapsable panel
-        pnlSettingsContainer.add(new ConnectionSettingsPanel(),BorderLayout.CENTER);
+        pnlSettingsContainer.add(new ConnectionSettingsPanel(loginProperties),BorderLayout.CENTER);
         pnlSettingsContainer.getComponent(0).setVisible(false);
         txtUser.setRequestFocusEnabled(true);
         lblError.setVisible(false);

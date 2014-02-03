@@ -15,6 +15,7 @@
  */
 package org.inventory.core.authentication;
 
+import java.util.Properties;
 import javax.swing.JTextField;
 
 /**
@@ -23,13 +24,20 @@ import javax.swing.JTextField;
  */
 public class ConnectionSettingsPanel extends javax.swing.JPanel {
 
-    /** Creates new form ConnectionSettingsPanel */
-    public ConnectionSettingsPanel() {
-        initComponents();
-        
+    ConnectionSettingsPanel(Properties loginProperties) {
+        initComponents();        
         //Let's hide them for now
         btnSaveConfiguration.setVisible(false);
         btnTestConnection.setVisible(false);
+        if (loginProperties != null){
+            if (loginProperties.getProperty("address") != null) //NOI18N
+                txtServerAddress.setText((String)loginProperties.getProperty("address")); //NOI18N
+            if (loginProperties.getProperty("port") != null) //NOI18N
+                txtServerPort.setText(loginProperties.getProperty("port")); //NOI18N
+            if (loginProperties.getProperty("path") != null) //NOI18N
+                txtWSDLPath.setText((String)loginProperties.getProperty("path")); //NOI18N
+        }
+        
     }
 
     /** This method is called from within the constructor to
