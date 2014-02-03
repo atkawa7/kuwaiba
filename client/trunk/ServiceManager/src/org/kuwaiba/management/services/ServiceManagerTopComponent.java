@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.management.services;
 
+import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -52,7 +53,8 @@ preferredID = "ServiceManagerTopComponent")
     "CTL_ServiceManagerTopComponent=ServiceManager Window",
     "HINT_ServiceManagerTopComponent=This is a ServiceManager window"
 })
-public final class ServiceManagerTopComponent extends TopComponent implements ExplorerManager.Provider{
+public final class ServiceManagerTopComponent extends TopComponent 
+implements ExplorerManager.Provider, RefreshableTopComponent{
 
     private ExplorerManager em = new ExplorerManager();
     private BeanTreeView tree;
@@ -123,5 +125,11 @@ public final class ServiceManagerTopComponent extends TopComponent implements Ex
     
     public NotificationUtil getNotifier(){
         return nu;
+    }
+
+    @Override
+    public void refresh() {
+        em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
+        sms.setTreeRoot();
     }
 }
