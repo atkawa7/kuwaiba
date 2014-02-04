@@ -60,6 +60,7 @@ import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.Traverser.Order;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.kernel.Traversal;
+import org.neo4j.kernel.impl.traversal.TraversalDescriptionImpl;
 
 /**
  * Utility class containing misc methods to perform common tasks
@@ -349,8 +350,8 @@ public class Util {
         for (Relationship rel : classNode.getRelationships(Direction.OUTGOING, RelTypes.POSSIBLE_CHILD))
         {
             if((Boolean)rel.getEndNode().getProperty(Constants.PROPERTY_ABSTRACT)){
-                Traverser traverserMetadata = Util.getAllSubclasses(rel.getEndNode());
-                for (Node childNode : traverserMetadata) {
+                Iterable<Node> allSubclasses = Util.getAllSubclasses(rel.getEndNode());
+                for (Node childNode : allSubclasses) {
                     if(!(Boolean)childNode.getProperty(Constants.PROPERTY_ABSTRACT)){
                         myClass.getPossibleChildren().add((String)childNode.getProperty(Constants.PROPERTY_NAME));
                     }
@@ -577,12 +578,12 @@ public class Util {
      * @return
      */
 
-    public static Traverser getAllSubclasses(final Node classMetadata)
-    {
-        return classMetadata.traverse(Order.BREADTH_FIRST,
-                StopEvaluator.END_OF_GRAPH,
-                ReturnableEvaluator.ALL_BUT_START_NODE, RelTypes.EXTENDS,
-                Direction.INCOMING);
+    public static Iterable<Node> getAllSubclasses(final Node classMetadata){
+        TraversalDescription td = new TraversalDescriptionImpl();
+        td = td.depthFirst();
+        td = td.relationships(RelTypes.EXTENDS, Direction.INCOMING);
+        org.neo4j.graphdb.traversal.Traverser traverse = td.traverse(classMetadata);
+        return traverse.nodes();
     }
 
     /**
