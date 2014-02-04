@@ -1315,11 +1315,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     }
                 }
                 parentNode.createRelationshipTo(childNode, RelTypes.POSSIBLE_CHILD);
-                
-                //Refresh cache
+                 //Refresh cache
                 if ((Boolean)childNode.getProperty(Constants.PROPERTY_ABSTRACT)){
-                    for(Node subclass : Util.getAllSubclasses(childNode))
-                        cm.putPossibleChild((String)parentNode.getProperty(Constants.PROPERTY_NAME),(String)subclass.getProperty(Constants.PROPERTY_NAME));
+                    for(ClassMetadataLight subclass : getSubClassesLight((String)childNode.getProperty(Constants.PROPERTY_NAME), false, false))
+                        cm.putPossibleChild((String)parentNode.getProperty(Constants.PROPERTY_NAME),subclass.getName());
                 }else
                     cm.putPossibleChild((String)parentNode.getProperty(Constants.PROPERTY_NAME), (String)childNode.getProperty(Constants.PROPERTY_NAME));
 
@@ -1398,16 +1397,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
                     }
                 }
                 parentNode.createRelationshipTo(childNode, RelTypes.POSSIBLE_CHILD);
-
                 //Refresh cache
                 if ((Boolean)childNode.getProperty(Constants.PROPERTY_ABSTRACT)){
-                    for(Node subclass : Util.getAllSubclasses(childNode)){
-                        cm.putPossibleChild(parentClassName,(String)subclass.getProperty(Constants.PROPERTY_NAME));
-                    }
+                    for(ClassMetadataLight subclass : getSubClassesLight((String)childNode.getProperty(Constants.PROPERTY_NAME), false, false))
+                        cm.putPossibleChild(parentClassName,subclass.getName());
                 }
-                else{
+                else
                     cm.putPossibleChild(parentClassName, (String)childNode.getProperty(Constants.PROPERTY_NAME));
-                }
+                
                 tx.success();
                 tx.finish();
             }
