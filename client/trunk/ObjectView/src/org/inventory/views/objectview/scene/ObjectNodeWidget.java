@@ -16,12 +16,14 @@
 
 package org.inventory.views.objectview.scene;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.widget.general.IconNodeWidget;
 import org.openide.util.ImageUtilities;
@@ -30,20 +32,22 @@ import org.openide.util.ImageUtilities;
  * This widget represents a node (as in the navigation tree)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectNodeWidget extends IconNodeWidget implements ActionListener{
-    private LocalObjectLight object;
+public class ObjectNodeWidget extends IconNodeWidget implements ActionListener, SelectableWidget{
+    private ObjectNode node;
     public static final Font defaultFont = new Font(Font.SANS_SERIF,Font.BOLD,12);
 
-    public ObjectNodeWidget(ViewScene scene, LocalObjectLight node){
+    public ObjectNodeWidget(ViewScene scene, LocalObjectLight object){
         super(scene);
-        this.object = node;
+        this.node = new ObjectNode(object, true);
         setLabel(node.getName());
         getLabelWidget().setFont(defaultFont);
+        setToolTipText(object.toString());
         
-        Image myIcon = CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false).getIcon();
+        Image myIcon = CommunicationsStub.getInstance().getMetaForClass(object.getClassName(), false).getIcon();
         if(myIcon == null)
             myIcon = ImageUtilities.loadImage("org/inventory/views/objectview/res/default_32.png");
-        setImage(myIcon);
+        setImage(myIcon);getLabelWidget().setBackground(Color.CYAN);
+        setImage(myIcon);getLabelWidget().setForeground(Color.MAGENTA);
 
         //The difference between using getActions().addAction() and createActions("tool").addAction()
         //is that the first enable the action no matter what's the active scene tool. The second
@@ -60,9 +64,15 @@ public class ObjectNodeWidget extends IconNodeWidget implements ActionListener{
      * @return
      */
     public LocalObjectLight getObject(){
-        return this.object;
+        return node.getObject();
+    }
+    
+    @Override
+    public ObjectNode getNode() {
+        return node;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         ((ViewScene)getScene()).fireChangeEvent(e);
     }

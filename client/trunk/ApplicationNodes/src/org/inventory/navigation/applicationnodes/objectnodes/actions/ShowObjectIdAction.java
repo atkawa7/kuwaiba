@@ -18,7 +18,7 @@ package org.inventory.navigation.applicationnodes.objectnodes.actions;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 
@@ -45,16 +45,17 @@ public final class ShowObjectIdAction extends AbstractAction{
                 msg +=  ":" +parent;
         }
         JOptionPane.showMessageDialog(null, 
-                new SelectableLabel(id + " ["+ className +"]" + msg), //NOI18N
+                new SelectableLabel("<strong>id:</strong> " + id + "<br/><strong>Class: </strong>"+ className +"<br/><strong>Containment Path: </strong>" + msg), //NOI18N
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SHOW_OBJECT_ID_ACTION_TITLE"),
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private class SelectableLabel extends JTextField{
+    private class SelectableLabel extends JTextPane {
 
         public SelectableLabel(String text) {
-            super(text);
-            setOpaque(true);
+            setContentType("text/html");
+            setText(text);
+            setOpaque(false);
             setEditable(false);
             setBorder(null);
         }

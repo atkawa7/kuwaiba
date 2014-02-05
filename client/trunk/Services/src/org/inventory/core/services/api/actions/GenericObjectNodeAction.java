@@ -15,32 +15,29 @@
  */
 package org.inventory.core.services.api.actions;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.AbstractAction;
-import org.inventory.core.services.api.behaviors.Refreshable;
-import org.openide.windows.WindowManager;
 
 
 /**
- * Refreshes the focused component
+ * Superclass to all actions related to a 
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class GenericObjectNodeAction extends AbstractAction implements ActionListener {
+public abstract class GenericObjectNodeAction extends AbstractAction {
+    protected String objectClassName;
+    protected long objectId;
 
-    public void actionPerformed(ActionEvent e) {
-        Object activeTopComponent = WindowManager.getDefault().getRegistry().getActivated();
-        if (activeTopComponent == null)
-            return;
-        boolean refreshable = false;
-        //Ignore the TopComponent that doesn't implement the RefreshableTopComponent interface
-        for (Class intz : activeTopComponent.getClass().getInterfaces()){
-            if (intz.equals(Refreshable.class)){
-                refreshable = true;
-                break;
-            }
-        }
-        if (refreshable)
-            ((Refreshable)activeTopComponent).refresh();
+    public void setObjectClassName(String objectClassName) {
+        this.objectClassName = objectClassName;
     }
+
+    public void setObjectId(long objectId) {
+        this.objectId = objectId;
+    }
+    
+    /**
+     * What instances support this action
+     * @return A validator. See class Constants (in Application Nodes) for possible values so far.
+     * You can add your own if the server supports them
+     */
+    public abstract String getValidator();
 }

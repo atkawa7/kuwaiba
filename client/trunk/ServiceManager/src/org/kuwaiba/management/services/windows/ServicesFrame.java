@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.navigation.applicationnodes.objectnodes.windows;
+package org.kuwaiba.management.services.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -37,15 +37,17 @@ import org.inventory.communications.core.LocalObjectLight;
 public class ServicesFrame extends JFrame{
     private JScrollPane pnlScrollMain;
     private JList lstAvailableServices;
-    private LocalObjectLight element;
+    private String objectClassName;
+    private long objectId;
 
-    public ServicesFrame(LocalObjectLight element, LocalObjectLight[] services) {
-        this.element = element;
+    public ServicesFrame(String objectClassName, long objectId, LocalObjectLight[] services) {
+        this.objectClassName = objectClassName;
+        this.objectId = objectId;
         setLayout(new BorderLayout());
-        setTitle(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TITLE_AVAILABLE_SERVICES"));
+        setTitle(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_TITLE_AVAILABLE_SERVICES"));
         setSize(300, 700);
         setLocationRelativeTo(null);
-        JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_INSTRUCTIONS_SELECT_SERVICE"));
+        JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_INSTRUCTIONS_SELECT_SERVICE"));
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
         add(lblInstructions, BorderLayout.NORTH);
         
@@ -80,10 +82,10 @@ public class ServicesFrame extends JFrame{
                 JOptionPane.showMessageDialog(null, "Select a service from the list");
             else{
                 if (CommunicationsStub.getInstance().associateObjectToService(
-                        element.getClassName(), element.getOid(), 
+                        objectClassName, objectId, 
                         ((LocalObjectLight)lstAvailableServices.getSelectedValue()).getClassName(),
                         ((LocalObjectLight)lstAvailableServices.getSelectedValue()).getOid()))
-                    JOptionPane.showMessageDialog(null, String.format("%s was related to %s", element, lstAvailableServices.getSelectedValue()));
+                    JOptionPane.showMessageDialog(null, String.format("The object was related to %s", lstAvailableServices.getSelectedValue()));
                 else 
                     JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError());
                 dispose();

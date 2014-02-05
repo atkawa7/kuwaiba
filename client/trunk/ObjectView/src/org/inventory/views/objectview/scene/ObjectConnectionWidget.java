@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.Router;
 import org.netbeans.api.visual.widget.FreeConnectionWidget;
@@ -30,7 +31,7 @@ import org.netbeans.api.visual.widget.FreeConnectionWidget;
  * Extends the functionality of a simple connection widget
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectConnectionWidget extends FreeConnectionWidget implements ActionListener{
+public class ObjectConnectionWidget extends FreeConnectionWidget implements ActionListener, SelectableWidget{
 
     /**
      * Some constants
@@ -47,7 +48,8 @@ public class ObjectConnectionWidget extends FreeConnectionWidget implements Acti
     /**
      * The wrapped business object
      */
-    private LocalObjectLight object;
+    //private LocalObjectLight object;
+    private ObjectNode node;
 
     /**
      * We don't take the router from the scene directly because it's possible that in some
@@ -58,8 +60,8 @@ public class ObjectConnectionWidget extends FreeConnectionWidget implements Acti
      */
     public ObjectConnectionWidget(ViewScene scene, LocalObjectLight connection, Router router){
         super(scene);
-        this.object = connection;
-        setToolTipText((String)connection.getName()+" ["+connection.getClassName()+"]"); //NOI18N
+        this.node = new ObjectNode(connection);
+        setToolTipText(connection.toString()); //NOI18N
         setRouter(router);
         setStroke(new BasicStroke(2));
         setLineColor(getConnectionColor(connection.getClassName()));
@@ -73,12 +75,15 @@ public class ObjectConnectionWidget extends FreeConnectionWidget implements Acti
 
         scene.getMoveControlPointAction().addActionListener(this);
         getActions().addAction(scene.getMoveControlPointAction());
-
-        //getActions().addAction(ActionFactory.createPopupMenuAction(scene.getEdgeMenu()));
     }
 
     public LocalObjectLight getObject() {
-        return object;
+        return node.getObject();
+    }
+
+    @Override
+    public ObjectNode getNode() {
+        return node;
     }
 
     public static Color getConnectionColor(String connectionClass){
@@ -95,6 +100,7 @@ public class ObjectConnectionWidget extends FreeConnectionWidget implements Acti
         return Color.BLACK;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         ((ViewScene)getScene()).fireChangeEvent(e);
     }

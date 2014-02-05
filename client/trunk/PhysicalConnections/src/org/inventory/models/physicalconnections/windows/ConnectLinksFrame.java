@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.navigation.applicationnodes.objectnodes.windows;
+package org.inventory.models.physicalconnections.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -62,10 +62,10 @@ public class ConnectLinksFrame extends JFrame{
         this.aSideRoot = aSideRoot;
         this.bSideRoot = bSideRoot;
         setLayout(new BorderLayout());
-        setTitle(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TITLE_CONNECT_LINKS"));
+        setTitle(java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_TITLE_CONNECT_LINKS"));
         setSize(1000, 700);
         
-        JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_INSTRUCTIONS_CONNECT_LINKS"));
+        JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_INSTRUCTIONS_CONNECT_LINKS"));
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
         add(lblInstructions, BorderLayout.NORTH);
         

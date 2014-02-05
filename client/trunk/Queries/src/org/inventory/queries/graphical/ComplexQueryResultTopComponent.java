@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -33,11 +34,8 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.queries.LocalResultRecord;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.listmanagernodes.actions.DeleteListTypeAction;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.RelateToServiceAction;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
+import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.queries.QueryManagerService;
 import org.inventory.queries.graphical.dialogs.ExportSettingsPanel;
 import org.netbeans.swing.etable.ETable;
@@ -231,14 +229,16 @@ public class ComplexQueryResultTopComponent extends TopComponent{
         private void showPopup(MouseEvent e) {
           if (e.isPopupTrigger()) {
             LocalObjectLight singleRecord = (LocalObjectLight)aTable.getValueAt(aTable.rowAtPoint(new Point(e.getX(), e.getY())), 0);
+            ObjectNode node;
             JPopupMenu  menu = new JPopupMenu();
-            menu.add(new EditObjectAction(singleRecord));
             if (CommunicationsStub.getInstance().getMetaForClass(singleRecord.getClassName(),false).isListType())
-                menu.add(new DeleteListTypeAction(singleRecord));
-            else{
-                menu.add(new RelateToServiceAction(singleRecord));
-                menu.add(new ShowObjectIdAction(singleRecord.getOid(), singleRecord.getClassName()));
-                menu.add(new DeleteBusinessObjectAction(singleRecord));
+                node = new ListTypeItemNode(singleRecord);
+            else
+                node = new ObjectNode(singleRecord);
+            
+            for (Action action : node.getActions(true)){
+                if (action != null)
+                    menu.add(action);
             }
             
             menu.show(e.getComponent(), e.getX(), e.getY());

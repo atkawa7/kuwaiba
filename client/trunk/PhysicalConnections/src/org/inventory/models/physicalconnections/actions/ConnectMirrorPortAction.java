@@ -13,38 +13,36 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.navigation.applicationnodes.objectnodes.actions;
+package org.inventory.models.physicalconnections.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This action allows to connect directly two ports
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ConnectMirrorPortAction extends AbstractAction {
-    private String objectClass;
-    private long objectId;
+@ServiceProvider(service=GenericObjectNodeAction.class)
+public class ConnectMirrorPortAction extends GenericObjectNodeAction {
     private NotificationUtil nu;
-    public ConnectMirrorPortAction(String objectClass, long objectId) {
-        this.objectClass = objectClass;
-        this.objectId = objectId;
+    public ConnectMirrorPortAction() {
         this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CONNECT_MIRROR_PORT"));
-    }
-
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_CONNECT_MIRROR_PORT"));
+    } 
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight[] siblings = CommunicationsStub.getInstance().getSiblings(objectClass, objectId);
+        LocalObjectLight[] siblings = CommunicationsStub.getInstance().getSiblings(objectClassName, objectId);
         if (siblings == null){
             nu.showSimplePopup("Error", NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());
             return;
@@ -56,7 +54,7 @@ public class ConnectMirrorPortAction extends AbstractAction {
         if (JOptionPane.showConfirmDialog(null, dialog, "Mirror Port Connection", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
             LocalObjectLight selectedObject = (LocalObjectLight)((JComboBox)dialog.getComponent("cmbSiblings")).getSelectedItem();
             if (selectedObject != null){
-                if (CommunicationsStub.getInstance().connectMirrorPort(objectClass, 
+                if (CommunicationsStub.getInstance().connectMirrorPort(objectClassName, 
                         objectId, selectedObject.getClassName(), selectedObject.getOid()))
                     nu.showSimplePopup("Success", NotificationUtil.INFO, "Port mirrored successfully");
                 else
@@ -64,5 +62,9 @@ public class ConnectMirrorPortAction extends AbstractAction {
             }
         }
     }
-    
+
+    @Override
+    public String getValidator() {
+        return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
+    }  
 }

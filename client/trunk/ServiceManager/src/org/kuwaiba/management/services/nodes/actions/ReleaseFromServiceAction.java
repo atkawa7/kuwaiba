@@ -13,36 +13,38 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.navigation.applicationnodes.objectnodes.actions;
+package org.kuwaiba.management.services.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This action releases de relationship between the object and the service
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ReleaseFromServiceAction extends AbstractAction {
-    private ObjectNode object;
+@ServiceProvider(service=GenericObjectNodeAction.class)
+public class ReleaseFromServiceAction extends GenericObjectNodeAction {
     
-    
-    public ReleaseFromServiceAction(ObjectNode object) {
-        this.object = object;
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_RELEASE_ELEMENT"));
+    public ReleaseFromServiceAction() {
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_RELEASE_ELEMENT"));
     }
 
-    
     @Override
     public void actionPerformed(ActionEvent e) {
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        if (CommunicationsStub.getInstance().releaseObjectFromService(object.getObject().getClassName(), 
-                object.getObject().getOid(), -1))
+        if (CommunicationsStub.getInstance().releaseObjectFromService(objectClassName, 
+                objectId, -1))
             nu.showSimplePopup("Success", NotificationUtil.INFO, "Element released successfully");
         else
             nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+    }
+
+    @Override
+    public String getValidator() {
+        return null;
     }
 }

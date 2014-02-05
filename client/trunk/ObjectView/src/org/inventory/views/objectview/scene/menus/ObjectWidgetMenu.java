@@ -16,9 +16,9 @@
 package org.inventory.views.objectview.scene.menus;
 
 import java.awt.Point;
+import javax.swing.Action;
 import javax.swing.JPopupMenu;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.ConnectLinksAction;
-import org.inventory.views.objectview.scene.ObjectConnectionWidget;
+import org.inventory.views.objectview.scene.SelectableWidget;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -26,16 +26,15 @@ import org.netbeans.api.visual.widget.Widget;
  * Menu with the actions associated to an edge (a physical connection)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class EdgeMenu implements PopupMenuProvider {
+public class ObjectWidgetMenu implements PopupMenuProvider {
 
     @Override
     public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
         JPopupMenu menu = new JPopupMenu();
-        
-        menu.add(new ConnectLinksAction(((ObjectConnectionWidget)widget).getObject().
-                getClassName(), ((ObjectConnectionWidget)widget).getObject().getOid()));
+        for (Action action : ((SelectableWidget)widget).getNode().getActions(false)){
+            if (action !=  null)
+                menu.add(action);
+        }
         return menu;
     }
-    
-    
 }

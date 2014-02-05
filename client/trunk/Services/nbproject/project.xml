@@ -48,6 +48,7 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
+                <package>org.inventory.core.services.api.actions</package>
                 <package>org.inventory.core.services.api.behaviors</package>
                 <package>org.inventory.core.services.api.export</package>
                 <package>org.inventory.core.services.api.notifications</package>

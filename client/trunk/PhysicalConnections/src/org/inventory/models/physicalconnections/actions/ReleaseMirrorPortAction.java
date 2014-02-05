@@ -13,36 +13,41 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.navigation.applicationnodes.objectnodes.actions;
+package org.inventory.models.physicalconnections.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This action allows to remove the port mirroring relationship between two ports
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ReleaseMirrorPortAction extends AbstractAction {
-    private String objectClass;
-    private long objectId;
+@ServiceProvider(service=GenericObjectNodeAction.class)
+public class ReleaseMirrorPortAction extends GenericObjectNodeAction {
     private NotificationUtil nu;
-    public ReleaseMirrorPortAction(String objectClass, long objectId) {
-        this.objectClass = objectClass;
-        this.objectId = objectId;
+
+    public ReleaseMirrorPortAction() {
         this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_RELEASE_MIRROR_PORT"));
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_RELEASE_MIRROR_PORT"));
     }
 
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (CommunicationsStub.getInstance().releaseMirrorPort(objectClass, objectId))
+        if (CommunicationsStub.getInstance().releaseMirrorPort(objectClassName, objectId))
             nu.showSimplePopup("Success", NotificationUtil.INFO, "Miror port released successfully");
         else
             nu.showSimplePopup("Error", NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());        
+    }
+
+    @Override
+    public String getValidator() {
+        return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
     }
     
 }

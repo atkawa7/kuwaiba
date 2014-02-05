@@ -13,27 +13,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.navigation.applicationnodes.objectnodes.actions;
+package org.kuwaiba.management.services.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.windows.ServicesFrame;
+import org.kuwaiba.management.services.windows.ServicesFrame;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This action allows the user relate the current object to a service as a resource
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RelateToServiceAction extends AbstractAction {
-    private LocalObjectLight element;
+@ServiceProvider(service=GenericObjectNodeAction.class)
+public class RelateToServiceAction extends GenericObjectNodeAction {
 
-    public RelateToServiceAction(LocalObjectLight element) {
-        this.element = element;
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_RELATE_TO_SERVICE"));
+    public RelateToServiceAction() {
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_RELATE_TO_SERVICE"));
     }
 
     
@@ -44,9 +44,14 @@ public class RelateToServiceAction extends AbstractAction {
         if (services ==  null)
             nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
         else{
-            ServicesFrame frame = new ServicesFrame(element, services);
+            ServicesFrame frame = new ServicesFrame(objectClassName, objectId, services);
             frame.setVisible(true);
         }
+    }
+
+    @Override
+    public String getValidator() {
+        return null; //This action is available to any object
     }
     
 }

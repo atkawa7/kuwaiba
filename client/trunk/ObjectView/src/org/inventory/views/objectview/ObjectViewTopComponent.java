@@ -23,7 +23,6 @@ import java.awt.event.ActionListener;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
-import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -464,8 +463,7 @@ public final class ObjectViewTopComponent extends TopComponent
                 if (e.getSource() == DialogDescriptor.OK_OPTION){
                     if (pnlFormat.getNodesFontColor() != null)
                         currentColor = pnlFormat.getNodesFontColor();
-//                    if (pnlFormat.getNodesFontType() != null)
-//                        currentFont = pnlFormat.getNodesFontType();
+
                     if (pnlFormat.getNodesFontSize() != -1)
                         currentFont = currentFont.deriveFont(Float.valueOf(pnlFormat.getNodesFontSize()+".0")); //NOI18N
 
@@ -473,12 +471,6 @@ public final class ObjectViewTopComponent extends TopComponent
                         if (pnlFormat.getNodesFontColor() != null)
                             ((ObjectNodeWidget)node).getLabelWidget().setForeground(pnlFormat.getNodesFontColor());
 
-//                        if (pnlFormat.getNodesFontType() != null){
-//                            Font newFont = new Font(pnlFormat.getNodesFontType().getFontName(),
-//                                    ((ObjectNodeWidget)node).getLabelWidget().getFont().getStyle(),
-//                                    ((ObjectNodeWidget)node).getLabelWidget().getFont().getSize());
-//                            ((ObjectNodeWidget)node).getLabelWidget().setFont(newFont);
-//                        }
                         if (pnlFormat.getNodesFontSize() != -1){
                             Font newFont = new Font(((ObjectNodeWidget)node).getLabelWidget().getFont().getFontName(),
                                     ((ObjectNodeWidget)node).getLabelWidget().getFont().getStyle(),
@@ -486,16 +478,6 @@ public final class ObjectViewTopComponent extends TopComponent
                             ((ObjectNodeWidget)node).getLabelWidget().setFont(newFont);
                         }
                     }
-//                    for (Widget node : scene.getEdgesLayer().getChildren()){
-//                        if (pnlFormat.getEdgesFontColor() != null)
-//                            ((ObjectConnectionWidget)node).setForeground(pnlFormat.getNodesFontColor());
-//                        if (pnlFormat.getEdgesFontType() != null)
-//                            ((ObjectConnectionWidget)node).setFont(pnlFormat.getNodesFontType());
-//                        if (pnlFormat.getEdgesFontSize() != null){
-//                            Font newFont = new Font(((ObjectConnectionWidget)node).getFont().getFontName(),Font.BOLD,pnlFormat.getNodesFontSize());
-//                            ((ObjectConnectionWidget)node).setFont(newFont);
-//                        }
-//                    }
                 }
             }
         });
@@ -582,7 +564,6 @@ public final class ObjectViewTopComponent extends TopComponent
     }
 
     void writeProperties(java.util.Properties p) {
-        p.setProperty("fontName", currentFont.getFontName());
         p.setProperty("fontSize", String.valueOf(currentFont.getSize()));
         p.setProperty("fontColor", String.valueOf(currentColor.getRGB()));
     }
@@ -596,9 +577,6 @@ public final class ObjectViewTopComponent extends TopComponent
     }
 
     private void readPropertiesImpl(java.util.Properties p) {
-        currentFont = new Font(p.getProperty("fontName") == null ? ObjectNodeWidget.defaultFont.getFontName() : p.getProperty("fontName"),
-                ObjectNodeWidget.defaultFont.getStyle(),
-                p.getProperty("fontSize")== null ? ObjectNodeWidget.defaultFont.getSize() : Integer.valueOf(p.getProperty("fontSize")));
         currentColor = p.getProperty("fontColor") == null ? Color.black : new Color(Integer.valueOf(p.getProperty("fontColor")));
     }
 
@@ -631,7 +609,7 @@ public final class ObjectViewTopComponent extends TopComponent
     public String getDisplayName(){
         if (super.getDisplayName() == null)
             return "Untitled view";
-        return super.getDisplayName().trim().equals("")?"Untitled view":super.getDisplayName();
+        return super.getDisplayName().trim().equals("") ? "Untitled view":super.getDisplayName();
     }
 
     public boolean isSaved() {
@@ -665,9 +643,8 @@ public final class ObjectViewTopComponent extends TopComponent
                 nu.showSimplePopup("Object View", NotificationUtil.INFO, "The view has been saved automatically");
                 break;
             case ViewScene.SCENE_OBJECTSELECTED:
-                ObjectNode widgetNode = new ObjectNode((LocalObjectLight)e.getSource(),true);
-                em.setRootContext(widgetNode);
-                setActivatedNodes(new Node[]{widgetNode});
+                em.setRootContext((ObjectNode)e.getSource());
+                setActivatedNodes(new Node[]{(ObjectNode)e.getSource()});
         }
     }
 
