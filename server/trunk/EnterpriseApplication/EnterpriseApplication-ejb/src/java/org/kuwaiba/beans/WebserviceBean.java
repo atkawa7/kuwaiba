@@ -1260,22 +1260,35 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 if (sideAIds[i] == sideBIds[i])
                     throw new ServerSideException(Level.SEVERE, "Can not connect a port to itself");
                 
-                if (!bem.getSpecialAttribute(sideAClassNames[i], sideAIds[i], "endpointA").isEmpty() || 
-                        !bem.getSpecialAttribute(sideAClassNames[i], sideAIds[i], "endpointB").isEmpty())
-                    throw new ServerSideException(Level.INFO, String.format("The selected endpoint %s [%s] is already connected", sideAClassNames[i], sideAIds[i]));
-
-                if (!bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], "endpointB").isEmpty() || 
-                        !bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], "endpointA").isEmpty())
-                    throw new ServerSideException(Level.INFO, String.format("The selected endpoint %s [%s] is already connected", sideBClassNames[i], sideBIds[i]));
+                List<RemoteBusinessObjectLight> aEndpointList = bem.getSpecialAttribute(linksClassNames[i], linksIds[i], "endpointA");
+                List<RemoteBusinessObjectLight> bEndpointList = bem.getSpecialAttribute(linksClassNames[i], linksIds[i], "endpointB");
                 
-                if (sideAIds[i] != null){
-                    if (bem.getSpecialAttribute(linksClassNames[i], linksIds[i], "endpointA").isEmpty())
+                if (!aEndpointList.isEmpty()){
+                    if (Long.valueOf(aEndpointList.get(0).getId()) == sideAIds[i] || Long.valueOf(aEndpointList.get(0).getId()) == sideBIds[i])
+                        throw new ServerSideException(Level.INFO, "The link is already related to at lest one of the endpoints");
+                }
+                
+                if (!bEndpointList.isEmpty()){
+                    if (Long.valueOf(bEndpointList.get(0).getId()) == sideAIds[i] || Long.valueOf(bEndpointList.get(0).getId()) == sideBIds[i])
+                        throw new ServerSideException(Level.INFO, "The link is already related to at lest one of the endpoints");
+                }
+                
+                if (sideAIds[i] != null && sideAClassNames[i] != null){
+                    if (!bem.getSpecialAttribute(sideAClassNames[i], sideAIds[i], "endpointA").isEmpty() || 
+                        !bem.getSpecialAttribute(sideAClassNames[i], sideAIds[i], "endpointB").isEmpty())
+                        throw new ServerSideException(Level.INFO, String.format("The selected endpoint %s [%s] is already connected", sideAClassNames[i], sideAIds[i]));
+                    
+                    if (aEndpointList.isEmpty())
                         bem.createSpecialRelationship(sideAClassNames[i], sideAIds[i], linksClassNames[i], linksIds[i], "endpointA");
                     else
                         throw new ServerSideException(Level.INFO, String.format("Link %s [%s] already has an aEndpoint", linksIds[i], linksClassNames[i]));
                 }
-                if (sideBIds[i] != null){
-                    if (bem.getSpecialAttribute(linksClassNames[i], linksIds[i], "endpointB").isEmpty())
+                if (sideBIds[i] != null && sideBClassNames[i] != null){
+                    if (!bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], "endpointB").isEmpty() || 
+                        !bem.getSpecialAttribute(sideBClassNames[i], sideBIds[i], "endpointA").isEmpty())
+                        throw new ServerSideException(Level.INFO, String.format("The selected endpoint %s [%s] is already connected", sideBClassNames[i], sideBIds[i]));
+                    
+                    if (bEndpointList.isEmpty())
                         bem.createSpecialRelationship(sideBClassNames[i], sideBIds[i], linksClassNames[i], linksIds[i], "endpointB");
                     else
                         throw new ServerSideException(Level.INFO, String.format("Link %s [%s] already has a bEndpoint", linksIds[i], linksClassNames[i]));
