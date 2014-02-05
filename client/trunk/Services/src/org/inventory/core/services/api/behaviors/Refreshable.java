@@ -21,6 +21,6 @@ package org.inventory.core.services.api.behaviors;
  * the button in the global toolbar
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface RefreshableTopComponent {
+public interface Refreshable {
     public void refresh();
 }

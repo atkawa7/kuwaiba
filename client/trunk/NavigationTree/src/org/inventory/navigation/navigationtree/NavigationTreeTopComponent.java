@@ -23,7 +23,7 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.text.DefaultEditorKit;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
@@ -45,7 +45,7 @@ import org.openide.windows.WindowManager;
 @ConvertAsProperties(dtd = "-//org.inventory.navigation.navigationtree//NavigationTree//EN",
 autostore = false)
 public final class NavigationTreeTopComponent extends TopComponent
-            implements ExplorerManager.Provider, RefreshableTopComponent{
+            implements ExplorerManager.Provider, Refreshable{
 
     /** path to the icon used by the component and its open action */
     static final String ICON_PATH = "org/inventory/navigation/navigationtree/res/icon.png";

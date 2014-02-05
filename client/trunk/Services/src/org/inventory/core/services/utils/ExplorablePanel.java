@@ -30,9 +30,11 @@ import org.openide.util.Lookup;
 public class ExplorablePanel extends JPanel implements Provider, Lookup.Provider{
 
     private ExplorerManager em;
+    private Lookup lookup;
 
     public ExplorablePanel() {
         this.em = new ExplorerManager();
+        this.lookup = ExplorerUtils.createLookup(em, getActionMap());
     }
 
     @Override
@@ -42,7 +44,7 @@ public class ExplorablePanel extends JPanel implements Provider, Lookup.Provider
 
     @Override
     public Lookup getLookup() {
-        return ExplorerUtils.createLookup(em, new ActionMap());
+        return lookup;
     }
 
 }

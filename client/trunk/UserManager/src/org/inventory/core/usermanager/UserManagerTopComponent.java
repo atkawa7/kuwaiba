@@ -23,7 +23,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.usermanager.actions.AddGroup;
 import org.inventory.core.usermanager.actions.AddUser;
 import org.inventory.core.usermanager.actions.UpdateList;
@@ -46,7 +46,7 @@ import org.openide.util.Lookup;
     autostore=false
 )
 public final class UserManagerTopComponent extends TopComponent
-    implements Provider, RefreshableTopComponent{
+    implements Provider, Refreshable {
 
     private static UserManagerTopComponent instance;
     /** path to the icon used by the component and its open action */

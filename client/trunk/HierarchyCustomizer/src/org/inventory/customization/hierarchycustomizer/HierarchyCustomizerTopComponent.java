@@ -22,7 +22,7 @@ import java.awt.dnd.DragSource;
 import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import javax.swing.JList;
-import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataChildren;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataTransferManager;
@@ -45,7 +45,7 @@ import org.openide.util.Lookup;
 @ConvertAsProperties(dtd = "-//org.inventory.customization.hierarchycustomizer//HierarchyCustomizer//EN",
 autostore = false)
 public final class HierarchyCustomizerTopComponent extends TopComponent
-    implements RefreshableTopComponent, ExplorerManager.Provider{
+    implements Refreshable, ExplorerManager.Provider{
 
     private static HierarchyCustomizerTopComponent instance;
     static final String ICON_PATH = "org/inventory/customization/hierarchycustomizer/res/icon.png";

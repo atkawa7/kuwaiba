@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
@@ -55,7 +55,7 @@ persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_PoolsAction",
 preferredID = "PoolsTopComponent")
-public final class PoolsTopComponent extends TopComponent implements ExplorerManager.Provider, RefreshableTopComponent{
+public final class PoolsTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable{
     
     private static final String PREFERRED_ID = "PoolsTopComponent";
     private static PoolsTopComponent instance;

@@ -17,7 +17,7 @@
 package org.inventory.customization.datamodelmanager;
 
 import org.inventory.communications.core.LocalClassMetadataLight;
-import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataChildren;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -58,7 +58,7 @@ preferredID = "DataModelManagerTopComponent")
     "HINT_DataModelManagerTopComponent=Update the data model"
 })
 public final class DataModelManagerTopComponent extends TopComponent 
-        implements ExplorerManager.Provider, RefreshableTopComponent{
+        implements ExplorerManager.Provider, Refreshable {
 
     private final ExplorerManager em = new ExplorerManager();
     private DataModelManagerService dmms;

@@ -18,7 +18,7 @@ package org.inventory.core.services.api.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.AbstractAction;
-import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.openide.windows.WindowManager;
 
 
@@ -26,7 +26,7 @@ import org.openide.windows.WindowManager;
  * Refreshes the focused component
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class RefreshComponent extends AbstractAction implements ActionListener {
+public final class GenericObjectNodeAction extends AbstractAction implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         Object activeTopComponent = WindowManager.getDefault().getRegistry().getActivated();
@@ -35,12 +35,12 @@ public final class RefreshComponent extends AbstractAction implements ActionList
         boolean refreshable = false;
         //Ignore the TopComponent that doesn't implement the RefreshableTopComponent interface
         for (Class intz : activeTopComponent.getClass().getInterfaces()){
-            if (intz.equals(RefreshableTopComponent.class)){
+            if (intz.equals(Refreshable.class)){
                 refreshable = true;
                 break;
             }
         }
         if (refreshable)
-            ((RefreshableTopComponent)activeTopComponent).refresh();
+            ((Refreshable)activeTopComponent).refresh();
     }
 }

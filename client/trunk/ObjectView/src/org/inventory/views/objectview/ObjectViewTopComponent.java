@@ -25,7 +25,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.behaviors.RefreshableTopComponent;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.actions.ExportSceneAction;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
@@ -54,7 +54,7 @@ import org.openide.util.Lookup;
 @ConvertAsProperties(dtd = "-//org.inventory.views.objectview//ObjectView//EN",
 autostore = false)
 public final class ObjectViewTopComponent extends TopComponent 
-        implements Provider, ActionListener, RefreshableTopComponent {
+        implements Provider, ActionListener, Refreshable {
 
     private static ObjectViewTopComponent instance;
     /** path to the icon used by the component and its open action */

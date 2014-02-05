@@ -19,7 +19,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.windows.ConnectLinksFrame;
+import org.openide.util.Lookup;
 
 /**
  * This action allows to connect the links (cables, fibers) inside a container
@@ -37,8 +39,22 @@ public class ConnectLinksAction extends AbstractAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         LocalObjectLight[] links = CommunicationsStub.getInstance().getObjectSpecialChildren(objectClass, objectId);
+        if (links == null){
+            nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            return;
+        }
         LocalObjectLight[] containerEndpoints = CommunicationsStub.getInstance().getConnectionEndpoints(objectClass, objectId);
+        if (containerEndpoints == null){
+            nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            return;
+        }
+        
+        if (containerEndpoints[0] == null || containerEndpoints[1] == null){
+            nu.showSimplePopup("Error", NotificationUtil.ERROR, String.format("Container %s [%s] is missing one of its endpoints", objectId, objectClass));
+            return;
+        }
         ConnectLinksFrame frame = new ConnectLinksFrame(containerEndpoints[0],containerEndpoints[1], links);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);

@@ -3,8 +3,8 @@
 <filesystem>
     <folder name="Actions">
         <folder name="View">
-            <file name="org-inventory-core-services-api-actions-RefreshComponent.instance">
-                <attr name="delegate" newvalue="org.inventory.core.services.api.actions.RefreshComponent"/>
+            <file name="org-inventory-core-services-api-actions-RefreshComponentAction.instance">
+                <attr name="delegate" newvalue="org.inventory.core.services.api.actions.RefreshComponentAction"/>
                 <attr name="displayName" bundlevalue="org.inventory.core.services.Bundle#CTL_Refresh"/>
                 <attr name="iconBase" stringvalue="org/inventory/core/services/res/view-refresh.png"/>
                 <attr name="instanceCreate" methodvalue="org.openide.awt.Actions.alwaysEnabled"/>
@@ -23,8 +23,8 @@
     </folder>
     <folder name="Menu">
         <folder name="View">
-            <file name="org-inventory-core-services-api-actions-Refresh.shadow">
-                <attr name="originalFile" stringvalue="Actions/View/org-inventory-core-services-api-actions-RefreshComponent.instance"/>
+            <file name="org-inventory-core-services-api-actions-RefreshAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/View/org-inventory-core-services-api-actions-RefreshComponentAction.instance"/>
                 <attr name="position" intvalue="100"/>
             </file>
         </folder>
@@ -36,7 +36,7 @@
     </folder>
     <folder name="Shortcuts">
         <file name="F5.shadow">
-            <attr name="originalFile" stringvalue="Actions/View/org-inventory-core-services-api-actions-RefreshComponent.instance"/>
+            <attr name="originalFile" stringvalue="Actions/View/org-inventory-core-services-api-actions-RefreshComponentAction.instance"/>
         </file>
         <file name="D-F5.shadow">
             <attr name="originalFile" stringvalue="Actions/System/org-inventory-communications-actions-RefreshLocalCache.instance"/>
@@ -45,7 +45,7 @@
     <folder name="Toolbars">
         <folder name="System">
             <file name="org-inventory-core-services-api-actions-Refresh.shadow">
-                <attr name="originalFile" stringvalue="Actions/View/org-inventory-core-services-api-actions-RefreshComponent.instance"/>
+                <attr name="originalFile" stringvalue="Actions/View/org-inventory-core-services-api-actions-RefreshComponentAction.instance"/>
                 <attr name="position" intvalue="0"/>
             </file>
             <file name="org-inventory-core-services-caching-RefreshLocalCache.shadow">

@@ -27,6 +27,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.utils.ExplorablePanel;
@@ -51,8 +53,14 @@ public class ConnectLinksFrame extends JFrame{
     private BeanTreeView rightTree;
     private LocalObjectLight aSelectedObject;
     private LocalObjectLight bSelectedObject;
+    private ExplorablePanel pnlLeft;
+    private ExplorablePanel pnlRight;
+    private LocalObjectLight aSideRoot;
+    private LocalObjectLight bSideRoot;
 
     public ConnectLinksFrame(LocalObjectLight aSideRoot, LocalObjectLight bSideRoot, LocalObjectLight[] connections) {
+        this.aSideRoot = aSideRoot;
+        this.bSideRoot = bSideRoot;
         setLayout(new BorderLayout());
         setTitle(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_TITLE_CONNECT_LINKS"));
         setSize(1000, 700);
@@ -66,42 +74,8 @@ public class ConnectLinksFrame extends JFrame{
         lblResults.setForeground(Color.RED);
         add(lblResults, BorderLayout.SOUTH);
         
-        ExplorablePanel pnlLeft = new ExplorablePanel();
-        ExplorablePanel pnlRight = new ExplorablePanel();
-        Result<LocalObjectLight> aResult = pnlLeft.getLookup().lookupResult(LocalObjectLight.class);
-        aResult.addLookupListener(new LookupListener() {
-
-            @Override
-            public void resultChanged(LookupEvent ev) {
-                if (((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().hasNext())
-                    aSelectedObject = ((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().next();
-                else
-                    aSelectedObject = null;
-                lblResults.setForeground(Color.MAGENTA);
-                lblResults.setText((aSelectedObject == null ? "Free" : aSelectedObject.getName() + " [" + aSelectedObject.getClassName() + "]") + " -> " +
-                        (lstAvailableConnections.getSelectedValue() ==  null ? "No connection" : ((LocalObjectLight)lstAvailableConnections.getSelectedValue()).getName() + "[" + ((LocalObjectLight)lstAvailableConnections.getSelectedValue()).getClassName() + "]") + " -> " +
-                        (bSelectedObject == null ? "Free" : bSelectedObject.getName() + " [" + bSelectedObject.getClassName() + "]"));
-            }
-        });
-        
-        Result<LocalObjectLight> bResult = pnlRight.getLookup().lookupResult(LocalObjectLight.class);
-        bResult.addLookupListener(new LookupListener() {
-
-            @Override
-            public void resultChanged(LookupEvent ev) {
-                if (((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().hasNext())
-                   bSelectedObject = ((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().next();
-                else
-                    bSelectedObject = null;
-                lblResults.setForeground(Color.MAGENTA);
-                lblResults.setText((aSelectedObject == null ? "Free" : aSelectedObject.getName() + " [" + aSelectedObject.getClassName() + "]") + " -> " +
-                        (lstAvailableConnections.getSelectedValue() ==  null ? "No connection" : ((LocalObjectLight)lstAvailableConnections.getSelectedValue()).getName() + "[" + ((LocalObjectLight)lstAvailableConnections.getSelectedValue()).getClassName() + "]") + " -> " +
-                        (bSelectedObject == null ? "Free" : bSelectedObject.getName() + " [" + bSelectedObject.getClassName() + "]"));
-            }
-        });
-                  
-        pnlLeft.getExplorerManager().setRootContext(new ObjectNode(aSideRoot));
-        pnlRight.getExplorerManager().setRootContext(new ObjectNode(bSideRoot));
+        pnlLeft = new ExplorablePanel();
+        pnlRight = new ExplorablePanel();
         
         rightTree = new BeanTreeView();
         rightTree.setSize(400, 0);
@@ -113,6 +87,13 @@ public class ConnectLinksFrame extends JFrame{
         JPanel centralPanel = new JPanel();
         centralPanel.setLayout(new BorderLayout());
         lstAvailableConnections = new JList(connections);
+        lstAvailableConnections.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                updateConnectionDetails();
+            }
+        });
         centralPanel.add(lstAvailableConnections,BorderLayout.CENTER);
         JButton btnConnect = new JButton("Connect");
         btnConnect.addActionListener(new BtnConnectActionListener());
@@ -130,14 +111,17 @@ public class ConnectLinksFrame extends JFrame{
         pnlScrollLeft = new JScrollPane();
         pnlScrollLeft.setViewportView(pnlLeft);
         add(pnlScrollLeft, BorderLayout.WEST);
+        init();
     }
     
     private class BtnConnectActionListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (lstAvailableConnections.getSelectedValue() == null)
+            if (lstAvailableConnections.getSelectedValue() == null){
+                lblResults.setForeground(Color.RED);
                 lblResults.setText("Select a link from the list");
+            }
             else{
                 if (CommunicationsStub.getInstance().connectPhysicalLinks(new String[]{aSelectedObject == null ? null :aSelectedObject.getClassName()}, 
                         new Long[]{aSelectedObject == null ? null : aSelectedObject.getOid()}, 
@@ -145,7 +129,7 @@ public class ConnectLinksFrame extends JFrame{
                         new Long[]{((LocalObjectLight)lstAvailableConnections.getSelectedValue()).getOid()}, 
                         new String[]{bSelectedObject == null ? null :bSelectedObject.getClassName()}, 
                         new Long[]{bSelectedObject == null ? null : bSelectedObject.getOid()})){
-                    lblResults.setForeground(Color.BLUE);
+                    lblResults.setForeground(Color.MAGENTA);
                     lblResults.setText("Connection was made successfully");
                 } else{
                     lblResults.setForeground(Color.RED);
@@ -153,5 +137,45 @@ public class ConnectLinksFrame extends JFrame{
                 }
             }
         }
+    }
+
+    private void init() {
+        pnlLeft.getExplorerManager().setRootContext(new ObjectNode(aSideRoot));
+        pnlRight.getExplorerManager().setRootContext(new ObjectNode(bSideRoot));
+        
+        Result<LocalObjectLight> aResult = pnlLeft.getLookup().lookupResult(LocalObjectLight.class);
+        aResult.addLookupListener(new LookupListener() {
+
+            @Override
+            public void resultChanged(LookupEvent ev) {
+                if (((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().hasNext())
+                    aSelectedObject = ((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().next();
+                else
+                    aSelectedObject = null;
+                
+                updateConnectionDetails();
+            }
+        });
+        
+        Result<LocalObjectLight> bResult = pnlRight.getLookup().lookupResult(LocalObjectLight.class);
+        bResult.addLookupListener(new LookupListener() {
+
+            @Override
+            public void resultChanged(LookupEvent ev) {
+                if (((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().hasNext())
+                   bSelectedObject = ((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().next();
+                else
+                    bSelectedObject = null;
+                
+                updateConnectionDetails();
+            }
+        });
+    }
+    
+    private void updateConnectionDetails(){
+        lblResults.setForeground(Color.BLUE);
+        lblResults.setText((aSelectedObject == null ? "Free" : aSelectedObject) + " <-> " +
+                (lstAvailableConnections.getSelectedValue() ==  null ? "No connection" : lstAvailableConnections.getSelectedValue()) + " <-> " +
+                (bSelectedObject == null ? "Free" : bSelectedObject));
     }
 }
