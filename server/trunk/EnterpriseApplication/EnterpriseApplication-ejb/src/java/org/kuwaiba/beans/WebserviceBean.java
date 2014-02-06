@@ -950,13 +950,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public RemoteObjectSpecialRelationships getSpecialRelationships(String objectClass, long oid)
+    public RemoteObjectSpecialRelationships getSpecialAttributes(String objectClass, long oid)
             throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try {
-            HashMap<String, List<RemoteBusinessObjectLight>> relationships = bem.getSpecialRelationhips(objectClass, oid);
-            RemoteObjectSpecialRelationships res = new RemoteObjectSpecialRelationships(relationships.keySet(), relationships.values());
+            HashMap<String, List<RemoteBusinessObjectLight>> relationships = bem.getSpecialAttributes(objectClass, oid);
+            RemoteObjectSpecialRelationships res = new RemoteObjectSpecialRelationships(relationships);
 
             return res;
         } catch (Exception ex) {

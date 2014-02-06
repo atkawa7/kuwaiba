@@ -16,7 +16,6 @@
 
 package org.kuwaiba.beans;
 
-import java.util.HashMap;
 import java.util.List;
 import javax.ejb.Remote;
 import org.kuwaiba.beans.sessions.Session;
@@ -323,10 +322,11 @@ public interface WebserviceBeanRemote {
     
     public RemoteObject getParent(String objectClass, long oid) throws ServerSideException;
     public RemoteObjectLight[] getParents(String objectClass, long oid) throws ServerSideException;
-    public RemoteObjectSpecialRelationships getSpecialRelationships(String objectClass, long oid) throws ServerSideException;
+    
     public RemoteObject getParentOfClass(String objectClass, long oid, String parentClass) throws ServerSideException;
 
     public RemoteObjectLight[] getSpecialAttribute(String objectClass, long objectId, String attributeName) throws ServerSideException;
+    public RemoteObjectSpecialRelationships getSpecialAttributes(String objectClass, long oid) throws ServerSideException;
     public RemoteObjectLight[] getObjectSpecialChildren(String objectClass, long objectId) throws ServerSideException;
 
     public void updateObject(String className, long oid, String[] attributeNames, String[][] attributeValues) throws ServerSideException;

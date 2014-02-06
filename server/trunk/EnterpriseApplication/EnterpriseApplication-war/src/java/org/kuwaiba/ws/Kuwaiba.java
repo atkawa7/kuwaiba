@@ -16,7 +16,6 @@
 
 package org.kuwaiba.ws;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1198,13 +1197,13 @@ public class Kuwaiba {
      * @return
      * @throws Exception If case something goes wrong
      */
-    @WebMethod(operationName = "getSpecialRelationships")
-    public RemoteObjectSpecialRelationships getSpecialRelationships(@WebParam(name = "objectclass") String objectClass,
+    @WebMethod(operationName = "getSpecialAttributes")
+    public RemoteObjectSpecialRelationships getSpecialAttributes(@WebParam(name = "objectClass") String objectClass,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            wsBean.validateCall("getSpecialRelationships", getIPAddress(), sessionId);
-            return wsBean.getSpecialRelationships(objectClass, oid);
+            wsBean.validateCall("getSpecialAttributes", getIPAddress(), sessionId);
+            return wsBean.getSpecialAttributes(objectClass, oid);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)

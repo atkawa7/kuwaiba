@@ -134,18 +134,6 @@ public interface BusinessEntityManager {
      */
     public List<RemoteBusinessObjectLight> getParents(String objectClassName, long oid)
         throws ObjectNotFoundException, MetadataObjectNotFoundException;
-    
-    /**
-     * Returns all the special relationships of a given object as a hashmap whose keys are
-     * the names of the relationships and the values the list of related objects
-     * @param className Object class
-     * @param objectId Object Id
-     * @return The hash map with the existing special relationships and the associated objects
-     * @throws MetadataObjectNotFoundException If the class provided does not exist
-     * @throws ObjectNotFoundException if the object does not exist
-     */
-    public HashMap<String,List<RemoteBusinessObjectLight>> getSpecialRelationhips (String className, long objectId) 
-        throws MetadataObjectNotFoundException, ObjectNotFoundException;
 
     /**
      * Gets the first parent of an object which matches the given class in the containment hierarchy
@@ -360,6 +348,18 @@ public interface BusinessEntityManager {
      */    
     public List<RemoteBusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException;
+    
+    /**
+     * Returns all the special relationships of a given object as a hashmap whose keys are
+     * the names of the relationships and the values the list of related objects
+     * @param className Object class
+     * @param objectId Object Id
+     * @return The hash map with the existing special relationships and the associated objects
+     * @throws MetadataObjectNotFoundException If the class provided does not exist
+     * @throws ObjectNotFoundException if the object does not exist
+     */
+    public HashMap<String,List<RemoteBusinessObjectLight>> getSpecialAttributes (String className, long objectId) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException;
     
     /**
      * Checks if an object has a given number of standard relationships with another object
