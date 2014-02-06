@@ -46,6 +46,7 @@ import org.kuwaiba.wsclient.Kuwaiba;
 import org.kuwaiba.wsclient.KuwaibaService;
 import org.kuwaiba.wsclient.RemoteObject;
 import org.kuwaiba.wsclient.RemoteObjectLight;
+import org.kuwaiba.wsclient.RemoteObjectSpecialRelationships;
 import org.kuwaiba.wsclient.RemoteQueryLight;
 import org.kuwaiba.wsclient.ResultRecord;
 import org.kuwaiba.wsclient.StringArray;
@@ -308,6 +309,24 @@ public class CommunicationsStub {
             LocalObjectLight[] res = new LocalObjectLight[values.size()];
             for (int i = 0; i < values.size(); i++)
                 res[i]= new LocalObjectLight(values.get(i).getOid(), values.get(i).getName(), values.get(i).getClassName());
+
+            return res;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public HashMap<String, RemoteObjectLight[]> getSpecialAttributes (String objectClass, long objectId) {
+        try{
+            RemoteObjectSpecialRelationships remoteRelationships = port.getSpecialRelationships(objectClass, objectId, session.getSessionId());
+            HashMap<String, RemoteObjectLight[]> res = new HashMap<String, RemoteObjectLight[]>();
+            
+            for (int i = 0; i < remoteRelationships.getRelationships().size(); i++){
+              //  remoteRelationships.getRelatedObjects().get(i).
+            }
+            //remoteRelationships.
+            
 
             return res;
         }catch(Exception ex){

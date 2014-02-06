@@ -320,6 +320,10 @@
 
 <xs:element name="getSpecialAttributeResponse" type="tns:getSpecialAttributeResponse"/>
 
+<xs:element name="getSpecialRelationships" type="tns:getSpecialRelationships"/>
+
+<xs:element name="getSpecialRelationshipsResponse" type="tns:getSpecialRelationshipsResponse"/>
+
 <xs:element name="getSubClassesLight" type="tns:getSubClassesLight"/>
 
 <xs:element name="getSubClassesLightNoRecursive" type="tns:getSubClassesLightNoRecursive"/>
@@ -737,6 +741,55 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="getSpecialRelationships">
+<xs:sequence>
+<xs:element name="objectclass" type="xs:string" minOccurs="0"/>
+<xs:element name="oid" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSpecialRelationshipsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectSpecialRelationships" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteObjectSpecialRelationships">
+<xs:sequence>
+<xs:element name="relationships" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="relatedObjects" type="tns:remoteObjectLightArray" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteObjectLightArray">
+<xs:complexContent>
+<xs:extension base="tns:arrayList">
+<xs:sequence/>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="arrayList">
+<xs:complexContent>
+<xs:extension base="tns:abstractList">
+<xs:sequence/>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="abstractList" abstract="true">
+<xs:complexContent>
+<xs:extension base="tns:abstractCollection">
+<xs:sequence/>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="abstractCollection" abstract="true">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="getAttributeForClassWithId">
 <xs:sequence>
 <xs:element name="classId" type="xs:string" minOccurs="0"/>
@@ -1091,6 +1144,18 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="removePossibleChildrenForClassWithId">
+<xs:sequence>
+<xs:element name="parentClassId" type="xs:long"/>
+<xs:element name="childrenToBeRemoved" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removePossibleChildrenForClassWithIdResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="createGeneralView">
 <xs:sequence>
 <xs:element name="viewType" type="xs:int"/>
@@ -1106,18 +1171,6 @@
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
 </xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="removePossibleChildrenForClassWithId">
-<xs:sequence>
-<xs:element name="parentClassId" type="xs:long"/>
-<xs:element name="childrenToBeRemoved" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="removePossibleChildrenForClassWithIdResponse">
-<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getObjectChildren">
