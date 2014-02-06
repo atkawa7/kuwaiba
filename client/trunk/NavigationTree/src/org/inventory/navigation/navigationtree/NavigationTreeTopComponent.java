@@ -192,7 +192,7 @@ public final class NavigationTreeTopComponent extends TopComponent
     public void setRoot(){
         LocalObjectLight[] rootChildren = nts.getRootChildren();
         if (rootChildren != null){
-            RootObjectNode root = new RootObjectNode(new ObjectChildren(rootChildren));
+            RootObjectNode root = new RootObjectNode(new ObjectChildren(rootChildren, false));
             em.setRootContext(root);
         }
     }

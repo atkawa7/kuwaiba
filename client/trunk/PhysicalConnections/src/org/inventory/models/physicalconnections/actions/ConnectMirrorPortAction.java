@@ -42,7 +42,7 @@ public class ConnectMirrorPortAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight[] siblings = CommunicationsStub.getInstance().getSiblings(objectClassName, objectId);
+        LocalObjectLight[] siblings = CommunicationsStub.getInstance().getSiblings(object.getClassName(), object.getOid());
         if (siblings == null){
             nu.showSimplePopup("Error", NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());
             return;
@@ -54,8 +54,8 @@ public class ConnectMirrorPortAction extends GenericObjectNodeAction {
         if (JOptionPane.showConfirmDialog(null, dialog, "Mirror Port Connection", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
             LocalObjectLight selectedObject = (LocalObjectLight)((JComboBox)dialog.getComponent("cmbSiblings")).getSelectedItem();
             if (selectedObject != null){
-                if (CommunicationsStub.getInstance().connectMirrorPort(objectClassName, 
-                        objectId, selectedObject.getClassName(), selectedObject.getOid()))
+                if (CommunicationsStub.getInstance().connectMirrorPort(object.getClassName(), object.getOid(),
+                        selectedObject.getClassName(), selectedObject.getOid()))
                     nu.showSimplePopup("Success", NotificationUtil.INFO, "Port mirrored successfully");
                 else
                     nu.showSimplePopup("Error", NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());

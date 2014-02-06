@@ -16,9 +16,13 @@
 package org.inventory.models.physicalconnections.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.Action;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
 import javax.swing.event.ListSelectionEvent;
@@ -40,13 +44,16 @@ public class PhysicalPathTopComponent extends TopComponent implements ExplorerMa
 
     private ExplorerManager em = new ExplorerManager();
     private JList lstPath;
+    private LocalObjectLight port;
     private ObjectNode selectedObject;
     
-    public PhysicalPathTopComponent(final LocalObjectLight[] trace) {
-        this.setDisplayName("Physical Path");
+    public PhysicalPathTopComponent(LocalObjectLight port, final LocalObjectLight[] trace) {
+        this.setDisplayName(String.format("Physical Path for %s", port));
+        this.port = port;
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
         setLayout(new BorderLayout());
         lstPath = new JList(trace);
+        lstPath.setCellRenderer(new CellRenderer());
         Mode myMode = WindowManager.getDefault().findMode("properties");
         myMode.dockInto(this);
         add(lstPath, BorderLayout.CENTER);
@@ -97,5 +104,15 @@ public class PhysicalPathTopComponent extends TopComponent implements ExplorerMa
     @Override
     public ExplorerManager getExplorerManager() {
         return em;
+    }
+    
+    private class CellRenderer extends DefaultListCellRenderer {
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            JLabel cell = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            if (((LocalObjectLight)value).getOid() == port.getOid())
+                cell.setForeground(Color.RED);
+            return cell;
+        }
     }
 }

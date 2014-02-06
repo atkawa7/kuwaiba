@@ -17,7 +17,6 @@
 package org.inventory.navigation.applicationnodes.objectnodes;
 
 import javax.swing.Action;
-import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateBusinessObjectAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;

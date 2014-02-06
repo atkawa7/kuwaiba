@@ -44,14 +44,14 @@ public class RelateToServiceAction extends GenericObjectNodeAction {
         if (services ==  null)
             nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
         else{
-            ServicesFrame frame = new ServicesFrame(objectClassName, objectId, services);
+            ServicesFrame frame = new ServicesFrame(object, services);
             frame.setVisible(true);
         }
     }
 
     @Override
     public String getValidator() {
-        return null; //This action is available to any object
+        return null; //Enable this action for any object
     }
     
 }

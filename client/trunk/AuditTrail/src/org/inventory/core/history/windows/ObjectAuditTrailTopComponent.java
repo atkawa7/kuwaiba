@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.navigation.applicationnodes.objectnodes.windows;
+package org.inventory.core.history.windows;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -26,6 +26,7 @@ import javax.swing.JToolBar;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import org.inventory.communications.core.LocalApplicationLogEntry;
+import org.inventory.communications.core.LocalObjectLight;
 import org.netbeans.swing.etable.ETable;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
@@ -41,12 +42,12 @@ public class ObjectAuditTrailTopComponent extends TopComponent{
     private JScrollPane pnlScrollMain;
     private ETable aTable;
 
-    public ObjectAuditTrailTopComponent(String objectName, String objectClass, final LocalApplicationLogEntry[] logEntries) {
+    public ObjectAuditTrailTopComponent(LocalObjectLight object, final LocalApplicationLogEntry[] logEntries) {
         setLayout(new BorderLayout());
         barMain = new JToolBar();
         add(barMain, BorderLayout.NORTH);
         btnExport = new JButton();
-        btnExport.setIcon(new ImageIcon(getClass().getResource("/org/inventory/navigation/applicationnodes/res/export.png"))); //NOI18N
+        btnExport.setIcon(new ImageIcon(getClass().getResource("/org/inventory/core/history/res/export.png"))); //NOI18N
         barMain.add(btnExport);
         btnExport.setToolTipText("Export to CSV...");
         btnExport.addActionListener(new ActionListener() {
@@ -56,7 +57,7 @@ public class ObjectAuditTrailTopComponent extends TopComponent{
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         });
-        setName(String.format("Audit trail for %s [%s]", objectName, objectClass));
+        setName(String.format("Audit trail for %s", object));
         aTable = new ETable(new TableModel() {
             final LocalApplicationLogEntry entries[] = logEntries;
             String columnNames[] =  new String[]{"Timestamp", "Type", "User", "Property", "Old value", "New value"};

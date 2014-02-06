@@ -39,7 +39,7 @@ public class ReleaseMirrorPortAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (CommunicationsStub.getInstance().releaseMirrorPort(objectClassName, objectId))
+        if (CommunicationsStub.getInstance().releaseMirrorPort(object.getClassName(), object.getOid()))
             nu.showSimplePopup("Success", NotificationUtil.INFO, "Miror port released successfully");
         else
             nu.showSimplePopup("Error", NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());        

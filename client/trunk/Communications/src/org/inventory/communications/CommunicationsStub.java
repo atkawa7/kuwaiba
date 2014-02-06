@@ -46,6 +46,7 @@ import org.kuwaiba.wsclient.Kuwaiba;
 import org.kuwaiba.wsclient.KuwaibaService;
 import org.kuwaiba.wsclient.RemoteObject;
 import org.kuwaiba.wsclient.RemoteObjectLight;
+import org.kuwaiba.wsclient.RemoteObjectLightArray;
 import org.kuwaiba.wsclient.RemoteObjectSpecialRelationships;
 import org.kuwaiba.wsclient.RemoteQueryLight;
 import org.kuwaiba.wsclient.ResultRecord;
@@ -317,17 +318,24 @@ public class CommunicationsStub {
         }
     }
     
-    public HashMap<String, RemoteObjectLight[]> getSpecialAttributes (String objectClass, long objectId) {
+    public HashMap<String, LocalObjectLight[]> getSpecialAttributes (String objectClass, long objectId) {
         try{
-            RemoteObjectSpecialRelationships remoteRelationships = port.getSpecialRelationships(objectClass, objectId, session.getSessionId());
-            HashMap<String, RemoteObjectLight[]> res = new HashMap<String, RemoteObjectLight[]>();
+            RemoteObjectSpecialRelationships remoteRelationships = port.getSpecialAttributes(objectClass, objectId, session.getSessionId());
+            HashMap<String, LocalObjectLight[]> res = new HashMap<String, LocalObjectLight[]>();
             
             for (int i = 0; i < remoteRelationships.getRelationships().size(); i++){
-              //  remoteRelationships.getRelatedObjects().get(i).
+                
+                RemoteObjectLightArray relatedRemoteObjects = remoteRelationships.getRelatedObjects().get(i);
+                LocalObjectLight[] relatedLocalObjects = new LocalObjectLight[relatedRemoteObjects.getItem().size()];
+                int j = 0;
+                for (RemoteObjectLight relatedRemoteObject : relatedRemoteObjects.getItem()) {
+                    relatedLocalObjects[j] = new LocalObjectLight(relatedRemoteObject.getOid(), 
+                                                    relatedRemoteObject.getName(), 
+                                                    relatedRemoteObject.getClassName());
+                    j++;
+                }
+                res.put(remoteRelationships.getRelationships().get(i), relatedLocalObjects);
             }
-            //remoteRelationships.
-            
-
             return res;
         }catch(Exception ex){
             this.error = ex.getMessage();

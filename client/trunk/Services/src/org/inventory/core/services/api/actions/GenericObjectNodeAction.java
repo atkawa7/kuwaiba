@@ -16,6 +16,7 @@
 package org.inventory.core.services.api.actions;
 
 import javax.swing.AbstractAction;
+import org.inventory.communications.core.LocalObjectLight;
 
 
 /**
@@ -23,15 +24,10 @@ import javax.swing.AbstractAction;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public abstract class GenericObjectNodeAction extends AbstractAction {
-    protected String objectClassName;
-    protected long objectId;
+    protected LocalObjectLight object;
 
-    public void setObjectClassName(String objectClassName) {
-        this.objectClassName = objectClassName;
-    }
-
-    public void setObjectId(long objectId) {
-        this.objectId = objectId;
+    public void setObject(LocalObjectLight object) {
+        this.object = object;
     }
     
     /**

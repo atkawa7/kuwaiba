@@ -33,19 +33,19 @@ import org.openide.util.Lookup;
 public class ObjectChildren extends Children.Array {
 
     protected List<LocalObjectLight> keys;
+    protected boolean asLeaves;
     
-    public ObjectChildren(LocalObjectLight[] lols){
+    public ObjectChildren(LocalObjectLight[] lols, boolean asLeaves){
         keys = new ArrayList<LocalObjectLight>();
         keys.addAll(Arrays.asList(lols));
+        this.asLeaves = asLeaves;
     }
 
     /**
      * This constructor is used to create a node with no children
      *  since they're going to be created on demand (see method addNotify)
      */
-    public ObjectChildren(){
-        //keys = new ArrayList<LocalObjectLight>();
-    }
+    public ObjectChildren(){}
 
     @Override
     protected Collection<Node> initCollection(){
@@ -54,8 +54,12 @@ public class ObjectChildren extends Children.Array {
         if (keys == null)
             keys = new ArrayList<LocalObjectLight>();
 
-        for (LocalObjectLight lol : keys)
-            myNodes.add(new ObjectNode(lol));
+        for (LocalObjectLight lol : keys){
+            if (asLeaves)
+                myNodes.add(new ObjectNode(lol, true));
+            else
+                myNodes.add(new ObjectNode(lol));
+        }
         return myNodes;
     }
 

@@ -40,11 +40,11 @@ public class ShowPhysicalPathAction extends GenericObjectNodeAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight[] trace = CommunicationsStub.getInstance().getPhysicalPath(objectClassName, objectId);
+        LocalObjectLight[] trace = CommunicationsStub.getInstance().getPhysicalPath(object.getClassName(), object.getOid());
         if (trace == null)
             nu.showSimplePopup("Error", NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());
         else{
-            PhysicalPathTopComponent tc = new PhysicalPathTopComponent(trace);
+            PhysicalPathTopComponent tc = new PhysicalPathTopComponent(object, trace);
             tc.open();
             tc.requestActive();
         }

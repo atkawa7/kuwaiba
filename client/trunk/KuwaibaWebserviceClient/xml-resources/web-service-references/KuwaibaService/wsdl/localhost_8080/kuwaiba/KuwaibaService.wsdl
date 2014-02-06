@@ -244,11 +244,11 @@
 <message name="getParentsResponse">
 <part name="parameters" element="tns:getParentsResponse"/>
 </message>
-<message name="getSpecialRelationships">
-<part name="parameters" element="tns:getSpecialRelationships"/>
+<message name="getSpecialAttributes">
+<part name="parameters" element="tns:getSpecialAttributes"/>
 </message>
-<message name="getSpecialRelationshipsResponse">
-<part name="parameters" element="tns:getSpecialRelationshipsResponse"/>
+<message name="getSpecialAttributesResponse">
+<part name="parameters" element="tns:getSpecialAttributesResponse"/>
 </message>
 <message name="getParentOfClass">
 <part name="parameters" element="tns:getParentOfClass"/>
@@ -794,10 +794,10 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getParentsResponse" message="tns:getParentsResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getParents/Fault/Exception"/>
 </operation>
-<operation name="getSpecialRelationships">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSpecialRelationshipsRequest" message="tns:getSpecialRelationships"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSpecialRelationshipsResponse" message="tns:getSpecialRelationshipsResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSpecialRelationships/Fault/Exception"/>
+<operation name="getSpecialAttributes">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSpecialAttributesRequest" message="tns:getSpecialAttributes"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSpecialAttributesResponse" message="tns:getSpecialAttributesResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSpecialAttributes/Fault/Exception"/>
 </operation>
 <operation name="getParentOfClass">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getParentOfClassRequest" message="tns:getParentOfClass"/>
@@ -1560,7 +1560,7 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="getSpecialRelationships">
+<operation name="getSpecialAttributes">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

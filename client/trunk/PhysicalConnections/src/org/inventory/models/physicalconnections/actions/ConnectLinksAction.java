@@ -39,12 +39,12 @@ public class ConnectLinksAction extends GenericObjectNodeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        LocalObjectLight[] links = CommunicationsStub.getInstance().getObjectSpecialChildren(objectClassName, objectId);
+        LocalObjectLight[] links = CommunicationsStub.getInstance().getObjectSpecialChildren(object.getClassName(), object.getOid());
         if (links == null){
             nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
             return;
         }
-        LocalObjectLight[] containerEndpoints = CommunicationsStub.getInstance().getConnectionEndpoints(objectClassName, objectId);
+        LocalObjectLight[] containerEndpoints = CommunicationsStub.getInstance().getConnectionEndpoints(object.getClassName(), object.getOid());
         if (containerEndpoints == null){
             nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
             return;
@@ -52,7 +52,7 @@ public class ConnectLinksAction extends GenericObjectNodeAction {
         
         if (containerEndpoints[0] == null || containerEndpoints[1] == null){
             nu.showSimplePopup("Error", NotificationUtil.ERROR, String.format(
-                    "Container %s [%s] is missing one of its endpoints", objectId, objectClassName));
+                    "Container %s is missing one of its endpoints", object));
             return;
         }
         ConnectLinksFrame frame = new ConnectLinksFrame(containerEndpoints[0],containerEndpoints[1], links);

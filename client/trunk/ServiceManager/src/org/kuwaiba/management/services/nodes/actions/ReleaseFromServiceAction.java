@@ -36,8 +36,7 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        if (CommunicationsStub.getInstance().releaseObjectFromService(objectClassName, 
-                objectId, -1))
+        if (CommunicationsStub.getInstance().releaseObjectFromService(object.getClassName(), object.getOid(), -1))
             nu.showSimplePopup("Success", NotificationUtil.INFO, "Element released successfully");
         else
             nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
@@ -45,6 +44,6 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction {
 
     @Override
     public String getValidator() {
-        return null;
+        return null; //Enable this action for any object
     }
 }

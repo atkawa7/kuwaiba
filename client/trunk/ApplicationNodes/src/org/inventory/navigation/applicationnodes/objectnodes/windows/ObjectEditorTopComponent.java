@@ -50,7 +50,7 @@ public class ObjectEditorTopComponent extends TopComponent{
             myMode.dockInto(this);
         else{
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-            nu.showSimplePopup("Display Warning", NotificationUtil.WARNING, "\"Properties\" Window Mode not available");
+            nu.showSimplePopup("Error", NotificationUtil.WARNING, "\"Properties\" Window Mode not available");
         }
 
         setLayout(new BorderLayout());

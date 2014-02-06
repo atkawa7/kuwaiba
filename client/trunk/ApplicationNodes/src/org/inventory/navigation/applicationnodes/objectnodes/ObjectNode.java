@@ -41,8 +41,8 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateBusin
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectAuditTrailAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectSpecialRelationshipsAction;
 import org.inventory.navigation.applicationnodes.objectnodes.properties.ObjectNodeProperty;
 import org.openide.actions.CopyAction;
 import org.openide.actions.CutAction;
@@ -78,7 +78,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     protected RefreshObjectAction refreshAction;
     protected EditObjectAction editAction;
     protected ShowObjectIdAction showObjectIdAction;
-    protected ShowObjectAuditTrailAction showObjectAuditTrailAction;
+    protected ShowObjectSpecialRelationshipsAction showRelationshipsAction;
     
     protected Sheet sheet;
     protected Image icon;
@@ -288,7 +288,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         actions.add(editAction == null ? editAction = new EditObjectAction(this) : editAction);
         actions.add(deleteAction == null ? deleteAction = new DeleteBusinessObjectAction(this) : deleteAction);
         actions.add(null); //Separator
-        if (getParentNode() != null){
+        if (getParentNode() != null) {
             actions.add(SystemAction.get(CopyAction.class));
             actions.add(SystemAction.get(CutAction.class));
             actions.add(SystemAction.get(PasteAction.class));
@@ -297,19 +297,18 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         }
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)){
             if (action.getValidator() == null){
-                action.setObjectClassName(object.getClassName());
-                action.setObjectId(object.getOid());
+                action.setObject(object);
                 actions.add(action);
             }else{
                 if (com.getMetaForClass(object.getClassName(), false).getValidator(action.getValidator()) == 1){
-                    action.setObjectClassName(object.getClassName());
-                    action.setObjectId(object.getOid());
+                    action.setObject(object);
                     actions.add(action);
                 }
             }
         }
         actions.add(null); //Separator
-        actions.add(showObjectAuditTrailAction == null ? showObjectAuditTrailAction = new ShowObjectAuditTrailAction(this) : showObjectAuditTrailAction);
+        actions.add(showRelationshipsAction == null ? showRelationshipsAction = 
+                                new ShowObjectSpecialRelationshipsAction(this.getObject()) : showRelationshipsAction);
         actions.add(showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction);
         
         return actions.toArray(new Action[]{});

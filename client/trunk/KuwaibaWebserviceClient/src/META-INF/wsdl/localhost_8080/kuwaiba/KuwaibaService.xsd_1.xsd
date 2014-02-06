@@ -320,9 +320,9 @@
 
 <xs:element name="getSpecialAttributeResponse" type="tns:getSpecialAttributeResponse"/>
 
-<xs:element name="getSpecialRelationships" type="tns:getSpecialRelationships"/>
+<xs:element name="getSpecialAttributes" type="tns:getSpecialAttributes"/>
 
-<xs:element name="getSpecialRelationshipsResponse" type="tns:getSpecialRelationshipsResponse"/>
+<xs:element name="getSpecialAttributesResponse" type="tns:getSpecialAttributesResponse"/>
 
 <xs:element name="getSubClassesLight" type="tns:getSubClassesLight"/>
 
@@ -739,55 +739,6 @@
 <xs:sequence>
 <xs:element name="return" type="tns:remoteObjectLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getSpecialRelationships">
-<xs:sequence>
-<xs:element name="objectclass" type="xs:string" minOccurs="0"/>
-<xs:element name="oid" type="xs:long"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getSpecialRelationshipsResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:remoteObjectSpecialRelationships" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="remoteObjectSpecialRelationships">
-<xs:sequence>
-<xs:element name="relationships" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="relatedObjects" type="tns:remoteObjectLightArray" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="remoteObjectLightArray">
-<xs:complexContent>
-<xs:extension base="tns:arrayList">
-<xs:sequence/>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-
-<xs:complexType name="arrayList">
-<xs:complexContent>
-<xs:extension base="tns:abstractList">
-<xs:sequence/>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-
-<xs:complexType name="abstractList" abstract="true">
-<xs:complexContent>
-<xs:extension base="tns:abstractCollection">
-<xs:sequence/>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-
-<xs:complexType name="abstractCollection" abstract="true">
-<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getAttributeForClassWithId">
@@ -1459,6 +1410,27 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="getSpecialAttributes">
+<xs:sequence>
+<xs:element name="objectClass" type="xs:string" minOccurs="0"/>
+<xs:element name="oid" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSpecialAttributesResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:remoteObjectSpecialRelationships" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteObjectSpecialRelationships">
+<xs:sequence>
+<xs:element name="relationships" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="relatedObjects" type="tns:remoteObjectLightArray" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="getSpecialAttribute">
 <xs:sequence>
 <xs:element name="objectclass" type="xs:string" minOccurs="0"/>
@@ -2044,6 +2016,12 @@
 <xs:complexType name="downloadLogResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:base64Binary" nillable="true" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="remoteObjectLightArray" final="#all">
+<xs:sequence>
+<xs:element name="item" type="tns:remoteObjectLight" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
 </xs:sequence>
 </xs:complexType>
 </xs:schema>

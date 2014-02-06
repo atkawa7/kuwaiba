@@ -37,12 +37,10 @@ import org.inventory.communications.core.LocalObjectLight;
 public class ServicesFrame extends JFrame{
     private JScrollPane pnlScrollMain;
     private JList lstAvailableServices;
-    private String objectClassName;
-    private long objectId;
+    private LocalObjectLight object;
 
-    public ServicesFrame(String objectClassName, long objectId, LocalObjectLight[] services) {
-        this.objectClassName = objectClassName;
-        this.objectId = objectId;
+    public ServicesFrame(LocalObjectLight object, LocalObjectLight[] services) {
+        this.object = object;
         setLayout(new BorderLayout());
         setTitle(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_TITLE_AVAILABLE_SERVICES"));
         setSize(300, 700);
@@ -82,7 +80,7 @@ public class ServicesFrame extends JFrame{
                 JOptionPane.showMessageDialog(null, "Select a service from the list");
             else{
                 if (CommunicationsStub.getInstance().associateObjectToService(
-                        objectClassName, objectId, 
+                        object.getClassName(), object.getOid(), 
                         ((LocalObjectLight)lstAvailableServices.getSelectedValue()).getClassName(),
                         ((LocalObjectLight)lstAvailableServices.getSelectedValue()).getOid()))
                     JOptionPane.showMessageDialog(null, String.format("The object was related to %s", lstAvailableServices.getSelectedValue()));
