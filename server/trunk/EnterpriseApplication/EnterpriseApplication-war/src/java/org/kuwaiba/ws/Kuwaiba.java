@@ -16,6 +16,7 @@
 
 package org.kuwaiba.ws;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,6 +42,7 @@ import org.kuwaiba.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfoLight;
@@ -1177,6 +1179,32 @@ public class Kuwaiba {
         try{
             wsBean.validateCall("getParents", getIPAddress(), sessionId);
             return wsBean.getParents(objectClass, oid);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    /**
+     * Returns all the special relationships of a given object as a hashmap whose keys are
+     * the names of the relationships and the values the list of related objects
+     * @param objectClass Object class
+     * @param oid Object id
+     * @param sessionId Session token
+     * @return
+     * @throws Exception If case something goes wrong
+     */
+    @WebMethod(operationName = "getSpecialRelationships")
+    public RemoteObjectSpecialRelationships getSpecialRelationships(@WebParam(name = "objectclass") String objectClass,
+            @WebParam(name = "oid") long oid,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("getSpecialRelationships", getIPAddress(), sessionId);
+            return wsBean.getSpecialRelationships(objectClass, oid);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)

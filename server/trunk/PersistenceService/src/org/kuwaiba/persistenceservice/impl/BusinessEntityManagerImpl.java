@@ -170,9 +170,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         if (myClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
-        //if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
-        //    throw new OperationNotPermittedException("Create Object", String.format("Class %s is not an business class", className));
-        
         if (myClass.isInDesign())
             throw new OperationNotPermittedException("Create Object", "Can not create instances of classes marked as isDesign");
         
@@ -363,6 +360,23 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         return parents;
     }
 
+    public HashMap<String,List<RemoteBusinessObjectLight>> getSpecialRelationhips (String className, long objectId) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException {
+
+        Node objectNode = getInstanceOfClass(className, objectId);
+        HashMap<String,List<RemoteBusinessObjectLight>> res = new HashMap<String, List<RemoteBusinessObjectLight>>();
+        for (Relationship rel : objectNode.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
+            String relName = (String)rel.getProperty(Constants.PROPERTY_NAME);
+            List<RemoteBusinessObjectLight> currentObjects = res.get(relName);
+            if (currentObjects == null){
+                currentObjects = new ArrayList<RemoteBusinessObjectLight>();
+                res.put(relName, currentObjects);
+            }
+            currentObjects.add(Util.createRemoteObjectLightFromNode(rel.getOtherNode(objectNode)));
+        }
+        return res;
+    }
+    
     public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         Node objectNode = getInstanceOfClass(objectClass, oid);

@@ -16,6 +16,7 @@
 
 package org.kuwaiba.beans;
 
+import java.util.HashMap;
 import java.util.List;
 import javax.ejb.Remote;
 import org.kuwaiba.beans.sessions.Session;
@@ -33,6 +34,7 @@ import org.kuwaiba.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.ws.toserialize.application.ViewInfoLight;
 import org.kuwaiba.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.ws.toserialize.metadata.CategoryInfo;
 import org.kuwaiba.ws.toserialize.metadata.ClassInfo;
@@ -321,6 +323,7 @@ public interface WebserviceBeanRemote {
     
     public RemoteObject getParent(String objectClass, long oid) throws ServerSideException;
     public RemoteObjectLight[] getParents(String objectClass, long oid) throws ServerSideException;
+    public RemoteObjectSpecialRelationships getSpecialRelationships(String objectClass, long oid) throws ServerSideException;
     public RemoteObject getParentOfClass(String objectClass, long oid, String parentClass) throws ServerSideException;
 
     public RemoteObjectLight[] getSpecialAttribute(String objectClass, long objectId, String attributeName) throws ServerSideException;
@@ -586,7 +589,5 @@ public interface WebserviceBeanRemote {
      * @throws ServerSideException 
      */
     public byte[] downloadErrors(String fileName) throws ServerSideException;
-    // </editor-fold>
-
-    
+    // </editor-fold>    
 }

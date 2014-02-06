@@ -59,7 +59,8 @@ public interface BusinessEntityManagerRemote extends Remote{
 
     public RemoteBusinessObjectLight getObjectLight(String objectClass, long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
-    
+    public HashMap<String,List<RemoteBusinessObjectLight>> getSpecialRelationhips (String className, long objectId) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
     public RemoteBusinessObject getParent(String objectClass, long oid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
     public List<RemoteBusinessObjectLight> getParents (String objectClassName, long oid)
