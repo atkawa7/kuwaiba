@@ -16,10 +16,14 @@
 package org.kuwaiba.management.services.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.util.Lookup;
+import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -27,16 +31,13 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseFromServiceAction extends GenericObjectNodeAction {
+public class ReleaseFromServiceAction extends GenericObjectNodeAction implements Presenter.Popup {
     
-    public ReleaseFromServiceAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_RELEASE_ELEMENT"));
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        if (CommunicationsStub.getInstance().releaseObjectFromService(object.getClassName(), object.getOid(), -1))
+        if (CommunicationsStub.getInstance().releaseObjectFromService(object.getClassName(), 
+                object.getOid(), Long.valueOf(((JMenuItem)e.getSource()).getName())))
             nu.showSimplePopup("Success", NotificationUtil.INFO, "Element released successfully");
         else
             nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
@@ -45,5 +46,24 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction {
     @Override
     public String getValidator() {
         return null; //Enable this action for any object
+    }
+
+    @Override
+    public JMenuItem getPopupPresenter() {
+        JMenu mnuServices = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_RELEASE_ELEMENT"));
+        LocalObjectLight[] services = CommunicationsStub.getInstance().getSpecialAttribute(object.getClassName(), 
+                object.getOid(), "uses");
+        if (services.length == 0)
+            mnuServices.setEnabled(false);
+        else{
+            for (LocalObjectLight service : services){
+                JMenuItem smiServices = new JMenuItem(service.toString());
+                smiServices.setName(String.valueOf(service.getOid()));
+                smiServices.addActionListener(this);
+                mnuServices.add(smiServices);
+            }
+        }
+        return mnuServices;
+        
     }
 }

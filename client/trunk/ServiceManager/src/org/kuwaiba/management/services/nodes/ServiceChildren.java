@@ -42,7 +42,7 @@ public class ServiceChildren extends Children.Array {
             nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
         else{
             for (LocalObjectLight resource : resources){
-                ObjectNode[] node = new ObjectNode[] {new ObjectNode(resource)};
+                ObjectNode[] node = new ObjectNode[] {new ObjectNode(resource, true)};
                 remove(node);
                 add(node);
             }

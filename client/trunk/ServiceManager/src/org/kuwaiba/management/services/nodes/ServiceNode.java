@@ -16,54 +16,23 @@
 package org.kuwaiba.management.services.nodes;
 
 import java.awt.Image;
-import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.util.Constants;
-import org.openide.nodes.AbstractNode;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.util.ImageUtilities;
-import org.openide.util.lookup.Lookups;
 
 /**
  * Node representing a customer
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ServiceNode extends AbstractNode {
-    private LocalObjectLight service;
-    private Image icon;
+public class ServiceNode extends ObjectNode {
+    private static Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/service.png");
     
     public ServiceNode(LocalObjectLight service) {
-        super(new ServiceChildren(service), Lookups.singleton(service));
-        this.service = service;
-        icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/service.png");
+        super(service);
+        setChildren(new ServiceChildren(service));
+        this.object = service;
     }
-
-    public LocalObjectLight getService() {
-        return service;
-    }
-    
-    @Override
-    public String getDisplayName(){
-        return service.toString();
-    }
-    
-    @Override
-    public boolean canRename(){
-        return true;
-    }
-    
-    @Override
-    public void setName(String newName){
-        LocalObject lo = new LocalObject(service.getClassName(), service.getOid(), 
-                new String[]{Constants.PROPERTY_NAME}, new String[]{newName});
-        if (CommunicationsStub.getInstance().saveObject(lo)){
-            this.service.setName(newName);
-            setDisplayName(newName);
-            fireDisplayNameChange(newName, newName);
-        }
         
-    }
-    
     @Override
     public Image getIcon(int i){
         return icon;

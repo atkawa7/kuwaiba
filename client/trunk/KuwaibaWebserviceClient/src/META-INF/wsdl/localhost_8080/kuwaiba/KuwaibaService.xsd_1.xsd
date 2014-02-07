@@ -1585,7 +1585,7 @@
 <xs:sequence>
 <xs:element name="serviceClass" type="xs:string" minOccurs="0"/>
 <xs:element name="serviceId" type="xs:long"/>
-<xs:element name="objectId" type="xs:long"/>
+<xs:element name="targetId" type="xs:long"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>

@@ -29,17 +29,24 @@ import org.openide.util.ImageUtilities;
  */
 public class ListTypeItemNode extends ObjectNode {
 
-    public static final String ICON_PATH="org/inventory/navigation/applicationnodes/res/list-type-item.png";
-    private static Image defaultIcon = ImageUtilities.loadImage(ICON_PATH);
+    private static Image icon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/list-type-item.png");
 
     public ListTypeItemNode(LocalObjectLight lol) {
         super(lol,true);
-        this.icon = defaultIcon;
-
     }
 
     @Override
     public Action[] getActions(boolean context){
         return new Action[]{editAction,new DeleteListTypeAction(this)};
+    }
+    
+    @Override
+    public Image getIcon(int i){
+        return icon;
+    }
+    
+    @Override
+    public Image getOpenedIcon(int i){
+        return getIcon(i);
     }
 }

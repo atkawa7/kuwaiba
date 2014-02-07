@@ -82,11 +82,14 @@ public class ServicesFrame extends JFrame{
                 if (CommunicationsStub.getInstance().associateObjectToService(
                         object.getClassName(), object.getOid(), 
                         ((LocalObjectLight)lstAvailableServices.getSelectedValue()).getClassName(),
-                        ((LocalObjectLight)lstAvailableServices.getSelectedValue()).getOid()))
+                        ((LocalObjectLight)lstAvailableServices.getSelectedValue()).getOid())){
                     JOptionPane.showMessageDialog(null, String.format("The object was related to %s", lstAvailableServices.getSelectedValue()));
+                    dispose();
+                }
                 else 
-                    JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError());
-                dispose();
+                    JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                
             }
         }
     }

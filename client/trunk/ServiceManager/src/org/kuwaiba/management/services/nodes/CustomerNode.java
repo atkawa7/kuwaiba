@@ -17,60 +17,29 @@ package org.kuwaiba.management.services.nodes;
 
 import java.awt.Image;
 import javax.swing.Action;
-import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.util.Constants;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.kuwaiba.management.services.nodes.actions.CreateServiceAction;
-import org.openide.nodes.AbstractNode;
 import org.openide.util.ImageUtilities;
-import org.openide.util.lookup.Lookups;
 
 /**
  * Node representing a customer
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class CustomerNode extends AbstractNode {
-    private LocalObjectLight customer;
-    private Image icon;
+public class CustomerNode extends ObjectNode {
+    private static Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/customer.png");
 
     public CustomerNode(LocalObjectLight customer) {
-        super(new CustomerChildren(customer), Lookups.singleton(customer));
-        this.customer = customer;
-        icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/customer.png");
+        super(customer);
+        setChildren(new CustomerChildren(customer));
+        this.object = customer;
     }
     
     @Override
     public Action[] getActions(boolean context){
         return new Action[]{new CreateServiceAction(this)};
     }
-
-    public LocalObjectLight getCustomer() {
-        return customer;
-    }
-    
-    @Override
-    public String getDisplayName(){
-        return customer.toString();
-    }
-    
-    @Override
-    public boolean canRename(){
-        return true;
-    }
-    
-    @Override
-    public void setName(String newName){
-        LocalObject lo = new LocalObject(customer.getClassName(), customer.getOid(), 
-                new String[]{Constants.PROPERTY_NAME}, new String[]{newName});
-        if (CommunicationsStub.getInstance().saveObject(lo)){
-            this.customer.setName(newName);
-            setDisplayName(newName);
-            //fireDisplayNameChange(newName, newName);
-        }
         
-    }
-    
     @Override
     public Image getIcon(int i){
         return icon;

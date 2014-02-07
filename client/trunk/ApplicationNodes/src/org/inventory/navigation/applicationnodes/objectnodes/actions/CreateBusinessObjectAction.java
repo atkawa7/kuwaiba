@@ -80,7 +80,7 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
             items = com.getPossibleChildren(((ObjectNode)node).getObject().getClassName(),false);
 
         if (items.isEmpty())
-			mnuPossibleChildren.setEnabled(false);
+            mnuPossibleChildren.setEnabled(false);
         else
             for(LocalClassMetadataLight item: items){
                     JMenuItem smiChildren = new JMenuItem(item.getClassName());

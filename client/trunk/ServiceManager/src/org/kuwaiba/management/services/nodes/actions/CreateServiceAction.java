@@ -23,7 +23,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.kuwaiba.management.services.nodes.CustomerNode;
 import org.kuwaiba.management.services.nodes.ServiceNode;
 import org.openide.util.Lookup;
@@ -47,8 +46,8 @@ public class CreateServiceAction extends AbstractAction implements Presenter.Pop
     public void actionPerformed(ActionEvent e) {
         String objectClass = ((JMenuItem)e.getSource()).getName();
         LocalObjectLight newService = CommunicationsStub.getInstance().
-                createService(objectClass, customerNode.getCustomer().getClassName(), 
-                customerNode.getCustomer().getOid(), null, null);
+                createService(objectClass, customerNode.getObject().getClassName(), 
+                customerNode.getObject().getOid(), null, null);
         if (newService != null)
             customerNode.getChildren().add(new ServiceNode[] {new ServiceNode(newService)});
         else{

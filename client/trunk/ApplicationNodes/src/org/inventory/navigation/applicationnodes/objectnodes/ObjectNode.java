@@ -81,7 +81,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     protected ShowObjectSpecialRelationshipsAction showRelationshipsAction;
     
     protected Sheet sheet;
-    protected Image icon;
+    private Image icon;
     private final Image defaultIcon = ImageUtilities.loadImage(GENERIC_ICON_PATH);
     private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
    
