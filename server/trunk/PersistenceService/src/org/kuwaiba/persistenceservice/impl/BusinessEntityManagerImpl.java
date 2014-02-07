@@ -973,6 +973,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         List<RemoteBusinessObjectLight> path = new ArrayList<RemoteBusinessObjectLight>();
         String cypherQuery = "START o=node({oid}) "+ 
                              "MATCH path = o-[r:"+RelTypes.RELATED_TO_SPECIAL.toString()+"*]-c "+
+                             "WHERE all(rel in r where rel.name = 'mirror' or rel.name = 'endpointA' or rel.name = 'endpointB') "+
                              "RETURN collect(distinct c) as path";
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("oid", objectId);
