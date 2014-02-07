@@ -91,7 +91,7 @@ public interface BusinessEntityManagerRemote extends Remote{
 
     public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
-    public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName)
+    public void releaseSpecialRelationship(String objectClass, long objectId, long otherObjectId, String relationshipName)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
     public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName, long targetId)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;

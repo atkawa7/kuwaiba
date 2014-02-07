@@ -1691,7 +1691,7 @@ public class Kuwaiba {
     public void releaseObjectFromService (
             @WebParam(name = "serviceClass")String serviceClass,
             @WebParam(name = "serviceId")long serviceId,
-            @WebParam(name = "objectId")long targetId,           
+            @WebParam(name = "targetId")long targetId,           
             @WebParam(name = "sessionId")String sessionId) throws Exception {
         try{
             wsBean.validateCall("releaseObjectFromService", getIPAddress(), sessionId);

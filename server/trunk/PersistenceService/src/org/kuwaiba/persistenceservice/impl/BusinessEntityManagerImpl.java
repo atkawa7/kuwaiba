@@ -510,16 +510,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
 
-        if (!cm.isSubClass("InventoryObject", aObjectClass))
-            throw new OperationNotPermittedException("Create Relationship", String.format("You can't create relationships between non-inventory objects (%1s)",aObjectClass));
-
-        if (!cm.isSubClass("InventoryObject", bObjectClass))
-            throw new OperationNotPermittedException("Create Relationship", String.format("You can't create relationships between non-inventory objects (%1s)",bObjectClass));
-
         Transaction tx = null;
         try{
             tx = graphDb.beginTx();
             Node nodeA = getInstanceOfClass(aObjectClass, aObjectId);
+            for (Relationship rel : nodeA.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
+                if (rel.getOtherNode(nodeA).getId() == bObjectId 
+                        && rel.getProperty(Constants.PROPERTY_NAME).equals(name))
+                    throw new OperationNotPermittedException("Relate Objects", "These elements are already related");
+            }
             Node nodeB = getInstanceOfClass(bObjectClass, bObjectId);
             Relationship rel = nodeA.createRelationshipTo(nodeB, RelTypes.RELATED_TO_SPECIAL);
             rel.setProperty(Constants.PROPERTY_NAME, name);
@@ -533,7 +532,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
     
-    public void releaseSpecialRelationship(String objectClass, long objectId, String name)
+    public void releaseSpecialRelationship(String objectClass, long objectId, long otherObjectId, String name)
             throws ObjectNotFoundException, MetadataObjectNotFoundException {
 
         Transaction tx = null;
@@ -541,7 +540,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             tx = graphDb.beginTx();
             Node node = getInstanceOfClass(objectClass, objectId);
             for (Relationship rel : node.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
-                if (rel.getProperty(Constants.PROPERTY_NAME).equals(name))
+                if ((rel.getProperty(Constants.PROPERTY_NAME).equals(name) && 
+                        rel.getOtherNode(node).getId() == otherObjectId) || otherObjectId == -1)
                     rel.delete();
             }
             tx.success();

@@ -317,11 +317,12 @@ public interface BusinessEntityManager {
      * Release all special relationships with a given name
      * @param objectClass Object class
      * @param objectId Object id
+     * @param otherObjectId The object we want to be released from. -1 To all objects related with relationships with that name
      * @param relationshipName Relationship name
      * @throws ObjectNotFoundException If the object can not be found
      * @throws MetadataObjectNotFoundException  If the class can not be found
      */
-    public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName)
+    public void releaseSpecialRelationship(String objectClass, long objectId, long otherObjectId, String relationshipName)
             throws ObjectNotFoundException, MetadataObjectNotFoundException;
     
     /**

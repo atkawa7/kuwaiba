@@ -360,7 +360,7 @@ public interface WebserviceBeanRemote {
     public RemoteObjectLight[] getPhysicalPath(String objectClass, long objectId) throws ServerSideException;
     //Service Manager
     public void associateObjectToService(String objectClass, long objectId, String serviceClass, long serviceId) throws ServerSideException;
-    public void releaseObjectFromService(String serviceClass, long serviceId, long objectId) throws ServerSideException;
+    public void releaseObjectFromService(String serviceClass, long serviceId, long otherObjectId) throws ServerSideException;
     public RemoteObjectLight[] getServiceResources(String serviceClass, long serviceId) throws ServerSideException;
     public long createService(String serviceClass, String customerClass, long customerId, String[] attributes, String[] attributeValues) throws ServerSideException;
     public long createCustomer(String serviceClass, String[] attributes, String[] attributeValues) throws ServerSideException;

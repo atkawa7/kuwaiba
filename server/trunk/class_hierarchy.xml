@@ -1,4 +1,4 @@
-<hierarchy documentVersion="1.1" serverVersion="0.5.1" date="1330720263006">
+<hierarchy documentVersion="1.1" serverVersion="0.6" date="1330720263006">
   <inventory>
     <classes>
       <class name="RootObject" javaModifiers="1025" applicationModifiers="0" classType="4" classPackage="org.kuwaiba.entity.core">
@@ -2552,7 +2552,7 @@
                           <attribute name="diskSpace" type="Integer" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="ram" type="Integer" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="operatingSystem" type="OperatingSystem" javaModifiers="4" applicationModifiers="0"/>
-                          <attribute name="backedUp" type="boolean" javaModifiers="4" applicationModifiers="0"/>
+                          <attribute name="backedUp" type="Boolean" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                           <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
@@ -2564,7 +2564,7 @@
                           <attribute name="diskSpace" type="Integer" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="database" type="Database" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="platform" type="ServerSidePlatform" javaModifiers="4" applicationModifiers="0"/>
-                          <attribute name="backedUp" type="boolean" javaModifiers="4" applicationModifiers="0"/>
+                          <attribute name="backedUp" type="Boolean" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                           <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>

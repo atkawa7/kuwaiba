@@ -1170,7 +1170,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             if (!mem.isSubClass("GenericPort", objectClass))
                 throw new ServerSideException(Level.WARNING, String.format("Object %s [%s] is not a port", objectId, objectClass));
                         
-            bem.releaseSpecialRelationship(objectClass, objectId, "mirror");
+            bem.releaseSpecialRelationship(objectClass, objectId, -1, "mirror");
             
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
@@ -1355,15 +1355,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
-    public void releaseObjectFromService(String serviceClass, long serviceId, long objectId) 
+    public void releaseObjectFromService(String serviceClass, long serviceId, long otherObjectId) 
             throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            /**if (!mem.isSubClass("GenericService", serviceClass))
-                throw new ServerSideException(Level.SEVERE, String.format("Class %s is not a service", serviceClass));
-            bem.releaseSpecialRelationship(serviceClass, serviceId, "uses", objectId);*/
-            bem.releaseSpecialRelationship(serviceClass, serviceId, "uses");
+            bem.releaseSpecialRelationship(serviceClass, serviceId, otherObjectId, "uses");
         } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
