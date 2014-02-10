@@ -37,7 +37,11 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.queries.QueryManagerService;
-import org.inventory.queries.graphical.dialogs.ExportSettingsPanel;
+import org.inventory.core.services.api.export.ExportSettingsPanel;
+import org.inventory.core.services.api.export.Exportable;
+import org.inventory.core.services.api.export.filters.CSVFilter;
+import org.inventory.core.services.api.export.filters.ExportFilter;
+import org.inventory.core.services.api.export.filters.XMLFilter;
 import org.netbeans.swing.etable.ETable;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -50,7 +54,7 @@ import org.openide.windows.WindowManager;
  * Query results for the new Graphical Query builder
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ComplexQueryResultTopComponent extends TopComponent{
+public class ComplexQueryResultTopComponent extends TopComponent implements Exportable {
     private JToolBar barMain;
     private JButton btnNext;
     private JButton btnPrevious;
@@ -196,8 +200,8 @@ public class ComplexQueryResultTopComponent extends TopComponent{
     }
 
     public void btnExportActionPerformed(){
-        ExportSettingsPanel exportPanel = new ExportSettingsPanel(qbs, this);
-        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true,exportPanel);
+        ExportSettingsPanel exportPanel = new ExportSettingsPanel(new ExportFilter[]{CSVFilter.getInstance(), XMLFilter.getInstance()}, this);
+        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }
 
@@ -213,7 +217,37 @@ public class ComplexQueryResultTopComponent extends TopComponent{
     }
 
     public Object[][] getCurrentResults(){
-        return ((QueryResultTableModel)aTable.getModel()).getCurrentResults();
+        Object[][] res = new Object[aTable.getModel().getRowCount() + 1][aTable.getModel().getColumnCount()];
+        res[0] = ((QueryResultTableModel)aTable.getModel()).getColumnNames();
+        for (int i = 1; i < aTable.getModel().getRowCount(); i++)
+            for (int j = 0; j < aTable.getModel().getColumnCount(); j++)
+                res[i][j] = aTable.getModel().getValueAt(i, j);
+        return res;
+    }
+    
+    @Override
+    public Object[][] getResults(Exportable.Range range) {
+        Object[][] res;
+        if (range == Exportable.Range.CURRENT_PAGE)
+            res = getCurrentResults();
+        else {
+            LocalResultRecord[] results = qbs.executeQuery(0);
+            if (results == null)
+                res = null;
+            else{
+                if (results.length == 0)
+                    res = new Object[0][0];
+                else{
+                    res =new Object[results.length][results[0].getExtraColumns().size() + 1];
+                    for (int i = 0; i < results.length; i++){
+                        res[i][0] = results[i].getObject();
+                        for (int j = 0; j < results[i].getExtraColumns().size();j++)
+                            res[i][j + 1] = results[i].getExtraColumns().get(j);
+                    }
+                }
+            }
+        }
+        return res;
     }
 
     private class PopupProvider extends MouseAdapter{
@@ -240,7 +274,6 @@ public class ComplexQueryResultTopComponent extends TopComponent{
                 if (action != null)
                     menu.add(action);
             }
-            
             menu.show(e.getComponent(), e.getX(), e.getY());
           }
         }

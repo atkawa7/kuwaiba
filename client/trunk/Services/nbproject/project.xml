@@ -23,11 +23,27 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.openide.dialogs</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>7.25.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.openide.explorer</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
                         <specification-version>6.45.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.openide.util</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>8.25.2</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -51,6 +67,7 @@
                 <package>org.inventory.core.services.api.actions</package>
                 <package>org.inventory.core.services.api.behaviors</package>
                 <package>org.inventory.core.services.api.export</package>
+                <package>org.inventory.core.services.api.export.filters</package>
                 <package>org.inventory.core.services.api.notifications</package>
                 <package>org.inventory.core.services.api.visual</package>
                 <package>org.inventory.core.services.api.xml</package>

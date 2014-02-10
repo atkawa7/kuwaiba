@@ -41,6 +41,10 @@ public class AuditTrailTableModel implements TableModel {
     public String getColumnName(int columnIndex) {
         return columnNames[columnIndex];
     }
+    
+    public String[] getColumnNames(){
+        return columnNames;
+    }
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
@@ -86,5 +90,8 @@ public class AuditTrailTableModel implements TableModel {
     @Override
     public void removeTableModelListener(TableModelListener l) {
     }
-    
+
+    void setRecords(LocalApplicationLogEntry[] records) {
+        this.records = records;
+    }    
 }

@@ -15,6 +15,7 @@
  */
 package org.inventory.core.history;
 
+import javax.swing.table.DefaultTableModel;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalApplicationLogEntry;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -33,6 +34,8 @@ public class AuditTrailService {
     public static final int SHOW_NEXT_PAGE = 2;
     public static final int SHOW_PREVIOUS_PAGE = 3;
     public static final int SHOW_FIRST_PAGE = 4;
+    
+    public static final int RESULTS_LIMIT = 50;
 
     public AuditTrailService(AuditTrailTopComponent component) {
         this.component = component;
@@ -55,19 +58,23 @@ public class AuditTrailService {
                 records = com.getGeneralActivityAuditTrail(0, 0);
                 break;
             case SHOW_NEXT_PAGE:
-                records = com.getGeneralActivityAuditTrail(++currentPage, 10);
+                records = com.getGeneralActivityAuditTrail(++currentPage, RESULTS_LIMIT);
                 break;
             case SHOW_PREVIOUS_PAGE:
-                records = com.getGeneralActivityAuditTrail(--currentPage, 10);
+                records = com.getGeneralActivityAuditTrail(--currentPage, RESULTS_LIMIT);
                 break;
             case SHOW_FIRST_PAGE:
-                records = com.getGeneralActivityAuditTrail(1, 10);
+                records = com.getGeneralActivityAuditTrail(1, RESULTS_LIMIT);
                 break;
         }
         
         if (records == null)
             component.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
-        else
-            component.getTable().setModel(new AuditTrailTableModel(records));
+        else{
+            if (component.getTable().getModel() instanceof DefaultTableModel)
+                component.getTable().setModel(new AuditTrailTableModel(records));
+            else
+                component.getTable().setModel(new AuditTrailTableModel(records));
+        }
     }
 }

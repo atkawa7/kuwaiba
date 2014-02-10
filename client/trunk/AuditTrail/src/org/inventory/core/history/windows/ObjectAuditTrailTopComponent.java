@@ -27,7 +27,13 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import org.inventory.communications.core.LocalApplicationLogEntry;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.services.api.export.ExportSettingsPanel;
+import org.inventory.core.services.api.export.Exportable;
+import org.inventory.core.services.api.export.filters.CSVFilter;
+import org.inventory.core.services.api.export.filters.ExportFilter;
 import org.netbeans.swing.etable.ETable;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -36,13 +42,15 @@ import org.openide.windows.WindowManager;
  * Show the activity log associated to an object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectAuditTrailTopComponent extends TopComponent{
+public class ObjectAuditTrailTopComponent extends TopComponent implements Exportable {
     private JToolBar barMain;
     private JButton btnExport;
     private JScrollPane pnlScrollMain;
     private ETable aTable;
+    private String columnNames[];
 
     public ObjectAuditTrailTopComponent(LocalObjectLight object, final LocalApplicationLogEntry[] logEntries) {
+        this.columnNames =  new String[]{"Timestamp", "Type", "User", "Property", "Old value", "New value"};
         setLayout(new BorderLayout());
         barMain = new JToolBar();
         add(barMain, BorderLayout.NORTH);
@@ -54,13 +62,12 @@ public class ObjectAuditTrailTopComponent extends TopComponent{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                btnExportButtonActionPerformed(e);
             }
         });
         setName(String.format("Audit trail for %s", object));
         aTable = new ETable(new TableModel() {
             final LocalApplicationLogEntry entries[] = logEntries;
-            String columnNames[] =  new String[]{"Timestamp", "Type", "User", "Property", "Old value", "New value"};
             @Override
             public int getRowCount() {
                 return entries.length;
@@ -134,5 +141,21 @@ public class ObjectAuditTrailTopComponent extends TopComponent{
     @Override
     public int getPersistenceType() {
         return TopComponent.PERSISTENCE_NEVER;
+    }
+    
+    private void btnExportButtonActionPerformed(ActionEvent e) {
+        ExportSettingsPanel exportPanel = new ExportSettingsPanel(new ExportFilter[]{CSVFilter.getInstance()}, this);
+        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
+        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+    }
+
+    @Override
+    public Object[][] getResults(Range range) {
+        Object[][] res = new Object[aTable.getModel().getRowCount() + 1][aTable.getModel().getColumnCount()];
+        res[0] = columnNames;
+        for (int i = 0; i < aTable.getModel().getRowCount(); i++)
+            for (int j = 0; j < aTable.getModel().getColumnCount(); j++)
+                res[i + 1][j] = aTable.getModel().getValueAt(i, j);
+        return res;
     }
 }

@@ -15,9 +15,17 @@
  */
 package org.inventory.core.history;
 
+import java.util.Date;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalApplicationLogEntry;
+import org.inventory.core.services.api.export.ExportSettingsPanel;
+import org.inventory.core.services.api.export.Exportable;
+import org.inventory.core.services.api.export.filters.CSVFilter;
+import org.inventory.core.services.api.export.filters.ExportFilter;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.swing.etable.ETable;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -29,9 +37,6 @@ import org.openide.util.NbBundle.Messages;
  * Audit trail module main TopComponent
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@ConvertAsProperties(
-    dtd = "-//org.inventory.core.history//AuditTrail//EN",
-autostore = false)
 @TopComponent.Description(
     preferredID = "AuditTrailTopComponent",
 iconBase = "org/inventory/core/history/res/icon.png",
@@ -48,8 +53,8 @@ preferredID = "AuditTrailTopComponent")
     "CTL_AuditTrailTopComponent=AuditTrail Window",
     "HINT_AuditTrailTopComponent=This is a AuditTrail window"
 })
-public final class AuditTrailTopComponent extends TopComponent {
-    private ETable myTable;
+public final class AuditTrailTopComponent extends TopComponent implements Exportable {
+    private ETable aTable;
     private AuditTrailService service;
     private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
 
@@ -58,7 +63,7 @@ public final class AuditTrailTopComponent extends TopComponent {
         setName(Bundle.CTL_AuditTrailTopComponent());
         setToolTipText(Bundle.HINT_AuditTrailTopComponent());
         service = new AuditTrailService(this);
-        pnlScrollMain.setViewportView(myTable = new ETable());
+        pnlScrollMain.setViewportView(aTable = new ETable());
     }
 
     /**
@@ -86,6 +91,11 @@ public final class AuditTrailTopComponent extends TopComponent {
         btnExport.setFocusable(false);
         btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportActionPerformed(evt);
+            }
+        });
         barMain.add(btnExport);
 
         btnAll.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/history/res/all.png"))); // NOI18N
@@ -148,6 +158,12 @@ public final class AuditTrailTopComponent extends TopComponent {
             btnPrevious.setEnabled(true);
     }//GEN-LAST:event_btnNextActionPerformed
 
+    private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
+        ExportSettingsPanel exportPanel = new ExportSettingsPanel(new ExportFilter[]{CSVFilter.getInstance()}, this);
+        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
+        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+    }//GEN-LAST:event_btnExportActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
     private javax.swing.JButton btnAll;
@@ -165,26 +181,51 @@ public final class AuditTrailTopComponent extends TopComponent {
 
     @Override
     public void componentClosed() {
-        myTable.removeAll();   
-    }
-
-    void writeProperties(java.util.Properties p) {
-        // better to version settings since initial version as advocated at
-        // http://wiki.apidesign.org/wiki/PropertyFiles
-        p.setProperty("version", "1.0");
-        // TODO store your settings
-    }
-
-    void readProperties(java.util.Properties p) {
-        String version = p.getProperty("version");
-        // TODO read your settings according to their version
+        aTable.removeAll();   
     }
     
+    void writeProperties(java.util.Properties p) {    }
+
+    void readProperties(java.util.Properties p) {    }
+    
     public ETable getTable(){
-        return myTable;
+        return aTable;
     }
     
     public NotificationUtil getNotifier(){
         return nu;
+    }
+
+    @Override
+    public Object[][] getResults(Range range) {
+        Object[][] res;
+        if (range == Range.CURRENT_PAGE){
+            res = new Object[aTable.getModel().getRowCount() + 1][aTable.getModel().getColumnCount()];
+            res[0] = ((AuditTrailTableModel)aTable.getModel()).getColumnNames();
+            for (int i = 0; i < aTable.getModel().getRowCount(); i++)
+                for (int j = 0; j < aTable.getModel().getColumnCount(); j++)
+                    res[i + 1][j] = aTable.getModel().getValueAt(i, j);
+            
+        }else{
+            LocalApplicationLogEntry[] records = CommunicationsStub.getInstance().getGeneralActivityAuditTrail(0, 0);
+            if (records == null){
+                nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+                return new Object[0][0];
+            }
+            else{
+                res = new Object[records.length + 1][7];
+                res[0] = ((AuditTrailTableModel)aTable.getModel()).getColumnNames();
+                for (int i = 0; i < records.length; i++){
+                    res[i + 1][0] = new Date(records[i].getTimestamp());
+                    res[i + 1][1] = LocalApplicationLogEntry.types[records[i].getType() - 1];
+                    res[i + 1][2] = records[i].getUserName();
+                    res[i + 1][3] = records[i].getAffectedProperty();
+                    res[i + 1][4] = records[i].getOldValue();
+                    res[i + 1][5] = records[i].getNewValue();
+                    res[i + 1][6] = records[i].getNotes();
+                }
+            }
+        }
+        return res;
     }
 }

@@ -16,8 +16,6 @@
 
 package org.inventory.queries.graphical;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import org.inventory.communications.core.queries.LocalResultRecord;
@@ -29,7 +27,7 @@ import org.inventory.communications.core.queries.LocalResultRecord;
 public class QueryResultTableModel implements TableModel{
 
     Object[][] currentResults;
-    List<String> columnNames;
+    String[] columnNames;
 
     /**
      *
@@ -37,15 +35,20 @@ public class QueryResultTableModel implements TableModel{
      * first record must be <b>always</b> used to store the table headers
      */
     QueryResultTableModel(LocalResultRecord[] res) {
-        columnNames = new ArrayList<String>();
-        columnNames.add(""); //NOI18N
-        columnNames.addAll(res[0].getExtraColumns());
+        columnNames = new String[res[0].getExtraColumns().size() + 1];
+        columnNames[0] = "";
+        for (int i = 0; i < res[0].getExtraColumns().size(); i++)
+            columnNames[i + 1] = res[0].getExtraColumns().get(i);
         updateTableModel(res);
     }
 
     @Override
     public int getRowCount() {
         return currentResults.length;
+    }
+    
+    public String[] getColumnNames(){
+        return columnNames;
     }
 
     @Override
@@ -55,7 +58,7 @@ public class QueryResultTableModel implements TableModel{
 
     @Override
     public String getColumnName(int columnIndex) {
-        return columnNames.get(columnIndex);
+        return columnNames[columnIndex];
     }
 
     @Override
@@ -89,10 +92,10 @@ public class QueryResultTableModel implements TableModel{
     }
 
     public final void updateTableModel(LocalResultRecord[] res) {
-        currentResults = new Object[res.length -1 ][columnNames.size()]; //We ignore the first record
+        currentResults = new Object[res.length -1 ][columnNames.length]; //We ignore the first record
         for (int i = 0; i < res.length -1 ; i++){
             currentResults[i][0] = res[i+1].getObject();
-            for (int j = 1; j < columnNames.size(); j++)
+            for (int j = 1; j < columnNames.length; j++)
                 currentResults[i][j] = res[i+1].getExtraColumns().get(j - 1);
         }
     }
