@@ -1207,8 +1207,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
             }
 
             newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, 0);
-            bem.createSpecialRelationship(aObjectClass, aObjectId, connectionClass, newConnectionId, "endpointA");
-            bem.createSpecialRelationship(bObjectClass, bObjectId, connectionClass, newConnectionId, "endpointB");
+            bem.createSpecialRelationship(connectionClass, newConnectionId, aObjectClass, aObjectId, "endpointA");
+            bem.createSpecialRelationship(connectionClass, newConnectionId, bObjectClass, bObjectId, "endpointB");
             return newConnectionId;
         } catch (Exception e) {
             //If the new connection was successfully created, but there's a problem creating the relationships,
@@ -1296,7 +1296,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                         throw new ServerSideException(Level.INFO, String.format("The selected endpoint %s [%s] is already connected", sideAClassNames[i], sideAIds[i]));
                     
                     if (aEndpointList.isEmpty())
-                        bem.createSpecialRelationship(sideAClassNames[i], sideAIds[i], linksClassNames[i], linksIds[i], "endpointA");
+                        bem.createSpecialRelationship(linksClassNames[i], linksIds[i], sideAClassNames[i], sideAIds[i], "endpointA");
                     else
                         throw new ServerSideException(Level.INFO, String.format("Link %s [%s] already has an aEndpoint", linksIds[i], linksClassNames[i]));
                 }
@@ -1306,7 +1306,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                         throw new ServerSideException(Level.INFO, String.format("The selected endpoint %s [%s] is already connected", sideBClassNames[i], sideBIds[i]));
                     
                     if (bEndpointList.isEmpty())
-                        bem.createSpecialRelationship(sideBClassNames[i], sideBIds[i], linksClassNames[i], linksIds[i], "endpointB");
+                        bem.createSpecialRelationship(linksClassNames[i], linksIds[i], sideBClassNames[i], sideBIds[i], "endpointB");
                     else
                         throw new ServerSideException(Level.INFO, String.format("Link %s [%s] already has a bEndpoint", linksIds[i], linksClassNames[i]));
                 }
