@@ -21,6 +21,7 @@ import java.util.Random;
 import javax.swing.JCheckBox;
 import org.inventory.communications.core.LocalAttributeMetadata;
 import org.inventory.communications.core.LocalClassMetadata;
+import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.communications.util.Constants;
@@ -39,6 +40,7 @@ public class ClassNodeWidget extends QueryEditorNodeWidget{
      * The model object to be represented by this widget
      */
     private LocalClassMetadata myClass;
+    private LocalClassMetadataLight myClassLight;
     /**
      * Should this widget show  the <strong>parent</strong> field
      */
@@ -53,11 +55,17 @@ public class ClassNodeWidget extends QueryEditorNodeWidget{
         this.myClass = lcm;
         this.hasParentField = hasParentField;
         this.hasIdField = hasIdField;
+        this.myClassLight = new LocalClassMetadataLight();
+        this.myClassLight.setClassName(lcm.getClassName());
         setNodeName(lcm.getClassName());
     }
     
     public LocalClassMetadata getWrappedClass() {
         return myClass;
+    }
+    
+    public LocalClassMetadataLight getWrappedClassLigth() {
+        return myClassLight;
     }
 
     @Override

@@ -217,8 +217,8 @@ public class QueryManagerService implements ActionListener {
                         }
                         myMetadata = com.getMetaForClass(selectedValue.getClassName(),false);
                     }else
-                        myMetadata = com.getMetaForClass((String)insideCheck.getClientProperty("className"),false);
-                        
+                    myMetadata = com.getMetaForClass((String)insideCheck.getClientProperty("className"),false);
+                    
                     newNode = (ClassNodeWidget)qbtc.getQueryScene().findWidget(myMetadata);
                     if (newNode == null){
                         newNode = (QueryEditorNodeWidget) qbtc.getQueryScene().addNode(myMetadata);

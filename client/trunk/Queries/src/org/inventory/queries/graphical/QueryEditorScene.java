@@ -229,7 +229,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      */
     protected Widget attachPinWidget (Object node, Object pin) {
         VMDPinWidget widget;
-        if (pin instanceof LocalAttributeMetadata){
+            if (pin instanceof LocalAttributeMetadata){
             widget = new AttributePinWidget(this, (LocalAttributeMetadata)pin,
                     ((LocalClassMetadata)node).getTypeForAttribute(((LocalAttributeMetadata)pin).getName()),
                     scheme);
