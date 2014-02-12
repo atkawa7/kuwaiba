@@ -19,7 +19,6 @@ package org.inventory.views.objectview.scene;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.wizards.physicalconnections.ConnectionWizard;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -36,7 +35,7 @@ import org.openide.util.Lookup;
  * This class controls the physical connections behavior
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class PhysicalConnectionProvider implements ConnectProvider{
+public class PhysicalConnectionProvider implements ConnectProvider {
 
     /**
      * The color use to draw the connections
@@ -47,16 +46,11 @@ public class PhysicalConnectionProvider implements ConnectProvider{
      */
     private int currentConnectionSelection;
     /**
-     * Reference to the common CommunicationsStub
-     */
-    private CommunicationsStub com;
-    /**
      * Reference to the common notifier
      */
     private NotificationUtil nu;
 
     public PhysicalConnectionProvider(){
-        this.com = CommunicationsStub.getInstance();
         this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
     }
 
@@ -145,7 +139,6 @@ public class PhysicalConnectionProvider implements ConnectProvider{
             line.setSourceAnchor(AnchorFactory.createCenterAnchor(sourceWidget));
             
             scene.validate();
-
             scene.fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "New Connection"));
         }
     }

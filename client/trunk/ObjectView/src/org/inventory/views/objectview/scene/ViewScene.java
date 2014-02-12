@@ -54,7 +54,10 @@ import org.netbeans.api.visual.widget.Widget;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>{
-
+    /**
+     * This layer is used to paint the auxiliary elements 
+     */
+    private LayerWidget interactionLayer;
     /**
      * Used to hold the background (just an image right now)
      */
@@ -137,6 +140,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLig
     private NotificationUtil notifier;
     
     public ViewScene (NotificationUtil notifier){
+        interactionLayer = new LayerWidget(this);
         backgroundLayer = new LayerWidget(this);
         nodesLayer = new LayerWidget(this);
         edgesLayer = new LayerWidget(this);
@@ -189,7 +193,6 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLig
         ObjectNodeWidget widget = new ObjectNodeWidget(this, node);
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(new ObjectWidgetMenu()));
         nodesLayer.addChild(widget);
-        validate();
         return widget;
     }
 
@@ -198,7 +201,6 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLig
         ObjectConnectionWidget widget = new ObjectConnectionWidget(this, edge, freeRouter);
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(new ObjectWidgetMenu()));
         edgesLayer.addChild(widget);
-        validate();
         return widget;
     }
 
@@ -214,6 +216,10 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLig
 
     @Override
     protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
+    }
+
+    public LayerWidget getInteractionLayer() {
+        return interactionLayer;
     }
 
     public LayerWidget getBackgroundLayer(){
@@ -380,7 +386,13 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLig
             StartTagWAX edgeTag = edgesTag.start("edge");
             edgeTag.attr("id", ((ObjectConnectionWidget)edgeWidget).getObject().getOid());
             edgeTag.attr("class", ((ObjectConnectionWidget)edgeWidget).getObject().getClassName());
+            //I haven't managed to find out why sometimes the view gets screwed. This is a dirty
+            //"solution", but I expect to solve it once we rewrite this module
+            if (((ObjectConnectionWidget)edgeWidget).getSourceAnchor() == null)
+                continue;
             edgeTag.attr("aside", ((ObjectNodeWidget)((ObjectConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
+            if (((ObjectConnectionWidget)edgeWidget).getTargetAnchor() == null)
+                continue;
             edgeTag.attr("bside", ((ObjectNodeWidget)((ObjectConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
             for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints())
                 edgeTag.start("controlpoint").attr("x", point.x).attr("y", point.y).end();

@@ -28,7 +28,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Properties;
-import javax.imageio.IIOException;
 import org.inventory.communications.CommunicationsStub;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -48,6 +47,9 @@ public class Installer extends ModuleInstall {
     @Override
     public void restored() {
       pnlAuthentication = new AuthenticationPanel(readProperties());
+      String javaVersion = System.getProperties().get("java.version").toString();
+      if (!javaVersion.contains("1.6"))
+          showExceptions(String.format("Your current Java version (%s) is not supported. Try version 1.6.x", javaVersion));
       dd = new DialogDescriptor(pnlAuthentication, "Login Window", true, new ActionListener() {
 
             @Override
@@ -138,7 +140,7 @@ public class Installer extends ModuleInstall {
             errorText = "Unknown Error";
         //If the message is too long we better display it on a JOPtionPane
         if (errorText.length() > 50)
-            pnlAuthentication.getLblError().setText("Error connecting to the server. Click here for further details");
+            pnlAuthentication.getLblError().setText("An error has ocurred. Click here for further details");
         else
             pnlAuthentication.getLblError().setText(errorText);
 

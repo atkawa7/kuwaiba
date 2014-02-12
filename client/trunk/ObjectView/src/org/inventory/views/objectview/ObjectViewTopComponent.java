@@ -100,7 +100,6 @@ public final class ObjectViewTopComponent extends TopComponent
         scene = new ViewScene(getNotifier());
 
         pnlScrollMain.setViewportView(scene.createView());
-        add(scene.createSatelliteView(),BorderLayout.SOUTH);
 
         btnWireContainer.setName(Constants.CLASS_WIRECONTAINER);
         btnWirelessContainer.setName(Constants.CLASS_WIRELESSCONTAINER);

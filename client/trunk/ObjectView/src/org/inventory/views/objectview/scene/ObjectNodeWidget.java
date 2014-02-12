@@ -55,7 +55,7 @@ public class ObjectNodeWidget extends IconNodeWidget implements ActionListener, 
         createActions(ViewScene.ACTION_SELECT).addAction(scene.createSelectAction());
         createActions(ViewScene.ACTION_SELECT).addAction(scene.getMoveAction());
         scene.getMoveAction().addActionListener(this);
-        createActions(ViewScene.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(scene.getEdgesLayer(), scene.getConnectionProvider()));
+        createActions(ViewScene.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(scene.getInteractionLayer(), scene.getConnectionProvider()));
         getActions().addAction(ActionFactory.createInplaceEditorAction(scene.getInplaceEditor()));
     }
 
