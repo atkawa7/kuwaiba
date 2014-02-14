@@ -49,6 +49,7 @@ public class TempBusinessRulesEngine {
         subClassOfValidators.put("GenericPhysicalNode", "physicalNode");
         subClassOfValidators.put("GenericPort", "physicalEndpoint");
         subClassOfValidators.put("GenericPhysicalContainer", "physicalContainer");
+        subClassOfValidators.put("GenericPhysicalLink", "physicalLink");
     }
 
     public HashMap<String, List<String[]>> getMappings(){       

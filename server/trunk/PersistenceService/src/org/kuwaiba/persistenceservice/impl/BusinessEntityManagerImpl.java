@@ -541,7 +541,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             Node node = getInstanceOfClass(objectClass, objectId);
             for (Relationship rel : node.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
                 if ((rel.getProperty(Constants.PROPERTY_NAME).equals(name) && 
-                        rel.getOtherNode(node).getId() == otherObjectId) || otherObjectId == -1)
+                        (rel.getOtherNode(node).getId() == otherObjectId) || otherObjectId == -1))
                     rel.delete();
             }
             tx.success();
