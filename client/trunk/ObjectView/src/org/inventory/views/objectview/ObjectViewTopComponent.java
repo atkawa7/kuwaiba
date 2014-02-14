@@ -15,7 +15,6 @@
  */
 package org.inventory.views.objectview;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -642,7 +641,6 @@ public final class ObjectViewTopComponent extends TopComponent
                 nu.showSimplePopup("Object View", NotificationUtil.INFO, "The view has been saved automatically");
                 break;
             case ViewScene.SCENE_OBJECTSELECTED:
-                em.setRootContext((ObjectNode)e.getSource());
                 setActivatedNodes(new Node[]{(ObjectNode)e.getSource()});
         }
     }

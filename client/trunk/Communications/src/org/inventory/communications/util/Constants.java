@@ -28,7 +28,7 @@ public class Constants {
      /**
      * Name of the validator to indicate if a given class is a link
      */
-    public static String VALIDATOR__PHYSICAL_LINK = "physicalLink";
+    public static String VALIDATOR_PHYSICAL_LINK = "physicalLink";
     /**
      * Name of the validator to indicate if a given class is the endpoint to a connection
      */

@@ -77,8 +77,8 @@ public class ExportSceneAction extends AbstractAction{
 
         public static final int ZOOM_NORMAL = 0;
         public static final int ZOOM_CURRENT = 1;
-        public static final int FORMAT_JPG = 0;
-        public static final int FORMAT_PNG = 1;
+        public static final int FORMAT_PNG = 0;
+        public static final int FORMAT_JPG = 1;
 
         /** Creates new form ExportSettingsPanel */
         public ExportSettingsPanel() {
@@ -116,7 +116,7 @@ public class ExportSceneAction extends AbstractAction{
 
             txtLocation.setText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.txtLocation.text")); // NOI18N
 
-            cmbFormat.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "JPG", "PNG" }));
+            cmbFormat.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "PNG", "JPG" }));
 
             lblFormat.setText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.lblFormat.text")); // NOI18N
 
@@ -172,7 +172,7 @@ public class ExportSceneAction extends AbstractAction{
                 txtLocation.setText(fChooser.getSelectedFile().getAbsolutePath()+
                         File.separator+"view"+Calendar.getInstance().get(Calendar.DAY_OF_YEAR)+ //NOI18N
                         "-"+Calendar.getInstance().get(Calendar.MINUTE)+ //NOI18N
-                        (cmbFormat.getSelectedIndex() == 0?".jpg":".png")); //NOI18N
+                        (cmbFormat.getSelectedIndex() == 0 ? ".png" :".jpg")); //NOI18N
     }
 
 

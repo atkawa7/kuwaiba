@@ -18,16 +18,21 @@ package org.inventory.models.physicalconnections.windows;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
+import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.models.physicalconnections.PhysicalConnectionsService;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
@@ -46,13 +51,38 @@ public class PhysicalPathTopComponent extends TopComponent implements ExplorerMa
     private JList lstPath;
     private LocalObjectLight port;
     private ObjectNode selectedObject;
+    private LocalObjectLight[] trace;
     
     public PhysicalPathTopComponent(LocalObjectLight port, final LocalObjectLight[] trace) {
-        this.setDisplayName(String.format("Physical Path for %s", port));
         this.port = port;
-        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
+        this.trace = trace;
+        initComponents();
+        lstPath.setListData(trace);
+    }
+    
+    public final void initComponents(){
+        JToolBar barMain = new JToolBar();
         setLayout(new BorderLayout());
-        lstPath = new JList(trace);
+        add(barMain, BorderLayout.PAGE_START);
+        barMain.setRollover(true);
+        JButton btnShowGraphicalPath = new JButton(new javax.swing.ImageIcon(getClass().
+                getResource("/org/inventory/models/physicalconnections/res/graphical_path.png"))); //NOI18N
+        btnShowGraphicalPath.setToolTipText("See graphical representation");
+        barMain.add(btnShowGraphicalPath);
+        btnShowGraphicalPath.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PhysicalConnectionsService fcs = new PhysicalConnectionsService(trace);
+                TopComponent tc = new GraphicalPhysicalPathTopComponent(fcs.buildPhysicalPathView());
+                tc.open();
+                tc.requestActive();
+            }
+        });
+        
+        this.setDisplayName(String.format("Physical Path for %s", port));
+        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
+        
+        lstPath = new JList();
         lstPath.setCellRenderer(new CellRenderer());
         Mode myMode = WindowManager.getDefault().findMode("properties");
         myMode.dockInto(this);

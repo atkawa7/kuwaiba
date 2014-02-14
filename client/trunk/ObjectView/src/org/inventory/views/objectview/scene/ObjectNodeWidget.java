@@ -16,7 +16,6 @@
 
 package org.inventory.views.objectview.scene;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -46,8 +45,8 @@ public class ObjectNodeWidget extends IconNodeWidget implements ActionListener, 
         Image myIcon = CommunicationsStub.getInstance().getMetaForClass(object.getClassName(), false).getIcon();
         if(myIcon == null)
             myIcon = ImageUtilities.loadImage("org/inventory/views/objectview/res/default_32.png");
-        setImage(myIcon);getLabelWidget().setBackground(Color.CYAN);
-        setImage(myIcon);getLabelWidget().setForeground(Color.MAGENTA);
+        setImage(myIcon);
+        setImage(myIcon);
 
         //The difference between using getActions().addAction() and createActions("tool").addAction()
         //is that the first enable the action no matter what's the active scene tool. The second
