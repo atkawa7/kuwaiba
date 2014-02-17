@@ -78,16 +78,13 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
         setName(NbBundle.getMessage(TopologyViewTopComponent.class, "CTL_TopologyViewTopComponent"));
         setToolTipText(NbBundle.getMessage(TopologyViewTopComponent.class, "HINT_TopologyViewTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
-        
-//      pnlMainScrollPanel.setViewportView(scene.createView());
-//        associateLookup(scene.getLookup());
     }
     
     public final void initiCustomComponents(){
-        //associateLookup(scene.getLookup());
         scene = new TopologyViewScene(getNotifier());
         tvsrv = new TopologyViewService(scene, this);
         pnlMainScrollPanel.setViewportView(scene.createView());
+        associateLookup(scene.getLookup());
     }
 
     /** This method is called from within the constructor to
