@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,22 +21,24 @@ import java.awt.event.ActionListener;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.views.LocalObjectViewLight;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.actions.ExportSceneAction;
 import org.inventory.views.graphical.dialogs.CreateTopologyPanel;
 import org.inventory.views.graphical.dialogs.TopologyListPanel;
 import org.inventory.views.topology.scene.ObjectNodeWidget;
 import org.inventory.views.topology.scene.TopologyViewScene;
+import org.netbeans.api.settings.ConvertAsProperties;
+import org.netbeans.api.visual.widget.Widget;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
+import org.openide.explorer.ExplorerManager;
+import org.openide.explorer.ExplorerManager.Provider;
+import org.openide.util.ImageUtilities;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
-import org.netbeans.api.settings.ConvertAsProperties;
-import org.netbeans.api.visual.widget.Widget;
-import org.openide.explorer.ExplorerManager;
-import org.openide.util.ImageUtilities;
-import org.openide.DialogDescriptor;
-import org.openide.DialogDisplayer;
-import org.openide.util.Lookup;
 
 /**
  * Top component which displays something.
@@ -45,7 +47,7 @@ import org.openide.util.Lookup;
     dtd="-//org.inventory.views.topology//TopologyView//EN",
     autostore=false
 )
-public final class TopologyViewTopComponent extends TopComponent implements ExplorerManager.Provider{
+public final class TopologyViewTopComponent extends TopComponent implements ActionListener, Provider, Refreshable{
     private static TopologyViewTopComponent instance;
     /** 
      * path to the icon used by the component and its open action
@@ -68,17 +70,24 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
 
     private NotificationUtil nu;
     
-    private boolean isSaved = true;
+    private boolean isSaved = false;
 
     public TopologyViewTopComponent() {
         initComponents();
+        initiCustomComponents();
         setName(NbBundle.getMessage(TopologyViewTopComponent.class, "CTL_TopologyViewTopComponent"));
         setToolTipText(NbBundle.getMessage(TopologyViewTopComponent.class, "HINT_TopologyViewTopComponent"));
-        scene = new TopologyViewScene();
+        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
+        
+//      pnlMainScrollPanel.setViewportView(scene.createView());
+//        associateLookup(scene.getLookup());
+    }
+    
+    public final void initiCustomComponents(){
+        //associateLookup(scene.getLookup());
+        scene = new TopologyViewScene(getNotifier());
         tvsrv = new TopologyViewService(scene, this);
         pnlMainScrollPanel.setViewportView(scene.createView());
-        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
-        associateLookup(scene.getLookup());
     }
 
     /** This method is called from within the constructor to
@@ -89,34 +98,33 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        barToolMain = new javax.swing.JToolBar();
-        btnNew = new javax.swing.JButton();
-        btnOpen = new javax.swing.JButton();
-        btnSave = new javax.swing.JButton();
-        btnDelete = new javax.swing.JButton();
-        btnExport = new javax.swing.JButton();
-        btnConnect = new javax.swing.JToggleButton();
-        btnShowNodeLabels = new javax.swing.JToggleButton();
-        btnSelect = new javax.swing.JToggleButton();
-        btnCloud = new javax.swing.JToggleButton();
-        btnFrame = new javax.swing.JToggleButton();
-        btnLabel = new javax.swing.JToggleButton();
         pnlMainScrollPanel = new javax.swing.JScrollPane();
+        jToolBar1 = new javax.swing.JToolBar();
+        btnNewTopology = new javax.swing.JButton();
+        btnOpen = new javax.swing.JButton();
+        btnSave = new javax.swing.JToggleButton();
+        btnDelete = new javax.swing.JToggleButton();
+        btnExport = new javax.swing.JToggleButton();
+        btnSelect = new javax.swing.JToggleButton();
+        btnShowNodesLabels = new javax.swing.JToggleButton();
+        btnConnect = new javax.swing.JToggleButton();
+        btnCloud = new javax.swing.JButton();
+        btnFrame = new javax.swing.JButton();
+        btnAddFreeLabel = new javax.swing.JButton();
 
-        barToolMain.setRollover(true);
+        jToolBar1.setRollover(true);
 
-        btnNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/add.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnNew, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnNew.text")); // NOI18N
-        btnNew.setFocusable(false);
-        btnNew.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnNew.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnNew.addActionListener(new java.awt.event.ActionListener() {
+        btnNewTopology.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/add.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnNewTopology, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnNewTopology.text")); // NOI18N
+        btnNewTopology.setFocusable(false);
+        btnNewTopology.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnNewTopology.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnNewTopology.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnNewActionPerformed(evt);
+                btnNewTopologyActionPerformed(evt);
             }
         });
-        barToolMain.add(btnNew);
-        btnNew.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnNew.AccessibleContext.accessibleDescription_2")); // NOI18N
+        jToolBar1.add(btnNewTopology);
 
         btnOpen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/open.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnOpen, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnOpen.text")); // NOI18N
@@ -128,11 +136,11 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
                 btnOpenActionPerformed(evt);
             }
         });
-        barToolMain.add(btnOpen);
+        jToolBar1.add(btnOpen);
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/save.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnSave.text")); // NOI18N
-        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnSave.toolTipText")); // NOI18N
+        btnSave.setEnabled(false);
         btnSave.setFocusable(false);
         btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -141,11 +149,10 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
                 btnSaveActionPerformed(evt);
             }
         });
-        barToolMain.add(btnSave);
+        jToolBar1.add(btnSave);
 
         btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/delete.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnDelete, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnDelete.text")); // NOI18N
-        btnDelete.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnDelete.toolTipText")); // NOI18N
         btnDelete.setEnabled(false);
         btnDelete.setFocusable(false);
         btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -155,11 +162,11 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
                 btnDeleteActionPerformed(evt);
             }
         });
-        barToolMain.add(btnDelete);
+        jToolBar1.add(btnDelete);
 
         btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/export.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnExport.text")); // NOI18N
-        btnExport.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnExport.toolTipText")); // NOI18N
+        btnExport.setEnabled(false);
         btnExport.setFocusable(false);
         btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -168,39 +175,11 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
                 btnExportActionPerformed(evt);
             }
         });
-        barToolMain.add(btnExport);
-        btnExport.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.jButton1.AccessibleContext.accessibleDescription")); // NOI18N
+        jToolBar1.add(btnExport);
 
-        btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/select.png"))); // NOI18N
-        btnConnect.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(btnConnect, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnConnect.text")); // NOI18N
-        btnConnect.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnConnect.toolTipText")); // NOI18N
-        btnConnect.setFocusable(false);
-        btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnConnect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnConnect.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnConnectActionPerformed(evt);
-            }
-        });
-        barToolMain.add(btnConnect);
-
-        btnShowNodeLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/hide_node_labels.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnShowNodeLabels, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnShowNodeLabels.text")); // NOI18N
-        btnShowNodeLabels.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnShowNodeLabels.toolTipText")); // NOI18N
-        btnShowNodeLabels.setFocusable(false);
-        btnShowNodeLabels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnShowNodeLabels.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnShowNodeLabels.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnShowNodeLabelsActionPerformed(evt);
-            }
-        });
-        barToolMain.add(btnShowNodeLabels);
-
-        btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/connect.png"))); // NOI18N
+        btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/select.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnSelect, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnSelect.text")); // NOI18N
-        btnSelect.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnSelect.toolTipText")); // NOI18N
+        btnSelect.setEnabled(false);
         btnSelect.setFocusable(false);
         btnSelect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSelect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -209,8 +188,33 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
                 btnSelectActionPerformed(evt);
             }
         });
-        barToolMain.add(btnSelect);
-        btnSelect.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.jToggleButton2.AccessibleContext.accessibleDescription")); // NOI18N
+        jToolBar1.add(btnSelect);
+
+        btnShowNodesLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/hide_node_labels.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnShowNodesLabels, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnShowNodesLabels.text")); // NOI18N
+        btnShowNodesLabels.setEnabled(false);
+        btnShowNodesLabels.setFocusable(false);
+        btnShowNodesLabels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnShowNodesLabels.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnShowNodesLabels.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnShowNodesLabelsActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnShowNodesLabels);
+
+        btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/connect.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnConnect, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnConnect.text")); // NOI18N
+        btnConnect.setEnabled(false);
+        btnConnect.setFocusable(false);
+        btnConnect.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnConnect.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnConnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConnectActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnConnect);
 
         btnCloud.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/cloud.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnCloud, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnCloud.text")); // NOI18N
@@ -222,142 +226,46 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
                 btnCloudActionPerformed(evt);
             }
         });
-        barToolMain.add(btnCloud);
-        btnCloud.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.jToggleButton2.AccessibleContext.accessibleName")); // NOI18N
+        jToolBar1.add(btnCloud);
 
         btnFrame.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/frame.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnFrame, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnFrame.text")); // NOI18N
-        btnFrame.setFocusable(false);
-        btnFrame.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnFrame.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnFrame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnFrameActionPerformed(evt);
             }
         });
-        barToolMain.add(btnFrame);
-        btnFrame.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.jToggleButton5.AccessibleContext.accessibleName")); // NOI18N
+        jToolBar1.add(btnFrame);
 
-        btnLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/label.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnLabel, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnLabel.text")); // NOI18N
-        btnLabel.addActionListener(new java.awt.event.ActionListener() {
+        btnAddFreeLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/topology/res/label.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnAddFreeLabel, org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.btnAddFreeLabel.text")); // NOI18N
+        btnAddFreeLabel.setFocusable(false);
+        btnAddFreeLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnAddFreeLabel.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnAddFreeLabel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLabelActionPerformed(evt);
+                btnAddFreeLabelActionPerformed(evt);
             }
         });
-        barToolMain.add(btnLabel);
-        btnLabel.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(TopologyViewTopComponent.class, "TopologyViewTopComponent.jToggleButton6.AccessibleContext.accessibleName")); // NOI18N
+        jToolBar1.add(btnAddFreeLabel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(barToolMain, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(211, Short.MAX_VALUE))
             .addComponent(pnlMainScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(barToolMain, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlMainScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE))
+                .addComponent(pnlMainScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        scene.setActiveTool(ObjectNodeWidget.ACTION_SELECT);
-        btnSelect.setSelected(false);
-    }//GEN-LAST:event_btnConnectActionPerformed
-
-    private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
-        scene.setActiveTool(ObjectNodeWidget.ACTION_CONNECT);
-        btnConnect.setSelected(false);
-    }//GEN-LAST:event_btnSelectActionPerformed
-
-    private void btnLabelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLabelActionPerformed
-        scene.addFreeLabel();
-        btnLabel.setSelected(false);
-    }//GEN-LAST:event_btnLabelActionPerformed
-
-    private void btnFrameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFrameActionPerformed
-        scene.addFreeFrame();
-        btnFrame.setSelected(false);
-    }//GEN-LAST:event_btnFrameActionPerformed
-
-    private void btnCloudActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloudActionPerformed
-        scene.addFreeCloud();
-        btnCloud.setSelected(false);
-    }//GEN-LAST:event_btnCloudActionPerformed
-
-    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current topology?",
-                "Delete saved view",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
-            tvsrv.deleteView();
-            scene.clear();
-            tvsrv.setTvId(-1);
-            toggleButtons(false);
-        }
-}//GEN-LAST:event_btnDeleteActionPerformed
-
-    private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-        if (scene.getNodes().isEmpty()){
-            toggleButtons(true);
-            return;
-        }
-        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to clear the current topology?",
-                    "Confirmation",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
-            if(tvsrv.getTvId() == -1){ //It's a temporal view, not a saved one
-                    scene.clear();
-            }else{ //It's a saved view, so we need to clear everything
-                scene.clear();
-                toggleButtons(true);
-                isSaved = false;
-            }
-            scene.validate();
-        }
-    }//GEN-LAST:event_btnNewActionPerformed
-
-    private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
-        if (!checkForUnsavedView(true))
-            return;
-         LocalObjectViewLight[] topologyViews = tvsrv.getTopologyViews();
-
-         final TopologyListPanel tlp = new TopologyListPanel(topologyViews);
-         DialogDescriptor dd = new DialogDescriptor(tlp, "Choose a view", true, new ActionListener(){
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                if (e.getSource() == DialogDescriptor.OK_OPTION){
-                                    if (checkForUnsavedView(true)){
-                                        if (tlp.getSelectedView() != null){
-                                            tvsrv.loadTopologyView(tlp.getSelectedView());
-                                            btnDelete.setEnabled(true);
-                                        }
-                                        else
-                                            JOptionPane.showConfirmDialog(null, "Select a view, please","Error", JOptionPane.ERROR_MESSAGE);
-                                    }
-                                }
-                                tlp.releaseListeners();
-                            }
-                        });
-        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
-        btnOpen.setSelected(false);
-    }//GEN-LAST:event_btnOpenActionPerformed
-
-    private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
-        new ExportSceneAction(scene).actionPerformed(evt);
-    }//GEN-LAST:event_btnExportActionPerformed
-
-    private void btnShowNodeLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodeLabelsActionPerformed
-        for (Widget node : scene.getNodesLayer().getChildren())
-            ((ObjectNodeWidget)node).getLabelWidget().setVisible(!btnShowNodeLabels.isSelected());
-        scene.validate();
-        for (Widget node : scene.getIconLayer().getChildren())
-            ((ObjectNodeWidget)node).getLabelWidget().setVisible(!btnShowNodeLabels.isSelected());
-        scene.validate();
-    }//GEN-LAST:event_btnShowNodeLabelsActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         if (!validateTopology())
@@ -373,8 +281,6 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
                                         tvsrv.setViewProperties(cqp.getValues());
                                         tvsrv.saveView();
                                         isSaved = true;
-                                        if (tvsrv.getTvId() != -1)
-                                            btnDelete.setEnabled(true);
                                     }
                                 }
                             });
@@ -383,22 +289,108 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
             tvsrv.saveView();
             isSaved = true;
         }
-         btnSave.setSelected(false);
     }//GEN-LAST:event_btnSaveActionPerformed
 
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        if (JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the current topology?",
+                "Delete saved view",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+            tvsrv.deleteView();
+            scene.clear();
+            tvsrv.setTvId(-1);
+            toggleButtons(false);
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
+        new ExportSceneAction(scene).actionPerformed(evt);
+    }//GEN-LAST:event_btnExportActionPerformed
+
+    private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
+        scene.setActiveTool(ObjectNodeWidget.ACTION_CONNECT);
+        btnConnect.setSelected(false);
+    }//GEN-LAST:event_btnSelectActionPerformed
+
+    private void btnShowNodesLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodesLabelsActionPerformed
+        for (Widget node : scene.getNodesLayer().getChildren())
+            ((ObjectNodeWidget)node).getLabelWidget().setVisible(!btnShowNodesLabels.isSelected());
+        scene.validate();
+        for (Widget node : scene.getIconLayer().getChildren())
+            ((ObjectNodeWidget)node).getLabelWidget().setVisible(!btnShowNodesLabels.isSelected());
+        scene.validate();
+    }//GEN-LAST:event_btnShowNodesLabelsActionPerformed
+
+    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
+        scene.setActiveTool(ObjectNodeWidget.ACTION_SELECT);
+        btnSelect.setSelected(false);
+    }//GEN-LAST:event_btnConnectActionPerformed
+
+    private void btnCloudActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloudActionPerformed
+        scene.addFreeCloud();
+    }//GEN-LAST:event_btnCloudActionPerformed
+
+    private void btnFrameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFrameActionPerformed
+        scene.addFreeFrame();
+    }//GEN-LAST:event_btnFrameActionPerformed
+
+    private void btnAddFreeLabelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddFreeLabelActionPerformed
+        scene.addFreeLabel();
+    }//GEN-LAST:event_btnAddFreeLabelActionPerformed
+
+    private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
+        if (!checkForUnsavedView(true))
+            return;
+         LocalObjectViewLight[] topologyViews = tvsrv.getTopologyViews();
+
+         final TopologyListPanel tlp = new TopologyListPanel(topologyViews);
+         DialogDescriptor dd = new DialogDescriptor(tlp, "Choose a view", true, new ActionListener(){
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                if (e.getSource() == DialogDescriptor.OK_OPTION){
+                                    if (tlp.getSelectedView() != null){
+                                        tvsrv.loadTopologyView(tlp.getSelectedView());
+                                        toggleButtons(true);
+                                    }
+                                    else
+                                        JOptionPane.showConfirmDialog(null, "Select a view, please","Error", JOptionPane.ERROR_MESSAGE);
+
+                                }
+                                else
+                                    toggleButtons(false);
+                                tlp.releaseListeners();
+                            }
+                        });
+        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+    }//GEN-LAST:event_btnOpenActionPerformed
+
+    private void btnNewTopologyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewTopologyActionPerformed
+        if (scene.getNodes().isEmpty())
+            toggleButtons(true);
+        else if (JOptionPane.showConfirmDialog(this, "Are you sure you want to clear the current topology?",
+                    "Confirmation",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+            if(tvsrv.getTvId() == -1){ //It's a temporal view, not a saved one
+                    scene.clear();
+            }else{ //It's a saved view, so we need to clear everything
+                scene.clear();
+                toggleButtons(true);
+                isSaved = false;
+            }
+            scene.validate();
+        }
+    }//GEN-LAST:event_btnNewTopologyActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JToolBar barToolMain;
-    private javax.swing.JToggleButton btnCloud;
+    private javax.swing.JButton btnAddFreeLabel;
+    private javax.swing.JButton btnCloud;
     private javax.swing.JToggleButton btnConnect;
-    private javax.swing.JButton btnDelete;
-    private javax.swing.JButton btnExport;
-    private javax.swing.JToggleButton btnFrame;
-    private javax.swing.JToggleButton btnLabel;
-    private javax.swing.JButton btnNew;
+    private javax.swing.JToggleButton btnDelete;
+    private javax.swing.JToggleButton btnExport;
+    private javax.swing.JButton btnFrame;
+    private javax.swing.JButton btnNewTopology;
     private javax.swing.JButton btnOpen;
-    private javax.swing.JButton btnSave;
+    private javax.swing.JToggleButton btnSave;
     private javax.swing.JToggleButton btnSelect;
-    private javax.swing.JToggleButton btnShowNodeLabels;
+    private javax.swing.JToggleButton btnShowNodesLabels;
+    private javax.swing.JToolBar jToolBar1;
     private javax.swing.JScrollPane pnlMainScrollPanel;
     // End of variables declaration//GEN-END:variables
     /**
@@ -416,7 +408,7 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
      private boolean validateTopology() {
         //The view must not be empty
         if(scene.getNodes().isEmpty()){
-            JOptionPane.showMessageDialog(this, "Nothing to do here",
+            JOptionPane.showMessageDialog(this, "Theres nothing to save",
                     "Search Error",JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -444,7 +436,7 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
 
     @Override
     public boolean canClose(){
-        if(!scene.getNodes().isEmpty())
+        if(!scene.getNodes().isEmpty() && !isSaved)
             return checkForUnsavedView(true);
         return true;
     }
@@ -457,13 +449,14 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
     @Override
     public void componentOpened() {
         toggleButtons(false);
+        scene.addActionListener(this);
     }
 
     @Override
     public void componentClosed() {
         scene.clear();
+        tvsrv.setViewProperties(new Object[2]);
         tvsrv.setTvId(-1);
-        toggleButtons(false);
     }
 
     void writeProperties(java.util.Properties p) {
@@ -500,17 +493,17 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
     }
 
     public boolean checkForUnsavedView(boolean showCancel) {
-        if (!isSaved){
+        if(!scene.getNodes().isEmpty() && !isSaved){
             switch (JOptionPane.showConfirmDialog(null, "This topology view has not been saved, do you want to save it?",
                     "Confirmation",showCancel?JOptionPane.YES_NO_CANCEL_OPTION:JOptionPane.YES_NO_OPTION)){
                 case JOptionPane.YES_OPTION:
                     btnSaveActionPerformed(new ActionEvent(this, 0, "close")); //NOI18N
-                    break;
+                    isSaved = true;
+                    return true;
                 case JOptionPane.CANCEL_OPTION:
                     return false;
             }
         }
-        isSaved = true;
         return true;
     }
 
@@ -521,15 +514,27 @@ public final class TopologyViewTopComponent extends TopComponent implements Expl
     }
 
     public void toggleButtons(boolean enabled) {
-        btnCloud.setEnabled(enabled);
         btnConnect.setEnabled(enabled);
         btnSelect.setEnabled(enabled);
         btnExport.setEnabled(enabled);
-        btnFrame.setEnabled(enabled);
-        btnLabel.setEnabled(enabled);
-        btnShowNodeLabels.setEnabled(enabled);
+        btnShowNodesLabels.setEnabled(enabled);
         btnSave.setEnabled(enabled);
         btnDelete.setEnabled(enabled);
+        btnSelect.setSelected(enabled);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        switch(e.getID()){
+            case TopologyViewScene.SCENE_OBJECTADDED:
+                toggleButtons(true);
+                break;
+        }
+    }
+
+    @Override
+    public void refresh() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

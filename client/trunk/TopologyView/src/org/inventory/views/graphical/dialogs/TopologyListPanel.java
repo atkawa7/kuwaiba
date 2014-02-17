@@ -51,7 +51,6 @@ public class TopologyListPanel extends JPanel implements ListSelectionListener{
                     item.setOpaque(true);
                 else
                     item.setOpaque(false);
-
                 return item;
             }
         });

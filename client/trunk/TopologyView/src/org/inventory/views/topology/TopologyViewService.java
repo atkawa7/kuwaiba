@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010 - 2014 Neotropic SAS <contact@neotropic.co>.
  *
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -207,10 +207,10 @@ public class TopologyViewService implements LookupListener {
                 }else{
                     if (reader.getName().equals(qIcon)){
                             if(Integer.valueOf(reader.getAttributeValue(null,"type"))==1){
-                                LocalObjectLight lol = new LocalObjectLight(Long.valueOf(reader.getAttributeValue(null,"id")), 
-                                        scene.CLOUD_ICON + reader.getElementText(), null);
                                 int x = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
                                 int y = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
+                                LocalObjectLight lol = new LocalObjectLight(Long.valueOf(reader.getAttributeValue(null,"id")), 
+                                        scene.CLOUD_ICON + reader.getElementText(), null);
                                 Widget myCloud = scene.addNode(lol);
                                 myCloud.setPreferredLocation(new Point(x, y));
                             }
@@ -279,7 +279,7 @@ public class TopologyViewService implements LookupListener {
                             }//end icons
                         }//end polygons
                     }//end else labels
-                }//HATA AQUI
+                }
             }
         }
         reader.close();
