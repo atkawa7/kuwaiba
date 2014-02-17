@@ -43,7 +43,7 @@ iconBase = "org/kuwaiba/management/services/res/icon.png",
 persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.kuwaiba.management.services.ServiceManagerTopComponent")
-@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administrative"),
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools"),
     @ActionReference(path = "Toolbars/Tools")})
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_ServiceManagerAction",

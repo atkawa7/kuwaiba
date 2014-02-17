@@ -81,9 +81,9 @@ public class MapWidgetPanAction extends WidgetAction.LockedAdapter{
         if (scene != widget.getScene ())
             return false;
         int deltaX = lastLocation.x - newLocation.x, deltaY = lastLocation.y - newLocation.y;
-        map.getMainMap().setCenter(new Point2D.Double(map.getMainMap().getCenter().getX() + deltaX,
-                map.getMainMap().getCenter().getY() + deltaY));
-        ((GISViewScene)scene).pan(deltaX, deltaY);
+//        map.getMainMap().setCenter(new Point2D.Double(map.getMainMap().getCenter().getX() + deltaX,
+//                map.getMainMap().getCenter().getY() + deltaY));
+//        ((GISViewScene)scene).pan(deltaX, deltaY);
         lastLocation = newLocation;
         return true;
     }

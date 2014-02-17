@@ -43,15 +43,15 @@ iconBase = "org/inventory/core/history/res/icon.png",
 persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "org.inventory.core.history.AuditTrailTopComponent")
-@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administrative"),
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools"),
     @ActionReference(path = "Toolbars/Tools")})
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_AuditTrailAction",
 preferredID = "AuditTrailTopComponent")
 @Messages({
     "CTL_AuditTrailAction=AuditTrail",
-    "CTL_AuditTrailTopComponent=AuditTrail Window",
-    "HINT_AuditTrailTopComponent=This is a AuditTrail window"
+    "CTL_AuditTrailTopComponent=Activity Log",
+    "HINT_AuditTrailTopComponent=Activity Log"
 })
 public final class AuditTrailTopComponent extends TopComponent implements Exportable {
     private ETable aTable;

@@ -41,7 +41,7 @@ iconBase = "org/inventory/view/rackview/res/icon.png",
 persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Window", id = "org.inventory.view.rackview.RackViewTopComponent")
-@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administrative"),
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools"),
     @ActionReference(path = "Toolbars/Tools")})
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_RackViewAction",

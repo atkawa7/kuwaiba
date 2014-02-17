@@ -28,19 +28,12 @@ import org.openide.windows.WindowManager;
  */
 public final class RefreshComponentAction extends AbstractAction implements ActionListener {
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         Object activeTopComponent = WindowManager.getDefault().getRegistry().getActivated();
         if (activeTopComponent == null)
             return;
-//        boolean refreshable = false;
-//        //Ignore the TopComponent that doesn't implement the RefreshableTopComponent interface
-//        for (Class intz : activeTopComponent.getClass().getInterfaces()){
-//            if (intz.equals(RefreshableTopComponent.class)){
-//                refreshable = true;
-//                break;
-//            }
-//        }
-//        if (refreshable)
+
         if (activeTopComponent instanceof Refreshable)
             ((Refreshable)activeTopComponent).refresh();
     }

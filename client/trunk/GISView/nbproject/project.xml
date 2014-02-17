@@ -129,14 +129,6 @@
                 </dependency>
             </module-dependencies>
             <public-packages/>
-            <class-path-extension>
-                <runtime-relative-path>ext/swingx-all-1.6.3.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/swingx-all-1.6.3.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/swingx-ws.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/swingx-ws.jar</binary-origin>
-            </class-path-extension>
         </data>
     </configuration>
 </project>

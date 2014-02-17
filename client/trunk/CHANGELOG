@@ -71,3 +71,9 @@
 * Support for bulk data uploads
 * Multiple bug fixes
 * Data model manager
+0.6 (20022014)
+* Rack View
+* Audit Trail
+* Improvements to physical connections capabilities
+* Multiple bugfixes
+* Removed references to SwingX and NimROD L&F due to licensing issues
