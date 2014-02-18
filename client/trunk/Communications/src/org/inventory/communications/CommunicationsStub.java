@@ -1204,9 +1204,10 @@ public class CommunicationsStub {
     }
     //End Service Manager
     
-    public LocalObjectLight[] getObjectSpecialChildren(String connectionClass, long connectionId) {
+    public LocalObjectLight[] getObjectSpecialChildren(String objectClass, long objectId) {
         try{
-            List<RemoteObjectLight> specialChildren = port.getObjectSpecialChildren (connectionClass, connectionId, session.getSessionId());
+            List<RemoteObjectLight> specialChildren = port.getObjectSpecialChildren (
+                    objectClass, objectId, session.getSessionId());
             LocalObjectLight[] res = new LocalObjectLight[specialChildren.size()];
             int i = 0;
             for (RemoteObjectLight rol : specialChildren){

@@ -61,7 +61,7 @@ public class ObjectViewService implements LookupListener{
      * Add this instance as listener for the selected nodes in the NavigationTree.
      * Should be called when the TopComponent is opened
      */
-    public void initializeLookListener(){
+    public void initializeLookupListener(){
         selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
         selectedNodes.addLookupListener(this);
         if (selectedNodes.allInstances().size() == 1) //There's a node already selected

@@ -30,15 +30,8 @@ import org.netbeans.api.visual.widget.Widget;
  */
 public class PhysicalConnectionsService {
 
-    private LocalObjectLight[] trace;
-    private CommunicationsStub com;
-    
-    public PhysicalConnectionsService(LocalObjectLight[] trace) {
-        this.trace = trace;
-        this.com = CommunicationsStub.getInstance();
-    }
-    
-    public PhysicalPathScene buildPhysicalPathView () {
+    public static PhysicalPathScene buildPhysicalPathView (LocalObjectLight[] trace) {
+        CommunicationsStub com = CommunicationsStub.getInstance();
         PhysicalPathScene scene = new PhysicalPathScene();
         ObjectBoxWidget lastPortWidget = null;
         SimpleObjectConnectionWidget lastConnectionWidget = null;
@@ -78,7 +71,6 @@ public class PhysicalConnectionsService {
             }
         }
         scene.revalidate();
-        //scene.organizeNodes();
         return scene;
     }
 }

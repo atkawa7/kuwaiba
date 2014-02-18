@@ -72,8 +72,8 @@ public class PhysicalPathTopComponent extends TopComponent implements ExplorerMa
         btnShowGraphicalPath.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PhysicalConnectionsService fcs = new PhysicalConnectionsService(trace);
-                TopComponent tc = new GraphicalPhysicalPathTopComponent(fcs.buildPhysicalPathView());
+                TopComponent tc = new GraphicalPhysicalPathTopComponent(
+                        PhysicalConnectionsService.buildPhysicalPathView(trace));
                 tc.open();
                 tc.requestActive();
             }

@@ -27,14 +27,16 @@ import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
-import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
 
 /**
  * Shows a tree with the special relationships of an object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
+@TopComponent.Description(
+    preferredID = "SpecialRelationshipsTopComponent",
+persistenceType = TopComponent.PERSISTENCE_NEVER)
+@TopComponent.Registration(mode = "output", openAtStartup = false)
 public class SpecialRelationshipsTopComponent extends TopComponent implements ExplorerManager.Provider {
     private BeanTreeView tree;
     private ExplorerManager em;
@@ -47,8 +49,6 @@ public class SpecialRelationshipsTopComponent extends TopComponent implements Ex
         tree = new BeanTreeView();
         tree.setRootVisible(false);
         em.setRootContext(new RootNode(relationships));
-        Mode myMode = WindowManager.getDefault().findMode("properties");
-        myMode.dockInto(this);
         setLayout(new BorderLayout());
         add(tree);
     }
@@ -57,11 +57,7 @@ public class SpecialRelationshipsTopComponent extends TopComponent implements Ex
     public ExplorerManager getExplorerManager() {
         return em;
     }
-    @Override
-    public int getPersistenceType() {
-        return TopComponent.PERSISTENCE_NEVER;
-    }
-
+    
     @Override
     public void componentOpened() {
     }
