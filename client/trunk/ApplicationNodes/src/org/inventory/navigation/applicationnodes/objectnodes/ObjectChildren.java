@@ -16,7 +16,6 @@
 package org.inventory.navigation.applicationnodes.objectnodes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
@@ -31,13 +30,13 @@ import org.openide.util.Lookup;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ObjectChildren extends Children.Array {
-
-    protected List<LocalObjectLight> keys;
-    protected boolean asLeaves;
+    protected boolean collapsed = true;
+    protected LocalObjectLight[] keys;
+    private boolean asLeaves;
+    
     
     public ObjectChildren(LocalObjectLight[] lols, boolean asLeaves){
-        keys = new ArrayList<LocalObjectLight>();
-        keys.addAll(Arrays.asList(lols));
+        keys = lols;
         this.asLeaves = asLeaves;
     }
 
@@ -45,14 +44,11 @@ public class ObjectChildren extends Children.Array {
      * This constructor is used to create a node with no children
      *  since they're going to be created on demand (see method addNotify)
      */
-    public ObjectChildren(){}
+    public ObjectChildren(){keys = new LocalObjectLight[0];}
 
     @Override
     protected Collection<Node> initCollection(){
         List<Node> myNodes = new ArrayList<Node>();
-
-        if (keys == null)
-            keys = new ArrayList<LocalObjectLight>();
 
         for (LocalObjectLight lol : keys){
             if (asLeaves)
@@ -68,13 +64,11 @@ public class ObjectChildren extends Children.Array {
      */
     @Override
     public void addNotify(){
+        collapsed = false;
         //The tree root is not an AbstractNode, but a RootObjectNode
         if (this.getNode() instanceof RootObjectNode)
             return;
-
-        if (keys == null)
-            keys = new ArrayList<LocalObjectLight>();
-            
+        
         CommunicationsStub com = CommunicationsStub.getInstance();
         LocalObjectLight node = ((ObjectNode)this.getNode()).getObject();
         List <LocalObjectLight> children = com.getObjectChildren(node.getOid(),
@@ -84,52 +78,12 @@ public class ObjectChildren extends Children.Array {
             nu.showSimplePopup("Error", NotificationUtil.ERROR, "An error has occurred retrieving this object's children: "+com.getError());
             
         }else{
-            for (LocalObjectLight child : children){
-                ObjectNode newNode = new ObjectNode(child);
-                // Remove it if it already exists (if this is not done,
-                // it will duplicate the nodes created when the parent was collapsed)
-                keys.remove(child);
-                keys.add(child);
-                remove(new Node[]{newNode});
-                add(new Node[]{newNode});
-            }
+            for (LocalObjectLight child : children)
+                add(new Node[]{new ObjectNode(child)});
         }
     }
-
-    @Override
-    protected void removeNotify() {
-        if (keys != null)
-            keys.clear();
-    }
-
-    public List<LocalObjectLight> getKeys() {
-        return keys;
-    }
-
-    @Override
-    public boolean add(Node[] arr) {
-        for (Node node : arr){
-            if (node instanceof ObjectNode){
-                if (keys == null)
-                    keys = new ArrayList<LocalObjectLight>();
-
-                if (!keys.contains(((ObjectNode)node).getObject()))
-                    keys.add(((ObjectNode)node).getObject());
-            }
-        }
-        return super.add(arr);
-    }
-
-    @Override
-    public boolean remove(Node[] arr) {
-        for (Node node : arr){
-            if (node instanceof ObjectNode){
-                if (keys == null)
-                    keys = new ArrayList<LocalObjectLight>();
-                
-                keys.remove(((ObjectNode)node).getObject());
-            }
-        }
-        return super.remove(arr);
+    
+    public boolean isCollapsed() {
+        return collapsed;
     }
 }

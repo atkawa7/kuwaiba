@@ -160,6 +160,12 @@
 <message name="getPossibleChildrenNoRecursiveResponse">
 <part name="parameters" element="tns:getPossibleChildrenNoRecursiveResponse"/>
 </message>
+<message name="getSpecialPossibleChildren">
+<part name="parameters" element="tns:getSpecialPossibleChildren"/>
+</message>
+<message name="getSpecialPossibleChildrenResponse">
+<part name="parameters" element="tns:getSpecialPossibleChildrenResponse"/>
+</message>
 <message name="getUpstreamContainmentHierarchy">
 <part name="parameters" element="tns:getUpstreamContainmentHierarchy"/>
 </message>
@@ -544,6 +550,12 @@
 <message name="downloadErrorsResponse">
 <part name="parameters" element="tns:downloadErrorsResponse"/>
 </message>
+<message name="createSpecialObject">
+<part name="parameters" element="tns:createSpecialObject"/>
+</message>
+<message name="createSpecialObjectResponse">
+<part name="parameters" element="tns:createSpecialObjectResponse"/>
+</message>
 <message name="getObjectChildrenForClassWithId">
 <part name="parameters" element="tns:getObjectChildrenForClassWithId"/>
 </message>
@@ -723,6 +735,11 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPossibleChildrenNoRecursiveRequest" message="tns:getPossibleChildrenNoRecursive"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPossibleChildrenNoRecursiveResponse" message="tns:getPossibleChildrenNoRecursiveResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPossibleChildrenNoRecursive/Fault/Exception"/>
+</operation>
+<operation name="getSpecialPossibleChildren">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSpecialPossibleChildrenRequest" message="tns:getSpecialPossibleChildren"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSpecialPossibleChildrenResponse" message="tns:getSpecialPossibleChildrenResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getSpecialPossibleChildren/Fault/Exception"/>
 </operation>
 <operation name="getUpstreamContainmentHierarchy">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getUpstreamContainmentHierarchyRequest" message="tns:getUpstreamContainmentHierarchy"/>
@@ -1043,6 +1060,11 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadErrorsRequest" message="tns:downloadErrors"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadErrorsResponse" message="tns:downloadErrorsResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadErrors/Fault/Exception"/>
+</operation>
+<operation name="createSpecialObject">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSpecialObjectRequest" message="tns:createSpecialObject"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSpecialObjectResponse" message="tns:createSpecialObjectResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSpecialObject/Fault/Exception"/>
 </operation>
 <operation name="getObjectChildrenForClassWithId">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectChildrenForClassWithIdRequest" message="tns:getObjectChildrenForClassWithId"/>
@@ -1392,6 +1414,18 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="getSpecialPossibleChildren">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="getUpstreamContainmentHierarchy">
 <soap:operation soapAction=""/>
 <input>
@@ -2149,6 +2183,18 @@
 </fault>
 </operation>
 <operation name="downloadErrors">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="createSpecialObject">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

@@ -54,4 +54,10 @@
             </file>
         </folder>
     </folder>
+    <folder name="Windows2">
+        <folder name="Modes">
+            <file name="navigator.wsmode" url="modes/navigator.wsmode"/>
+            <file name="output.wsmode" url="modes/output.wsmode"/>
+        </folder>
+    </folder>
 </filesystem>

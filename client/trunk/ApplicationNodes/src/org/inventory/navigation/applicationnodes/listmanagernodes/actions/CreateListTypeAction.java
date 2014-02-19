@@ -44,10 +44,11 @@ public final class CreateListTypeAction extends AbstractAction {
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         LocalObjectLight myLol = com.createListTypeItem(node.getObject().getClassName());
             if (myLol == null)
-                nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR,
-                    CommunicationsStub.getInstance().getError());
+                nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
         else{
-            ((ListTypeItemChildren)node.getChildren()).add(new ListTypeItemNode[]{new ListTypeItemNode(myLol)});
+            if (!((ListTypeItemChildren)node.getChildren()).isCollapsed())
+                ((ListTypeItemChildren)node.getChildren()).add(new ListTypeItemNode[]{new ListTypeItemNode(myLol)});
+            //Refresh cache
             com.getList(node.getObject().getClassName(), false, true);
         }
     }

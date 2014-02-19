@@ -15,16 +15,19 @@
  */
 package org.inventory.navigation.applicationnodes.objectnodes;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.navigation.applicationnodes.SpecialChildren;
+import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateSpecialBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectSpecialRelationshipsAction;
+import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 
 /**
@@ -34,7 +37,7 @@ import org.openide.util.Lookup;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SpecialNode extends ObjectNode {
-
+    private static Image icon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/special_object.png");
     public SpecialNode(LocalObjectLight anObject) {
         super(anObject);
         setChildren(new SpecialChildren());
@@ -43,6 +46,7 @@ public class SpecialNode extends ObjectNode {
     @Override
     public Action[] getActions(boolean context) {
         ArrayList<Action> actions = new ArrayList<Action>();
+        actions.add(new CreateSpecialBusinessObjectAction(this));
         actions.add(refreshAction == null ? refreshAction = new RefreshObjectAction(this) : refreshAction);
         actions.add(editAction == null ? editAction = new EditObjectAction(this) : editAction);
         actions.add(deleteAction == null ? deleteAction = new DeleteBusinessObjectAction(this) : deleteAction);
@@ -66,7 +70,13 @@ public class SpecialNode extends ObjectNode {
         return actions.toArray(new Action[]{});
     }
 
-    
-    
-    
+    @Override
+    public Image getIcon(int i) {
+        return icon;
+    }
+
+    @Override
+    public Image getOpenedIcon(int i) {
+        return icon;
+    }
 }

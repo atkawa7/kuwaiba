@@ -532,8 +532,33 @@ public class CommunicationsStub {
             return null;
         }
     }
-      
-   public List<LocalClassMetadataLight> getUpstreamContainmentHierarchy(String className, boolean recursive){
+   
+    public List<LocalClassMetadataLight> getSpecialPossibleChildren(String className) {
+        try{
+            List<ClassInfoLight> resAsRemote = port.getSpecialPossibleChildren(className,this.session.getSessionId());
+            List<LocalClassMetadataLight> resAsLocal = new ArrayList<LocalClassMetadataLight>();
+
+            for (ClassInfoLight cil : resAsRemote){
+               HashMap<String, Integer> validators = new HashMap<String, Integer>();
+                    for (Validator validator : cil.getValidators())
+                        validators.put(validator.getLabel(), validator.getValue());
+                    
+                    resAsLocal.add(new LocalClassMetadataLight(cil.getId(),
+                                                cil.getClassName(),
+                                                cil.getDisplayName(),
+                                                cil.getParentClassName(),
+                                                cil.isAbstract(),cil.isViewable(), cil.isListType(),
+                                                cil.isCustom(), cil.isInDesign(),
+                                                cil.getSmallIcon(), validators));
+            }
+            return resAsLocal;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public List<LocalClassMetadataLight> getUpstreamContainmentHierarchy(String className, boolean recursive){
         try{
             List<LocalClassMetadataLight> res = new ArrayList<LocalClassMetadataLight>();
             for (ClassInfoLight cil : port.getUpstreamContainmentHierarchy(className, recursive, this.session.getSessionId())){
@@ -894,6 +919,18 @@ public class CommunicationsStub {
         try{
             long objectId  = port.createObject(objectClass,parentClass, parentOid, new ArrayList<String>(),new ArrayList<StringArray>(),template,this.session.getSessionId());
             return new LocalObjectLight(objectId, null, objectClass);
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public LocalObjectLight createSpecialObject(String className, String parentClassName, 
+            long parentOid, long templateId) {
+        try{
+            long objectId  = port.createSpecialObject(className,parentClassName, parentOid, 
+                    new ArrayList<String>(),new ArrayList<StringArray>(),templateId,this.session.getSessionId());
+            return new LocalObjectLight(objectId, null, className);
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;

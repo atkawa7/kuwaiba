@@ -33,7 +33,7 @@ import org.openide.windows.TopComponent;
 @TopComponent.Description(
     preferredID = "SpecialObjectExplorerTopComponent",
 persistenceType = TopComponent.PERSISTENCE_NEVER)
-@TopComponent.Registration(mode = "output", openAtStartup = false)
+@TopComponent.Registration(mode = "navigator", openAtStartup = false)
 public class SpecialObjectExplorerTopComponent extends TopComponent 
     implements ExplorerManager.Provider, ActionListener {
     private ExplorerManager em;
@@ -55,7 +55,7 @@ public class SpecialObjectExplorerTopComponent extends TopComponent
     }
 
     @Override
-    public void componentOpened() {}
+    public void componentOpened() { }
     
     @Override
     public void componentClosed() {

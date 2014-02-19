@@ -96,6 +96,10 @@
 
 <xs:element name="createSessionResponse" type="tns:createSessionResponse"/>
 
+<xs:element name="createSpecialObject" type="tns:createSpecialObject"/>
+
+<xs:element name="createSpecialObjectResponse" type="tns:createSpecialObjectResponse"/>
+
 <xs:element name="createUser" type="tns:createUser"/>
 
 <xs:element name="createUserResponse" type="tns:createUserResponse"/>
@@ -323,6 +327,10 @@
 <xs:element name="getSpecialAttributes" type="tns:getSpecialAttributes"/>
 
 <xs:element name="getSpecialAttributesResponse" type="tns:getSpecialAttributesResponse"/>
+
+<xs:element name="getSpecialPossibleChildren" type="tns:getSpecialPossibleChildren"/>
+
+<xs:element name="getSpecialPossibleChildrenResponse" type="tns:getSpecialPossibleChildrenResponse"/>
 
 <xs:element name="getSubClassesLight" type="tns:getSubClassesLight"/>
 
@@ -1051,6 +1059,24 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="createSpecialObject">
+<xs:sequence>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
+<xs:element name="parentObjectClassName" type="xs:string" minOccurs="0"/>
+<xs:element name="parentOid" type="xs:long"/>
+<xs:element name="attributeNames" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="attributeValues" type="ns1:stringArray" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="templateId" type="xs:long"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createSpecialObjectResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="getParent">
 <xs:sequence>
 <xs:element name="objectclass" type="xs:string" minOccurs="0"/>
@@ -1466,6 +1492,19 @@
 </xs:complexType>
 
 <xs:complexType name="getSubClassesLightResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSpecialPossibleChildren">
+<xs:sequence>
+<xs:element name="parentClassName" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSpecialPossibleChildrenResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:classInfoLight" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>

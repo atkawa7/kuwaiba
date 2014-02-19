@@ -60,10 +60,11 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
                 node instanceof RootObjectNode ? null : ((ObjectNode)node).getObject().getClassName(),
                 node instanceof RootObjectNode? -1 : ((ObjectNode)node).getObject().getOid(), 0);
         if (myLol == null)
-            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR,
-                    com.getError());
+            nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
         else{
-            ((ObjectChildren)node.getChildren()).add(new ObjectNode[]{new ObjectNode(myLol)});
+            if (!((ObjectChildren)node.getChildren()).isCollapsed())
+                ((ObjectChildren)node.getChildren()).add(new ObjectNode[]{new ObjectNode(myLol)});
+            
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO,
                     java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
         }

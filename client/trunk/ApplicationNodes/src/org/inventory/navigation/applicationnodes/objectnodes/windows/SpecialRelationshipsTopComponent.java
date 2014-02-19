@@ -36,7 +36,7 @@ import org.openide.windows.TopComponent;
 @TopComponent.Description(
     preferredID = "SpecialRelationshipsTopComponent",
 persistenceType = TopComponent.PERSISTENCE_NEVER)
-@TopComponent.Registration(mode = "output", openAtStartup = false)
+@TopComponent.Registration(mode = "navigator", openAtStartup = false)
 public class SpecialRelationshipsTopComponent extends TopComponent implements ExplorerManager.Provider {
     private BeanTreeView tree;
     private ExplorerManager em;

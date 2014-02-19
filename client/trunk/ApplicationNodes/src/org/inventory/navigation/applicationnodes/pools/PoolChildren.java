@@ -40,7 +40,7 @@ public class PoolChildren extends Children.Array{
         List<LocalObjectLight> items = CommunicationsStub.getInstance().getPoolItems(pool.getOid());
         if (items == null)
             Lookup.getDefault().lookup(NotificationUtil.class).
-                        showSimplePopup("List Generation", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+                        showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
         else{
             for (LocalObjectLight item : items){
                 ObjectNode newNode = new ObjectNode(item);

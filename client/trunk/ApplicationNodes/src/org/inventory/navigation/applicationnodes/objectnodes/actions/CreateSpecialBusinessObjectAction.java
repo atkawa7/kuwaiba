@@ -25,28 +25,21 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
-import org.openide.nodes.AbstractNode;
+import org.inventory.navigation.applicationnodes.SpecialChildren;
+import org.inventory.navigation.applicationnodes.objectnodes.SpecialNode;
 import org.openide.util.Lookup;
-import org.openide.util.actions.Presenter.Popup;
+import org.openide.util.actions.Presenter;
 
 /**
- * Action that requests a business object creation
+ * Creates a new special object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class CreateSpecialBusinessObjectAction extends AbstractAction implements Popup {
-    private AbstractNode node;
+public final class CreateSpecialBusinessObjectAction extends AbstractAction 
+            implements Presenter.Popup {
+    private SpecialNode node;
     private CommunicationsStub com;
 
-    public CreateSpecialBusinessObjectAction(ObjectNode node) {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
-        com = CommunicationsStub.getInstance();
-        this.node = node;
-    }
-
-    public CreateSpecialBusinessObjectAction(RootObjectNode node) {
+    public CreateSpecialBusinessObjectAction(SpecialNode node) {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
         com = CommunicationsStub.getInstance();
         this.node = node;
@@ -55,17 +48,19 @@ public final class CreateSpecialBusinessObjectAction extends AbstractAction impl
     @Override
     public void actionPerformed(ActionEvent ev) {
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        LocalObjectLight myLol = com.createObject(
+        LocalObjectLight myLol = com.createSpecialObject(
                 ((JMenuItem)ev.getSource()).getName(),
-                node instanceof RootObjectNode ? null : ((ObjectNode)node).getObject().getClassName(),
-                node instanceof RootObjectNode? -1 : ((ObjectNode)node).getObject().getOid(), 0);
+                node.getObject().getClassName(),
+                node.getObject().getOid(), 0);
         if (myLol == null)
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR,
                     com.getError());
         else{
-            ((ObjectChildren)node.getChildren()).add(new ObjectNode[]{new ObjectNode(myLol)});
+            if (!((SpecialChildren)node.getChildren()).isCollapsed())
+                ((SpecialChildren)node.getChildren()).add(new SpecialNode[]{new SpecialNode(myLol)});
+                
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO,
-                    java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
+                        java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
         }
     }
 
@@ -73,16 +68,12 @@ public final class CreateSpecialBusinessObjectAction extends AbstractAction impl
     public JMenuItem getPopupPresenter() {
         JMenu mnuPossibleChildren = new JMenu(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
 
-        List<LocalClassMetadataLight> items;
-        if (node instanceof RootObjectNode) //For the root node
-            items = com.getPossibleChildren(null, false);
-        else
-            items = com.getPossibleChildren(((ObjectNode)node).getObject().getClassName(),false);
-
+        List<LocalClassMetadataLight> items = com.getSpecialPossibleChildren(node.getObject().getClassName());
+        
         if (items.isEmpty())
             mnuPossibleChildren.setEnabled(false);
         else
-            for(LocalClassMetadataLight item: items){
+            for(LocalClassMetadataLight item: items) {
                     JMenuItem smiChildren = new JMenuItem(item.getClassName());
                     smiChildren.setName(item.getClassName());
                     smiChildren.addActionListener(this);

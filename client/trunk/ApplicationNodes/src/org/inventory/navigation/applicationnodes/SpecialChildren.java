@@ -18,32 +18,33 @@ package org.inventory.navigation.applicationnodes;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.SpecialNode;
-import org.openide.nodes.Children;
 import org.openide.util.Lookup;
 
 /**
  * Children to SpecialNodes
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class SpecialChildren extends Children.Array {
+public class SpecialChildren extends ObjectChildren {  
 
     @Override
     public void addNotify(){
         assert getNode() instanceof ObjectNode : "Node is not instance of ObjectNode";
-        LocalObjectLight parentObject = ((ObjectNode)getNode()).getObject();
         
-        remove(getNodes());
+        LocalObjectLight parentObject = ((ObjectNode)getNode()).getObject();
+
         LocalObjectLight[] specialChildren = CommunicationsStub.getInstance().
                 getObjectSpecialChildren(parentObject.getClassName(), parentObject.getOid());
         if (specialChildren == null){
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
             return;
-        }
+        }isInitialized();
             
         for (LocalObjectLight lol : specialChildren)
             add(new SpecialNode[]{new SpecialNode(lol)});
-    }    
+
+    }
 }
