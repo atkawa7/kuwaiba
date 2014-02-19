@@ -70,3 +70,6 @@
 0.6
 * Support for activity logs
 * Improved permissions support
+* Improvements to physical connections capabilities
+* Multiple bugfixes
+* Sessions are managed in the service

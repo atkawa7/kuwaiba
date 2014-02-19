@@ -19,7 +19,7 @@
     </head>
     <body>
 
-         <div id="wrapper"align="center">
+         <div align="center">
             <div id="header">
                 <a href="http://www.kuwaiba.org"><img alt="http://www.kuwaiba.org" src="images/kuwaiba_logo.png" border="0"/></a>
             </div>

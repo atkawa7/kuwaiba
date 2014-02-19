@@ -1,12 +1,5 @@
-@font-face {
-	  font-family: Ubuntu;
-	  src: url('resources/ubuntu_R.eot?') format('eot'),
-               url('/resources/ubuntu_R.ttf'),
-               url('/resources/ubuntu_R.ttf') format('truetype');
-}
-
 body{
-    font-family: Ubuntu,verdana,helvetica,arial,sans-serif;
+    font-family: verdana, helvetica, arial, sans-serif;
     font-size: 0.95em;
     color:#777777;
     margin: 0;
@@ -25,22 +18,17 @@ a{
 a:hover{
     text-decoration:underline;
 }
-#wrapper{
-    /*padding: 15px 15px 15px 15px;*/
-}
 
 #header{
     padding: 20px 0 0 0;
     height: 90px;
     width: 100%;
-    /*background: darkviolet;*/
 }
 
 #content{
     text-align: justify;
     height: 350px;
     width: 100%;
-    /*background: coral;*/
 }
 
 #maincontent{
@@ -48,7 +36,6 @@ a:hover{
     width: 700px;
     height: 350px;
     float: left;
-    /*background: chartreuse;*/
     float: left;
 }
 
@@ -60,7 +47,6 @@ a:hover{
     text-align: justify;
     color: #000000;
     font-size: 28px;
-    /*background: darkkhaki;*/
 }
 
 #footer{
@@ -70,5 +56,4 @@ a:hover{
     vertical-align: bottom;
     position:absolute;
     bottom:0;
-
 }

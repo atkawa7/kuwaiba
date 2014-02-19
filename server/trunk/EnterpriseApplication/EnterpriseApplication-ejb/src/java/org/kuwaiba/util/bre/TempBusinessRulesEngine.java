@@ -33,18 +33,21 @@ public class TempBusinessRulesEngine {
      * They key is the connecting element (say WireContainer) and the value is a list with the pairs of elements that can be connected
      */
     private HashMap<String, List<String[]>> relationshipMappings;
+    private HashMap<String,String[]> possibleChildrenAccordingToModels;
     private HashMap<String, String> subClassOfValidators;
 
     public TempBusinessRulesEngine() {
         relationshipMappings = new HashMap<String, List<String[]>>();
+        possibleChildrenAccordingToModels = new HashMap<String, String[]>();
         List<String[]> links = new ArrayList<String[]>();
         links.add(new String[]{"GenericPort", "GenericPort"});
         relationshipMappings.put("GenericPhysicalLink", links);
-
-        //List<String[]> containers = new ArrayList<String[]>();
-        //containers.add(new String[]{"GenericLocation", "GenericLocation"});
         relationshipMappings.put("GenericPhysicalContainer", links);
 
+        possibleChildrenAccordingToModels.put("WireContainer", new String[]{"OpticalLink", "ElectricalLink"});
+        possibleChildrenAccordingToModels.put("WirelessContainer", new String[]{"RadioLink"});
+        possibleChildrenAccordingToModels.put("OpticalLink", new String[]{"Wavelength"});
+        
         subClassOfValidators = new HashMap<String, String>();
         subClassOfValidators.put("GenericPhysicalNode", "physicalNode");
         subClassOfValidators.put("GenericPort", "physicalEndpoint");
@@ -58,5 +61,9 @@ public class TempBusinessRulesEngine {
 
     public HashMap<String, String> getSubclassOfValidators(){
         return subClassOfValidators;
+    }
+    
+    public HashMap<String, String[]> getPossibleChildrenAccordingToModels(){
+        return possibleChildrenAccordingToModels;
     }
 }

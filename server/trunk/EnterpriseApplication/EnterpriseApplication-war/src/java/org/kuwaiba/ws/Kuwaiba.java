@@ -1346,6 +1346,41 @@ public class Kuwaiba {
             throw e;
         }
     }
+    
+    /**
+     * Creates a special business object. It's a generic method to create objects proper to
+     * special models. Parent object won't be linked to the new object through a conventional 
+     * containment relationship
+     * @param className New object class name
+     * @param parentObjectClassName New object parent's class name
+     * @param parentOid New object parent's id
+     * @param attributeNames Names of the attributes to be set at creation time
+     * @param attributeValues Values for those attributes
+     * @param templateId Template id. Does nothing for now
+     * @param sessionId Session token
+     * @return the id of the new object
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "createSpecialObject")
+    public long createSpecialObject(@WebParam(name = "className")String className,
+            @WebParam(name = "parentObjectClassName")String parentObjectClassName,
+            @WebParam(name = "parentOid")long parentOid,
+            @WebParam(name = "attributeNames")String[] attributeNames,
+            @WebParam(name = "attributeValues")String[][] attributeValues,
+            @WebParam(name = "templateId")long templateId,
+            @WebParam(name = "sessionId")String sessionId) throws Exception{
+        try{
+            wsBean.validateCall("createSpecialObject", getIPAddress(), sessionId);
+            return wsBean.createSpecialObject(className,parentObjectClassName, parentOid,attributeNames,attributeValues, templateId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
 
     /**
      * Delete a set of objects. Note that this method must be used only for business objects (not metadata or application ones)
@@ -2567,6 +2602,33 @@ public class Kuwaiba {
         try {
             wsBean.validateCall("getPossibleChildrenNoRecursive", getIPAddress(), sessionId);
             return wsBean.getPossibleChildrenNoRecursive(parentClassName);
+
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
+    
+    /**
+     * Gets the possible children of a given non-abstract class according to the business rules set for a 
+     * particular model
+     * @param parentClassName Class to retrieve its possible children
+     * @param sessionId Session token
+     * @return The list of possible special children
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
+    @WebMethod(operationName = "getSpecialPossibleChildren")
+    public List<ClassInfoLight> getSpecialPossibleChildren(@WebParam(name = "parentClassName")
+    String parentClassName, @WebParam(name = "sessionId")
+    String sessionId) throws Exception {
+
+        try {
+            wsBean.validateCall("getSpecialPossibleChildren", getIPAddress(), sessionId);
+            return wsBean.getSpecialPossibleChildren(parentClassName);
 
         }catch(Exception e){
             Level level = Level.SEVERE;

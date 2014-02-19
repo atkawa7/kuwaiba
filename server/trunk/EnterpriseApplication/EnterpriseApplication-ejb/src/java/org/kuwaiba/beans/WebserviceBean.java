@@ -660,6 +660,31 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
+    
+    @Override
+    public List<ClassInfoLight> getSpecialPossibleChildren(String parentClassName) throws ServerSideException {
+        if (mem == null){
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        }
+        
+        List<ClassInfoLight> res = new ArrayList<ClassInfoLight>();
+        try{
+            for (String aClass : bre.getPossibleChildrenAccordingToModels().keySet()){
+                if (mem.isSubClass(aClass, parentClassName)){
+                    for (String possibleChild : bre.getPossibleChildrenAccordingToModels().get(aClass)){
+                        List<ClassMetadataLight> subClasses = mem.getSubClassesLight(possibleChild, false, true);
+                        for (ClassMetadataLight subClass : subClasses)
+                            res.add(new ClassInfoLight(subClass, new Validator[0]));
+                    }
+                    break;
+                }
+            }
+        }catch (Exception ex){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+        return res;
+    }
         
     @Override
     public List<ClassInfoLight> getUpstreamContainmentHierarchy(String className, boolean recursive) throws ServerSideException{
@@ -1021,6 +1046,26 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
 
+    @Override
+    public long createSpecialObject(String className, String parentClassName, long parentOid, String[] attributeNames,
+            String[][] attributeValues, long template) throws ServerSideException{
+        if (bem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        if (attributeNames.length != attributeValues.length)
+            throw new ServerSideException(Level.SEVERE, "Attribute names and attribute values arrays sizes doesn't match");
+
+        try {
+            HashMap<String,List<String>> attributes = new HashMap<String, List<String>>();
+            for (int i = 0; i < attributeNames.length; i++)
+                attributes.put(attributeNames[i], Arrays.asList(attributeValues[i]));
+
+            return bem.createSpecialObject(className, parentClassName, parentOid,attributes, template);
+        } catch (Exception ex) {
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
     @Override
     public void deleteObjects(String[] classNames, long[] oids, boolean releaseRelationships) throws ServerSideException{
         if (bem == null)

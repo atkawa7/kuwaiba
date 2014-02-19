@@ -273,6 +273,13 @@ public interface WebserviceBeanRemote {
      * @return The list of possible children
      */
     public List<ClassInfoLight> getPossibleChildrenNoRecursive(String parentClassName) throws ServerSideException;
+    /**
+     * Get the possible children, but not according to the containment hierarchy but to a set of business rules
+     * @param parentClassName
+     * @return The list of possible children
+     * @throws ServerSideException 
+     */
+    public List<ClassInfoLight> getSpecialPossibleChildren(String parentClassName) throws ServerSideException;
 
     /**
      * Get the upstream containment hierarchy for a given class, unlike getPossibleChildren (which will give you the
@@ -332,7 +339,8 @@ public interface WebserviceBeanRemote {
     public void updateObject(String className, long oid, String[] attributeNames, String[][] attributeValues) throws ServerSideException;
 
     public long createObject(String className, String parentClassName, long parentOid, String[] attributeNames, String[][] attributeValues, long templateId) throws ServerSideException;
-
+    public long createSpecialObject(String className, String parentObjectClassName, long parentOid, String[] attributeNames, String[][] attributeValues, long templateId) throws ServerSideException;
+    
     public long createListTypeItem(String className, String name, String displayName) throws ServerSideException;
 
     public void deleteListTypeItem(String className, long oid, boolean releaseRelationships) throws ServerSideException;
@@ -589,5 +597,5 @@ public interface WebserviceBeanRemote {
      * @throws ServerSideException 
      */
     public byte[] downloadErrors(String fileName) throws ServerSideException;
-    // </editor-fold>    
+    // </editor-fold>
 }
