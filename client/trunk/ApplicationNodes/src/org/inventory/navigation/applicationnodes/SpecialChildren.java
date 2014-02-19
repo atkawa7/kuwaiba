@@ -31,8 +31,8 @@ public class SpecialChildren extends ObjectChildren {
 
     @Override
     public void addNotify(){
-        assert getNode() instanceof ObjectNode : "Node is not instance of ObjectNode";
-        
+        assert getNode() instanceof ObjectNode : "This node is not instance of ObjectNode";
+        collapsed = false;
         LocalObjectLight parentObject = ((ObjectNode)getNode()).getObject();
 
         LocalObjectLight[] specialChildren = CommunicationsStub.getInstance().
@@ -41,7 +41,7 @@ public class SpecialChildren extends ObjectChildren {
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
             return;
-        }isInitialized();
+        }
             
         for (LocalObjectLight lol : specialChildren)
             add(new SpecialNode[]{new SpecialNode(lol)});

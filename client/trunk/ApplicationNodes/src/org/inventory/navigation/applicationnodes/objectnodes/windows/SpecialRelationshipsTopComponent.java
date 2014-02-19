@@ -27,7 +27,9 @@ import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
+import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
+import org.openide.windows.WindowManager;
 
 /**
  * Shows a tree with the special relationships of an object
@@ -51,6 +53,8 @@ public class SpecialRelationshipsTopComponent extends TopComponent implements Ex
         em.setRootContext(new RootNode(relationships));
         setLayout(new BorderLayout());
         add(tree);
+        Mode navigator = WindowManager.getDefault().findMode("navigator");//For some reason, the TopComponent.Registration annotation is being ignored
+        navigator.dockInto(this);
     }
 
     @Override
@@ -59,8 +63,7 @@ public class SpecialRelationshipsTopComponent extends TopComponent implements Ex
     }
     
     @Override
-    public void componentOpened() {
-    }
+    public void componentOpened() {    }
     
     private class RootNode extends AbstractNode {
         

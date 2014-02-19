@@ -153,8 +153,6 @@ public final class NavigationTreeTopComponent extends TopComponent
     public void componentClosed() {
         ExplorerUtils.activateActions(em, false);
         em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
-        TopComponent propertiesWindow = WindowManager.getDefault().findTopComponent("properties");
-        propertiesWindow.close();
         //Workaround, because when you close a TC whose mode is "explorer" and open it again,
         //it docks as "explorer". This forces the TC to be always docked "explorer"
         Mode myMode = WindowManager.getDefault().findMode("explorer"); //NOI18N
