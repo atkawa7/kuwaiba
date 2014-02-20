@@ -40,31 +40,31 @@ public class BulkLoadTester {
             System.out.println("Starting at: " + Calendar.getInstance().getTime());
             System.out.println("Generating a containment hierarchy...");
             //Let's create the default containment hierarchy
-            mem.addPossibleChildren(null, new String[]{"City"});
-            for (String parentClass : c.containmentHierarchy.keySet()){
-                try{
-                    mem.addPossibleChildren(parentClass, c.containmentHierarchy.get(parentClass));
-                }catch (Exception ex){
-                    System.out.println("ERROR: "+ex.getMessage());
-                }
-            }
+//            mem.addPossibleChildren(null, new String[]{"City"});
+//            for (String parentClass : c.containmentHierarchy.keySet()){
+//                try{
+//                    mem.addPossibleChildren(parentClass, c.containmentHierarchy.get(parentClass));
+//                }catch (Exception ex){
+//                    System.out.println("ERROR: "+ex.getMessage());
+//                }
+//            }
             System.out.println("Containment hierarchy generated successfully");
 
             System.out.println("Generating a set of list types...");
             //We create the default list types here
-            for (String listType : lt.listTypes.keySet()){
-                try{
-                    for (String listTypeItem : lt.listTypes.get(listType))
-                        aem.createListTypeItem(listType, listTypeItem, null);
-                }catch (Exception ex){
-                    System.out.println("ERROR: "+ex.getMessage());
-                }
-            }
+//            for (String listType : lt.listTypes.keySet()){
+//                try{
+//                    for (String listTypeItem : lt.listTypes.get(listType))
+//                        aem.createListTypeItem(listType, listTypeItem, null);
+//                }catch (Exception ex){
+//                    System.out.println("ERROR: "+ex.getMessage());
+//                }
+//            }
             System.out.println("List type set generated successfully");
 
             System.out.println("Generating a sample data set");
-            //We create a test dataset here
-            createObjects("City", 2, null, null);
+//            We create a test dataset here
+//            createObjects("City", 2, null, null);
 
             System.out.println("Data set created successfully");
 
@@ -76,6 +76,7 @@ public class BulkLoadTester {
         }
     }
 
+    /*
     private static void createObjects(String className, int numInstances, String parentClass, Long parentId){
         for (int i = 0; i < numInstances; i++){
             HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
@@ -114,4 +115,5 @@ public class BulkLoadTester {
 
         }
     }
+    */
 }

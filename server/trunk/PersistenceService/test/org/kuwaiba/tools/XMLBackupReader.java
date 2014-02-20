@@ -1,6 +1,17 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package org.kuwaiba.tools;
@@ -30,7 +41,7 @@ import org.kuwaiba.persistenceservice.integrity.DataIntegrityService;
 
 /**
  *
- * @author adrian
+ * @author Adrian Fernando Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class XMLBackupReader {
 
@@ -199,11 +210,11 @@ public class XMLBackupReader {
                     attList.add(attr);
             }
             clmt.setAttributes(attList);
-            try{
-                mem.createClass(clmt);
-            }catch (Exception ex){
-                System.out.println(String.format("Class %s could not be created: %s", lcw.getName(), ex.getMessage()));
-            }
+//            try{
+//                mem.createClass(clmt);
+//            }catch (Exception ex){
+//                System.out.println(String.format("Class %s could not be created: %s", lcw.getName(), ex.getMessage()));
+//            }
             //The subclasses are processed even if the parent class failed
             if(lcw.getDirectSubClasses().size() > 0)
                 readRoots(lcw.getDirectSubClasses(), lcw.getName());
@@ -215,5 +226,6 @@ public class XMLBackupReader {
         dis.createDummyroot();
         dis.createGroupsRootNode();
         dis.createActivityLogRootNodes();
+        dis.createPrivilegeRootNode();
     }
 }
