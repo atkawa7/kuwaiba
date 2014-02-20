@@ -32,9 +32,11 @@ import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
+import org.kuwaiba.apis.persistence.interfaces.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
@@ -80,6 +82,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
      */
     private Index<Node> specialNodesIndex;
     /**
+     * Instance of application entity manager
+     */
+    private ApplicationEntityManager aem;
+    /**
      * Reference to the CacheManager
      */
     private CacheManager cm;
@@ -96,9 +102,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
     }
 
-    public long createObject(String className, String parentClassName, long parentOid, HashMap<String,List<String>> attributes, long template)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException {
+    @Override
+    public long createObject(String className, String parentClassName, long parentOid, HashMap<String,List<String>> attributes, long template, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
 
+        aem.validateCall("createObject", ipAddress, sessionId);
+        
         ClassMetadata myClass= cm.getClass(className);
         
         Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
@@ -161,11 +170,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
     
-    
+    @Override
+    public long createSpecialObject(String className, String parentClassName, long parentOid, HashMap<String,List<String>> attributes, long template, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
 
-    public long createSpecialObject(String className, String parentClassName, long parentOid, HashMap<String,List<String>> attributes, long template)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException {
-
+        aem.validateCall("createSpecialObject", ipAddress, sessionId);
+        
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
@@ -221,7 +231,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
 
-    public long[] createBulkSpecialObjects(String className, int numberOfObjects, String parentClassName, long parentId) throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException {
+    @Override
+    public long[] createBulkSpecialObjects(String className, int numberOfObjects, String parentClassName, long parentId, String ipAddress, String sessionId) 
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        
+        aem.validateCall("createBulkSpecialObjects", ipAddress, sessionId);
+        
         ClassMetadata myClass= cm.getClass(className);
         if (myClass == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
@@ -286,8 +301,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
 
-    public RemoteBusinessObject getObject(String className, long oid)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+    @Override
+    public RemoteBusinessObject getObject(String className, long oid, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        
+        aem.validateCall("getObject", ipAddress, sessionId);
         
         ClassMetadata myClass = cm.getClass(className);
         Node instance = getInstanceOfClass(className, oid);
@@ -295,8 +313,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         return res;
     }
 
-    public RemoteBusinessObjectLight getObjectLight(String className, long oid)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException {
+    @Override
+    public RemoteBusinessObjectLight getObjectLight(String className, long oid, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        
+        aem.validateCall("getObjectLight", ipAddress, sessionId);
         //Perform benchmarks to see if accessing to the objects index is less expensive
         Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
         if (classNode == null)
@@ -314,8 +335,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         throw new ObjectNotFoundException(className, oid);
     }
     
-    public RemoteBusinessObject getParent(String objectClass, long oid) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+    @Override
+    public RemoteBusinessObject getParent(String objectClass, long oid, String ipAddress, String sessionId) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        
+        aem.validateCall("getParent", ipAddress, sessionId);
+        
         Node objectNode = getInstanceOfClass(objectClass, oid);
         if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF)){
             Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
@@ -334,8 +359,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
     
     @Override
-    public List<RemoteBusinessObjectLight> getParents (String objectClassName, long oid)
-        throws ObjectNotFoundException, MetadataObjectNotFoundException {
+    public List<RemoteBusinessObjectLight> getParents (String objectClassName, long oid, String ipAddress, String sessionId)
+        throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        
+        aem.validateCall("getParents", ipAddress, sessionId);
+        
         List<RemoteBusinessObjectLight> parents =  new ArrayList<RemoteBusinessObjectLight>();
       
         String cypherQuery = "START n=node({oid})" +
@@ -360,8 +388,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         return parents;
     }
     
-    public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+    @Override
+    public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass, String ipAddress, String sessionId) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        
+        aem.validateCall("getParentOfClass", ipAddress, sessionId);
+        
         Node objectNode = getInstanceOfClass(objectClass, oid);
         
         while (true){
@@ -383,9 +415,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
 
-    public void deleteObjects(HashMap<String, long[]> objects, boolean releaseRelationships)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
+    @Override
+    public void deleteObjects(HashMap<String, long[]> objects, boolean releaseRelationships, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, NotAuthorizedException {
 
+        aem.validateCall("deleteObjects", ipAddress, sessionId);
         Transaction tx = null;
         try{
             tx = graphDb.beginTx();
@@ -415,10 +449,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
 
-    public void updateObject(String className, long oid, HashMap<String,List<String>> attributes)
+    @Override
+    public void updateObject(String className, long oid, HashMap<String,List<String>> attributes, String ipAddress, String sessionId)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, 
-            WrongMappingException, InvalidArgumentException, ApplicationObjectNotFoundException {
+            WrongMappingException, InvalidArgumentException, ApplicationObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
 
+        aem.validateCall("updateObject", ipAddress, sessionId);
+        
         ClassMetadata myClass= cm.getClass(className);
         
         if (myClass == null)
@@ -502,14 +539,17 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
 
-    public boolean setBinaryAttributes(String className, long oid, List<String> attributeNames, List<byte[]> attributeValues)
-            throws ObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException {
+    @Override
+    public boolean setBinaryAttributes(String className, long oid, List<String> attributeNames, List<byte[]> attributeValues, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, OperationNotPermittedException, ArraySizeMismatchException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        aem.validateCall("setBinaryAttributes", ipAddress, sessionId);
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
-
+    @Override
+    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        aem.validateCall("createSpecialRelationship", ipAddress, sessionId);
         Transaction tx = null;
         try{
             tx = graphDb.beginTx();
@@ -532,9 +572,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
     
-    public void releaseSpecialRelationship(String objectClass, long objectId, long otherObjectId, String name)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException {
-
+    @Override
+    public void releaseSpecialRelationship(String objectClass, long objectId, long otherObjectId, String name, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        aem.validateCall("releaseSpecialRelationship", ipAddress, sessionId);
         Transaction tx = null;
         try{
             tx = graphDb.beginTx();
@@ -554,8 +595,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
     
-    public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName, long targetId)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException {
+    @Override
+    public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName, long targetId, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        aem.validateCall("releaseSpecialRelationship", ipAddress, sessionId);
         Transaction tx = null;
         try{
             tx = graphDb.beginTx();
@@ -575,9 +618,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
 
-    public void moveObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
-        
+    @Override
+    public void moveObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        aem.validateCall("moveObjects", ipAddress, sessionId);
         ClassMetadata newParentClass = cm.getClass(targetClassName);
         
         if (newParentClass == null)
@@ -629,9 +673,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
 
-    public long[] copyObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
-
+    @Override
+    public long[] copyObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        aem.validateCall("copyObjects", ipAddress, sessionId);
         ClassMetadata newParentClass = cm.getClass(targetClassName);
 
         if (newParentClass == null)
@@ -677,13 +722,17 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }        
     }
 
-    public boolean setObjectLockState(String className, long oid, Boolean value)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+    @Override
+    public boolean setObjectLockState(String className, long oid, Boolean value, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        aem.validateCall("setObjectLockState", ipAddress, sessionId);
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public List<RemoteBusinessObjectLight> getObjectChildren(String className, long oid, int maxResults)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException {
+    @Override
+    public List<RemoteBusinessObjectLight> getObjectChildren(String className, long oid, int maxResults, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        aem.validateCall("getObjectChildren", ipAddress, sessionId);
         try{
             Node parentNode;
             if(oid == -1){
@@ -713,9 +762,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             throw new RuntimeException (ex.getMessage());
         }
     }
-
-    public List<RemoteBusinessObjectLight> getObjectChildren(long oid, long classId, int maxResults)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException {
+    
+    @Override
+    public List<RemoteBusinessObjectLight> getObjectChildren(long oid, long classId, int maxResults, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        aem.validateCall("getObjectChildren", ipAddress, sessionId);
         try{
             Node parentNode;
             if(oid == -1){
@@ -745,8 +796,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
     
-    public List<RemoteBusinessObjectLight> getSiblings(String className, long oid, int maxResults)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException{
+    @Override
+    public List<RemoteBusinessObjectLight> getSiblings(String className, long oid, int maxResults, String ipAddress, String sessionId)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException{
+        aem.validateCall("getSiblings", ipAddress, sessionId);
         try{
             Node node = getInstanceOfClass(className, oid);
             List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
@@ -779,12 +832,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
     
     @Override
-    public List<RemoteBusinessObjectLight> getObjectsOfClassLight(String parentClass, int maxResults)
-            throws MetadataObjectNotFoundException, InvalidArgumentException {
-        
+    public List<RemoteBusinessObjectLight> getObjectsOfClassLight(String parentClass, int maxResults, String ipAddress, String sessionId)
+            throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+       aem.validateCall("getObjectsOfClassLight", ipAddress, sessionId); 
         //if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, parentClass))
         //    throw new InvalidArgumentException(String.format("Class %s is not subclass of InventoryObject", parentClass), Level.INFO);
-        
         Node classMetadataNode = classIndex.get(Constants.PROPERTY_NAME, parentClass).getSingle();
         if (classMetadataNode == null)
             throw new MetadataObjectNotFoundException(parentClass);
@@ -808,8 +860,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
 
     @Override
-    public List<RemoteBusinessObject> getChildrenOfClass(long parentOid, String parentClass, String classToFilter, int maxResults)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException{
+    public List<RemoteBusinessObject> getChildrenOfClass(long parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        aem.validateCall("getChildrenOfClass", ipAddress, sessionId); 
         Node parentNode = getInstanceOfClass(parentClass, parentOid);
         Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF,Direction.INCOMING);
         List<RemoteBusinessObject> res = new ArrayList<RemoteBusinessObject>();
@@ -857,8 +910,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
 
     @Override
-    public List<RemoteBusinessObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException {
+    public List<RemoteBusinessObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException  {
+        aem.validateCall("getChildrenOfClassLight", ipAddress, sessionId); 
         Node parentNode = getInstanceOfClass(parentClass, parentOid);
         Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING);
         List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
@@ -906,7 +960,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
 
     @Override
-    public List<RemoteBusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) throws ObjectNotFoundException, MetadataObjectNotFoundException {
+    public List<RemoteBusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName, String ipAddress, String sessionId) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        aem.validateCall("getSpecialAttribute", ipAddress, sessionId); 
         Node instance = getInstanceOfClass(objectClass, objectId);
         List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
         for (Relationship rel : instance.getRelationships(RelTypes.RELATED_TO_SPECIAL))
@@ -916,9 +972,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         return res;
     }
     
-    public HashMap<String,List<RemoteBusinessObjectLight>> getSpecialAttributes (String className, long objectId) 
-        throws MetadataObjectNotFoundException, ObjectNotFoundException {
-
+    @Override
+    public HashMap<String,List<RemoteBusinessObjectLight>> getSpecialAttributes (String className, long objectId, String ipAddress, String sessionId) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException  {
+        aem.validateCall("getSpecialAttributes", ipAddress, sessionId); 
         Node objectNode = getInstanceOfClass(className, objectId);
         HashMap<String,List<RemoteBusinessObjectLight>> res = new HashMap<String, List<RemoteBusinessObjectLight>>();
         for (Relationship rel : objectNode.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
@@ -934,8 +991,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
     
     @Override
-    public List<RemoteBusinessObjectLight> getObjectSpecialChildren(String objectClass, long objectId)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException {
+    public List<RemoteBusinessObjectLight> getObjectSpecialChildren(String objectClass, long objectId, String ipAddress, String sessionId)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException  {
+        aem.validateCall("getObjectSpecialChildren", ipAddress, sessionId); 
         Node instance = getInstanceOfClass(objectClass, objectId);
         List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
         for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL))
@@ -943,7 +1001,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         return res;
     }
 
-    public boolean hasRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) throws ObjectNotFoundException, MetadataObjectNotFoundException {
+    @Override
+    public boolean hasRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException  {
+        aem.validateCall("hasRelationship", ipAddress, sessionId); 
         Node object = getInstanceOfClass(objectClass, objectId);
         int relationshipsCounter = 0;
         for (Relationship rel : object.getRelationships(RelTypes.RELATED_TO)){
@@ -955,7 +1016,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         return false;
     }
     
-    public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) throws ObjectNotFoundException, MetadataObjectNotFoundException {
+    @Override
+    public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships, String ipAddress, String sessionId) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException  {
+        aem.validateCall("hasSpecialRelationship", ipAddress, sessionId); 
         Node object = getInstanceOfClass(objectClass, objectId);
         int relationshipsCounter = 0;
         for (Relationship rel : object.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
@@ -967,8 +1031,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         return false;
     }
     
-    //TO DELETE
-    public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId) {
+    //TODO DELETE
+    @Override
+    public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException{
+        aem.validateCall("getPhysicalPath", ipAddress, sessionId); 
         Node lastNode = null;
         List<RemoteBusinessObjectLight> path = new ArrayList<RemoteBusinessObjectLight>();
         String cypherQuery = "START o=node({oid}) "+ 
@@ -1034,7 +1100,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
         throw new ObjectNotFoundException(className, oid);
     }
-
     /**
      * Boiler-plate code. Gets a particular instance given the class name and the oid
      * @param className object class name
@@ -1043,7 +1108,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
      * @throws MetadataObjectNotFoundException id the class cannot be found
      */
     private Node getInstanceOfClass(long classId, long oid) throws MetadataObjectNotFoundException, ObjectNotFoundException{
-
         //if any of the parameters is null, return the dummy root
         if (classId == -1)
             return graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.BOTH).getEndNode();
@@ -1126,7 +1190,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         
         return newObject;       
     }
-    
     /**
      * Copies and object and optionally its children objects. This method does not manage transactions
      * @param templateObject The object to be cloned
@@ -1149,5 +1212,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             }
         }
         return newInstance;
+    }
+    
+    public void setApplicationEntityManager(ApplicationEntityManagerImpl aem) {
+        this.aem = aem;
     }
 }

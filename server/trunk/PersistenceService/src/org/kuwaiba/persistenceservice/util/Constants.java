@@ -122,6 +122,10 @@ public class Constants {
      */
     public static final String INDEX_SPECIAL_NODES = "specialNodes"; //NOI18N
     /**
+     * Label used for the privilege nodes index
+     */
+    public static final String INDEX_PRIVILEGE_NODES = "privilegeNodes"; //NOI18N
+    /**
      * Property "background path" for views
      */
     public static final String PROPERTY_BACKGROUND_FILE_NAME = "backgroundPath";
@@ -160,6 +164,10 @@ public class Constants {
     public static final String PROPERTY_NEW_VALUE = "newValue"; //NOI18N
     public static final String PROPERTY_NOTES = "notes"; //NOI18N
     public static final String PROPERTY_AFFECTED_PROPERTY = "affectedProperty"; //NOI18N
+    public static final String PROPERTY_CODE = "code"; //NOI18N
+    public static final String PROPERTY_METHOD_GROUP = "methodGroup"; //NOI18N
+    public static final String PROPERTY_METHOD_MANAGER = "methodManager"; //NOI18N
+    public static final String PROPERTY_DEPENDS_OF = "dependsOf"; //NOI18N
     
     /**
      * Root for all business classes
@@ -197,6 +205,10 @@ public class Constants {
      * Users root node name
      */
     public static final String NODE_USERS = "Users";
+    /**
+     * Privileges root node name
+     */
+    public static final String NODE_PRIVILEGES = "Privilges";
     /**
      * Date format for queries
      */

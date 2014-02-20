@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.kuwaiba.persistenceservice.integrity;
 import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.kuwaiba.apis.persistence.application.Privilege;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.persistenceservice.impl.RelTypes;
@@ -141,6 +142,66 @@ public class DataIntegrityService{
             }
         }
         
+    }
+    
+    public void createPrivilegeRootNode(){
+        for (Relationship rel : graphDb.getReferenceNode().getRelationships(RelTypes.ROOT)){
+            if (Constants.NODE_PRIVILEGES.equals(rel.getEndNode().getProperty(Constants.PROPERTY_NAME)))
+                return;
+        }
+        Transaction tx =null;
+        try{
+            tx = graphDb.beginTx();
+            
+            Node privilegeRootNode = graphDb.createNode();
+            privilegeRootNode.setProperty(Constants.PROPERTY_NAME, Constants.NODE_PRIVILEGES);
+            privilegeRootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+            graphDb.getReferenceNode().createRelationshipTo(privilegeRootNode, RelTypes.ROOT);
+            graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).putIfAbsent(privilegeRootNode, Constants.PROPERTY_NAME, Constants.NODE_PRIVILEGES);
+            tx.success();
+            tx.finish();
+        }catch(Exception ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "createPriviligeRootNode: {0}", ex.getMessage()); //NOI18N
+            if (tx != null){
+                tx.failure();
+                tx.finish();
+            }
+        }
+    }
+    
+    public void createPrivileges(Privilege privilege){
+        Node privilegeRootNode = null;
+        for (Relationship rel : graphDb.getReferenceNode().getRelationships(RelTypes.ROOT)){
+            if (Constants.NODE_PRIVILEGES.equals(rel.getEndNode().getProperty(Constants.PROPERTY_NAME))){
+                privilegeRootNode = rel.getEndNode();
+                break;
+            }
+                
+        }
+        Transaction tx = null;
+        try{
+            tx = graphDb.beginTx();
+            Node privilegeNode = graphDb.createNode();
+            privilegeNode.setProperty(Constants.PROPERTY_CODE, privilege.getCode());
+            privilegeNode.setProperty(Constants.PROPERTY_NAME, privilege.getMethodName());
+            privilegeNode.setProperty(Constants.PROPERTY_METHOD_GROUP, privilege.getMethodGroup());
+            privilegeNode.setProperty(Constants.PROPERTY_METHOD_MANAGER, privilege.getMethodManager());
+            privilegeNode.setProperty(Constants.PROPERTY_DEPENDS_OF, privilege.getDependsOf());
+            privilegeNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+            
+            privilegeRootNode.createRelationshipTo(privilegeNode, RelTypes.PRIVILEGE);
+            graphDb.index().forNodes(Constants.INDEX_PRIVILEGE_NODES).putIfAbsent(privilegeNode, Constants.PROPERTY_CODE, privilege.getCode());
+            graphDb.index().forNodes(Constants.INDEX_PRIVILEGE_NODES).putIfAbsent(privilegeNode, Constants.PROPERTY_NAME, privilege.getMethodName());
+                    
+            tx.success();
+            tx.finish();
+        }catch(Exception ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "createPrivilegeNodes: {0}", ex.getMessage()); //NOI18N
+            if (tx != null){
+                tx.failure();
+                tx.finish();
+            }
+        }
     }
         
     public void checkIntegrity() {

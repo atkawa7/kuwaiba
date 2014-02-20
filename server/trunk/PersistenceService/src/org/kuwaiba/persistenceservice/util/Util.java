@@ -36,6 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
+import org.kuwaiba.apis.persistence.application.Privilege;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
@@ -441,32 +442,36 @@ public class Util {
      * @return UserProfile
      */
 
-    public static UserProfile createUserProfileFromNode(Node userNode)
-    {
-       Iterable<Relationship> relationships = userNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.OUTGOING);
+    public static UserProfile createUserProfileFromNode(Node userNode){
        List<GroupProfile> groups = new ArrayList<GroupProfile>();
-
-       for (Relationship relationship : relationships) {
-            Node groupNode = relationship.getEndNode();
-            groups.add(new GroupProfile(groupNode.getId(),
+       List<Privilege> privileges = new ArrayList<Privilege>();
+       Iterable<Relationship> groupRelationships = userNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.OUTGOING);
+       //groups
+       for (Relationship relationship : groupRelationships) {
+           //group Privileges         
+           Node groupNode = relationship.getEndNode();
+           List<Privilege> groupPrivileges = new ArrayList<Privilege>();
+           for(Relationship rel: groupNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING))
+                groupPrivileges.add(createPrivilegeFromNode(rel.getStartNode()));
+           //TODO get users
+           groups.add(new GroupProfile(groupNode.getId(),
                         (String)groupNode.getProperty(Constants.PROPERTY_NAME),
                         (String)groupNode.getProperty(Constants.PROPERTY_DESCRIPTION),
-                        (Long)groupNode.getProperty(Constants.PROPERTY_CREATION_DATE))
-                     );
-        }
-
-       UserProfile user =  new UserProfile(
-                userNode.getId(),
+                        (Long)groupNode.getProperty(Constants.PROPERTY_CREATION_DATE),
+                        null,groupPrivileges));
+            
+       }//end for
+       for(Relationship relationship: userNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING))
+           privileges.add(createPrivilegeFromNode(relationship.getStartNode()));
+       
+       UserProfile user =  new UserProfile(userNode.getId(),
                 (String)userNode.getProperty(Constants.PROPERTY_NAME),
                 (String)userNode.getProperty(Constants.PROPERTY_FIRST_NAME),
                 (String)userNode.getProperty(Constants.PROPERTY_LAST_NAME),
-                (Boolean)userNode.getProperty(Constants.PROPERTY_ENABLED),
                 (Long)userNode.getProperty(Constants.PROPERTY_CREATION_DATE),
-                null);
-
-       user.setGroups(groups);
-
-        return user;
+                (Boolean)userNode.getProperty(Constants.PROPERTY_ENABLED),
+                groups, privileges);
+         return user;
     }
 
     /**
@@ -475,30 +480,49 @@ public class Util {
      * @return
      */
     public static GroupProfile createGroupProfileFromNode(Node groupNode){
-        Iterable<Relationship> relationships = groupNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.INCOMING);
+        
         List<UserProfile> users = new ArrayList<UserProfile>();
-
-        for (Relationship relationship : relationships) {
+        Iterable<Relationship> usersRelationships = groupNode.getRelationships(RelTypes.BELONGS_TO_GROUP, Direction.INCOMING);
+        //Users
+        for (Relationship relationship : usersRelationships) {
             Node userNode = relationship.getStartNode();
+            //user Privileges
+            List<Privilege> userPrivileges = new ArrayList<Privilege>();
+            for(Relationship rel: userNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING))
+                userPrivileges.add(createPrivilegeFromNode(rel.getStartNode()));
+            //TODO User Groups
             users.add(new UserProfile(userNode.getId(),
                         (String)userNode.getProperty(Constants.PROPERTY_NAME),
                         (String)userNode.getProperty(Constants.PROPERTY_FIRST_NAME),
                         (String)userNode.getProperty(Constants.PROPERTY_LAST_NAME),
                         (Boolean)userNode.getProperty(Constants.PROPERTY_ENABLED),
                         (Long)userNode.getProperty(Constants.PROPERTY_CREATION_DATE),
-                        null)
+                        userPrivileges)
                      );
         }
+        List<Privilege> privileges = new ArrayList<Privilege>();
+        for(Relationship relationship: groupNode.getRelationships(RelTypes.HAS_PRIVILEGE, Direction.INCOMING)){
+           Node node = relationship.getStartNode();
+           privileges.add(createPrivilegeFromNode(node));
+        }
+        
         GroupProfile group =  new GroupProfile(
                 groupNode.getId(),
                 (String)groupNode.getProperty(Constants.PROPERTY_NAME),
                 groupNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? 
                         (String)groupNode.getProperty(Constants.PROPERTY_DESCRIPTION) : "",
                 (Long)groupNode.getProperty(Constants.PROPERTY_CREATION_DATE),
-                null,
-                null);
-        group.setUsers(users);
+                users,privileges);
         return group;
+    }
+    
+    
+    public static Privilege createPrivilegeFromNode(Node privilegeNode){
+        return new Privilege((Long)privilegeNode.getProperty(Constants.PROPERTY_CODE), 
+                (String)privilegeNode.getProperty(Constants.PROPERTY_METHOD_GROUP),
+                (String)privilegeNode.getProperty(Constants.PROPERTY_NAME), 
+                (String)privilegeNode.getProperty(Constants.PROPERTY_METHOD_MANAGER), 
+                (long[])privilegeNode.getProperty(Constants.PROPERTY_DEPENDS_OF));
     }
     
     /**
