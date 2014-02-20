@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public class UserProfile implements Serializable{
     /**
      * User's id (oid)
      */
-    private Long id;
+    private long id;
     /**
      * User's username
      */
@@ -54,11 +54,11 @@ public class UserProfile implements Serializable{
     /**
      * User's creation date (a time stamp)
      */
-    private Long creationDate;
+    private long creationDate;
     /**
      * Is this user enabled?
      */
-    private Boolean enabled;
+    private boolean enabled;
     /**
      * User's privileges. See class Privileges for the complete list of supported privileges
      */
@@ -66,13 +66,13 @@ public class UserProfile implements Serializable{
     /**
      * User's privileges. See class Privileges for the complete list of supported privileges
      */
-    private int[] privileges;
+    private List<Privilege> privileges;
 
     public UserProfile() {
     }
 
-    public UserProfile(Long id, String userName, String firstName, String lastName, 
-            Long creationDate, Boolean enabled, List<GroupProfile> groups, int[] privileges) {
+    public UserProfile(long id, String userName, String firstName, String lastName, 
+            long creationDate, boolean enabled, List<GroupProfile> groups, List<Privilege> privileges) {
         this.id = id;
         this.userName = userName;
         this.firstName = firstName;
@@ -83,8 +83,8 @@ public class UserProfile implements Serializable{
         this.privileges = privileges;
     }
 
-    public UserProfile(Long id, String userName, String firstName, String lastName, 
-            Long creationDate, Boolean enabled, List<GroupProfile> groups) {
+    public UserProfile(long id, String userName, String firstName, String lastName, 
+            long creationDate, boolean enabled, List<GroupProfile> groups) {
         this.id = id;
         this.userName = userName;
         this.firstName = firstName;
@@ -94,8 +94,8 @@ public class UserProfile implements Serializable{
         this.groups = groups;
     }
  
-    public UserProfile(Long id, String userName, String firstName, String lastName, 
-            Boolean enabled, Long creationDate, int[] privileges) {
+    public UserProfile(long id, String userName, String firstName, String lastName, 
+            boolean enabled, long creationDate, List<Privilege> privileges) {
         this.id = id;
         this.userName = userName;
         this.firstName = firstName;
@@ -121,11 +121,11 @@ public class UserProfile implements Serializable{
         this.groups = groups;
     }
 
-    public int[] getPrivileges() {
+    public List<Privilege> getPrivileges() {
         return privileges;
     }
 
-    public void setPrivileges(int[] privileges) {
+    public void setPrivileges(List<Privilege> privileges) {
         this.privileges = privileges;
     }
 
@@ -145,7 +145,7 @@ public class UserProfile implements Serializable{
         this.lastName = lastName;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
@@ -153,21 +153,19 @@ public class UserProfile implements Serializable{
         this.id = id;
     }
 
-    public Long getCreationDate() {
+    public long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Long creationDate) {
+    public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
     }
 
-    public Boolean isEnabled() {
+    public boolean isEnabled() {
         return enabled;
     }
 
-    public void setEnabled(Boolean enabled) {
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-
-
 }

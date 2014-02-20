@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public class GroupProfile implements Serializable{
     /**
      * Group's id (oid)
      */
-    private Long id;
+    private long id;
     /**
      * Group's name
      */
@@ -39,7 +39,7 @@ public class GroupProfile implements Serializable{
     /**
      * Group's creation date (in milliseconds, it's a timestamp)
      */
-    private Long creationDate;
+    private long creationDate;
     /**
      * Group's users
      */
@@ -47,20 +47,20 @@ public class GroupProfile implements Serializable{
     /**
      * Group's privileges. See class Privileges for the complete list of supported privileges
      */
-    private List<Integer> privileges;
+    private List<Privilege> privileges;
 
     public GroupProfile() {
     }
 
-    public GroupProfile(Long id, String name, String description, Long creationDate) {
+    public GroupProfile(long id, String name, String description, long creationDate) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.creationDate = creationDate;
     }
 
-    public GroupProfile(Long id, String name, String description, Long creationDate,
-            List<UserProfile> users, List<Integer> privileges) {
+    public GroupProfile(long id, String name, String description, long creationDate,
+            List<UserProfile> users, List<Privilege> privileges) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -69,11 +69,11 @@ public class GroupProfile implements Serializable{
         this.privileges = privileges;
     }
     
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long groupId) {
+    public void setId(long groupId) {
         this.id = groupId;
     }
 
@@ -94,11 +94,11 @@ public class GroupProfile implements Serializable{
         this.name = groupName;
     }
 
-    public List<Integer> getPrivileges() {
+    public List<Privilege> getPrivileges() {
         return privileges;
     }
 
-    public void setPrivileges(List<Integer> privileges) {
+    public void setPrivileges(List<Privilege> privileges) {
         this.privileges = privileges;
     }
 
@@ -110,11 +110,11 @@ public class GroupProfile implements Serializable{
         this.users = users;
     }
 
-    public Long getCreationDate() {
+    public long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Long creationDate) {
+    public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
     }
 }

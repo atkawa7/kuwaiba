@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,20 +14,20 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.beans.sessions;
+package org.kuwaiba.apis.persistence.application;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.Date;
-import org.kuwaiba.apis.persistence.application.UserProfile;
 
 /**
  * Represents a single user session
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class Session{
+public class Session implements Serializable{
     /**
      * User associated to this session
      */
@@ -55,14 +55,6 @@ public class Session{
         this.loginTime = Calendar.getInstance().getTime();
         this.token = generateSessionToken();
     }
-
-//    public ClientDetail getDetail() {
-//        return detail;
-//    }
-//
-//    public void setDetail(ClientDetail detail) {
-//        this.detail = detail;
-//    }
 
     public String getIpAddress() {
         return ipAddress;
