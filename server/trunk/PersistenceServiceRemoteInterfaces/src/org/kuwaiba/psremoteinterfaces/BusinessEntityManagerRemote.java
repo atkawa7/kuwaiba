@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010 - 2014 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundExceptio
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
@@ -37,78 +38,87 @@ import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 public interface BusinessEntityManagerRemote extends Remote{
     public static final String REFERENCE_BEM = "bem";
 
-    public List<RemoteBusinessObjectLight> getObjectChildren(String className, long oid, int maxResults)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
+    public List<RemoteBusinessObjectLight> getObjectChildren(String className, long oid, int maxResults, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
 
-    public List<RemoteBusinessObjectLight> getObjectChildren(long oid, long classId, int maxResults)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
+    public List<RemoteBusinessObjectLight> getObjectChildren(long oid, long classId, int maxResults, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
     
-    public List<RemoteBusinessObjectLight> getSiblings(String className, long oid, int maxResults)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
-    public List<RemoteBusinessObjectLight> getObjectsOfClassLight(String className, int maxResults)
-            throws MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+    public List<RemoteBusinessObjectLight> getSiblings(String className, long oid, int maxResults, String ipAddress, String sessionId)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
+    
+    public List<RemoteBusinessObjectLight> getObjectsOfClassLight(String className, int maxResults, String ipAddress, String sessionId)
+            throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
 
-    public List<RemoteBusinessObject> getChildrenOfClass(long parentOid, String parentClass, String myClass, int maxResults)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, RemoteException;
+    public List<RemoteBusinessObject> getChildrenOfClass(long parentOid, String parentClass, String myClass, int maxResults, String ipAddress, String sessionId)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
 
-    public List<RemoteBusinessObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String myClass, int maxResults)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
+    public List<RemoteBusinessObjectLight> getChildrenOfClassLight(long parentOid, String parentClass, String myClass, int maxResults, String ipAddress, String sessionId)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
 
-    public RemoteBusinessObject getObject(String objectClass, long oid)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+    public RemoteBusinessObject getObject(String objectClass, long oid, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
 
-    public RemoteBusinessObjectLight getObjectLight(String objectClass, long oid)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
-    public RemoteBusinessObject getParent(String objectClass, long oid)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
-    public List<RemoteBusinessObjectLight> getParents (String objectClassName, long oid)
-        throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
+    public RemoteBusinessObjectLight getObjectLight(String objectClass, long oid, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
+    
+    public RemoteBusinessObject getParent(String objectClass, long oid, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
+    
+    public List<RemoteBusinessObjectLight> getParents (String objectClassName, long oid, String ipAddress, String sessionId)
+        throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
 
-    public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, RemoteException;
+    public RemoteBusinessObject getParentOfClass(String objectClass, long oid, String parentClass, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
 
-    public void updateObject(String className, long oid, HashMap<String,List<String>> attributes)
+    public void updateObject(String className, long oid, HashMap<String,List<String>> attributes, String ipAddress, String sessionId)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException,
-                WrongMappingException, InvalidArgumentException, ApplicationObjectNotFoundException, RemoteException;
+                WrongMappingException, InvalidArgumentException, ApplicationObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
+    
     public long createObject(String className, String parentClassName, long parentOid,
-            HashMap<String,List<String>> attributes, long template)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException, DatabaseException, RemoteException;
-   public long createSpecialObject(String className, String parentClassName, long parentOid,
-            HashMap<String,List<String>> attributes,long template)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, DatabaseException, RemoteException;
+            HashMap<String,List<String>> attributes, long template, String ipAddress, String sessionId)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
    
-   public long[] createBulkSpecialObjects(String objectClass, int numberOfObjects, String parentClass, long parentId)
-           throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, RemoteException;
+    public long createSpecialObject(String className, String parentClassName, long parentOid,
+            HashMap<String,List<String>> attributes,long template, String ipAddress, String sessionId)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
+   
+   public long[] createBulkSpecialObjects(String objectClass, int numberOfObjects, String parentClass, long parentId, String ipAddress, String sessionId)
+           throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
 
-    public void deleteObjects(HashMap<String, long[]> objects, boolean releaseRelationships)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
+    public void deleteObjects(HashMap<String, long[]> objects, boolean releaseRelationships, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
 
-    public void moveObjects(String targetClass, long targetOid, HashMap<String, long[]> objects)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
+    public void moveObjects(String targetClass, long targetOid, HashMap<String, long[]> objects, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
 
-    public long[] copyObjects(String targetClass, long targetOid, HashMap<String, long[]> objects, boolean recursive)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
+    public long[] copyObjects(String targetClass, long targetOid, HashMap<String, long[]> objects, boolean recursive, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
 
-    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name)
-            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, RemoteException;
-    public void releaseSpecialRelationship(String objectClass, long objectId, long otherObjectId, String relationshipName)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
-    public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName, long targetId)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
+    public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
     
-    public List<RemoteBusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
-    public HashMap<String,List<RemoteBusinessObjectLight>> getSpecialAttributes (String className, long objectId) 
-        throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
-    public List<RemoteBusinessObjectLight> getObjectSpecialChildren(String objectClass, long objectId)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, RemoteException;
-
-    public boolean hasRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
+    public void releaseSpecialRelationship(String objectClass, long objectId, long otherObjectId, String relationshipName, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
     
-    public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
+    public void releaseSpecialRelationship(String objectClass, long objectId, String relationshipName, long targetId, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
+    
+    public List<RemoteBusinessObjectLight> getSpecialAttribute(String objectClass, long objectId, String specialAttributeName, String ipAddress, String sessionId) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
+    
+    public HashMap<String,List<RemoteBusinessObjectLight>> getSpecialAttributes (String className, long objectId, String ipAddress, String sessionId) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
+    
+    public List<RemoteBusinessObjectLight> getObjectSpecialChildren(String objectClass, long objectId, String ipAddress, String sessionId)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
+
+    public boolean hasRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships, String ipAddress, String sessionId) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
+    
+    public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships, String ipAddress, String sessionId) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
     //TO DELETE
-    public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, RemoteException;
+    public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId, String ipAddress, String sessionId) 
+            throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
 }
