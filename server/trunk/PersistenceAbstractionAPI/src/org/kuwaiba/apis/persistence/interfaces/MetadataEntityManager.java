@@ -44,7 +44,7 @@ public interface MetadataEntityManager {
      * @throws DatabaseException if the reference node doesn't exist
      * @throws InvalidArgumentException if any of the fields of the class definition has an invalid value
      */
-    public long createClass(ClassMetadata classDefinition, String ipAddress, String sessionId) throws DatabaseException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
+    public long createClass(ClassMetadata classDefinition) throws DatabaseException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Changes a classmetadata definiton
@@ -157,7 +157,7 @@ public interface MetadataEntityManager {
      * @throws MetadataObjectNotFoundException if there is no a class with such classId
      * @throws InvalidArgumentException if any of the parameters to create the attribute has a wrong value
      */
-    public void createAttribute(long classId, AttributeMetadata attributeDefinition, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException;
+    public void createAttribute(long classId, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Gets an attribute belonging to a class
@@ -167,7 +167,7 @@ public interface MetadataEntityManager {
      * @throws ClassNotFoundException if there is no a class with such className
      * @throws MiscException if the attributeName does not exist
      */
-    public AttributeMetadata getAttribute(String className, String attributeName, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+    public AttributeMetadata getAttribute(String className, String attributeName) throws MetadataObjectNotFoundException;
 
     /**
      * Gets an attribute belonging to a class
