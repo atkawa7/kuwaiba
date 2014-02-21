@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010 - 2014 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.inventory.communications.core;
 
-import org.kuwaiba.wsclient.UserGroupInfoLight;
+import org.kuwaiba.wsclient.GroupInfoLight;
 
 /**
  * Implementation for the local representation of the very basic information about an application users group
@@ -26,8 +26,8 @@ public class LocalUserGroupObjectLight {
     protected  long oid;
     protected  String name;
 
-    public LocalUserGroupObjectLight(UserGroupInfoLight user){
-        this.oid = user.getOid();
+    public LocalUserGroupObjectLight(GroupInfoLight user){
+        this.oid = user.getId();
         this.name = user.getName();
     }
 

@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.inventory.communications.core;
 
-import org.kuwaiba.wsclient.UserGroupInfoLight;
+import org.kuwaiba.wsclient.GroupInfoLight;
 import org.kuwaiba.wsclient.UserInfo;
 
 /**
@@ -34,7 +34,7 @@ public class LocalUserObject {
     public LocalUserObject() {    }
 
     public LocalUserObject(UserInfo user) {
-        this.oid = user.getOid();
+        this.oid = user.getId();
         this.userName = user.getUserName();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
@@ -44,12 +44,11 @@ public class LocalUserObject {
             groups = new LocalUserGroupObjectLight[user.getGroups().size()];
 
             int i = 0;
-            for(UserGroupInfoLight group : user.getGroups()){
+            for(GroupInfoLight group : user.getGroups()){
                 groups[i] = new LocalUserGroupObjectLight(group);
                 i++;
             }
         }
-
     }
 
     public String getFirstName() {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010 - 2014 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.inventory.communications.core;
 
 import java.util.Date;
-import org.kuwaiba.wsclient.UserGroupInfo;
+import org.kuwaiba.wsclient.GroupInfo;
 
 /**
  * Implementation for the local representation of an application users group
@@ -33,8 +33,8 @@ public class LocalUserGroupObject extends LocalUserGroupObjectLight {
      */
     private String description;
     
-    public LocalUserGroupObject(UserGroupInfo group) {
-        super(group.getOid(),group.getName());
+    public LocalUserGroupObject(GroupInfo group) {
+        super(group.getId(),group.getName());
         this.description = group.getDescription();
         if (group.getCreationDate() == 0)
             this.creationDate = null;
