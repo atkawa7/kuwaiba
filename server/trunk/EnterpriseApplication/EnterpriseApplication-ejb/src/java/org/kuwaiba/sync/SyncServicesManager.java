@@ -138,13 +138,13 @@ public final class SyncServicesManager{
                                 String type = attribute[0];
                                 String value = attribute[1];
                                 AttributeMetadata theAttribute =  null;
-                                try{
-                                    theAttribute = mem.getAttribute(className, attributeName);
-                                }catch(Exception ex){
-                                    errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE")+currentFileLine + ex.getMessage()+"\n";
-                                    errors = true;
-                                    break;
-                                }
+//                                try{
+//                                    theAttribute = mem.getAttribute(className, attributeName);
+//                                }catch(Exception ex){
+//                                    errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE")+currentFileLine + ex.getMessage()+"\n";
+//                                    errors = true;
+//                                    break;
+//                                }
                                 if (theAttribute == null) {
                                     errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE")+ currentFileLine +
                                             java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_ATTRIBUTE_NOT_FOUND")+ attributeName+"\n";
@@ -163,7 +163,7 @@ public final class SyncServicesManager{
                                         //The type is not primitive.
                                         RemoteBusinessObjectLight listTypeItem = null;
                                         try{
-                                            listTypeItem = aem.getListTypeItem(value);
+                                            //listTypeItem = aem.getListTypeItem(value);
                                         }catch(Exception ex){
                                             errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE")+currentFileLine+
                                                     ex.getMessage()+java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_LISTTYPE_NOTFOUND")+value+"\n";
@@ -182,20 +182,20 @@ public final class SyncServicesManager{
                                 }//end if to eval attribute type 
                             }//end if attributos estan bien formados
                         }//end for read Attributes
-                        if(!errors){
-                            //is a son of dummy root
-                            try{
-                                if (parentClassName.equals(ROOT) && objectParentName.equals(OBJECTROOTNAME))
-                                    oid = bem.createObject(className, null, -1, attributes, templateId);
-                                else// si no esta en la jerarquia de contentencia va a salir error! si el padre no existe! La clase del padre no coincide con el nombre de padre objeto dado
-                                    oid = bem.createObject(className, parentClassName, currentCreatedObjects.get(objectParentName), attributes, templateId);
-                                    currentCreatedObjects.put(savedObjectName, oid);
-                            }catch(Exception ex){
-                                errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE")+currentFileLine +
-                                        java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_PARENT_BAD_CLASS")+"\n";
-                                errors = true;
-                            }
-                        }
+//                        if(!errors){
+//                            //is a son of dummy root
+//                            try{
+//                                if (parentClassName.equals(ROOT) && objectParentName.equals(OBJECTROOTNAME))
+//                                    oid = bem.createObject(className, null, -1, attributes, templateId);
+//                                else// si no esta en la jerarquia de contentencia va a salir error! si el padre no existe! La clase del padre no coincide con el nombre de padre objeto dado
+//                                    oid = bem.createObject(className, parentClassName, currentCreatedObjects.get(objectParentName), attributes, templateId);
+//                                    currentCreatedObjects.put(savedObjectName, oid);
+//                            }catch(Exception ex){
+//                                errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE")+currentFileLine +
+//                                        java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_PARENT_BAD_CLASS")+"\n";
+//                                errors = true;
+//                            }
+//                        }
                         //I keep the name object and the oid of the saved object to create new ones 
                     }//else suficientes campos
                 }//else el nombre del padre esta mal formado

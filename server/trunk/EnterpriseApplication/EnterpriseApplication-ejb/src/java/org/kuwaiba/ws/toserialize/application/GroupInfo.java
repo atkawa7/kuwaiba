@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,15 +19,18 @@ package org.kuwaiba.ws.toserialize.application;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
-import org.kuwaiba.apis.persistence.application.UserProfile;
 
 /**
  * Wrapper for entity class UserGroup
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UserGroupInfo extends UserGroupInfoLight{
-    protected UserInfo[] members;
+public class GroupInfo extends GroupInfoLight{
+    
+    /**
+     * Membres of the group;
+     */
+    protected UserInfo[] users;
     /**
      * Object's creation date. Since there's no a seamless map for java.util.Date
      * (xsd:date has less information than Date, so it's mapped into Calendar), we use a long instead (a timestamp)
@@ -37,27 +40,32 @@ public class UserGroupInfo extends UserGroupInfoLight{
      * UserGroup's description
      */
     protected String description;
+    /**
+     * Group's privileges
+     */
+    private PrivilegeInfo[] privileges;
 
-    public UserGroupInfo(){}
-    public UserGroupInfo(GroupProfile group){
+    public GroupInfo(){}
+    public GroupInfo(GroupProfile group){
         super (group);
-        this.members = new UserInfo[group.getUsers().size()];
         this.description = group.getDescription();
-        if (group.getCreationDate() != null)
-            this.creationDate = group.getCreationDate();
-        else
-            this.creationDate = 0;
-        int i = 0;
-        for (UserProfile member : group.getUsers())
-            this.members[i] = new UserInfo(member);
+        this.creationDate = group.getCreationDate();
+        users = new UserInfo[group.getUsers().size()];
+        privileges = new PrivilegeInfo[group.getPrivileges().size()];
+        
+        for(int i=0; i < group.getUsers().size(); i++)
+            users[i]= new UserInfo(group.getUsers().get(i));
+        
+        for(int i=0; i < group.getPrivileges().size(); i++)
+            privileges[i] = new PrivilegeInfo(group.getPrivileges().get(i));
+    } 
+
+    public UserInfoLight[] getUsers() {
+        return users;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public UserInfo[] getMembers() {
-        return members;
+    public void setUsers(UserInfo[] users) {
+        this.users = users;
     }
 
     public long getCreationDate() {
@@ -66,5 +74,21 @@ public class UserGroupInfo extends UserGroupInfoLight{
 
     public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public PrivilegeInfo[] getPrivileges() {
+        return privileges;
+    }
+
+    public void setPrivileges(PrivilegeInfo[] privileges) {
+        this.privileges = privileges;
     }
 }

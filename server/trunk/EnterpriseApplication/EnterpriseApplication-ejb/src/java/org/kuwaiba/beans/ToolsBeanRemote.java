@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,11 +30,11 @@ public interface ToolsBeanRemote {
      */
     public void resetAdmin() throws Exception;
 
-    /**
-     * Created the default groups
-     * @throws ServerSideException
-     */
-    public void createDefaultGroups() throws ServerSideException;
+//    /**
+//     * Created the default groups
+//     * @throws ServerSideException
+//     */
+//    public void createDefaultGroups() throws ServerSideException;
     
     /**
      * Tries to retrieve the references to the remote objects exposed by the Persistence Service
