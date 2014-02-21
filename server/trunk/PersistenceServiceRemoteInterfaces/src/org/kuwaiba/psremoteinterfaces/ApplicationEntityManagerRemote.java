@@ -98,8 +98,8 @@ public interface ApplicationEntityManagerRemote extends Remote {
      * @throws ApplicationObjectNotFoundException Thrown if any of the ids provided for the groups does not belong to an existing group
      */
     public void setUserProperties(String formerUsername, String userName, String password, String firstName,
-            String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
-            throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
+            String lastName, boolean enabled, long[] privileges, long[] groups)//, String ipAddress, String sessionId)
+            throws InvalidArgumentException, ApplicationObjectNotFoundException, RemoteException;//, NotAuthorizedException, RemoteException;
 
     /**
      * Creates a group

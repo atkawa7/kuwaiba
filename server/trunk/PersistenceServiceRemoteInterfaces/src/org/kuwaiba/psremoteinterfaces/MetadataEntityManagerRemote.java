@@ -42,7 +42,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public long createClass(ClassMetadata classDefinition, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException, RemoteException;
+    public long createClass(ClassMetadata classDefinition) throws MetadataObjectNotFoundException, DatabaseException, InvalidArgumentException, RemoteException;
     /**
      * See Persistence Abstraction API documentation
      * @param newClassDefinition
@@ -148,7 +148,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public void createAttribute(long classId, AttributeMetadata attributeDefinition, String ipAddress, String sessionId) throws RemoteException, ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException, InvalidArgumentException;
+    public void createAttribute(long classId, AttributeMetadata attributeDefinition) throws RemoteException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * See Persistence Abstraction API documentation
@@ -157,7 +157,7 @@ public interface MetadataEntityManagerRemote extends Remote{
      * @return
      * @throws RemoteException, Exception
      */
-    public AttributeMetadata getAttribute(String className, String attributeName, String ipAddress, String sessionId) throws RemoteException, ApplicationObjectNotFoundException, NotAuthorizedException, MetadataObjectNotFoundException;
+    public AttributeMetadata getAttribute(String className, String attributeName) throws RemoteException, NotAuthorizedException, MetadataObjectNotFoundException;
 
     /**
      * See Persistence Abstraction API documentation
