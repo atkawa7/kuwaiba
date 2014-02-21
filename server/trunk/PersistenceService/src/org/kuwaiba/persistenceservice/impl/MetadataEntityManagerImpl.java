@@ -103,9 +103,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws DatabaseException if the reference node does not exist
      */
     @Override
-    public long createClass(ClassMetadata classDefinition, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException {
+    public long createClass(ClassMetadata classDefinition) throws MetadataObjectNotFoundException, DatabaseException, InvalidArgumentException {
         
-        aem.validateCall("createClass", ipAddress, sessionId);
+        //aem.validateCall("createClass", ipAddress, sessionId);
         
         Transaction tx = null;
         long id;   
@@ -190,8 +190,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
             //Attributes
             if (classDefinition.getAttributes() != null) {
                 for (AttributeMetadata at : classDefinition.getAttributes()) {
-                    if (getAttribute(classDefinition.getName(), at.getName(), ipAddress, sessionId) == null){
-                        createAttribute(id, at, ipAddress, sessionId);
+                    if (getAttribute(classDefinition.getName(), at.getName()) == null){
+                        createAttribute(id, at);
                     }
                 }
             }
@@ -715,8 +715,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws MetadataObjectNotFoundException if there is no a class with such classId
      */
     @Override
-    public void createAttribute(long classId, AttributeMetadata attributeDefinition, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
-        aem.validateCall("createAttribute", ipAddress, sessionId);
+    public void createAttribute(long classId, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException {
+        //aem.validateCall("createAttribute", ipAddress, sessionId);
         Transaction tx = null;
         if (attributeDefinition.getName() == null || attributeDefinition.getName().isEmpty())
             throw new InvalidArgumentException("Attribute name can not be null or an empty string", Level.INFO);
@@ -753,8 +753,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
      * @throws MetadataObjectNotFoundException if there is no a class with such className
      */
     @Override
-    public AttributeMetadata getAttribute(String className, String attributeName, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
-        aem.validateCall("getAttribute", ipAddress, sessionId);
+    public AttributeMetadata getAttribute(String className, String attributeName) throws MetadataObjectNotFoundException {
+        //aem.validateCall("getAttribute", ipAddress, sessionId);
         AttributeMetadata attribute = null;
         try {
             Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
@@ -1590,4 +1590,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager, Metadat
    public void setApplicationEntityManager(ApplicationEntityManagerImpl aem) {
         this.aem = aem;
    }
+
+    public void createAttribute(long classId, AttributeMetadata attributeDefinition, String ipAddress, String sessionId) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, InvalidArgumentException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

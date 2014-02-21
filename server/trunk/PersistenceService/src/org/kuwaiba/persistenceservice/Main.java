@@ -51,22 +51,22 @@ public class Main {
             System.out.println(String.format("[%s] Connection established", Calendar.getInstance().getTime()));
             cm.printConnectionDetails();
             
+            MetadataEntityManagerImpl memi  =new MetadataEntityManagerImpl(cm);
             ApplicationEntityManagerImpl aemi = new ApplicationEntityManagerImpl(cm);
+            BusinessEntityManagerImpl bemi = new BusinessEntityManagerImpl(cm);
+            
+            memi.setApplicationEntityManager(aemi);
+            MetadataEntityManagerRemote meri = memi;
+            MetadataEntityManagerRemote memStub = (MetadataEntityManagerRemote)UnicastRemoteObject.exportObject(meri,0);
+
+            bemi.setApplicationEntityManager(aemi);
+            BusinessEntityManagerRemote bemri = bemi; 
+            BusinessEntityManagerRemote bemStub = (BusinessEntityManagerRemote)UnicastRemoteObject.exportObject(bemri,0);
+            
+            aemi.setBusinessEntityManager(bemi);
             ApplicationEntityManagerRemote aemri = aemi;
             ApplicationEntityManagerRemote aemStub = (ApplicationEntityManagerRemote)UnicastRemoteObject.exportObject(aemri,0);
             
-            MetadataEntityManagerImpl memi = new MetadataEntityManagerImpl(cm);
-            MetadataEntityManagerRemote memri =  memi;
-            MetadataEntityManagerRemote memStub = (MetadataEntityManagerRemote)UnicastRemoteObject.exportObject(memri,0);
-
-            BusinessEntityManagerImpl bemi = new BusinessEntityManagerImpl(cm);
-            BusinessEntityManagerRemote bemri = bemi; 
-            BusinessEntityManagerRemote bemStub = (BusinessEntityManagerRemote)UnicastRemoteObject.exportObject(bemri,0);
-
-            aemi.setBusinessEntityManager(bemi);
-            memi.setApplicationEntityManager(aemi);
-            bemi.setApplicationEntityManager(aemi);
-                    
             Registry registry = LocateRegistry.getRegistry();
             System.out.println(String.format("[%s] Registry obtained", Calendar.getInstance().getTime()));
 

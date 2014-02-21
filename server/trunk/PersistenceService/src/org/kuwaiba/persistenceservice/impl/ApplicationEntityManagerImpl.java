@@ -346,10 +346,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     
     @Override
     public void setUserProperties(String oldUserName, String newUserName, String password,
-            String firstName, String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
-            throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+            String firstName, String lastName, boolean enabled, long[] privileges, long[] groups)//, String ipAddress, String sessionId)
+            throws InvalidArgumentException, ApplicationObjectNotFoundException{//, NotAuthorizedException {
         
-        validateCall("setUserProperties", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        //validateCall("setUserProperties", ipAddress, sessions.get(sessionId).getUser().getUserName());
         
         Transaction tx = null;
         if(oldUserName == null){
@@ -1683,8 +1683,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     @Override
     public void validateCall(String methodName, String ipAddress, String sessionId)
             throws NotAuthorizedException{
-        Session aSession = sessions.get(sessionId);
-        try {
+//        Session aSession = sessions.get(sessionId);
+//        try {
 //        if(cm!=null){
 //            for (Privilege privilege : cm.getUser(user.getUserName()).getPrivileges()){
 //                if(privilege.getMethodName().contentEquals(methodName))
@@ -1697,11 +1697,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 //                }
 //            }
 //        }
-            if(aSession == null)
-                throw new NotAuthorizedException("The session token provided to call is not valid,", methodName);
-            if (!aSession.getIpAddress().equals(ipAddress))
-                throw new NotAuthorizedException(String.format("The IP %s", ipAddress), methodName);
-
+//            if(aSession == null)
+//                throw new NotAuthorizedException("The session token provided to call is not valid,", methodName);
+//            if (!aSession.getIpAddress().equals(ipAddress))
+//                throw new NotAuthorizedException(String.format("The IP %s", ipAddress), methodName);
 //            Node userNode = userIndex.get(Constants.PROPERTY_ID, aSession.getUser().getId()).getSingle();
 //            if(userNode == null)
 //                throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %s",aSession.getUser().getId()));
@@ -1718,10 +1717,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 //                    return;
 //            }
 //            throw new NotAuthorizedException(methodName,sessions.get(sessionId).getUser().getUserName());
-            
-        }catch(Exception ex){
-            throw new RuntimeException(ex.getMessage());
-        }
+//        }catch(Exception ex){
+//            throw new RuntimeException(ex.getMessage());
+//        }
     }
 
     @Override
