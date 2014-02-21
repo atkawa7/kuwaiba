@@ -210,11 +210,11 @@ public class XMLBackupReader {
                     attList.add(attr);
             }
             clmt.setAttributes(attList);
-//            try{
-//                mem.createClass(clmt);
-//            }catch (Exception ex){
-//                System.out.println(String.format("Class %s could not be created: %s", lcw.getName(), ex.getMessage()));
-//            }
+            try{
+                mem.createClass(clmt);
+            }catch (Exception ex){
+                System.out.println(String.format("Class %s could not be created: %s", lcw.getName(), ex.getMessage()));
+            }
             //The subclasses are processed even if the parent class failed
             if(lcw.getDirectSubClasses().size() > 0)
                 readRoots(lcw.getDirectSubClasses(), lcw.getName());
