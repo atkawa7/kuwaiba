@@ -224,7 +224,7 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
                 return myWidget;
             }
             else{
-                LocalObjectLight lol = new LocalObjectLight(randomGenerator.nextInt(1000), "Cloud", "Cloud");
+                LocalObjectLight lol = new LocalObjectLight(randomGenerator.nextInt(1000), null, null);
                 ObjectNodeWidget cloudWidget = new ObjectNodeWidget(this, lol);
                 iconsLayer.addChild(cloudWidget);
                 cloudWidget.setImage(cloudIcon);
@@ -444,8 +444,6 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
         polygonsTag.end();
         
         mainTag.end().close();
-        System.out.println(bas.toString());
-        
         return bas.toByteArray();
     }
     

@@ -99,9 +99,9 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
         jToolBar1 = new javax.swing.JToolBar();
         btnNewTopology = new javax.swing.JButton();
         btnOpen = new javax.swing.JButton();
-        btnSave = new javax.swing.JToggleButton();
-        btnDelete = new javax.swing.JToggleButton();
-        btnExport = new javax.swing.JToggleButton();
+        btnSave = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
+        btnExport = new javax.swing.JButton();
         btnSelect = new javax.swing.JToggleButton();
         btnShowNodesLabels = new javax.swing.JToggleButton();
         btnConnect = new javax.swing.JToggleButton();
@@ -264,6 +264,83 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
+        scene.setActiveTool(ObjectNodeWidget.ACTION_SELECT);
+        btnConnect.setSelected(false);
+    }//GEN-LAST:event_btnSelectActionPerformed
+
+    private void btnShowNodesLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodesLabelsActionPerformed
+        for (Widget node : scene.getNodesLayer().getChildren())
+            ((ObjectNodeWidget)node).getLabelWidget().setVisible(!btnShowNodesLabels.isSelected());
+        scene.validate();
+        for (Widget node : scene.getIconLayer().getChildren())
+            ((ObjectNodeWidget)node).getLabelWidget().setVisible(!btnShowNodesLabels.isSelected());
+        scene.validate();
+    }//GEN-LAST:event_btnShowNodesLabelsActionPerformed
+
+    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
+        scene.setActiveTool(ObjectNodeWidget.ACTION_CONNECT);
+        btnSelect.setSelected(false);
+    }//GEN-LAST:event_btnConnectActionPerformed
+
+    private void btnCloudActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloudActionPerformed
+        scene.addFreeCloud();
+    }//GEN-LAST:event_btnCloudActionPerformed
+
+    private void btnFrameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFrameActionPerformed
+        scene.addFreeFrame();
+    }//GEN-LAST:event_btnFrameActionPerformed
+
+    private void btnAddFreeLabelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddFreeLabelActionPerformed
+        scene.addFreeLabel();
+    }//GEN-LAST:event_btnAddFreeLabelActionPerformed
+
+    private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
+        if (!checkForUnsavedView(true))
+            return;
+         LocalObjectViewLight[] topologyViews = tvsrv.getTopologyViews();
+
+         final TopologyListPanel tlp = new TopologyListPanel(topologyViews);
+         DialogDescriptor dd = new DialogDescriptor(tlp, "Choose a view", true, new ActionListener(){
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                if (e.getSource() == DialogDescriptor.OK_OPTION){
+                                    if (tlp.getSelectedView() != null){
+                                        tvsrv.loadTopologyView(tlp.getSelectedView());
+                                        
+                                        toggleButtons(true);
+                                    }
+                                    else
+                                        JOptionPane.showConfirmDialog(null, "Select a view, please","Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                                tlp.releaseListeners();
+                            }
+                        });
+        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+    }//GEN-LAST:event_btnOpenActionPerformed
+
+    private void btnNewTopologyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewTopologyActionPerformed
+        if (scene.getNodes().isEmpty()){
+            toggleButtons(true);
+        }
+        else {
+            switch (JOptionPane.showConfirmDialog(this, "This topology has not been saved, do you want to save it?",
+                    "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION)){
+                case JOptionPane.NO_OPTION:
+                    scene.clear();
+                    isSaved=false;
+                    tvsrv.setTvId(-1);
+                    break;
+                case JOptionPane.YES_OPTION:
+                    btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
+                    break;
+                case JOptionPane.CANCEL_OPTION:
+                    break;
+            }  
+        
+        }
+    }//GEN-LAST:event_btnNewTopologyActionPerformed
+
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         if (!validateTopology())
             return;
@@ -302,89 +379,16 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
         new ExportSceneAction(scene).actionPerformed(evt);
     }//GEN-LAST:event_btnExportActionPerformed
 
-    private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
-        scene.setActiveTool(ObjectNodeWidget.ACTION_CONNECT);
-        btnConnect.setSelected(false);
-    }//GEN-LAST:event_btnSelectActionPerformed
-
-    private void btnShowNodesLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodesLabelsActionPerformed
-        for (Widget node : scene.getNodesLayer().getChildren())
-            ((ObjectNodeWidget)node).getLabelWidget().setVisible(!btnShowNodesLabels.isSelected());
-        scene.validate();
-        for (Widget node : scene.getIconLayer().getChildren())
-            ((ObjectNodeWidget)node).getLabelWidget().setVisible(!btnShowNodesLabels.isSelected());
-        scene.validate();
-    }//GEN-LAST:event_btnShowNodesLabelsActionPerformed
-
-    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        scene.setActiveTool(ObjectNodeWidget.ACTION_SELECT);
-        btnSelect.setSelected(false);
-    }//GEN-LAST:event_btnConnectActionPerformed
-
-    private void btnCloudActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloudActionPerformed
-        scene.addFreeCloud();
-    }//GEN-LAST:event_btnCloudActionPerformed
-
-    private void btnFrameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFrameActionPerformed
-        scene.addFreeFrame();
-    }//GEN-LAST:event_btnFrameActionPerformed
-
-    private void btnAddFreeLabelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddFreeLabelActionPerformed
-        scene.addFreeLabel();
-    }//GEN-LAST:event_btnAddFreeLabelActionPerformed
-
-    private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
-        if (!checkForUnsavedView(true))
-            return;
-         LocalObjectViewLight[] topologyViews = tvsrv.getTopologyViews();
-
-         final TopologyListPanel tlp = new TopologyListPanel(topologyViews);
-         DialogDescriptor dd = new DialogDescriptor(tlp, "Choose a view", true, new ActionListener(){
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                if (e.getSource() == DialogDescriptor.OK_OPTION){
-                                    if (tlp.getSelectedView() != null){
-                                        tvsrv.loadTopologyView(tlp.getSelectedView());
-                                        toggleButtons(true);
-                                    }
-                                    else
-                                        JOptionPane.showConfirmDialog(null, "Select a view, please","Error", JOptionPane.ERROR_MESSAGE);
-
-                                }
-                                else
-                                    toggleButtons(false);
-                                tlp.releaseListeners();
-                            }
-                        });
-        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
-    }//GEN-LAST:event_btnOpenActionPerformed
-
-    private void btnNewTopologyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewTopologyActionPerformed
-        if (scene.getNodes().isEmpty())
-            toggleButtons(true);
-        else if (JOptionPane.showConfirmDialog(this, "Are you sure you want to clear the current topology?",
-                    "Confirmation",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
-            if(tvsrv.getTvId() == -1){ //It's a temporal view, not a saved one
-                    scene.clear();
-            }else{ //It's a saved view, so we need to clear everything
-                scene.clear();
-                toggleButtons(true);
-                isSaved = false;
-            }
-            scene.validate();
-        }
-    }//GEN-LAST:event_btnNewTopologyActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddFreeLabel;
     private javax.swing.JButton btnCloud;
     private javax.swing.JToggleButton btnConnect;
-    private javax.swing.JToggleButton btnDelete;
-    private javax.swing.JToggleButton btnExport;
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnExport;
     private javax.swing.JButton btnFrame;
     private javax.swing.JButton btnNewTopology;
     private javax.swing.JButton btnOpen;
-    private javax.swing.JToggleButton btnSave;
+    private javax.swing.JButton btnSave;
     private javax.swing.JToggleButton btnSelect;
     private javax.swing.JToggleButton btnShowNodesLabels;
     private javax.swing.JToolBar jToolBar1;
@@ -518,6 +522,7 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
         btnSave.setEnabled(enabled);
         btnDelete.setEnabled(enabled);
         btnSelect.setSelected(enabled);
+        btnConnect.setSelected(!enabled);
     }
 
     @Override
