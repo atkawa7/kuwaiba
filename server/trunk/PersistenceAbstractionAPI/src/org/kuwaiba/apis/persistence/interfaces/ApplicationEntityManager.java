@@ -92,6 +92,25 @@ public interface ApplicationEntityManager {
             String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
             throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException;
     /**
+     * Updates the attributes of a user, using its username as key to find it
+     * @param formerUsername Current user name
+     * @param newUserName New name. Null if unchanged
+     * @param password Password. Null if unchanged
+     * @param firstName User's first name. Null if unchanged
+     * @param lastName User's last name. Null if unchanged
+     * @param enabled Is this user enabled?
+     * @param privileges Privileges
+     * @param groups List of ids with the groups. It overwrites the existing ones
+     * @param ipAddress IP address this request is made
+     * @param sessionId Session token
+     * @throws InvalidArgumentException If the format of any of the parameters provided is erroneous
+     * @throws ApplicationObjectNotFoundException If the user can not be found
+     * @throws NotAuthorizedException If the session is not valid or the caller doesn't have enough rights to perform this operation
+     */
+    public void setUserProperties(String formerUsername, String newUserName, String password, String firstName,
+            String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
+            throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException;
+    /**
      * Creates a group
      * @param name
      * @param description

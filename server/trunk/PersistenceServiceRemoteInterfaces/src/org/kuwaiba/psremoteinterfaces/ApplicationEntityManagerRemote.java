@@ -83,6 +83,9 @@ public interface ApplicationEntityManagerRemote extends Remote {
     public void setUserProperties(long oid, String userName, String password, String firstName,
             String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
             throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
+    public void setUserProperties(String formerUsername, String newUserName, String password, String firstName,
+            String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
+            throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
 
     /**
      * Creates a group

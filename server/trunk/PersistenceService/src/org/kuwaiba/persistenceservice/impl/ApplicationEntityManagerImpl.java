@@ -273,6 +273,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         
         validateCall("setUserProperties", ipAddress, sessionId);
         
+        Node userNode = userIndex.get(Constants.PROPERTY_ID, oid).getSingle();
+        if(userNode == null)
+            throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %s",oid));
+        
         Transaction tx = null;
         if(userName != null){
             if (userName.trim().equals(""))
@@ -287,10 +291,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
         }
         
-        Node userNode = userIndex.get(Constants.PROPERTY_ID, oid).getSingle();
-        if(userNode == null)
-            throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %s",oid));
-        
         try{
             tx =  graphDb.beginTx();
             if (userName != null){
@@ -299,6 +299,82 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 cm.removeUser(userName);
                 userNode.setProperty(Constants.PROPERTY_NAME, userName);
                 userIndex.putIfAbsent(userNode, Constants.PROPERTY_NAME, userName);
+            }
+            if (password != null)
+                userNode.setProperty(Constants.PROPERTY_PASSWORD, Util.getMD5Hash(password));
+            if(firstName != null)
+                userNode.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
+            if(lastName != null)
+                userNode.setProperty(Constants.PROPERTY_LAST_NAME, lastName);
+            if(groups != null){
+                Iterable<Relationship> relationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP);
+                for (Relationship relationship : relationships)
+                    relationship.delete();
+                for (long id : groups) {
+                    Node groupNode = groupIndex.get(Constants.PROPERTY_ID, id).getSingle();
+                    userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
+                }
+            }
+            if (privileges != null){
+                Iterable<Relationship> privilegesRelationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE);
+                for (Relationship relationship : privilegesRelationships)
+                    relationship.delete();
+                for(long privilegeCode : privileges){
+                    Node privilegeNode = privilegeIndex.get(Constants.PROPERTY_CODE, privilegeCode).getSingle();
+                    if(privilegeNode != null)
+                        privilegeNode.createRelationshipTo(userNode, RelTypes.HAS_PRIVILEGE);
+                    else{
+                        tx.failure();
+                        tx.finish();
+                        throw new InvalidArgumentException(String.format("Privilege with coded %s can not be found",privilegeCode), Level.OFF);
+                    }
+                }
+            }
+            
+            tx.success();
+            tx.finish();
+            cm.putUser(Util.createUserProfileFromNode(userNode));
+        }catch(Exception ex){
+            Logger.getLogger("setUserProperties: "+ex.getMessage()); //NOI18N
+            tx.failure();
+            tx.finish();
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void setUserProperties(String formerUsername, String newUserName, String password, String firstName,
+            String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
+            throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        
+        validateCall("setUserProperties", ipAddress, sessionId);
+        
+        Node userNode = userIndex.get(Constants.PROPERTY_NAME, formerUsername).getSingle();
+        if(userNode == null)
+            throw new ApplicationObjectNotFoundException(String.format("Can not find a user with name %s", formerUsername));
+        
+        Transaction tx = null;
+        if(newUserName != null){
+            if (newUserName.trim().equals(""))
+                throw new InvalidArgumentException("User name can not be an empty string", Level.INFO);
+
+            Node storedUser = userIndex.get(Constants.PROPERTY_NAME, newUserName).getSingle();
+            if (storedUser != null)
+                throw new InvalidArgumentException(String.format("User name %s already exists", newUserName), Level.WARNING);
+        }
+        if(password != null){
+            if (password.trim().isEmpty())
+                throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
+        }
+        
+        try{
+            tx =  graphDb.beginTx();
+            if (newUserName != null){
+                //refresh the userindex
+                userIndex.remove(userNode, Constants.PROPERTY_NAME, (String)userNode.getProperty(Constants.PROPERTY_NAME));
+                userNode.setProperty(Constants.PROPERTY_NAME, newUserName);
+                userIndex.putIfAbsent(userNode, Constants.PROPERTY_NAME, newUserName);
+                cm.removeUser(newUserName);
             }
             if (password != null)
                 userNode.setProperty(Constants.PROPERTY_PASSWORD, Util.getMD5Hash(password));
