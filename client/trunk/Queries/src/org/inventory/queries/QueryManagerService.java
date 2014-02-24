@@ -218,17 +218,21 @@ public class QueryManagerService implements ActionListener {
                         myMetadata = com.getMetaForClass(selectedValue.getClassName(),false);
                     }else
                     myMetadata = com.getMetaForClass((String)insideCheck.getClientProperty("className"),false);
+                    LocalClassMetadataLight myMetadataLight = new LocalClassMetadataLight(myMetadata.getOid(), 
+                            myMetadata.getClassName(), myMetadata.getDisplayName(),
+                            myMetadata.getParentName(), myMetadata.isAbstract(), 
+                            myMetadata.isViewable(), myMetadata.isListType(), myMetadata.isCustom(), false, null, null);
                     
-                    newNode = (ClassNodeWidget)qbtc.getQueryScene().findWidget(myMetadata);
+                    newNode = (ClassNodeWidget)qbtc.getQueryScene().findWidget(myMetadataLight);
                     if (newNode == null){
-                        newNode = (QueryEditorNodeWidget) qbtc.getQueryScene().addNode(myMetadata);
+                        newNode = (QueryEditorNodeWidget) qbtc.getQueryScene().addNode(myMetadataLight);
                         if (newNode instanceof ListTypeFilter)
                             ((ListTypeFilter)newNode).build(com.getList(((ListTypeFilter)newNode).getWrappedClass().getClassName(), true, false));
                         else
                             newNode.build(null);
                         qbtc.getQueryScene().validate();
                     }
-                    insideCheck.putClientProperty("related-node", myMetadata);
+                    insideCheck.putClientProperty("related-node", myMetadataLight);
                 }else{
                     String newNodeId = lam.getType().getSimpleName()+"_"+new Random().nextInt(10000);
                     newNode = (QueryEditorNodeWidget)qbtc.getQueryScene().addNode(newNodeId);
