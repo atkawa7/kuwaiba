@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 
@@ -35,24 +36,22 @@ import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
 public class ToolsBean implements ToolsBeanRemote {
     private static ApplicationEntityManagerRemote aem;
     @Override
-    public void resetAdmin()  throws ServerSideException{
+    public void resetAdmin()  throws ServerSideException, NotAuthorizedException{
         try{
-            getAEMInstance().setUserProperties("admin",null, "kuwaiba", "Tyler", "Durden", true, new long[]{1,2,3}, null);
+            getAEMInstance().setUserProperties("admin",null, "kuwaiba", "Tyler", "Durden", true, null, null);
         }catch(ApplicationObjectNotFoundException ex){ //If the user does not exist, create it
-//            try{
-//                getAEMInstance().createUser("admin", "kuwaiba", "Tyler", "Durden", true, new long[]{1,2,3}, null);
-//            }catch(RemoteException re){
-//                throw new ServerSideException(Level.SEVERE, re.getMessage());
-//            }catch(InvalidArgumentException ie){
-//                throw new ServerSideException(Level.SEVERE, ie.getMessage());
-//            }
-//            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+            try{
+                getAEMInstance().createUser("admin", "kuwaiba", "Tyler", "Durden", true, null, null);
+            }catch(RemoteException re){
+                throw new ServerSideException(Level.SEVERE, re.getMessage());
+            }catch(InvalidArgumentException ie){
+                throw new ServerSideException(Level.SEVERE, ie.getMessage());
+            }
         }catch(RemoteException ex){
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }catch(InvalidArgumentException ex){
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
-        
     }
 
 //    @Override
