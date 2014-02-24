@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.kuwaiba.wsclient.ApplicationLogEntry;
 import org.kuwaiba.wsclient.ClassInfo;
 import org.kuwaiba.wsclient.ClassInfoLight;
+import org.kuwaiba.wsclient.GroupInfo;
 import org.kuwaiba.wsclient.Kuwaiba;
 import org.kuwaiba.wsclient.KuwaibaService;
 import org.kuwaiba.wsclient.RemoteObject;
@@ -52,7 +53,6 @@ import org.kuwaiba.wsclient.RemoteQueryLight;
 import org.kuwaiba.wsclient.ResultRecord;
 import org.kuwaiba.wsclient.StringArray;
 import org.kuwaiba.wsclient.TransientQuery;
-import org.kuwaiba.wsclient.UserGroupInfo;
 import org.kuwaiba.wsclient.UserInfo;
 import org.kuwaiba.wsclient.Validator;
 import org.kuwaiba.wsclient.ViewInfo;
@@ -1603,11 +1603,11 @@ public class CommunicationsStub {
      */
     public LocalUserGroupObject[] getGroups() {
         try{
-            List<UserGroupInfo> groups = port.getGroups(this.session.getSessionId());
+            List<GroupInfo> groups = port.getGroups(this.session.getSessionId());
             LocalUserGroupObject[] localGroups = new LocalUserGroupObject[groups.size()];
 
             int i = 0;
-            for (UserGroupInfo group : groups){
+            for (GroupInfo group : groups){
                 localGroups[i] = (LocalUserGroupObject) new LocalUserGroupObject(group);
                 i++;
             }
@@ -1627,7 +1627,7 @@ public class CommunicationsStub {
             Random random = new Random();
             UserInfo newUser = new UserInfo();
             newUser.setUserName("user"+random.nextInt(10000));
-            newUser.setOid(port.createUser(newUser.getUserName(), "kuwaiba", null, null, true, null, null, this.session.getSessionId()));
+            newUser.setId(port.createUser(newUser.getUserName(), "kuwaiba", null, null, true, null, null, this.session.getSessionId()));
             return new LocalUserObject(newUser);
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -1677,9 +1677,9 @@ public class CommunicationsStub {
     public LocalUserGroupObject addGroup(){
         try{
             Random random = new Random();
-            UserGroupInfo newGroup = new UserGroupInfo();
+            GroupInfo newGroup = new GroupInfo();
             newGroup.setName("group"+random.nextInt(10000));
-            newGroup.setOid(port.createGroup(newGroup.getName(), null, null, null, this.session.getSessionId()));
+            newGroup.setId(port.createGroup(newGroup.getName(), null, null, null, this.session.getSessionId()));
             return new LocalUserGroupObject(newGroup);
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -1981,18 +1981,18 @@ public class CommunicationsStub {
     
     // <editor-fold defaultstate="collapsed" desc="Sync methods. Click on the + sign on the left to edit the code.">
     /**
-     * Load data from a file 
+     * BulkUpload from a file
      * @param choosenFile csv file with the data
      * @return percent  of progress
      */
-    public String loadDataFromFile(byte[] choosenFile){
-        try{
-            return port.loadDataFromFile(choosenFile, this.session.getSessionId());
-        }catch(Exception ex){
-            this.error =  ex.getMessage();
-            return "";
-        }
-    }
+//    public String loadDataFromFile(byte[] choosenFile){
+//        try{
+//            return port.loadDataFromFile(choosenFile, this.session.getSessionId());
+//        }catch(Exception ex){
+//            this.error =  ex.getMessage();
+//            return "";
+//        }
+//    }
      public byte[] downloadErrors(String fileName){
         try{
             return port.downloadErrors(fileName, this.session.getSessionId());
