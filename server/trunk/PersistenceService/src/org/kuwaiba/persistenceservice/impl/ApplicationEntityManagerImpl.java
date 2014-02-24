@@ -156,7 +156,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             GenericObjectList aListType = Util.createGenericObjectListFromNode(listTypeNode);
             cm.putListType(aListType);
         }
-        sessions = new HashMap<String, Session>();
+        
+        this.sessions = new HashMap<String, Session>();
+    }
+    
+    public HashMap<String, Session> getSessions(){
+        return sessions;
     }
 
     @Override
@@ -186,7 +191,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             String lastName, boolean enabled, long[] privileges, long[] groups)
             throws InvalidArgumentException, NotAuthorizedException, NotAuthorizedException {
         //validateCall("createUser", ipAddres, sessions.get(sessionId).getUser().getUserName());
-Transaction tx = null;
+        Transaction tx = null;
         
         if (userName == null){
             throw new InvalidArgumentException("User name can not be null", Level.INFO);
@@ -266,7 +271,7 @@ Transaction tx = null;
             String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
             throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         
-        validateCall("setUserProperties", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("setUserProperties", ipAddress, sessionId);
         
         Transaction tx = null;
         if(userName != null){
@@ -293,6 +298,7 @@ Transaction tx = null;
                 userIndex.remove(userNode, Constants.PROPERTY_NAME, (String)userNode.getProperty(Constants.PROPERTY_NAME));
                 cm.removeUser(userName);
                 userNode.setProperty(Constants.PROPERTY_NAME, userName);
+                userIndex.putIfAbsent(userNode, Constants.PROPERTY_NAME, userName);
             }
             if (password != null)
                 userNode.setProperty(Constants.PROPERTY_PASSWORD, Util.getMD5Hash(password));
@@ -324,7 +330,7 @@ Transaction tx = null;
                     }
                 }
             }
-            userIndex.putIfAbsent(userNode, Constants.PROPERTY_NAME, userName);
+            
             tx.success();
             tx.finish();
             cm.putUser(Util.createUserProfileFromNode(userNode));
@@ -333,73 +339,6 @@ Transaction tx = null;
             tx.failure();
             tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }
-    }
-    
-    @Override
-    public void setUserProperties(String oldUserName, String newUserName, String password,
-            String firstName, String lastName, boolean enabled, long[] privileges, long[] groups)//, String ipAddress, String sessionId)
-            throws InvalidArgumentException, ApplicationObjectNotFoundException{//, NotAuthorizedException {
-        Transaction tx = null;
-        if(oldUserName == null){
-            throw new InvalidArgumentException("The user name can not be null", Level.INFO);
-        }
-        if(newUserName != null){
-            if (newUserName.trim().equals("")){
-                throw new InvalidArgumentException("Username can not be an empty string", Level.INFO);
-            }
-            Node storedUser = userIndex.get(Constants.PROPERTY_NAME,newUserName).getSingle();
-            if (storedUser != null){
-                throw new InvalidArgumentException(String.format("User %s already exists", newUserName), Level.WARNING);
-            }
-        }
-        if(password != null){
-            if (password.trim().equals("")){
-                throw new InvalidArgumentException("Password can not be an empty string", Level.INFO);
-            }
-        }
-        Node userNode = userIndex.get(Constants.PROPERTY_NAME, oldUserName).getSingle();
-        if(userNode == null){
-            throw new ApplicationObjectNotFoundException(String.format("Can not find a user with name %s",oldUserName));
-        }
-        try{
-            tx =  graphDb.beginTx();
-            if (newUserName != null){
-                //refresh the userindex
-                userIndex.remove(userNode, Constants.PROPERTY_NAME, oldUserName);
-                userNode.setProperty(Constants.PROPERTY_NAME, newUserName);
-                userIndex.putIfAbsent(userNode, Constants.PROPERTY_NAME, newUserName);
-            }
-            if (password != null){
-                userNode.setProperty(Constants.PROPERTY_PASSWORD, Util.getMD5Hash(password));
-            }
-            if(firstName != null){
-                userNode.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
-            }
-            if(lastName != null){
-                userNode.setProperty(Constants.PROPERTY_LAST_NAME, lastName);
-            }
-            if(groups != null){
-                Iterable<Relationship> relationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP);
-                for (Relationship relationship : relationships){
-                    relationship.delete();
-                }
-                for (long id : groups) {
-                    Node groupNode = groupIndex.get(Constants.PROPERTY_ID, id).getSingle();
-                    userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
-                }
-            }
-            tx.success();
-        }catch(Exception ex){
-            Logger.getLogger("setUserProperties: "+ex.getMessage()); //NOI18N
-            if (tx != null){
-                tx.failure();
-            }
-            throw new RuntimeException(ex.getMessage());
-        } finally {
-            if (tx != null){
-                tx.finish();
-            }
         }
     }
     
@@ -479,7 +418,7 @@ Transaction tx = null;
     @Override
     public List<UserProfile> getUsers(String ipAddress, String sessionId) throws NotAuthorizedException{
         
-        validateCall("getUsers", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("getUsers", ipAddress, sessionId);
         
         IndexHits<Node> usersNodes = userIndex.query(Constants.PROPERTY_NAME, "*");
 
@@ -494,7 +433,7 @@ Transaction tx = null;
     @Override
     public List<GroupProfile> getGroups(String ipAddress, String sessionId) throws NotAuthorizedException{
         
-        validateCall("getGroups", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("getGroups", ipAddress, sessionId);
         
         IndexHits<Node> groupsNodes = groupIndex.query(Constants.PROPERTY_NAME, "*");
 
@@ -509,7 +448,7 @@ Transaction tx = null;
             long[] privileges, long[] users, String ipAddress, String sessionId)
             throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         
-        validateCall("setGroupProperties", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("setGroupProperties", ipAddress, sessionId);
         
         Transaction tx = null;
         try{
@@ -577,7 +516,7 @@ Transaction tx = null;
     public void deleteUsers(long[] oids, String ipAddress, String sessionId)
             throws ApplicationObjectNotFoundException, NotAuthorizedException {
         
-        validateCall("deleteUsers", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("deleteUsers", ipAddress, sessionId);
         
         Transaction tx = null;
         try{
@@ -613,7 +552,7 @@ Transaction tx = null;
     public void deleteGroups(long[] oids, String ipAddress, String sessionId)
             throws ApplicationObjectNotFoundException, NotAuthorizedException {
         
-        validateCall("deleteGroups", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("deleteGroups", ipAddress, sessionId);
         
         Transaction tx = null;
         try{
@@ -648,7 +587,7 @@ Transaction tx = null;
     public RemoteBusinessObjectLight getListTypeItem(String listTypeName, String ipAddress, String sessionId) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         
-        validateCall("getListTypeItem", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("getListTypeItem", ipAddress, sessionId);
         
         if (listTypeName == null)
            throw new InvalidArgumentException("Item name and class name can not be null", Level.INFO);
@@ -666,7 +605,7 @@ Transaction tx = null;
    public long createListTypeItem(String className, String name, String displayName, String ipAddress, String sessionId)
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
        
-       validateCall("createListTypeItem", ipAddress, sessions.get(sessionId).getUser().getUserName());
+       validateCall("createListTypeItem", ipAddress, sessionId);
         
        if (name == null || className == null){
            throw new InvalidArgumentException("Item name and class name can not be null", Level.INFO);
@@ -705,7 +644,7 @@ Transaction tx = null;
     public void deleteListTypeItem(String className, long oid, boolean realeaseRelationships, String ipAddress, String sessionId) 
             throws MetadataObjectNotFoundException, OperationNotPermittedException, ObjectNotFoundException, NotAuthorizedException {
        
-        validateCall("deleteListTypeItem", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("deleteListTypeItem", ipAddress, sessionId);
         
         Transaction tx = null;
         try{
@@ -732,7 +671,7 @@ Transaction tx = null;
     public List<RemoteBusinessObjectLight> getListTypeItems(String className, String ipAddress, String sessionId)
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         
-        validateCall("getListTypeItems", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("getListTypeItems", ipAddress, sessionId);
         
         Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
         if (classNode ==  null)
@@ -755,7 +694,7 @@ Transaction tx = null;
     public List<ClassMetadataLight> getInstanceableListTypes(String ipAddress, String sessionId)
             throws ApplicationObjectNotFoundException, NotAuthorizedException {
         
-        validateCall("getInstanceableListTypes", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("getInstanceableListTypes", ipAddress, sessionId);
         
         Node genericObjectListNode = classIndex.get(Constants.PROPERTY_NAME, Constants.CLASS_GENERICOBJECTLIST).getSingle();
 
@@ -788,7 +727,7 @@ Transaction tx = null;
         byte[] structure, byte[] background, String ipAddress, String sessionId) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         
-        validateCall("createObjectRelatedView", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("createObjectRelatedView", ipAddress, sessionId);
         
         if (objectClass == null)
             throw new InvalidArgumentException("The root object can not be related to any view", Level.INFO);
@@ -839,7 +778,7 @@ Transaction tx = null;
     public long createGeneralView(int viewType, String name, String description, byte[] structure, byte[] background, String ipAddress, String sessionId)
             throws InvalidArgumentException, NotAuthorizedException {
         
-        validateCall("createGeneralView", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("createGeneralView", ipAddress, sessionId);
         
         Transaction tx = null;
         try{
@@ -884,7 +823,7 @@ Transaction tx = null;
     String name, String description, byte[] structure, byte[] background, String ipAddress, String sessionId)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         
-        validateCall("updateObjectRelatedView", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("updateObjectRelatedView", ipAddress, sessionId);
         
         if (objectClass == null)
             throw new InvalidArgumentException("The root object does not have any view", Level.INFO);
@@ -951,7 +890,7 @@ Transaction tx = null;
     public void updateGeneralView(long oid, String name, String description, byte[] structure, byte[] background, String ipAddress, String sessionId)
             throws InvalidArgumentException, ObjectNotFoundException, NotAuthorizedException {
         
-        validateCall("updateGeneralView", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("updateGeneralView", ipAddress, sessionId);
         
         Transaction tx = null;
         try{
@@ -994,7 +933,7 @@ Transaction tx = null;
     @Override
     public void deleteGeneralViews(long[] ids, String ipAddress, String sessionId) throws ObjectNotFoundException, NotAuthorizedException {
         
-        validateCall("deleteGeneralViews", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("deleteGeneralViews", ipAddress, sessionId);
         
         Transaction tx = null;
         try{
@@ -1018,7 +957,7 @@ Transaction tx = null;
     public ViewObject getObjectRelatedView(long oid, String objectClass, long viewId, String ipAddress, String sessionId)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         
-        validateCall("getObjectRelatedView", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("getObjectRelatedView", ipAddress, sessionId);
         
         Node instance = getInstanceOfClass(objectClass, oid);
 
@@ -1053,7 +992,7 @@ Transaction tx = null;
     public List<ViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int limit, String ipAddress, String sessionId)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         
-        validateCall("getObjectRelatedViews", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("getObjectRelatedViews", ipAddress, sessionId);
         
         Node instance = getInstanceOfClass(objectClass, oid);
         List<ViewObjectLight> res = new ArrayList<ViewObjectLight>();
@@ -1077,7 +1016,7 @@ Transaction tx = null;
     public List<ViewObjectLight> getGeneralViews(int viewType, int limit, String ipAddress, String sessionId) 
             throws InvalidArgumentException, NotAuthorizedException {
         
-        validateCall("getGeneralViews", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("getGeneralViews", ipAddress, sessionId);
         
         String cypherQuery = "START gView=node:"+ Constants.INDEX_GENERAL_VIEWS +"('id:*')";
         if (viewType != -1)
@@ -1109,7 +1048,7 @@ Transaction tx = null;
     @Override
     public ViewObject getGeneralView(long viewId, String ipAddress, String sessionId) throws ObjectNotFoundException, NotAuthorizedException {
         
-        validateCall("getGeneralView", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("getGeneralView", ipAddress, sessionId);
         
         Node gView = generalViewsIndex.get(Constants.PROPERTY_ID,viewId).getSingle();
 
@@ -1143,7 +1082,7 @@ Transaction tx = null;
             String description, String ipAddress, String sessionId) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException{
         
-        validateCall("createQuery", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("createQuery", ipAddress, sessionId);
         
         Transaction tx = null;
         try{
@@ -1185,7 +1124,7 @@ Transaction tx = null;
             byte[] queryStructure, String description, String ipAddress, String sessionId) 
             throws MetadataObjectNotFoundException, NotAuthorizedException{
 
-        validateCall("saveQuery", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("saveQuery", ipAddress, sessionId);
         
         Transaction tx = null;
         try{
@@ -1231,7 +1170,7 @@ Transaction tx = null;
     public void deleteQuery(long queryOid, String ipAddress, String sessionId)
             throws ApplicationObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         
-        validateCall("deleteQuery", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("deleteQuery", ipAddress, sessionId);
         
         Transaction tx = null;
         try{
@@ -1263,7 +1202,7 @@ Transaction tx = null;
     public List<CompactQuery> getQueries(boolean showPublic, String ipAddress, String sessionId) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, NotAuthorizedException{
         
-        validateCall("getQueries", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("getQueries", ipAddress, sessionId);
         
         List<CompactQuery> queryList = new ArrayList<CompactQuery>();
         IndexHits<Node> queries = queryIndex.query(CompactQuery.PROPERTY_ID, "*");
@@ -1294,7 +1233,7 @@ Transaction tx = null;
     public CompactQuery getQuery(long queryOid, String ipAddress, String sessionId)
             throws ApplicationObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         
-        validateCall("getQuery", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("getQuery", ipAddress, sessionId);
         
         CompactQuery cq =  new CompactQuery();
 
@@ -1327,7 +1266,7 @@ Transaction tx = null;
     public List<ResultRecord> executeQuery(ExtendedQuery query, String ipAddress, String sessionId) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         
-        validateCall("executeQuery", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("executeQuery", ipAddress, sessionId);
         
         CypherQueryBuilder cqb = new CypherQueryBuilder();
         cqb.setClassNodes(getNodesFromQuery(query));
@@ -1340,7 +1279,7 @@ Transaction tx = null;
     public byte[] getClassHierachy(boolean showAll, String ipAddress, String sessionId) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException{
         
-        validateCall("getClassHierachy", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("getClassHierachy", ipAddress, sessionId);
         
         ByteArrayOutputStream bas = new ByteArrayOutputStream();
         WAX xmlWriter = new WAX(bas);
@@ -1374,7 +1313,7 @@ Transaction tx = null;
     public long createPool(long parentId, String name, String description, String instancesOfClass, String ipAddress, String sessionId)
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         
-        validateCall("createPool", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("createPool", ipAddress, sessionId);
         
         Transaction tx = null;
         try{
@@ -1430,7 +1369,7 @@ Transaction tx = null;
     String[][] attributeValues, long templateId, String ipAddress, String sessionId) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, ArraySizeMismatchException, NotAuthorizedException {
         
-        validateCall("createPoolItem", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("createPoolItem", ipAddress, sessionId);
         
         if (attributeNames != null && attributeValues != null){
             if (attributeNames.length != attributeValues.length)
@@ -1469,7 +1408,7 @@ Transaction tx = null;
             return newObject.getId();
 
         }catch(Exception ex){
-            Logger.getLogger("createPoolItem: "+ex.getMessage()); //NOI18N
+            Logger.getLogger("createPoolItem: " + ex.getMessage()); //NOI18N
             tx.failure();
             throw new RuntimeException(ex.getMessage());
         }finally{
@@ -1481,7 +1420,7 @@ Transaction tx = null;
     @Override
     public void deletePools(long[] ids, String ipAddress, String sessionId) throws NotAuthorizedException, InvalidArgumentException {
         
-        validateCall("deletePools", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("deletePools", ipAddress, sessionId);
         
         Transaction tx = null;
         try{
@@ -1525,7 +1464,7 @@ Transaction tx = null;
     @Override
     public List<RemoteBusinessObjectLight> getPools(int limit, String ipAddress, String sessionId) throws NotAuthorizedException{
         
-        validateCall("getPools", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("getPools", ipAddress, sessionId);
         
         IndexHits<Node> poolNodes = poolsIndex.query(Constants.PROPERTY_ID, "*");
 
@@ -1550,7 +1489,7 @@ Transaction tx = null;
     public List<RemoteBusinessObjectLight> getPoolItems(long poolId, int limit, String ipAddress, String sessionId)
             throws ApplicationObjectNotFoundException, NotAuthorizedException{
         
-        validateCall("getPoolItems", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("getPoolItems", ipAddress, sessionId);
         
         Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
 
@@ -1580,7 +1519,7 @@ Transaction tx = null;
     public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, int limit, String ipAddress, String sessionId) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         
-        validateCall("getBusinessObjectAuditTrail", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        validateCall("getBusinessObjectAuditTrail", ipAddress, sessionId);
         
         if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, objectClass))
             throw new InvalidArgumentException(String.format("Class %s is not subclass of %s",
@@ -1653,7 +1592,7 @@ Transaction tx = null;
     @Override
     public void validateCall(String methodName, String ipAddress, String sessionId)
             throws NotAuthorizedException{
-//        Session aSession = sessions.get(sessionId);
+        Session aSession = sessions.get(sessionId);
 //        try {
 //        if(cm!=null){
 //            for (Privilege privilege : cm.getUser(user.getUserName()).getPrivileges()){
@@ -1667,10 +1606,10 @@ Transaction tx = null;
 //                }
 //            }
 //        }
-//            if(aSession == null)
-//                throw new NotAuthorizedException("The session token provided to call is not valid,", methodName);
-//            if (!aSession.getIpAddress().equals(ipAddress))
-//                throw new NotAuthorizedException(String.format("The IP %s", ipAddress), methodName);
+            if(aSession == null)
+                throw new NotAuthorizedException("Invalid session ID");
+            if (!aSession.getIpAddress().equals(ipAddress))
+                throw new NotAuthorizedException(String.format("The IP %s does not match with the one registered for this session", ipAddress));
 //            Node userNode = userIndex.get(Constants.PROPERTY_ID, aSession.getUser().getId()).getSingle();
 //            if(userNode == null)
 //                throw new ApplicationObjectNotFoundException(String.format("Can not find a user with id %s",aSession.getUser().getId()));
@@ -1710,7 +1649,7 @@ Transaction tx = null;
         }
         for (Session aSession : sessions.values()){
             if (aSession.getUser().getUserName().equals(userName)){
-                Logger.getLogger("CreateSession").log(Level.INFO, String.format("An existing session for user %1s has been dropped", aSession.getUser().getUserName()));
+                Logger.getLogger("createSession").log(Level.INFO, String.format("An existing session for user %1s has been dropped", aSession.getUser().getUserName()));
                 sessions.remove(aSession.getToken());
                 break;
             }
@@ -1724,9 +1663,9 @@ Transaction tx = null;
     public void closeSession(String sessionId, String remoteAddress) throws NotAuthorizedException {
         Session aSession = sessions.get(sessionId);
         if (aSession == null)
-            throw new NotAuthorizedException(aSession.getUser().getUserName(), "When trying to closeSession, the session token provided is not valid");
+            throw new NotAuthorizedException("Invalid session ID");
         if (!aSession.getIpAddress().equals(remoteAddress))
-            throw new NotAuthorizedException(aSession.getUser().getUserName(), "When trying to closeSession, this IP is not allowed to close the current session");
+            throw new NotAuthorizedException(String.format("The IP %s does not match with the one registered for this session", remoteAddress));
         sessions.remove(sessionId);
     }
             

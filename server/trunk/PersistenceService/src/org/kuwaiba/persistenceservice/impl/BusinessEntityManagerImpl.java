@@ -84,22 +84,23 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     /**
      * Instance of application entity manager
      */
-    private ApplicationEntityManager aem;
+    private ApplicationEntityManagerImpl aem;
     /**
      * Reference to the CacheManager
      */
     private CacheManager cm;
 
     private BusinessEntityManagerImpl() {
-        cm= CacheManager.getInstance();
+        cm = CacheManager.getInstance();
     }
 
-    public BusinessEntityManagerImpl(ConnectionManager cmn) {
+    public BusinessEntityManagerImpl(ConnectionManager cmn, ApplicationEntityManagerImpl aem) {
         this();
         this.graphDb = (EmbeddedGraphDatabase)cmn.getConnectionHandler();
         this.classIndex = graphDb.index().forNodes(Constants.INDEX_CLASS);
         this.objectIndex = graphDb.index().forNodes(Constants.INDEX_OBJECTS);
         this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
+        this.aem = aem;
     }
 
     @Override
@@ -156,7 +157,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             
             //Creates an activity log entry
             Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
-                    "admin", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                    aem.getSessions().get(sessionId).getUser().getUserName(), ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
                     Calendar.getInstance().getTimeInMillis(), null, null, null, String.valueOf(newObject.getId()));
             
             tx.success();
@@ -217,7 +218,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             
             //Creates an activity log entry
             Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
-                    "admin", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                    aem.getSessions().get(sessionId).getUser().getUserName(), ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
                     Calendar.getInstance().getTimeInMillis(), null, null, null, String.valueOf(newObject.getId()));
             
             tx.success();
@@ -286,7 +287,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                 objectIndex.putIfAbsent(newObject, Constants.PROPERTY_ID, newObject.getId());
                 //Creates an activity log entry
                 Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
-                        "admin", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                        aem.getSessions().get(sessionId).getUser().getUserName(), ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
                         Calendar.getInstance().getTimeInMillis(), null, null, null, String.valueOf(newObject.getId()));
             }
             
@@ -434,7 +435,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     
                     //Creates an activity log entry
                     Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
-                            "admin", ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
+                            aem.getSessions().get(sessionId).getUser().getUserName(), ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
                             Calendar.getInstance().getTimeInMillis(), null, null, null, String.valueOf(instance.getId()));
             
                 }
@@ -526,7 +527,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
 
                 //Creates an activity log entry
                 Util.createActivityLogEntry(instance, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG).getSingle(), 
-                        "admin", ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, 
+                        aem.getSessions().get(sessionId).getUser().getUserName(), ActivityLogEntry.ACTIVITY_TYPE_UPDATE_INVENTORY_OBJECT, 
                         Calendar.getInstance().getTimeInMillis(), attributeName, oldValue, newValue, null);
             }
             tx.success();
@@ -658,7 +659,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     
                 //Creates an activity log entry
                 Util.createActivityLogEntry(instance, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG).getSingle(), 
-                        "admin", ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
+                        aem.getSessions().get(sessionId).getUser().getUserName(), ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
                         Calendar.getInstance().getTimeInMillis(), "parent", oldValue, String.valueOf(newParentNode.getId()), null); //NOI18N
             
                 }
@@ -706,7 +707,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                     
                     //Creates an activity log entry
                     Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
-                            "admin", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
+                            aem.getSessions().get(sessionId).getUser().getUserName(), ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
                             Calendar.getInstance().getTimeInMillis(), null, null, null, String.valueOf(newInstance.getId()));
             
                 }
@@ -1212,9 +1213,5 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             }
         }
         return newInstance;
-    }
-    
-    public void setApplicationEntityManager(ApplicationEntityManagerImpl aem) {
-        this.aem = aem;
     }
 }

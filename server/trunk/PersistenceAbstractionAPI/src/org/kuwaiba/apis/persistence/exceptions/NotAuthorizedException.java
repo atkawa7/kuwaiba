@@ -1,25 +1,29 @@
 /*
- * Copyright (c) 2014 adrian.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>
  *
- * Contributors:
- *    adrian - initial API and implementation and/or initial documentation
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.kuwaiba.apis.persistence.exceptions;
 
 import java.util.logging.Level;
 
 /**
- *
- * @author adrian
+ * Raised when is not 
+ * @author Adrián Fernando Martínez Molina <adrian.martinez@kuwaiba.org>
  */
 public class NotAuthorizedException extends InventoryException{
     
-    public NotAuthorizedException(String methodName, String userName) {
-        super(userName+java.util.ResourceBundle.
-                getBundle("org/kuwaiba/Bundle").getString("LBL_NOTALLOWED")+methodName, Level.INFO);
+    public NotAuthorizedException(String msg) {
+        super(msg, Level.INFO);
     }
 }

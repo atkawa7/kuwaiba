@@ -53,13 +53,12 @@ public class Main {
             
             MetadataEntityManagerImpl memi  =new MetadataEntityManagerImpl(cm);
             ApplicationEntityManagerImpl aemi = new ApplicationEntityManagerImpl(cm);
-            BusinessEntityManagerImpl bemi = new BusinessEntityManagerImpl(cm);
+            BusinessEntityManagerImpl bemi = new BusinessEntityManagerImpl(cm, aemi);
             
             memi.setApplicationEntityManager(aemi);
             MetadataEntityManagerRemote meri = memi;
             MetadataEntityManagerRemote memStub = (MetadataEntityManagerRemote)UnicastRemoteObject.exportObject(meri,0);
 
-            bemi.setApplicationEntityManager(aemi);
             BusinessEntityManagerRemote bemri = bemi; 
             BusinessEntityManagerRemote bemStub = (BusinessEntityManagerRemote)UnicastRemoteObject.exportObject(bemri,0);
             
