@@ -185,59 +185,53 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     public long createUser(String userName, String password, String firstName,
             String lastName, boolean enabled, long[] privileges, long[] groups)
             throws InvalidArgumentException, NotAuthorizedException, NotAuthorizedException {
-        
         //validateCall("createUser", ipAddres, sessions.get(sessionId).getUser().getUserName());
+Transaction tx = null;
         
-        Transaction tx = null;
-        
-        if (userName == null)
+        if (userName == null){
             throw new InvalidArgumentException("User name can not be null", Level.INFO);
-        
-        if (userName.trim().equals(""))
+        }
+        if (userName.trim().equals("")){
             throw new InvalidArgumentException("User name can not be an empty string", Level.INFO);
-        
-        if (password == null)
+        }
+        if (password == null){
             throw new InvalidArgumentException("Password can not be null", Level.INFO);
-        
-        if (password.trim().equals(""))
+        }
+        if (password.trim().equals("")){
             throw new InvalidArgumentException("Password can not be an empty string", Level.INFO);
-        
-        Node storedUserNode = userIndex.get(Constants.PROPERTY_NAME,userName).getSingle();
-        if (storedUserNode != null)
+        }
+        Node storedUser = userIndex.get(Constants.PROPERTY_NAME,userName).getSingle();
+        if (storedUser != null){
             throw new InvalidArgumentException(String.format("User name %s already exists", userName), Level.WARNING);
-        
+        }
         try{
             tx = graphDb.beginTx();
-            Node newUserNode = graphDb.createNode();
-            newUserNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-            newUserNode.setProperty(Constants.PROPERTY_NAME, userName);
-            newUserNode.setProperty(Constants.PROPERTY_PASSWORD, Util.getMD5Hash(password));
-            if(firstName == null)
+
+            Node newUser = graphDb.createNode();
+
+            newUser.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+            newUser.setProperty(Constants.PROPERTY_NAME, userName);
+            newUser.setProperty(Constants.PROPERTY_PASSWORD, Util.getMD5Hash(password));
+
+            if(firstName == null){
                 firstName = "";
-            
-            newUserNode.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
-            if(lastName == null)
-                lastName = "";
-            
-            newUserNode.setProperty(Constants.PROPERTY_LAST_NAME, lastName);
-            newUserNode.setProperty(Constants.PROPERTY_ENABLED, enabled);
-            if (privileges != null){
-                for(long privilegeCode : privileges){
-                    Node privilegeNode = privilegeIndex.get(Constants.PROPERTY_CODE, privilegeCode).getSingle();
-                    if(privilegeNode != null)
-                        privilegeNode.createRelationshipTo(newUserNode, RelTypes.HAS_PRIVILEGE);
-                    else{
-                        tx.failure();
-                        tx.finish();
-                        throw new InvalidArgumentException(String.format("Privilege with coded %s can not be found",privilegeCode), Level.OFF);
-                    }
-                }
             }
+            newUser.setProperty(Constants.PROPERTY_FIRST_NAME, firstName);
+            if(lastName == null){
+                lastName = "";
+            }
+            newUser.setProperty(Constants.PROPERTY_LAST_NAME, lastName);
+
+            newUser.setProperty(Constants.PROPERTY_ENABLED, enabled);
+  //        TODO privileges
+  //        if (privileges != null || privileges.size()<1)
+  //            newUser.setProperty(UserProfile.PROPERTY_PRIVILEGES, privileges);
             if (groups != null){
                 for (long groupId : groups){
                     Node group = groupIndex.get(Constants.PROPERTY_ID,groupId).getSingle();
-                    if (group != null)
-                        newUserNode.createRelationshipTo(group, RelTypes.BELONGS_TO_GROUP);
+                    if (group != null){
+                        newUser.createRelationshipTo(group, RelTypes.BELONGS_TO_GROUP);
+                    }
                     else{
                         tx.failure();
                         tx.finish();
@@ -245,28 +239,26 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     }
                 }
             }
-            else{
-                Node defaultUsersGroup = groupIndex.get(Constants.PROPERTY_NAME, Constants.NODE_USERS).getSingle();
-                newUserNode.createRelationshipTo(defaultUsersGroup, RelTypes.BELONGS_TO_GROUP);
-            }
-            userIndex.putIfAbsent(newUserNode, Constants.PROPERTY_ID, newUserNode.getId());
-            userIndex.putIfAbsent(newUserNode, Constants.PROPERTY_NAME, userName);
+            userIndex.putIfAbsent(newUser, Constants.PROPERTY_ID, newUser.getId());
+            userIndex.putIfAbsent(newUser, Constants.PROPERTY_NAME, userName);
             
             tx.success();
-            tx.finish();
             
-            cm.putUser(Util.createUserProfileFromNode(newUserNode));
+            cm.putUser(Util.createUserProfileFromNode(newUser));
+
+            return newUser.getId();
            
-            return newUserNode.getId();
-            
-        }catch(Exception ex) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "createUser: {0}", ex.getMessage()); //NOI18N
+        }catch(Exception ex){
+            Logger.getLogger("Create user: "+ex.getMessage()); //NOI18N
             if (tx != null){
                 tx.failure();
+            }
+            throw new RuntimeException(ex.getMessage());
+        } finally {
+            if (tx != null){
                 tx.finish();
             }
         }
-        return -1;
     }
 
     @Override
@@ -348,9 +340,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     public void setUserProperties(String oldUserName, String newUserName, String password,
             String firstName, String lastName, boolean enabled, long[] privileges, long[] groups)//, String ipAddress, String sessionId)
             throws InvalidArgumentException, ApplicationObjectNotFoundException{//, NotAuthorizedException {
-        
-        //validateCall("setUserProperties", ipAddress, sessions.get(sessionId).getUser().getUserName());
-        
         Transaction tx = null;
         if(oldUserName == null){
             throw new InvalidArgumentException("The user name can not be null", Level.INFO);
@@ -378,8 +367,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             if (newUserName != null){
                 //refresh the userindex
                 userIndex.remove(userNode, Constants.PROPERTY_NAME, oldUserName);
-                cm.removeUser(oldUserName);
                 userNode.setProperty(Constants.PROPERTY_NAME, newUserName);
+                userIndex.putIfAbsent(userNode, Constants.PROPERTY_NAME, newUserName);
             }
             if (password != null){
                 userNode.setProperty(Constants.PROPERTY_PASSWORD, Util.getMD5Hash(password));
@@ -400,26 +389,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     userNode.createRelationshipTo(groupNode, RelTypes.BELONGS_TO_GROUP);
                 }
             }
-            if (privileges != null){
-                Iterable<Relationship> privilegesRelationships = userNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE);
-                for (Relationship relationship : privilegesRelationships)
-                    relationship.delete();
-                for(long privilegeCode : privileges){
-                    Node privilegeNode = privilegeIndex.get(Constants.PROPERTY_CODE, privilegeCode).getSingle();
-                    if(privilegeNode != null)
-                        privilegeNode.createRelationshipTo(userNode, RelTypes.HAS_PRIVILEGE);
-                    else{
-                        tx.failure();
-                        tx.finish();
-                        throw new InvalidArgumentException(String.format("Privilege with coded %s can not be found",privilegeCode), Level.OFF);
-                    }
-                }
-            }
-            //refresh the userindex
-            userIndex.putIfAbsent(userNode, Constants.PROPERTY_NAME, newUserName);
             tx.success();
-            tx.finish();
-            cm.putUser(Util.createUserProfileFromNode(userNode));
         }catch(Exception ex){
             Logger.getLogger("setUserProperties: "+ex.getMessage()); //NOI18N
             if (tx != null){
