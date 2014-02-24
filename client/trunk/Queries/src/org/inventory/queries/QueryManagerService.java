@@ -173,6 +173,7 @@ public class QueryManagerService implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         JCheckBox insideCheck = (JCheckBox)e.getSource();
         LocalAttributeMetadata lam = (LocalAttributeMetadata)insideCheck.getClientProperty("attribute");
+        boolean isParentMenu = false;
         switch (e.getID()){
             case QueryEditorScene.SCENE_FILTERENABLED:
                 QueryEditorNodeWidget newNode;
@@ -216,13 +217,18 @@ public class QueryManagerService implements ActionListener {
                             return;
                         }
                         myMetadata = com.getMetaForClass(selectedValue.getClassName(),false);
+                        isParentMenu = true;
                     }else
                     myMetadata = com.getMetaForClass((String)insideCheck.getClientProperty("className"),false);
-                    LocalClassMetadataLight myMetadataLight = new LocalClassMetadataLight(myMetadata.getOid(), 
-                            myMetadata.getClassName(), myMetadata.getDisplayName(),
-                            myMetadata.getParentName(), myMetadata.isAbstract(), 
-                            myMetadata.isViewable(), myMetadata.isListType(), myMetadata.isCustom(), false, null, null);
-                    
+                    LocalClassMetadataLight myMetadataLight;
+                    if(!isParentMenu){
+                        myMetadataLight = new LocalClassMetadataLight(myMetadata.getOid(), 
+                        myMetadata.getClassName(), myMetadata.getDisplayName(),
+                        myMetadata.getParentName(), myMetadata.isAbstract(), 
+                        myMetadata.isViewable(), myMetadata.isListType(), myMetadata.isCustom(), false, null, null);
+                    }
+                    else 
+                        myMetadataLight = myMetadata;
                     newNode = (ClassNodeWidget)qbtc.getQueryScene().findWidget(myMetadataLight);
                     if (newNode == null){
                         newNode = (QueryEditorNodeWidget) qbtc.getQueryScene().addNode(myMetadataLight);
