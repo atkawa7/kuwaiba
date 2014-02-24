@@ -46,7 +46,7 @@ public class SyncService implements ActionListener{
         
     }
     
-    public void loadFile(byte[] choosenFile){
+    public void loadFile(byte[] file){
         CommunicationsStub com = CommunicationsStub.getInstance();
         //fileName = com.loadDataFromFile(choosenFile);
     }

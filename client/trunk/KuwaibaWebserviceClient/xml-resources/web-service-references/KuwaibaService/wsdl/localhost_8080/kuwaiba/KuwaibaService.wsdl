@@ -268,6 +268,12 @@
 <message name="getObjectSpecialChildrenResponse">
 <part name="parameters" element="tns:getObjectSpecialChildrenResponse"/>
 </message>
+<message name="createSpecialObject">
+<part name="parameters" element="tns:createSpecialObject"/>
+</message>
+<message name="createSpecialObjectResponse">
+<part name="parameters" element="tns:createSpecialObjectResponse"/>
+</message>
 <message name="deleteObjects">
 <part name="parameters" element="tns:deleteObjects"/>
 </message>
@@ -532,12 +538,6 @@
 <message name="getGeneralActivityAuditTrailResponse">
 <part name="parameters" element="tns:getGeneralActivityAuditTrailResponse"/>
 </message>
-<message name="loadDataFromFile">
-<part name="parameters" element="tns:loadDataFromFile"/>
-</message>
-<message name="loadDataFromFileResponse">
-<part name="parameters" element="tns:loadDataFromFileResponse"/>
-</message>
 <message name="downloadLog">
 <part name="parameters" element="tns:downloadLog"/>
 </message>
@@ -549,12 +549,6 @@
 </message>
 <message name="downloadErrorsResponse">
 <part name="parameters" element="tns:downloadErrorsResponse"/>
-</message>
-<message name="createSpecialObject">
-<part name="parameters" element="tns:createSpecialObject"/>
-</message>
-<message name="createSpecialObjectResponse">
-<part name="parameters" element="tns:createSpecialObjectResponse"/>
 </message>
 <message name="getObjectChildrenForClassWithId">
 <part name="parameters" element="tns:getObjectChildrenForClassWithId"/>
@@ -609,6 +603,12 @@
 </message>
 <message name="removePossibleChildrenForClassWithIdResponse">
 <part name="parameters" element="tns:removePossibleChildrenForClassWithIdResponse"/>
+</message>
+<message name="bulkUpload">
+<part name="parameters" element="tns:bulkUpload"/>
+</message>
+<message name="bulkUploadResponse">
+<part name="parameters" element="tns:bulkUploadResponse"/>
 </message>
 <portType name="Kuwaiba">
 <operation name="getClass">
@@ -825,6 +825,11 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectSpecialChildrenRequest" message="tns:getObjectSpecialChildren"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectSpecialChildrenResponse" message="tns:getObjectSpecialChildrenResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectSpecialChildren/Fault/Exception"/>
+</operation>
+<operation name="createSpecialObject">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSpecialObjectRequest" message="tns:createSpecialObject"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSpecialObjectResponse" message="tns:createSpecialObjectResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSpecialObject/Fault/Exception"/>
 </operation>
 <operation name="deleteObjects">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/deleteObjectsRequest" message="tns:deleteObjects"/>
@@ -1046,11 +1051,6 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGeneralActivityAuditTrailResponse" message="tns:getGeneralActivityAuditTrailResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGeneralActivityAuditTrail/Fault/Exception"/>
 </operation>
-<operation name="loadDataFromFile">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/loadDataFromFileRequest" message="tns:loadDataFromFile"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/loadDataFromFileResponse" message="tns:loadDataFromFileResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/loadDataFromFile/Fault/Exception"/>
-</operation>
 <operation name="downloadLog">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadLogRequest" message="tns:downloadLog"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadLogResponse" message="tns:downloadLogResponse"/>
@@ -1060,11 +1060,6 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadErrorsRequest" message="tns:downloadErrors"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadErrorsResponse" message="tns:downloadErrorsResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/downloadErrors/Fault/Exception"/>
-</operation>
-<operation name="createSpecialObject">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSpecialObjectRequest" message="tns:createSpecialObject"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSpecialObjectResponse" message="tns:createSpecialObjectResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/createSpecialObject/Fault/Exception"/>
 </operation>
 <operation name="getObjectChildrenForClassWithId">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectChildrenForClassWithIdRequest" message="tns:getObjectChildrenForClassWithId"/>
@@ -1110,6 +1105,11 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenForClassWithIdRequest" message="tns:removePossibleChildrenForClassWithId"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenForClassWithIdResponse" message="tns:removePossibleChildrenForClassWithIdResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenForClassWithId/Fault/Exception"/>
+</operation>
+<operation name="bulkUpload">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/bulkUploadRequest" message="tns:bulkUpload"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/bulkUploadResponse" message="tns:bulkUploadResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/bulkUpload/Fault/Exception"/>
 </operation>
 </portType>
 <binding name="KuwaibaPortBinding" type="tns:Kuwaiba">
@@ -1630,6 +1630,18 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="createSpecialObject">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="deleteObjects">
 <soap:operation soapAction=""/>
 <input>
@@ -2158,18 +2170,6 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
-<operation name="loadDataFromFile">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
 <operation name="downloadLog">
 <soap:operation soapAction=""/>
 <input>
@@ -2183,18 +2183,6 @@
 </fault>
 </operation>
 <operation name="downloadErrors">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
-<operation name="createSpecialObject">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -2303,6 +2291,18 @@
 </fault>
 </operation>
 <operation name="removePossibleChildrenForClassWithId">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
+<operation name="bulkUpload">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

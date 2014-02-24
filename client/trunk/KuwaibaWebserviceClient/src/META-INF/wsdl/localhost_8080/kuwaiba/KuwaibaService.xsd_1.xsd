@@ -16,6 +16,10 @@
 
 <xs:element name="associateObjectToServiceResponse" type="tns:associateObjectToServiceResponse"/>
 
+<xs:element name="bulkUpload" type="tns:bulkUpload"/>
+
+<xs:element name="bulkUploadResponse" type="tns:bulkUploadResponse"/>
+
 <xs:element name="closeSession" type="tns:closeSession"/>
 
 <xs:element name="closeSessionResponse" type="tns:closeSessionResponse"/>
@@ -348,10 +352,6 @@
 
 <xs:element name="getUsersResponse" type="tns:getUsersResponse"/>
 
-<xs:element name="loadDataFromFile" type="tns:loadDataFromFile"/>
-
-<xs:element name="loadDataFromFileResponse" type="tns:loadDataFromFileResponse"/>
-
 <xs:element name="moveObjects" type="tns:moveObjects"/>
 
 <xs:element name="moveObjectsResponse" type="tns:moveObjectsResponse"/>
@@ -428,7 +428,7 @@
 <xs:element name="oid" type="xs:long"/>
 <xs:element name="groupName" type="xs:string" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
-<xs:element name="privileges" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="privileges" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="users" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
@@ -561,19 +561,6 @@
 
 <xs:complexType name="deleteClassResponse">
 <xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="loadDataFromFile">
-<xs:sequence>
-<xs:element name="chossenFile" type="xs:base64Binary" nillable="true" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="loadDataFromFileResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:string" minOccurs="0"/>
-</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="getClass">
@@ -851,7 +838,7 @@
 <xs:sequence>
 <xs:element name="groupName" type="xs:string" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
-<xs:element name="privileges" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="privileges" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="users" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
@@ -899,6 +886,19 @@
 <xs:sequence/>
 </xs:complexType>
 
+<xs:complexType name="bulkUpload">
+<xs:sequence>
+<xs:element name="chossenFile" type="xs:base64Binary" nillable="true" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="bulkUploadResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="addPossibleChildrenForClassWithId">
 <xs:sequence>
 <xs:element name="parentClassId" type="xs:long"/>
@@ -919,7 +919,7 @@
 <xs:element name="lastName" type="xs:string" minOccurs="0"/>
 <xs:element name="password" type="xs:string" minOccurs="0"/>
 <xs:element name="enabled" type="xs:boolean"/>
-<xs:element name="privileges" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="privileges" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="groups" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
@@ -1015,50 +1015,6 @@
 <xs:sequence/>
 </xs:complexType>
 
-<xs:complexType name="getGroups">
-<xs:sequence>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="getGroupsResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:userGroupInfo" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="userGroupInfo">
-<xs:complexContent>
-<xs:extension base="tns:userGroupInfoLight">
-<xs:sequence>
-<xs:element name="members" type="tns:userInfo" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="creationDate" type="xs:long"/>
-<xs:element name="description" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:extension>
-</xs:complexContent>
-</xs:complexType>
-
-<xs:complexType name="userGroupInfoLight">
-<xs:sequence>
-<xs:element name="oid" type="xs:long"/>
-<xs:element name="name" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="userInfo">
-<xs:sequence>
-<xs:element name="oid" type="xs:long"/>
-<xs:element name="userName" type="xs:string" minOccurs="0"/>
-<xs:element name="firstName" type="xs:string" minOccurs="0"/>
-<xs:element name="lastName" type="xs:string" minOccurs="0"/>
-<xs:element name="creationDate" type="xs:long"/>
-<xs:element name="enabled" type="xs:boolean"/>
-<xs:element name="groups" type="tns:userGroupInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="privileges" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="createSpecialObject">
 <xs:sequence>
 <xs:element name="className" type="xs:string" minOccurs="0"/>
@@ -1074,6 +1030,71 @@
 <xs:complexType name="createSpecialObjectResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getGroups">
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getGroupsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:groupInfo" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="groupInfo">
+<xs:complexContent>
+<xs:extension base="tns:groupInfoLight">
+<xs:sequence>
+<xs:element name="users" type="tns:userInfo" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="creationDate" type="xs:long"/>
+<xs:element name="description" type="xs:string" minOccurs="0"/>
+<xs:element name="privileges" type="tns:privilegeInfo" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="groupInfoLight">
+<xs:sequence>
+<xs:element name="id" type="xs:long"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="userInfo">
+<xs:complexContent>
+<xs:extension base="tns:userInfoLight">
+<xs:sequence>
+<xs:element name="firstName" type="xs:string" minOccurs="0"/>
+<xs:element name="lastName" type="xs:string" minOccurs="0"/>
+<xs:element name="creationDate" type="xs:long"/>
+<xs:element name="enabled" type="xs:boolean"/>
+<xs:element name="groups" type="tns:groupInfoLight" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="privileges" type="tns:privilegeInfo" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+
+<xs:complexType name="userInfoLight">
+<xs:sequence>
+<xs:element name="id" type="xs:long"/>
+<xs:element name="userName" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="privilegeInfo">
+<xs:sequence>
+<xs:element name="id" type="xs:long"/>
+<xs:element name="code" type="xs:long"/>
+<xs:element name="methodGroup" type="xs:string" minOccurs="0"/>
+<xs:element name="methodName" type="xs:string" minOccurs="0"/>
+<xs:element name="methodManager" type="xs:string" minOccurs="0"/>
+<xs:element name="dependsOf" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -1997,7 +2018,7 @@
 <xs:element name="firstName" type="xs:string" minOccurs="0"/>
 <xs:element name="LastName" type="xs:string" minOccurs="0"/>
 <xs:element name="enabled" type="xs:boolean"/>
-<xs:element name="privileges" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="privileges" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="groups" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>

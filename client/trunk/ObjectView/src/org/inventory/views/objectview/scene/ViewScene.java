@@ -151,6 +151,7 @@ public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLig
         addChild(edgesLayer);
         addChild(nodesLayer);
         addChild(labelsLayer);
+	addChild(interactionLayer);
         
         getActions().addAction(ActionFactory.createZoomAction());
         getActions().addAction(ActionFactory.createPanAction());

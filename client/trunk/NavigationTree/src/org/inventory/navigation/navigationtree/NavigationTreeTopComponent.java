@@ -145,8 +145,10 @@ public final class NavigationTreeTopComponent extends TopComponent
         ExplorerUtils.activateActions(em, true);
         TopComponent propertiesWindow = WindowManager.getDefault().findTopComponent("properties");
         Mode navigator = WindowManager.getDefault().findMode("navigator"); //NOI18N
-        propertiesWindow.open();
-        navigator.dockInto(propertiesWindow);
+        if (!propertiesWindow.isOpened()){
+            propertiesWindow.open();
+            navigator.dockInto(propertiesWindow);
+        }
     }
 
     @Override
