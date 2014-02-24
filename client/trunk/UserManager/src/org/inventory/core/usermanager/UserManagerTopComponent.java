@@ -134,6 +134,11 @@ public final class UserManagerTopComponent extends TopComponent
         btnAddUser.setFocusable(false);
         btnAddUser.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnAddUser.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnAddUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddUserActionPerformed(evt);
+            }
+        });
         barMain.add(btnAddUser);
 
         btnAddGroup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/usermanager/res/addGroup.png"))); // NOI18N
@@ -142,6 +147,11 @@ public final class UserManagerTopComponent extends TopComponent
         btnAddGroup.setFocusable(false);
         btnAddGroup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnAddGroup.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnAddGroup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddGroupActionPerformed(evt);
+            }
+        });
         barMain.add(btnAddGroup);
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/usermanager/res/refresh.png"))); // NOI18N
@@ -207,6 +217,14 @@ public final class UserManagerTopComponent extends TopComponent
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnRefreshActionPerformed
+
+    private void btnAddGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddGroupActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddGroupActionPerformed
+
+    private void btnAddUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddUserActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddUserActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
