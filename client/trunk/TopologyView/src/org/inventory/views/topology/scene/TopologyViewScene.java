@@ -230,7 +230,8 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
                 cloudWidget.setImage(cloudIcon);
                 cloudWidget.setLabel(((LocalObjectLight)node).getName().substring(9));
                 cloudWidget.getActions().addAction (ActionFactory.createInplaceEditorAction (new LabelTextFieldEditor()));
-                cloudWidget.getActions().addAction(ActionFactory.createMoveAction());
+                cloudWidget.getActions(ObjectNodeWidget.ACTION_SELECT).addAction(ActionFactory.createMoveAction());
+                cloudWidget.getActions(ObjectNodeWidget.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(edgesLayer, new SceneConnectProvider(this)));
                 cloudWidget.getActions().addAction(ActionFactory.createPopupMenuAction(iconMenu));
                 fireChangeEvent(new ActionEvent(node, SCENE_OBJECTADDED, "cloud-add-operation"));
                 return cloudWidget;

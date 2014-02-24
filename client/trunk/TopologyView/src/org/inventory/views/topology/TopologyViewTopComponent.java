@@ -307,8 +307,9 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
                                 if (e.getSource() == DialogDescriptor.OK_OPTION){
                                     if (tlp.getSelectedView() != null){
                                         tvsrv.loadTopologyView(tlp.getSelectedView());
-                                        
                                         toggleButtons(true);
+                                        if(btnConnect.isSelected())
+                                            btnConnect.setSelected(false);
                                     }
                                     else
                                         JOptionPane.showConfirmDialog(null, "Select a view, please","Error", JOptionPane.ERROR_MESSAGE);
@@ -522,7 +523,6 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
         btnSave.setEnabled(enabled);
         btnDelete.setEnabled(enabled);
         btnSelect.setSelected(enabled);
-        btnConnect.setSelected(!enabled);
     }
 
     @Override
@@ -530,6 +530,10 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
         switch(e.getID()){
             case TopologyViewScene.SCENE_OBJECTADDED:
                 toggleButtons(true);
+                if(btnConnect.isSelected()){
+                    btnConnect.setSelected(true);
+                    btnSelect.setSelected(false);
+                }
                 break;
         }
     }
