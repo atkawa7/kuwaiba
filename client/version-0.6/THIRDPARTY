@@ -1,0 +1,5 @@
+This client makes use of the following third-party components:
+Netbeans Platform (CDDL) http://www.netbeans.org/
+WAX, a simple API for XML (BSD) http://code.google.com/p/waxy/
+
+We want to thank all people that made possible this software to be available.

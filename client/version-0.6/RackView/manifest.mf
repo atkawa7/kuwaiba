@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: org.inventory.view.rackview
+OpenIDE-Module-Localizing-Bundle: org/inventory/view/rackview/Bundle.properties
+OpenIDE-Module-Requires: org.openide.windows.WindowManager
+OpenIDE-Module-Specification-Version: 1.0
+
