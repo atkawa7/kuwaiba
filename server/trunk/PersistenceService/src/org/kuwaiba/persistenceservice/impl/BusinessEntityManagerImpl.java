@@ -36,7 +36,6 @@ import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
-import org.kuwaiba.apis.persistence.interfaces.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.interfaces.ConnectionManager;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
@@ -833,14 +832,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
     
     @Override
-    public List<RemoteBusinessObjectLight> getObjectsOfClassLight(String parentClass, int maxResults, String ipAddress, String sessionId)
+    public List<RemoteBusinessObjectLight> getObjectsOfClassLight(String className, int maxResults, String ipAddress, String sessionId)
             throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
        aem.validateCall("getObjectsOfClassLight", ipAddress, sessionId); 
-        //if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, parentClass))
-        //    throw new InvalidArgumentException(String.format("Class %s is not subclass of InventoryObject", parentClass), Level.INFO);
-        Node classMetadataNode = classIndex.get(Constants.PROPERTY_NAME, parentClass).getSingle();
+        
+        Node classMetadataNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
         if (classMetadataNode == null)
-            throw new MetadataObjectNotFoundException(parentClass);
+            throw new MetadataObjectNotFoundException(className);
         
         List<RemoteBusinessObjectLight> instances = new ArrayList<RemoteBusinessObjectLight>();
         

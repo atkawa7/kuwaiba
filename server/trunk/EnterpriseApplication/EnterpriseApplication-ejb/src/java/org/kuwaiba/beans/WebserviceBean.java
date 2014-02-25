@@ -1872,27 +1872,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
 
-    /**
-     * For now, everyone can do everything unless the credentials are invalid
-     * @param methodName
-     * @param ipAddress
-     * @param sessionId
-     */
-    @Override
-    public void validateCall(String methodName, String ipAddress, String sessionId) throws ServerSideException, NotAuthorizedException{
-        if (aem == null)
-            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        try {
-            aem.validateCall(methodName, ipAddress, sessionId);
-    //        if (aSession == null)
-    //            throw new NotAuthorizedException(String.format("The session token provided to call %s is not valid", methodName));
-    //            throw new NotAuthorizedException(String.format("IP %s is not allowed to perform this operation (%s)", ipAddress, methodName));
-    //            throw new NotAuthorizedException(String.format("IP %s is not allowed to perform this operation (%s)", ipAddress, methodName));
-        } catch (Exception ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
     @Override
     public ApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long objectId, int limit, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)

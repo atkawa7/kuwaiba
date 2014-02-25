@@ -547,15 +547,6 @@ public interface WebserviceBeanRemote {
      */
     public byte[] getClassHierarchy(boolean showAll, String ipAddress, String sessionId) throws ServerSideException;
 
-    /**
-     * Verifies if a given user is able to call a webservice method according to its privileges
-     * @param methodName method that is trying to be called
-     * @param ipAddress IP Address where th request is coming from
-     * @param sessionId Session token
-     * @return the active session if any
-     * @throws NotAuthorizedException if the session id doesn't belong to an active session
-     */
-    public void validateCall(String methodName, String ipAddress, String sessionId) throws ServerSideException, NotAuthorizedException;
     //Pools
     public long createPool(long parentId, String name, String description, String instancesOfClass, String ipAddress, String sessionId) throws ServerSideException;
     

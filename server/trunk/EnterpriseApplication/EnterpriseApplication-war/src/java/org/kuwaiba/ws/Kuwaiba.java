@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -65,10 +65,10 @@ public class Kuwaiba {
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
     /**
-     * Authenticates the user
+     * Creates a session
      * @param username user login name
      * @param password user password
-     * @return A session object
+     * @return A session object, including the session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createSession")
@@ -88,7 +88,7 @@ public class Kuwaiba {
     }
     /**
      * Closes a session
-     * @param sessionId The session token to be closed
+     * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "closeSession")
@@ -107,7 +107,7 @@ public class Kuwaiba {
     }
 
    /**
-     * Retrieves the user list
+     * Retrieves the list of uses
      * @param sessionId session token
      * @return The list of users
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
@@ -129,8 +129,8 @@ public class Kuwaiba {
     }
 
     /**
-     * Retrieves the group list
-     * @param sessionId
+     * Retrieves the list of groups
+     * @param sessionId Session token
      * @return A group object list
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
@@ -326,7 +326,15 @@ public class Kuwaiba {
         }
     }
 
-    
+    /**
+     * Gets a particular view related to an object
+     * @param oid Object id
+     * @param objectClass Object class
+     * @param viewId The view id
+     * @param sessionId Session token
+     * @return The View object (which is basically an XML document)
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
     @WebMethod(operationName = "getObjectRelatedView")
     public ViewInfo getObjectRelatedView(@WebParam(name = "oid")long oid,
             @WebParam(name = "objectClass")String objectClass,
@@ -345,14 +353,14 @@ public class Kuwaiba {
     }
 
     /**
-     *
-     * @param oid
-     * @param objectClass
-     * @param viewType
-     * @param limit
-     * @param sessionId
-     * @return
-     * @throws Exception
+     * Returns list of views associated to an object
+     * @param oid Object id
+     * @param objectClass Object class
+     * @param viewType View type
+     * @param limit Max number of results
+     * @param sessionId Session token
+     * @return List of objects related to the object
+     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getObjectRelatedViews")
     public ViewInfoLight[] getObjectRelatedViews(@WebParam(name = "oid")long oid,
@@ -372,6 +380,14 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Gets all views that are not related to a particular object
+     * @param viewType View type. Used to filter. Use 0 retrieve all
+     * @param limit Max number if reaults
+     * @param sessionId Session token
+     * @return A list of views
+     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime 
+     */
     @WebMethod(operationName = "getGeneralViews")
     public ViewInfoLight[] getGeneralViews(@WebParam(name = "viewType")int viewType,
             @WebParam(name = "limit")int limit,
@@ -388,6 +404,13 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Gets the information of a particular view
+     * @param viewId View id
+     * @param sessionId Session token
+     * @return The view
+     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
+     */
     @WebMethod(operationName = "getGeneralView")
     public ViewInfo getGeneralView(@WebParam(name = "viewId")long viewId,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
@@ -403,6 +426,19 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Creates a view an relates it to an existing object
+     * @param objectId Object id
+     * @param objectClass Object class
+     * @param name View name
+     * @param description View description
+     * @param viewType View type
+     * @param structure Structure (as an XML document)
+     * @param background Background
+     * @param sessionId Session id
+     * @return The id of the newly created view
+     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
+     */
     @WebMethod(operationName = "createObjectRelatedView")
     public long createObjectRelatedView(@WebParam(name = "objectId")long objectId,
             @WebParam(name = "objectClass")String objectClass,
@@ -423,7 +459,18 @@ public class Kuwaiba {
             throw e;
         }
     }
-
+    
+    /**
+     * Creates a general view (a view that is not associated to any object)
+     * @param viewType View type
+     * @param name View name
+     * @param description Description
+     * @param structure Structure
+     * @param background background
+     * @param sessionId Session id
+     * @return The id of the newly created view
+     * @throws Exception Exception Generic exception encapsulating any possible error raised at runtime
+     */
     @WebMethod(operationName = "createGeneralView")
     public long createGeneralView(@WebParam(name = "viewType")int viewType,
             @WebParam(name = "name")String name,
@@ -443,6 +490,18 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Updates an object view (a view that is linked to a particular object)
+     * @param objectOid Object id
+     * @param objectClass Object class
+     * @param viewId View id
+     * @param viewName View name. Null to leave unchanged
+     * @param viewDescription View description. Null to leave unchanged
+     * @param structure View structure. Null to leave unchanged
+     * @param background Background. Null to leave unchanged
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
     @WebMethod(operationName = "updateObjectRelatedView")
     public void updateObjectRelatedView(@WebParam(name = "objectOid")long objectOid,
             @WebParam(name = "objectClass")String objectClass, @WebParam(name = "viewId")long viewId,
@@ -461,6 +520,16 @@ public class Kuwaiba {
         }
     }
 
+    /**
+     * Updates a general view (a view that is not linked to any particular object)
+     * @param viewId View id
+     * @param viewName View name. Null to leave unchanged
+     * @param viewDescription View Description. Null to leave unchanged
+     * @param structure View structure. Null to leave unchanged
+     * @param background Background. Null to leave unchanged
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
     @WebMethod(operationName = "updateGeneralView")
     public void updateGeneralView(@WebParam(name = "viewId")long viewId,
             @WebParam(name = "viewName")String viewName, @WebParam(name = "viewDescription")String viewDescription,
@@ -478,9 +547,9 @@ public class Kuwaiba {
     }
     /**
      * Deletes views
-     * @param oids
-     * @param sessionId
-     * @throws Exception
+     * @param oids Ids of the views to be deleted
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteGeneralView")
     public void deleteGeneralView(@WebParam(name = "oids")long [] oids,
@@ -955,12 +1024,12 @@ public class Kuwaiba {
     
     /**
      * Returns the siblings of an object in the containment hierarchy
-     * @param objectClassName class name of the object
+     * @param objectClassName Object class
      * @param oid Object oid
      * @param maxResults Max number of results to be returned
      * @param sessionId Session token
      * @return List of siblings
-     * @throws Exception In case something goes wrong
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getSiblings")
     public RemoteObjectLight[] getSiblings(@WebParam(name = "objectClassName") String objectClassName,
@@ -1086,12 +1155,20 @@ public class Kuwaiba {
         }
     }
     
+    /**
+     * Gets all objects of a given class
+     * @param className Class name
+     * @param maxResults Max number of results. 0 to retriever all
+     * @param sessionId Session token
+     * @return A list of instances of @className
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
+     */
     @WebMethod(operationName = "getObjectsOfClassLight")
-    public RemoteObjectLight[] getObjectsOfClassLight(@WebParam(name = "objectclass") String objectClass,
+    public RemoteObjectLight[] getObjectsOfClassLight(@WebParam(name = "className") String className,
             @WebParam(name = "maxResults")int maxResults,
             @WebParam(name = "sessionId")String sessionId) throws Exception{
         try{
-            return wsBean.getObjectsOfClassLight(objectClass, maxResults, getIPAddress(), sessionId);
+            return wsBean.getObjectsOfClassLight(className, maxResults, getIPAddress(), sessionId);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -1417,13 +1494,13 @@ public class Kuwaiba {
 
     //Physical connections
     /**
-     * Conncect the mirror port
-     * @param aObjectClass Class of the object a
-     * @param aObjectId object a id
-     * @param bObjectClass Class of the object b
-     * @param bObjectId object b id
+     * Connect two ports using a mirror relationship
+     * @param aObjectClass Port A class
+     * @param aObjectId Port A id
+     * @param bObjectClass Port B class
+     * @param bObjectId Port B id
      * @param sessionId Session token
-     * @throws Exception 
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime 
      */
     @WebMethod(operationName = "connectMirrorPort")
     public void connectMirrorPort(
@@ -1449,7 +1526,7 @@ public class Kuwaiba {
      * @param objectClass Object class
      * @param objectId Object id
      * @param sessionId Session token
-     * @throws Exception In case something goes wrong
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "releaseMirrorPort")
     public void releaseMirrorPort(
@@ -1475,14 +1552,14 @@ public class Kuwaiba {
      * @param aObjectId "a" endpoint object id
      * @param bObjectClass "b" endpoint object class
      * @param bObjectId "b" endpoint object id
-     * @param parentClass parente class  name
-     * @param parentId parent id
-     * @param attributeNames 
-     * @param attributeValues
+     * @param parentClass Parent object class
+     * @param parentId Parent object id
+     * @param attributeNames Default attributes to be set
+     * @param attributeValues Default attributes to be set
      * @param connectionClass Class used to create the connection. See Constants class for supported values
      * @param sessionId Session token
      * @return The new connection id
-     * @throws Exception In case something goes wrong
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
      */
     @WebMethod(operationName = "createPhysicalConnection")
     public long createPhysicalConnection(
@@ -1516,8 +1593,8 @@ public class Kuwaiba {
      * @param parentClass Class of the parent object to the connections. Null for none, anything for DummyRoot
      * @param parentId Id of the parent object to the connections. Anything none, -1 for DummyRoot
      * @param sessionId Session token
-     * @return The  ids of the new objects
-     * @throws Exception In case something goes wrong
+     * @return The ids of the new objects
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
      */
     public long[] createBulkPhysicalConnections(@WebParam(name = "connectionClass")String connectionClass, 
             @WebParam(name = "numberOfChildren")int numberOfChildren, 
@@ -1543,7 +1620,7 @@ public class Kuwaiba {
      * @param connectionId Connection id
      * @param sessionId Session token
      * @return An array of two positions: the first is the A endpoint and the second is the B endpoint
-     * @throws Exception In case something goes wrong
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
      */
     public RemoteObjectLight[] getConnectionEndpoints(@WebParam(name = "connectionClass")String connectionClass, 
             @WebParam(name = "connectionId")long connectionId, 
@@ -1565,8 +1642,7 @@ public class Kuwaiba {
      * @param objectClass Object class
      * @param objectId Object id
      * @param sessionId Session token
-     * @return an array of the objects in the path
-     * @throws Exception In case something goes wrong 
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
      */
     @WebMethod(operationName = "getPhysicalPath")
     public RemoteObjectLight[] getPhysicalPath (@WebParam(name = "objectClass")String objectClass,
@@ -1593,7 +1669,7 @@ public class Kuwaiba {
      * @param sideBClassNames The list of classes of the other side of the connection
      * @param sideBIds The list of ids the objects on the other side of the connection
      * @param sessionId Session token
-     * @throws Exception In case something goes wrong
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
      */
     public void connectPhysicalLinks (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
                                       @WebParam(name = "linksClassNames")String[] linksClassNames, @WebParam(name = "linksIds")Long[] linksIds,
@@ -1646,7 +1722,7 @@ public class Kuwaiba {
      * @param serviceClass service class
      * @param serviceId service id
      * @param sessionId Session token
-     * @throws Exception In case something goes wrong
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
      */
     @WebMethod(operationName = "associateObjectToService")
     public void associateObjectToService (
@@ -1667,6 +1743,14 @@ public class Kuwaiba {
         }
     }
     
+    /**
+     * Releases an object from a service that is using it
+     * @param serviceClass Service class
+     * @param serviceId Service id
+     * @param targetId target object id
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime    
+     */
     @WebMethod(operationName = "releaseObjectFromService")
     public void releaseObjectFromService (
             @WebParam(name = "serviceClass")String serviceClass,
@@ -1685,6 +1769,14 @@ public class Kuwaiba {
         }
     }
     
+    /**
+     * Gets the services associated to a service 
+     * @param serviceClass Service class
+     * @param serviceId Service id
+     * @param sessionId Session token
+     * @return A list of services
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
+     */
     @WebMethod(operationName = "getServiceResources")
     public RemoteObjectLight[] getServiceResources (
             @WebParam(name = "serviceClass")String serviceClass,
@@ -1704,12 +1796,12 @@ public class Kuwaiba {
     
     /**
      * Creates a customer (with no parent in the containment hierarchy)
-     * @param customerClass The class name, this class extends from generic coustomer 
-     * @param attributes attribute names
-     * @param attributeValues attribute value s
+     * @param customerClass Customer class
+     * @param attributes Default attributes to be set
+     * @param attributeValues Default values to #attributes
      * @param sessionId Session token
-     * @return coustomerId
-     * @throws Exception 
+     * @return The id of the newly created customer
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime   
      */
     @WebMethod(operationName = "createCustomer")
     public long createCustomer (
@@ -1731,14 +1823,14 @@ public class Kuwaiba {
     
     /**
      * Creates a service and relates it to a customer
-     * @param serviceClass The class name, this class extends from generic services 
-     * @param customerClass The class name, this class extends from generic coustomer 
-     * @param customerId coustomer object id
-     * @param attributes attribute names
-     * @param attributeValues attribute values
+     * @param serviceClass Service class
+     * @param customerClass Customer class
+     * @param customerId Customer id
+     * @param attributes Service attributes
+     * @param attributeValues Default values to #attributes
      * @param sessionId Session token
-     * @return service Id
-     * @throws Exception 
+     * @return The id of the newly created service
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime  
      */
     @WebMethod(operationName = "createService")
     public long createService (
@@ -1764,9 +1856,9 @@ public class Kuwaiba {
      * Returns the services associated to a customer
      * @param customerClass Customer class
      * @param customerId Customer Id
-     * @param sessionId session token
+     * @param sessionId Session token
      * @return The list of services related to the give customer
-     * @exception Exception
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getServices")
     public RemoteObjectLight[] getServices(@WebParam(name = "customerClass")String customerClass, 
@@ -1791,7 +1883,6 @@ public class Kuwaiba {
      * @param objectId Object id
      * @param limit Max number of results (0 to retrieve all)
      * @param sessionId Session token
-     * @return an array whit the Application log entry
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getBusinessObjectAuditTrail")
@@ -1816,9 +1907,7 @@ public class Kuwaiba {
      * Retrieves the list of activity log entries
      * @param page current page
      * @param limit limit of results per page. 0 to retrieve them all
-     * @param sessionId Session token
      * @return The list of activity log entries
-     * @throws Exception In case something goes wrong
      */
     @WebMethod(operationName = "getGeneralActivityAuditTrail")
     public ApplicationLogEntry[] getGeneralActivityAuditTrail (
@@ -1869,13 +1958,10 @@ public class Kuwaiba {
 
     /**
      * Creates a class metadata object. This method is still under testing and might be buggy
-     * @param className Class name
+     * @param name Class name
      * @param displayName Class display name
      * @param description Class description
-     * @param _abstract is this class abstract?
-     * @param custom is this class by default in the initial configuration or was create by some user
-     * @param countable is this class countable?
-     * @param inDesign is this class in design or can be used?
+     * @param abstractClass is this class abstract?
      * @param parentClassName Parent class name
      * @param icon Icon fro view. The size is limited by the value in Constants.MAX_ICON_SIZE
      * @param smallIcon Icon for trees. The size is limited by the value in Constants.MAX_ICON_SIZE
@@ -1934,15 +2020,12 @@ public class Kuwaiba {
 
      /**
      * Updates a class metadata properties. Use null values for those properties that shouldn't be touched
-     * @param classId metadata id.
-     * @param name metadata name. Null if unchanged
+     * @param class metadata id.
+     * @param class metadata name. Null if unchanged
      * @param displayName New class metadata display name. Null if unchanged
      * @param description New class metadata description. Null if unchanged
+     * @param abstractClass is this class abstract?
      * @param icon New icon for views. Null if unchanged. The size is limited by the value in Constants.MAX_ICON_SIZE
-     * @param _abstract is this class abstract?
-     * @param inDesign is this class in design or can be use?
-     * @param custom is this class by default in the initial configuration or was create by some user
-     * @param countable is this class countable
      * @param smallIcon New icon for trees. Null if unchanged. The size is limited by the value in Constants.MAX_ICON_SIZE
      * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
@@ -1995,12 +2078,11 @@ public class Kuwaiba {
     }
     
     /**
-     * Get an attribute from a class by the class name
+     * Gets a class attribute, using the class name as key to find it
      * @param className the class name
-     * @param attributeName the attribute name
-     * @param sessionId
+     * @param sessionId Session token
      * @return the class attribute
-     * @throws Exception 
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime  
      */
     @WebMethod(operationName = "getAttribute")
     public AttributeInfo getAttribute(@WebParam(name = "className")
@@ -2020,17 +2102,17 @@ public class Kuwaiba {
     }
     
     /**
-     * Returns a class attribute, providing the class id
+     * Gets a class attribute, using the class id as key to find it
      * @param classId Class id
      * @param attributeName Attribute name
-     * @param sessionId 
+     * @param sessionId  Session token
      * @return The attribute definition
-     * @throws Exception 
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime 
      */
     @WebMethod(operationName = "getAttributeForClassWithId")
     public AttributeInfo getAttributeForClassWithId(@WebParam(name = "classId")
         String classId, @WebParam(name = "attributeName")
-        String attributeName, @WebParam(name = "sesionId")
+        String attributeName, @WebParam(name = "sessionId")
         String sessionId) throws Exception{
         try {
             return wsBean.getAttribute(classId, attributeName, getIPAddress(), sessionId);
@@ -2045,7 +2127,7 @@ public class Kuwaiba {
     }
    
     /**
-     * Adds an attribute to a classMetadata
+     * Adds an attribute to a class using its name as key to find it
      * @param className Class name where the attribute will be attached
      * @param name attribute name
      * @param displayName attribute display name
@@ -2054,10 +2136,9 @@ public class Kuwaiba {
      * @param administrative is the attribute administrative?
      * @param visible is the attribute visible?
      * @param readOnly is the attribute read only?
-     * @param noCopy can be copy this attribute?
      * @param unique should this attribute be unique?
      * @param sessionId session token
-     * @throws Exception IN case something goes wrong
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createAttribute")
     public void createAttribute(@WebParam(name = "className")
@@ -2090,7 +2171,7 @@ public class Kuwaiba {
     }
 
     /**
-     * Adds an attribute to a classMetadata
+     * Adds an attribute to a class using its id as key to find it
      * @param ClassId Class id where the attribute will be attached
      * @param name attribute name
      * @param displayName attribute display name
@@ -2099,10 +2180,9 @@ public class Kuwaiba {
      * @param administrative is the attribute administrative?
      * @param visible is the attribute visible?
      * @param readOnly is the attribute read only?
-     * @param noCopy can be copy this attribute?
      * @param unique should this attribute be unique?
      * @param sessionId session token
-     * @throws Exception IN case something goes wrong
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "createAttributeForClassWithId")
     public void createAttributeForClassWithId(@WebParam(name = "classId")
@@ -2119,7 +2199,6 @@ public class Kuwaiba {
         String sessionId) throws Exception {
 
         try {
-            wsBean.validateCall("createAttributeForClassWithId", getIPAddress(), sessionId);
             AttributeInfo ai = new AttributeInfo(name, displayName, type, administrative, 
                                    visible, readOnly, unique, description, noCopy);
 
@@ -2136,7 +2215,7 @@ public class Kuwaiba {
     }
     
     /**
-     * Update a class attribute taking its class name as parameter
+     * Updates a class attribute taking its name as key to find it
      * @param className Class the attribute belongs to
      * @param attributeId attribute id
      * @param name attribute name
@@ -2149,7 +2228,7 @@ public class Kuwaiba {
      * @param unique should this attribute be unique?
      * @param noCopy can this attribute be copy in copy/paste operation?
      * @param sessionId session token
-     * @throws Exception
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "setAttributeProperties")
     public void setAttributeProperties(@WebParam(name = "className")
@@ -2181,8 +2260,8 @@ public class Kuwaiba {
     }
 
     /**
-     * Update a class attribute taking its class id as parameter
-     * @param classId Class the attribute belongs to
+     * Updates a class attribute taking its id as key to find it
+     * @param className Class the attribute belongs to
      * @param attributeId attribute id
      * @param name attribute name
      * @param displayName attribute display name
@@ -2194,11 +2273,11 @@ public class Kuwaiba {
      * @param unique should this attribute be unique?
      * @param noCopy can this attribute be copy in copy/paste operation?
      * @param sessionId session token
-     * @throws Exception
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "setAttributePropertiesForClassWithId")
-    public void setAttributePropertiesForClassWithId(@WebParam(name = "classId")
-        long classId, @WebParam(name = "attributeId")
+    public void setAttributePropertiesForClassWithId(@WebParam(name = "classid")
+        long classid, @WebParam(name = "attributeId")
         long attributeId, @WebParam(name = "name")
         String name, @WebParam(name = "displayName")
         String displayName, @WebParam(name = "type")
@@ -2214,7 +2293,7 @@ public class Kuwaiba {
         try {
             AttributeInfo ai = new AttributeInfo(attributeId, name, displayName, 
                     type, administrative, visible, readOnly, unique, description, noCopy);
-            wsBean.setAttributeProperties(classId, ai, getIPAddress(), sessionId);
+            wsBean.setAttributeProperties(classid, ai, getIPAddress(), sessionId);
         }catch(Exception e){
             Level level = Level.SEVERE;
             if (e instanceof ServerSideException)
@@ -2226,11 +2305,11 @@ public class Kuwaiba {
     }
     
     /**
-     * Deletes a class attribute
-     * @param className
-     * @param attributeName
-     * @param sessionId
-     * @throws Exception 
+     * Deletes an attribute from a class using the class name as key to find it
+     * @param className Class name
+     * @param attributeName Attribute name
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     
     @WebMethod(operationName = "deleteAttribute")
@@ -2252,11 +2331,11 @@ public class Kuwaiba {
     }
 
     /**
-     * Deletes a class attribute
-     * @param classId
-     * @param attributeName
-     * @param sessionId
-     * @throws Exception 
+     * Deletes an attribute from a class using the class id as key to find it
+     * @param classId Class id
+     * @param attributeName Attribute name
+     * @param sessionId Session token
+     * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteAttributeForClassWithId")
     public void deleteAttributeForClassWithId(@WebParam(name = "classId") 
@@ -2277,7 +2356,7 @@ public class Kuwaiba {
     }
 
     /**
-     * Gets the metadata for a given class using its name as argument
+     * Gets the metadata of a given class using its name as key to find it
      * @param className Class name
      * @param sessionId Session token
      * @return The metadata as a ClassInfo instance
@@ -2301,7 +2380,7 @@ public class Kuwaiba {
     }
 
     /**
-     * Gets the metadata for a given class using its id as argument
+     * Gets the metadata of a given class using its id as key to find it
      * @param classId Class metadata object id
      * @param sessionId session token
      * @return The metadata as a ClassInfo instance
@@ -2433,7 +2512,7 @@ public class Kuwaiba {
     }
 
     /**
-     * Deletes a class metadata entry for a given class using its name as argument
+     * Deletes a class from the data model using its name as key to find it
      * @param className Class name
      * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
@@ -2457,7 +2536,7 @@ public class Kuwaiba {
     }
 
     /**
-     * Deletes a class metadata entry for a given class using its id as argument
+     * Deletes a class from the data model using its id as key to find it
      * @param classId Class id
      * @param sessionId Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
@@ -2633,10 +2712,10 @@ public class Kuwaiba {
     }
 
     /**
-     *
-     * @param className
-     * @param recursive
-     * @param sessionId session token
+     * Get the containment hierarchy of a given class, but upwards (i.e. for Building, it could return 
+     * City, Country, Continent)
+     * @param className Class to be evaluated
+     * @param recursive do it recursively or not
      * @return Session token
      * @throws Exception Generic exception encapsulating any possible error raised at runtime
      */
@@ -2659,78 +2738,57 @@ public class Kuwaiba {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Sync/Load methods. Click on the + sign on the left to edit the code.">/**
-    /**
-     * Loads data from a csv file
-     * @param choosenFile the chosen csv file
-     * @param sessionId Session token
-     * @return 
-     * @throws Exception 
-     */
-    @WebMethod(operationName = "bulkUpload")
-    public String bulkUpload(@WebParam(name = "chossenFile")
-        byte[] choosenFile, @WebParam(name = "sessionId")
-            String sessionId) throws Exception {
-        try{
-            wsBean.validateCall("loadDataFromFile", getIPAddress(), sessionId);
-            UserInfo user = wsBean.getUserInSession(sessionId);
-            return wsBean.bulkUpload(choosenFile, user.getId());
-        }catch(Exception e){
-            Level level = Level.SEVERE;
-            if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(Kuwaiba.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-            throw e;
-        }
-    }
+//    @WebMethod(operationName = "bulkUpload")
+//    public String bulkUpload(@WebParam(name = "file")
+//        byte[] file, @WebParam(name = "sessionId")
+//            String sessionId) throws Exception {
+//        try{
+//            UserInfo user = wsBean.getUserInSession(sessionId);
+//            return wsBean.bulkUpload(file, user.getId());
+//        }catch(Exception e){
+//            Level level = Level.SEVERE;
+//            if (e instanceof ServerSideException)
+//                level = ((ServerSideException)e).getLevel();
+//            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+//                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+//            throw e;
+//        }
+//    }
     
-    /**
-     * Errors file generated after the bulkupload
-     * @param fileName the file name
-     * @param sessionId Session token
-     * @return list of the lines with errors that could not be saved after bulkupload
-     * @throws Exception 
-     */
-    @WebMethod(operationName = "downloadErrors")
-    public byte[] downloadErrors(@WebParam(name = "fileName")
-        String fileName, @WebParam(name = "sessionId")
-            String sessionId) throws Exception {
-        try{
-            wsBean.validateCall("downloadErrors", getIPAddress(), sessionId);
-            return wsBean.downloadErrors(fileName);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
-            if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(Kuwaiba.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-            throw e;
-        }
-    }
+    
+//    @WebMethod(operationName = "downloadErrors")
+//    public byte[] downloadErrors(@WebParam(name = "fileName")
+//        String fileName, @WebParam(name = "sessionId")
+//            String sessionId) throws Exception {
+//        try{
+//            wsBean.validateCall("downloadErrors", getIPAddress(), sessionId);
+//            return wsBean.downloadErrors(fileName);
+//        }catch(Exception e){
+//            Level level = Level.SEVERE;
+//            if (e instanceof ServerSideException)
+//                level = ((ServerSideException)e).getLevel();
+//            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+//                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+//            throw e;
+//        }
+//    }
      
-    /**
-     * log file generatad after the bulkupload
-     * @param fileName the file name
-     * @param sessionId Session token
-     * @return log file after bulkupload
-     * @throws Exception 
-     */
-    @WebMethod(operationName = "downloadLog")
-    public byte[] downloadLog(@WebParam(name = "fileName")
-        String fileName, @WebParam(name = "sessionId")
-            String sessionId) throws Exception {
-        try{
-            wsBean.validateCall("downloadLog", getIPAddress(), sessionId);
-            return wsBean.downloadLog(fileName);
-        }catch(Exception e){
-            Level level = Level.SEVERE;
-            if (e instanceof ServerSideException)
-                level = ((ServerSideException)e).getLevel();
-            Logger.getLogger(Kuwaiba.class.getName()).log(level,
-                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-            throw e;
-        }
-    }
+//    @WebMethod(operationName = "downloadLog")
+//    public byte[] downloadLog(@WebParam(name = "fileName")
+//        String fileName, @WebParam(name = "sessionId")
+//            String sessionId) throws Exception {
+//        try{
+//            wsBean.validateCall("downloadLog", getIPAddress(), sessionId);
+//            return wsBean.downloadLog(fileName);
+//        }catch(Exception e){
+//            Level level = Level.SEVERE;
+//            if (e instanceof ServerSideException)
+//                level = ((ServerSideException)e).getLevel();
+//            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+//                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+//            throw e;
+//        }
+//    }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**
