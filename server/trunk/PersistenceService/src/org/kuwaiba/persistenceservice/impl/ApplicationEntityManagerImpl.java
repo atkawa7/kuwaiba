@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Modifier;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -190,7 +191,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
     public long createUser(String userName, String password, String firstName,
             String lastName, boolean enabled, long[] privileges, long[] groups)
             throws InvalidArgumentException, NotAuthorizedException, NotAuthorizedException {
-        //validateCall("createUser", ipAddres, sessions.get(sessionId).getUser().getUserName());
+        //validateCall("createUser", ipAddres, sessionId);
         Transaction tx = null;
         
         if (userName == null){
@@ -199,6 +200,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         if (userName.trim().equals("")){
             throw new InvalidArgumentException("User name can not be an empty string", Level.INFO);
         }
+        if (!userName.matches("^[a-zA-Z0-9_]*$"))
+            throw new InvalidArgumentException(String.format("Class %s contains invalid characters", userName), Level.INFO);
         if (password == null){
             throw new InvalidArgumentException("Password can not be null", Level.INFO);
         }
@@ -281,6 +284,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         if(userName != null){
             if (userName.trim().equals(""))
                 throw new InvalidArgumentException("User name can not be an empty string", Level.INFO);
+        
+            if (!userName.matches("^[a-zA-Z0-9_]*$"))
+                throw new InvalidArgumentException(String.format("Class %s contains invalid characters", userName), Level.INFO);
 
             Node storedUser = userIndex.get(Constants.PROPERTY_NAME, userName).getSingle();
             if (storedUser != null)
@@ -347,7 +353,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
             throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         
-        validateCall("setUserProperties", ipAddress, sessionId);
+        //validateCall("setUserProperties", ipAddress, sessionId);
         
         Node userNode = userIndex.get(Constants.PROPERTY_NAME, formerUsername).getSingle();
         if(userNode == null)
@@ -361,6 +367,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             Node storedUser = userIndex.get(Constants.PROPERTY_NAME, newUserName).getSingle();
             if (storedUser != null)
                 throw new InvalidArgumentException(String.format("User name %s already exists", newUserName), Level.WARNING);
+            
+            if (!newUserName.matches("^[a-zA-Z0-9_]*$"))
+                throw new InvalidArgumentException(String.format("Class %s contains invalid characters", newUserName), Level.INFO);
         }
         if(password != null){
             if (password.trim().isEmpty())
@@ -423,7 +432,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             long[] privileges, long[] users) 
             throws InvalidArgumentException, NotAuthorizedException {
         
-        //validateCall("createGroup", ipAddress, sessions.get(sessionId).getUser().getUserName());
+        //validateCall("createGroup", ipAddress, sessionId);
         
         Transaction tx = null;
         if (groupName == null){
@@ -432,6 +441,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         if (groupName.trim().equals("")){
             throw new InvalidArgumentException("Group name can not be an empty string", Level.INFO);
         }
+        if (!groupName.matches("^[a-zA-Z0-9_]*$"))
+            throw new InvalidArgumentException(String.format("Class %s contains invalid characters", groupName), Level.INFO);
+        
         Node storedGroup = groupIndex.get(Constants.PROPERTY_NAME,groupName).getSingle();
         if (storedGroup != null){
             throw new InvalidArgumentException(String.format("Group %s already exists", groupName), Level.WARNING);
@@ -537,6 +549,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             if(groupName != null){
                 if (groupName.trim().equals(""))
                     throw new InvalidArgumentException("Group name can not be an empty string", Level.INFO);
+                if (!groupName.matches("^[a-zA-Z0-9_]*$"))
+                    throw new InvalidArgumentException(String.format("Class %s contains invalid characters", groupName), Level.INFO);
+
                 Node storedGroup = groupIndex.get(Constants.PROPERTY_NAME, groupName).getSingle();
                     if (storedGroup != null)
                         throw new InvalidArgumentException(String.format("The group name %1s is already in use", groupName), Level.WARNING);
@@ -1537,6 +1552,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
+        
     @Override
     public List<RemoteBusinessObjectLight> getPools(int limit, String ipAddress, String sessionId) throws NotAuthorizedException{
         
@@ -1556,6 +1572,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                                     node.hasProperty(Constants.PROPERTY_NAME) ? (String)node.getProperty(Constants.PROPERTY_NAME) : null,
                                     node.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)node.getProperty(Constants.PROPERTY_CLASS_NAME) : null);
             pools.add(rbol);
+            
         }
             
         return pools;
@@ -1701,7 +1718,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 //                if(methodName.equals((String)(userPrivilegesRel.getStartNode().getProperty(Constants.PROPERTY_NAME))))
 //                    return;
 //            }
-//            throw new NotAuthorizedException(methodName,sessions.get(sessionId).getUser().getUserName());
+//            throw new NotAuthorizedException(methodName,sessionId);
 //        }catch(Exception ex){
 //            throw new RuntimeException(ex.getMessage());
 //        }
@@ -1709,6 +1726,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
     @Override
     public Session createSession(String userName, String password, String IPAddress) throws ApplicationObjectNotFoundException {
+        
         if (userName == null || password == null)
             throw  new ApplicationObjectNotFoundException("User or Password can not be null");
         
@@ -1723,6 +1741,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             UserProfile user = Util.createUserProfileFromNode(userNode);
             cm.putUser(user);
         }
+        else
+            throw new ApplicationObjectNotFoundException("User or password incorrect");
+        
         for (Session aSession : sessions.values()){
             if (aSession.getUser().getUserName().equals(userName)){
                 Logger.getLogger("createSession").log(Level.INFO, String.format("An existing session for user %1s has been dropped", aSession.getUser().getUserName()));
@@ -1878,4 +1899,5 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         throw new ObjectNotFoundException(className, oid);
     }
     //end Helpers
+
 }
