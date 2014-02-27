@@ -813,10 +813,10 @@ public class WebserviceBean implements WebserviceBeanRemote {
             
         } catch (ApplicationObjectNotFoundException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            throw new ServerSideException(Level.SEVERE, ex.getMessage()); 
         } catch (RemoteException ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
-            return null;
+            throw new ServerSideException(Level.SEVERE, ex.getMessage()); 
         }
     }
 
@@ -1847,7 +1847,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
         }
     }
-
+    
+    
     @Override
     public RemoteObjectLight[] getPools(int limit, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
