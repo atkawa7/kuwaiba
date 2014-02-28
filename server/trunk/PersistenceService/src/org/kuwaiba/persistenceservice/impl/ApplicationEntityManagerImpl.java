@@ -22,7 +22,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Modifier;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -1735,7 +1734,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             throw new ApplicationObjectNotFoundException("User does not exist");
         
         if (!(Boolean)userNode.getProperty(Constants.PROPERTY_ENABLED))
-            throw new ApplicationObjectNotFoundException("The user is not enable to peform operations");
+            throw new ApplicationObjectNotFoundException("This user is not enabled");
         
         if (Util.getMD5Hash(password).equals(userNode.getProperty(Constants.PROPERTY_PASSWORD))){
             UserProfile user = Util.createUserProfileFromNode(userNode);

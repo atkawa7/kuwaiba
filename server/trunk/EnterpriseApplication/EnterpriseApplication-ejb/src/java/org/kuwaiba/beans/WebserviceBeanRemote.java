@@ -58,12 +58,6 @@ public interface WebserviceBeanRemote {
      */
     public void closeSession(String sessionId, String remoteAddress) throws ServerSideException, NotAuthorizedException;
 
-    /**
-     * Returns the user related to the given session id
-     * @param sessionId The session id
-     * @return The user or null if none
-     */
-    public UserInfo getUserInSession(String sessionId);
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">

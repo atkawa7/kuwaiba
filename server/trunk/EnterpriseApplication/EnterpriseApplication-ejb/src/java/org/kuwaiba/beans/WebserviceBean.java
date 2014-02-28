@@ -37,7 +37,6 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
-import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.CategoryMetadata;
@@ -808,13 +807,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
         try {
             Session newSession = aem.createSession(user, password, IPAddress);
-            
             return new RemoteSession(newSession.getToken(), newSession.getUser());
-            
-        } catch (ApplicationObjectNotFoundException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ServerSideException(Level.SEVERE, ex.getMessage()); 
-        } catch (RemoteException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage()); 
         }
@@ -834,14 +828,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
     
-    @Override
-    public UserInfo getUserInSession(String sessionId){
-//        Session aSession = sessions.get(sessionId);
-//        if (aSession == null){
-            return null;
-//        }
-//        return new UserInfo(aSession.getUser());
-    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Business methods. Click on the + sign on the left to edit the code.">

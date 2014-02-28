@@ -77,9 +77,9 @@ public class PrivilegesReader {
             privileges[i] = (long)i+1;
         try{
             aem.createGroup(Constants.NODE_USERS, "users root group", new long[]{1,2}, null);
-            long userId = aem.createUser("user", "kuwaiba", "Tyler", "Durden", true, null, null);
+            aem.createUser("user", "kuwaiba", "James", "Rodriguez", true, null, null);
             long adminGroupId = aem.createGroup("administrators", "Administrators Group", privileges, null);
-            aem.createUser("admin", "kuwaiba", "Tyler", "Durden", true, null, new long[]{adminGroupId});
+            aem.createUser("admin", "kuwaiba", "Falcao", "garcia", true, null, new long[]{adminGroupId});
         }catch(InvalidArgumentException ex){
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "setDefaultSettings: {0}", ex.getMessage()); //NOI18N
         }

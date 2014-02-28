@@ -2059,9 +2059,7 @@
                             <attributes>
                               <attribute name="administrator" type="Employee" javaModifiers="4" applicationModifiers="2"/>
                               <attribute name="position" type="String" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="state" type="StructuralState" javaModifiers="4" applicationModifiers="0"/>
-                              
-                              
+                              <attribute name="state" type="StructuralState" javaModifiers="4" applicationModifiers="0"/>                              
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                               <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                             </attributes>
@@ -2072,9 +2070,17 @@
                       <class name="OutdoorsCabinet" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.location">
                         <attributes>
                           <attribute name="width" type="Float" javaModifiers="4" applicationModifiers="0"/>
+                          <attribute name="height" type="Float" javaModifiers="4" applicationModifiers="0"/>                         
+                          <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                          <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                        </attributes>
+                        <subclasses/>
+                      </class>
+                      <class name="Manhole" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.location">
+                        <attributes>
+                          <attribute name="width" type="Float" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="height" type="Float" javaModifiers="4" applicationModifiers="0"/>
-                          
-                          
+                          <attribute name="depth" type="Float" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                           <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                         </attributes>
@@ -2085,7 +2091,6 @@
                   <class name="City" javaModifiers="1" applicationModifiers="2" classType="1" classPackage="org.kuwaiba.entity.location">
                     <attributes>
                       <attribute name="acronym" type="String" javaModifiers="4" applicationModifiers="0"/>
-                      
                       <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                       <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                     </attributes>
