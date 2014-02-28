@@ -20,7 +20,7 @@ import org.inventory.communications.core.LocalObjectLight;
 
 
 /**
- * Superclass to all actions related to a 
+ * Superclass to all actions related to a node
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public abstract class GenericObjectNodeAction extends AbstractAction {

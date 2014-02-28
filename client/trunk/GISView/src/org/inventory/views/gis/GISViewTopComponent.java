@@ -342,11 +342,11 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnZoomInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomInActionPerformed
-//        scene.zoomIn();
+        scene.zoomIn();
     }//GEN-LAST:event_btnZoomInActionPerformed
 
     private void btnZoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomOutActionPerformed
-//        scene.zoomOut();
+        scene.zoomOut();
     }//GEN-LAST:event_btnZoomOutActionPerformed
 
     private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
@@ -360,38 +360,38 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }//GEN-LAST:event_btnConnectActionPerformed
 
     private void btnWireContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWireContainerActionPerformed
-//        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRECONTAINER);
+        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRECONTAINER);
         btnConnect.setSelected(true);
         btnConnectActionPerformed(evt);
     }//GEN-LAST:event_btnWireContainerActionPerformed
 
     private void btnWirelessContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessContainerActionPerformed
-//        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRELESSCONTAINER);
+        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRELESSCONTAINER);
         btnConnect.setSelected(true);
         btnConnectActionPerformed(evt);
     }//GEN-LAST:event_btnWirelessContainerActionPerformed
 
     private void btnOpticalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpticalLinkActionPerformed
-//        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_OPTICALLINK);
+        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_OPTICALLINK);
         btnConnect.setSelected(true);
         btnConnectActionPerformed(evt);
     }//GEN-LAST:event_btnOpticalLinkActionPerformed
 
     private void btnElectricalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnElectricalLinkActionPerformed
-//        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_ELECTRICALLINK);
+        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_ELECTRICALLINK);
         btnConnect.setSelected(true);
         btnConnectActionPerformed(evt);
     }//GEN-LAST:event_btnElectricalLinkActionPerformed
 
     private void btnWirelessLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessLinkActionPerformed
-//        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRELESSLINK);
+        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRELESSLINK);
         btnConnect.setSelected(true);
         btnConnectActionPerformed(evt);
     }//GEN-LAST:event_btnWirelessLinkActionPerformed
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-//        scene.clear();
-//        scene.activateMap();
+        scene.clear();
+        scene.activateMap();
         gvs.setCurrentView(null);
         toggleButtons(true);
     }//GEN-LAST:event_btnNewActionPerformed
@@ -424,11 +424,11 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }//GEN-LAST:event_btnOpenActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-//        gvs.deleteCurrentView();
+        gvs.deleteCurrentView();
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnShowNodeLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodeLabelsActionPerformed
-//        gvs.toggleLabels(!btnShowNodeLabels.isSelected());
+        gvs.toggleLabels(!btnShowNodeLabels.isSelected());
     }//GEN-LAST:event_btnShowNodeLabelsActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -494,7 +494,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     @Override
     public void componentClosed() {
         toggleButtons(false);
-//        scene.clear();
+        scene.clear();
     }
 
     /**
@@ -553,5 +553,4 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
         return nu;
     }
-
 }

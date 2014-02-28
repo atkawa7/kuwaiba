@@ -18,9 +18,7 @@ package org.kuwaiba.management.services;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.kuwaiba.management.services.nodes.CustomerChildren;
 import org.kuwaiba.management.services.nodes.ServiceManagerRootNode;
-import org.openide.nodes.Children;
 
 /**
  * Service Manager Service
@@ -36,7 +34,7 @@ public class ServiceManagerService {
     }
     
     public void setTreeRoot(){
-        LocalObjectLight[] customers = CommunicationsStub.getInstance().getObjectsOfClassLight("GenericCustomer");
+        LocalObjectLight[] customers = com.getObjectsOfClassLight("GenericCustomer");
         if (customers == null)
             this.smtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
         else

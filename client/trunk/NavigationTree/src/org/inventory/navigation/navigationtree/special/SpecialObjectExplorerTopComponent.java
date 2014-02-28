@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JScrollPane;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.SpecialNode;
 import org.openide.explorer.ExplorerManager;
@@ -44,6 +45,12 @@ public class SpecialObjectExplorerTopComponent extends TopComponent
         em = new ExplorerManager();
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
         initComponents();
+    }
+    
+    public SpecialObjectExplorerTopComponent(LocalObjectLight anObject) {
+        this();
+        em.setRootContext(new SpecialNode(anObject));
+        setDisplayName(String.format("Exploring %s", anObject));
     }
         
     public final void initComponents(){

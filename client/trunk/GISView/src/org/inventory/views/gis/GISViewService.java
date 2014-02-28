@@ -28,7 +28,6 @@ import javax.xml.stream.XMLStreamReader;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
-import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.views.gis.scene.GISViewScene;
 import org.inventory.views.gis.scene.GeoPositionedConnectionWidget;
@@ -158,10 +157,10 @@ public class GISViewService {
                                                     double longitude = Double.valueOf(reader.getAttributeValue(null,"x"));
                                                     double latitude = Double.valueOf(reader.getAttributeValue(null,"y"));
                                                     newEdge.getGeoPositionedControlPoints().add(new double[]{longitude, latitude});
-//                                                    Point newControlPoint = scene.coordinateToPixel(latitude, longitude, currentView.getZoom());
-//                                                    localControlPoints.add(newControlPoint);
-//                                                    if (newControlPoint.x <= 0 || newControlPoint.y <= 0)
-//                                                        visible = false;
+                                                    Point newControlPoint = scene.coordinateToPixel(latitude, longitude, currentView.getZoom());
+                                                    localControlPoints.add(newControlPoint);
+                                                    if (newControlPoint.x <= 0 || newControlPoint.y <= 0)
+                                                        visible = false;
                                                 }
                                             }else{
                                                 if (!localControlPoints.isEmpty())
@@ -235,25 +234,25 @@ public class GISViewService {
         }
 //    }
 
-//    void deleteCurrentView() {
-//        if (currentView == null)
-//            nu.showSimplePopup("Delete View", NotificationUtil.INFO, "This view has not been saved yet");
-//        else{
-//            if (com.deleteGeneralViews(new long[]{currentView.getId()})){
-//                scene.clear();
-//                currentView = null;
-//                gvtc.toggleButtons(false);
-//                nu.showSimplePopup("Delete View", NotificationUtil.INFO, "View deleted successfully");
-//            }
-//            else
-//                nu.showSimplePopup("Delete View", NotificationUtil.ERROR, com.getError());
-//        }
-//    }
-//
-//    void toggleLabels(boolean isVisible) {
-//        for (Widget aNode :scene.getNodesLayer().getChildren())
-//            ((GeoPositionedNodeWidget)aNode).getLabelWidget().setVisible(isVisible);
-//                
-//        scene.validate();
-//    }
+    void deleteCurrentView() {
+        if (currentView == null)
+            nu.showSimplePopup("Delete View", NotificationUtil.INFO, "This view has not been saved yet");
+        else{
+            if (com.deleteGeneralViews(new long[]{currentView.getId()})){
+                scene.clear();
+                currentView = null;
+                gvtc.toggleButtons(false);
+                nu.showSimplePopup("Delete View", NotificationUtil.INFO, "View deleted successfully");
+            }
+            else
+                nu.showSimplePopup("Delete View", NotificationUtil.ERROR, com.getError());
+        }
+    }
+
+    void toggleLabels(boolean isVisible) {
+        for (Widget aNode :scene.getNodesLayer().getChildren())
+            ((GeoPositionedNodeWidget)aNode).getLabelWidget().setVisible(isVisible);
+                
+        scene.validate();
+    }
 }

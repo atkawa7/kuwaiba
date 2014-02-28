@@ -28,7 +28,7 @@ import org.netbeans.api.visual.widget.Widget;
  * A modified version of the original pan action for a scrolless container. It pans over a JXMapViewer component
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class MapWidgetPanAction extends WidgetAction.LockedAdapter{
+public class MapWidgetPanAction extends WidgetAction.LockedAdapter {
     /**
      * Local scene
      */
@@ -81,9 +81,9 @@ public class MapWidgetPanAction extends WidgetAction.LockedAdapter{
         if (scene != widget.getScene ())
             return false;
         int deltaX = lastLocation.x - newLocation.x, deltaY = lastLocation.y - newLocation.y;
-//        map.getMainMap().setCenter(new Point2D.Double(map.getMainMap().getCenter().getX() + deltaX,
-//                map.getMainMap().getCenter().getY() + deltaY));
-//        ((GISViewScene)scene).pan(deltaX, deltaY);
+        map.getMainMap().setCenter(new Point2D.Double(map.getMainMap().getCenter().getX() + deltaX,
+                map.getMainMap().getCenter().getY() + deltaY));
+        ((GISViewScene)scene).pan(deltaX, deltaY);
         lastLocation = newLocation;
         return true;
     }

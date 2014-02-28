@@ -97,9 +97,7 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
-                <package>org.inventory.navigation.navigationtree.actions</package>
-                <package>org.inventory.navigation.navigationtree.nodes</package>
-                <package>org.inventory.navigation.navigationtree.nodes.properties</package>
+                <package>org.inventory.navigation.navigationtree.special</package>
             </public-packages>
         </data>
     </configuration>

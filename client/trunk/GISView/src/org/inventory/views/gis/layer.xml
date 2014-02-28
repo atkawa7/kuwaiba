@@ -2,21 +2,21 @@
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
     <folder name="Actions">
-        <!--<folder name="Window">
+        <folder name="Window">
             <file name="org-inventory-views-gis-GISViewAction.instance">
                 <attr name="component" methodvalue="org.inventory.views.gis.GISViewTopComponent.findInstance"/>
                 <attr name="displayName" bundlevalue="org.inventory.views.gis.Bundle#CTL_GISViewAction"/>
                 <attr name="instanceCreate" methodvalue="org.openide.windows.TopComponent.openAction"/>
                 <attr name="iconBase" stringvalue="org/inventory/views/gis/res/icon.png"/>
             </file>
-        </folder>-->
+        </folder>
     </folder>
     <folder name="Menu">
-        <!--<folder name="Tools">
+        <folder name="Tools">
             <file name="GISViewAction.shadow">
                 <attr name="originalFile" stringvalue="Actions/Window/org-inventory-views-gis-GISViewAction.instance"/>
             </file>
-        </folder>-->
+        </folder>
     </folder>
     <folder name="Windows2">
         <folder name="Components">
@@ -29,11 +29,11 @@
         </folder>
     </folder>
     <folder name="Toolbars">
-        <!--<folder name="Tools">
+        <folder name="Tools">
             <file name="GISViewAction.shadow">
                 <attr name="originalFile" stringvalue="Actions/Window/org-inventory-views-gis-GISViewAction.instance"/>
             </file>
-        </folder>-->
+        </folder>
     </folder>
     <folder name="Shortcuts">
         <!--<file name="DS-G.shadow">

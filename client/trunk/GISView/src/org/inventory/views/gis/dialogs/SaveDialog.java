@@ -23,7 +23,7 @@
 package org.inventory.views.gis.dialogs;
 
 /**
- *
+ * Dialog to save the view
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SaveDialog extends javax.swing.JPanel {

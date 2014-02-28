@@ -23,7 +23,6 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.views.gis.scene.GISViewScene;
-import org.inventory.views.gis.scene.GeoPositionedNodeWidget;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.Widget;
@@ -46,9 +45,9 @@ public class AcceptActionProvider implements AcceptProvider{
 
     @Override
     public ConnectorState isAcceptable(Widget widget, Point point, Transferable transferable) {
-//        if (transferable.isDataFlavorSupported(LocalObjectLight.DATA_FLAVOR)&& scene.hasView()){
+        if (scene.hasView()){
             return ConnectorState.ACCEPT;
-//        }else return ConnectorState.REJECT_AND_STOP;
+        }else return ConnectorState.REJECT_AND_STOP;
     }
 
     @Override
@@ -69,5 +68,4 @@ public class AcceptActionProvider implements AcceptProvider{
             Exceptions.printStackTrace(ex);
         }
     }
-
 }
