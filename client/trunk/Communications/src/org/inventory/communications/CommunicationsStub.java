@@ -1995,7 +1995,7 @@ public class CommunicationsStub {
 //    }
      public byte[] downloadErrors(String fileName){
         try{
-            return port.downloadErrors(fileName, this.session.getSessionId());
+            return null;
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
@@ -2004,7 +2004,7 @@ public class CommunicationsStub {
     
     public byte[] downloadLog(String fileName){
         try{
-            return port.downloadLog(fileName, this.session.getSessionId());
+            return null;
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
