@@ -28,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Properties;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
