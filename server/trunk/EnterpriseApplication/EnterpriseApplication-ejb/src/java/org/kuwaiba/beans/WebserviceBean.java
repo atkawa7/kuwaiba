@@ -1834,13 +1834,24 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
     
-    
     @Override
-    public RemoteObjectLight[] getPools(int limit, String ipAddress, String sessionId) throws ServerSideException{
+    public RemoteObjectLight[] getPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
         try{
-            return RemoteObjectLight.toRemoteObjectLightArray(aem.getPools(limit, ipAddress, sessionId));
+            return RemoteObjectLight.toRemoteObjectLightArray(aem.getPools(limit, parentId, className, ipAddress, sessionId));
+        }catch (Exception ex){
+            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteObjectLight[] getPools(int limit, String className, String ipAddress, String sessionId) throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
+        try{
+            return RemoteObjectLight.toRemoteObjectLightArray(aem.getPools(limit, className, ipAddress, sessionId));
         }catch (Exception ex){
             Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
             throw new ServerSideException(Level.SEVERE, ex.getMessage());
