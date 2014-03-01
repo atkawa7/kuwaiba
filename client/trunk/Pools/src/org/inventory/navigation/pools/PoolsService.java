@@ -39,16 +39,16 @@ public class PoolsService {
     }
     
     public LocalObjectLight[] getRootChildren(){
-        List<LocalObjectLight> rootChildren = com.getPools();
+        List<LocalObjectLight> rootChildren = com.getPools(null);
         if(rootChildren != null)
             return rootChildren.toArray(new LocalObjectLight[0]);
         else{
             NotificationUtil nu = Lookup.getDefault().
                 lookup(NotificationUtil.class);
             if (nu == null)
-                System.out.println(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("DBG_CREATION_ERROR")+com.getError());
+                System.out.println(java.util.ResourceBundle.getBundle("org/inventory/navigation/pools/Bundle").getString("DBG_CREATION_ERROR")+com.getError());
             else
-                nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_TITLE_CREATION"), NotificationUtil.ERROR, com.getError());
+                nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/pools/Bundle").getString("LBL_TITLE_CREATION"), NotificationUtil.ERROR, com.getError());
             return null;
         }
     }
