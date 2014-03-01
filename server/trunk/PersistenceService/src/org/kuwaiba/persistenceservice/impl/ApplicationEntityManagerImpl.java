@@ -164,27 +164,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         return sessions;
     }
 
-    @Override
-    public UserProfile login(String userName, String password) {
-        if (userName == null || password == null)
-            return null;
-        
-        Node userNode = userIndex.get(Constants.PROPERTY_NAME,userName).getSingle();
-        if (userNode == null)
-            return null;
-        
-        if (!(Boolean)userNode.getProperty(Constants.PROPERTY_ENABLED))
-            return null;
-        
-        if (Util.getMD5Hash(password).equals(userNode.getProperty(Constants.PROPERTY_PASSWORD))){
-            UserProfile user = Util.createUserProfileFromNode(userNode);
-            cm.putUser(user);
-            return user;
-        }
-        else
-            return null;
-    }
-
     //TODO add ipAddress, sessionId
     @Override
     public long createUser(String userName, String password, String firstName,
@@ -1402,9 +1381,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
      */
     public long createPool(long parentId, String name, String description, String instancesOfClass, String ipAddress, String sessionId)
             throws MetadataObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
-        
         validateCall("createPool", ipAddress, sessionId);
-        
         Transaction tx = null;
         try{
             tx = graphDb.beginTx();
@@ -1412,11 +1389,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             Node parentNode = null;
             if (parentId != -1){
                 parentNode = objectIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
-
                 if (parentNode == null)
                     throw new ObjectNotFoundException("N/A", parentId);
             }
-            
             Node poolNode =  graphDb.createNode();
             if (name != null)
                 poolNode.setProperty(Constants.PROPERTY_NAME, name);
@@ -1430,8 +1405,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             poolNode.setProperty(Constants.PROPERTY_CLASS_NAME, instancesOfClass);
             
             if (parentNode != null)
-                poolNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
-            
+                poolNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
+                        
             poolsIndex.putIfAbsent(poolNode, Constants.PROPERTY_ID, poolNode.getId());
             tx.success();
             tx.finish();
@@ -1443,7 +1418,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             throw new RuntimeException(ex.getMessage());
         }
     }
-
     /**
      * Creates an object inside a pool
      * @param poolId Parent pool id. 
@@ -1493,7 +1467,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             }
             
             Node newObject = bem.createObject(classNode, classMetadata, attributes, templateId);
-            newObject.createRelationshipTo(pool, RelTypes.CHILD_OF_SPECIAL);
+            newObject.createRelationshipTo(pool, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
             tx.success();
             return newObject.getId();
 
@@ -1551,9 +1525,44 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         }
     }
 
+    @Override
+    public List<RemoteBusinessObjectLight> getPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws NotAuthorizedException, ObjectNotFoundException{
+        validateCall("getPools", ipAddress, sessionId);
+        
+        Node parentNode = null;
+        if (parentId != -1){
+            parentNode = objectIndex.get(Constants.PROPERTY_ID, parentId).getSingle();
+            if (parentNode == null)
+                throw new ObjectNotFoundException("N/A", parentId);
+        }
+        List<RemoteBusinessObjectLight> pools  = new ArrayList<RemoteBusinessObjectLight>();
+        int i = 0;
+        for(Relationship rel: parentNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)){
+            if (limit != -1){
+                if (i >= limit)
+                     break;
+                i++;
+            }
+            Node node = null;
+            node = poolsIndex.get(Constants.PROPERTY_ID, rel.getStartNode().getId()).getSingle();
+            //or it could be use this if (rel.getProperty(Constants.PROPERTY_NAME).equals("Pools"))
+            if(node != null){
+                RemoteBusinessObjectLight rbol = new RemoteBusinessObjectLight(node.getId(),
+                node.hasProperty(Constants.PROPERTY_NAME) ? (String)node.getProperty(Constants.PROPERTY_NAME) : null,
+                node.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)node.getProperty(Constants.PROPERTY_CLASS_NAME) : null);
+                if(className != null && node.hasProperty(Constants.PROPERTY_CLASS_NAME)){
+                    if(className.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)))
+                        pools.add(rbol);
+                }
+                else
+                    pools.add(rbol);
+            }
+        }
+        return pools;
+    }
         
     @Override
-    public List<RemoteBusinessObjectLight> getPools(int limit, String ipAddress, String sessionId) throws NotAuthorizedException{
+    public List<RemoteBusinessObjectLight> getPools(int limit, String className, String ipAddress, String sessionId) throws NotAuthorizedException{
         
         validateCall("getPools", ipAddress, sessionId);
         
@@ -1567,11 +1576,18 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                      break;
                 i++;
             }
-            RemoteBusinessObjectLight rbol = new RemoteBusinessObjectLight(node.getId(), 
-                                    node.hasProperty(Constants.PROPERTY_NAME) ? (String)node.getProperty(Constants.PROPERTY_NAME) : null,
-                                    node.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)node.getProperty(Constants.PROPERTY_CLASS_NAME) : null);
-            pools.add(rbol);
-            
+            RemoteBusinessObjectLight rbol = new RemoteBusinessObjectLight(node.getId(),
+                    node.hasProperty(Constants.PROPERTY_NAME) ? (String)node.getProperty(Constants.PROPERTY_NAME) : null,
+                    node.hasProperty(Constants.PROPERTY_CLASS_NAME) ? (String)node.getProperty(Constants.PROPERTY_CLASS_NAME) : null);
+            if(className != null){
+                if(className.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)))
+                    pools.add(rbol);
+            }
+            else{
+                if(!Constants.CLASS_GENERICCUSTOMER.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)) ||
+                   !Constants.CLASS_GENERICSERVICE.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)))
+                    pools.add(rbol);
+            }
         }
             
         return pools;
@@ -1591,17 +1607,21 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         List<RemoteBusinessObjectLight> poolItems  = new ArrayList<RemoteBusinessObjectLight>();
         
         int i = 0;
-        for (Relationship rel : poolNode.getRelationships(RelTypes.CHILD_OF_SPECIAL)){
+        for (Relationship rel : poolNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)){
             if (limit != -1){
                 if (i >= limit)
                      break;
                 i++;
             }
-            Node item = rel.getStartNode();
-            RemoteBusinessObjectLight rbol = new RemoteBusinessObjectLight(item.getId(), 
-                                    item.hasProperty(Constants.PROPERTY_NAME) ? (String)item.getProperty(Constants.PROPERTY_NAME) : null,
-                                    Util.getClassName(item));
-            poolItems.add(rbol);
+            if(rel.hasProperty(Constants.PROPERTY_NAME)){
+                if(rel.getProperty(Constants.PROPERTY_NAME).equals(Constants.REL_PROPERTY_POOL)){
+                    Node item = rel.getStartNode();
+                    RemoteBusinessObjectLight rbol = new RemoteBusinessObjectLight(item.getId(), 
+                                            item.hasProperty(Constants.PROPERTY_NAME) ? (String)item.getProperty(Constants.PROPERTY_NAME) : null,
+                                            Util.getClassName(item));
+                    poolItems.add(rbol);
+                }
+            }
         }
                    
         return poolItems;

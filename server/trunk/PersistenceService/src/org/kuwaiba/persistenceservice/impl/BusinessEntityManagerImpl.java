@@ -964,10 +964,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         aem.validateCall("getSpecialAttribute", ipAddress, sessionId); 
         Node instance = getInstanceOfClass(objectClass, objectId);
         List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
-        for (Relationship rel : instance.getRelationships(RelTypes.RELATED_TO_SPECIAL))
-            if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName))
-                res.add(rel.getEndNode().getId() == objectId ? 
+        for (Relationship rel : instance.getRelationships(RelTypes.RELATED_TO_SPECIAL)){
+            if(rel.hasProperty(Constants.PROPERTY_NAME)){
+                if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName))
+                    res.add(rel.getEndNode().getId() == objectId ? 
                         Util.createRemoteObjectLightFromNode(rel.getStartNode()) : Util.createRemoteObjectLightFromNode(rel.getEndNode()));
+            }
+        }
         return res;
     }
     
@@ -995,8 +998,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         aem.validateCall("getObjectSpecialChildren", ipAddress, sessionId); 
         Node instance = getInstanceOfClass(objectClass, objectId);
         List<RemoteBusinessObjectLight> res = new ArrayList<RemoteBusinessObjectLight>();
-        for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL))
+        for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)){
+            if(rel.hasProperty(Constants.PROPERTY_NAME)){
+                if(rel.getProperty(Constants.PROPERTY_NAME).equals(Constants.REL_PROPERTY_POOL))
+                    return res;
+            }
             res.add(Util.createRemoteObjectLightFromNode(rel.getStartNode()));
+        }
         return res;
     }
 
