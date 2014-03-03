@@ -1584,7 +1584,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     pools.add(rbol);
             }
             else{
-                if(!Constants.CLASS_GENERICCUSTOMER.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)) ||
+                if(!Constants.CLASS_GENERICCUSTOMER.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)) &&
                    !Constants.CLASS_GENERICSERVICE.equals(node.getProperty(Constants.PROPERTY_CLASS_NAME)))
                     pools.add(rbol);
             }
