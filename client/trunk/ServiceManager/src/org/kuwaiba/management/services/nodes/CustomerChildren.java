@@ -15,13 +15,10 @@
  */
 package org.kuwaiba.management.services.nodes;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
 
@@ -31,6 +28,7 @@ import org.openide.util.Lookup;
  */
 public class CustomerChildren extends Children.Array {
     private LocalObjectLight customer;
+    
     public CustomerChildren(LocalObjectLight customers) {
         this.customer = customers;
     }
@@ -49,7 +47,15 @@ public class CustomerChildren extends Children.Array {
                 add(node);
             }
         }
+        List<LocalObjectLight> servicesPools = CommunicationsStub.getInstance().getPools(customer.getOid(), "GenericService");
+        if (servicesPools == null)
+            nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+        else{
+            for (LocalObjectLight servicePool : servicesPools) {
+                ServicesPoolNode[] node = new ServicesPoolNode[]{new ServicesPoolNode(servicePool)};
+                remove(node);
+                add(node);
+            }
+        }
     }
-    
-        
 }

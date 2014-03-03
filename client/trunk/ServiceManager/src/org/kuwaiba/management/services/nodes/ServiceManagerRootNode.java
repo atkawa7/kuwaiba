@@ -19,6 +19,7 @@ import java.awt.Image;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import org.kuwaiba.management.services.nodes.actions.CreateCustomerAction;
+import org.kuwaiba.management.services.nodes.actions.CreateCustomersPoolAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.ImageUtilities;
@@ -34,13 +35,17 @@ public class ServiceManagerRootNode extends AbstractNode {
         super(new Children.Array());
         icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/root.png");
         setDisplayName("Root");
-        for (LocalObjectLight customer : customers)
-            getChildren().add(new CustomerNode[]{new CustomerNode(customer)});
+        for (LocalObjectLight customer : customers){
+            if(customer.getClassName().equals("GenericCustomer"))
+                getChildren().add(new CustomersPoolNode[]{new CustomersPoolNode(customer)});
+            else
+                getChildren().add(new CustomerNode[]{new CustomerNode(customer)});
+        }
     }
 
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{new CreateCustomerAction(this)};
+        return new Action[]{new CreateCustomerAction(this), new CreateCustomersPoolAction(this)}; //new CreateServicesPoolAction(this)
     }
     
     @Override

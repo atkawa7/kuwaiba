@@ -16,15 +16,16 @@
 package org.kuwaiba.management.services.nodes.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.kuwaiba.management.services.nodes.CustomerNode;
 import org.kuwaiba.management.services.nodes.ServiceNode;
+import org.kuwaiba.management.services.nodes.ServicesPoolNode;
 import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter;
 
@@ -32,12 +33,17 @@ import org.openide.util.actions.Presenter;
  * This action allows to create a customer
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class CreateServiceAction extends AbstractAction implements Presenter.Popup {
+public class CreateServiceAction extends GenericObjectNodeAction implements Presenter.Popup {
     private CustomerNode customerNode;
-    
+    private ServicesPoolNode servicesPoolNode;
     
     public CreateServiceAction(CustomerNode customerNode) {
         this.customerNode = customerNode;
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_SERVICE"));
+    }
+
+    public CreateServiceAction(ServicesPoolNode servicesPoolNode) {
+        this.servicesPoolNode = servicesPoolNode;
         putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_SERVICE"));
     }
 
@@ -45,14 +51,23 @@ public class CreateServiceAction extends AbstractAction implements Presenter.Pop
     @Override
     public void actionPerformed(ActionEvent e) {
         String objectClass = ((JMenuItem)e.getSource()).getName();
-        LocalObjectLight newService = CommunicationsStub.getInstance().
+        if(customerNode != null){
+            LocalObjectLight newService = CommunicationsStub.getInstance().
                 createService(objectClass, customerNode.getObject().getClassName(), 
                 customerNode.getObject().getOid(), null, null);
-        if (newService != null)
-            customerNode.getChildren().add(new ServiceNode[] {new ServiceNode(newService)});
+            if (newService != null)
+                customerNode.getChildren().add(new ServiceNode[] {new ServiceNode(newService)});
+            else
+                Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+        }
         else{
-            Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup("Error", 
-                    NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            LocalObjectLight newService = CommunicationsStub.getInstance().createPoolItem(servicesPoolNode.getObject().getOid(), ((JMenuItem)e.getSource()).getName());
+            if (newService == null)
+                Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATION_ERROR"), NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            else{
+                servicesPoolNode.getChildren().add(new ServiceNode[]{new ServiceNode(newService)});
+                Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
+            }
         }
     }
 
@@ -68,6 +83,11 @@ public class CreateServiceAction extends AbstractAction implements Presenter.Pop
             menu.add(customerEntry);
         }
         return menu;
+    }
+
+    @Override
+    public String getValidator() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }

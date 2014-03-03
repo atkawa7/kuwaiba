@@ -15,6 +15,9 @@
  */
 package org.kuwaiba.management.services;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -34,11 +37,25 @@ public class ServiceManagerService {
     }
     
     public void setTreeRoot(){
-        LocalObjectLight[] customers = com.getObjectsOfClassLight("GenericCustomer");
+        List<LocalObjectLight> customersPools = CommunicationsStub.getInstance().getPools("GenericCustomer");
+        LocalObjectLight[] customers = CommunicationsStub.getInstance().getObjectsOfClassLight("GenericCustomer");
+                
         if (customers == null)
             this.smtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
-        else
-            smtc.getExplorerManager().setRootContext(new ServiceManagerRootNode(customers));
+        else{
+            List<LocalObjectLight> serviceManagerNodes = new ArrayList<LocalObjectLight>();
+            serviceManagerNodes.addAll(Arrays.asList(customers)); 
+            for (LocalObjectLight customersPool : customersPools){
+                List<LocalObjectLight> poolItems = CommunicationsStub.getInstance().getPoolItems(customersPool.getOid());
+                for(LocalObjectLight customer : customers){
+                    if(poolItems.contains(customer)){
+                        serviceManagerNodes.remove(customer);
+                    }
+                }
+                serviceManagerNodes.add(customersPool);
+            }
+            smtc.getExplorerManager().setRootContext(new ServiceManagerRootNode(serviceManagerNodes.toArray(new LocalObjectLight[serviceManagerNodes.size()])));
+        }
     }
     
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 - 2014 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.kuwaiba.management.services.nodes;
 
 import java.awt.Image;
@@ -21,37 +22,39 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.kuwaiba.management.services.nodes.actions.CreateServiceAction;
-import org.kuwaiba.management.services.nodes.actions.CreateServicesPoolAction;
 import org.openide.util.ImageUtilities;
 
 /**
- * Node representing a customer
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * Represents a pool (a set of services)
+ * @author adrian martinez molina <adrian.martinez@kuwaiba.org>
  */
-public class CustomerNode extends ObjectNode {
-    private static Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/customer.png");
+public class ServicesPoolNode extends ObjectNode{
     
-    public CustomerNode(LocalObjectLight customer) {
-        super(customer);
-        this.object = customer;
-        setChildren(new CustomerChildren(customer));
+    private static Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/servicesPool.png");
+    
+    public ServicesPoolNode(LocalObjectLight service) {
+        super(service);
+        this.object = service;
+        setChildren(new ServiceChildren(service));
+    }
+
+    @Override
+    public String getName(){
+        return object.getName() +" ["+java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_SERVICES_POOL")+"]";
     }
     
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{new CreateServiceAction(this), 
-            new CreateServicesPoolAction(this), 
-            new ShowObjectIdAction(object.getOid(), object.getClassName())
-        };
-    }
-        
-    @Override
-    public Image getIcon(int i){
-        return icon;
+        return new Action[]{new CreateServiceAction(this), new ShowObjectIdAction(object.getOid(), object.getClassName())};
     }
     
     @Override
-    public Image getOpenedIcon(int i){
+    public Image getIcon(int i) {
+        return icon;
+    }
+
+    @Override
+    public Image getOpenedIcon(int i) {
         return getIcon(i);
     }
 }
