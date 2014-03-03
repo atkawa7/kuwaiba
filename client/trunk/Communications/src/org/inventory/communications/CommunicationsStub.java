@@ -1958,12 +1958,34 @@ public class CommunicationsStub {
     }
     
     /**
+     * Returns the list of pools available for a specific parent
+     * @return The list of pools
+     */
+    public List<LocalObjectLight> getPools(long parentId, String className) {
+        try{
+            List <RemoteObjectLight> children = port.getPoolsForParentWithId(-1, parentId, className, this.session.getSessionId());
+            List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
+
+            for (RemoteObjectLight rol : children){
+                HashMap<String, Integer> validators = new HashMap<String, Integer>();
+                for (Validator validator : rol.getValidators())
+                    validators.put(validator.getLabel(), validator.getValue());
+                res.add(new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getOid(), validators));
+            }
+            return res;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
      * Returns the list of pools available
      * @return The list of pools
      */
-    public List<LocalObjectLight> getPools() {
+    public List<LocalObjectLight> getPools(String className) {
         try{
-            List <RemoteObjectLight> children = port.getPools(-1,this.session.getSessionId());
+            List <RemoteObjectLight> children = port.getPools(-1, className, this.session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<LocalObjectLight>();
 
             for (RemoteObjectLight rol : children){
@@ -1993,22 +2015,22 @@ public class CommunicationsStub {
 //            return "";
 //        }
 //    }
-     public byte[] downloadErrors(String fileName){
-        try{
-            return null;
-        }catch(Exception ex){
-            this.error =  ex.getMessage();
-            return null;
-        }
-    }    
-    
-    public byte[] downloadLog(String fileName){
-        try{
-            return null;
-        }catch(Exception ex){
-            this.error =  ex.getMessage();
-            return null;
-        }
-    }
+//     public byte[] downloadErrors(String fileName){
+//        try{
+//            return port.downloadErrors(fileName, this.session.getSessionId());
+//        }catch(Exception ex){
+//            this.error =  ex.getMessage();
+//            return null;
+//        }
+//    }    
+//    
+//    public byte[] downloadLog(String fileName){
+//        try{
+//            return port.downloadLog(fileName, this.session.getSessionId());
+//        }catch(Exception ex){
+//            this.error =  ex.getMessage();
+//            return null;
+//        }
+//    }
     // </editor-fold>    
 }
