@@ -45,13 +45,6 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 public interface ApplicationEntityManagerRemote extends Remote {
     public static final String REFERENCE_AEM = "aem";
     /**
-     * Verifies if a pair username/password matches
-     * @param username User name
-     * @param password password (in plain text)
-     * @return The user's profile. Null if the username/password don't match or any of them is null
-     */
-    public UserProfile login(String username, String password) throws RemoteException;
-    /**
      * Creates a user
      * @param userName New user's name. Mandatory.
      * @param password New user's password
@@ -420,13 +413,26 @@ public interface ApplicationEntityManagerRemote extends Remote {
      * @throws InvalidArgumentException If any of the pools to be deleted couldn't be found
      */
     public void deletePools(long[] ids, String ipAddress, String sessionId) throws InvalidArgumentException, NotAuthorizedException, RemoteException;
-
+    
+    
+     /**
+     * Gets the available pools for a specific parent id
+     * @param limit
+     * @param parentId
+     * @param className
+     * @param ipAddress
+     * @param sessionId
+     * @return
+     * @throws NotAuthorizedException 
+     */
+    public List<RemoteBusinessObjectLight> getPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws NotAuthorizedException, ObjectNotFoundException, RemoteException;
+    
     /**
      * Gets the available pools
      * @param limit Maximum number of pool records to be returned. -1 to return all
      * @return The list of pools as RemoteBusinessObjectLight instances
      */
-    public List<RemoteBusinessObjectLight> getPools(int limit, String ipAddress, String sessionId) throws NotAuthorizedException, RemoteException;
+    public List<RemoteBusinessObjectLight> getPools(int limit, String className, String ipAddress, String sessionId) throws NotAuthorizedException, RemoteException;
     /**
      * Gets the objects into a pool
      * @param poolId Parent pool id
