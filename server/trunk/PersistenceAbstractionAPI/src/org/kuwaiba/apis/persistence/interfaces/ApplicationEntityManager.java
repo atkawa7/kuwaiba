@@ -51,15 +51,6 @@ public interface ApplicationEntityManager {
      * String that identifies the superclass of all the list types
      */
     public static final String CLASS_GENERICOBJECTLIST = "GenericObjectList";
-    
-    
-    /**
-     * Verifies if a pair username/password matches
-     * @param username User name
-     * @param password password (in plain text)
-     * @return The user's profile. Null if the username/password don't match or any of them is null
-     */
-    public UserProfile login(String username, String password);
     /**
      * Creates a user
      * @param userName New user's name. Mandatory.
@@ -440,13 +431,24 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException If any of the pools to be deleted couldn't be found
      */
     public void deletePools(long[] ids, String ipAddress, String sessionId) throws InvalidArgumentException, NotAuthorizedException;
-
+   
+    /**
+     * Gets the available pools for a specific parent id
+     * @param limit
+     * @param parentId
+     * @param className
+     * @param ipAddress
+     * @param sessionId
+     * @return
+     * @throws NotAuthorizedException 
+     */
+    public List<RemoteBusinessObjectLight> getPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws NotAuthorizedException, ObjectNotFoundException;
     /**
      * Gets the available pools
      * @param limit Maximum number of pool records to be returned. -1 to return all
      * @return The list of pools as RemoteBusinessObjectLight instances
      */
-    public List<RemoteBusinessObjectLight> getPools(int limit, String ipAddress, String sessionId) throws NotAuthorizedException;
+    public List<RemoteBusinessObjectLight> getPools(int limit, String className, String ipAddress, String sessionId) throws NotAuthorizedException;
     
     /**
      * Gets the list of objects into a pool
