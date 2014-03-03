@@ -65,8 +65,8 @@ public final class ServiceManagerTopComponent extends TopComponent
         initComponents();
         setName(Bundle.CTL_ServiceManagerTopComponent());
         setToolTipText(Bundle.HINT_ServiceManagerTopComponent());
-        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
         em = new ExplorerManager();
+        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
         nu = Lookup.getDefault().lookup(NotificationUtil.class);
         sms = new ServiceManagerService(this);
         tree = new BeanTreeView();
