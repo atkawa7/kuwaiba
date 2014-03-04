@@ -371,7 +371,7 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
                 "Delete saved view",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
             tvsrv.deleteView();
             scene.clear();
-            tvsrv.setTvId(-1);
+            tvsrv.setTvId(0);
             toggleButtons(false);
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
@@ -458,7 +458,7 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
     public void componentClosed() {
         scene.clear();
         tvsrv.setViewProperties(new Object[2]);
-        tvsrv.setTvId(-1);
+        tvsrv.setTvId(0);
     }
 
     void writeProperties(java.util.Properties p) {

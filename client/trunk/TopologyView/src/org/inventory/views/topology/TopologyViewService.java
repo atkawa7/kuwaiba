@@ -104,11 +104,12 @@ public class TopologyViewService implements LookupListener {
         byte[] viewStructure = tvtc.getScene().getAsXML();
         byte[] background = null;
         if(tvId == 0){
-            tvId = com.createGeneralView(LocalObjectViewLight.TYPE_TOPOLOGY, (String)viewProperties[0], (String)viewProperties[1], viewStructure, background);
-            if(tvId != -1)
+            try{
+                tvId = com.createGeneralView(LocalObjectViewLight.TYPE_TOPOLOGY, (String)viewProperties[0], (String)viewProperties[1], viewStructure, background);
                 tvtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO, "Topology view created successfully");
-            else
+            }catch(Exception ex){
                 tvtc.getNotifier().showSimplePopup("Error", NotificationUtil.INFO, com.getError());
+            }
         }
         else{
             if(com.updateGeneralView(tvId, (String)viewProperties[0], (String)viewProperties[1], viewStructure, background))
@@ -154,10 +155,14 @@ public class TopologyViewService implements LookupListener {
     }
 
     public void deleteView(){
-        if(com.deleteGeneralViews(new long[]{tvId}))
-            tvtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO, "Saved view deleted successfully");
-        else
-            tvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+        if(tvId>0){
+            try{
+                com.deleteGeneralViews(new long[]{tvId});
+                tvtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO, "Saved view deleted successfully");
+            }catch(Exception ex){
+                tvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+            }
+        }
     }
 
     private void resetProperties() {
