@@ -74,8 +74,8 @@ public final class MoveAction extends WidgetAction.LockedAdapter {
         if (movingWidget != widget)
             return false;
         
-        int deltaX = newLocation.x - lastMouseLocation.x + widget.getBounds().width/2;
-        int deltaY = newLocation.y - lastMouseLocation.y + widget.getBounds().height/2;
+        int deltaX = newLocation.x - lastMouseLocation.x;
+        int deltaY = newLocation.y - lastMouseLocation.y;
 
         widget.setPreferredLocation(new Point(widget.getPreferredLocation().x + deltaX, widget.getPreferredLocation().y + deltaY));
         ((GeoPositionedNodeWidget)widget).updateCoordinates();

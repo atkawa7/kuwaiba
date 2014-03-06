@@ -45,7 +45,7 @@ public class AcceptActionProvider implements AcceptProvider{
 
     @Override
     public ConnectorState isAcceptable(Widget widget, Point point, Transferable transferable) {
-        if (scene.hasView()){
+        if (scene.isEnabled()){
             return ConnectorState.ACCEPT;
         }else return ConnectorState.REJECT_AND_STOP;
     }
@@ -56,10 +56,8 @@ public class AcceptActionProvider implements AcceptProvider{
             LocalObjectLight droppedObject = (LocalObjectLight) transferable.getTransferData(LocalObjectLight.DATA_FLAVOR);
             if (!scene.isNode(droppedObject)){
                 Widget newNode = scene.addNode(droppedObject);
-//                double[] coordinates = scene.pixelToCoordinate(point);
-//                ((GeoPositionedNodeWidget)newNode).setCoordinates(coordinates[0], coordinates[1]);
                 newNode.setPreferredLocation(point);
-                scene.repaint();
+                scene.revalidate();
             }else
                 JOptionPane.showMessageDialog(null, "The view already contains this object","Error",JOptionPane.ERROR_MESSAGE);
         } catch (UnsupportedFlavorException ex) {

@@ -44,7 +44,9 @@ public class MapPanel extends JXPanel {
      * Default maximum zoom level
      */
     private final int DEFAULT_MAXIMUM_ZOOM_LEVEL = 15;
-
+    /**
+     * Default zoom level
+     */
     public static final int DEFAULT_ZOOM_LEVEL = 10;
     /**
      * Open Street Maps tile server base URL
@@ -66,6 +68,10 @@ public class MapPanel extends JXPanel {
      * Maximum zoom allowed by the tile provider
      */
     private int minZoom;
+    /**
+     * Default coordinates to center the map
+     */
+    public static final GeoPosition DEFAULT_CENTER_POSITION = new GeoPosition(2.451627, -76.624424);
 
     public MapPanel() {
         map = new JXMapViewer();
@@ -84,6 +90,8 @@ public class MapPanel extends JXPanel {
         map.removeMouseListener(map.getMouseListeners()[0]);
         map.removeMouseMotionListener(map.getMouseMotionListeners()[0]);
         map.removeMouseWheelListener(map.getMouseWheelListeners()[0]);
+        map.setCenterPosition(DEFAULT_CENTER_POSITION);
+        map.setZoom(DEFAULT_ZOOM_LEVEL);
     }
 
     public void setCenterPosition(GeoPosition coordinates){

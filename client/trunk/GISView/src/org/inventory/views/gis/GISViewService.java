@@ -66,11 +66,10 @@ public class GISViewService {
      * Updates the current view
      * @param viewId
      */
-    public void loadView(long viewId) {
+    public void loadView(long viewId) throws Exception {
         this.currentView = com.getGeneralView(viewId);
         if (this.currentView == null)
-            nu.showSimplePopup("Loading view", NotificationUtil.ERROR, com.getError());
-//        scene.clear();
+            throw new Exception(com.getError());
         buildView();
     }
 

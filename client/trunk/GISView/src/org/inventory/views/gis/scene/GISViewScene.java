@@ -19,6 +19,7 @@ package org.inventory.views.gis.scene;
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
 import java.awt.BasicStroke;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -30,7 +31,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
@@ -39,7 +39,6 @@ import org.inventory.views.gis.scene.actions.MoveAction;
 import org.inventory.views.gis.scene.actions.ZoomAction;
 import org.inventory.views.gis.scene.providers.AcceptActionProvider;
 import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
-import org.jdesktop.swingx.JXMapViewer;
 import org.jdesktop.swingx.mapviewer.GeoPosition;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.PointShape;
@@ -73,15 +72,12 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      */
     private final int ICON_RADIUS = 5;
     /**
-     * Default coordinates to center the map
-     */
-    public final GeoPosition DEFAULT_CENTER_POSITION = new GeoPosition(2.451627, -76.624424);
-    /**
      * Default icon
      */
     private final Image defaultIcon = ImageUtilities.loadImage(GENERIC_ICON_PATH);
+    
     /**
-     * Layer to contain the map and its additional components
+     * Layer to contain the main map
      */
     private LayerWidget mapLayer;
     /**
@@ -105,9 +101,9 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      */
     private LayerWidget interactionLayer;
     /**
-     * The widget to contain the map component
+     * The map panel
      */
-    private ComponentWidget mapWidget;
+    private MapPanel map;
     /**
      * Scene lookup
      */
@@ -117,8 +113,8 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      */
     private PhysicalConnectionProvider connectProvider;
 
-    public GISViewScene() {
-        
+    public GISViewScene(MapPanel map) {
+        this.map = map;
         mapLayer = new LayerWidget(this);
         nodesLayer = new LayerWidget(this);
         connectionsLayer = new LayerWidget(this);
@@ -126,10 +122,12 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         //labelsLayer = new LayerWidget(this);
         //polygonsLayer = new LayerWidget(this);
 
-        //addChild(mapLayer);
+        addChild(mapLayer);
         addChild(connectionsLayer);
         addChild(nodesLayer);
         addChild(interactionLayer);
+        
+        mapLayer.addChild(new ComponentWidget(this, map));
         
         this.lookup = new SceneLookup(Lookup.EMPTY);
         this.connectProvider = new PhysicalConnectionProvider(this);
@@ -157,8 +155,8 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         //Actions
         getActions().addAction(new ZoomAction());
         getActions().addAction(ActionFactory.createAcceptAction(new AcceptActionProvider(this)));
-        getActions().addAction(ActionFactory.createPanAction());
-
+        getActions().addAction(new MapWidgetPanAction(map, MouseEvent.BUTTON1));
+        //getActions().addAction(ActionFactory.createPanAction());
         setActiveTool(ObjectNodeWidget.ACTION_SELECT);
         setOpaque(false);
     }
@@ -197,36 +195,6 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
 
     @Override
     protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
-    }
-
-    /**
-     * This method adds the map to the scene. Due to the nature of the JXMapViewer component, The map is built 
-     * when the component is painted. If there are network problems, you could get some nasty exceptions.
-     */
-    public void activateMap(){
-        if (mapWidget == null){
-            MapPanel myMap = new MapPanel();
-            myMap.setProvider(MapPanel.Providers.OSM);
-            myMap.getMainMap().setCenterPosition(DEFAULT_CENTER_POSITION);
-            myMap.addPropertyChangeListener("painted", this);
-            mapWidget = new ComponentWidget(this, myMap);
-            mapWidget.getActions().addAction(new MapWidgetPanAction(myMap, MouseEvent.BUTTON1));
-            mapWidget.setPreferredLocation(new Point(0, 0));
-        }
-        mapLayer.addChild(mapWidget);
-        ((MapPanel)mapWidget.getComponent()).getMainMap().setZoom(MapPanel.DEFAULT_ZOOM_LEVEL);
-        ((MapPanel)mapWidget.getComponent()).getMainMap().setCenterPosition(DEFAULT_CENTER_POSITION);
-        updateMapBounds();
-    }
-
-    /**
-     * Updates the map widget bounds to fit the container's ones
-     */
-    public void updateMapBounds() {
-        if (mapWidget != null){
-            mapWidget.setPreferredSize(this.getBounds().getSize());
-            validate();
-        }
     }
 
     /**
@@ -301,12 +269,12 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      * @return the resulting coordinates as a pair (latitude, longitude)
      */
     public double[] pixelToCoordinate(Point point, int zoom){
-        JXMapViewer map = ((MapPanel)mapWidget.getComponent()).getMainMap();
-        int currentZoom = map.getZoom();
-        map.setZoom(zoom);
-        Rectangle realViewport = map.getViewportBounds();
-        GeoPosition coordinates = map.getTileFactory().pixelToGeo(new Point(point.x + realViewport.x, point.y + realViewport.y), map.getZoom());
-        map.setZoom(currentZoom);
+        int currentZoom = map.getMainMap().getZoom();
+        map.getMainMap().setZoom(zoom);
+        Rectangle realViewport = map.getMainMap().getViewportBounds();
+        GeoPosition coordinates = map.getMainMap().getTileFactory().pixelToGeo(
+                new Point(point.x + realViewport.x, point.y + realViewport.y), map.getMainMap().getZoom());
+        map.getMainMap().setZoom(currentZoom);
         return new double[]{coordinates.getLatitude(), coordinates.getLongitude()};
     }
 
@@ -316,7 +284,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      * @return the resulting coordinates as a pair (latitude, longitude)
      */
     public double[] pixelToCoordinate(Point point){
-        return pixelToCoordinate(point, ((MapPanel)mapWidget.getComponent()).getMainMap().getZoom());
+        return pixelToCoordinate(point, map.getMainMap().getZoom());
     }
 
     /**
@@ -327,12 +295,11 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      * @return the resulting Point object
      */
     public Point coordinateToPixel(double latitude, double longitude, int zoom){
-        JXMapViewer map = ((MapPanel)mapWidget.getComponent()).getMainMap();
-        int currentZoom = map.getZoom();
-        map.setZoom(zoom);
-        Rectangle realViewport = map.getViewportBounds();
-        Point2D point2D = map.getTileFactory().geoToPixel(new GeoPosition(latitude, longitude), zoom);
-        map.setZoom(currentZoom);
+        int currentZoom = map.getMainMap().getZoom();
+        map.getMainMap().setZoom(zoom);
+        Rectangle realViewport = map.getMainMap().getViewportBounds();
+        Point2D point2D = map.getMainMap().getTileFactory().geoToPixel(new GeoPosition(latitude, longitude), zoom);
+        map.getMainMap().setZoom(currentZoom);
         return new Point((int)point2D.getX() - realViewport.x, (int)point2D.getY() - realViewport.y);
     }
 
@@ -345,55 +312,50 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
      * Zooms in the inner map
      */
     public void zoomIn() {
-        MapPanel mapComponent = (MapPanel)mapWidget.getComponent();
-        int currentZoom = mapComponent.getMainMap().getZoom();
-        if (currentZoom > mapComponent.getMinZoom()){
+        int currentZoom = map.getMainMap().getZoom();
+        if (currentZoom > map.getMinZoom()){
 
             for (Widget node : nodesLayer.getChildren()){
-                double[] geoControlPoint = pixelToCoordinate(node.getPreferredLocation(), mapComponent.getMainMap().getZoom());
-                Point newLocation = coordinateToPixel(geoControlPoint[0], geoControlPoint[1], mapComponent.getMainMap().getZoom() - 1);
+                double[] geoControlPoint = pixelToCoordinate(node.getPreferredLocation(), map.getMainMap().getZoom());
+                Point newLocation = coordinateToPixel(geoControlPoint[0], geoControlPoint[1], map.getMainMap().getZoom() - 1);
                 node.setPreferredLocation(newLocation);
             }
 
             for (Widget edge : connectionsLayer.getChildren()){
                 List<Point> newControlPoints = new ArrayList<Point>();
                 for (Point oldControlPoint : ((GeoPositionedConnectionWidget)edge).getControlPoints()){
-                    double[] geoControlPoint = pixelToCoordinate(oldControlPoint, mapComponent.getMainMap().getZoom());
-                    newControlPoints.add(coordinateToPixel(geoControlPoint[1], geoControlPoint[0], mapComponent.getMainMap().getZoom() - 1));
+                    double[] geoControlPoint = pixelToCoordinate(oldControlPoint, map.getMainMap().getZoom());
+                    newControlPoints.add(coordinateToPixel(geoControlPoint[1], geoControlPoint[0], map.getMainMap().getZoom() - 1));
                 }
                 if (!newControlPoints.isEmpty())
                     ((GeoPositionedConnectionWidget)edge).setControlPoints(newControlPoints, false);
             }
-
-            mapComponent.getMainMap().setZoom(currentZoom - 1);
-        }else
-            JOptionPane.showMessageDialog(null, "The maximum zoom level has been reached");
+            map.getMainMap().setZoom(currentZoom - 1);
+        }
     }
 
     /**
      * Zooms out the inner map
      */
     public void zoomOut() {
-        MapPanel mapComponent = (MapPanel)mapWidget.getComponent();
-        int currentZoom = mapComponent.getMainMap().getZoom();
-        if (currentZoom < mapComponent.getMaxZoom()){
+        int currentZoom = map.getMainMap().getZoom();
+        if (currentZoom < map.getMaxZoom()){
 
             for (Widget node : nodesLayer.getChildren()){
-                double[] geoControlPoint = pixelToCoordinate(node.getPreferredLocation(), mapComponent.getMainMap().getZoom());
-                Point newLocation = coordinateToPixel(geoControlPoint[0], geoControlPoint[1], mapComponent.getMainMap().getZoom() + 1);
+                double[] geoControlPoint = pixelToCoordinate(node.getPreferredLocation(), map.getMainMap().getZoom());
+                Point newLocation = coordinateToPixel(geoControlPoint[0], geoControlPoint[1], map.getMainMap().getZoom() + 1);
                 node.setPreferredLocation(newLocation);
             }
             for (Widget edge : connectionsLayer.getChildren()){
                 List<Point> newControlPoints = new ArrayList<Point>();
                 for (Point oldControlPoint : ((GeoPositionedConnectionWidget)edge).getControlPoints()){
                     double[] geoControlPoint = pixelToCoordinate(oldControlPoint);
-                    newControlPoints.add(coordinateToPixel(geoControlPoint[1], geoControlPoint[0], mapComponent.getMainMap().getZoom() + 1));
+                    newControlPoints.add(coordinateToPixel(geoControlPoint[1], geoControlPoint[0], map.getMainMap().getZoom() + 1));
                 }
                 if (!newControlPoints.isEmpty())
                     ((GeoPositionedConnectionWidget)edge).setControlPoints(newControlPoints, false);
             }
-
-            mapComponent.getMainMap().setZoom(currentZoom + 1);
+            map.getMainMap().setZoom(currentZoom + 1);
         }
     }
 
@@ -410,23 +372,20 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         for (LocalObjectLight edge : clonedEdges)
             removeEdge(edge);
         
-        mapLayer.removeChildren();
         //labelsLayer.removeChildren();
         //polygonsLayer.removeChildren();
     }
 
     public byte[] getAsXML() {
-
-        MapPanel mapComponent = ((MapPanel)mapWidget.getComponent());
-
         ByteArrayOutputStream bas = new ByteArrayOutputStream();
         WAX xmlWriter = new WAX(bas);
         StartTagWAX mainTag = xmlWriter.start("view");
         mainTag.attr("version", Constants.VIEW_FORMAT_VERSION); //NOI18N
         //TODO: Get the class name from some else
         mainTag.start("class").text("GISView").end();
-        mainTag.start("zoom").text(String.valueOf(mapComponent.getMainMap().getZoom())).end();
-        mainTag.start("center").attr("x", mapComponent.getMainMap().getCenterPosition().getLongitude()).attr("y", mapComponent.getMainMap().getCenterPosition().getLatitude()).end();
+        mainTag.start("zoom").text(String.valueOf(map.getMainMap().getZoom())).end();
+        mainTag.start("center").attr("x", map.getMainMap().getCenterPosition().
+                getLongitude()).attr("y", map.getMainMap().getCenterPosition().getLatitude()).end();
         StartTagWAX nodesTag = mainTag.start("nodes");
         for (Widget nodeWidget : nodesLayer.getChildren())
             nodesTag.start("node").attr("x", ((GeoPositionedNodeWidget)nodeWidget).getLongitude()).
@@ -444,7 +403,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
             edgeTag.attr("bside", ((GeoPositionedNodeWidget)((ObjectConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
             //for (double[] point : ((GeoPositionedConnectionWidget)edgeWidget).getGeoPositionedControlPoints())
             for (Point point : ((ConnectionWidget)edgeWidget).getControlPoints()){
-                double[] geoPosition = pixelToCoordinate(point, mapComponent.getMainMap().getZoom());
+                double[] geoPosition = pixelToCoordinate(point, map.getMainMap().getZoom());
                 edgeTag.start("controlpoint").attr("x", geoPosition[1]).attr("y", geoPosition[0]).end();
             }
             edgeTag.end();
@@ -463,46 +422,30 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
     }
 
     public void setCenterPosition(double latitude, double longitude) {
-        ((MapPanel)mapWidget.getComponent()).getMainMap().setCenterPosition(new GeoPosition(latitude, longitude));
+        map.getMainMap().setCenterPosition(new GeoPosition(latitude, longitude));
     }
 
     public void zoom(int zoom) {
-        ((MapPanel)mapWidget.getComponent()).getMainMap().setZoom(zoom);
+        map.getMainMap().setZoom(zoom);
     }
 
     public void pan(int deltaX, int deltaY) {
         if (deltaX == 0 && deltaY == 0)
             return;
         
-        //mapWidget.setPreferredLocation(new Point(mapWidget.getPreferredLocation().x - deltaX , mapWidget.getPreferredLocation().y - deltaY ));
-        mapWidget.setPreferredBounds(getBounds());
-        for (Widget node : nodesLayer.getChildren()){
+        for (Widget node : nodesLayer.getChildren())
             node.setPreferredLocation(new Point(node.getPreferredLocation().x - deltaX, node.getPreferredLocation().y - deltaY));
-        }
+        
         revalidate();
-        System.out.println("Scene Bounds: " + getBounds());
-        System.out.println("Map location: " + mapWidget.getLocation());
-
-//        for (Widget con : connectionsLayer.getChildren()){
-//            List<Point> newControlPoints = new ArrayList<Point>();
-//            boolean visible = true;
-//            for (Point controlPoint : ((ConnectionWidget)con).getControlPoints()){
-//                Point newControlPoint = new Point(controlPoint.x - deltaX, controlPoint.y - deltaY);
-//                newControlPoints.add(newControlPoint);
-//                if (newControlPoint.x <= 0 || newControlPoint.y <= 0)
-//                    visible = false;
-//            }
-//            con.setVisible(visible);
-//            ((ConnectionWidget)con).setControlPoints(newControlPoints, false);
-//        }
     }
-
-    public boolean hasView() {
-        return !mapLayer.getChildren().isEmpty();
-    }
-
+    
     public LayerWidget getNodesLayer() {
         return nodesLayer;
+    }
+
+    public void updateMapBounds() {
+        mapLayer.getChildren().get(0).setPreferredBounds(getBounds());
+        validate();
     }
     
     /**

@@ -54,13 +54,13 @@ public class SyncService implements ActionListener{
     public void downloadErrors(){
         logFileName = ERRORS+fileName;
         CommunicationsStub com = CommunicationsStub.getInstance();
-        wrongLinesResults = com.downloadErrors(fileName);
+        //wrongLinesResults = com.downloadErrors(fileName);
     }    
     
     public void downloadLog(){
         wrongLinesFileName = LOGS+fileName;
         CommunicationsStub com = CommunicationsStub.getInstance();
-        logResults = com.downloadLog(fileName);
+        //logResults = com.downloadLog(fileName);
     }
 
     public byte[] getLogResults() {

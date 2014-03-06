@@ -21,13 +21,16 @@ import java.awt.event.ComponentListener;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
+import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.views.gis.dialogs.OpenDialog;
 import org.inventory.views.gis.dialogs.SaveDialog;
 import org.inventory.views.gis.scene.GISViewScene;
+import org.inventory.views.gis.scene.MapPanel;
 import org.inventory.views.gis.scene.ObjectNodeWidget;
 import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.openide.util.NbBundle;
@@ -46,6 +49,7 @@ autostore = false)
 public final class GISViewTopComponent extends TopComponent implements ExplorerManager.Provider{
 
     private ButtonGroup aButtonGroup;
+    private MapPanel pnlMap;
     private static GISViewTopComponent instance;
     /** path to the icon used by the component and its open action */
     static final String ICON_PATH = "org/inventory/views/gis/res/icon.png";
@@ -53,6 +57,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     private GISViewService gvs;
     private boolean isSaved = false;
     private NotificationUtil nu;
+    private JScrollPane pnlSceneScroll;
     /**
      * Main scene
      */
@@ -67,16 +72,14 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         initCustomComponents();
         setName(NbBundle.getMessage(GISViewTopComponent.class, "CTL_GISViewTopComponent"));
         setToolTipText(NbBundle.getMessage(GISViewTopComponent.class, "HINT_GISViewTopComponent"));
-        scene = new GISViewScene();
         this.gvs = new GISViewService(scene, this);
-        add(scene.createView(), BorderLayout.CENTER);
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         associateLookup(scene.getLookup());
         addComponentListener(new ComponentListener() {
 
             @Override
             public void componentResized(ComponentEvent e) {
-//                scene.updateMapBounds();
+                scene.updateMapBounds();
             }
 
             @Override
@@ -94,6 +97,13 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }
 
     private void initCustomComponents(){
+        pnlMap = new MapPanel();
+        pnlMap.setProvider(MapPanel.Providers.OSM);
+        scene = new GISViewScene(pnlMap);
+        //scene.setEnabled(false);
+        pnlSceneScroll = new JScrollPane(scene.createView());
+        pnlMap.addPropertyChangeListener("painted", scene);
+        add(pnlSceneScroll, BorderLayout.CENTER);
         aButtonGroup = new ButtonGroup();
         aButtonGroup.add(btnWireContainer);
         aButtonGroup.add(btnWirelessContainer);
@@ -253,7 +263,6 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         barToolMain.add(btnZoomOut);
 
         btnShowNodeLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/hide_node_labels.png"))); // NOI18N
-        btnShowNodeLabels.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(btnShowNodeLabels, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnShowNodeLabels.text")); // NOI18N
         btnShowNodeLabels.setToolTipText(org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.btnShowNodeLabels.toolTipText")); // NOI18N
         btnShowNodeLabels.setEnabled(false);
@@ -391,7 +400,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         scene.clear();
-        scene.activateMap();
+        scene.setEnabled(true);
         gvs.setCurrentView(null);
         toggleButtons(true);
     }//GEN-LAST:event_btnNewActionPerformed
@@ -417,14 +426,21 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
             OpenDialog openDialog = new OpenDialog(views.toArray(new LocalObjectViewLight[0]));
 
             if (JOptionPane.showConfirmDialog(WindowManager.getDefault().getMainWindow(), openDialog,"Open GIS view", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
-                if (openDialog.getSelectedObject() !=  null)
-                    gvs.loadView(openDialog.getSelectedObject().getId());
+                if (openDialog.getSelectedObject() !=  null){
+                    try{
+                        gvs.loadView(openDialog.getSelectedObject().getId());
+                        scene.setEnabled(true);
+                    }catch(Exception ex){
+                        nu.showSimplePopup("Loading view", NotificationUtil.ERROR, ex.getMessage());
+                    }
+                }
             }
         }
     }//GEN-LAST:event_btnOpenActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         gvs.deleteCurrentView();
+        setEnabled(false);
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnShowNodeLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodeLabelsActionPerformed
@@ -487,14 +503,10 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }
 
     @Override
-    public void componentOpened() {
-        scene.paint();
-    }
-
-    @Override
     public void componentClosed() {
         toggleButtons(false);
         scene.clear();
+        pnlMap.setEnabled(false);
     }
 
     /**
