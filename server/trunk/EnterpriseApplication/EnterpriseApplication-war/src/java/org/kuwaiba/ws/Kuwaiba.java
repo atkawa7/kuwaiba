@@ -924,8 +924,8 @@ public class Kuwaiba {
      * @param limit Maximum number of pool records to be returned
      * @param parentId Pool's parent id
      * @param className class type for the pools
-     * @param sessionId Session identifier
-     * @return The list of pools as RemoteObjectLight instances for an especific parent
+     * @param sessionId Session token
+     * @return The list of pools as RemoteObjectLight instances for an specific parent
      * @throws Exception Generic exception encapsulating any possible error raised at runtime 
      */
     @WebMethod(operationName = "getPoolsForParentWithId")
