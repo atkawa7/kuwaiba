@@ -21,17 +21,16 @@ import java.awt.event.ComponentListener;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
-import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.visual.widgets.AbstractObjectNodeWidget;
 import org.inventory.views.gis.dialogs.OpenDialog;
 import org.inventory.views.gis.dialogs.SaveDialog;
 import org.inventory.views.gis.scene.GISViewScene;
 import org.inventory.views.gis.scene.MapPanel;
-import org.inventory.views.gis.scene.ObjectNodeWidget;
 import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
@@ -48,7 +47,14 @@ import org.openide.util.Lookup;
 autostore = false)
 public final class GISViewTopComponent extends TopComponent implements ExplorerManager.Provider{
 
+    /**
+     * Button group for links and container
+     */
     private ButtonGroup aButtonGroup;
+    /**
+     * Button group for actions
+     */
+    private ButtonGroup bButtonGroup; 
     private MapPanel pnlMap;
     private static GISViewTopComponent instance;
     /** path to the icon used by the component and its open action */
@@ -100,10 +106,13 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         pnlMap = new MapPanel();
         pnlMap.setProvider(MapPanel.Providers.OSM);
         scene = new GISViewScene(pnlMap);
-        //scene.setEnabled(false);
+        scene.setEnabled(false);
+        pnlMap.setVisible(false);
         pnlSceneScroll = new JScrollPane(scene.createView());
-        pnlMap.addPropertyChangeListener("painted", scene);
         add(pnlSceneScroll, BorderLayout.CENTER);
+        bButtonGroup = new ButtonGroup();
+        bButtonGroup.add(btnSelect);
+        bButtonGroup.add(btnConnect);
         aButtonGroup = new ButtonGroup();
         aButtonGroup.add(btnWireContainer);
         aButtonGroup.add(btnWirelessContainer);
@@ -359,12 +368,12 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }//GEN-LAST:event_btnZoomOutActionPerformed
 
     private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
-        scene.setActiveTool(ObjectNodeWidget.ACTION_SELECT);
+        scene.setActiveTool(AbstractObjectNodeWidget.ACTION_SELECT);
         btnConnect.setSelected(false);
     }//GEN-LAST:event_btnSelectActionPerformed
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        scene.setActiveTool(ObjectNodeWidget.ACTION_CONNECT);
+        scene.setActiveTool(AbstractObjectNodeWidget.ACTION_CONNECT);
         btnSelect.setSelected(false);
     }//GEN-LAST:event_btnConnectActionPerformed
 
@@ -401,6 +410,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         scene.clear();
         scene.setEnabled(true);
+        pnlMap.setVisible(true);
         gvs.setCurrentView(null);
         toggleButtons(true);
     }//GEN-LAST:event_btnNewActionPerformed
@@ -430,8 +440,9 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
                     try{
                         gvs.loadView(openDialog.getSelectedObject().getId());
                         scene.setEnabled(true);
+                        pnlMap.setVisible(true);
                     }catch(Exception ex){
-                        nu.showSimplePopup("Loading view", NotificationUtil.ERROR, ex.getMessage());
+                        nu.showSimplePopup("Error", NotificationUtil.ERROR, ex.getMessage());
                     }
                 }
             }
@@ -439,12 +450,15 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }//GEN-LAST:event_btnOpenActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        gvs.deleteCurrentView();
-        setEnabled(false);
+        if (gvs.deleteCurrentView()){
+            toggleButtons(false);
+            scene.setEnabled(false);
+            pnlMap.setVisible(false);
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnShowNodeLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodeLabelsActionPerformed
-        gvs.toggleLabels(!btnShowNodeLabels.isSelected());
+        scene.toggleLabels(!btnShowNodeLabels.isSelected());
     }//GEN-LAST:event_btnShowNodeLabelsActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -506,7 +520,6 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     public void componentClosed() {
         toggleButtons(false);
         scene.clear();
-        pnlMap.setEnabled(false);
     }
 
     /**

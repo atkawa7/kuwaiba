@@ -7,6 +7,14 @@
             <suite-component/>
             <module-dependencies>
                 <dependency>
+                    <code-name-base>org.inventory.communications</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.inventory.core.services</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -51,6 +59,7 @@
                 <package>org.inventory.core.visual.actions</package>
                 <package>org.inventory.core.visual.actions.providers</package>
                 <package>org.inventory.core.visual.decorators</package>
+                <package>org.inventory.core.visual.widgets</package>
             </public-packages>
         </data>
     </configuration>

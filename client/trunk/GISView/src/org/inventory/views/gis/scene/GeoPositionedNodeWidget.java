@@ -17,13 +17,13 @@
 package org.inventory.views.gis.scene;
 
 import org.inventory.communications.core.LocalObjectLight;
-import org.netbeans.api.visual.layout.LayoutFactory;
+import org.inventory.core.visual.widgets.AbstractObjectNodeWidget;
 
 /**
  * An ObjectNodeWidget with extra geo attributes
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class GeoPositionedNodeWidget extends ObjectNodeWidget {
+public class GeoPositionedNodeWidget extends AbstractObjectNodeWidget {
     /**
      * Widget's longitude
      */
@@ -33,12 +33,11 @@ public class GeoPositionedNodeWidget extends ObjectNodeWidget {
      */
     private double latitude;
 
-    public GeoPositionedNodeWidget(GISViewScene scene, LocalObjectLight object, double latitude, double longitude) {
+    public GeoPositionedNodeWidget(GISViewScene scene, LocalObjectLight object, 
+            double latitude, double longitude) {
         super(scene, object);
         this.longitude = longitude;
         this.latitude = latitude;
-        setLayout(LayoutFactory.createAbsoluteLayout());
-        getLabelWidget().setPreferredLocation(getImageWidget().getPreferredLocation());
     }
 
     public double getLatitude() {
@@ -58,7 +57,7 @@ public class GeoPositionedNodeWidget extends ObjectNodeWidget {
     }
 
     /**
-     * Convenience method to set both components of the widget coordinates
+     * Convenience method to set longitude and latitude in the same call
      * @param latitude new latitude
      * @param longitude new longitude
      */

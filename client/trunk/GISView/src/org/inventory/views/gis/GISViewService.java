@@ -233,25 +233,20 @@ public class GISViewService {
         }
 //    }
 
-    void deleteCurrentView() {
+    public boolean deleteCurrentView() {
         if (currentView == null)
-            nu.showSimplePopup("Delete View", NotificationUtil.INFO, "This view has not been saved yet");
+            scene.clear();
         else{
             if (com.deleteGeneralViews(new long[]{currentView.getId()})){
                 scene.clear();
                 currentView = null;
-                gvtc.toggleButtons(false);
                 nu.showSimplePopup("Delete View", NotificationUtil.INFO, "View deleted successfully");
             }
-            else
+            else{
                 nu.showSimplePopup("Delete View", NotificationUtil.ERROR, com.getError());
+                return false;
+            }
         }
-    }
-
-    void toggleLabels(boolean isVisible) {
-        for (Widget aNode :scene.getNodesLayer().getChildren())
-            ((GeoPositionedNodeWidget)aNode).getLabelWidget().setVisible(isVisible);
-                
-        scene.validate();
+        return true;
     }
 }

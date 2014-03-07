@@ -21,6 +21,7 @@ import java.awt.Point;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.visual.widgets.AbstractObjectNodeWidget;
 import org.inventory.core.wizards.physicalconnections.ConnectionWizard;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -29,7 +30,6 @@ import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
-import org.netbeans.api.visual.widget.general.IconNodeWidget;
 
 /**
  * Connection provider to the GIS view
@@ -63,7 +63,7 @@ public class PhysicalConnectionProvider implements ConnectProvider{
 
     @Override
     public boolean isSourceWidget(Widget sourceWidget) {
-        if (sourceWidget instanceof IconNodeWidget)
+        if (sourceWidget instanceof AbstractObjectNodeWidget)
             return true;
         else
             return false;

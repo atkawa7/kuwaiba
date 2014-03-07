@@ -17,6 +17,7 @@
 package org.inventory.views.gis.scene;
 
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.visual.widgets.AbstractObjectNodeWidget;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 
@@ -24,7 +25,7 @@ import org.netbeans.api.visual.widget.ConnectionWidget;
  * A connection widget representing a link or a container
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectConnectionWidget extends ConnectionWidget{
+public class ObjectConnectionWidget extends ConnectionWidget {
     /**
      * Business object represented by this widget
      */
@@ -33,7 +34,7 @@ public class ObjectConnectionWidget extends ConnectionWidget{
     public ObjectConnectionWidget(GraphScene<LocalObjectLight, LocalObjectLight> scene, LocalObjectLight object) {
         super(scene);
         this.object = object;
-        createActions(ObjectNodeWidget.ACTION_SELECT);
+        createActions(AbstractObjectNodeWidget.ACTION_SELECT);
     }
 
     public LocalObjectLight getObject() {
