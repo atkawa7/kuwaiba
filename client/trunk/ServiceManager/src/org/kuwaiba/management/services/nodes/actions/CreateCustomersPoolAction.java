@@ -28,7 +28,6 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.kuwaiba.management.services.nodes.CustomersPoolNode;
 import org.kuwaiba.management.services.nodes.ServiceManagerRootNode;
-import org.kuwaiba.management.services.nodes.ServicesPoolNode;
 import org.openide.util.Lookup;
 
 /**
@@ -67,7 +66,7 @@ public class CreateCustomersPoolAction extends AbstractAction{
         
         if (JOptionPane.showConfirmDialog(null,
                 pnlMyDialog,
-                java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_SERVICES_POOL"),
+                java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_CUSTOMERS_POOL"),
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
         

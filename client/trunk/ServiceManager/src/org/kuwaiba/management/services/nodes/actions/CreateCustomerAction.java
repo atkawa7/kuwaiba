@@ -40,12 +40,12 @@ public class CreateCustomerAction extends GenericObjectNodeAction implements Pre
     
     public CreateCustomerAction(ServiceManagerRootNode rootNode) {
         this.rootNode = rootNode;
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_CUSTOMER"));
+        
     }
 
     public CreateCustomerAction(CustomersPoolNode coustomersPoolNode) {
         this.coustomersPoolNode = coustomersPoolNode;
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_CUSTOMER"));
+        
     }
 
     @Override
@@ -59,7 +59,7 @@ public class CreateCustomerAction extends GenericObjectNodeAction implements Pre
                 Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
         }
         else if(object.getClassName().equals("GenericCustomer")){
-            LocalObjectLight newCustomer = CommunicationsStub.getInstance().createPoolItem(coustomersPoolNode.getObject().getOid(), ((JMenuItem)e.getSource()).getName());
+            LocalObjectLight newCustomer = CommunicationsStub.getInstance().createPoolItem(coustomersPoolNode.getPool().getOid(), ((JMenuItem)e.getSource()).getName());
             if (newCustomer == null)
                 Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATION_ERROR"), NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
             else{

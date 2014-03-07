@@ -17,40 +17,60 @@
 package org.kuwaiba.management.services.nodes;
 
 import java.awt.Image;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
+import org.inventory.navigation.applicationnodes.pools.PoolNode;
 import org.kuwaiba.management.services.nodes.actions.CreateCustomerAction;
-import org.openide.nodes.AbstractNode;
+import org.kuwaiba.management.services.nodes.actions.CreateServiceAction;
+import org.kuwaiba.management.services.nodes.actions.DeleteCustomersPoolAction;
+import org.openide.nodes.NodeTransfer;
 import org.openide.util.ImageUtilities;
+import org.openide.util.datatransfer.PasteType;
 
 /**
  * Represents a pool (a set of customers)
  * @author adrian martinez molina <adrian.martinez@kuwaiba.org>
  */
-public class CustomersPoolNode extends ObjectNode{
+public class CustomersPoolNode extends PoolNode{
 
     private static Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/customersPool.png");
+    private CreateCustomerAction createCustomerAction;
+    private DeleteCustomersPoolAction deleteCustomersPoolAction;
+    private CreateServiceAction createServiceAction;
+    private  ShowObjectIdAction showObjectIdAction; 
     
     public CustomersPoolNode(LocalObjectLight customer) {
         super(customer);
-        this.object = customer;
+        this.pool = customer;
         setChildren(new CustomersPoolChildren(customer));
     }
     
     @Override
     public String getName(){
-        return object.getName() +" ["+java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CUSTOMERS_POOL")+"]";
+        return pool.getName() +" ["+java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CUSTOMERS_POOL")+"]";
     }
     
     @Override
     public Action[] getActions(boolean context){
-        CreateCustomerAction createCustomerAction= new CreateCustomerAction(this);
-        createCustomerAction.setObject(object);
-        return new Action[]{createCustomerAction, new ShowObjectIdAction(object.getOid(), object.getClassName())};
+        List<Action> actions = new ArrayList<Action>();
+        if(createCustomerAction == null){
+            createCustomerAction= new CreateCustomerAction(this);
+            createCustomerAction.setObject(pool);
+            actions.add(createCustomerAction);
+        }
+        actions.add(createServiceAction == null ? createServiceAction = new CreateServiceAction(this) : createServiceAction);
+        actions.add(null);
+        actions.add(deleteCustomersPoolAction == null ? deleteCustomersPoolAction = new DeleteCustomersPoolAction(this) : deleteCustomersPoolAction);
+        actions.add(null);
+        actions.add(showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(pool.getOid(), pool.getClassName()) : showObjectIdAction);
+        return actions.toArray(new Action[]{});
     }
-    
+   
     @Override
     public Image getIcon(int i){
         return icon;

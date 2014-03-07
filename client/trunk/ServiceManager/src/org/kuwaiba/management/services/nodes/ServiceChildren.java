@@ -59,6 +59,7 @@ public class ServiceChildren extends Children.Array {
                 for (LocalObjectLight item : items){
                     ServiceNode newNode = new ServiceNode(item);
                     remove(new Node[]{newNode});
+                    refresh();
                     add(new Node[]{newNode});
                }
             }
