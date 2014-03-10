@@ -23,7 +23,6 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.kuwaiba.management.services.nodes.CustomerNode;
 import org.kuwaiba.management.services.nodes.CustomersPoolNode;
 import org.kuwaiba.management.services.nodes.ServiceManagerRootNode;
@@ -40,11 +39,13 @@ public class CreateCustomerAction extends GenericObjectNodeAction implements Pre
     
     public CreateCustomerAction(ServiceManagerRootNode rootNode) {
         this.rootNode = rootNode;
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_CUSTOMER"));
         
     }
 
     public CreateCustomerAction(CustomersPoolNode coustomersPoolNode) {
         this.coustomersPoolNode = coustomersPoolNode;
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_CUSTOMER"));
         
     }
 

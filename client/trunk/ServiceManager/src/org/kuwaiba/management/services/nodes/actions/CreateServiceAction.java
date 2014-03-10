@@ -99,11 +99,7 @@ public class CreateServiceAction extends GenericObjectNodeAction implements Pres
     public JMenuItem getPopupPresenter() {
         LocalClassMetadataLight[] serviceClasses = CommunicationsStub.getInstance().
                 getLightSubclasses("GenericService", false, false);
-        JMenuItem menu;
-        if(customersPoolNode!=null)
-            menu = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_SERVICE_ALL"));
-        else
-            menu = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_SERVICE"));
+        JMenuItem menu = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_SERVICE"));
         
         for (LocalClassMetadataLight serviceClass : serviceClasses){
             JMenuItem customerEntry = new JMenuItem(serviceClass.getClassName());

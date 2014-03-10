@@ -24,6 +24,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.inventory.navigation.applicationnodes.pools.PoolNode;
 import org.kuwaiba.management.services.nodes.actions.CreateServiceAction;
+import org.kuwaiba.management.services.nodes.actions.DeleteServicesPoolAction;
 import org.openide.util.ImageUtilities;
 
 /**
@@ -35,6 +36,7 @@ public class ServicesPoolNode extends PoolNode{
     private static Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/servicesPool.png");
     private CreateServiceAction createServiceAction;
     private ShowObjectIdAction showObjectIdAction;
+    private DeleteServicesPoolAction deleteServicesPoolAction;
     
     public ServicesPoolNode(LocalObjectLight service) {
         super(service);
@@ -51,6 +53,7 @@ public class ServicesPoolNode extends PoolNode{
     public Action[] getActions(boolean context){
         List<Action> actions = new ArrayList<Action>();
         actions.add(createServiceAction == null ? createServiceAction = new CreateServiceAction(this) : createServiceAction);
+        actions.add(deleteServicesPoolAction == null ? deleteServicesPoolAction = new DeleteServicesPoolAction(this) : deleteServicesPoolAction);
         actions.add(null);// Separator
         actions.add(showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(pool.getOid(), pool.getClassName()) : showObjectIdAction);
         return actions.toArray(new Action[]{});

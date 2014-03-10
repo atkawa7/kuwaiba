@@ -35,6 +35,7 @@ public class DeleteServicesPoolAction extends AbstractAction{
 
     public DeleteServicesPoolAction(ServicesPoolNode servicesPoolNode) {
         this.servicesPoolNode = servicesPoolNode;
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_DELETE_SERVICES_POOL"));
     }
 
     @Override

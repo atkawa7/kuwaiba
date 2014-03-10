@@ -53,7 +53,9 @@ public class CustomerChildren extends Children.Array {
         else{
             for (LocalObjectLight servicePool : servicesPools) {
                 ServicesPoolNode[] node = new ServicesPoolNode[]{new ServicesPoolNode(servicePool)};
+                
                 remove(node);
+                refresh();
                 add(node);
             }
         }
