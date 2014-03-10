@@ -1,5 +1,5 @@
-/**
- * Copyright 2010-2013 Neotropic SAS <contact@neotropic.co>.
+/*
+ * Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -18,35 +18,30 @@ package org.inventory.navigation.applicationnodes.pools;
 import java.awt.Image;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.inventory.navigation.applicationnodes.pools.actions.DeletePoolAction;
 import org.inventory.navigation.applicationnodes.pools.actions.NewPoolItemAction;
-import org.openide.nodes.AbstractNode;
 import org.openide.util.ImageUtilities;
 /**
  * Represents a pool (a set of objects of a certain kind)
  * @author Charles edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class PoolNode extends AbstractNode {
+public class PoolNode extends ObjectNode {
     
     private static Image defaultIcon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/pool.png");
-    private LocalObjectLight pool;
     private NewPoolItemAction newPoolItemAction;
     private DeletePoolAction deletePoolAction;
-    private ShowObjectIdAction showObjectIdAction;
-
-    public PoolNode(LocalObjectLight lol) {
-        super(new PoolChildren(lol));
-        this.pool = lol;
+    
+    public PoolNode(LocalObjectLight pool) {
+        super(pool);
+        this.object = pool;
+        setChildren(new PoolChildren(pool));
     }
     
     @Override
     public String getName(){
-        return pool.getName() +" ["+pool.getClassName()+"]";
-    }
-    
-    public LocalObjectLight getPool(){
-        return pool;
+        return object.getName() +" ["+object.getClassName()+"]";
     }
     
     @Override
@@ -54,12 +49,12 @@ public class PoolNode extends AbstractNode {
         if (newPoolItemAction == null){
             newPoolItemAction = new NewPoolItemAction(this);
             deletePoolAction = new DeletePoolAction(this);
-            showObjectIdAction = new ShowObjectIdAction (pool.getOid(), pool.getClassName());
+            showObjectIdAction = new ShowObjectIdAction (object.getOid(), object.getClassName());
         }
         return new Action[]{newPoolItemAction, deletePoolAction, showObjectIdAction};
     }
  
-        @Override
+    @Override
     public Image getIcon(int i){
         return defaultIcon;
     }

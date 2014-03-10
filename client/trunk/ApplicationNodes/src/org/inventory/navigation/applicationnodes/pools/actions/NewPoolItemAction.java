@@ -46,7 +46,7 @@ public class NewPoolItemAction extends AbstractAction implements Presenter.Popup
     @Override
     public void actionPerformed(ActionEvent e) {
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        LocalObjectLight newObject = com.createPoolItem(poolNode.getPool().getOid(), ((JMenuItem)e.getSource()).getName());
+        LocalObjectLight newObject = com.createPoolItem(poolNode.getObject().getOid(), ((JMenuItem)e.getSource()).getName());
         if (newObject == null)
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_ERROR"), NotificationUtil.ERROR, com.getError());
         else{
@@ -60,7 +60,7 @@ public class NewPoolItemAction extends AbstractAction implements Presenter.Popup
         JMenu mnuPossibleChildren = new JMenu(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
 
         LocalClassMetadataLight[] items;
-        items = com.getLightSubclasses(poolNode.getPool().getClassName(), false, true);
+        items = com.getLightSubclasses(poolNode.getObject().getClassName(), false, true);
 
             if (items.length == 0)
                 mnuPossibleChildren.setEnabled(false);

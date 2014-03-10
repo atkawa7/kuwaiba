@@ -46,7 +46,7 @@ public class DeletePoolAction extends AbstractAction{
     @Override
     public void actionPerformed(ActionEvent ev) {
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        if (com.deletePool(pn.getPool().getOid())){
+        if (com.deletePool(pn.getObject().getOid())){
             pn.getParentNode().getChildren().remove(new Node[]{pn});
             nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TITLE"), 
                     NotificationUtil.INFO, 
