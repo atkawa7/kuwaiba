@@ -52,6 +52,7 @@ public class NewPoolAction extends AbstractAction{
 
     @Override
     public void actionPerformed(ActionEvent ev) {
+        
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
 
         JTextField txtName = new JTextField(), txtDescription =  new JTextField();

@@ -31,7 +31,7 @@ public class PoolRootNode extends AbstractNode {
     
     public static final String ICON_PATH="org/inventory/navigation/applicationnodes/res/root.png";
     private static Image defaultIcon = ImageUtilities.loadImage(ICON_PATH);
-    
+
     public PoolRootNode (LocalObjectLight[] pools){
         super (new Children.Array());
         setName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_POOLS"));

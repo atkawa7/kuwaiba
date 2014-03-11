@@ -87,6 +87,7 @@
                 <package>org.inventory.navigation.applicationnodes.objectnodes</package>
                 <package>org.inventory.navigation.applicationnodes.objectnodes.actions</package>
                 <package>org.inventory.navigation.applicationnodes.pools</package>
+                <package>org.inventory.navigation.applicationnodes.pools.actions</package>
                 <package>org.inventory.navigation.applicationnodes.querynodes</package>
             </public-packages>
         </data>

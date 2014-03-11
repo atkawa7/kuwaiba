@@ -25,7 +25,7 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
-import org.inventory.navigation.applicationnodes.SpecialChildren;
+import org.inventory.navigation.applicationnodes.objectnodes.SpecialChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.SpecialNode;
 import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter;

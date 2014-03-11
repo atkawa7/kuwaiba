@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
-import org.inventory.navigation.applicationnodes.SpecialChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.CreateSpecialBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;

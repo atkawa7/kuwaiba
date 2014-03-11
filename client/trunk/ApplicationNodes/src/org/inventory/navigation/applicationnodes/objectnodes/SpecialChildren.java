@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.navigation.applicationnodes;
+package org.inventory.navigation.applicationnodes.objectnodes;
 
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
