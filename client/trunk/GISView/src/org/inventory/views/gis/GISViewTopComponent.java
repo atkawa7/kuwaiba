@@ -27,7 +27,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
-import org.inventory.core.visual.widgets.AbstractNodeWidget;
+import org.inventory.core.visual.widgets.AbstractScene;
 import org.inventory.views.gis.dialogs.OpenDialog;
 import org.inventory.views.gis.dialogs.SaveDialog;
 import org.inventory.views.gis.scene.GISViewScene;
@@ -357,12 +357,12 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }//GEN-LAST:event_btnZoomOutActionPerformed
 
     private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
-        scene.setActiveTool(AbstractNodeWidget.ACTION_SELECT);
+        scene.setActiveTool(AbstractScene.ACTION_SELECT);
         btnConnect.setSelected(false);
     }//GEN-LAST:event_btnSelectActionPerformed
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        scene.setActiveTool(AbstractNodeWidget.ACTION_CONNECT);
+        scene.setActiveTool(AbstractScene.ACTION_CONNECT);
         btnSelect.setSelected(false);
     }//GEN-LAST:event_btnConnectActionPerformed
 
@@ -398,6 +398,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         scene.clear();
+        scene.getMapPanel().setPreferredSize(null);
         scene.setEnabled(true);
         pnlMap.setVisible(true);
         gvs.setCurrentView(null);
@@ -439,9 +440,10 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }//GEN-LAST:event_btnOpenActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        if (gvs.deleteCurrentView()){
+        if (gvs.deleteCurrentView()) {
             toggleButtons(false);
             scene.setEnabled(false);
+            scene.setPreferredBounds(getBounds());
             pnlMap.setVisible(false);
         }
     }//GEN-LAST:event_btnDeleteActionPerformed

@@ -16,6 +16,7 @@
 
 package org.inventory.views.objectview.scene;
 
+import org.inventory.core.visual.widgets.SelectableWidget;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.event.ActionEvent;

@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Set;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.visual.widgets.AbstractNodeWidget;
+import org.inventory.core.visual.menu.ObjectWidgetMenu;
 import org.inventory.core.visual.widgets.AbstractScene;
 import org.inventory.core.visual.widgets.TagLabelWidget;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
@@ -61,7 +61,14 @@ import org.openide.util.lookup.ProxyLookup;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class GISViewScene extends AbstractScene implements Lookup.Provider{
-    
+    /**
+     * Default coordinates to center the map
+     */
+    public static final GeoPosition DEFAULT_CENTER_POSITION = new GeoPosition(4.740675, -73.762207);
+    /**
+     * Default zoom level
+     */
+    public static final int DEFAULT_ZOOM_LEVEL = 10;
     /**
      * Layer to contain the main map
      */
@@ -98,6 +105,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
      * Local connect provider
      */
     private PhysicalConnectionProvider connectProvider;
+    
 
     public GISViewScene(MapPanel map) {
         this.map = map;
@@ -120,6 +128,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
         
         this.lookup = new SceneLookup(Lookup.EMPTY);
         this.connectProvider = new PhysicalConnectionProvider(this);
+        this.defaultPopupMenuProvider = new ObjectWidgetMenu();
 
         addObjectSceneListener(new ObjectSceneListener() {
             @Override
@@ -145,7 +154,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
         getActions().addAction(new ZoomAction());
         getActions().addAction(ActionFactory.createAcceptAction(new AcceptActionProvider(this)));
         getActions().addAction(new MapWidgetPanAction(map, MouseEvent.BUTTON1));
-        setActiveTool(AbstractNodeWidget.ACTION_SELECT);
+        setActiveTool(AbstractScene.ACTION_SELECT);
         setOpaque(false);
     }
 
@@ -153,9 +162,10 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
     protected Widget attachNodeWidget(LocalObjectLight node) {
         GeoPositionedNodeWidget myWidget =  new GeoPositionedNodeWidget(this,node, 0, 0);
         nodesLayer.addChild(myWidget);
-        myWidget.getActions(AbstractNodeWidget.ACTION_SELECT).addAction(createSelectAction());
-        myWidget.getActions(AbstractNodeWidget.ACTION_SELECT).addAction(ActionFactory.createMoveAction());
-        myWidget.getActions(AbstractNodeWidget.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, connectProvider));
+        myWidget.getActions(AbstractScene.ACTION_SELECT).addAction(createSelectAction());
+        myWidget.getActions(AbstractScene.ACTION_SELECT).addAction(ActionFactory.createMoveAction());
+        myWidget.getActions(AbstractScene.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, connectProvider));
+        myWidget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         TagLabelWidget aLabelWidget = new TagLabelWidget(this, myWidget);
         myWidget.addDependency(aLabelWidget);
         labelsLayer.addChild(aLabelWidget);
@@ -169,6 +179,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
         myWidget.getActions().addAction(createSelectAction());
         myWidget.getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
         myWidget.getActions().addAction(ActionFactory.createMoveControlPointAction(ActionFactory.createFreeMoveControlPointProvider()));
+        myWidget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         myWidget.setStroke(new BasicStroke(2));
         myWidget.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         myWidget.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
@@ -299,8 +310,14 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
         for (LocalObjectLight edge : clonedEdges)
             removeEdge(edge);
         
-        map.setVisible(false);
         labelsLayer.removeChildren();
+        
+        map.setVisible(false);
+        map.getMainMap().setCenterPosition(DEFAULT_CENTER_POSITION);
+        map.getMainMap().setZoom(DEFAULT_ZOOM_LEVEL);
+        
+        validate();
+        
         //polygonsLayer.removeChildren();
     }
 
@@ -350,12 +367,8 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
         return bas.toByteArray();
     }
 
-    public void setCenterPosition(double latitude, double longitude) {
-        map.getMainMap().setCenterPosition(new GeoPosition(latitude, longitude));
-    }
-
-    public void zoom(int zoom) {
-        map.getMainMap().setZoom(zoom);
+    public MapPanel getMapPanel(){
+        return map;
     }
 
     public void pan(int deltaX, int deltaY) {

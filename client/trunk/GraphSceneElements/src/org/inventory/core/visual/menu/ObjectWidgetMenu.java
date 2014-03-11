@@ -13,12 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.views.objectview.scene.menus;
+package org.inventory.core.visual.menu;
 
 import java.awt.Point;
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
-import org.inventory.views.objectview.scene.SelectableWidget;
+import org.inventory.core.visual.widgets.SelectableWidget;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
 

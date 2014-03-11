@@ -22,7 +22,6 @@ import java.beans.PropertyChangeListener;
 import org.jdesktop.swingx.JXMapViewer;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.mapviewer.DefaultTileFactory;
-import org.jdesktop.swingx.mapviewer.GeoPosition;
 import org.jdesktop.swingx.mapviewer.TileFactory;
 import org.jdesktop.swingx.mapviewer.TileFactoryInfo;
 import org.jdesktop.swingx.painter.Painter;
@@ -45,10 +44,6 @@ public class MapPanel extends JXPanel {
      */
     private final int DEFAULT_MAXIMUM_ZOOM_LEVEL = 15;
     /**
-     * Default zoom level
-     */
-    public static final int DEFAULT_ZOOM_LEVEL = 10;
-    /**
      * Open Street Maps tile server base URL
      */
     private final String OSM_BASE_URL = "http://tile.openstreetmap.org";
@@ -68,10 +63,6 @@ public class MapPanel extends JXPanel {
      * Maximum zoom allowed by the tile provider
      */
     private int minZoom;
-    /**
-     * Default coordinates to center the map
-     */
-    public static final GeoPosition DEFAULT_CENTER_POSITION = new GeoPosition(4.740675, -73.762207);
 
     public MapPanel() {
         map = new JXMapViewer();
@@ -90,13 +81,8 @@ public class MapPanel extends JXPanel {
         map.removeMouseListener(map.getMouseListeners()[0]);
         map.removeMouseMotionListener(map.getMouseMotionListeners()[0]);
         map.removeMouseWheelListener(map.getMouseWheelListeners()[0]);
-        map.setCenterPosition(DEFAULT_CENTER_POSITION);
-        map.setZoom(DEFAULT_ZOOM_LEVEL);
     }
-
-    public void setCenterPosition(GeoPosition coordinates){
-        map.setCenterPosition(coordinates);
-    }
+    
     /**
      * Sets the tile provider
      * @param provider Open Street maps or Custom
@@ -117,8 +103,6 @@ public class MapPanel extends JXPanel {
             };
             TileFactory tf = new DefaultTileFactory(info);
             map.setTileFactory(tf);
-            map.setZoom(DEFAULT_ZOOM_LEVEL);
-            map.setCenterPosition(new GeoPosition(0,0));
             maxZoom = DEFAULT_MAXIMUM_ZOOM_LEVEL;
             minZoom = DEFAULT_MINIMUM_ZOOM_LEVEL;
         }

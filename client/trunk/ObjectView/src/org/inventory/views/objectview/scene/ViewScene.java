@@ -16,6 +16,7 @@
 
 package org.inventory.views.objectview.scene;
 
+import org.inventory.core.visual.widgets.SelectableWidget;
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
 import java.awt.Image;
@@ -36,7 +37,7 @@ import org.inventory.core.visual.widgets.AbstractScene;
 import org.inventory.views.objectview.scene.actions.CustomAddRemoveControlPointAction;
 import org.inventory.views.objectview.scene.actions.CustomMoveAction;
 import org.inventory.views.objectview.scene.actions.CustomMoveControlPointAction;
-import org.inventory.views.objectview.scene.menus.ObjectWidgetMenu;
+import org.inventory.core.visual.menu.ObjectWidgetMenu;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.model.ObjectSceneEvent;
 import org.netbeans.api.visual.model.ObjectSceneEventType;
@@ -113,15 +114,6 @@ public final class ViewScene extends AbstractScene {
      * Action listeners
      */
     private List<ActionListener> listeners;
-    
-    /**
-     * Constant to represent the selection tool
-     */
-    public final static String ACTION_SELECT = "selection"; //NOI18
-    /**
-     * Constant to represent the connection tool
-     */
-    public final static String ACTION_CONNECT = "connect"; //NOI18
     /**
      * Event ID to indicate a change in the scene (saving is not mandatory)
      */
@@ -139,6 +131,7 @@ public final class ViewScene extends AbstractScene {
      */
     private NotificationUtil notifier;
     
+    
     public ViewScene (NotificationUtil notifier){
         interactionLayer = new LayerWidget(this);
         backgroundLayer = new LayerWidget(this);
@@ -155,7 +148,9 @@ public final class ViewScene extends AbstractScene {
         
         getActions().addAction(ActionFactory.createZoomAction());
         getActions().addAction(ActionFactory.createPanAction());
-        //getActions().addAction(ActionFactory.createRectangularSelectAction(this, backgroundLayer));
+
+        defaultPopupMenuProvider = new ObjectWidgetMenu();
+        
         setActiveTool(ACTION_SELECT);
         addObjectSceneListener(new ObjectSceneListener() {
 
@@ -192,7 +187,7 @@ public final class ViewScene extends AbstractScene {
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
         ObjectNodeWidget widget = new ObjectNodeWidget(this, node);
-        widget.getActions().addAction(ActionFactory.createPopupMenuAction(new ObjectWidgetMenu()));
+        widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         nodesLayer.addChild(widget);
         return widget;
     }
@@ -200,7 +195,7 @@ public final class ViewScene extends AbstractScene {
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         ObjectConnectionWidget widget = new ObjectConnectionWidget(this, edge, freeRouter);
-        widget.getActions().addAction(ActionFactory.createPopupMenuAction(new ObjectWidgetMenu()));
+        widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         edgesLayer.addChild(widget);
         return widget;
     }

@@ -20,6 +20,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.HashMap;
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -38,6 +39,7 @@ public class JComplexDialogPanel extends JPanel{
             throw new RuntimeException("You must provide the same number of labels and components");
         
         this.components = new HashMap<String, JComponent>();
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
         setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         gc.fill = GridBagConstraints.HORIZONTAL;

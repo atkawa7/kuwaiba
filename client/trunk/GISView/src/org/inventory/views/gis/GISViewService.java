@@ -34,6 +34,7 @@ import org.inventory.views.gis.scene.GISViewScene;
 import org.inventory.views.gis.scene.GeoPositionedConnectionWidget;
 import org.inventory.views.gis.scene.GeoPositionedNodeWidget;
 import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
+import org.jdesktop.swingx.mapviewer.GeoPosition;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
@@ -175,14 +176,15 @@ public class GISViewService {
                                 else{
                                     if (reader.getName().equals(qZoom)){
                                         currentView.setZoom(Integer.valueOf(reader.getElementText()));
-                                        scene.zoom(currentView.getZoom());
+                                        scene.getMapPanel().getMainMap().setZoom(currentView.getZoom());
                                     }
                                     else{
                                         if (reader.getName().equals(qCenter)){
                                             double x = Double.valueOf(reader.getAttributeValue(null, "x"));
                                             double y = Double.valueOf(reader.getAttributeValue(null, "y"));
                                             currentView.setCenter(new double[]{x,y});
-                                            scene.setCenterPosition(currentView.getCenter()[1], currentView.getCenter()[0]);
+                                            scene.getMapPanel().getMainMap().
+                                                    setCenterPosition(new GeoPosition(currentView.getCenter()[1], currentView.getCenter()[0]));
                                         }else {
                                             //Place more tags
                                         }

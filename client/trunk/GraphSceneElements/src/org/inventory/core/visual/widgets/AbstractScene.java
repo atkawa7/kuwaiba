@@ -19,6 +19,7 @@ package org.inventory.core.visual.widgets;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.visual.export.ExportableScene;
 import org.inventory.core.visual.export.Layer;
+import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.Scene;
 
@@ -27,7 +28,20 @@ import org.netbeans.api.visual.widget.Scene;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalObjectLight> 
-        implements ExportableScene{
+        implements ExportableScene {
+    /**
+     * Constant to represent the selection tool
+     */
+    public final static String ACTION_SELECT = "selection"; //NOI18
+    /**
+     * Constant to represent the connection tool
+     */
+    public final static String ACTION_CONNECT = "connect"; //NOI18
+    /**
+     * Shared popup menu for widgets
+     */
+    protected PopupMenuProvider defaultPopupMenuProvider;
+    
     @Override
     public Scene getExportable(){
         return this;

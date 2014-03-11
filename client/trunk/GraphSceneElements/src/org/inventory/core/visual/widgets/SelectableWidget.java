@@ -14,7 +14,7 @@
  * 
  */
 
-package org.inventory.views.objectview.scene;
+package org.inventory.core.visual.widgets;
 
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 

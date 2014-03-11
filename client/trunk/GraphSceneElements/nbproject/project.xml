@@ -23,6 +23,14 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.inventory.navigation.applicationnodes</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.api.visual</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -36,6 +44,14 @@
                     <compile-dependency/>
                     <run-dependency>
                         <specification-version>7.15.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.openide.nodes</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>7.28.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -60,6 +76,7 @@
                 <package>org.inventory.core.visual.decorators</package>
                 <package>org.inventory.core.visual.export</package>
                 <package>org.inventory.core.visual.export.filters</package>
+                <package>org.inventory.core.visual.menu</package>
                 <package>org.inventory.core.visual.widgets</package>
             </public-packages>
         </data>

@@ -78,10 +78,10 @@ public class ImageFilter extends SceneExportFilter {
             cmbFormat.setName("cmbFormat");
             
             JComboBox cmbZoom = new JComboBox(new SceneExporter.ZoomType[]{SceneExporter.ZoomType.ACTUAL_SIZE, SceneExporter.ZoomType.CURRENT_ZOOM_LEVEL});
-            cmbFormat.setName("cmbZoom");
+            cmbZoom.setName("cmbZoom");
             
             JComboBox cmbVisibleAreaOnly = new JComboBox(new Boolean[]{false, true});
-            cmbFormat.setName("cmbVisibleAreaOnly");
+            cmbVisibleAreaOnly.setName("cmbVisibleAreaOnly");
             
             myPanel = new JComplexDialogPanel(new String[]{"Format", "Zoom", "Visible area only"}, 
                     new JComponent[]{cmbFormat, cmbZoom, cmbVisibleAreaOnly});

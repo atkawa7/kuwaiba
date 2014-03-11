@@ -47,23 +47,7 @@ public class GeoPositionedConnectionWidget extends AbstractConnectionWidget {
     public GeoPositionedConnectionWidget(GISViewScene scene, LocalObjectLight object) {
         this(scene, object, new ArrayList<double[]>());
     }
-
-
-    /**
-     * We override this method in order to set the geopositioned control points as well
-     * @param controlPoints
-     * @param sceneLocations
-     */
-//    @Override
-//    public void setControlPoints(Collection<Point> controlPoints, boolean sceneLocations) {
-//        geoPositionedControlPoints.clear();
-//        for (Point controlPoint : controlPoints){
-//            double[] coordinates = ((GISViewScene)getScene()).pixelToCoordinate(controlPoint);
-//            geoPositionedControlPoints.add(new double[]{coordinates[0], coordinates[1]});
-//        }
-//        super.setControlPoints(controlPoints, sceneLocations);
-//    }
-
+    
     /**
      * These control points can only be set by the setControlPoints method
      * @return the set of

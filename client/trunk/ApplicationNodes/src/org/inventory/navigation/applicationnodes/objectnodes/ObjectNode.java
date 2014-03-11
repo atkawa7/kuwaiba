@@ -84,15 +84,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     private Image icon;
     private final Image defaultIcon = ImageUtilities.loadImage(GENERIC_ICON_PATH);
     private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-   
-    public ObjectNode(LocalObjectLight lol, boolean isLeaf){
-        super(Children.LEAF, Lookups.singleton(lol));
-        this.object = lol;
-        this.object.addPropertyChangeListener(this);
-        com = CommunicationsStub.getInstance();
-        icon = (com.getMetaForClass(lol.getClassName(),false)).getSmallIcon();
-        explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
-    }
     
     public ObjectNode(LocalObjectLight lol){
         super(new ObjectChildren(), Lookups.singleton(lol));
@@ -103,6 +94,15 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
             icon = (com.getMetaForClass(lol.getClassName(),false)).getSmallIcon();
             explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
         }
+    }
+    
+    public ObjectNode(LocalObjectLight lol, boolean isLeaf){
+        super(Children.LEAF, Lookups.singleton(lol));
+        this.object = lol;
+        this.object.addPropertyChangeListener(this);
+        com = CommunicationsStub.getInstance();
+        icon = (com.getMetaForClass(lol.getClassName(),false)).getSmallIcon();
+        explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
     }
 
     /*

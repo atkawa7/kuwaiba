@@ -16,6 +16,7 @@
 
 package org.inventory.views.objectview.scene;
 
+import org.inventory.core.visual.widgets.SelectableWidget;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -31,7 +32,7 @@ import org.openide.util.ImageUtilities;
  * This widget represents a node (as in the navigation tree)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectNodeWidget extends IconNodeWidget implements ActionListener, SelectableWidget{
+public class ObjectNodeWidget extends IconNodeWidget implements ActionListener, SelectableWidget {
     private ObjectNode node;
     public static final Font defaultFont = new Font(Font.SANS_SERIF,Font.BOLD,12);
 

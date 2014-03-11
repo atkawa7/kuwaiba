@@ -18,6 +18,7 @@ package org.inventory.core.visual.widgets;
 import java.awt.Color;
 import java.awt.Dimension;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
@@ -28,46 +29,46 @@ import org.openide.util.lookup.Lookups;
  * Root to all widgets representing and object node
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class AbstractNodeWidget extends Widget {
+public class AbstractNodeWidget extends Widget implements SelectableWidget {
     /**
      * Default widget size
      */
     public static final Dimension DEFAULT_DIMENSION = new Dimension(10, 10);
     /**
-     * String for Selection tool
-     */
-    public final static String ACTION_SELECT = "selection"; //NOI18
-    /**
-     * String for Connect tool
-     */
-    public final static String ACTION_CONNECT = "connect"; //NOI18
-    /**
-     * Wrapped object
-     */
-    protected LocalObjectLight object;
-    /**
      * Widget's lookup
      */
     private Lookup lookup;
+    /**
+     * Object node. The wrapped object will be referenced here
+     */
+    private ObjectNode node;
 
     public AbstractNodeWidget(Scene scene, LocalObjectLight object) {
         super(scene);
-        this.object = object;
+        this.node = new ObjectNode(object);
         setPreferredSize(DEFAULT_DIMENSION);
         setBackground(Color.ORANGE);
         setToolTipText(object.toString());
         this.lookup = Lookups.singleton(object);
-        createActions(ACTION_SELECT);
-        createActions(ACTION_CONNECT);
+        createActions(AbstractScene.ACTION_SELECT);
+        createActions(AbstractScene.ACTION_CONNECT);
         setOpaque(true);
     }
 
+    /**
+     * Convenience method to get the wrapped object
+     * @return The wrapped object
+     */
     public LocalObjectLight getObject() {
-        return object;
+        return node.getObject();
     }
 
+    /**
+     * Convenience method to set the wrapped object
+     * @param object the new object
+     */
     public void setObject(LocalObjectLight object) {
-        this.object = object;
+        this.node = new ObjectNode(object);
     }
     
     @Override
@@ -87,5 +88,9 @@ public class AbstractNodeWidget extends Widget {
         else
             setBackground(Color.ORANGE);
     }
-    
+
+    @Override
+    public ObjectNode getNode() {
+        return node;
+    }   
 }
