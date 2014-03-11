@@ -23,6 +23,7 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.pools.PoolNode;
 import org.kuwaiba.management.services.nodes.CustomerNode;
 import org.kuwaiba.management.services.nodes.CustomersPoolNode;
 import org.kuwaiba.management.services.nodes.ServiceNode;
@@ -33,29 +34,22 @@ import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter;
 
 /**
- * This action allows to create a customer
+ * This action allows to create a service
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class CreateServiceAction extends GenericObjectNodeAction implements Presenter.Popup {
     private CustomerNode customerNode;
-    private ServicesPoolNode servicesPoolNode;
-    private CustomersPoolNode customersPoolNode;
+    private PoolNode poolNode;
     
     public CreateServiceAction(CustomerNode customerNode) {
         this.customerNode = customerNode;
         putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_SERVICE"));
     }
 
-    public CreateServiceAction(ServicesPoolNode servicesPoolNode) {
-        this.servicesPoolNode = servicesPoolNode;
+    public CreateServiceAction(PoolNode poolNode) {
+        this.poolNode = poolNode;
         putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_SERVICE"));
     }
-    
-    public CreateServiceAction(CustomersPoolNode customersPoolNode) {
-        this.customersPoolNode = customersPoolNode;
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_SERVICE_ALL"));
-    }
-
     
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -69,17 +63,17 @@ public class CreateServiceAction extends GenericObjectNodeAction implements Pres
             else
                 Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
         }
-        else if(servicesPoolNode != null){
-            LocalObjectLight newService = CommunicationsStub.getInstance().createPoolItem(servicesPoolNode.getPool().getOid(), ((JMenuItem)e.getSource()).getName());
+        else if(poolNode != null && poolNode instanceof ServicesPoolNode){
+            LocalObjectLight newService = CommunicationsStub.getInstance().createPoolItem(poolNode.getObject().getOid(), ((JMenuItem)e.getSource()).getName());
             if (newService == null)
                 Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATION_ERROR"), NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
             else{
-                servicesPoolNode.getChildren().add(new ServiceNode[]{new ServiceNode(newService)});
+                poolNode.getChildren().add(new ServiceNode[]{new ServiceNode(newService)});
                 Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
             }
         }
-        else if(customersPoolNode != null){
-            Children children = customersPoolNode.getChildren();
+        else if(poolNode != null && poolNode instanceof CustomersPoolNode){
+            Children children = poolNode.getChildren();
             Node[] nodes = children.getNodes();
             for (Node node : nodes) {
                 CustomerNode poolCustomer = (CustomerNode)node;

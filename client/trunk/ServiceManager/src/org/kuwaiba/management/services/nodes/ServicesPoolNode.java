@@ -17,14 +17,12 @@
 package org.kuwaiba.management.services.nodes;
 
 import java.awt.Image;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
 import org.inventory.navigation.applicationnodes.pools.PoolNode;
+import org.inventory.navigation.applicationnodes.pools.actions.DeletePoolAction;
 import org.kuwaiba.management.services.nodes.actions.CreateServiceAction;
-import org.kuwaiba.management.services.nodes.actions.DeleteServicesPoolAction;
 import org.openide.util.ImageUtilities;
 
 /**
@@ -34,29 +32,23 @@ import org.openide.util.ImageUtilities;
 public class ServicesPoolNode extends PoolNode{
     
     private static Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/servicesPool.png");
-    private CreateServiceAction createServiceAction;
-    private ShowObjectIdAction showObjectIdAction;
-    private DeleteServicesPoolAction deleteServicesPoolAction;
     
     public ServicesPoolNode(LocalObjectLight service) {
         super(service);
-        this.pool = service;
+        this.object = service;
         setChildren(new ServiceChildren(service));
     }
 
     @Override
     public String getName(){
-        return pool.getName() +" ["+java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_SERVICES_POOL")+"]";
+        return object.getName() +" ["+java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_SERVICES_POOL")+"]";
     }
     
     @Override
     public Action[] getActions(boolean context){
-        List<Action> actions = new ArrayList<Action>();
-        actions.add(createServiceAction == null ? createServiceAction = new CreateServiceAction(this) : createServiceAction);
-        actions.add(deleteServicesPoolAction == null ? deleteServicesPoolAction = new DeleteServicesPoolAction(this) : deleteServicesPoolAction);
-        actions.add(null);// Separator
-        actions.add(showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(pool.getOid(), pool.getClassName()) : showObjectIdAction);
-        return actions.toArray(new Action[]{});
+        return new Action[]{new CreateServiceAction(this), 
+            new DeletePoolAction(this),
+            new ShowObjectIdAction(object.getOid(), object.getClassName())};
     }
     
     @Override

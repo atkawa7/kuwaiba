@@ -25,7 +25,7 @@ import org.openide.nodes.Children;
 import org.openide.util.ImageUtilities;
 
 /**
- * Node representing a customer
+ * Node representing the service manager root
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ServiceManagerRootNode extends AbstractNode {

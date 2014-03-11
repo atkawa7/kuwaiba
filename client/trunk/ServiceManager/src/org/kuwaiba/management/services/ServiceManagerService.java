@@ -37,16 +37,16 @@ public class ServiceManagerService {
     }
     
     public void setTreeRoot(){
-        List<LocalObjectLight> customersPools = CommunicationsStub.getInstance().getPools("GenericCustomer");
-        LocalObjectLight[] customers = CommunicationsStub.getInstance().getObjectsOfClassLight("GenericCustomer");
+        List<LocalObjectLight> customersPools = com.getPools("GenericCustomer");
+        LocalObjectLight[] customers = com.getObjectsOfClassLight("GenericCustomer");
                 
         if (customers == null)
-            this.smtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            this.smtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
         else{
             List<LocalObjectLight> serviceManagerNodes = new ArrayList<LocalObjectLight>();
             serviceManagerNodes.addAll(Arrays.asList(customers)); 
             for (LocalObjectLight customersPool : customersPools){
-                List<LocalObjectLight> poolItems = CommunicationsStub.getInstance().getPoolItems(customersPool.getOid());
+                List<LocalObjectLight> poolItems = com.getPoolItems(customersPool.getOid());
                 for(LocalObjectLight customer : customers){
                     if(poolItems.contains(customer)){
                         serviceManagerNodes.remove(customer);
