@@ -18,10 +18,10 @@ package org.inventory.core.history;
 import java.util.Date;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalApplicationLogEntry;
-import org.inventory.core.services.api.export.ExportSettingsPanel;
-import org.inventory.core.services.api.export.Exportable;
+import org.inventory.core.services.api.export.ExportTablePanel;
+import org.inventory.core.services.api.export.ExportableTable;
 import org.inventory.core.services.api.export.filters.CSVFilter;
-import org.inventory.core.services.api.export.filters.ExportFilter;
+import org.inventory.core.services.api.export.filters.TextExportFilter;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.netbeans.swing.etable.ETable;
 import org.openide.DialogDescriptor;
@@ -53,7 +53,7 @@ preferredID = "AuditTrailTopComponent")
     "CTL_AuditTrailTopComponent=Activity Log",
     "HINT_AuditTrailTopComponent=Activity Log"
 })
-public final class AuditTrailTopComponent extends TopComponent implements Exportable {
+public final class AuditTrailTopComponent extends TopComponent implements ExportableTable {
     private ETable aTable;
     private AuditTrailService service;
     private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
@@ -159,7 +159,7 @@ public final class AuditTrailTopComponent extends TopComponent implements Export
     }//GEN-LAST:event_btnNextActionPerformed
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
-        ExportSettingsPanel exportPanel = new ExportSettingsPanel(new ExportFilter[]{CSVFilter.getInstance()}, this);
+        ExportTablePanel exportPanel = new ExportTablePanel(new TextExportFilter[]{CSVFilter.getInstance()}, this);
         DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportActionPerformed

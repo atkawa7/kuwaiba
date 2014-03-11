@@ -20,7 +20,7 @@ package org.inventory.core.services.api.export;
  * file using a ExportFilter
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface Exportable {
+public interface ExportableTable {
     public enum Range{
         ALL(0,"All"),
         CURRENT_PAGE(1,"Current Page");

@@ -28,11 +28,7 @@ import org.openide.util.lookup.Lookups;
  * Root to all widgets representing and object node
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class AbstractObjectNodeWidget extends Widget {
-    /**
-     * Default color to be used to paint widget
-     */
-    public static final Color DEFAULT_COLOR = Color.ORANGE;
+public class AbstractNodeWidget extends Widget {
     /**
      * Default widget size
      */
@@ -54,11 +50,11 @@ public class AbstractObjectNodeWidget extends Widget {
      */
     private Lookup lookup;
 
-    public AbstractObjectNodeWidget(Scene scene, LocalObjectLight object) {
+    public AbstractNodeWidget(Scene scene, LocalObjectLight object) {
         super(scene);
         this.object = object;
         setPreferredSize(DEFAULT_DIMENSION);
-        setBackground(DEFAULT_COLOR);
+        setBackground(Color.ORANGE);
         setToolTipText(object.toString());
         this.lookup = Lookups.singleton(object);
         createActions(ACTION_SELECT);
@@ -87,9 +83,9 @@ public class AbstractObjectNodeWidget extends Widget {
     @Override
     public void notifyStateChanged (ObjectState previousState, ObjectState state) {
         if (state.isSelected())
-            setBackground(Color.BLACK);
+            setBackground(Color.RED);
         else
-            setBackground(DEFAULT_COLOR);
+            setBackground(Color.ORANGE);
     }
     
 }

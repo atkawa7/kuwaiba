@@ -14,12 +14,6 @@
  *  limitations under the License.
  */
 
-/*
- * OpenDialog.java
- *
- * Created on Oct 10, 2012, 2:50:52 PM
- */
-
 package org.inventory.views.gis.dialogs;
 
 import javax.swing.JPanel;
@@ -28,7 +22,7 @@ import javax.swing.event.ListSelectionListener;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 
 /**
- *
+ * Generic panel used to choose an element to be opened by a viewer
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class OpenDialog extends JPanel {

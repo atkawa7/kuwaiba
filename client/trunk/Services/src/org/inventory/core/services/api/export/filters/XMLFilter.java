@@ -26,7 +26,7 @@ import javax.swing.JPanel;
  * Exports to XML as explained <a href="http://www.kuwaiba.org/kuwaiba/wiki/index.php?title=XML_Documents">here</a>
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class XMLFilter extends ExportFilter {
+public class XMLFilter extends TextExportFilter {
     
     /**
      * Current format version. Visit the <a href="http://www.kuwaiba.neotropic.co/wiki/index.php?title=XML_Documents">wiki</a> for details

@@ -16,8 +16,6 @@
 package org.inventory.views.gis;
 
 import java.awt.BorderLayout;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
@@ -26,7 +24,10 @@ import javax.swing.JScrollPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.visual.widgets.AbstractObjectNodeWidget;
+import org.inventory.core.visual.export.ExportScenePanel;
+import org.inventory.core.visual.export.filters.ImageFilter;
+import org.inventory.core.visual.export.filters.SceneExportFilter;
+import org.inventory.core.visual.widgets.AbstractNodeWidget;
 import org.inventory.views.gis.dialogs.OpenDialog;
 import org.inventory.views.gis.dialogs.SaveDialog;
 import org.inventory.views.gis.scene.GISViewScene;
@@ -37,6 +38,8 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 import org.openide.explorer.ExplorerManager;
 import org.openide.util.Lookup;
 
@@ -81,25 +84,6 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         this.gvs = new GISViewService(scene, this);
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         associateLookup(scene.getLookup());
-        addComponentListener(new ComponentListener() {
-
-            @Override
-            public void componentResized(ComponentEvent e) {
-                scene.updateMapBounds();
-            }
-
-            @Override
-            public void componentMoved(ComponentEvent e) {
-            }
-
-            @Override
-            public void componentShown(ComponentEvent e) {
-            }
-
-            @Override
-            public void componentHidden(ComponentEvent e) {
-            }
-        });
     }
 
     private void initCustomComponents(){
@@ -212,6 +196,11 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnExport.setFocusable(false);
         btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportActionPerformed(evt);
+            }
+        });
         barToolMain.add(btnExport);
 
         btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/select.png"))); // NOI18N
@@ -368,12 +357,12 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }//GEN-LAST:event_btnZoomOutActionPerformed
 
     private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
-        scene.setActiveTool(AbstractObjectNodeWidget.ACTION_SELECT);
+        scene.setActiveTool(AbstractNodeWidget.ACTION_SELECT);
         btnConnect.setSelected(false);
     }//GEN-LAST:event_btnSelectActionPerformed
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        scene.setActiveTool(AbstractObjectNodeWidget.ACTION_CONNECT);
+        scene.setActiveTool(AbstractNodeWidget.ACTION_CONNECT);
         btnSelect.setSelected(false);
     }//GEN-LAST:event_btnConnectActionPerformed
 
@@ -431,7 +420,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
         List<LocalObjectViewLight> views = CommunicationsStub.getInstance().getGeneralViews(LocalObjectViewLight.TYPE_GIS);
         if (views == null)
-            JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), "Load View", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), "Error", JOptionPane.ERROR_MESSAGE);
         else{
             OpenDialog openDialog = new OpenDialog(views.toArray(new LocalObjectViewLight[0]));
 
@@ -442,7 +431,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
                         scene.setEnabled(true);
                         pnlMap.setVisible(true);
                     }catch(Exception ex){
-                        nu.showSimplePopup("Error", NotificationUtil.ERROR, ex.getMessage());
+                        getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, ex.getMessage());
                     }
                 }
             }
@@ -460,6 +449,12 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     private void btnShowNodeLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodeLabelsActionPerformed
         scene.toggleLabels(!btnShowNodeLabels.isSelected());
     }//GEN-LAST:event_btnShowNodeLabelsActionPerformed
+
+    private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
+        ExportScenePanel exportPanel = new ExportScenePanel(new SceneExportFilter[]{ImageFilter.getInstance()}, scene);
+        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
+        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+    }//GEN-LAST:event_btnExportActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barToolMain;
@@ -575,7 +570,6 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     public NotificationUtil getNotifier(){
         if (nu == null)
             nu = Lookup.getDefault().lookup(NotificationUtil.class);
-
         return nu;
     }
 }

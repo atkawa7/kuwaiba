@@ -14,17 +14,17 @@
  * 
  */
 
-package org.inventory.core.services.api.export.filters;
+package org.inventory.core.visual.export.filters;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import javax.swing.JPanel;
+import org.inventory.core.visual.export.ExportableScene;
 
 /**
- * All filters must implement this interface
+ * All scene export filters must implement this interface
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public abstract class ExportFilter {
+public abstract class SceneExportFilter {
     /**
      * To be used as label in the formats combo box
      * @return the name to be displayed
@@ -36,10 +36,10 @@ public abstract class ExportFilter {
      */
     public abstract String getExtension();
     /**
-     * The export action. This method WON'T close the stream!
+     * The export action
      * @throws 
      */
-    public abstract boolean export(Object[][] result, FileOutputStream out) throws IOException;
+    public abstract void export(ExportableScene scene, String fileName) throws IOException;
     /**
      * The settings panel
      * @return 

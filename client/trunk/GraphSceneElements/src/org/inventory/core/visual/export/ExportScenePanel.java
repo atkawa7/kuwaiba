@@ -14,34 +14,35 @@
  * 
  */
 
-package org.inventory.core.services.api.export;
+package org.inventory.core.visual.export;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Calendar;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import org.inventory.core.services.api.export.filters.ExportFilter;
+import org.inventory.core.services.api.export.filters.TextExportFilter;
+import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 
 /**
- * Dialog to export a table to a file
+ * Dialog to export a scene to a file
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ExportSettingsPanel extends JPanel implements ActionListener{
+public class ExportScenePanel extends JPanel implements ActionListener{
 
-    private ExportFilter[] filters;
-    private Exportable exportable;
+    private SceneExportFilter[] filters;
+    private ExportableScene exportable;
 
     /** Creates new form ExportSettingsPanel */
-    public ExportSettingsPanel(ExportFilter[] filters, Exportable exportable) {
+    public ExportScenePanel(SceneExportFilter[] filters, ExportableScene exportable) {
         this.filters = filters;
         initComponents();
         initCustomComponents();
@@ -49,9 +50,7 @@ public class ExportSettingsPanel extends JPanel implements ActionListener{
     }
 
     private void initCustomComponents() {
-        cmbRange.addItem(Exportable.Range.ALL);
-        cmbRange.addItem(Exportable.Range.CURRENT_PAGE);
-        for (ExportFilter filter : filters)
+        for (SceneExportFilter filter : filters)
             cmbExportTo.addItem(filter);
         cmbExportTo.addItemListener(new ItemListener() {
 
@@ -74,15 +73,13 @@ public class ExportSettingsPanel extends JPanel implements ActionListener{
         btnExportToSettings = new javax.swing.JButton();
         txtOutputFile = new javax.swing.JTextField();
         lblOutputFile = new javax.swing.JLabel();
-        lblRange = new javax.swing.JLabel();
-        cmbRange = new javax.swing.JComboBox();
         btnOutputFileSet = new javax.swing.JButton();
         lblExportTo = new javax.swing.JLabel();
         cmbExportTo = new javax.swing.JComboBox();
 
-        btnExportToSettings.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/services/res/configure.png"))); // NOI18N
-        btnExportToSettings.setText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.btnExportToSettings.text")); // NOI18N
-        btnExportToSettings.setToolTipText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.btnExportToSettings.toolTipText")); // NOI18N
+        btnExportToSettings.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/visual/res/configure.png"))); // NOI18N
+        btnExportToSettings.setText(org.openide.util.NbBundle.getMessage(ExportScenePanel.class, "ExportScenePanel.btnExportToSettings.text")); // NOI18N
+        btnExportToSettings.setToolTipText(org.openide.util.NbBundle.getMessage(ExportScenePanel.class, "ExportScenePanel.btnExportToSettings.toolTipText")); // NOI18N
         btnExportToSettings.setPreferredSize(new java.awt.Dimension(24, 24));
         btnExportToSettings.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -90,14 +87,12 @@ public class ExportSettingsPanel extends JPanel implements ActionListener{
             }
         });
 
-        txtOutputFile.setText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.txtOutputFile.text")); // NOI18N
+        txtOutputFile.setText(org.openide.util.NbBundle.getMessage(ExportScenePanel.class, "ExportScenePanel.txtOutputFile.text")); // NOI18N
 
-        lblOutputFile.setText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.lblOutputFile.text")); // NOI18N
+        lblOutputFile.setText(org.openide.util.NbBundle.getMessage(ExportScenePanel.class, "ExportScenePanel.lblOutputFile.text")); // NOI18N
 
-        lblRange.setText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.lblRange.text")); // NOI18N
-
-        btnOutputFileSet.setText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.btnOutputFileSet.text")); // NOI18N
-        btnOutputFileSet.setToolTipText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.btnOutputFileSet.toolTipText")); // NOI18N
+        btnOutputFileSet.setText(org.openide.util.NbBundle.getMessage(ExportScenePanel.class, "ExportScenePanel.btnOutputFileSet.text")); // NOI18N
+        btnOutputFileSet.setToolTipText(org.openide.util.NbBundle.getMessage(ExportScenePanel.class, "ExportScenePanel.btnOutputFileSet.toolTipText")); // NOI18N
         btnOutputFileSet.setPreferredSize(new java.awt.Dimension(24, 24));
         btnOutputFileSet.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -105,7 +100,7 @@ public class ExportSettingsPanel extends JPanel implements ActionListener{
             }
         });
 
-        lblExportTo.setText(org.openide.util.NbBundle.getMessage(ExportSettingsPanel.class, "ExportSettingsPanel.lblExportTo.text")); // NOI18N
+        lblExportTo.setText(org.openide.util.NbBundle.getMessage(ExportScenePanel.class, "ExportScenePanel.lblExportTo.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -115,11 +110,9 @@ public class ExportSettingsPanel extends JPanel implements ActionListener{
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblOutputFile)
-                    .addComponent(lblExportTo)
-                    .addComponent(lblRange))
+                    .addComponent(lblExportTo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(cmbRange, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cmbExportTo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtOutputFile, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(6, 6, 6)
@@ -135,24 +128,21 @@ public class ExportSettingsPanel extends JPanel implements ActionListener{
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnExportToSettings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblOutputFile)
-                            .addComponent(btnOutputFileSet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtOutputFile))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtOutputFile, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(lblOutputFile)
+                                .addComponent(btnOutputFileSet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cmbExportTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblExportTo))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmbRange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblRange))
-                .addGap(40, 40, 40))
+                .addGap(20, 20, 20))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnExportToSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportToSettingsActionPerformed
-        ExportFilter selectedFilter = (ExportFilter)cmbExportTo.getSelectedItem();
+        SceneExportFilter selectedFilter = (SceneExportFilter)cmbExportTo.getSelectedItem();
         if (selectedFilter.getExportSettingsPanel() != null){
             DialogDescriptor dd = new DialogDescriptor(selectedFilter.getExportSettingsPanel(), 
                     "Export Settings", true, null);
@@ -166,9 +156,9 @@ public class ExportSettingsPanel extends JPanel implements ActionListener{
         fChooser.setDialogTitle("Select a directory");
         if (fChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
             txtOutputFile.setText(fChooser.getSelectedFile().getAbsolutePath()+
-                    File.separator + "results" + Calendar.getInstance().get(Calendar.DAY_OF_YEAR)+ //NOI18N
+                    File.separator + "scene" + Calendar.getInstance().get(Calendar.DAY_OF_YEAR)+ //NOI18N
                     "-"+Calendar.getInstance().get(Calendar.MINUTE)+ //NOI18N
-                    (((ExportFilter)cmbExportTo.getSelectedItem()).getExtension())); //NOI18N
+                    (((SceneExportFilter)cmbExportTo.getSelectedItem()).getExtension())); //NOI18N
 }//GEN-LAST:event_btnOutputFileSetActionPerformed
 
 
@@ -176,10 +166,8 @@ public class ExportSettingsPanel extends JPanel implements ActionListener{
     private javax.swing.JButton btnExportToSettings;
     private javax.swing.JButton btnOutputFileSet;
     private javax.swing.JComboBox cmbExportTo;
-    private javax.swing.JComboBox cmbRange;
     private javax.swing.JLabel lblExportTo;
     private javax.swing.JLabel lblOutputFile;
-    private javax.swing.JLabel lblRange;
     private javax.swing.JTextField txtOutputFile;
     // End of variables declaration//GEN-END:variables
 
@@ -191,21 +179,11 @@ public class ExportSettingsPanel extends JPanel implements ActionListener{
                 return;
             }
 
-            ExportFilter selectedFilter = (ExportFilter)cmbExportTo.getSelectedItem();
-
-            Object[][] allResults = exportable.getResults((Exportable.Range)cmbRange.getSelectedItem());
-            
+            SceneExportFilter selectedFilter = (SceneExportFilter)cmbExportTo.getSelectedItem();
+           
             try{
-                FileOutputStream fos = new FileOutputStream(txtOutputFile.getText());
-
-                if (allResults != null){
-                    if (!selectedFilter.export(allResults, fos))
-                        JOptionPane.showMessageDialog(this, "Error exporting file", "Error",JOptionPane.ERROR_MESSAGE);
-                    else
-                        JOptionPane.showMessageDialog(this, "Results exported successfully", "Success",JOptionPane.INFORMATION_MESSAGE);
-                }
-                fos.close();
-            }catch(Exception ex){
+                selectedFilter.export(exportable, txtOutputFile.getText());
+            }catch(IOException ex){
                 JOptionPane.showMessageDialog(this, String.format("Error exporting file %s", ex.getMessage()), "Error",JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -215,7 +193,7 @@ public class ExportSettingsPanel extends JPanel implements ActionListener{
         if (!txtOutputFile.getText().trim().isEmpty())
             txtOutputFile.setText(
                     txtOutputFile.getText().substring(0, txtOutputFile.getText().lastIndexOf('.'))+
-                    ((ExportFilter)((JComboBox)source).getSelectedItem()).getExtension());
+                    ((TextExportFilter)((JComboBox)source).getSelectedItem()).getExtension());
     }
     
     

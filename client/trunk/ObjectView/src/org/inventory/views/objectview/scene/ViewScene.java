@@ -32,12 +32,12 @@ import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
+import org.inventory.core.visual.widgets.AbstractScene;
 import org.inventory.views.objectview.scene.actions.CustomAddRemoveControlPointAction;
 import org.inventory.views.objectview.scene.actions.CustomMoveAction;
 import org.inventory.views.objectview.scene.actions.CustomMoveControlPointAction;
 import org.inventory.views.objectview.scene.menus.ObjectWidgetMenu;
 import org.netbeans.api.visual.action.ActionFactory;
-import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.model.ObjectSceneEvent;
 import org.netbeans.api.visual.model.ObjectSceneEventType;
 import org.netbeans.api.visual.model.ObjectSceneListener;
@@ -53,7 +53,7 @@ import org.netbeans.api.visual.widget.Widget;
  * This is the main scene for an object's view
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class ViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>{
+public final class ViewScene extends AbstractScene {
     /**
      * This layer is used to paint the auxiliary elements 
      */

@@ -33,10 +33,10 @@ import javax.swing.table.TableModel;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.queries.LocalResultRecord;
-import org.inventory.core.services.api.export.ExportSettingsPanel;
-import org.inventory.core.services.api.export.Exportable;
+import org.inventory.core.services.api.export.ExportTablePanel;
+import org.inventory.core.services.api.export.ExportableTable;
 import org.inventory.core.services.api.export.filters.CSVFilter;
-import org.inventory.core.services.api.export.filters.ExportFilter;
+import org.inventory.core.services.api.export.filters.TextExportFilter;
 import org.inventory.core.services.api.export.filters.XMLFilter;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
@@ -54,7 +54,7 @@ import org.openide.windows.WindowManager;
  * Query results for the new Graphical Query builder
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ComplexQueryResultTopComponent extends TopComponent implements Exportable {
+public class ComplexQueryResultTopComponent extends TopComponent implements ExportableTable {
     private JToolBar barMain;
     private JButton btnNext;
     private JButton btnPrevious;
@@ -200,7 +200,7 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
     }
 
     public void btnExportActionPerformed(){
-        ExportSettingsPanel exportPanel = new ExportSettingsPanel(new ExportFilter[]{CSVFilter.getInstance(), XMLFilter.getInstance()}, this);
+        ExportTablePanel exportPanel = new ExportTablePanel(new TextExportFilter[]{CSVFilter.getInstance(), XMLFilter.getInstance()}, this);
         DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }
@@ -226,9 +226,9 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
     }
     
     @Override
-    public Object[][] getResults(Exportable.Range range) {
+    public Object[][] getResults(ExportableTable.Range range) {
         Object[][] res;
-        if (range == Exportable.Range.CURRENT_PAGE)
+        if (range == ExportableTable.Range.CURRENT_PAGE)
             res = getCurrentResults();
         else {
             LocalResultRecord[] results = qbs.executeQuery(0);

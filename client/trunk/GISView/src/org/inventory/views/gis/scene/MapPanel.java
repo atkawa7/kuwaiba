@@ -71,7 +71,7 @@ public class MapPanel extends JXPanel {
     /**
      * Default coordinates to center the map
      */
-    public static final GeoPosition DEFAULT_CENTER_POSITION = new GeoPosition(2.451627, -76.624424);
+    public static final GeoPosition DEFAULT_CENTER_POSITION = new GeoPosition(4.740675, -73.762207);
 
     public MapPanel() {
         map = new JXMapViewer();

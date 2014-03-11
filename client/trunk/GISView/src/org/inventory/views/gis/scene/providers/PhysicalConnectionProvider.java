@@ -21,7 +21,7 @@ import java.awt.Point;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.visual.widgets.AbstractObjectNodeWidget;
+import org.inventory.core.visual.widgets.AbstractNodeWidget;
 import org.inventory.core.wizards.physicalconnections.ConnectionWizard;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -63,7 +63,7 @@ public class PhysicalConnectionProvider implements ConnectProvider{
 
     @Override
     public boolean isSourceWidget(Widget sourceWidget) {
-        if (sourceWidget instanceof AbstractObjectNodeWidget)
+        if (sourceWidget instanceof AbstractNodeWidget)
             return true;
         else
             return false;
@@ -135,8 +135,8 @@ public class PhysicalConnectionProvider implements ConnectProvider{
         if (myWizard.getNewConnection() != null){
             ConnectionWidget newEdge = (ConnectionWidget)currentScene.addEdge(myWizard.getNewConnection());
             newEdge.setLineColor(lineColor);
-            newEdge.setSourceAnchor(AnchorFactory.createCircularAnchor(sourceWidget, 3));
-            newEdge.setTargetAnchor(AnchorFactory.createCircularAnchor(targetWidget, 3));
+            newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(sourceWidget));
+            newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(targetWidget));
         }
 
 

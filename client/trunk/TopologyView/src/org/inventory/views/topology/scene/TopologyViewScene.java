@@ -33,6 +33,8 @@ import java.util.Set;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.visual.export.ExportableScene;
+import org.inventory.core.visual.export.Layer;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.views.topology.scene.menus.ConnectionMenu;
 import org.inventory.views.topology.scene.menus.IconMenu;
@@ -52,18 +54,19 @@ import org.netbeans.api.visual.model.ObjectSceneListener;
 import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.LayerWidget;
+import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
-import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
 /**
- * Scene used by the GISView component
- * @author Adrian Martinez Molinar <adrian.martinez@kuwaiba.org>
+ * Scene used by the TopologyView component
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class TopologyViewScene extends GraphScene<Object, String> implements PropertyChangeListener, Lookup.Provider{
+public class TopologyViewScene extends GraphScene<Object, String> 
+        implements PropertyChangeListener, Lookup.Provider, ExportableScene {
 
     /**
      * Path to nodes default icon
@@ -300,6 +303,16 @@ public class TopologyViewScene extends GraphScene<Object, String> implements Pro
     @Override
     public Lookup getLookup(){
         return this.lookup;
+    }
+
+    @Override
+    public Scene getExportable() {
+        return this;
+    }
+
+    @Override
+    public Layer[] getLayers() {
+        return null;
     }
 
     /**

@@ -16,9 +16,11 @@
 
 package org.inventory.views.gis.scene;
 
+import org.inventory.core.visual.widgets.AbstractConnectionWidget;
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
 import java.awt.BasicStroke;
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -29,7 +31,8 @@ import java.util.List;
 import java.util.Set;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
-import org.inventory.core.visual.widgets.AbstractObjectNodeWidget;
+import org.inventory.core.visual.widgets.AbstractNodeWidget;
+import org.inventory.core.visual.widgets.AbstractScene;
 import org.inventory.core.visual.widgets.TagLabelWidget;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.views.gis.scene.actions.MapWidgetPanAction;
@@ -39,7 +42,6 @@ import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.jdesktop.swingx.mapviewer.GeoPosition;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.PointShape;
-import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.model.ObjectSceneEvent;
 import org.netbeans.api.visual.model.ObjectSceneEventType;
 import org.netbeans.api.visual.model.ObjectSceneListener;
@@ -48,6 +50,7 @@ import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.ComponentWidget;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
+import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
@@ -57,7 +60,7 @@ import org.openide.util.lookup.ProxyLookup;
  * Scene used by the GISView component
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight> implements Lookup.Provider{
+public class GISViewScene extends AbstractScene implements Lookup.Provider{
     
     /**
      * Layer to contain the main map
@@ -70,7 +73,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
     /**
      * Layer to contain the connections (containers, links, etc)
      */
-    private LayerWidget connectionsLayer;
+    private LayerWidget edgesLayer;
     /**
      * Layer to contain additional labels (free text)
      */
@@ -100,18 +103,20 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         this.map = map;
         mapLayer = new LayerWidget(this);
         nodesLayer = new LayerWidget(this);
-        connectionsLayer = new LayerWidget(this);
+        edgesLayer = new LayerWidget(this);
         interactionLayer = new LayerWidget(this);
         labelsLayer = new LayerWidget(this);
         //polygonsLayer = new LayerWidget(this);
 
         addChild(mapLayer);
-        addChild(connectionsLayer);
+        addChild(edgesLayer);
         addChild(nodesLayer);
         addChild(labelsLayer);
         addChild(interactionLayer);
         
-        mapLayer.addChild(new ComponentWidget(this, map));
+        MapComponentWidget mapWidget = new MapComponentWidget(this, map);
+        mapLayer.addChild(mapWidget);
+        addDependency(mapWidget);
         
         this.lookup = new SceneLookup(Lookup.EMPTY);
         this.connectProvider = new PhysicalConnectionProvider(this);
@@ -140,7 +145,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         getActions().addAction(new ZoomAction());
         getActions().addAction(ActionFactory.createAcceptAction(new AcceptActionProvider(this)));
         getActions().addAction(new MapWidgetPanAction(map, MouseEvent.BUTTON1));
-        setActiveTool(AbstractObjectNodeWidget.ACTION_SELECT);
+        setActiveTool(AbstractNodeWidget.ACTION_SELECT);
         setOpaque(false);
     }
 
@@ -148,9 +153,9 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
     protected Widget attachNodeWidget(LocalObjectLight node) {
         GeoPositionedNodeWidget myWidget =  new GeoPositionedNodeWidget(this,node, 0, 0);
         nodesLayer.addChild(myWidget);
-        myWidget.getActions(AbstractObjectNodeWidget.ACTION_SELECT).addAction(createSelectAction());
-        myWidget.getActions(AbstractObjectNodeWidget.ACTION_SELECT).addAction(ActionFactory.createMoveAction());
-        myWidget.getActions(AbstractObjectNodeWidget.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, connectProvider));
+        myWidget.getActions(AbstractNodeWidget.ACTION_SELECT).addAction(createSelectAction());
+        myWidget.getActions(AbstractNodeWidget.ACTION_SELECT).addAction(ActionFactory.createMoveAction());
+        myWidget.getActions(AbstractNodeWidget.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, connectProvider));
         TagLabelWidget aLabelWidget = new TagLabelWidget(this, myWidget);
         myWidget.addDependency(aLabelWidget);
         labelsLayer.addChild(aLabelWidget);
@@ -160,7 +165,7 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         GeoPositionedConnectionWidget myWidget =  new GeoPositionedConnectionWidget(this, edge);
-        connectionsLayer.addChild(myWidget);
+        edgesLayer.addChild(myWidget);
         myWidget.getActions().addAction(createSelectAction());
         myWidget.getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
         myWidget.getActions().addAction(ActionFactory.createMoveControlPointAction(ActionFactory.createFreeMoveControlPointProvider()));
@@ -243,14 +248,14 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
                 node.setPreferredLocation(newLocation);
             }
 
-            for (Widget edge : connectionsLayer.getChildren()){
-                List<Point> newControlPoints = new ArrayList<Point>();
-                for (Point oldControlPoint : ((GeoPositionedConnectionWidget)edge).getControlPoints()){
-                    double[] geoControlPoint = pixelToCoordinate(oldControlPoint, map.getMainMap().getZoom());
-                    newControlPoints.add(coordinateToPixel(geoControlPoint[1], geoControlPoint[0], map.getMainMap().getZoom() - 1));
-                }
-                if (!newControlPoints.isEmpty())
-                    ((GeoPositionedConnectionWidget)edge).setControlPoints(newControlPoints, false);
+            for (Widget connection : edgesLayer.getChildren()){
+                List<Point> controlPoints = ((AbstractConnectionWidget)connection).getControlPoints();
+                for (int i = 1; i < controlPoints.size() - 1; i++) {
+                    double[] geoControlPoint = pixelToCoordinate(controlPoints.get(i), map.getMainMap().getZoom());
+                    Point newLocation = coordinateToPixel(geoControlPoint[0], geoControlPoint[1], map.getMainMap().getZoom() - 1);
+                    controlPoints.get(i).x = newLocation.x;
+                    controlPoints.get(i).y = newLocation.y;
+                }               
             }
             map.getMainMap().setZoom(currentZoom - 1);
         }
@@ -268,14 +273,14 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
                 Point newLocation = coordinateToPixel(geoControlPoint[0], geoControlPoint[1], map.getMainMap().getZoom() + 1);
                 node.setPreferredLocation(newLocation);
             }
-            for (Widget edge : connectionsLayer.getChildren()){
-                List<Point> newControlPoints = new ArrayList<Point>();
-                for (Point oldControlPoint : ((GeoPositionedConnectionWidget)edge).getControlPoints()){
-                    double[] geoControlPoint = pixelToCoordinate(oldControlPoint);
-                    newControlPoints.add(coordinateToPixel(geoControlPoint[1], geoControlPoint[0], map.getMainMap().getZoom() + 1));
-                }
-                if (!newControlPoints.isEmpty())
-                    ((GeoPositionedConnectionWidget)edge).setControlPoints(newControlPoints, false);
+            for (Widget connection : edgesLayer.getChildren()){
+                List<Point> controlPoints = ((AbstractConnectionWidget)connection).getControlPoints();
+                for (int i = 1; i < controlPoints.size() - 1; i++) {
+                    double[] geoControlPoint = pixelToCoordinate(controlPoints.get(i), map.getMainMap().getZoom());
+                    Point newLocation = coordinateToPixel(geoControlPoint[0], geoControlPoint[1], map.getMainMap().getZoom() + 1);
+                    controlPoints.get(i).x = newLocation.x;
+                    controlPoints.get(i).y = newLocation.y;
+                }               
             }
             map.getMainMap().setZoom(currentZoom + 1);
         }
@@ -310,21 +315,22 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         mainTag.start("center").attr("x", map.getMainMap().getCenterPosition().
                 getLongitude()).attr("y", map.getMainMap().getCenterPosition().getLatitude()).end();
         StartTagWAX nodesTag = mainTag.start("nodes");
-        for (Widget nodeWidget : nodesLayer.getChildren())
-            nodesTag.start("node").attr("x", ((GeoPositionedNodeWidget)nodeWidget).getLongitude()).
-            attr("y", ((GeoPositionedNodeWidget)nodeWidget).getLatitude()).
+        for (Widget nodeWidget : nodesLayer.getChildren()){
+            double[] geoPosition = pixelToCoordinate(nodeWidget.getPreferredLocation(), map.getMainMap().getZoom());
+            nodesTag.start("node").attr("x", geoPosition[1]).
+            attr("y", geoPosition[0]).
             attr("class", ((GeoPositionedNodeWidget)nodeWidget).getObject().getClassName()).
             text(String.valueOf(((GeoPositionedNodeWidget)nodeWidget).getObject().getOid())).end();
+        }
         nodesTag.end();
 
         StartTagWAX edgesTag = mainTag.start("edges");
-        for (Widget edgeWidget : connectionsLayer.getChildren()){
+        for (Widget edgeWidget : edgesLayer.getChildren()){
             StartTagWAX edgeTag = edgesTag.start("edge");
             edgeTag.attr("id", ((GeoPositionedConnectionWidget)edgeWidget).getObject().getOid());
             edgeTag.attr("class", ((GeoPositionedConnectionWidget)edgeWidget).getObject().getClassName());
-            edgeTag.attr("aside", ((GeoPositionedNodeWidget)((ObjectConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
-            edgeTag.attr("bside", ((GeoPositionedNodeWidget)((ObjectConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
-            //for (double[] point : ((GeoPositionedConnectionWidget)edgeWidget).getGeoPositionedControlPoints())
+            edgeTag.attr("aside", ((GeoPositionedNodeWidget)((AbstractConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
+            edgeTag.attr("bside", ((GeoPositionedNodeWidget)((AbstractConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
             for (Point point : ((ConnectionWidget)edgeWidget).getControlPoints()){
                 double[] geoPosition = pixelToCoordinate(point, map.getMainMap().getZoom());
                 edgeTag.start("controlpoint").attr("x", geoPosition[1]).attr("y", geoPosition[0]).end();
@@ -359,17 +365,19 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
         for (Widget node : nodesLayer.getChildren())
             node.setPreferredLocation(new Point(node.getPreferredLocation().x - deltaX, node.getPreferredLocation().y - deltaY));
         
+        for (Widget connection : edgesLayer.getChildren()){
+            List<Point> controlPoints = ((AbstractConnectionWidget)connection).getControlPoints();
+            for (int i = 1; i < controlPoints.size() - 1; i++) {
+                controlPoints.get(i).x -= deltaX;
+                controlPoints.get(i).y -= deltaY;
+            }
+        }
         revalidate();
     }
     
     public void toggleLabels(boolean visible){
         labelsLayer.setVisible(visible);
         repaint();
-    }
-
-    public void updateMapBounds() {
-        mapLayer.getChildren().get(0).setPreferredBounds(getBounds());
-        validate();
     }
     
     /**
@@ -387,6 +395,22 @@ public class GISViewScene extends GraphScene<LocalObjectLight, LocalObjectLight>
 
         public void updateLookup(LocalObjectLight newElement){
             setLookups(Lookups.singleton(new ObjectNode(newElement)));
+        }
+    }
+    
+    /**
+     * Inner class to wrap the map panel and handle scene resize/relocation events
+     */
+    private class MapComponentWidget extends ComponentWidget implements Widget.Dependency {
+
+        public MapComponentWidget(Scene scene, Component component) {
+            super(scene, component);
+        }
+        
+        @Override
+        public void revalidateDependency() {
+            setPreferredBounds(this.getScene().getBounds());
+            validate();
         }
     }
 }

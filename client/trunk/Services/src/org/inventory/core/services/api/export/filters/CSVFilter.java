@@ -26,7 +26,7 @@ import org.inventory.core.services.api.export.filters.panels.CSVExportSettingsPa
  * Implements the logic necessary to export to CSV
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class CSVFilter extends ExportFilter {
+public class CSVFilter extends TextExportFilter {
 
     //Singleton
     private static CSVFilter self;

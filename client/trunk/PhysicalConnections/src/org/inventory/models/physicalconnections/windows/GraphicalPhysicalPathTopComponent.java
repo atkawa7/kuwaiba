@@ -22,14 +22,17 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
-import org.inventory.core.visual.actions.ExportSceneAction;
-import org.inventory.models.physicalconnections.PhysicalConnectionsService;
+import org.inventory.core.visual.export.ExportScenePanel;
+import org.inventory.core.visual.export.filters.ImageFilter;
+import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.models.physicalconnections.scene.PhysicalPathScene;
 import org.inventory.models.physicalconnections.scene.SelectableWidget;
 import org.netbeans.api.visual.model.ObjectSceneEvent;
 import org.netbeans.api.visual.model.ObjectSceneEventType;
 import org.netbeans.api.visual.model.ObjectSceneListener;
 import org.netbeans.api.visual.model.ObjectState;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.nodes.Node;
@@ -69,7 +72,9 @@ public class GraphicalPhysicalPathTopComponent extends TopComponent implements E
         btnExport.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ExportSceneAction(scene).actionPerformed(e);
+                ExportScenePanel exportPanel = new ExportScenePanel(new SceneExportFilter[]{ImageFilter.getInstance()}, scene);
+                DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
+                DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
             }
         });
         

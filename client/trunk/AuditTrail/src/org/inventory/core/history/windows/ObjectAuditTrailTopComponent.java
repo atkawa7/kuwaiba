@@ -27,10 +27,10 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import org.inventory.communications.core.LocalApplicationLogEntry;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.export.ExportSettingsPanel;
-import org.inventory.core.services.api.export.Exportable;
+import org.inventory.core.services.api.export.ExportTablePanel;
+import org.inventory.core.services.api.export.ExportableTable;
 import org.inventory.core.services.api.export.filters.CSVFilter;
-import org.inventory.core.services.api.export.filters.ExportFilter;
+import org.inventory.core.services.api.export.filters.TextExportFilter;
 import org.netbeans.swing.etable.ETable;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -42,7 +42,7 @@ import org.openide.windows.WindowManager;
  * Show the activity log associated to an object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectAuditTrailTopComponent extends TopComponent implements Exportable {
+public class ObjectAuditTrailTopComponent extends TopComponent implements ExportableTable {
     private JToolBar barMain;
     private JButton btnExport;
     private JScrollPane pnlScrollMain;
@@ -144,7 +144,7 @@ public class ObjectAuditTrailTopComponent extends TopComponent implements Export
     }
     
     private void btnExportButtonActionPerformed(ActionEvent e) {
-        ExportSettingsPanel exportPanel = new ExportSettingsPanel(new ExportFilter[]{CSVFilter.getInstance()}, this);
+        ExportTablePanel exportPanel = new ExportTablePanel(new TextExportFilter []{CSVFilter.getInstance()}, this);
         DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }

@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.visual.widgets.AbstractScene;
 import org.netbeans.api.visual.action.ActionFactory;
-import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.router.Router;
 import org.netbeans.api.visual.router.RouterFactory;
@@ -35,7 +35,7 @@ import org.netbeans.api.visual.widget.Widget;
  * Service class for this module
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class PhysicalPathScene extends GraphScene<LocalObjectLight, LocalObjectLight> {
+public class PhysicalPathScene extends AbstractScene {
     private LayerWidget nodesLayer;
     private LayerWidget edgesLayer;
     private Router router;

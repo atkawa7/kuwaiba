@@ -21,19 +21,22 @@ import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.visual.export.ExportableScene;
+import org.inventory.core.visual.export.Layer;
 import org.netbeans.api.visual.border.Border;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.layout.Layout;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.LabelWidget;
+import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Scene class used in this module
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RackViewScene extends GraphScene<LocalObject, LocalObject> {
+public class RackViewScene extends GraphScene<LocalObject, LocalObject> implements ExportableScene {
     public static final int STANDARD_RACK_WIDTH = 300;
     public static final int RACK_UNIT_IN_PX = 20;
     private Widget rackWidget;
@@ -114,5 +117,15 @@ public class RackViewScene extends GraphScene<LocalObject, LocalObject> {
     
     public Widget getRackWidget(){
         return rackWidget;
+    }
+
+    @Override
+    public Scene getExportable() {
+        return this;
+    }
+
+    @Override
+    public Layer[] getLayers() {
+        return null;
     }
 }

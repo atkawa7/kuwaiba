@@ -14,27 +14,27 @@
  *  limitations under the License.
  */
 
-package org.inventory.views.gis.scene;
+package org.inventory.core.visual.widgets;
 
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.visual.widgets.AbstractObjectNodeWidget;
-import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.widget.ConnectionWidget;
+import org.netbeans.api.visual.widget.Scene;
 
 /**
  * A connection widget representing a link or a container
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectConnectionWidget extends ConnectionWidget {
+public class AbstractConnectionWidget extends ConnectionWidget {
     /**
-     * Business object represented by this widget
+     * Wrapped object
      */
     private LocalObjectLight object;
 
-    public ObjectConnectionWidget(GraphScene<LocalObjectLight, LocalObjectLight> scene, LocalObjectLight object) {
+    public AbstractConnectionWidget(Scene scene, LocalObjectLight object) {
         super(scene);
         this.object = object;
-        createActions(AbstractObjectNodeWidget.ACTION_SELECT);
+        setToolTipText(object.toString());
+        createActions(AbstractNodeWidget.ACTION_SELECT);
     }
 
     public LocalObjectLight getObject() {

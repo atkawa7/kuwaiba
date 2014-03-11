@@ -17,13 +17,13 @@
 package org.inventory.views.gis.scene;
 
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.visual.widgets.AbstractObjectNodeWidget;
+import org.inventory.core.visual.widgets.AbstractNodeWidget;
 
 /**
  * An ObjectNodeWidget with extra geo attributes
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class GeoPositionedNodeWidget extends AbstractObjectNodeWidget {
+public class GeoPositionedNodeWidget extends AbstractNodeWidget {
     /**
      * Widget's longitude
      */
@@ -70,9 +70,9 @@ public class GeoPositionedNodeWidget extends AbstractObjectNodeWidget {
      * This method updates the widget geo-coordinates from the scene coordinates
      */
     public void updateCoordinates() {
-//        double[] coordinates = ((GISViewScene)getScene()).pixelToCoordinate(getPreferredLocation());
-//        this.latitude = coordinates[0];
-//        this.longitude = coordinates[1];
+        double[] coordinates = ((GISViewScene)getScene()).pixelToCoordinate(getPreferredLocation());
+        this.latitude = coordinates[0];
+        this.longitude = coordinates[1];
         
     }
 }
