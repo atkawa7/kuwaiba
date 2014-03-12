@@ -426,17 +426,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             //TODO: Optimize so it can find all objects of a single class in one query
             for (String className : objects.keySet()){
                 for (long oid : objects.get(className)){
-                    if (!cm.isSubClass("InventoryObject", className))
+                    if (!cm.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
                         throw new OperationNotPermittedException(className, String.format("Class %s is not a business-related class", className));
 
                     Node instance = getInstanceOfClass(className, oid);
                     Util.deleteObject(instance, releaseRelationships);
-                    
                     //Creates an activity log entry
                     Util.createActivityLogEntry(null, specialNodesIndex.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle(), 
                             aem.getSessions().get(sessionId).getUser().getUserName(), ActivityLogEntry.ACTIVITY_TYPE_DELETE_INVENTORY_OBJECT, 
                             Calendar.getInstance().getTimeInMillis(), null, null, null, String.valueOf(instance.getId()));
-            
                 }
             }
             tx.success();
@@ -1088,17 +1086,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
      * @throws MetadataObjectNotFoundException id the class cannot be found
      */
     private Node getInstanceOfClass(String className, long oid) throws MetadataObjectNotFoundException, ObjectNotFoundException{
-
         //if any of the parameters is null, return the dummy root
         if (className == null)
             return graphDb.getReferenceNode().getSingleRelationship(RelTypes.DUMMY_ROOT, Direction.BOTH).getEndNode();
-
 
         Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
 
         if (classNode == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
-
+        
         Iterable<Relationship> instances = classNode.getRelationships(RelTypes.INSTANCE_OF);
         while (instances.iterator().hasNext()){
             Node otherSide = instances.iterator().next().getStartNode();

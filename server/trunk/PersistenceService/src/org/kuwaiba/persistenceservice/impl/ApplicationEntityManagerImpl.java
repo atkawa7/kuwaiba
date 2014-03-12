@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,12 +66,17 @@ import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
+import org.neo4j.graphdb.traversal.Evaluators;
+import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.helpers.collection.IteratorUtil;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.kernel.Traversal;
+import org.neo4j.kernel.impl.traversal.TraversalDescriptionImpl;
 
 /**
  * Application Entity Manager reference implementation
@@ -1493,23 +1499,45 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, id).getSingle();
                 if (poolNode == null)
                     throw new InvalidArgumentException(String.format("A pool with id %s does not exist", id),Level.INFO);
-                
+
                 //Let's delete the objects inside, if possible
                 HashMap<String, long[]> toBeDeleted = new HashMap<String, long[]>();
-                for (Relationship rel : poolNode.getRelationships(RelTypes.CHILD_OF_SPECIAL)){
-                    Node objectNode = rel.getStartNode();
-                    String className = Util.getObjectClassName(objectNode);
-                    if (toBeDeleted.get(className) == null)
-                        toBeDeleted.put(className, new long[]{objectNode.getId()});
-                    //else
-                    //    toBeDeleted.put(className, Arrays.asList(toBeDeleted.get(className)). );
+                List<Long> poolsToBeDeleted = new ArrayList<Long>();
+                for (Path p : Traversal.description()
+                    .breadthFirst()
+                    .evaluator(Evaluators.atDepth(1))    
+                    .relationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING)
+                    .evaluator(Evaluators.excludeStartPosition())
+                    .traverse(poolNode)) {
+
+                    Node objectNode = p.endNode();
+                     
+                    if(objectNode.hasProperty(Constants.PROPERTY_CLASS_NAME) && objectNode.getProperty(Constants.PROPERTY_CLASS_NAME).equals(Constants.CLASS_GENERICSERVICE))
+                        poolsToBeDeleted.add(objectNode.getId());
+                    else{
+                        String className = Util.getObjectClassName(objectNode);
+                        if (toBeDeleted.get(className) == null) 
+                            toBeDeleted.put(className, new long[]{objectNode.getId()});
+                        else{
+                            long[] objectIds = toBeDeleted.get(className);
+                            long[] newObjectIds = new long[objectIds.length+1];
+                            System.arraycopy(objectIds, 0, newObjectIds, 0, objectIds.length);
+                            newObjectIds[objectIds.length]=objectNode.getId();
+                            toBeDeleted.put(className, newObjectIds);
+                        }
+                    }
                 }
-                
                 bem.deleteObjects(toBeDeleted, false, ipAddress, sessionId);
+
+                for (long pId : poolsToBeDeleted){
+                    Node servicePoolNode = poolsIndex.get(Constants.PROPERTY_ID, pId).getSingle();
+                    for (Relationship rel : servicePoolNode.getRelationships())
+                        rel.delete();
+                    poolsIndex.remove(servicePoolNode);
+                }
                 
                 for (Relationship rel : poolNode.getRelationships())
                     rel.delete();
-                
                 poolsIndex.remove(poolNode);
                 poolNode.delete();
             }
@@ -1543,8 +1571,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                      break;
                 i++;
             }
-            Node node = null;
-            node = poolsIndex.get(Constants.PROPERTY_ID, rel.getStartNode().getId()).getSingle();
+            Node node = poolsIndex.get(Constants.PROPERTY_ID, rel.getStartNode().getId()).getSingle();
             //or it could be use this if (rel.getProperty(Constants.PROPERTY_NAME).equals("Pools"))
             if(node != null){
                 RemoteBusinessObjectLight rbol = new RemoteBusinessObjectLight(node.getId(),
@@ -1918,5 +1945,4 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         throw new ObjectNotFoundException(className, oid);
     }
     //end Helpers
-
 }
