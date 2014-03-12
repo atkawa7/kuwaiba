@@ -45,7 +45,10 @@ public class ServiceManagerRootNode extends AbstractNode {
 
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{new CreateCustomerAction(this), new CreateCustomersPoolAction(this)};
+        return new Action[]{
+            new CreateCustomerAction(this), 
+            new CreateCustomersPoolAction(this)
+        };
     }
     
     @Override

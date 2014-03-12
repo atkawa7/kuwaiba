@@ -48,7 +48,9 @@ public class CustomersPoolNode extends PoolNode{
     
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{new CreateCustomerAction(this), 
+        CreateCustomerAction createCustomerAction = new CreateCustomerAction(this);
+        createCustomerAction.setObject(object);
+        return new Action[]{createCustomerAction, 
             new CreateServiceAction(this), 
             new DeletePoolAction(this),
             new ShowObjectIdAction(object.getOid(), object.getClassName())};

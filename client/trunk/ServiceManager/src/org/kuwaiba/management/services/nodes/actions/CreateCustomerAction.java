@@ -52,7 +52,7 @@ public class CreateCustomerAction extends GenericObjectNodeAction implements Pre
     @Override
     public void actionPerformed(ActionEvent e) {
         String objectClass = ((JMenuItem)e.getSource()).getName();
-        if(object ==null){
+        if(object == null){
             LocalObjectLight newCustomer = CommunicationsStub.getInstance().createCustomer(objectClass, null, null);
             if (newCustomer != null)
                 rootNode.getChildren().add(new CustomerNode[] {new CustomerNode(newCustomer)});
