@@ -1,4 +1,4 @@
-<hierarchy documentVersion="1.1" serverVersion="0.6" date="1330720263006">
+<hierarchy documentVersion="1.1" serverVersion="0.5.1" date="1330720263006">
   <inventory>
     <classes>
       <class name="RootObject" javaModifiers="1025" applicationModifiers="0" classType="4" classPackage="org.kuwaiba.entity.core">
@@ -428,60 +428,6 @@
                           <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                         </attributes>
                         <subclasses/>
-                      </class>
-                      <class name="GenericCustomer" javaModifiers="1025" applicationModifiers="0" classType="2" classPackage="org.kuwaiba.entity.multiple.people">
-                        <attributes>
-                          <attribute name="firstName" type="String" javaModifiers="4" applicationModifiers="0"/>
-                          <attribute name="lastName" type="String" javaModifiers="4" applicationModifiers="0"/>
-                          <attribute name="phoneNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
-                          <attribute name="mobileNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
-                          <attribute name="personalId" type="String" javaModifiers="4" applicationModifiers="0"/>
-                          <attribute name="displayName" type="String" javaModifiers="4" applicationModifiers="0"/>
-                          <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
-                        </attributes>
-                        <subclasses>
-                          <class name="HomeCustomer" javaModifiers="1" applicationModifiers="0" classType="2" classPackage="org.kuwaiba.entity.multiple.people">
-                            <attributes>
-                              <attribute name="firstName" type="String" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="lastName" type="String" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="phoneNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="mobileNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="personalId" type="String" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="displayName" type="String" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
-                            </attributes>
-                            <subclasses/>
-                          </class>
-                          <class name="CorporateCustomer" javaModifiers="1" applicationModifiers="0" classType="2" classPackage="org.kuwaiba.entity.multiple.companies">
-                            <attributes>
-                              <attribute name="accountManager" type="Employee" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="asn" type="Integer" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="firstName" type="String" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="lastName" type="String" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="phoneNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="mobileNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="personalId" type="String" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="displayName" type="String" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
-                            </attributes>
-                            <subclasses>
-                              <class name="TelecommunicationsOperator" javaModifiers="1" applicationModifiers="0" classType="2" classPackage="org.kuwaiba.entity.multiple.companies">
-                                <attributes>
-                                  <attribute name="accountManager" type="Employee" javaModifiers="4" applicationModifiers="0"/>
-                                  <attribute name="asn" type="Integer" javaModifiers="4" applicationModifiers="0"/>
-                                  <attribute name="firstName" type="String" javaModifiers="4" applicationModifiers="0"/>
-                                  <attribute name="lastName" type="String" javaModifiers="4" applicationModifiers="0"/>
-                                  <attribute name="phoneNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
-                                  <attribute name="mobileNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
-                                  <attribute name="personalId" type="String" javaModifiers="4" applicationModifiers="0"/>
-                                  <attribute name="displayName" type="String" javaModifiers="4" applicationModifiers="0"/>
-                                  <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
-                                </attributes>
-                                <subclasses/>
-                              </class>
-                            </subclasses>
-                          </class>
-                        </subclasses>
                       </class>
                       <class name="ExternalSupportStaff" javaModifiers="1" applicationModifiers="0" classType="2" classPackage="org.kuwaiba.entity.multiple.people">
                         <attributes>
@@ -2059,7 +2005,9 @@
                             <attributes>
                               <attribute name="administrator" type="Employee" javaModifiers="4" applicationModifiers="2"/>
                               <attribute name="position" type="String" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="state" type="StructuralState" javaModifiers="4" applicationModifiers="0"/>                              
+                              <attribute name="state" type="StructuralState" javaModifiers="4" applicationModifiers="0"/>
+                              
+                              
                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                               <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                             </attributes>
@@ -2070,17 +2018,9 @@
                       <class name="OutdoorsCabinet" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.location">
                         <attributes>
                           <attribute name="width" type="Float" javaModifiers="4" applicationModifiers="0"/>
-                          <attribute name="height" type="Float" javaModifiers="4" applicationModifiers="0"/>                         
-                          <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
-                          <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
-                        </attributes>
-                        <subclasses/>
-                      </class>
-                      <class name="Manhole" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.location">
-                        <attributes>
-                          <attribute name="width" type="Float" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="height" type="Float" javaModifiers="4" applicationModifiers="0"/>
-                          <attribute name="depth" type="Float" javaModifiers="4" applicationModifiers="0"/>
+                          
+                          
                           <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                           <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                         </attributes>
@@ -2091,6 +2031,7 @@
                   <class name="City" javaModifiers="1" applicationModifiers="2" classType="1" classPackage="org.kuwaiba.entity.location">
                     <attributes>
                       <attribute name="acronym" type="String" javaModifiers="4" applicationModifiers="0"/>
+                      
                       <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                       <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                     </attributes>
@@ -2395,6 +2336,64 @@
                       </class>
                     </subclasses>
                   </class>
+                  <class name="GenericCustomer" javaModifiers="1025" applicationModifiers="0" classType="2" classPackage="org.kuwaiba.entity.multiple.people">
+                     <attributes>
+                       <attribute name="firstName" type="String" javaModifiers="4" applicationModifiers="0"/>
+                       <attribute name="lastName" type="String" javaModifiers="4" applicationModifiers="0"/>
+                       <attribute name="phoneNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
+                       <attribute name="mobileNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
+                       <attribute name="personalId" type="String" javaModifiers="4" applicationModifiers="0"/>
+                       <attribute name="displayName" type="String" javaModifiers="4" applicationModifiers="0"/>
+                       <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                       <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                     </attributes>
+                     <subclasses>
+                       <class name="HomeCustomer" javaModifiers="1" applicationModifiers="0" classType="2" classPackage="org.kuwaiba.entity.multiple.people">
+                         <attributes>
+                           <attribute name="firstName" type="String" javaModifiers="4" applicationModifiers="0"/>
+                           <attribute name="lastName" type="String" javaModifiers="4" applicationModifiers="0"/>
+                           <attribute name="phoneNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
+                           <attribute name="mobileNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
+                           <attribute name="personalId" type="String" javaModifiers="4" applicationModifiers="0"/>
+                           <attribute name="displayName" type="String" javaModifiers="4" applicationModifiers="0"/>
+                           <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                           <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                         </attributes>
+                         <subclasses/>
+                       </class>
+                       <class name="CorporateCustomer" javaModifiers="1" applicationModifiers="0" classType="2" classPackage="org.kuwaiba.entity.multiple.companies">
+                         <attributes>
+                           <attribute name="accountManager" type="Employee" javaModifiers="4" applicationModifiers="0"/>
+                           <attribute name="asn" type="Integer" javaModifiers="4" applicationModifiers="0"/>
+                           <attribute name="firstName" type="String" javaModifiers="4" applicationModifiers="0"/>
+                           <attribute name="lastName" type="String" javaModifiers="4" applicationModifiers="0"/>
+                           <attribute name="phoneNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
+                           <attribute name="mobileNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
+                           <attribute name="personalId" type="String" javaModifiers="4" applicationModifiers="0"/>
+                           <attribute name="displayName" type="String" javaModifiers="4" applicationModifiers="0"/>
+                           <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                           <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                         </attributes>
+                         <subclasses>
+                           <class name="TelecommunicationsOperator" javaModifiers="1" applicationModifiers="0" classType="2" classPackage="org.kuwaiba.entity.multiple.companies">
+                             <attributes>
+                               <attribute name="accountManager" type="Employee" javaModifiers="4" applicationModifiers="0"/>
+                               <attribute name="asn" type="Integer" javaModifiers="4" applicationModifiers="0"/>
+                               <attribute name="firstName" type="String" javaModifiers="4" applicationModifiers="0"/>
+                               <attribute name="lastName" type="String" javaModifiers="4" applicationModifiers="0"/>
+                               <attribute name="phoneNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
+                               <attribute name="mobileNumber" type="String" javaModifiers="4" applicationModifiers="0"/>
+                               <attribute name="personalId" type="String" javaModifiers="4" applicationModifiers="0"/>
+                               <attribute name="displayName" type="String" javaModifiers="4" applicationModifiers="0"/>
+                               <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
+                               <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
+                             </attributes>
+                             <subclasses/>
+                           </class>
+                         </subclasses>
+                       </class>
+                     </subclasses>
+                   </class>
                   <class name="GenericService" javaModifiers="1025" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.qos.services">
                     <attributes>
                       <attribute name="serviceId" type="String" javaModifiers="4" applicationModifiers="0"/>
