@@ -68,7 +68,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
     /**
      * Default zoom level
      */
-    public static final int DEFAULT_ZOOM_LEVEL = 10;
+    public static final int DEFAULT_ZOOM_LEVEL = 11;
     /**
      * Layer to contain the main map
      */
