@@ -174,3 +174,8 @@
 * Added all classes related to the Mobile Networks model (see corresponding design document)
 * Added class Subnet
 * Added class Manhole
+
+0.6 - 0.7 alpha
+
+* Class "GenericCustomer" is no longer subclass of "GenericPerson" now is subclass of "AdminstrativeItem"
+* attribute *creationDate* added

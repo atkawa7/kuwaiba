@@ -77,7 +77,3 @@
 0.7
 * Improved Service manager
 * Datamodel change 
-  GenericCustomer (is now a sub class of AdminstrativeItem, the attribute creationDate added)
-	|_CorporateCustomer
-	|_HomeCustomer
-	|_TelecomunicationsOperator
