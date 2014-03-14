@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -31,7 +30,6 @@ import org.inventory.core.visual.widgets.AbstractScene;
 import org.inventory.views.gis.dialogs.OpenDialog;
 import org.inventory.views.gis.dialogs.SaveDialog;
 import org.inventory.views.gis.scene.GISViewScene;
-import org.inventory.views.gis.scene.MapPanel;
 import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
@@ -42,6 +40,7 @@ import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.explorer.ExplorerManager;
 import org.openide.util.Lookup;
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
 
 /**
  * Top component which displays something.
@@ -58,7 +57,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
      * Button group for actions
      */
     private ButtonGroup bButtonGroup; 
-    private MapPanel pnlMap;
+    private JMapViewer pnlMap;
     private static GISViewTopComponent instance;
     /** path to the icon used by the component and its open action */
     static final String ICON_PATH = "org/inventory/views/gis/res/icon.png";
@@ -66,7 +65,6 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     private GISViewService gvs;
     private boolean isSaved = false;
     private NotificationUtil nu;
-    private JScrollPane pnlSceneScroll;
     /**
      * Main scene
      */
@@ -87,13 +85,14 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }
 
     private void initCustomComponents(){
-        pnlMap = new MapPanel();
-        pnlMap.setProvider(MapPanel.Providers.OSM);
+        pnlMap = new JMapViewer();
+        pnlMap.setZoomContolsVisible(false);
+        pnlMap.setDisplayPosition(GISViewScene.DEFAULT_CENTER_POSITION, GISViewScene.DEFAULT_ZOOM_LEVEL);
+        
         scene = new GISViewScene(pnlMap);
         scene.setEnabled(false);
         pnlMap.setVisible(false);
-        pnlSceneScroll = new JScrollPane(scene.createView());
-        add(pnlSceneScroll, BorderLayout.CENTER);
+        add(scene.createView(), BorderLayout.CENTER);
         bButtonGroup = new ButtonGroup();
         bButtonGroup.add(btnSelect);
         bButtonGroup.add(btnConnect);
@@ -349,11 +348,11 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnZoomInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomInActionPerformed
-        scene.zoomIn();
+        //scene.zoomIn();
     }//GEN-LAST:event_btnZoomInActionPerformed
 
     private void btnZoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomOutActionPerformed
-        scene.zoomOut();
+        //scene.zoomOut();
     }//GEN-LAST:event_btnZoomOutActionPerformed
 
     private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
@@ -398,7 +397,6 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         scene.clear();
-        scene.getMapPanel().setPreferredSize(null);
         scene.setEnabled(true);
         pnlMap.setVisible(true);
         gvs.setCurrentView(null);

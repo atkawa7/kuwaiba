@@ -22,9 +22,8 @@ import com.ociweb.xml.WAX;
 import java.awt.BasicStroke;
 import java.awt.Component;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
+import java.awt.event.MouseListener;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +34,8 @@ import org.inventory.core.visual.menu.ObjectWidgetMenu;
 import org.inventory.core.visual.widgets.AbstractScene;
 import org.inventory.core.visual.widgets.TagLabelWidget;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.inventory.views.gis.scene.actions.MapWidgetPanAction;
-import org.inventory.views.gis.scene.actions.ZoomAction;
 import org.inventory.views.gis.scene.providers.AcceptActionProvider;
 import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
-import org.jdesktop.swingx.mapviewer.GeoPosition;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.model.ObjectSceneEvent;
@@ -55,6 +51,14 @@ import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
+import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
+import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
+import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
+import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
 /**
  * Scene used by the GISView component
@@ -64,11 +68,11 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
     /**
      * Default coordinates to center the map
      */
-    public static final GeoPosition DEFAULT_CENTER_POSITION = new GeoPosition(4.740675, -73.762207);
+    public static final Coordinate DEFAULT_CENTER_POSITION = new Coordinate(4.740675, -73.762207);
     /**
      * Default zoom level
      */
-    public static final int DEFAULT_ZOOM_LEVEL = 11;
+    public static final int DEFAULT_ZOOM_LEVEL = 6;
     /**
      * Layer to contain the main map
      */
@@ -94,21 +98,86 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
      */
     private LayerWidget interactionLayer;
     /**
-     * The map panel
+     * The map itself
      */
-    private MapPanel map;
+    private JMapViewer map;
     /**
-     * Scene lookup
+     * Last map center X coordinate. Used to pan the scene
      */
-    private SceneLookup lookup;
+    private int lastXPosition;
+    /**
+     * Last map center Y coordinate. Used to pan the scene
+     */
+    private int lastYPosition;
+    /**
+     * Current zoom level. Used to recalculate the widgets coordinates after a Zoom event
+     */
+    private int lastZoomLevel;
     /**
      * Local connect provider
      */
-    private PhysicalConnectionProvider connectProvider;
+    private PhysicalConnectionProvider connectionProvider;
     
+    /**
+     * Scene lookup
+     */
+    private SceneLookup lookup;  
 
-    public GISViewScene(MapPanel map) {
+    public GISViewScene(JMapViewer map) {
         this.map = map;
+        this.map.addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                for (MouseListener ml : getView().getMouseListeners())
+                    ml.mouseClicked(e);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                for (MouseListener ml : getView().getMouseListeners())
+                    ml.mousePressed(e);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                for (MouseListener ml : getView().getMouseListeners())
+                    ml.mouseReleased(e);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                for (MouseListener ml : getView().getMouseListeners())
+                    ml.mouseEntered(e);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                for (MouseListener ml : getView().getMouseListeners())
+                    ml.mouseExited(e);
+            }
+        });
+        
+        this.map.addJMVListener(new JMapViewerEventListener() {
+
+            @Override
+            public void processCommand(JMVCommandEvent jmvce) {
+                if (jmvce.getCommand().equals(JMVCommandEvent.COMMAND.MOVE))
+                    pan();
+                else
+                    zoom();
+                getView().repaint();
+            }
+        });
+        
+        this.map.setTileLoader(new CustomTileLoader(new CustomTileLoaderListener()));
+        
+        this.lastXPosition = map.getCenter().x;
+        this.lastYPosition = map.getCenter().y;
+        this.lastZoomLevel = map.getZoom();
+        
+        this.connectionProvider = new PhysicalConnectionProvider(this);
+        
         mapLayer = new LayerWidget(this);
         nodesLayer = new LayerWidget(this);
         edgesLayer = new LayerWidget(this);
@@ -127,7 +196,6 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
         addDependency(mapWidget);
         
         this.lookup = new SceneLookup(Lookup.EMPTY);
-        this.connectProvider = new PhysicalConnectionProvider(this);
         this.defaultPopupMenuProvider = new ObjectWidgetMenu();
 
         addObjectSceneListener(new ObjectSceneListener() {
@@ -151,20 +219,18 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
         }, ObjectSceneEventType.OBJECT_SELECTION_CHANGED);
         
         //Actions
-        getActions().addAction(new ZoomAction());
         getActions().addAction(ActionFactory.createAcceptAction(new AcceptActionProvider(this)));
-        getActions().addAction(new MapWidgetPanAction(map, MouseEvent.BUTTON1));
         setActiveTool(AbstractScene.ACTION_SELECT);
         setOpaque(false);
     }
-
+    
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
         GeoPositionedNodeWidget myWidget =  new GeoPositionedNodeWidget(this,node, 0, 0);
         nodesLayer.addChild(myWidget);
         myWidget.getActions(AbstractScene.ACTION_SELECT).addAction(createSelectAction());
         myWidget.getActions(AbstractScene.ACTION_SELECT).addAction(ActionFactory.createMoveAction());
-        myWidget.getActions(AbstractScene.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, connectProvider));
+        myWidget.getActions(AbstractScene.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, connectionProvider));
         myWidget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         TagLabelWidget aLabelWidget = new TagLabelWidget(this, myWidget);
         myWidget.addDependency(aLabelWidget);
@@ -189,112 +255,70 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
     }
 
     @Override
-    protected void attachEdgeSourceAnchor(LocalObjectLight edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {
-    }
-
+    protected void attachEdgeSourceAnchor(LocalObjectLight edge, LocalObjectLight oldSourceNode, LocalObjectLight sourceNode) {}
     @Override
-    protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
-    }
+    protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {}
 
     public PhysicalConnectionProvider getConnectProvider() {
-        return connectProvider;
+        return connectionProvider;
     }
 
-    /**
-     * Translate a point (Cartesian coordinates) within the map viewport into a GeoPosition object
-     * @param point Point to be translated
-     * @param zoom the zoom to be used to perform the calculation (note that this might NOT be the current map zoom)
-     * @return the resulting coordinates as a pair (latitude, longitude)
-     */
-    public double[] pixelToCoordinate(Point point, int zoom){
-        int currentZoom = map.getMainMap().getZoom();
-        map.getMainMap().setZoom(zoom);
-        Rectangle realViewport = map.getMainMap().getViewportBounds();
-        GeoPosition coordinates = map.getMainMap().getTileFactory().pixelToGeo(
-                new Point(point.x + realViewport.x, point.y + realViewport.y), map.getMainMap().getZoom());
-        map.getMainMap().setZoom(currentZoom);
-        return new double[]{coordinates.getLatitude(), coordinates.getLongitude()};
+    public JMapViewer getMap() {
+        return map;
     }
-
-    /**
-     * Translate a point (Cartesian coordinates) within the map viewport into a GeoPosition object using the current zoom level
-     * @param point point to be translated
-     * @return the resulting coordinates as a pair (latitude, longitude)
-     */
-    public double[] pixelToCoordinate(Point point){
-        return pixelToCoordinate(point, map.getMainMap().getZoom());
-    }
-
-    /**
-     * Translate a point (Polar coordinates) into a Point object (Cartesian coordinates)  within the map viewport
-     * @param latitude latitude
-     * @param longitude longitude
-     * @param zoom the zoom to be used to perform the calculation (note that this might NOT be the current map zoom)
-     * @return the resulting Point object
-     */
-    public Point coordinateToPixel(double latitude, double longitude, int zoom){
-        int currentZoom = map.getMainMap().getZoom();
-        map.getMainMap().setZoom(zoom);
-        Rectangle realViewport = map.getMainMap().getViewportBounds();
-        Point2D point2D = map.getMainMap().getTileFactory().geoToPixel(new GeoPosition(latitude, longitude), zoom);
-        map.getMainMap().setZoom(currentZoom);
-        return new Point((int)point2D.getX() - realViewport.x, (int)point2D.getY() - realViewport.y);
-    }
-
+    
     @Override
     public Lookup getLookup(){
         return this.lookup;
     }
 
     /**
-     * Zooms in the inner map
+     * Called on a pan event
      */
-    public void zoomIn() {
-        int currentZoom = map.getMainMap().getZoom();
-        if (currentZoom > map.getMinZoom()){
+    public void pan() {
+        int deltaX = map.getCenter().x - lastXPosition;
+        int deltaY = map.getCenter().y - lastYPosition;
+        
+        for (Widget node : nodesLayer.getChildren())
+            node.setPreferredLocation(new Point(node.getPreferredLocation().x - 
+                    deltaX, node.getPreferredLocation().y - deltaY));
 
-            for (Widget node : nodesLayer.getChildren()){
-                double[] geoControlPoint = pixelToCoordinate(node.getPreferredLocation(), map.getMainMap().getZoom());
-                Point newLocation = coordinateToPixel(geoControlPoint[0], geoControlPoint[1], map.getMainMap().getZoom() - 1);
-                node.setPreferredLocation(newLocation);
+        for (Widget connection : edgesLayer.getChildren()){
+            List<Point> controlPoints = ((AbstractConnectionWidget)connection).getControlPoints();
+            for (int i = 1; i < controlPoints.size() - 1; i++) {
+                controlPoints.get(i).x -= deltaX;
+                controlPoints.get(i).y -= deltaY;
             }
-
-            for (Widget connection : edgesLayer.getChildren()){
-                List<Point> controlPoints = ((AbstractConnectionWidget)connection).getControlPoints();
-                for (int i = 1; i < controlPoints.size() - 1; i++) {
-                    double[] geoControlPoint = pixelToCoordinate(controlPoints.get(i), map.getMainMap().getZoom());
-                    Point newLocation = coordinateToPixel(geoControlPoint[0], geoControlPoint[1], map.getMainMap().getZoom() - 1);
-                    controlPoints.get(i).x = newLocation.x;
-                    controlPoints.get(i).y = newLocation.y;
-                }               
-            }
-            map.getMainMap().setZoom(currentZoom - 1);
         }
+        
+        revalidate();
+        lastXPosition = map.getCenter().x;
+        lastYPosition = map.getCenter().y;
     }
-
+    
     /**
-     * Zooms out the inner map
+     * Called on a zoom event
      */
-    public void zoomOut() {
-        int currentZoom = map.getMainMap().getZoom();
-        if (currentZoom < map.getMaxZoom()){
-
-            for (Widget node : nodesLayer.getChildren()){
-                double[] geoControlPoint = pixelToCoordinate(node.getPreferredLocation(), map.getMainMap().getZoom());
-                Point newLocation = coordinateToPixel(geoControlPoint[0], geoControlPoint[1], map.getMainMap().getZoom() + 1);
-                node.setPreferredLocation(newLocation);
-            }
-            for (Widget connection : edgesLayer.getChildren()){
-                List<Point> controlPoints = ((AbstractConnectionWidget)connection).getControlPoints();
-                for (int i = 1; i < controlPoints.size() - 1; i++) {
-                    double[] geoControlPoint = pixelToCoordinate(controlPoints.get(i), map.getMainMap().getZoom());
-                    Point newLocation = coordinateToPixel(geoControlPoint[0], geoControlPoint[1], map.getMainMap().getZoom() + 1);
-                    controlPoints.get(i).x = newLocation.x;
-                    controlPoints.get(i).y = newLocation.y;
-                }               
-            }
-            map.getMainMap().setZoom(currentZoom + 1);
+    public void zoom() {
+        
+        for (Widget node : nodesLayer.getChildren()){
+            Coordinate geoPosition = getLastPosition(node.getPreferredLocation().x, node.getPreferredLocation().y);
+            Point newLocation = map.getMapPosition(geoPosition, true);
+            node.setPreferredLocation(newLocation);
         }
+        for (Widget connection : edgesLayer.getChildren()){
+            for (Point controlPoint : ((AbstractConnectionWidget)connection).getControlPoints()){
+                Coordinate geoPosition = getLastPosition(controlPoint.x, controlPoint.y);
+                Point newLocation = map.getMapPosition(geoPosition.getLat(), geoPosition.getLon(), true);
+                controlPoint.x = newLocation.x;
+                controlPoint.y = newLocation.y;
+            }
+        }
+        
+        revalidate();
+        lastZoomLevel = map.getZoom();
+        lastXPosition = map.getCenter().x;
+        lastYPosition = map.getCenter().y;
     }
 
     /**
@@ -313,8 +337,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
         labelsLayer.removeChildren();
         
         map.setVisible(false);
-        map.getMainMap().setCenterPosition(DEFAULT_CENTER_POSITION);
-        map.getMainMap().setZoom(DEFAULT_ZOOM_LEVEL);
+        map.setDisplayPosition(DEFAULT_CENTER_POSITION, DEFAULT_ZOOM_LEVEL);
         
         validate();
         
@@ -328,14 +351,14 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
         mainTag.attr("version", Constants.VIEW_FORMAT_VERSION); //NOI18N
         //TODO: Get the class name from some else
         mainTag.start("class").text("GISView").end();
-        mainTag.start("zoom").text(String.valueOf(map.getMainMap().getZoom())).end();
-        mainTag.start("center").attr("x", map.getMainMap().getCenterPosition().
-                getLongitude()).attr("y", map.getMainMap().getCenterPosition().getLatitude()).end();
+        mainTag.start("zoom").text(String.valueOf(map.getZoom())).end();
+        mainTag.start("center").attr("x", map.getPosition().
+                getLon()).attr("y", map.getPosition().getLat()).end();
         StartTagWAX nodesTag = mainTag.start("nodes");
         for (Widget nodeWidget : nodesLayer.getChildren()){
-            double[] geoPosition = pixelToCoordinate(nodeWidget.getPreferredLocation(), map.getMainMap().getZoom());
-            nodesTag.start("node").attr("x", geoPosition[1]).
-            attr("y", geoPosition[0]).
+            Coordinate geoPosition = map.getPosition(nodeWidget.getPreferredLocation());
+            nodesTag.start("node").attr("x", geoPosition.getLon()).
+            attr("y", geoPosition.getLat()).
             attr("class", ((GeoPositionedNodeWidget)nodeWidget).getObject().getClassName()).
             text(String.valueOf(((GeoPositionedNodeWidget)nodeWidget).getObject().getOid())).end();
         }
@@ -349,8 +372,8 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
             edgeTag.attr("aside", ((GeoPositionedNodeWidget)((AbstractConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
             edgeTag.attr("bside", ((GeoPositionedNodeWidget)((AbstractConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
             for (Point point : ((ConnectionWidget)edgeWidget).getControlPoints()){
-                double[] geoPosition = pixelToCoordinate(point, map.getMainMap().getZoom());
-                edgeTag.start("controlpoint").attr("x", geoPosition[1]).attr("y", geoPosition[0]).end();
+                Coordinate geoPosition = map.getPosition(point);
+                edgeTag.start("controlpoint").attr("x", geoPosition.getLon()).attr("y", geoPosition.getLat()).end();
             }
             edgeTag.end();
         }
@@ -366,31 +389,25 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
 
         return bas.toByteArray();
     }
-
-    public MapPanel getMapPanel(){
-        return map;
-    }
-
-    public void pan(int deltaX, int deltaY) {
-        if (deltaX == 0 && deltaY == 0)
-            return;
-        
-        for (Widget node : nodesLayer.getChildren())
-            node.setPreferredLocation(new Point(node.getPreferredLocation().x - deltaX, node.getPreferredLocation().y - deltaY));
-        
-        for (Widget connection : edgesLayer.getChildren()){
-            List<Point> controlPoints = ((AbstractConnectionWidget)connection).getControlPoints();
-            for (int i = 1; i < controlPoints.size() - 1; i++) {
-                controlPoints.get(i).x -= deltaX;
-                controlPoints.get(i).y -= deltaY;
-            }
-        }
-        revalidate();
-    }
     
     public void toggleLabels(boolean visible){
         labelsLayer.setVisible(visible);
         repaint();
+    }
+    
+    /**
+     * A convenience method cloning the behavior of JMapviewer.getPosition, but using
+     * lastZoomLevel and lastX/YPosition
+     * @param mapPointX
+     * @param mapPointY
+     * @return 
+     */
+    public Coordinate getLastPosition(int mapPointX, int mapPointY){
+        int x = lastXPosition + mapPointX - map.getWidth() / 2;
+        int y = lastYPosition + mapPointY - map.getHeight() / 2;
+        double lon = map.getTileController().getTileSource().XToLon(x, lastZoomLevel);
+        double lat = map.getTileController().getTileSource().YToLat(y, lastZoomLevel);
+        return new Coordinate(lat, lon);
     }
     
     /**
@@ -422,8 +439,37 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
         
         @Override
         public void revalidateDependency() {
-            setPreferredBounds(this.getScene().getBounds());
+            setPreferredBounds(getScene().getBounds());
+            nodesLayer.setPreferredBounds(getScene().getBounds());
+            labelsLayer.setPreferredBounds(getScene().getBounds());
             validate();
+        }
+    }
+    
+    /**
+     * Custom TileLoader used to set our own TileLoaderListener so we can repaint the scene view
+     * when a tile is done loading
+     */
+    private class CustomTileLoader extends OsmTileLoader{
+        public CustomTileLoader(TileLoaderListener listener) {
+            super(listener);
+        }
+    }
+    
+    /**
+     * Custom CustomTileLoaderListener, used to repaint the scene view
+     * when a tile is done loading
+     */
+    private class CustomTileLoaderListener implements TileLoaderListener {
+
+        @Override
+        public void tileLoadingFinished(Tile tile, boolean bln) {
+            getView().repaint();
+        }
+
+        @Override
+        public TileCache getTileCache() {
+            return null;
         }
     }
 }

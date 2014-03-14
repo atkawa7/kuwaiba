@@ -65,14 +65,4 @@ public class GeoPositionedNodeWidget extends AbstractNodeWidget {
         this.longitude = longitude;
         this.latitude = latitude;
     }
-
-    /**
-     * This method updates the widget geo-coordinates from the scene coordinates
-     */
-    public void updateCoordinates() {
-        double[] coordinates = ((GISViewScene)getScene()).pixelToCoordinate(getPreferredLocation());
-        this.latitude = coordinates[0];
-        this.longitude = coordinates[1];
-        
-    }
 }

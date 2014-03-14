@@ -56,8 +56,10 @@ public class AcceptActionProvider implements AcceptProvider{
             LocalObjectLight droppedObject = (LocalObjectLight) transferable.getTransferData(LocalObjectLight.DATA_FLAVOR);
             if (!scene.isNode(droppedObject)){
                 Widget newNode = scene.addNode(droppedObject);
+                point.x -= newNode.getBounds().width / 2;
+                point.y -= newNode.getBounds().height / 2;
                 newNode.setPreferredLocation(point);
-                scene.revalidate();
+                scene.validate();
             }else
                 JOptionPane.showMessageDialog(null, "The view already contains this object","Error",JOptionPane.ERROR_MESSAGE);
         } catch (UnsupportedFlavorException ex) {

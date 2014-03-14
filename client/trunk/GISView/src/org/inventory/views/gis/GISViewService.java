@@ -34,10 +34,10 @@ import org.inventory.views.gis.scene.GISViewScene;
 import org.inventory.views.gis.scene.GeoPositionedConnectionWidget;
 import org.inventory.views.gis.scene.GeoPositionedNodeWidget;
 import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
-import org.jdesktop.swingx.mapviewer.GeoPosition;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
+import org.openstreetmap.gui.jmapviewer.Coordinate;
 
 /**
  * Logic associated to the corresponding TopComponent
@@ -116,7 +116,7 @@ public class GISViewService {
                             if (lol != null){
                                 GeoPositionedNodeWidget widget = (GeoPositionedNodeWidget)scene.addNode(lol);
                                 widget.setCoordinates(latitude, longitude);
-                                widget.setPreferredLocation(scene.coordinateToPixel(latitude, longitude, currentView.getZoom()));
+                                widget.setPreferredLocation(scene.getMap().getMapPosition(latitude, longitude));
                                 scene.validate();
                             }
                             else
@@ -144,7 +144,6 @@ public class GISViewService {
                                         newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
                                         newEdge.setLineColor(PhysicalConnectionProvider.getConnectionColor(container.getClassName()));
 
-                                        boolean visible = true;
                                         List<Point> localControlPoints = new ArrayList<Point>();
                                         while(true){
                                             reader.nextTag();
@@ -153,15 +152,12 @@ public class GISViewService {
                                                     double longitude = Double.valueOf(reader.getAttributeValue(null,"x"));
                                                     double latitude = Double.valueOf(reader.getAttributeValue(null,"y"));
                                                     newEdge.getGeoPositionedControlPoints().add(new double[]{longitude, latitude});
-                                                    Point newControlPoint = scene.coordinateToPixel(latitude, longitude, currentView.getZoom());
+                                                    Point newControlPoint = scene.getMap().getMapPosition(latitude, longitude);
                                                     localControlPoints.add(newControlPoint);
-                                                    if (newControlPoint.x <= 0 || newControlPoint.y <= 0)
-                                                        visible = false;
                                                 }
                                             }else{
                                                 if (!localControlPoints.isEmpty())
                                                     newEdge.setControlPoints(localControlPoints, false);
-                                                newEdge.setVisible(visible);
                                                 break;
                                             }
                                         }
@@ -176,15 +172,15 @@ public class GISViewService {
                                 else{
                                     if (reader.getName().equals(qZoom)){
                                         currentView.setZoom(Integer.valueOf(reader.getElementText()));
-                                        scene.getMapPanel().getMainMap().setZoom(currentView.getZoom());
+                                        scene.getMap().setZoom(currentView.getZoom());
                                     }
                                     else{
                                         if (reader.getName().equals(qCenter)){
                                             double x = Double.valueOf(reader.getAttributeValue(null, "x"));
                                             double y = Double.valueOf(reader.getAttributeValue(null, "y"));
                                             currentView.setCenter(new double[]{x,y});
-                                            scene.getMapPanel().getMainMap().
-                                                    setCenterPosition(new GeoPosition(currentView.getCenter()[1], currentView.getCenter()[0]));
+                                            scene.getMap().setDisplayPosition(
+                                                    new Coordinate(y, x), currentView.getZoom());
                                         }else {
                                             //Place more tags
                                         }
