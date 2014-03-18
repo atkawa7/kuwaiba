@@ -51,8 +51,8 @@ public class ServerStatus implements Serializable {
      */
     private int status;
 
-    public ServerStatus() {
-    }
+    //No-arg constructor required
+    public ServerStatus() {    }
 
     public ServerStatus(String serverVersion) {
         this.version = serverVersion;

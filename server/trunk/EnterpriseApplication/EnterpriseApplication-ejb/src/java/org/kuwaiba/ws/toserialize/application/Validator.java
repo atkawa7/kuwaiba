@@ -44,9 +44,7 @@ public class Validator implements Serializable {
      */
     private int value;
 
-    /**
-     * Required by the serializer
-     */
+    //No-arg constructor required
     public Validator(){}
 
     public Validator(String label, int value){

@@ -30,8 +30,8 @@ import org.kuwaiba.apis.persistence.application.CompactQuery;
 public class RemoteQuery extends RemoteQueryLight{
     private byte[] content;
 
-    public RemoteQuery() {
-    }
+    //No-arg constructor required
+    public RemoteQuery() {    }
 
     public RemoteQuery(CompactQuery query) {
         super (query.getId(), query.getName(),query.getDescription(),query.getIsPublic());

@@ -45,9 +45,7 @@ public class ViewInfoLight implements Serializable {
      */
     private String description;
 
-    /**
-     * Required by the serializer.
-     */
+    //No-arg constructor required
     public ViewInfoLight(){}
 
     public ViewInfoLight(ViewObjectLight myView) {

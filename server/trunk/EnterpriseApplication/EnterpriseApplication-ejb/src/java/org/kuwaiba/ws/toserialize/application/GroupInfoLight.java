@@ -37,6 +37,7 @@ public class GroupInfoLight implements Serializable {
      */
     protected String name;
 
+    //No-arg constructor required
     public GroupInfoLight(){}
 
     public GroupInfoLight(GroupProfile group){

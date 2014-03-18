@@ -33,8 +33,8 @@ public class RemoteQueryLight implements Serializable {
     private String description;
     private boolean isPublic;
 
-    public RemoteQueryLight() {
-    }
+    //No-arg constructor required
+    public RemoteQueryLight() {    }
 
 
     public RemoteQueryLight(long id, String name, String description, boolean isPublic) {

@@ -31,8 +31,8 @@ public class ViewInfo extends ViewInfoLight {
     private byte[] background;
     private byte[] structure;
 
-    public ViewInfo() {
-    }
+    //No-arg constructor required
+    public ViewInfo() {    }
 
     public ViewInfo(ViewObject myView) {
         super(myView);

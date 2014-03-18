@@ -34,8 +34,8 @@ public class Query implements Serializable{
     private UserInfo owner;
     private byte[] content;
 
-    public Query() {
-    }
+    //No-arg constructor required
+    public Query() {    }
 
     public Query(String name, UserInfo owner) {
         this.name = name;

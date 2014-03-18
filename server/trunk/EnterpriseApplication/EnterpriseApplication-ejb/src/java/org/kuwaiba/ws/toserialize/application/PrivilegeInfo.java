@@ -52,6 +52,9 @@ public class PrivilegeInfo implements Serializable{
      */
     private long [] dependsOf;
 
+    //No-arg constructor required
+    public PrivilegeInfo() { }
+    
     public PrivilegeInfo(Privilege privilege) {
         id=privilege.getId();
         code=privilege.getCode();

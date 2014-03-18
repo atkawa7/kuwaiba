@@ -34,9 +34,8 @@ public class RemoteSession implements Serializable {
     private String firstName;
     private String lastName;
 
-
-    public RemoteSession() {
-    }
+    //No-arg constructor required
+    public RemoteSession() {    }
 
     public RemoteSession(String sessionID, UserProfile user) {
         this.sessionId = sessionID;

@@ -46,8 +46,8 @@ public class ObjectList implements Serializable {
      */
     private HashMap<Long,String> list;
 
-    public ObjectList() {
-    }
+    //No-arg constructor required
+    public ObjectList() {    }
 
     public ObjectList(GenericObjectList listType){
         this.className = listType.getClassName();

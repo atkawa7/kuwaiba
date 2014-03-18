@@ -1,7 +1,7 @@
 This software makes use of the following third-party components and neither of them was modified, only linked:
 
 * WAX, a simple API for XML (New BSD, http://opensource.org/licenses/BSD-3-Clause) http://code.google.com/p/waxy/
-* Neo4J (GPL, OEM license) http://www.neo4j.org
+* Neo4J (GPL) http://www.neo4j.org
 
 We want to thank all people that made possible this software to be available.
 

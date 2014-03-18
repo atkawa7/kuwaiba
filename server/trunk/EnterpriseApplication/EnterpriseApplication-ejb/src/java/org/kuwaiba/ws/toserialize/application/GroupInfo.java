@@ -45,7 +45,9 @@ public class GroupInfo extends GroupInfoLight{
      */
     private PrivilegeInfo[] privileges;
 
+    //No-arg constructor required
     public GroupInfo(){}
+    
     public GroupInfo(GroupProfile group){
         super (group);
         this.description = group.getDescription();

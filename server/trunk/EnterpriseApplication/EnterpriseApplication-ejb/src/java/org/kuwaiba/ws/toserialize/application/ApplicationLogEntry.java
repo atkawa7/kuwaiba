@@ -64,8 +64,8 @@ public final class ApplicationLogEntry implements Serializable {
      */
     private String notes;
 
-    public ApplicationLogEntry() {
-    }
+    //No-arg constructor required
+    public ApplicationLogEntry() {   }
     
     public ApplicationLogEntry(ActivityLogEntry logEntry) {
         this.id = logEntry.getId();

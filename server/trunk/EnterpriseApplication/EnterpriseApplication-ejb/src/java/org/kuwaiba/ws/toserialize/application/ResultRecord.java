@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
  * This is a record in a query result. It's composed of a RemoteObjectLight column
  * and a number of extra columns based on the visibleAttributes parameter provided in the
  * execute query call
- * @author Charles Edward Bedon Cortazar <charles.bedon@zoho.com>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResultRecord implements Serializable {
@@ -39,11 +39,8 @@ public class ResultRecord implements Serializable {
      */
     private ArrayList<String> extraColumns;
     
-    /**
-     * Default constructor. Not used
-     */
-    private ResultRecord() {
-    }
+    //No-arg constructor required
+    private ResultRecord() {    }
 
     public ResultRecord(RemoteObjectLight object, ArrayList<String> columns) {
         this.object = object;
