@@ -22,7 +22,6 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.models.physicalconnections.windows.ConnectLinksFrame;
-import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -38,20 +37,19 @@ public class ConnectLinksAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         LocalObjectLight[] links = CommunicationsStub.getInstance().getObjectSpecialChildren(object.getClassName(), object.getOid());
         if (links == null){
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
         LocalObjectLight[] containerEndpoints = CommunicationsStub.getInstance().getConnectionEndpoints(object.getClassName(), object.getOid());
         if (containerEndpoints == null){
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
         
         if (containerEndpoints[0] == null || containerEndpoints[1] == null){
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, String.format(
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, String.format(
                     "Container %s is missing one of its endpoints", object));
             return;
         }

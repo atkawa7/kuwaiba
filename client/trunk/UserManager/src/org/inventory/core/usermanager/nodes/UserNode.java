@@ -19,7 +19,7 @@ package org.inventory.core.usermanager.nodes;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalUserObject;
 import org.inventory.core.usermanager.UserManagerTopComponent;
-import org.inventory.core.usermanager.actions.Delete;
+import org.inventory.core.usermanager.actions.DeleteAction;
 import org.inventory.core.usermanager.nodes.properties.UserProperty;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
@@ -72,6 +72,6 @@ public class UserNode extends AbstractNode{
     @Override
     public Action[] getActions(boolean context){
         UserManagerTopComponent tc =(UserManagerTopComponent)WindowManager.getDefault().findTopComponent("UserManagerTopComponent");
-        return new Action[]{new Delete(this,tc.getUserManagerServiceInstance())};
+        return new Action[]{new DeleteAction(this,tc.getUserManagerServiceInstance())};
     }
 }

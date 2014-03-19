@@ -209,7 +209,7 @@ public final class AuditTrailTopComponent extends TopComponent implements Export
         }else{
             LocalApplicationLogEntry[] records = CommunicationsStub.getInstance().getGeneralActivityAuditTrail(0, 0);
             if (records == null){
-                nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+                nu.showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return new Object[0][0];
             }
             else{

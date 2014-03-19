@@ -26,7 +26,6 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.pools.PoolNode;
-import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter;
 
 /**
@@ -45,13 +44,12 @@ public class NewPoolItemAction extends AbstractAction implements Presenter.Popup
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         LocalObjectLight newObject = com.createPoolItem(poolNode.getObject().getOid(), ((JMenuItem)e.getSource()).getName());
         if (newObject == null)
-            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_ERROR"), NotificationUtil.ERROR, com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
             poolNode.getChildren().add(new ObjectNode[]{new ObjectNode(newObject)});
-            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
         }
     }
     

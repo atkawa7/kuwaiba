@@ -23,7 +23,6 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Formatter;
 import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
@@ -83,7 +82,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     protected Sheet sheet;
     private Image icon;
     private final Image defaultIcon = ImageUtilities.loadImage(GENERIC_ICON_PATH);
-    private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
     
     public ObjectNode(LocalObjectLight lol){
         super(new ObjectChildren(), Lookups.singleton(lol));
@@ -133,7 +131,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
         LocalClassMetadata meta = com.getMetaForClass(object.getClassName(),false);
         if (meta == null){
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             return sheet;
         }
 
@@ -144,7 +142,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
             lo = com.getObjectInfo(object.getClassName(), object.getOid());
 
         if (lo == null){
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             return sheet;
         }
 
@@ -170,7 +168,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                         //If so, this can be a reference to an object list item or a 1:1 to any other RootObject subclass
                         List<LocalObjectListItem> list = com.getList(lam.getListAttributeClassName(), true, false);
                         if (list == null){
-                            nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+                            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                             return sheet;
                         }
                         LocalObjectListItem val = null;
@@ -199,7 +197,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                                     lam.getDisplayName(),  "", this);
                     break;
                     default:
-                        nu.showSimplePopup("Error", NotificationUtil.ERROR, "Mapping not supported");
+                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "Mapping not supported");
                         return sheet;
                 }
                 generalPropertySet.put(property);
@@ -367,8 +365,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
                                 }
                                 else
-                                    nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").
-                                        getString("LBL_COPYOPERATION_TITLE"), NotificationUtil.ERROR, com.getError());
+                                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                           }
                           else{
                               if (action == DnDConstants.ACTION_MOVE){
@@ -377,18 +374,14 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                                         getChildren().add(new Node[]{new ObjectNode(obj)});
                                     }
                                     else
-                                        nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").
-                                            getString("LBL_MOVEOPERATION_TITLE"), NotificationUtil.ERROR, com.getError());
+                                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                               }
                           }                        
                     }else
-                        nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").
-                                    getString("LBL_MOVEOPERATION_TITLE"), NotificationUtil.ERROR,
-                                    new Formatter().format(java.util.ResourceBundle.
-                                        getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_MOVEOPERATION_TEXT"),obj.getClassName(),object.getClassName()).toString());
+                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,
+                                    String.format(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_MOVEOPERATION_TEXT"),obj.getClassName(),object.getClassName()).toString());
                 }catch(Exception ex){
-                    nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").
-                                        getString("LBL_MOVEOPERATION_TITLE"), NotificationUtil.ERROR, ex.getClass().getSimpleName() +" "+ex.getMessage());
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
                 }
                  return null;
             }
@@ -443,7 +436,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
             //So the PropertySheet reflects the changes too
             refresh();
         }catch(Exception e){
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, e.getMessage());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, e.getMessage());
         }
     }
 

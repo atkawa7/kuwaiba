@@ -23,7 +23,6 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 
 /**
  * Represents the children for the navigation tree
@@ -73,11 +72,9 @@ public class ObjectChildren extends Children.Array {
         LocalObjectLight node = ((ObjectNode)this.getNode()).getObject();
         List <LocalObjectLight> children = com.getObjectChildren(node.getOid(),
                 com.getMetaForClass(node.getClassName(),false).getOid());
-        if (children == null){
-            NotificationUtil  nu = Lookup.getDefault().lookup(NotificationUtil.class);
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, "An error has occurred retrieving this object's children: "+com.getError());
-            
-        }else{
+        if (children == null)
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "An error has occurred retrieving this object's children: "+com.getError());
+        else{
             for (LocalObjectLight child : children)
                 add(new Node[]{new ObjectNode(child)});
         }

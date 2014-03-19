@@ -20,7 +20,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.nodes.Children;
-import org.openide.util.Lookup;
 
 /**
  * Node representing a customer
@@ -35,11 +34,10 @@ public class CustomerChildren extends Children.Array {
 
     @Override
     protected void addNotify() {
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         LocalObjectLight[] services = CommunicationsStub.getInstance().getServices(customer.getClassName(), customer.getOid());
         
         if (services == null)
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
             for (LocalObjectLight service : services){
                 ServiceNode[] node = new ServiceNode[] {new ServiceNode(service)};
@@ -49,15 +47,10 @@ public class CustomerChildren extends Children.Array {
         }
         List<LocalObjectLight> servicesPools = CommunicationsStub.getInstance().getPools(customer.getOid(), "GenericService");
         if (servicesPools == null)
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
-            for (LocalObjectLight servicePool : servicesPools) {
-                ServicesPoolNode[] node = new ServicesPoolNode[]{new ServicesPoolNode(servicePool)};
-                
-                remove(node);
-                refresh();
-                add(node);
-            }
+            for (LocalObjectLight servicePool : servicesPools) 
+                add(new ServicesPoolNode[]{new ServicesPoolNode(servicePool)});
         }
     }
 }

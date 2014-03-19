@@ -41,7 +41,7 @@ public class ServiceManagerService {
         LocalObjectLight[] customers = com.getObjectsOfClassLight("GenericCustomer");
                 
         if (customers == null)
-            this.smtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+            this.smtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
             List<LocalObjectLight> serviceManagerNodes = new ArrayList<LocalObjectLight>();
             serviceManagerNodes.addAll(Arrays.asList(customers)); 

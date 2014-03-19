@@ -27,7 +27,6 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 
 /**
  * Action to delete an a list type item
@@ -62,20 +61,18 @@ public final class DeleteListTypeAction extends AbstractAction {
         if(JOptionPane.showConfirmDialog(null, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_LIST_TYPE_ITEM"),
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CONFIRMATION"),JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
 
-            NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             if (CommunicationsStub.getInstance().deleteListTypeItem(node == null ?  lol.getClassName() : node.getObject().getClassName(),
                     node == null ? lol.getOid() : node.getObject().getOid(),false)){
                 if (node != null)
                     ((ObjectChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
                 
-                nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
                 
                 //Refresh cache
                 CommunicationsStub.getInstance().getList(node.getObject().getClassName(), false, true);
             }
             else
-                nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_ERROR"),
-                        NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
     }
 }

@@ -22,10 +22,9 @@ import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.customization.hierarchycustomizer.actions.Remove;
+import org.inventory.customization.hierarchycustomizer.actions.RemovePosibleChildAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
-import org.openide.util.Lookup;
 import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
 
@@ -74,8 +73,8 @@ public class ClassMetadataNode extends AbstractNode {
     @Override
    public Action[] getActions(boolean context){
         if(this.isLeaf()){ //return actions only for the nodes representing possible children
-            Remove deleteAction;
-            deleteAction = new Remove(this);
+            RemovePosibleChildAction deleteAction;
+            deleteAction = new RemovePosibleChildAction(this);
             return new Action[]{deleteAction};
         }
         else
@@ -90,8 +89,7 @@ public class ClassMetadataNode extends AbstractNode {
                 //Only can be dropped into a parent node (the ones marked with a green flag)
                 if (isLeaf())
                     return null;
-                NotificationUtil nu = Lookup.getDefault().
-                            lookup(NotificationUtil.class);
+                
                 try {
                     LocalClassMetadataLight data = (LocalClassMetadataLight)obj.getTransferData(
                             LocalClassMetadataLight.DATA_FLAVOR);
@@ -110,15 +108,12 @@ public class ClassMetadataNode extends AbstractNode {
                         ((ClassMetadataChildren)getChildren()).add(new ClassMetadataNode[]{new ClassMetadataNode(data)});
                         CommunicationsStub.getInstance().refreshCache(false, false, false, true);
 
-                         nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
-                                NotificationUtil.INFO,java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));
+                        NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));
                     }
                     else
-                        nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
-                                NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());
+                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,CommunicationsStub.getInstance().getError());
                 }catch (Exception ex) {
-                        nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
-                                NotificationUtil.ERROR,ex.getMessage());
+                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,ex.getMessage());
                 }
                 return null;
             }

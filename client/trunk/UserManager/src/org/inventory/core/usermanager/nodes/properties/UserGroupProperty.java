@@ -21,14 +21,14 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.usermanager.nodes.GroupNode;
-import org.openide.nodes.PropertySupport.ReadWrite;
+import org.openide.nodes.PropertySupport;
 import org.openide.util.Lookup;
 
 /**
  * Represents a single group's property
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>User Update
  */
-public class UserGroupProperty extends ReadWrite{
+public class UserGroupProperty extends PropertySupport.ReadWrite {
 
     /**
      * Current value
@@ -66,7 +66,7 @@ public class UserGroupProperty extends ReadWrite{
             this.value = t;
         else{
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-            nu.showSimplePopup("User Update", NotificationUtil.ERROR, com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         }
     }
 

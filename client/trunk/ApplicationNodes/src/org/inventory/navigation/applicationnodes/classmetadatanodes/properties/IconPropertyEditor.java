@@ -36,7 +36,6 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.utils.Utils;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
 import org.openide.explorer.propertysheet.PropertyEnv;
-import org.openide.util.Lookup;
 
 /**
  * Provides a custom property editor for icon and small-icon.
@@ -49,10 +48,6 @@ public class IconPropertyEditor extends PropertyEditorSupport
      * Reference to the communications stub singleton
      */
     private CommunicationsStub com;
-    /**
-     * A reference to the notification mechanism
-     */
-    private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
     
     private byte[] icon = null;
         
@@ -65,7 +60,6 @@ public class IconPropertyEditor extends PropertyEditorSupport
     private InnerPanel myPanel;
         
     public IconPropertyEditor(long id, String attribute) {
-        nu = Lookup.getDefault().lookup(NotificationUtil.class);
         this.id = id;
         this.attribute = attribute;
         this.com = CommunicationsStub.getInstance();
@@ -94,10 +88,10 @@ public class IconPropertyEditor extends PropertyEditorSupport
         if(fChooser.showOpenDialog(fChooser)  == JFileChooser.APPROVE_OPTION){ 
             Image myIcon = Toolkit.getDefaultToolkit().createImage(fChooser.getSelectedFile().getAbsolutePath());
             if (myIcon == null)
-                nu.showSimplePopup("Image Load", NotificationUtil.ERROR, String.format("Image in %s couldn't be loaded", fChooser.getSelectedFile().getAbsolutePath()));
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, String.format("Image in %s couldn't be loaded", fChooser.getSelectedFile().getAbsolutePath()));
             else{
                 if((myIcon.getHeight(null) > maxAllowedSize) || (myIcon.getWidth(null) > maxAllowedSize)) //Images have limits depending of if you need to set "icon" or "smallIcon"
-                    nu.showSimplePopup("Image Load", NotificationUtil.ERROR, String.format("The size of the image is exceeds the limits"));
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, String.format("The size of the image is exceeds the limits"));
                 else{
                     try {
                         icon = Utils.getByteArrayFromFile(fChooser.getSelectedFile());
@@ -105,18 +99,18 @@ public class IconPropertyEditor extends PropertyEditorSupport
                         //This should be here but in the setValue method, however I haven't discovered yet why clicking on "cancel" still calls setValue
                         if (attribute.equals(Constants.PROPERTY_ICON)){
                             if(!com.setClassMetadataProperties(id, null, null, null, null, icon, null, null, null, null))
-                                nu.showSimplePopup("Class Properties", NotificationUtil.ERROR, com.getError());
+                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                             else
                                 Cache.getInstace().resetAll();
                         }else{
                             if(!com.setClassMetadataProperties(id, null, null, null, icon, null, null, null, null, null))
-                                nu.showSimplePopup("Class Properties", NotificationUtil.ERROR, com.getError());
+                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                             else
                                 Cache.getInstace().resetAll();
                         }
                     } catch (IOException ex) {
                         icon = null;
-                        nu.showSimplePopup("Image Load", NotificationUtil.ERROR, "The file couldn't be converted: " + ex.getMessage());
+                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "The file couldn't be converted: " + ex.getMessage());
                     }
                 }
             }

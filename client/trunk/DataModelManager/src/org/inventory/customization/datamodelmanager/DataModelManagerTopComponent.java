@@ -28,7 +28,6 @@ import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.AbstractNode;
-import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.Mode;
@@ -62,7 +61,6 @@ public final class DataModelManagerTopComponent extends TopComponent
 
     private final ExplorerManager em = new ExplorerManager();
     private DataModelManagerService dmms;
-    private NotificationUtil nu;
        
     public DataModelManagerTopComponent() {
         initComponents();
@@ -139,8 +137,6 @@ public final class DataModelManagerTopComponent extends TopComponent
     }
     
     public NotificationUtil getNotifier(){
-         if (nu == null)
-             return Lookup.getDefault().lookup(NotificationUtil.class);
-         return nu;
+         return NotificationUtil.getInstance();
     }
 }

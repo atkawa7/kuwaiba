@@ -23,7 +23,6 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemChildren;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeNode;
-import org.openide.util.Lookup;
 
 /**
  * Action to create a new list type item
@@ -41,10 +40,9 @@ public final class CreateListTypeAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         LocalObjectLight myLol = com.createListTypeItem(node.getObject().getClassName());
             if (myLol == null)
-                nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
             if (!((ListTypeItemChildren)node.getChildren()).isCollapsed())
                 ((ListTypeItemChildren)node.getChildren()).add(new ListTypeItemNode[]{new ListTypeItemNode(myLol)});

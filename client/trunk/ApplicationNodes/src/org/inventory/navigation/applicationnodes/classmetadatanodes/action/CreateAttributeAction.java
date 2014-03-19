@@ -29,7 +29,6 @@ import org.inventory.communications.core.caching.Cache;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
-import org.openide.util.Lookup;
 
 /**
  *  Creates an attribute metadata
@@ -71,9 +70,7 @@ public class CreateAttributeAction extends AbstractAction {
         txtDescription.setName("txtDescription");
         JComboBox lstType = new JComboBox(attributeTypeslist.toArray());
         lstType.setName("lstType");
-        
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        
+                
         JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(
                 new String[]{java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NAME"), 
                     java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DISPLAYNAME"), 
@@ -91,12 +88,12 @@ public class CreateAttributeAction extends AbstractAction {
                             ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), 
                             (String)((JComboBox)pnlMyDialog.getComponent("lstType")).getSelectedItem(), 
                             false, false, true, false, false)){
-                        nu.showSimplePopup("Class metadata operation", NotificationUtil.INFO, "Attribute added successfully");
+                        NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Attribute added successfully");
                         Cache.getInstace().resetAll();
                         classNode.refresh();
                     }
                     else
-                        nu.showSimplePopup("Class metadata operation", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
     }
 }

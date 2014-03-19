@@ -25,7 +25,6 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
-import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -34,9 +33,8 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
 public class ConnectMirrorPortAction extends GenericObjectNodeAction {
-    private NotificationUtil nu;
+
     public ConnectMirrorPortAction() {
-        this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_CONNECT_MIRROR_PORT"));
     } 
     
@@ -44,11 +42,11 @@ public class ConnectMirrorPortAction extends GenericObjectNodeAction {
     public void actionPerformed(ActionEvent e) {
         LocalObjectLight[] siblings = CommunicationsStub.getInstance().getSiblings(object.getClassName(), object.getOid());
         if (siblings == null){
-            nu.showSimplePopup("Error", NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
         JComboBox cmbSiblings = new JComboBox(siblings);
-        cmbSiblings.setName("cmbSiblings");
+        cmbSiblings.setName("cmbSiblings"); //NOI18N
         JComplexDialogPanel dialog = new JComplexDialogPanel(new String[]{"The other ports in the parent device are"},
                 new JComponent[]{cmbSiblings});
         if (JOptionPane.showConfirmDialog(null, dialog, "Mirror Port Connection", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
@@ -56,9 +54,9 @@ public class ConnectMirrorPortAction extends GenericObjectNodeAction {
             if (selectedObject != null){
                 if (CommunicationsStub.getInstance().connectMirrorPort(object.getClassName(), object.getOid(),
                         selectedObject.getClassName(), selectedObject.getOid()))
-                    nu.showSimplePopup("Success", NotificationUtil.INFO, "Port mirrored successfully");
+                    NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Port mirrored successfully");
                 else
-                    nu.showSimplePopup("Error", NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,CommunicationsStub.getInstance().getError());
             }
         }
     }

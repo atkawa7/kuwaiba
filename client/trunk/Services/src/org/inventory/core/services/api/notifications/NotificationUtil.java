@@ -15,15 +15,87 @@
  */
 package org.inventory.core.services.api.notifications;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import javax.swing.ImageIcon;
+import org.openide.awt.Notification;
+import org.openide.awt.NotificationDisplayer;
+import org.openide.awt.StatusDisplayer;
+
 /**
- * Exposes notification services
+ * Useful methods to show notifications
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface NotificationUtil {
-    public static int ERROR = 1;
-    public static int WARNING = 2;
-    public static int INFO = 3;
+public class NotificationUtil {
+    public static final int ERROR_MESSAGE = 1;
+    public static final int WARNING_MESSAGE = 2;
+    public static final int INFO_MESSAGE = 3;
+    
+    static final ImageIcon ERROR_ICON = new ImageIcon(NotificationUtil.class.getResource("/org/inventory/core/services/res/error.png"));
+    static final ImageIcon WARNING_ICON = new ImageIcon(NotificationUtil.class.getResource("/org/inventory/core/services/res/warning.png"));
+    static final ImageIcon INFO_ICON = new ImageIcon(NotificationUtil.class.getResource("/org/inventory/core/services/res/info.png"));
 
-    public void showSimplePopup(String title, int icon, String details);
-    public void showStatusMessage(String message, boolean important);
+    /**
+     * Timer to control how long will the pop-up will be visible
+     */
+    private Timer controller;
+    /**
+     * Singleton
+     */
+    private static NotificationUtil self;
+
+    private NotificationUtil() {}
+
+    public static NotificationUtil getInstance() {
+        if (self == null)
+            self = new NotificationUtil();
+        return self;
+    }
+    
+    /**
+     * Shows a simple pop-up notification on the bottom right corner of the screen
+     * @param title Title
+     * @param iconType Icon type (see constants ERROR_MESSAGE, WARNING_MESSAGE and INFO_MESSAGE)
+     * @param text The actual message
+     */
+    public void showSimplePopup(String title, int iconType, String text){
+        ImageIcon popupIcon;
+        switch(iconType){
+            case ERROR_MESSAGE:
+                popupIcon = ERROR_ICON;
+                break;
+            case WARNING_MESSAGE:
+                popupIcon = WARNING_ICON;
+                break;
+            case INFO_MESSAGE:
+            default:
+                popupIcon = INFO_ICON;
+        }
+        if (NotificationDisplayer.getDefault() != null){
+            final Notification lastNotification = NotificationDisplayer.getDefault().
+                    notify(title, popupIcon, text, null);
+
+            //Thanks to Luca Dazi for this suggestion
+            if (lastNotification != null){
+                if (null == controller)
+                    controller = new Timer();
+                TimerTask tt = new TimerTask() {
+                        @Override
+                        public void run() {
+                            lastNotification.clear();
+                        }
+                    };
+                controller.schedule(tt, 10000);
+            }
+        }
+    }
+
+    public void showStatusMessage(String message, boolean important){
+        if (StatusDisplayer.getDefault() != null){
+            if (important)
+                StatusDisplayer.getDefault().setStatusText(message, StatusDisplayer.IMPORTANCE_ERROR_HIGHLIGHT);
+            else
+                StatusDisplayer.getDefault().setStatusText(message);
+        }
+    }
 }

@@ -21,12 +21,12 @@ import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.kuwaiba.management.services.nodes.CustomerNode;
 import org.kuwaiba.management.services.nodes.CustomersPoolNode;
 import org.kuwaiba.management.services.nodes.ServiceManagerRootNode;
-import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter;
 
 /**
@@ -35,7 +35,7 @@ import org.openide.util.actions.Presenter;
  */
 public class CreateCustomerAction extends GenericObjectNodeAction implements Presenter.Popup {
     private ServiceManagerRootNode rootNode;
-    private CustomersPoolNode coustomersPoolNode;
+    private CustomersPoolNode customersPoolNode;
     
     public CreateCustomerAction(ServiceManagerRootNode rootNode) {
         this.rootNode = rootNode;
@@ -44,7 +44,7 @@ public class CreateCustomerAction extends GenericObjectNodeAction implements Pre
     }
 
     public CreateCustomerAction(CustomersPoolNode coustomersPoolNode) {
-        this.coustomersPoolNode = coustomersPoolNode;
+        this.customersPoolNode = coustomersPoolNode;
         putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_CUSTOMER"));
         
     }
@@ -57,24 +57,23 @@ public class CreateCustomerAction extends GenericObjectNodeAction implements Pre
             if (newCustomer != null)
                 rootNode.getChildren().add(new CustomerNode[] {new CustomerNode(newCustomer)});
             else
-                Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
-        else if(object.getClassName().equals("GenericCustomer")){
-            LocalObjectLight newCustomer = CommunicationsStub.getInstance().createPoolItem(coustomersPoolNode.getObject().getOid(), ((JMenuItem)e.getSource()).getName());
+        else if(object.getClassName().equals(Constants.CLASS_GENERICCUSTOMER)){
+            LocalObjectLight newCustomer = CommunicationsStub.getInstance().createPoolItem(customersPoolNode.getObject().getOid(), ((JMenuItem)e.getSource()).getName());
             if (newCustomer == null)
-                Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATION_ERROR"), NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else{
-                coustomersPoolNode.getChildren().add(new CustomerNode[]{new CustomerNode(newCustomer)});
-                Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
+                customersPoolNode.getChildren().add(new CustomerNode[]{new CustomerNode(newCustomer)});
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
             }
         }
     }
-
   
     @Override
     public JMenuItem getPopupPresenter() {
         LocalClassMetadataLight[] customerClasses = CommunicationsStub.getInstance().
-                getLightSubclasses("GenericCustomer", false, false);
+                getLightSubclasses(Constants.CLASS_GENERICCUSTOMER, false, false);
         JMenuItem menu = new JMenu(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATE_CUSTOMER"));
         for (LocalClassMetadataLight customerClass : customerClasses){
             JMenuItem customerEntry = new JMenuItem(customerClass.getClassName());
@@ -87,6 +86,6 @@ public class CreateCustomerAction extends GenericObjectNodeAction implements Pre
 
     @Override
     public String getValidator() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 }

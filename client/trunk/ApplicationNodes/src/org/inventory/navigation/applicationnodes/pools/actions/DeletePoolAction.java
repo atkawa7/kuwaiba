@@ -21,7 +21,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.pools.PoolNode;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 
 /**
  * Deletes a pool
@@ -45,16 +44,12 @@ public class DeletePoolAction extends AbstractAction{
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         if (com.deletePool(pn.getObject().getOid())){
             pn.getParentNode().getChildren().remove(new Node[]{pn});
-            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TITLE"), 
-                    NotificationUtil.INFO, 
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
                     java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
         }
         else
-            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TITLE"), 
-                    NotificationUtil.ERROR, 
-                    com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
     }
 }

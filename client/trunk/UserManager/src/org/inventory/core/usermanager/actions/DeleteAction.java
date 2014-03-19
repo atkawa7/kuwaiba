@@ -25,9 +25,8 @@ import org.inventory.core.usermanager.nodes.GroupNode;
 import org.inventory.core.usermanager.nodes.UserNode;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 
-public class Delete extends AbstractAction {
+public class DeleteAction extends AbstractAction {
     /**
      * Node to be deleted
      */
@@ -39,18 +38,13 @@ public class Delete extends AbstractAction {
     private CommunicationsStub com;
 
     /**
-     * Reference to the notification system
-     */
-    private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-
-    /**
      * Reference to the UserManagerService useful to refresh the UI.
      * For some reason the calling to the method add() to add a node to the table doesn't
      * show the new node
      */
     private UserManagerService ums;
 
-    public Delete(AbstractNode node, UserManagerService ums){
+    public DeleteAction(AbstractNode node, UserManagerService ums){
         com = CommunicationsStub.getInstance();
         this.node = node;
         this.ums = ums;
@@ -67,22 +61,22 @@ public class Delete extends AbstractAction {
                 return;
 
             if(com.deleteUsers(new long[]{((UserNode)this.node).getObject().getOid()})){
-                nu.showSimplePopup("User removal", NotificationUtil.INFO, "The user was deleted successfully");
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The user was deleted successfully");
                 node.getParentNode().getChildren().remove(new Node[]{node});
                 ums.refreshUserList();
             }
             else
-                nu.showSimplePopup("User removal", NotificationUtil.ERROR, com.getError());
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         }else{ //We're gonna delete a group
             if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this group? The associated users won't be deleted if you choose OK","Confirmation",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
                     return;
             if(com.deleteGroups(new long[]{((GroupNode)this.node).getObject().getOid()})){
-                nu.showSimplePopup("Group removal", NotificationUtil.INFO, "The group was deleted successfully");
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The group was deleted successfully");
                 node.getParentNode().getChildren().remove(new Node[]{node});
                 ums.refreshGroupsList();
             }
             else
-                nu.showSimplePopup("Group removal", NotificationUtil.ERROR, com.getError());
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         }
     }
 }

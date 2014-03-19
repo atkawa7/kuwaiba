@@ -16,7 +16,6 @@
 
 package org.inventory.views.objectview.scene;
 
-import org.inventory.core.visual.widgets.SelectableWidget;
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
 import java.awt.Image;
@@ -27,7 +26,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.util.Constants;
@@ -35,16 +33,12 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
 import org.inventory.core.visual.widgets.AbstractScene;
 import org.inventory.views.objectview.scene.actions.CustomAddRemoveControlPointAction;
-import org.inventory.views.objectview.scene.actions.CustomMoveAction;
 import org.inventory.views.objectview.scene.actions.CustomMoveControlPointAction;
 import org.inventory.core.visual.menu.ObjectWidgetMenu;
+import org.inventory.core.visual.widgets.AbstractConnectionWidget;
+import org.inventory.core.visual.widgets.AbstractNodeWidget;
+import org.inventory.core.visual.widgets.TagLabelWidget;
 import org.netbeans.api.visual.action.ActionFactory;
-import org.netbeans.api.visual.model.ObjectSceneEvent;
-import org.netbeans.api.visual.model.ObjectSceneEventType;
-import org.netbeans.api.visual.model.ObjectSceneListener;
-import org.netbeans.api.visual.model.ObjectState;
-import org.netbeans.api.visual.router.Router;
-import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.ImageWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
@@ -56,33 +50,13 @@ import org.netbeans.api.visual.widget.Widget;
  */
 public final class ViewScene extends AbstractScene {
     /**
-     * This layer is used to paint the auxiliary elements 
-     */
-    private LayerWidget interactionLayer;
-    /**
      * Used to hold the background (just an image right now)
      */
     private LayerWidget backgroundLayer;
     /**
-     * Used to hold the nodes
-     */
-    private LayerWidget nodesLayer;
-    /**
-     * Used to hold the connections
-     */
-    private LayerWidget edgesLayer;
-    /**
-     * Used to hold misc messages
-     */
-    private LayerWidget labelsLayer;
-    /**
      * The common connection provider
      */
     private PhysicalConnectionProvider myConnectionProvider;
-    /**
-     * Default free router (shared by all connection widgets)
-     */
-    private Router freeRouter = RouterFactory.createFreeRouter();
     /**
      * Default control point move action (shared by all connection widgets)
      */
@@ -93,15 +67,6 @@ public final class ViewScene extends AbstractScene {
      */
     private CustomAddRemoveControlPointAction addRemoveControlPointAction =
             new CustomAddRemoveControlPointAction(3.0, 5.0, null);
-    /**
-     * Default move action (shared by all node widgets)
-     */
-    private CustomMoveAction moveAction =
-            new CustomMoveAction(ActionFactory.createFreeMoveStrategy(),ActionFactory.createDefaultMoveProvider());
-    /**
-     * Default inplace editor for node widgets
-     */
-    private LabelInplaceTextEditor inplaceEditor = new LabelInplaceTextEditor();
     /**
      * Object owning the current view
      */
@@ -122,10 +87,6 @@ public final class ViewScene extends AbstractScene {
      * Event ID to indicate a change in the scene (saving is mandatory)
      */
     public final static int SCENE_CHANGETOSAVE = 2;
-    /**
-     * Event ID to indicate an object has been selected
-     */
-    public final static int SCENE_OBJECTSELECTED = 3;
     /**
      * Default notifier
      */
@@ -152,30 +113,7 @@ public final class ViewScene extends AbstractScene {
         defaultPopupMenuProvider = new ObjectWidgetMenu();
         
         setActiveTool(ACTION_SELECT);
-        addObjectSceneListener(new ObjectSceneListener() {
-
-            @Override
-            public void objectAdded(ObjectSceneEvent ose, Object o) {}
-            @Override
-            public void objectRemoved(ObjectSceneEvent ose, Object o) {}
-            @Override
-            public void objectStateChanged(ObjectSceneEvent ose, Object o, ObjectState os, ObjectState os1) {}
-            @Override
-            public void selectionChanged(ObjectSceneEvent ose, Set<Object> oldSelection, Set<Object> newSelection) {
-                if (newSelection.size() == 1){
-                    Widget selectedWidget = findWidget(newSelection.iterator().next());
-                    if (selectedWidget instanceof SelectableWidget)
-                        fireChangeEvent(new ActionEvent(((SelectableWidget)selectedWidget).getNode(),
-                                SCENE_OBJECTSELECTED, "object-selected-operation"));
-                }
-            }
-            @Override
-            public void highlightingChanged(ObjectSceneEvent ose, Set<Object> set, Set<Object> set1) {}
-            @Override
-            public void hoverChanged(ObjectSceneEvent ose, Object o, Object o1) {}
-            @Override
-            public void focusChanged(ObjectSceneEvent ose, Object o, Object o1) {}
-        }, ObjectSceneEventType.OBJECT_SELECTION_CHANGED);
+        initSelectionListener();
         this.notifier = notifier;
     }
 
@@ -186,16 +124,27 @@ public final class ViewScene extends AbstractScene {
      */
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
-        ObjectNodeWidget widget = new ObjectNodeWidget(this, node);
+        AbstractNodeWidget widget = new AbstractNodeWidget(this, node);
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
+        widget.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction());
+        TagLabelWidget aLabelWidget = new TagLabelWidget(this, widget);
+        widget.addDependency(aLabelWidget);
+        labelsLayer.addChild(aLabelWidget);
         nodesLayer.addChild(widget);
         return widget;
     }
 
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
-        ObjectConnectionWidget widget = new ObjectConnectionWidget(this, edge, freeRouter);
+        AbstractConnectionWidget widget = new AbstractConnectionWidget(this, edge);
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
+        widget.addDependency(new Dependency() {
+
+            @Override
+            public void revalidateDependency() {
+                System.out.println("Chamoooooo");
+            }
+        });
         edgesLayer.addChild(widget);
         return widget;
     }
@@ -230,10 +179,6 @@ public final class ViewScene extends AbstractScene {
         return edgesLayer;
     }
 
-    public LayerWidget getLabelsLayer() {
-        return labelsLayer;
-    }
-
     public LocalObjectLight getCurrentObject() {
         return currentObject;
     }
@@ -256,18 +201,6 @@ public final class ViewScene extends AbstractScene {
 
     public CustomAddRemoveControlPointAction getAddRemoveControlPointAction() {
         return addRemoveControlPointAction;
-    }
-
-    public CustomMoveAction getMoveAction() {
-        return moveAction;
-    }
-
-    public LabelInplaceTextEditor getInplaceEditor() {
-        return inplaceEditor;
-    }
-
-    public Router getFreeRouter() {
-        return freeRouter;
     }
     
     public PhysicalConnectionProvider getConnectionProvider(){
@@ -323,15 +256,12 @@ public final class ViewScene extends AbstractScene {
     }
 
     public void clear(){
-        List<LocalObjectLight> clonedNodes = new ArrayList<LocalObjectLight>(getNodes());
-        List<LocalObjectLight> clonedEdges = new ArrayList<LocalObjectLight>(getEdges());
-        
-        for(LocalObjectLight lol : clonedNodes)
-            removeNode(lol);
-        for(LocalObjectLight lol : clonedEdges)
-            removeEdge(lol);
+        while (!getNodes().isEmpty())
+            removeNode(getNodes().iterator().next());
 
-        moveAction.clearActionListeners();
+        while (!getEdges().isEmpty())
+            removeNode(getEdges().iterator().next());
+
         addRemoveControlPointAction.clearActionListeners();
         moveControlPointAction.clearActionListeners();
         nodesLayer.removeChildren();
@@ -362,6 +292,7 @@ public final class ViewScene extends AbstractScene {
         validate();
     }
 
+    @Override
     public byte[] getAsXML() {
         ByteArrayOutputStream bas = new ByteArrayOutputStream();
         WAX xmlWriter = new WAX(bas);
@@ -373,24 +304,24 @@ public final class ViewScene extends AbstractScene {
         for (Widget nodeWidget : nodesLayer.getChildren())
             nodesTag.start("node").attr("x", nodeWidget.getPreferredLocation().x).
             attr("y", nodeWidget.getPreferredLocation().y).
-            attr("class", ((ObjectNodeWidget)nodeWidget).getObject().getClassName()).
-            text(String.valueOf(((ObjectNodeWidget)nodeWidget).getObject().getOid()) ).end();
+            attr("class", ((AbstractNodeWidget)nodeWidget).getObject().getClassName()).
+            text(String.valueOf(((AbstractNodeWidget)nodeWidget).getObject().getOid()) ).end();
         nodesTag.end();
 
         StartTagWAX edgesTag = mainTag.start("edges");
         for (Widget edgeWidget : edgesLayer.getChildren()){
             StartTagWAX edgeTag = edgesTag.start("edge");
-            edgeTag.attr("id", ((ObjectConnectionWidget)edgeWidget).getObject().getOid());
-            edgeTag.attr("class", ((ObjectConnectionWidget)edgeWidget).getObject().getClassName());
+            edgeTag.attr("id", ((AbstractConnectionWidget)edgeWidget).getObject().getOid());
+            edgeTag.attr("class", ((AbstractConnectionWidget)edgeWidget).getObject().getClassName());
             //I haven't managed to find out why sometimes the view gets screwed. This is a dirty
             //"solution", but I expect to solve it once we rewrite this module
-            if (((ObjectConnectionWidget)edgeWidget).getSourceAnchor() == null)
+            if (((AbstractConnectionWidget)edgeWidget).getSourceAnchor() == null)
                 continue;
-            edgeTag.attr("aside", ((ObjectNodeWidget)((ObjectConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
-            if (((ObjectConnectionWidget)edgeWidget).getTargetAnchor() == null)
+            edgeTag.attr("aside", ((AbstractNodeWidget)((AbstractConnectionWidget)edgeWidget).getSourceAnchor().getRelatedWidget()).getObject().getOid());
+            if (((AbstractConnectionWidget)edgeWidget).getTargetAnchor() == null)
                 continue;
-            edgeTag.attr("bside", ((ObjectNodeWidget)((ObjectConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
-            for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints())
+            edgeTag.attr("bside", ((AbstractNodeWidget)((AbstractConnectionWidget)edgeWidget).getTargetAnchor().getRelatedWidget()).getObject().getOid());
+            for (Point point : ((AbstractConnectionWidget)edgeWidget).getControlPoints())
                 edgeTag.start("controlpoint").attr("x", point.x).attr("y", point.y).end();
             edgeTag.end();
         }
@@ -401,5 +332,10 @@ public final class ViewScene extends AbstractScene {
 
     public NotificationUtil getNotifier() {
         return notifier;
+    }
+    
+    public void toggleLabels(boolean visible){
+        labelsLayer.setVisible(visible);
+        getView().repaint();
     }
 }

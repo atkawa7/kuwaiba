@@ -28,7 +28,6 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.navigation.applicationnodes.pools.PoolNode;
 import org.inventory.navigation.applicationnodes.pools.PoolRootNode;
-import org.openide.util.Lookup;
 
 /**
  * Creates a new pool
@@ -53,8 +52,6 @@ public class NewPoolAction extends AbstractAction{
     @Override
     public void actionPerformed(ActionEvent ev) {
         
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-
         JTextField txtName = new JTextField(), txtDescription =  new JTextField();
         txtName.setName("txtName"); //NOI18N
         txtDescription.setName("txtDescription"); //NOI18N
@@ -78,11 +75,10 @@ public class NewPoolAction extends AbstractAction{
                             ((LocalClassMetadataLight)((JComboBox)pnlMyDialog.getComponent("lstType")).getSelectedItem()).getClassName());
                     
                     if (newPool ==  null)
-                        nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_ERROR"), NotificationUtil.ERROR, com.getError());
-
+                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                     else{
                         prn.getChildren().add(new PoolNode[]{new PoolNode(newPool)});
-                        nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
+                        NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
                     }
         }
     }

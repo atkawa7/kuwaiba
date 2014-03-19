@@ -36,7 +36,6 @@ import org.inventory.views.gis.scene.GeoPositionedNodeWidget;
 import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.Widget;
-import org.openide.util.Lookup;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 
 /**
@@ -48,7 +47,6 @@ public class GISViewService {
     private GISViewScene scene;
     private LocalObjectView currentView;
     private CommunicationsStub com = CommunicationsStub.getInstance();
-    private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
     private GISViewTopComponent gvtc;
 
     public GISViewService(GISViewScene scene, GISViewTopComponent gvtc) {
@@ -194,11 +192,11 @@ public class GISViewService {
                 scene.validate();
                 gvtc.toggleButtons(true);
             } catch (XMLStreamException ex) {
-                gvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, "Error rendering view file (Corrupted File)");
+                gvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "Error rendering view file (Corrupted File)");
             } catch (IllegalStateException ise){
-                gvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, "Error rendering view file (Illegal State)");
+                gvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "Error rendering view file (Illegal State)");
             } catch (NumberFormatException nfe){
-                gvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, "Error rendering view file (Wrong Number Format)");
+                gvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "Error rendering view file (Wrong Number Format)");
             }
         }
     }
@@ -209,18 +207,18 @@ public class GISViewService {
             long viewId = com.createGeneralView(LocalObjectViewLight.TYPE_GIS, nameInTxt, descriptionInTxt, structure, null);
             if (viewId != -1){
                 currentView = new LocalObjectView(viewId, nameInTxt, descriptionInTxt, LocalObjectViewLight.TYPE_GIS, structure, null);
-                nu.showSimplePopup("New View", NotificationUtil.INFO, "View created successfully");
+                gvtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "View created successfully");
             }else
-                nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+                gvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         }
         else{
             if (com.updateGeneralView(currentView.getId(), nameInTxt, descriptionInTxt, scene.getAsXML(), null)){
                 currentView.setName(nameInTxt);
                 currentView.setDescription(descriptionInTxt);
-                nu.showSimplePopup("Save View", NotificationUtil.INFO, "View saved successfully");
+                gvtc.getNotifier().showSimplePopup("SUccess", NotificationUtil.INFO_MESSAGE, "View saved successfully");
             }
             else
-                nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+                gvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         }
     }
 
@@ -231,9 +229,9 @@ public class GISViewService {
             if (com.deleteGeneralViews(new long[]{currentView.getId()})){
                 scene.clear();
                 currentView = null;
-                nu.showSimplePopup("Delete View", NotificationUtil.INFO, "View deleted successfully");
+                gvtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "View deleted successfully");
             }else{
-                nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+                gvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                 return false;
             }
         }

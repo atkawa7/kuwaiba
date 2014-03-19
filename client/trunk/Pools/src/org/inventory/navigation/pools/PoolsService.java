@@ -19,7 +19,6 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.openide.util.Lookup;
 
 /**
  * Business logic associated to the PoolsTopComponent
@@ -43,18 +42,8 @@ public class PoolsService {
         if(rootChildren != null)
             return rootChildren.toArray(new LocalObjectLight[0]);
         else{
-            NotificationUtil nu = Lookup.getDefault().
-                lookup(NotificationUtil.class);
-            if (nu == null)
-                System.out.println(java.util.ResourceBundle.getBundle("org/inventory/navigation/pools/Bundle").getString("DBG_CREATION_ERROR")+com.getError());
-            else
-                nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/pools/Bundle").getString("LBL_TITLE_CREATION"), NotificationUtil.ERROR, com.getError());
-            return null;
+            pstc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            return new LocalObjectLight[0];
         }
     }
-        
-    void refresh() {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-    
 }

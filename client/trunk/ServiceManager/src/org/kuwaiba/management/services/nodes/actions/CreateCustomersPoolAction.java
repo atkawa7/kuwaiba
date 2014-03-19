@@ -28,7 +28,6 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.kuwaiba.management.services.nodes.CustomersPoolNode;
 import org.kuwaiba.management.services.nodes.ServiceManagerRootNode;
-import org.openide.util.Lookup;
 
 /**
  * Creates a new customer pool
@@ -52,8 +51,7 @@ public class CreateCustomersPoolAction extends AbstractAction{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-
+        
         JTextField txtName = new JTextField(), txtDescription =  new JTextField();
         txtName.setName("txtName"); //NOI18N
         txtName.setPreferredSize(new Dimension(120, 18));
@@ -74,11 +72,11 @@ public class CreateCustomersPoolAction extends AbstractAction{
                             ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), "GenericCustomer");
                     
                     if (newPool ==  null)
-                        nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATION_ERROR"), NotificationUtil.ERROR, com.getError());
+                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
 
                     else{
                         rootNode.getChildren().add(new CustomersPoolNode[]{new CustomersPoolNode(newPool)});
-                        nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
+                        NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
                     }
         }
     }

@@ -35,7 +35,6 @@ import org.inventory.navigation.applicationnodes.classmetadatanodes.properties.C
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
-import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 
 /**
@@ -57,7 +56,6 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
     protected Sheet sheet;
     protected Image icon;
     private final Image defaultIcon = ImageUtilities.loadImage(GENERIC_ICON_PATH);
-    private NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
 
     public ClassMetadataNode(LocalClassMetadataLight lcml) {
         super(new ClassMetadataChildren(), Lookups.singleton(lcml));
@@ -82,7 +80,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
     
     @Override
     public Image getIcon(int i){
-        if (icon==null){
+        if (icon == null){
             return defaultIcon;
         }
         return icon;
@@ -114,7 +112,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
             classMetadata.setClassName(newName);
             refresh();
         }else
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
     }
     
     public void refresh(){
@@ -123,7 +121,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
         classMetadataRefresh = com.getMetaForClass(classMetadata.getOid(), true);
         
         if(classMetadataRefresh == null)
-            nu.showSimplePopup("Error refreshing class metadata", NotificationUtil.ERROR, com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
             classMetadata = classMetadataRefresh;
             if (this.sheet != null)
@@ -140,7 +138,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
         
         LocalClassMetadata lcm = com.getMetaForClass(classMetadata.getClassName(),false);
         if (lcm == null){
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             return sheet;
         }
         ClassMetadataProperty nameProp = new ClassMetadataProperty(Constants.PROPERTY_NAME, 

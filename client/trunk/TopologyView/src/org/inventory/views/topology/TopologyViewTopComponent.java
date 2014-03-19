@@ -37,7 +37,6 @@ import org.openide.DialogDisplayer;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerManager.Provider;
 import org.openide.util.ImageUtilities;
-import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -69,9 +68,7 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
      * Topology view service
      */
     private TopologyViewService tvsrv;
-
-    private NotificationUtil nu;
-    
+  
     private boolean isSaved = false;
 
     public TopologyViewTopComponent() {
@@ -514,9 +511,7 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
     }
 
     public NotificationUtil getNotifier(){
-        if (nu == null)
-            return Lookup.getDefault().lookup(NotificationUtil.class);
-        return null;
+        return NotificationUtil.getInstance();
     }
 
     public void toggleButtons(boolean enabled) {

@@ -54,6 +54,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICSERVICE = "GenericService";
     /**
+     * Name for the class GenericCustomer
+     */
+    public static final String CLASS_GENERICCUSTOMER = "GenericCustomer";
+    /**
      * Root class to all ports
      */
     public static final String CLASS_GENERICPORT = "GenericPort";

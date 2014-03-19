@@ -31,6 +31,7 @@ import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.netbeans.api.visual.anchor.AnchorFactory;
+import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
@@ -106,7 +107,7 @@ public class ViewBuilder {
                         LocalObjectLight lol = CommunicationsStub.getInstance().
                                 getObjectInfoLight(objectClass, objectId);
                         if (lol != null){
-                            ObjectNodeWidget widget = (ObjectNodeWidget)scene.addNode(lol);
+                            Widget widget = scene.addNode(lol);
                             widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
                         }
                         else
@@ -129,7 +130,7 @@ public class ViewBuilder {
                                 if (aSideWidget == null || bSideWidget == null)
                                     currentView.setDirty(true);
                                 else{
-                                    ObjectConnectionWidget newEdge = (ObjectConnectionWidget)scene.addEdge(container);
+                                    ConnectionWidget newEdge = (ConnectionWidget)scene.addEdge(container);
                                     newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
                                     newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
                                     List<Point> localControlPoints = new ArrayList<Point>();
@@ -186,7 +187,7 @@ public class ViewBuilder {
 
         for (LocalObjectLight node : myNodes){ //Add the nodes
             //Puts an element after another
-            ObjectNodeWidget widget = (ObjectNodeWidget)scene.addNode(node);
+            Widget widget = scene.addNode(node);
             widget.setPreferredLocation(new Point(lastX, 0));
 
             lastX +=100;
@@ -207,7 +208,7 @@ public class ViewBuilder {
 
             Widget bSideWidget = scene.findWidget(bSide[0]);
 
-            ObjectConnectionWidget newEdge = (ObjectConnectionWidget)scene.addEdge(container);
+            ConnectionWidget newEdge = (ConnectionWidget)scene.addEdge(container);
             newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
             newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
         }
@@ -238,7 +239,7 @@ public class ViewBuilder {
         int lastX = 0;
         for (LocalObjectLight node : newNodes){ //Add the nodes
             //Puts an element after another
-            ObjectNodeWidget widget = (ObjectNodeWidget)scene.addNode(node);
+            Widget widget = scene.addNode(node);
             widget.setPreferredLocation(new Point(lastX, 20));
             lastX +=100;
         }
@@ -257,7 +258,7 @@ public class ViewBuilder {
 
             Widget bSideWidget = scene.findWidget(bSide[0]);
 
-            ObjectConnectionWidget newEdge = (ObjectConnectionWidget)scene.addEdge(toAdd);
+            ConnectionWidget newEdge = (ConnectionWidget)scene.addEdge(toAdd);
             newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
             newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
         }

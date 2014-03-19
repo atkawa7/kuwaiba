@@ -29,7 +29,6 @@ import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
 import org.openide.nodes.AbstractNode;
-import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter.Popup;
 
 /**
@@ -54,18 +53,17 @@ public final class CreateBusinessObjectAction extends AbstractAction implements 
     
     @Override
     public void actionPerformed(ActionEvent ev) {
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         LocalObjectLight myLol = com.createObject(
                 ((JMenuItem)ev.getSource()).getName(),
                 node instanceof RootObjectNode ? null : ((ObjectNode)node).getObject().getClassName(),
                 node instanceof RootObjectNode? -1 : ((ObjectNode)node).getObject().getOid(), 0);
         if (myLol == null)
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
             if (!((ObjectChildren)node.getChildren()).isCollapsed())
                 ((ObjectChildren)node.getChildren()).add(new ObjectNode[]{new ObjectNode(myLol)});
             
-            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO,
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
                     java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
         }
     }

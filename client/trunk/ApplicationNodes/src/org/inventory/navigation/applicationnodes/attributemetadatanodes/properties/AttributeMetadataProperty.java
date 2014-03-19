@@ -23,7 +23,6 @@ import org.inventory.communications.core.caching.Cache;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.AttributeMetadataNode;
 import org.openide.nodes.PropertySupport;
-import org.openide.util.Lookup;
 
 /**
  * Provides a property editor
@@ -49,7 +48,6 @@ public class AttributeMetadataProperty extends PropertySupport.ReadWrite {
 
     @Override
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         CommunicationsStub com = CommunicationsStub.getInstance();
 
         if(com.setAttributeProperties(classId, node.getAttributeMetadata().getId(), getName().equals(Constants.PROPERTY_NAME) ? (String)t : null, 
@@ -67,9 +65,9 @@ public class AttributeMetadataProperty extends PropertySupport.ReadWrite {
             Cache.getInstace().resetAll();
             //Refresh the class node
             node.getClassNode().refresh();
-            nu.showSimplePopup("Attribute Property Update", NotificationUtil.INFO, "Attribute updated successfully");
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Attribute updated successfully");
         }else
-            nu.showSimplePopup("Attribute Property Update", NotificationUtil.ERROR, com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
     }
     
     @Override

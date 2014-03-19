@@ -22,7 +22,6 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.special.SpecialObjectExplorerTopComponent;
-import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.TopComponent;
 
@@ -42,8 +41,7 @@ public class CreateSoftwareAssetAction extends GenericObjectNodeAction {
         LocalObjectLight newLicense = CommunicationsStub.getInstance().createSpecialObject("SoftwareLicense", object.getClassName(), 
                 object.getOid(), 0);
         if (newLicense == null)
-            Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup("Error", 
-                    NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
             TopComponent explorer = new SpecialObjectExplorerTopComponent(object);
             explorer.open();

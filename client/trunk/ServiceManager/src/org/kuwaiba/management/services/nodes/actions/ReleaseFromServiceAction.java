@@ -22,7 +22,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -35,12 +34,11 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         if (CommunicationsStub.getInstance().releaseObjectFromService(object.getClassName(), 
                 object.getOid(), Long.valueOf(((JMenuItem)e.getSource()).getName())))
-            nu.showSimplePopup("Success", NotificationUtil.INFO, "Element released successfully");
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Element released successfully");
         else
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
     }
 
     @Override
@@ -64,6 +62,5 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
             }
         }
         return mnuServices;
-        
     }
 }

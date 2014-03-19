@@ -69,22 +69,22 @@ public class RackViewService implements LookupListener {
     public final void buildView(LocalObjectLight lol){
         LocalObject rack = com.getObjectInfo(lol.getClassName(), lol.getOid());
         if (rack == null)
-            rvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+            rvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         
         Integer rackUnits = (Integer)rack.getAttribute(Constants.PROPERTY_RACKUNITS);
         if (rackUnits == null || rackUnits == 0){
-            rvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, 
+            rvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
                     String.format("attribute %s in rack %s doesn not exist or is not set correctly", Constants.PROPERTY_RACKUNITS, lol.toString()));
         }else{
             List<LocalObjectLight> children = com.getObjectChildren(lol.getOid(), lol.getClassName());
             if (children == null)
-                rvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+                rvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else{
                 int rackUnitsCounter = 0;
                 for (LocalObjectLight child : children){
                     LocalObject theWholeChild = com.getObjectInfo(child.getClassName(), child.getOid());
                     if (theWholeChild == null){
-                        rvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+                        rvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                         scene.clear();
                         return;
                     }
@@ -92,7 +92,7 @@ public class RackViewService implements LookupListener {
                     Integer position = (Integer)theWholeChild.getAttribute(Constants.PROPERTY_POSITION);
                     
                     if (elementRackUnits == null ||  position == null || elementRackUnits == 0 || position == 0) {
-                        rvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, 
+                        rvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
                                 String.format("attribute %s or %s does not exist or is not set correctly in element %s", 
                                 Constants.PROPERTY_RACKUNITS, Constants.PROPERTY_POSITION, child.toString()));
                         scene.clear();
@@ -106,7 +106,7 @@ public class RackViewService implements LookupListener {
                 }
                 
                 if (rackUnitsCounter > rackUnits){
-                    rvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, 
+                    rvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
                                 String.format("The sum of the sizes of the elements (%s) exceeds the rack capacity (%s)", rackUnitsCounter, rackUnits));
                     scene.clear();
                     return;

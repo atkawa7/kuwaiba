@@ -38,18 +38,14 @@ public class DataModelManagerService {
     public LocalClassMetadataLight[] getRootChildren(){
         LocalClassMetadata inventoryObjectClass = com.getMetaForClass(Constants.CLASS_INVENTORYOBJECT, true);
         if(inventoryObjectClass == null){
-            dmmtc.getNotifier().showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/datamodelmanager/Bundle").getString("LBL_TITLE_CREATION"), 
-                    NotificationUtil.ERROR, 
-                    com.getError());
+            dmmtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             return new LocalClassMetadataLight[0];
         }
         
         LocalClassMetadata genericObjectListClass = com.getMetaForClass(Constants.CLASS_GENERICOBJECTLIST, true);
         
         if(genericObjectListClass == null) {
-            dmmtc.getNotifier().showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/datamodelmanager/Bundle").getString("LBL_TITLE_CREATION"), 
-                    NotificationUtil.ERROR, 
-                    com.getError());
+            dmmtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             return new LocalClassMetadataLight[0];
         }
         

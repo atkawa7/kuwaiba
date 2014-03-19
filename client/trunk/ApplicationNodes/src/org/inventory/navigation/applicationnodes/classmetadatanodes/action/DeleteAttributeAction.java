@@ -26,7 +26,6 @@ import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.communications.core.caching.Cache;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
-import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter;
 
 /**
@@ -37,11 +36,10 @@ public class DeleteAttributeAction extends AbstractAction implements Presenter.P
 
     private ClassMetadataNode classNode;
     private CommunicationsStub com;
-    private NotificationUtil nu;
+
     public DeleteAttributeAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_ATTRIBUTE"));
         com = CommunicationsStub.getInstance();
-        nu = Lookup.getDefault().lookup(NotificationUtil.class);
     }
 
     public DeleteAttributeAction(ClassMetadataNode classNode) {
@@ -54,14 +52,14 @@ public class DeleteAttributeAction extends AbstractAction implements Presenter.P
         if (JOptionPane.showConfirmDialog(null, "Are you sure you want to perform this operation? All subclasses will be modified as well", 
                 "Class metadata operation", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
             if (com.deleteAttribute(this.classNode.getClassMetadata().getOid(), ((JMenuItem)ae.getSource()).getName())){
-                nu.showSimplePopup("Class meta data operation", NotificationUtil.INFO, "Attribute deleted successfully");
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Attribute deleted successfully");
                 //Force a cache reload
                 Cache.getInstace().resetAll();
                 //Refresh the class node
                 classNode.refresh();
             }
             else
-                nu.showSimplePopup("Class meta data operation", NotificationUtil.ERROR, com.getError());
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         }
     }
 
@@ -72,7 +70,7 @@ public class DeleteAttributeAction extends AbstractAction implements Presenter.P
         
         if (metaForThisClass == null){
             deleteAttributeMenu.setEnabled(false);
-            nu.showSimplePopup("Class metadata", NotificationUtil.ERROR, com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         }else{
             for (LocalAttributeMetadata anAttribute : metaForThisClass.getAttributes()){
                 JMenuItem menuEntry = new JMenuItem(anAttribute.getName());

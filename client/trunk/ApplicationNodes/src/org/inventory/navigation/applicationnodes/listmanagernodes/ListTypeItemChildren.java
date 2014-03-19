@@ -26,7 +26,6 @@ import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 
 /**
  * These children represent the items within the list
@@ -52,10 +51,9 @@ public class ListTypeItemChildren extends ObjectChildren {
             LocalClassMetadataLight lcml = ((ListTypeNode)this.getNode()).getObject();
             List<LocalObjectListItem> myObjects = CommunicationsStub.getInstance().getList(lcml.getClassName(), false, false);
 
-            if (myObjects == null){
-                Lookup.getDefault().lookup(NotificationUtil.class).
-                        showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
-            }else{
+            if (myObjects == null)
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            else{
                 for (LocalObjectListItem child : myObjects)
                     add(new Node[]{new ListTypeItemNode(child)});
             }

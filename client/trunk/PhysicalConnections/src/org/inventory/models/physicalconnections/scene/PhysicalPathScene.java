@@ -104,4 +104,10 @@ public class PhysicalPathScene extends AbstractScene {
             x += child.getPreferredBounds().width + 50;
         }
     }
+
+    @Override
+    public byte[] getAsXML() {
+        //For now
+        return null;
+    }
 }

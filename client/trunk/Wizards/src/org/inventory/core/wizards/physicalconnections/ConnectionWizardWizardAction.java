@@ -28,7 +28,6 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
-import org.openide.util.Lookup;
 
 /**
  * Connection wizard
@@ -57,7 +56,6 @@ public final class ConnectionWizardWizardAction implements ActionListener {
         dialog.toFront();
         boolean cancelled = wizardDescriptor.getValue() != WizardDescriptor.FINISH_OPTION;
         if (!cancelled) {
-            NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
             String aSideClass = (String)wizardDescriptor.getProperty("aSideClass");
             Long aSide = (Long)wizardDescriptor.getProperty("aSide");
             String bSideClass = (String)wizardDescriptor.getProperty("bSideClass");
@@ -76,17 +74,17 @@ public final class ConnectionWizardWizardAction implements ActionListener {
                 myWizard.getConnectionClass());
 
             if (newConnection != null)
-                nu.showSimplePopup("Success", NotificationUtil.INFO, "The object was created successfully");
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The object was created successfully");
             else
-                nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             
             int numberOfChildren = (Integer)wizardDescriptor.getProperty("numberOfChildren");
             if (numberOfChildren > 0){
                 if (CommunicationsStub.getInstance().createBulkPhysicalConnections((String)wizardDescriptor.getProperty("childrenType"),
                         (Integer)wizardDescriptor.getProperty("numberOfChildren"), myWizard.getConnectionClass(), newConnection.getOid()) == null)
-                    nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 else
-                    nu.showSimplePopup("Success", NotificationUtil.INFO, "Children connections were created successfully");
+                    NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Children connections were created successfully");
             }
         }
     }

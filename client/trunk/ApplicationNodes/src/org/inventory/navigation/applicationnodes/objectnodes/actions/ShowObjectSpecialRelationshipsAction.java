@@ -22,7 +22,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.windows.SpecialRelationshipsTopComponent;
-import org.openide.util.Lookup;
 
 /**
  * Gets the selected object special relationships
@@ -41,8 +40,7 @@ public final class ShowObjectSpecialRelationshipsAction extends AbstractAction{
         HashMap<String, LocalObjectLight[]> relationships = CommunicationsStub.
                 getInstance().getSpecialAttributes(object.getClassName(), object.getOid());
         if (relationships == null){
-            NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
         SpecialRelationshipsTopComponent tc = new SpecialRelationshipsTopComponent(object, relationships);

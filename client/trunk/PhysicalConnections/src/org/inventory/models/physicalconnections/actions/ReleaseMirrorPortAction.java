@@ -20,7 +20,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -29,10 +28,8 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
 public class ReleaseMirrorPortAction extends GenericObjectNodeAction {
-    private NotificationUtil nu;
 
     public ReleaseMirrorPortAction() {
-        this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_RELEASE_MIRROR_PORT"));
     }
 
@@ -40,14 +37,13 @@ public class ReleaseMirrorPortAction extends GenericObjectNodeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (CommunicationsStub.getInstance().releaseMirrorPort(object.getClassName(), object.getOid()))
-            nu.showSimplePopup("Success", NotificationUtil.INFO, "Miror port released successfully");
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Miror port released successfully");
         else
-            nu.showSimplePopup("Error", NotificationUtil.ERROR,CommunicationsStub.getInstance().getError());        
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());        
     }
 
     @Override
     public String getValidator() {
         return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
     }
-    
 }

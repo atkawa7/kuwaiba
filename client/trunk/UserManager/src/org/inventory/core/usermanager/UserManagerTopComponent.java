@@ -24,9 +24,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.api.behaviors.Refreshable;
-import org.inventory.core.usermanager.actions.AddGroup;
-import org.inventory.core.usermanager.actions.AddUser;
-import org.inventory.core.usermanager.actions.UpdateList;
+import org.inventory.core.usermanager.actions.AddGroupAction;
+import org.inventory.core.usermanager.actions.AddUserAction;
+import org.inventory.core.usermanager.actions.UpdateListAction;
 import org.openide.explorer.ExplorerManager;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
@@ -76,9 +76,9 @@ public final class UserManagerTopComponent extends TopComponent
         pnlUsers.add(tblUsers,BorderLayout.CENTER);
        // pnlUsers.add(tblGroups);
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
-        btnAddUser.addActionListener(new AddUser(ums));
-        btnRefresh.addActionListener(new UpdateList(pnlTabbedMain, ums));
-        btnAddGroup.addActionListener(new AddGroup(ums));
+        btnAddUser.addActionListener(new AddUserAction(ums));
+        btnRefresh.addActionListener(new UpdateListAction(pnlTabbedMain, ums));
+        btnAddGroup.addActionListener(new AddGroupAction(ums));
         pnlTabbedMain.addChangeListener(new ChangeListener() {
 
             @Override

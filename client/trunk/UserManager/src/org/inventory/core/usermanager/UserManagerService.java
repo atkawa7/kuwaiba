@@ -51,13 +51,9 @@ public class UserManagerService {
      * Reference to the user's list root node
      */
     private AbstractNode groupsRoot;
-    /**
-     * In order to refresh the list, will make this class a singleton
-     */
-     private UserManagerService instance;
 
-    public UserManagerService(UserManagerTopComponent _umtc){
-        this.umtc = _umtc;
+    public UserManagerService(UserManagerTopComponent umtc){
+        this.umtc = umtc;
     }
 
     /**
@@ -67,9 +63,7 @@ public class UserManagerService {
         usersTableModel = new NodeTableModel();
         LocalUserObject[] users = com.getUsers();
         if (users == null){
-            umtc.getNotifier().showSimplePopup(
-                    java.util.ResourceBundle.getBundle("org/inventory/core/usermanager/Bundle").
-                    getString("LBL_USERMANAGEMENT"), NotificationUtil.ERROR, com.getError());
+            umtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             users = new LocalUserObject[0];
         }
         usersRoot = new AbstractNode(new UserChildren(users));
@@ -87,7 +81,7 @@ public class UserManagerService {
     public void populateGroupsList() {
         LocalUserGroupObject[] groups = com.getGroups();
         if (groups == null){
-            umtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+            umtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             return;
         }
         //Do nothing if there are no groups
@@ -95,9 +89,7 @@ public class UserManagerService {
             return;
         groupsTableModel = new NodeTableModel();
         if (groups == null){
-            umtc.getNotifier().showSimplePopup(
-                    java.util.ResourceBundle.getBundle("org/inventory/core/usermanager/Bundle").
-                    getString("LBL_USERMANAGEMENT"), NotificationUtil.ERROR, com.getError());
+            umtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             groups = new LocalUserGroupObject[0];
         }
         groupsRoot = new AbstractNode(new GroupChildren(groups));

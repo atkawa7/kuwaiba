@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.management.software.nodes;
 
-import org.kuwaiba.management.software.nodes.actions.CreateSoftwareAssetAction;
 import java.awt.Image;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;

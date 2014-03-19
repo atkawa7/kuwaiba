@@ -21,7 +21,6 @@ import org.inventory.communications.core.LocalApplicationLogEntry;
 import org.inventory.core.history.windows.ObjectAuditTrailTopComponent;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.TopComponent;
 
@@ -40,10 +39,9 @@ public final class ShowObjectAuditTrailAction extends GenericObjectNodeAction {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         LocalApplicationLogEntry[] entries = com.getBusinessObjectAuditTrail(object.getClassName(), object.getOid());
         if (entries == null)
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
             TopComponent tc = new ObjectAuditTrailTopComponent(object, entries);
             tc.open();

@@ -25,23 +25,16 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.visual.menu.ObjectWidgetMenu;
 import org.inventory.core.visual.widgets.AbstractScene;
 import org.inventory.core.visual.widgets.TagLabelWidget;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.views.gis.scene.providers.AcceptActionProvider;
 import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.PointShape;
-import org.netbeans.api.visual.model.ObjectSceneEvent;
-import org.netbeans.api.visual.model.ObjectSceneEventType;
-import org.netbeans.api.visual.model.ObjectSceneListener;
-import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.ComponentWidget;
 import org.netbeans.api.visual.widget.ConnectionWidget;
@@ -49,8 +42,6 @@ import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
-import org.openide.util.lookup.Lookups;
-import org.openide.util.lookup.ProxyLookup;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
@@ -78,25 +69,9 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
      */
     private LayerWidget mapLayer;
     /**
-     * Layer to contain the nodes (poles, cabinets, etc)
-     */
-    private LayerWidget nodesLayer;
-    /**
-     * Layer to contain the connections (containers, links, etc)
-     */
-    private LayerWidget edgesLayer;
-    /**
-     * Layer to contain additional labels (free text)
-     */
-    private LayerWidget labelsLayer;
-    /**
      * Layer to contain polylines
      */
     //private LayerWidget polygonsLayer;
-    /**
-     * Layer to support the creation of connections
-     */
-    private LayerWidget interactionLayer;
     /**
      * The map itself
      */
@@ -118,45 +93,12 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
      */
     private PhysicalConnectionProvider connectionProvider;
     
-    /**
-     * Scene lookup
-     */
-    private SceneLookup lookup;  
+    
 
     public GISViewScene(JMapViewer map) {
+        super();
         this.map = map;
-        this.map.addMouseListener(new MouseListener() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                for (MouseListener ml : getView().getMouseListeners())
-                    ml.mouseClicked(e);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                for (MouseListener ml : getView().getMouseListeners())
-                    ml.mousePressed(e);
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                for (MouseListener ml : getView().getMouseListeners())
-                    ml.mouseReleased(e);
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                for (MouseListener ml : getView().getMouseListeners())
-                    ml.mouseEntered(e);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                for (MouseListener ml : getView().getMouseListeners())
-                    ml.mouseExited(e);
-            }
-        });
+        this.map.addMouseListener(new MouseEventsForwarder());
         
         this.map.addJMVListener(new JMapViewerEventListener() {
 
@@ -195,32 +137,9 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
         mapLayer.addChild(mapWidget);
         addDependency(mapWidget);
         
-        this.lookup = new SceneLookup(Lookup.EMPTY);
-        this.defaultPopupMenuProvider = new ObjectWidgetMenu();
-
-        addObjectSceneListener(new ObjectSceneListener() {
-            @Override
-            public void objectAdded(ObjectSceneEvent event, Object addedObject) { }
-            @Override
-            public void objectRemoved(ObjectSceneEvent event, Object removedObject) {}
-            @Override
-            public void objectStateChanged(ObjectSceneEvent event, Object changedObject, ObjectState previousState, ObjectState newState) {}
-            @Override
-            public void selectionChanged(ObjectSceneEvent event, Set<Object> previousSelection, Set<Object> newSelection) {
-                if (newSelection.size() == 1)
-                    lookup.updateLookup((LocalObjectLight)newSelection.iterator().next());
-            }
-            @Override
-            public void highlightingChanged(ObjectSceneEvent event, Set<Object> previousHighlighting, Set<Object> newHighlighting) {}
-            @Override
-            public void hoverChanged(ObjectSceneEvent event, Object previousHoveredObject, Object newHoveredObject) {}
-            @Override
-            public void focusChanged(ObjectSceneEvent event, Object previousFocusedObject, Object newFocusedObject) {}
-        }, ObjectSceneEventType.OBJECT_SELECTION_CHANGED);
-        
+        this.defaultPopupMenuProvider = new ObjectWidgetMenu();        
         //Actions
         getActions().addAction(ActionFactory.createAcceptAction(new AcceptActionProvider(this)));
-        setActiveTool(AbstractScene.ACTION_SELECT);
         setOpaque(false);
     }
     
@@ -266,11 +185,6 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
     public JMapViewer getMap() {
         return map;
     }
-    
-    @Override
-    public Lookup getLookup(){
-        return this.lookup;
-    }
 
     /**
      * Called on a pan event
@@ -303,7 +217,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
         
         for (Widget node : nodesLayer.getChildren()){
             Coordinate geoPosition = getLastPosition(node.getPreferredLocation().x, node.getPreferredLocation().y);
-            Point newLocation = map.getMapPosition(geoPosition, true);
+            Point newLocation = map.getMapPosition(geoPosition, false);
             node.setPreferredLocation(newLocation);
         }
         for (Widget connection : edgesLayer.getChildren()){
@@ -325,14 +239,12 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
      * Cleans up the scene and release resources
      */
     public void clear() {
-        List<LocalObjectLight> clonedNodes = new ArrayList(getNodes());
-        List<LocalObjectLight> clonedEdges = new ArrayList(getEdges());
 
-        for (LocalObjectLight node : clonedNodes)
-            removeNode(node); //RemoveNodeWithEdges didn't work
+        while (!getNodes().isEmpty())
+            removeNode(getNodes().iterator().next());
 
-        for (LocalObjectLight edge : clonedEdges)
-            removeEdge(edge);
+        while (!getEdges().isEmpty())
+            removeNode(getEdges().iterator().next());
         
         labelsLayer.removeChildren();
         
@@ -344,6 +256,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
         //polygonsLayer.removeChildren();
     }
 
+    @Override
     public byte[] getAsXML() {
         ByteArrayOutputStream bas = new ByteArrayOutputStream();
         WAX xmlWriter = new WAX(bas);
@@ -392,7 +305,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
     
     public void toggleLabels(boolean visible){
         labelsLayer.setVisible(visible);
-        repaint();
+        getView().repaint();
     }
     
     /**
@@ -409,25 +322,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
         double lat = map.getTileController().getTileSource().YToLat(y, lastZoomLevel);
         return new Coordinate(lat, lon);
     }
-    
-    /**
-     * Helper class to let us launch a lookup event every time a widget is selected
-     */
-    private class SceneLookup extends ProxyLookup{
-
-        public SceneLookup(Lookup initialLookup) {
-            super(initialLookup);
-        }
-
-        public void updateLookup(Lookup newLookup){
-            setLookups(newLookup);
-        }
-
-        public void updateLookup(LocalObjectLight newElement){
-            setLookups(Lookups.singleton(new ObjectNode(newElement)));
-        }
-    }
-    
+       
     /**
      * Inner class to wrap the map panel and handle scene resize/relocation events
      */
@@ -470,6 +365,42 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
         @Override
         public TileCache getTileCache() {
             return null;
+        }
+    }
+    
+    /**
+     * Class used to forward the mouse events captures by the map component, since they're not
+     * reaching the scene
+     */
+    private class MouseEventsForwarder implements MouseListener {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            for (MouseListener ml : getView().getMouseListeners())
+                ml.mouseClicked(e);
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            for (MouseListener ml : getView().getMouseListeners())
+                ml.mousePressed(e);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            for (MouseListener ml : getView().getMouseListeners())
+                ml.mouseReleased(e);
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            for (MouseListener ml : getView().getMouseListeners())
+                ml.mouseEntered(e);
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            for (MouseListener ml : getView().getMouseListeners())
+                ml.mouseExited(e);
         }
     }
 }

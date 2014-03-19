@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import javax.swing.ActionMap;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
@@ -176,5 +177,9 @@ public final class PoolsTopComponent extends TopComponent implements ExplorerMan
             setRoot();
             revalidate();
         }
+    }
+
+    public NotificationUtil getNotifier() {
+        return NotificationUtil.getInstance();
     }
 }

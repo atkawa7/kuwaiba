@@ -23,7 +23,6 @@ import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 
 /**
  * Action to delete a class metadata
@@ -43,16 +42,16 @@ public class DeleteClassAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent ae) {
         LocalClassMetadata classMetaData = com.getMetaForClass(node.getClassMetadata().getClassName(), false);
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
+
         if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this class?", 
                 "Data integrity", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
             return;
         
             if (com.deleteClassMetadata(classMetaData.getOid())){
                 node.getParentNode().getChildren().remove(new Node[]{node});
-                nu.showSimplePopup("Operation Result", NotificationUtil.INFO, "The class was deleted successfully");
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The class was deleted successfully");
             }
             else
-                nu.showSimplePopup("Operation Result", NotificationUtil.ERROR, com.getError());
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
     }
 }

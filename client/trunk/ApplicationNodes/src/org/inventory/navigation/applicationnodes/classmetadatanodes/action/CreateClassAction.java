@@ -23,7 +23,6 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 
 /**
  * Action that requests a metadata class creation
@@ -51,17 +50,17 @@ public class CreateClassAction extends AbstractAction {
         if (className == null)
             return;
         
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         long classId = com.createClassMetadata(className, "","", node.getClassMetadata().getClassName(), 
                 true, true, 0, false, true);
         if (classId == -1)
-            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR,
+            NotificationUtil.getInstance().showSimplePopup(java.util.
+                    ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.ERROR_MESSAGE,
                     com.getError());
         else{
             LocalClassMetadataLight lcml = new LocalClassMetadataLight(classId, className, 
                     className, null, false, true, false, true, true, null, null);
             node.getChildren().add(new Node[]{new ClassMetadataNode(lcml)});
-            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO,
+            NotificationUtil.getInstance().showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO_MESSAGE,
                     java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CLASS_CREATED"));
         }
     }

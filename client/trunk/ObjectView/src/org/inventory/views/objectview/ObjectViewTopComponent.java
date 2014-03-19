@@ -19,7 +19,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
@@ -29,10 +28,8 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.core.visual.widgets.AbstractScene;
 import org.inventory.views.objectview.dialogs.FormatTextPanel;
-import org.inventory.views.objectview.scene.ObjectConnectionWidget;
-import org.inventory.views.objectview.scene.ObjectNodeWidget;
 import org.inventory.views.objectview.scene.ViewScene;
 import org.openide.explorer.ExplorerManager;
 import org.openide.util.NbBundle;
@@ -40,13 +37,10 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.openide.util.ImageUtilities;
 import org.netbeans.api.settings.ConvertAsProperties;
-import org.netbeans.api.visual.widget.Widget;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.explorer.ExplorerManager.Provider;
 import org.openide.explorer.ExplorerUtils;
-import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 
 /**
  * This component renders the views associated to an object
@@ -68,17 +62,14 @@ public final class ObjectViewTopComponent extends TopComponent
     public static final int CONNECTION_WIRELESSLINK = 5;
     
 
-    private Font currentFont = ObjectNodeWidget.defaultFont;
-    private Color currentColor = Color.black;
+    private Font currentFont = AbstractScene.defaultFont;
+    private Color currentColor = AbstractScene.defaultForegroundColor;
     private ButtonGroup buttonGroupUpperToolbar;
     private ButtonGroup buttonGroupRightToolbar;
-    private NotificationUtil nu;
 
     private ExplorerManager em = new ExplorerManager();
     private ObjectViewService vrs;
     
-    //Ugly workaround since for some reason, lookup is not working properñy
-    private ArrayList<ActionListener> selectionListeners;
     /**
      * To warn the user if the view has not been saved yet
      */
@@ -94,7 +85,6 @@ public final class ObjectViewTopComponent extends TopComponent
         setName(NbBundle.getMessage(ObjectViewTopComponent.class, "CTL_ObjectViewTopComponent"));
         setToolTipText(NbBundle.getMessage(ObjectViewTopComponent.class, "HINT_ObjectViewTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
-        this.selectionListeners = new ArrayList<ActionListener>();
     }
 
     public final void initCustomComponents(){
@@ -143,7 +133,6 @@ public final class ObjectViewTopComponent extends TopComponent
         btnZoomOut = new javax.swing.JButton();
         btnExport = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
-        btnExplore = new javax.swing.JButton();
         cmbViewType = new javax.swing.JComboBox();
         pnlScrollMain = new javax.swing.JScrollPane();
         pnlRight = new javax.swing.JPanel();
@@ -312,20 +301,6 @@ public final class ObjectViewTopComponent extends TopComponent
         });
         barMain.add(btnRefresh);
 
-        btnExplore.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/explore.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnExplore, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnExplore.text")); // NOI18N
-        btnExplore.setToolTipText(org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnExplore.toolTipText")); // NOI18N
-        btnExplore.setEnabled(false);
-        btnExplore.setFocusable(false);
-        btnExplore.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnExplore.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnExplore.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnExploreActionPerformed(evt);
-            }
-        });
-        barMain.add(btnExplore);
-
         cmbViewType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Default View" }));
         barMain.add(cmbViewType);
 
@@ -437,27 +412,27 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_btnRemoveBackgroundActionPerformed
 
     private void btnElectricalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnElectricalLinkActionPerformed
-        scene.getConnectionProvider().setCurrentLineColor(ObjectConnectionWidget.COLOR_ELECTRICALLINK);
+        scene.getConnectionProvider().setCurrentLineColor(Color.ORANGE);
         scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_ELECTRICALLINK);
     }//GEN-LAST:event_btnElectricalLinkActionPerformed
 
     private void btnOpticalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpticalLinkActionPerformed
-        scene.getConnectionProvider().setCurrentLineColor(ObjectConnectionWidget.COLOR_OPTICALLINK);
+        scene.getConnectionProvider().setCurrentLineColor(Color.GREEN);
         scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_OPTICALLINK);
     }//GEN-LAST:event_btnOpticalLinkActionPerformed
 
     private void btnWirelessLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessLinkActionPerformed
-        scene.getConnectionProvider().setCurrentLineColor(ObjectConnectionWidget.COLOR_WIRELESSLINK);
+        scene.getConnectionProvider().setCurrentLineColor(Color.MAGENTA);
         scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_WIRELESSLINK);
     }//GEN-LAST:event_btnWirelessLinkActionPerformed
 
     private void btnWireContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWireContainerActionPerformed
-        scene.getConnectionProvider().setCurrentLineColor(ObjectConnectionWidget.COLOR_WIRE);
+        scene.getConnectionProvider().setCurrentLineColor(Color.RED);
         scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_WIRECONTAINER);
     }//GEN-LAST:event_btnWireContainerActionPerformed
 
     private void btnWirelessContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessContainerActionPerformed
-        scene.getConnectionProvider().setCurrentLineColor(ObjectConnectionWidget.COLOR_WIRELESS);
+        scene.getConnectionProvider().setCurrentLineColor(Color.BLUE);
         scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_WIRELESSCONTAINER);
     }//GEN-LAST:event_btnWirelessContainerActionPerformed
 
@@ -483,22 +458,15 @@ public final class ObjectViewTopComponent extends TopComponent
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == DialogDescriptor.OK_OPTION){
-                    if (pnlFormat.getNodesFontColor() != null)
-                        currentColor = pnlFormat.getNodesFontColor();
 
-                    if (pnlFormat.getNodesFontSize() != -1)
+                    if (pnlFormat.getNodesFontSize() != -1){
                         currentFont = currentFont.deriveFont(Float.valueOf(pnlFormat.getNodesFontSize()+".0")); //NOI18N
+                        scene.setSceneFont(currentFont);
+                    }
 
-                    for (Widget node : scene.getNodesLayer().getChildren()){
-                        if (pnlFormat.getNodesFontColor() != null)
-                            ((ObjectNodeWidget)node).getLabelWidget().setForeground(pnlFormat.getNodesFontColor());
-
-                        if (pnlFormat.getNodesFontSize() != -1){
-                            Font newFont = new Font(((ObjectNodeWidget)node).getLabelWidget().getFont().getFontName(),
-                                    ((ObjectNodeWidget)node).getLabelWidget().getFont().getStyle(),
-                                    pnlFormat.getNodesFontSize());
-                            ((ObjectNodeWidget)node).getLabelWidget().setFont(newFont);
-                        }
+                    if (pnlFormat.getNodesFontColor() != null){
+                        currentColor = pnlFormat.getNodesFontColor();
+                        scene.setSceneForegroundColor(pnlFormat.getNodesFontColor());
                     }
                 }
             }
@@ -507,18 +475,8 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_btnFormatTextActionPerformed
 
     private void btnShowNodeLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodeLabelsActionPerformed
-        for (Widget node : scene.getNodesLayer().getChildren())
-            ((ObjectNodeWidget)node).getLabelWidget().setVisible(!btnShowNodeLabels.isSelected());
-        scene.validate();
+        scene.toggleLabels(!btnShowNodeLabels.isSelected());
     }//GEN-LAST:event_btnShowNodeLabelsActionPerformed
-
-    private void btnExploreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExploreActionPerformed
-        TopComponent tc  = WindowManager.getDefault().findTopComponent("SpecialObjectExplorerTopComponent");
-        if (!selectionListeners.contains(tc))
-            selectionListeners.add((ActionListener)tc);
-        tc.open();
-        tc.requestActive();   
-    }//GEN-LAST:event_btnExploreActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barConnections;
@@ -527,7 +485,6 @@ public final class ObjectViewTopComponent extends TopComponent
     private javax.swing.JButton btnAddBackgroundImage;
     private javax.swing.JToggleButton btnConnect;
     private javax.swing.JToggleButton btnElectricalLink;
-    private javax.swing.JButton btnExplore;
     private javax.swing.JButton btnExport;
     private javax.swing.JButton btnFormatText;
     private javax.swing.JToggleButton btnOpticalLink;
@@ -592,7 +549,6 @@ public final class ObjectViewTopComponent extends TopComponent
         vrs.terminateLookupListener();
         scene.removeActionListener(this);
         scene.clear();
-        selectionListeners.clear();
     }
 
     void writeProperties(java.util.Properties p) {
@@ -628,9 +584,7 @@ public final class ObjectViewTopComponent extends TopComponent
     }
 
     public NotificationUtil getNotifier(){
-        if (nu == null)
-            nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        return nu;
+        return NotificationUtil.getInstance();
     }
 
     public ViewScene getScene(){
@@ -640,8 +594,8 @@ public final class ObjectViewTopComponent extends TopComponent
     @Override
     public String getDisplayName(){
         if (super.getDisplayName() == null)
-            return "Untitled view";
-        return super.getDisplayName().trim().equals("") ? "Untitled view" : super.getDisplayName();
+            return "<No View>";
+        return super.getDisplayName().trim().equals("") ? "<No view>" : super.getDisplayName();
     }
 
     public boolean isSaved() {
@@ -672,21 +626,16 @@ public final class ObjectViewTopComponent extends TopComponent
                 break;
             case ViewScene.SCENE_CHANGETOSAVE:
                 btnSaveActionPerformed(e);
-                nu.showSimplePopup("Object View", NotificationUtil.INFO, "The view has been saved automatically");
-                break;
-            case ViewScene.SCENE_OBJECTSELECTED:
-                setActivatedNodes(new Node[]{(ObjectNode)e.getSource()});
-                for (ActionListener selectionListener : selectionListeners)
-                    selectionListener.actionPerformed(new ActionEvent((ObjectNode)e.getSource(), 0, ""));
+                NotificationUtil.getInstance().showSimplePopup("Object View", NotificationUtil.INFO_MESSAGE, "The view has been saved automatically");
         }
     }
 
     public boolean checkForUnsavedView(boolean showCancel) {
         if (!isSaved){
             switch (JOptionPane.showConfirmDialog(null, "This view has not been saved, do you want to save it?",
-                    "Confirmation",showCancel?JOptionPane.YES_NO_CANCEL_OPTION:JOptionPane.YES_NO_OPTION)){
+                    "Confirmation",showCancel ? JOptionPane.YES_NO_CANCEL_OPTION : JOptionPane.YES_NO_OPTION)){
                 case JOptionPane.YES_OPTION:
-                    btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
+                    btnSaveActionPerformed(null);
                     break;
                 case JOptionPane.CANCEL_OPTION:
                     return false;
@@ -713,6 +662,5 @@ public final class ObjectViewTopComponent extends TopComponent
         btnFormatText.setEnabled(enabled);
         btnRefresh.setEnabled(enabled);
         btnShowNodeLabels.setEnabled(enabled);
-        btnExplore.setEnabled(enabled);
     }
 }

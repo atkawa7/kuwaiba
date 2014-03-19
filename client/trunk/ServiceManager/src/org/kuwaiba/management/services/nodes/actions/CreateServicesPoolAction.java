@@ -29,7 +29,6 @@ import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.kuwaiba.management.services.nodes.CustomerNode;
 import org.kuwaiba.management.services.nodes.ServiceManagerRootNode;
 import org.kuwaiba.management.services.nodes.ServicesPoolNode;
-import org.openide.util.Lookup;
 
 /**
  * Creates a new services pool
@@ -63,7 +62,6 @@ public class CreateServicesPoolAction extends GenericObjectNodeAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
 
         JTextField txtName = new JTextField(), txtDescription =  new JTextField();
         txtName.setName("txtName"); //NOI18N
@@ -83,11 +81,11 @@ public class CreateServicesPoolAction extends GenericObjectNodeAction {
                     ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), "GenericService");
                     
             if (newPool ==  null)
-                nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATION_ERROR"), NotificationUtil.ERROR, com.getError());
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else{
                 if(object != null){
                     customerNode.getChildren().add(new ServicesPoolNode[]{new ServicesPoolNode(newPool)});
-                    nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
+                    NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
                 }
             }
         }
@@ -95,6 +93,6 @@ public class CreateServicesPoolAction extends GenericObjectNodeAction {
 
     @Override
     public String getValidator() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 }

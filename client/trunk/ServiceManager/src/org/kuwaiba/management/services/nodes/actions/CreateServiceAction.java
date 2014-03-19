@@ -30,7 +30,6 @@ import org.kuwaiba.management.services.nodes.ServiceNode;
 import org.kuwaiba.management.services.nodes.ServicesPoolNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 import org.openide.util.actions.Presenter;
 
 /**
@@ -61,15 +60,15 @@ public class CreateServiceAction extends GenericObjectNodeAction implements Pres
             if (newService != null)
                 customerNode.getChildren().add(new ServiceNode[] {new ServiceNode(newService)});
             else
-                Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
         else if(poolNode != null && poolNode instanceof ServicesPoolNode){
             LocalObjectLight newService = CommunicationsStub.getInstance().createPoolItem(poolNode.getObject().getOid(), ((JMenuItem)e.getSource()).getName());
             if (newService == null)
-                Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATION_ERROR"), NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else{
                 poolNode.getChildren().add(new ServiceNode[]{new ServiceNode(newService)});
-                Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
             }
         }
         else if(poolNode != null && poolNode instanceof CustomersPoolNode){
@@ -83,8 +82,7 @@ public class CreateServiceAction extends GenericObjectNodeAction implements Pres
                 if (newService != null)
                     poolCustomer.getChildren().add(new ServiceNode[] {new ServiceNode(newService)});
                 else
-                    Lookup.getDefault().lookup(NotificationUtil.class).showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
-                
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
         }
     }

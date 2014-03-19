@@ -25,7 +25,7 @@ import org.inventory.core.usermanager.UserManagerService;
  * This action updates the user or group list
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class UpdateList extends AbstractAction{
+public class UpdateListAction extends AbstractAction{
 
     /**
      * Reference to the tabbed panel just to know which tab is focused
@@ -36,7 +36,7 @@ public class UpdateList extends AbstractAction{
      */
     private UserManagerService ums;
 
-    public UpdateList(JTabbedPane _tabbedPane, UserManagerService _ums){
+    public UpdateListAction(JTabbedPane _tabbedPane, UserManagerService _ums){
         this.tabbedPanel = _tabbedPane;
         this.ums = _ums;
     }

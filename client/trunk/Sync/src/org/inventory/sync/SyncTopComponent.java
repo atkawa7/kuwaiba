@@ -130,8 +130,7 @@ public final class SyncTopComponent extends TopComponent {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         ss.loadFile(choosenFile);
         NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/sync/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO,
-                    java.util.ResourceBundle.getBundle("org/inventory/sync/Bundle").getString("LBL_CREATED"));
+        nu.showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/inventory/sync/Bundle").getString("LBL_CREATED"));
         ss.downloadErrors();
         ss.downloadLog();
         if(ss.getWrongLinesResults().length>1 || ss.getLogResults().length>1){

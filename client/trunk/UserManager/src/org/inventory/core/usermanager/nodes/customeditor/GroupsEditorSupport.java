@@ -27,7 +27,6 @@ import org.inventory.communications.core.LocalUserObject;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
 import org.openide.explorer.propertysheet.PropertyEnv;
-import org.openide.util.Lookup;
 
 /**
  * This is the editor for changing the groups for a given users
@@ -56,14 +55,10 @@ public class GroupsEditorSupport extends PropertyEditorSupport
      * Reference to the user that is being edited
      */
     private LocalUserObject user;
-    /**
-     * Reference to the NotificationUtil instance
-     */
-    private NotificationUtil nu;
+    
     public GroupsEditorSupport(LocalUserGroupObjectLight[] allGroups, LocalUserObject user){
         this.allGroups = allGroups;
         this.com = CommunicationsStub.getInstance();
-        this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
         this.user = user;
     }
 
@@ -106,7 +101,7 @@ public class GroupsEditorSupport extends PropertyEditorSupport
         if(evt.getNewValue().equals(PropertyEnv.STATE_VALID)){
             boolean success = com.setUserProperties(this.user.getOid(), null, null, null, null, myPanel.toBeAdded());
             if (!success)
-                nu.showSimplePopup("User Update", NotificationUtil.ERROR, com.getError());
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else
                 user.setGroups(myPanel.getSelectedGroups());
             

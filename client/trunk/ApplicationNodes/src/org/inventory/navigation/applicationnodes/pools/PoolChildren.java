@@ -22,7 +22,6 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 
 /**
  * Children for pool nodes
@@ -39,14 +38,10 @@ public class PoolChildren extends Children.Array{
     public void addNotify(){
         List<LocalObjectLight> items = CommunicationsStub.getInstance().getPoolItems(pool.getOid());
         if (items == null)
-            Lookup.getDefault().lookup(NotificationUtil.class).
-                        showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
-            for (LocalObjectLight item : items){
-                ObjectNode newNode = new ObjectNode(item);
-                remove(new Node[]{newNode});
-                add(new Node[]{newNode});
-           }
+            for (LocalObjectLight item : items)
+                add(new Node[]{new ObjectNode(item)});
         }
     }
 }

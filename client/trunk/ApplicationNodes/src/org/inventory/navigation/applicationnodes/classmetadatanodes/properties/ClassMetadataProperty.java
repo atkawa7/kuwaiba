@@ -26,7 +26,6 @@ import org.inventory.communications.core.caching.Cache;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
 import org.openide.nodes.PropertySupport.ReadWrite;
-import org.openide.util.Lookup;
 
 /**
  * ClassMetadata properties
@@ -78,8 +77,7 @@ public class ClassMetadataProperty extends ReadWrite {
             Cache.getInstace().resetAll();
             
         }catch(Exception e){
-            NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-            nu.showSimplePopup("Class update", NotificationUtil.ERROR, e.getMessage());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, e.getMessage());
         }
     }
 

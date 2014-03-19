@@ -29,7 +29,6 @@ import org.inventory.communications.util.Constants;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.PropertySupport.ReadWrite;
-import org.openide.util.Lookup;
 
 /**
  * Provides a valid representation of LocalObjects attributes as Properties,
@@ -95,8 +94,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
             if (node instanceof ListTypeItemNode)
                 CommunicationsStub.getInstance().getList(node.getObject().getClassName(), true, true);
         }catch(Exception e){
-            NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-            nu.showSimplePopup("Object update", NotificationUtil.ERROR, "An error occurred while updating this object: "+e.getMessage());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "An error occurred while updating this object: "+e.getMessage());
         }
     }
 

@@ -18,10 +18,6 @@ package org.inventory.navigation.applicationnodes.objectnodes;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
-import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.inventory.navigation.applicationnodes.objectnodes.SpecialNode;
-import org.openide.util.Lookup;
 
 /**
  * Children to SpecialNodes
@@ -38,13 +34,11 @@ public class SpecialChildren extends ObjectChildren {
         LocalObjectLight[] specialChildren = CommunicationsStub.getInstance().
                 getObjectSpecialChildren(parentObject.getClassName(), parentObject.getOid());
         if (specialChildren == null){
-            NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-            nu.showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
             
         for (LocalObjectLight lol : specialChildren)
             add(new SpecialNode[]{new SpecialNode(lol)});
-
     }
 }

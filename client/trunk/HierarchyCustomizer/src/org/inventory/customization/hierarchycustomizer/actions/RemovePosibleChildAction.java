@@ -22,24 +22,22 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataChildren;
 import org.inventory.customization.hierarchycustomizer.nodes.ClassMetadataNode;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 
 /**
  * Implements the "remove a class from container hierarchy" action
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class Remove extends AbstractAction{
+public class RemovePosibleChildAction extends AbstractAction{
 
     ClassMetadataNode node;
 
-    public Remove(){}
-    public Remove(ClassMetadataNode _node){
+    public RemovePosibleChildAction(){}
+    public RemovePosibleChildAction(ClassMetadataNode node){
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_REMOVE"));
-        this.node = _node;
+        this.node = node;
     }
 
     public void actionPerformed(ActionEvent e) {
-        NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
         CommunicationsStub com = CommunicationsStub.getInstance();
         if (com.removePossibleChildren(
                 ((ClassMetadataNode)node.getParentNode()).getObject().getOid(),new long[]{node.getObject().getOid()})){
@@ -47,12 +45,10 @@ public class Remove extends AbstractAction{
             ((ClassMetadataChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
             com.refreshCache(false, false, false, true);
 
-            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
-                    NotificationUtil.INFO,
+            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
                     java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TEXT"));
         }
         else
-            nu.showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_HIERARCHY_UPDATE_TITLE"),
-                    NotificationUtil.INFO,com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,com.getError());
     }
 }

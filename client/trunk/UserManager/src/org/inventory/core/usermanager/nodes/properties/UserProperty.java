@@ -85,7 +85,7 @@ public class UserProperty extends ReadWrite{
         
         if(!success){
             NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-            nu.showSimplePopup("User Update", NotificationUtil.ERROR, com.getError());
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         }else
             this.value = t;
     }
@@ -113,13 +113,11 @@ public class UserProperty extends ReadWrite{
     }
 
     /**
-     * I don't like this workaround, but as described in the setValue method, this is while 
+     * I don't like this workaround, but as described in the setValue method, this is just temporary
      * @param passwd a String with the password to be set for this user
      */
     public void setPassword(String passwd) {
-        if(!com.setUserProperties(user.getOid(), null, passwd, null, null, null)){
-            NotificationUtil nu = Lookup.getDefault().lookup(NotificationUtil.class);
-            nu.showSimplePopup("User Update", NotificationUtil.ERROR, com.getError());
-        }
+        if(!com.setUserProperties(user.getOid(), null, passwd, null, null, null))
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
     }
 }

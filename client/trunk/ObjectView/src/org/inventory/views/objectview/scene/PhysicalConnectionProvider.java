@@ -22,14 +22,14 @@ import java.awt.event.ActionEvent;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.wizards.physicalconnections.ConnectionWizard;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.visual.widgets.AbstractConnectionWidget;
+import org.inventory.core.visual.widgets.AbstractNodeWidget;
 import org.inventory.views.objectview.ObjectViewTopComponent;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
-import org.netbeans.api.visual.widget.general.IconNodeWidget;
-import org.openide.util.Lookup;
 
 /**
  * This class controls the physical connections behavior
@@ -45,14 +45,6 @@ public class PhysicalConnectionProvider implements ConnectProvider {
      * Says what button is selected
      */
     private int currentConnectionSelection;
-    /**
-     * Reference to the common notifier
-     */
-    private NotificationUtil nu;
-
-    public PhysicalConnectionProvider(){
-        this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
-    }
 
     /**
      * Gets the current line color
@@ -79,7 +71,7 @@ public class PhysicalConnectionProvider implements ConnectProvider {
 
     @Override
     public ConnectorState isTargetWidget(Widget sourceWidget, Widget targetWidget) {
-        if (sourceWidget != targetWidget && targetWidget instanceof IconNodeWidget)
+        if (sourceWidget != targetWidget && targetWidget instanceof AbstractNodeWidget)
             return ConnectorState.ACCEPT;
 
         return ConnectorState.REJECT;
@@ -121,19 +113,19 @@ public class PhysicalConnectionProvider implements ConnectProvider {
                 wizardType = ConnectionWizard.WIZARDTYPE_CONNECTIONS;
                 break;
             default:
-                nu.showSimplePopup("Create Connection", NotificationUtil.ERROR, "No connection type is selected");
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "No connection type is selected");
                 return;
         }
 
-        ConnectionWizard myWizard =new ConnectionWizard(wizardType,((ObjectNodeWidget)sourceWidget).getObject(),
-                ((ObjectNodeWidget)targetWidget).getObject(), connectionClass,
+        ConnectionWizard myWizard =new ConnectionWizard(wizardType,((AbstractNodeWidget)sourceWidget).getObject(),
+                ((AbstractNodeWidget)targetWidget).getObject(), connectionClass,
                 ((ViewScene)sourceWidget.getScene()).getCurrentObject());
         
         myWizard.show();
         if (myWizard.getNewConnection() != null){
 
             ViewScene scene =(ViewScene)sourceWidget.getScene();
-            ObjectConnectionWidget line = (ObjectConnectionWidget)scene.addEdge(myWizard.getNewConnection());
+            AbstractConnectionWidget line = (AbstractConnectionWidget)scene.addEdge(myWizard.getNewConnection());
 
             line.setTargetAnchor(AnchorFactory.createCenterAnchor(targetWidget));
             line.setSourceAnchor(AnchorFactory.createCenterAnchor(sourceWidget));

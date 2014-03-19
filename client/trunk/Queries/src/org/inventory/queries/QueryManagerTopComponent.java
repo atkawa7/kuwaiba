@@ -41,7 +41,6 @@ import org.openide.windows.WindowManager;
 import org.openide.util.ImageUtilities;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
-import org.openide.util.Lookup;
 
 /**
  * Query manager Top component 
@@ -53,7 +52,6 @@ public final class QueryManagerTopComponent extends TopComponent implements Acti
     static final String ICON_PATH = "org/inventory/queries/res/icon2.png";
     private static final String PREFERRED_ID = "QueryManagerTopComponent";
     private QueryEditorScene queryScene;
-    private NotificationUtil nu;
     private QueryManagerService qbs;
     private ButtonGroup grpLogicalConnector;
     private boolean isSaved = true;
@@ -307,6 +305,7 @@ public final class QueryManagerTopComponent extends TopComponent implements Acti
             final QueryListPanel qlp = new QueryListPanel(queries);
             DialogDescriptor dd = new DialogDescriptor(qlp,
                     "Choose a query", true, new ActionListener() {
+                        @Override
                                 public void actionPerformed(ActionEvent e) {
                                     if (e.getSource() == DialogDescriptor.OK_OPTION){
                                         if (checkForUnsavedQuery(true)){
@@ -333,6 +332,7 @@ public final class QueryManagerTopComponent extends TopComponent implements Acti
                                         (String)qbs.getQueryProperties()[1],(Boolean)qbs.getQueryProperties()[2]);
             DialogDescriptor dd = new DialogDescriptor(cqp,
                     "Set query settings", true, new ActionListener() {
+                        @Override
                                 public void actionPerformed(ActionEvent e){
                                     if (e.getSource() == DialogDescriptor.OK_OPTION)
                                         qbs.setQueryProperties(cqp.getValues());
@@ -478,9 +478,7 @@ public final class QueryManagerTopComponent extends TopComponent implements Acti
     }
 
     public NotificationUtil getNotifier(){
-        if (nu == null)
-            return Lookup.getDefault().lookup(NotificationUtil.class);
-        return null;
+        return NotificationUtil.getInstance();
     }
 
     public QueryEditorScene getQueryScene() {
@@ -504,6 +502,7 @@ public final class QueryManagerTopComponent extends TopComponent implements Acti
      * Called when a different item within the class list is selected
      * @param e
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (!checkForUnsavedQuery(true))
             return;

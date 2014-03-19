@@ -39,7 +39,6 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.explorer.ExplorerManager;
-import org.openide.util.Lookup;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 
 /**
@@ -64,7 +63,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     private static final String PREFERRED_ID = "GISViewTopComponent";
     private GISViewService gvs;
     private boolean isSaved = false;
-    private NotificationUtil nu;
+
     /**
      * Main scene
      */
@@ -348,11 +347,11 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnZoomInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomInActionPerformed
-        //scene.zoomIn();
+        pnlMap.zoomIn();
     }//GEN-LAST:event_btnZoomInActionPerformed
 
     private void btnZoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomOutActionPerformed
-        //scene.zoomOut();
+        pnlMap.zoomOut();
     }//GEN-LAST:event_btnZoomOutActionPerformed
 
     private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
@@ -399,6 +398,8 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         scene.clear();
         scene.setEnabled(true);
         pnlMap.setVisible(true);
+        pnlMap.setEnabled(false);
+        scene.revalidate();
         gvs.setCurrentView(null);
         toggleButtons(true);
     }//GEN-LAST:event_btnNewActionPerformed
@@ -430,7 +431,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
                         scene.setEnabled(true);
                         pnlMap.setVisible(true);
                     }catch(Exception ex){
-                        getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, ex.getMessage());
+                        getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
                     }
                 }
             }
@@ -568,8 +569,6 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }
 
     public NotificationUtil getNotifier(){
-        if (nu == null)
-            nu = Lookup.getDefault().lookup(NotificationUtil.class);
-        return nu;
+        return NotificationUtil.getInstance();
     }
 }

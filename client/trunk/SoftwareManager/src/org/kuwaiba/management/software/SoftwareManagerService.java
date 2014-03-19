@@ -36,7 +36,7 @@ public class SoftwareManagerService {
     public void setTreeRoot(){
         LocalObjectLight[] softwareAssets = com.getObjectsOfClassLight("GenericSoftwareAsset");
         if (softwareAssets == null)
-            this.smtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR, CommunicationsStub.getInstance().getError());
+            this.smtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else
             smtc.getExplorerManager().setRootContext(new SoftwareManagerRootNode(softwareAssets));
     }

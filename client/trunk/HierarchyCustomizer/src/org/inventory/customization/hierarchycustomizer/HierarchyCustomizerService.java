@@ -47,8 +47,7 @@ public class HierarchyCustomizerService{
         LocalClassMetadataLight[] allMeta;
         allMeta = com.getAllLightMeta(false);
         if (allMeta==null)
-           hctc.getNotifier().showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/customization/hierarchycustomizer/Bundle").getString("LBL_RETRIEVE_HIERARCHY_TEXT"),
-                        NotificationUtil.ERROR, com.getError());
+           hctc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
             //Build the lstClasses model, made out of all metadata
             //and the bTreeView model, made out of allMeta minus the abstract classes

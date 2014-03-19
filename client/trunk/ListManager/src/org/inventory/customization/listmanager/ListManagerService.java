@@ -36,7 +36,7 @@ public class ListManagerService {
     public LocalClassMetadataLight[] getInstanceableListTypes(){
         LocalClassMetadataLight[] res = com.getInstanceableListTypes();
         if (res == null){
-            lmtc.getNotifier().showSimplePopup("Tree Creation", NotificationUtil.ERROR, com.getError());
+            lmtc.getNotifier().showSimplePopup("Tree Creation", NotificationUtil.ERROR_MESSAGE, com.getError());
             return new LocalClassMetadataLight[0];
         }
         return res;

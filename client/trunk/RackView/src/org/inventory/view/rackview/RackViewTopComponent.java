@@ -28,7 +28,6 @@ import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
-import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
@@ -66,7 +65,6 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
         setName(Bundle.CTL_RackViewTopComponent());
         setToolTipText(Bundle.HINT_RackViewTopComponent());
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
-        this.nu = Lookup.getDefault().lookup(NotificationUtil.class);
         this.rvs = new RackViewService(this);
         scene = rvs.getScene();
         pnlScrollMain.setViewportView(scene.createView());
@@ -149,6 +147,6 @@ public final class RackViewTopComponent extends TopComponent implements Explorer
     }
     
     public NotificationUtil getNotifier(){
-        return nu;
+        return NotificationUtil.getInstance();
     }
 }

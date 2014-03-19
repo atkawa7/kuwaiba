@@ -32,10 +32,8 @@ import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
-import org.inventory.views.objectview.scene.ObjectNodeWidget;
 import org.inventory.views.objectview.scene.ViewBuilder;
 import org.inventory.views.objectview.scene.ViewScene;
-import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
@@ -142,18 +140,13 @@ public class ObjectViewService implements LookupListener{
            vrtc.getScene().clear();
            viewBuilder.buildView();
            if (defaultView.isDirty()){
-               vrtc.getNotifier().showSimplePopup("View changes", NotificationUtil.WARNING, "Some elements in the view has been deleted since the last time it was opened. They were removed");
+               vrtc.getNotifier().showSimplePopup("Information", NotificationUtil.WARNING_MESSAGE, "Some elements in the view has been deleted since the last time it was opened. They were removed");
                vrtc.getScene().fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGETOSAVE, "Removing old objects"));
                defaultView.setDirty(false);
            }
        }
-       for (Widget node : vrtc.getScene().getNodesLayer().getChildren()){
-           ((ObjectNodeWidget)node).getLabelWidget().setFont(vrtc.getCurrentFont());
-           ((ObjectNodeWidget)node).getLabelWidget().setForeground(vrtc.getCurrentColor());
-       }
        vrtc.getScene().validate();
-       vrtc.getScene().repaint();
-       vrtc.setDisplayName(myObject.getName() + " ["+myObject.getClassName()+"]");
+       vrtc.setDisplayName(myObject.toString());
     }
 
     private void disableView(){
@@ -179,7 +172,7 @@ public class ObjectViewService implements LookupListener{
                 vrtc.getScene().setBackgroundImage(myBackgroundImage);
                 vrtc.getScene().fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "Add Background"));
             } catch (IOException ex) {
-                vrtc.getNotifier().showSimplePopup("Image load", NotificationUtil.ERROR, ex.getMessage());
+                vrtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
             }
         }
     }  
@@ -197,13 +190,13 @@ public class ObjectViewService implements LookupListener{
                 vrtc.setHtmlDisplayName(vrtc.getDisplayName());
             }
             else{
-                vrtc.getNotifier().showSimplePopup("Object View", NotificationUtil.ERROR, com.getError());
+                vrtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             }
         }else{
             if (!com.updateObjectRelatedView(vrtc.getScene().getCurrentObject().getOid(),
                      vrtc.getScene().getCurrentObject().getClassName(), vrtc.getScene().getCurrentView().getId(),
-                    null, null,viewStructure, vrtc.getScene().getBackgroundImage())) //NOI18N
-                vrtc.getNotifier().showSimplePopup("Object View", NotificationUtil.ERROR, com.getError());
+                    null, null,viewStructure, vrtc.getScene().getBackgroundImage()))
+                vrtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else
                 vrtc.setHtmlDisplayName(vrtc.getDisplayName());
         }
