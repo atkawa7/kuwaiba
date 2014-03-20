@@ -90,6 +90,12 @@ public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalOb
         this.lookup = new SceneLookup(Lookup.EMPTY);
         setActiveTool(ACTION_SELECT);
     }
+    
+    public void toggleLabels(boolean visible){
+        labelsLayer.setVisible(visible);
+        if (getView() != null)
+            getView().repaint();
+    }
        
     @Override
     public Scene getExportable(){
@@ -108,7 +114,9 @@ public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalOb
             @Override
             public void objectRemoved(ObjectSceneEvent event, Object removedObject) {}
             @Override
-            public void objectStateChanged(ObjectSceneEvent event, Object changedObject, ObjectState previousState, ObjectState newState) {}
+            public void objectStateChanged(ObjectSceneEvent event, Object changedObject, ObjectState previousState, ObjectState newState) {
+                System.out.println("Hey!");
+            }
             @Override
             public void selectionChanged(ObjectSceneEvent event, Set<Object> previousSelection, Set<Object> newSelection) {
                 if (newSelection.size() == 1)
@@ -145,6 +153,16 @@ public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalOb
             aLabel.setBackground(getBackground());
     }
     
+    public void clear(){
+        while (!getNodes().isEmpty())
+            removeNode(getNodes().iterator().next());
+
+        while (!getEdges().isEmpty())
+            removeNode(getEdges().iterator().next());
+        
+        labelsLayer.removeChildren();
+        validate();
+    }
     
     @Override
     public Lookup getLookup(){

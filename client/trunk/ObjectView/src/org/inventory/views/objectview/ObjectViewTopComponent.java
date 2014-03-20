@@ -91,9 +91,8 @@ public final class ObjectViewTopComponent extends TopComponent
 
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
 
-        vrs = new ObjectViewService(this);
-
         scene = new ViewScene(getNotifier());
+        vrs = new ObjectViewService(scene, this);
 
         pnlScrollMain.setViewportView(scene.createView());
 
@@ -129,8 +128,6 @@ public final class ObjectViewTopComponent extends TopComponent
         btnSave = new javax.swing.JButton();
         btnSelect = new javax.swing.JToggleButton();
         btnConnect = new javax.swing.JToggleButton();
-        btnZoomIn = new javax.swing.JButton();
-        btnZoomOut = new javax.swing.JButton();
         btnExport = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
         cmbViewType = new javax.swing.JComboBox();
@@ -245,33 +242,6 @@ public final class ObjectViewTopComponent extends TopComponent
             }
         });
         barMain.add(btnConnect);
-
-        btnZoomIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/zoom-in.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnZoomIn, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnZoomIn.text")); // NOI18N
-        btnZoomIn.setEnabled(false);
-        btnZoomIn.setFocusable(false);
-        btnZoomIn.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnZoomIn.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnZoomIn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnZoomInActionPerformed(evt);
-            }
-        });
-        barMain.add(btnZoomIn);
-
-        btnZoomOut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/zoom-out.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnZoomOut, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnZoomOut.text")); // NOI18N
-        btnZoomOut.setToolTipText(org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnZoomOut.toolTipText")); // NOI18N
-        btnZoomOut.setEnabled(false);
-        btnZoomOut.setFocusable(false);
-        btnZoomOut.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnZoomOut.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnZoomOut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnZoomOutActionPerformed(evt);
-            }
-        });
-        barMain.add(btnZoomOut);
 
         btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/objectview/res/export.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(ObjectViewTopComponent.class, "ObjectViewTopComponent.btnExport.text")); // NOI18N
@@ -399,14 +369,6 @@ public final class ObjectViewTopComponent extends TopComponent
         vrs.addBackground();
     }//GEN-LAST:event_btnAddBackgroundImageActionPerformed
 
-    private void btnZoomInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomInActionPerformed
-        scene.zoomIn();
-    }//GEN-LAST:event_btnZoomInActionPerformed
-
-    private void btnZoomOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnZoomOutActionPerformed
-        scene.zoomOut();
-    }//GEN-LAST:event_btnZoomOutActionPerformed
-
     private void btnRemoveBackgroundActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveBackgroundActionPerformed
         scene.removeBackground();
     }//GEN-LAST:event_btnRemoveBackgroundActionPerformed
@@ -496,8 +458,6 @@ public final class ObjectViewTopComponent extends TopComponent
     private javax.swing.JToggleButton btnWireContainer;
     private javax.swing.JToggleButton btnWirelessContainer;
     private javax.swing.JToggleButton btnWirelessLink;
-    private javax.swing.JButton btnZoomIn;
-    private javax.swing.JButton btnZoomOut;
     private javax.swing.JComboBox cmbViewType;
     private javax.swing.JPanel pnlRight;
     private javax.swing.JScrollPane pnlScrollMain;
@@ -548,7 +508,7 @@ public final class ObjectViewTopComponent extends TopComponent
     public void componentClosed() {
         vrs.terminateLookupListener();
         scene.removeActionListener(this);
-        scene.clear();
+        vrs.disableView();
     }
 
     void writeProperties(java.util.Properties p) {
@@ -587,8 +547,12 @@ public final class ObjectViewTopComponent extends TopComponent
         return NotificationUtil.getInstance();
     }
 
-    public ViewScene getScene(){
-        return scene;
+    public Font getCurrentFont() {
+        return currentFont;
+    }
+
+    public Color getCurrentColor() {
+        return currentColor;
     }
 
     @Override
@@ -608,14 +572,6 @@ public final class ObjectViewTopComponent extends TopComponent
             this.setHtmlDisplayName(this.getDisplayName());
         else
             this.setHtmlDisplayName(String.format("<html><b>%s [Modified]</b></html>", getDisplayName()));
-    }
-
-    public Color getCurrentColor() {
-        return currentColor;
-    }
-
-    public Font getCurrentFont() {
-        return currentFont;
     }
 
     @Override
@@ -656,8 +612,6 @@ public final class ObjectViewTopComponent extends TopComponent
         btnSave.setEnabled(enabled);
         btnSelect.setEnabled(enabled);
         btnConnect.setEnabled(enabled);
-        btnZoomIn.setEnabled(enabled);
-        btnZoomOut.setEnabled(enabled);
         btnExport.setEnabled(enabled);
         btnFormatText.setEnabled(enabled);
         btnRefresh.setEnabled(enabled);

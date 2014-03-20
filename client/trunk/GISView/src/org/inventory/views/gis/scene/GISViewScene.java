@@ -55,7 +55,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
  * Scene used by the GISView component
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class GISViewScene extends AbstractScene implements Lookup.Provider{
+public class GISViewScene extends AbstractScene implements Lookup.Provider {
     /**
      * Default coordinates to center the map
      */
@@ -238,21 +238,12 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
     /**
      * Cleans up the scene and release resources
      */
+    @Override
     public void clear() {
-
-        while (!getNodes().isEmpty())
-            removeNode(getNodes().iterator().next());
-
-        while (!getEdges().isEmpty())
-            removeNode(getEdges().iterator().next());
-        
-        labelsLayer.removeChildren();
         
         map.setVisible(false);
         map.setDisplayPosition(DEFAULT_CENTER_POSITION, DEFAULT_ZOOM_LEVEL);
-        
-        validate();
-        
+        super.clear();       
         //polygonsLayer.removeChildren();
     }
 
@@ -302,12 +293,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider{
 
         return bas.toByteArray();
     }
-    
-    public void toggleLabels(boolean visible){
-        labelsLayer.setVisible(visible);
-        getView().repaint();
-    }
-    
+        
     /**
      * A convenience method cloning the behavior of JMapviewer.getPosition, but using
      * lastZoomLevel and lastX/YPosition

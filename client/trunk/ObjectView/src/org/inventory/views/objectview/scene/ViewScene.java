@@ -108,6 +108,7 @@ public final class ViewScene extends AbstractScene {
 	addChild(interactionLayer);
         
         getActions().addAction(ActionFactory.createZoomAction());
+        getInputBindings ().setZoomActionModifiers(0); //No keystroke combinations
         getActions().addAction(ActionFactory.createPanAction());
 
         defaultPopupMenuProvider = new ObjectWidgetMenu();
@@ -127,6 +128,7 @@ public final class ViewScene extends AbstractScene {
         AbstractNodeWidget widget = new AbstractNodeWidget(this, node);
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         widget.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction());
+        widget.getActions(ACTION_SELECT).addAction(createSelectAction());
         TagLabelWidget aLabelWidget = new TagLabelWidget(this, widget);
         widget.addDependency(aLabelWidget);
         labelsLayer.addChild(aLabelWidget);
@@ -138,13 +140,8 @@ public final class ViewScene extends AbstractScene {
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         AbstractConnectionWidget widget = new AbstractConnectionWidget(this, edge);
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
-        widget.addDependency(new Dependency() {
-
-            @Override
-            public void revalidateDependency() {
-                System.out.println("Chamoooooo");
-            }
-        });
+        widget.getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
+        widget.getActions(ACTION_SELECT).addAction(createSelectAction());
         edgesLayer.addChild(widget);
         return widget;
     }
@@ -161,10 +158,6 @@ public final class ViewScene extends AbstractScene {
 
     @Override
     protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
-    }
-
-    public LayerWidget getInteractionLayer() {
-        return interactionLayer;
     }
 
     public LayerWidget getBackgroundLayer(){
@@ -207,24 +200,6 @@ public final class ViewScene extends AbstractScene {
         return this.myConnectionProvider;
     }
 
-    public void zoomIn() {
-        synchronized (getSceneAnimator()) {
-            double zoom = getSceneAnimator().isAnimatingZoomFactor () ? getSceneAnimator().getTargetZoomFactor () : getZoomFactor ();
-            if(zoom < 4){
-                getSceneAnimator().animateZoomFactor (zoom + 0.1);
-                validate();
-            }
-        }
-    }
-
-    public void zoomOut() {
-        synchronized (getSceneAnimator()) {
-            double zoom = getSceneAnimator().isAnimatingZoomFactor () ? getSceneAnimator().getTargetZoomFactor () : getZoomFactor ();
-            if(zoom > 0)
-                getSceneAnimator().animateZoomFactor (zoom - 0.1);
-        }
-    }
-
     /**
      * Gets the background image
      * @return
@@ -255,18 +230,12 @@ public final class ViewScene extends AbstractScene {
         listeners.remove(listener);
     }
 
+    @Override
     public void clear(){
-        while (!getNodes().isEmpty())
-            removeNode(getNodes().iterator().next());
-
-        while (!getEdges().isEmpty())
-            removeNode(getEdges().iterator().next());
-
         addRemoveControlPointAction.clearActionListeners();
         moveControlPointAction.clearActionListeners();
-        nodesLayer.removeChildren();
-        edgesLayer.removeChildren();
         backgroundLayer.removeChildren();
+        super.clear();
     }
 
     public void fireChangeEvent(ActionEvent ev){
@@ -332,10 +301,5 @@ public final class ViewScene extends AbstractScene {
 
     public NotificationUtil getNotifier() {
         return notifier;
-    }
-    
-    public void toggleLabels(boolean visible){
-        labelsLayer.setVisible(visible);
-        getView().repaint();
     }
 }

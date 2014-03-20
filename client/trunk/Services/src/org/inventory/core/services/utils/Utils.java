@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileFilter;
+import org.inventory.communications.util.Constants;
 
 /**
  * Class with utility methods
@@ -175,5 +176,19 @@ public class Utils {
                                         if (value.equals(Color.yellow))
                                             return "Yellow";
         return "Other";
+    }
+    
+    public static Color getConnectionColor(String connectionClass){
+        if (connectionClass.equals(Constants.CLASS_ELECTRICALLINK))
+            return Color.ORANGE;
+        if (connectionClass.equals(Constants.CLASS_OPTICALLINK))
+            return Color.GREEN;
+        if (connectionClass.equals(Constants.CLASS_WIRELESSLINK))
+            return Color.MAGENTA;
+        if (connectionClass.equals(Constants.CLASS_WIRECONTAINER))
+            return Color.RED;
+        if (connectionClass.equals(Constants.CLASS_WIRELESSCONTAINER))
+            return Color.BLUE;
+        return Color.BLACK;
     }
 }

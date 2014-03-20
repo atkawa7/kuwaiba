@@ -30,6 +30,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
+import org.inventory.core.services.utils.Utils;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Widget;
@@ -58,13 +59,9 @@ public class ViewBuilder {
      * @param localView
      * @throws NullPointerException if the LocalObjectViewImpl or the ViewScene provided are null
      */
-    public ViewBuilder(LocalObjectView localView, ViewScene scene) throws NullPointerException{
-        if (scene != null){
-            this.currentView = localView;
-            this.scene = scene;
-        }
-        else
-            throw new NullPointerException("A null ViewScene is not supported by this constructor");
+    public ViewBuilder(LocalObjectView localView, ViewScene scene) {
+        this.currentView = localView;
+        this.scene = scene;
     }
 
     /**
@@ -131,6 +128,7 @@ public class ViewBuilder {
                                     currentView.setDirty(true);
                                 else{
                                     ConnectionWidget newEdge = (ConnectionWidget)scene.addEdge(container);
+                                    newEdge.setLineColor(Utils.getConnectionColor(container.getClassName()));
                                     newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
                                     newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
                                     List<Point> localControlPoints = new ArrayList<Point>();
@@ -190,7 +188,7 @@ public class ViewBuilder {
             Widget widget = scene.addNode(node);
             widget.setPreferredLocation(new Point(lastX, 0));
 
-            lastX +=100;
+            lastX += 100;
         }
 
         //TODO: This algorithm to find the endpoints for a connection could be improved in many ways
@@ -209,6 +207,7 @@ public class ViewBuilder {
             Widget bSideWidget = scene.findWidget(bSide[0]);
 
             ConnectionWidget newEdge = (ConnectionWidget)scene.addEdge(container);
+            newEdge.setLineColor(Utils.getConnectionColor(container.getClassName()));
             newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
             newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
         }
@@ -259,6 +258,7 @@ public class ViewBuilder {
             Widget bSideWidget = scene.findWidget(bSide[0]);
 
             ConnectionWidget newEdge = (ConnectionWidget)scene.addEdge(toAdd);
+            newEdge.setLineColor(Utils.getConnectionColor(toAdd.getClassName()));
             newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
             newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
         }
