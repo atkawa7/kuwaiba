@@ -116,7 +116,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             cm.setDescription(classDefinition.getDescription());
             cm.setParentClassName(classDefinition.getParentClassName());
             cm.setAbstract(classDefinition.isAbstract());
-            cm.setColor(0);
+            cm.setColor(classDefinition.getColor());
             cm.setCountable(classDefinition.isCountable());
             cm.setCreationDate(Calendar.getInstance().getTimeInMillis());
             cm.setIcon(classDefinition.getIcon());
@@ -395,7 +395,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             cm.setInDesign(newClassDefinition.isInDesign());
             cm.setIcon(newClassDefinition.getIcon());
             cm.setSmallIcon(newClassDefinition.getSmallIcon());
-            cm.setColor(cm.getColor());
+            cm.setColor(newClassDefinition.getColor());
             //cm.setCategory(classDefinition.getCategory());
             
             mem.setClassProperties(cm, ipAddress, sessionId);
