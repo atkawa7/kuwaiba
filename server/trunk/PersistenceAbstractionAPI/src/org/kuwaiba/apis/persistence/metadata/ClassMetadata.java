@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,10 +38,6 @@ public class ClassMetadata extends ClassMetadataLight{
      */
     private List<InterfaceMetadata> interfaces;
     /**
-     *  Color assigned to the instances when displayed
-     */
-    private int color;
-    /**
      *  Icon to show in views
      */
     private byte[] icon;
@@ -72,14 +68,6 @@ public class ClassMetadata extends ClassMetadataLight{
     }
     
    // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
-    public int getColor() {
-        return color;
-    }
-
-    public void setColor(int color) {
-        this.color = color;
-    }
-
     public Boolean isCountable() {
         return countable;
     }

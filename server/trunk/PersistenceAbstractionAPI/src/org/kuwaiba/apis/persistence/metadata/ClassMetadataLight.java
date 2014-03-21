@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012, 2013 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2014 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.io.Serializable;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class ClassMetadataLight implements Serializable{
-
     /**
      * ClassMetada's Id
      */
@@ -58,6 +57,10 @@ public class ClassMetadataLight implements Serializable{
      */
     private byte[] smallIcon;
     /**
+     *  Color assigned to the instances when displayed
+     */
+    private int color;
+    /**
      * Class metadata state default false operational or in design true
      */
     private Boolean inDesign;
@@ -88,8 +91,8 @@ public class ClassMetadataLight implements Serializable{
     }
 
     
-    public ClassMetadataLight(long id, String name, Boolean viewable, Boolean _abstract, 
-            Boolean listType, String parentClassName, Boolean inDesign, Boolean custom, Boolean administrative) {
+    public ClassMetadataLight(long id, String name, boolean viewable, boolean _abstract, 
+            boolean listType, String parentClassName, boolean inDesign, boolean custom, boolean administrative) {
         this.id = id;
         this.name = name;
         this.viewable = viewable;
@@ -189,7 +192,12 @@ public class ClassMetadataLight implements Serializable{
     public void setAdministrative(Boolean administrative) {
         this.administrative = administrative;
     }
-    // </editor-fold>
+    public int getColor() {
+        return color;
+    }
 
-    
+    public void setColor(int color) {
+        this.color = color;
+    }
+    // </editor-fold>
 }
