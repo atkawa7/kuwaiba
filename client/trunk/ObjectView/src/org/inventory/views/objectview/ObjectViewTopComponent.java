@@ -40,7 +40,6 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.explorer.ExplorerManager.Provider;
-import org.openide.explorer.ExplorerUtils;
 
 /**
  * This component renders the views associated to an object
@@ -85,13 +84,12 @@ public final class ObjectViewTopComponent extends TopComponent
         setName(NbBundle.getMessage(ObjectViewTopComponent.class, "CTL_ObjectViewTopComponent"));
         setToolTipText(NbBundle.getMessage(ObjectViewTopComponent.class, "HINT_ObjectViewTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
+        associateLookup(scene.getLookup());
     }
 
     public final void initCustomComponents(){
 
-        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
-
-        scene = new ViewScene(getNotifier());
+        scene = new ViewScene();
         vrs = new ObjectViewService(scene, this);
 
         pnlScrollMain.setViewportView(scene.createView());
@@ -501,13 +499,12 @@ public final class ObjectViewTopComponent extends TopComponent
     @Override
     public void componentOpened() {
         vrs.initializeLookupListener();
-        scene.addActionListener(this);
+        scene.addChangeListener(this);
     }
 
     @Override
     public void componentClosed() {
         vrs.terminateLookupListener();
-        scene.removeActionListener(this);
         vrs.disableView();
     }
 

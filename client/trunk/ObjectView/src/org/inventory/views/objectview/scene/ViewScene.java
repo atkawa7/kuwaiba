@@ -21,18 +21,14 @@ import com.ociweb.xml.WAX;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
 import org.inventory.core.visual.widgets.AbstractScene;
-import org.inventory.views.objectview.scene.actions.CustomAddRemoveControlPointAction;
 import org.inventory.views.objectview.scene.actions.CustomMoveControlPointAction;
 import org.inventory.core.visual.menu.ObjectWidgetMenu;
 import org.inventory.core.visual.widgets.AbstractConnectionWidget;
@@ -42,7 +38,6 @@ import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.widget.ImageWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
-
 
 /**
  * This is the main scene for an object's view
@@ -61,12 +56,12 @@ public final class ViewScene extends AbstractScene {
      * Default control point move action (shared by all connection widgets)
      */
     private CustomMoveControlPointAction moveControlPointAction =
-            new CustomMoveControlPointAction(new FreeMoveControlPointProvider(),null);
+            new CustomMoveControlPointAction(this);
     /**
      * Default add/remove control point action (shared by all connection widgets)
      */
-    private CustomAddRemoveControlPointAction addRemoveControlPointAction =
-            new CustomAddRemoveControlPointAction(3.0, 5.0, null);
+//    private CustomAddRemoveControlPointAction addRemoveControlPointAction =
+//            new CustomAddRemoveControlPointAction(this);
     /**
      * Object owning the current view
      */
@@ -75,25 +70,8 @@ public final class ViewScene extends AbstractScene {
      * Current view (if any, null if the current view does is just about to be created)
      */
     private LocalObjectViewLight currentView;
-    /**
-     * Action listeners
-     */
-    private List<ActionListener> listeners;
-    /**
-     * Event ID to indicate a change in the scene (saving is not mandatory)
-     */
-    public final static int SCENE_CHANGE = 1;
-    /**
-     * Event ID to indicate a change in the scene (saving is mandatory)
-     */
-    public final static int SCENE_CHANGETOSAVE = 2;
-    /**
-     * Default notifier
-     */
-    private NotificationUtil notifier;
     
-    
-    public ViewScene (NotificationUtil notifier){
+    public ViewScene (){
         interactionLayer = new LayerWidget(this);
         backgroundLayer = new LayerWidget(this);
         nodesLayer = new LayerWidget(this);
@@ -115,7 +93,6 @@ public final class ViewScene extends AbstractScene {
         
         setActiveTool(ACTION_SELECT);
         initSelectionListener();
-        this.notifier = notifier;
     }
 
     /**
@@ -127,8 +104,11 @@ public final class ViewScene extends AbstractScene {
     protected Widget attachNodeWidget(LocalObjectLight node) {
         AbstractNodeWidget widget = new AbstractNodeWidget(this, node);
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
-        widget.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction());
+        //The order the actions are added to a widget matters, if Select goes
+        //after Move, you will need a double click to select the widget
         widget.getActions(ACTION_SELECT).addAction(createSelectAction());
+        widget.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction());
+        widget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, myConnectionProvider));
         TagLabelWidget aLabelWidget = new TagLabelWidget(this, widget);
         widget.addDependency(aLabelWidget);
         labelsLayer.addChild(aLabelWidget);
@@ -140,8 +120,8 @@ public final class ViewScene extends AbstractScene {
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         AbstractConnectionWidget widget = new AbstractConnectionWidget(this, edge);
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
-        widget.getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
         widget.getActions(ACTION_SELECT).addAction(createSelectAction());
+        widget.getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
         edgesLayer.addChild(widget);
         return widget;
     }
@@ -187,14 +167,6 @@ public final class ViewScene extends AbstractScene {
     public void setCurrentView(LocalObjectViewLight currentView) {
         this.currentView = currentView;
     }
-
-    public CustomMoveControlPointAction getMoveControlPointAction() {
-        return moveControlPointAction;
-    }
-
-    public CustomAddRemoveControlPointAction getAddRemoveControlPointAction() {
-        return addRemoveControlPointAction;
-    }
     
     public PhysicalConnectionProvider getConnectionProvider(){
         return this.myConnectionProvider;
@@ -214,33 +186,11 @@ public final class ViewScene extends AbstractScene {
         }
     }
 
-    /**
-     * To listen for scene changes implementing the observer design pattern
-     * @param listener
-     */
-    public void addActionListener(ActionListener listener){
-        if (listeners == null)
-            listeners = new ArrayList<ActionListener>();
-        listeners.add(listener);
-    }
-
-    public void removeActionListener(ActionListener listener){
-        if (listeners == null)
-            return;
-        listeners.remove(listener);
-    }
-
     @Override
     public void clear(){
-        addRemoveControlPointAction.clearActionListeners();
-        moveControlPointAction.clearActionListeners();
         backgroundLayer.removeChildren();
+        removeAllListeners();
         super.clear();
-    }
-
-    public void fireChangeEvent(ActionEvent ev){
-        for (ActionListener listener : listeners)
-            listener.actionPerformed(ev);
     }
 
     /**
@@ -300,6 +250,6 @@ public final class ViewScene extends AbstractScene {
     }
 
     public NotificationUtil getNotifier() {
-        return notifier;
+        return NotificationUtil.getInstance();
     }
 }

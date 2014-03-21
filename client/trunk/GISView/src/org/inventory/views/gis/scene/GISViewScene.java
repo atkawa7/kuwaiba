@@ -140,6 +140,8 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
         this.defaultPopupMenuProvider = new ObjectWidgetMenu();        
         //Actions
         getActions().addAction(ActionFactory.createAcceptAction(new AcceptActionProvider(this)));
+        
+        initSelectionListener();
         setOpaque(false);
     }
     

@@ -47,63 +47,34 @@
 package org.inventory.views.objectview.scene.actions;
 
 import java.awt.Point;
-import org.netbeans.api.visual.action.MoveControlPointProvider;
+import java.awt.event.ActionEvent;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Widget;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import org.inventory.views.objectview.scene.ViewScene;
+import org.inventory.core.visual.widgets.AbstractScene;
 
 /**
  * This class is used to fire an action event whenever this is triggered so we can
  * track the change and notify the TopComponent to mark it as unsaved. It's a modified
- * copy of org.netbeans.modules.visual.action.MoveControlPointAction since this is not
- * reachable from the current code.
+ * copy of org.netbeans.modules.visual.action.MoveControlPointAction if final and does not notify changes
  * This class was licensed under CDDL and keeps the licensing
- * @author Alex, modified by Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org> for project Kuwaiba 2010
+ * @author David Kaspar, modified by Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org> for project Kuwaiba 2010
  */
 public final class CustomMoveControlPointAction extends WidgetAction.LockedAdapter {
-
-    private MoveControlPointProvider provider;
-    private ConnectionWidget.RoutingPolicy routingPolicy;
 
     private ConnectionWidget movingWidget = null;
     private Point controlPointLocation;
     private int controlPointIndex;
     private Point lastLocation = null;
-    private ArrayList<ActionListener> listeners;
+    private AbstractScene scene;
 
-    public CustomMoveControlPointAction (MoveControlPointProvider provider, ConnectionWidget.RoutingPolicy routingPolicy) {
-        this.provider = provider;
-        this.routingPolicy = routingPolicy;
+    public CustomMoveControlPointAction (AbstractScene scene) {
+        //this.provider = new FreeMoveControlPointProvider();
+        this.scene = scene;
     }
 
-    public void addActionListener(ActionListener listener){
-        if (listeners == null)
-            listeners = new ArrayList<ActionListener>();
-        if (!listeners.contains(listener))
-            listeners.add(listener);
-    }
-
-    public void removeActionListener(ActionListener listener){
-        if (listeners == null)
-            return;
-        listeners.remove(listener);
-    }
-
-    public void clearActionListeners(){
-        if (listeners != null)
-            listeners.clear();
-    }
-
-    public void fireChangeEvent(ActionEvent ev){
-        for (ActionListener listener : listeners)
-            listener.actionPerformed(ev);
-    }
-
+    @Override
     protected boolean isLocked () {
         return movingWidget != null;
     }
@@ -134,7 +105,7 @@ public final class CustomMoveControlPointAction extends WidgetAction.LockedAdapt
         State state = move(widget, event.getPoint()) ? State.CONSUMED : State.REJECTED;
         movingWidget = null;
         if (state == State.CONSUMED)
-            fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "move-controlpoint-operation"));
+            scene.fireChangeEvent(new ActionEvent(scene, AbstractScene.SCENE_CHANGE, "control-point-moved")); //NOI18N
         return state;
     }
 
@@ -152,20 +123,12 @@ public final class CustomMoveControlPointAction extends WidgetAction.LockedAdapt
         if (movingWidget != widget)
             return false;
 
-        java.util.List<Point> controlPoints = movingWidget.getControlPoints ();
-        if (controlPointIndex < 0  ||  controlPointIndex >= controlPoints.size ())
+        if (controlPointIndex < 0  ||  controlPointIndex >= movingWidget.getControlPoints ().size ())
             return false;
 
-        Point location = new Point (controlPointLocation);
-        location.translate (newLocation.x - lastLocation.x, newLocation.y - lastLocation.y);
+        controlPointLocation.translate (newLocation.x - lastLocation.x, newLocation.y - lastLocation.y);
 
-        controlPoints = provider.locationSuggested (movingWidget, controlPointIndex, location);
-        if (controlPoints == null)
-            return false;
-
-        if (routingPolicy != null)
-            movingWidget.setRoutingPolicy (routingPolicy);
-        movingWidget.setControlPoints (controlPoints, false);
+        movingWidget.getControlPoints().set(controlPointIndex, controlPointLocation);
         return true;
     }
 

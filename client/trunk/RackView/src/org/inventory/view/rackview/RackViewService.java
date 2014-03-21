@@ -100,7 +100,7 @@ public class RackViewService implements LookupListener {
                     }
                     
                     Widget newElement = scene.addNode(theWholeChild);
-                    newElement.setPreferredSize(new Dimension(RackViewScene.STANDARD_RACK_WIDTH, (int)(RackViewScene.RACK_UNIT_IN_PX * elementRackUnits)));
+                    newElement.setPreferredSize(new Dimension(RackViewScene.STANDARD_RACK_WIDTH, RackViewScene.RACK_UNIT_IN_PX * elementRackUnits));
                     newElement.setPreferredLocation(new Point(0, RackViewScene.RACK_UNIT_IN_PX * position - RackViewScene.RACK_UNIT_IN_PX));
                     rackUnitsCounter += elementRackUnits;
                 }
@@ -112,7 +112,7 @@ public class RackViewService implements LookupListener {
                     return;
                 }
                 
-                scene.getRackWidget().setPreferredSize(new Dimension(RackViewScene.STANDARD_RACK_WIDTH , (int)(RackViewScene.RACK_UNIT_IN_PX * rackUnits)));
+                scene.getRackWidget().setPreferredSize(new Dimension(RackViewScene.STANDARD_RACK_WIDTH , RackViewScene.RACK_UNIT_IN_PX * rackUnits));
                 for (String attribute : rack.getObjectMetadata().getAttributeNames())
                     scene.addInfoLabel(attribute +": " + (rack.getAttribute(attribute) == null ? "" : rack.getAttribute(attribute).toString()), false);
                 scene.addInfoLabel("Usage Percentage: "+ Math.round((float)rackUnitsCounter * 100/rackUnits) +"% (" + rackUnitsCounter + "U/" + rackUnits + "U)", true);

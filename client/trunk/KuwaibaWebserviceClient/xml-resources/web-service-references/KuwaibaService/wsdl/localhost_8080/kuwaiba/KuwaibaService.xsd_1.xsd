@@ -599,6 +599,7 @@
 <xs:element name="className" type="xs:string" minOccurs="0"/>
 <xs:element name="displayName" type="xs:string" minOccurs="0"/>
 <xs:element name="parentClassName" type="xs:string" minOccurs="0"/>
+<xs:element name="color" type="xs:int"/>
 <xs:element name="smallIcon" type="xs:base64Binary" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
@@ -787,6 +788,7 @@
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="smallIcon" type="xs:base64Binary" nillable="true" minOccurs="0"/>
 <xs:element name="icon" type="xs:base64Binary" nillable="true" minOccurs="0"/>
+<xs:element name="color" type="xs:int"/>
 <xs:element name="_abstract" type="xs:boolean" minOccurs="0"/>
 <xs:element name="inDesign" type="xs:boolean" minOccurs="0"/>
 <xs:element name="custom" type="xs:boolean" minOccurs="0"/>
@@ -1108,6 +1110,18 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="removePossibleChildrenForClassWithId">
+<xs:sequence>
+<xs:element name="parentClassId" type="xs:long"/>
+<xs:element name="childrenToBeRemoved" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removePossibleChildrenForClassWithIdResponse">
+<xs:sequence/>
+</xs:complexType>
+
 <xs:complexType name="createGeneralView">
 <xs:sequence>
 <xs:element name="viewType" type="xs:int"/>
@@ -1123,18 +1137,6 @@
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
 </xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="removePossibleChildrenForClassWithId">
-<xs:sequence>
-<xs:element name="parentClassId" type="xs:long"/>
-<xs:element name="childrenToBeRemoved" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="removePossibleChildrenForClassWithIdResponse">
-<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getObjectChildren">
@@ -1702,6 +1704,7 @@
 <xs:element name="parentClassName" type="xs:string" minOccurs="0"/>
 <xs:element name="icon" type="xs:base64Binary" nillable="true" minOccurs="0"/>
 <xs:element name="smallIcon" type="xs:base64Binary" nillable="true" minOccurs="0"/>
+<xs:element name="color" type="xs:int"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>

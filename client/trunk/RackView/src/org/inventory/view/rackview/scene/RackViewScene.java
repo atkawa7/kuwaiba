@@ -17,8 +17,6 @@ package org.inventory.view.rackview.scene;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.List;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.visual.export.ExportableScene;
@@ -97,10 +95,11 @@ public class RackViewScene extends GraphScene<LocalObject, LocalObject> implemen
     }
     
     public void clear(){
-        List<LocalObject> clonedNodes = new ArrayList(getNodes());
-        
-        for(LocalObject lol : clonedNodes)
-            removeNode(lol);
+        while (!getNodes().isEmpty())
+            removeNode(getNodes().iterator().next());
+
+        while (!getEdges().isEmpty())
+            removeNode(getEdges().iterator().next());
         
         infoWidget.removeChildren();
         rackWidget.setPreferredSize(new Dimension(0,0));

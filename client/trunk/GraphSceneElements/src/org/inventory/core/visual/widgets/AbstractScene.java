@@ -18,10 +18,14 @@ package org.inventory.core.visual.widgets;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Set;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.visual.export.ExportableScene;
 import org.inventory.core.visual.export.Layer;
+import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.model.ObjectSceneEvent;
@@ -49,6 +53,14 @@ public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalOb
      * Constant to represent the connection tool
      */
     public final static String ACTION_CONNECT = "connect"; //NOI18
+    /**
+     * Event ID to indicate a change in the scene (saving is not mandatory)
+     */
+    public final static int SCENE_CHANGE = 1;
+    /**
+     * Event ID to indicate a change in the scene (saving is mandatory)
+     */
+    public final static int SCENE_CHANGETOSAVE = 2;
     /**
      * Default font
      */
@@ -85,9 +97,14 @@ public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalOb
      * Scene lookup
      */
     private SceneLookup lookup;
+    /**
+     * Change listeners
+     */
+    private ArrayList<ActionListener> changeListeners;
 
     public AbstractScene() {
         this.lookup = new SceneLookup(Lookup.EMPTY);
+        this.changeListeners = new ArrayList<ActionListener>();
         setActiveTool(ACTION_SELECT);
     }
     
@@ -114,9 +131,7 @@ public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalOb
             @Override
             public void objectRemoved(ObjectSceneEvent event, Object removedObject) {}
             @Override
-            public void objectStateChanged(ObjectSceneEvent event, Object changedObject, ObjectState previousState, ObjectState newState) {
-                System.out.println("Hey!");
-            }
+            public void objectStateChanged(ObjectSceneEvent event, Object changedObject, ObjectState previousState, ObjectState newState) {}
             @Override
             public void selectionChanged(ObjectSceneEvent event, Set<Object> previousSelection, Set<Object> newSelection) {
                 if (newSelection.size() == 1)
@@ -129,6 +144,36 @@ public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalOb
             @Override
             public void focusChanged(ObjectSceneEvent event, Object previousFocusedObject, Object newFocusedObject) {}
         }, ObjectSceneEventType.OBJECT_SELECTION_CHANGED);
+    }
+    
+    /**
+     * Adds a change listener
+     * @param listener 
+     */
+    public void addChangeListener(ActionListener listener){
+        if (!changeListeners.contains(listener))
+            changeListeners.add(listener);
+    }
+    
+    /**
+     * Removes a change listener
+     * @param listener 
+     */
+    public void removeChangeListener(ActionListener listener){
+        changeListeners.remove(listener);
+    }
+    
+    /**
+     * Releases all listeners
+     */
+    public void removeAllListeners (){
+        while (!changeListeners.isEmpty())
+            changeListeners.remove(changeListeners.get(0));
+    }
+    
+    public void fireChangeEvent(ActionEvent ev){
+        for (ActionListener listener : changeListeners)
+            listener.actionPerformed(ev);
     }
     
     /**
@@ -180,11 +225,11 @@ public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalOb
             super(aLookup);
         }
         public SceneLookup(LocalObjectLight object) {
-            super(Lookups.singleton(object));
+            updateLookup(object);
         }
 
-        public void updateLookup(LocalObjectLight object){
-            setLookups(Lookups.singleton(object));
+        public final void updateLookup(LocalObjectLight object){
+            setLookups(Lookups.singleton(new ObjectNode(object)));
         }
     }
 }

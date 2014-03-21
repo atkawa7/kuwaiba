@@ -538,6 +538,12 @@
 <message name="getGeneralActivityAuditTrailResponse">
 <part name="parameters" element="tns:getGeneralActivityAuditTrailResponse"/>
 </message>
+<message name="getPoolsForParentWithId">
+<part name="parameters" element="tns:getPoolsForParentWithId"/>
+</message>
+<message name="getPoolsForParentWithIdResponse">
+<part name="parameters" element="tns:getPoolsForParentWithIdResponse"/>
+</message>
 <message name="getObjectChildrenForClassWithId">
 <part name="parameters" element="tns:getObjectChildrenForClassWithId"/>
 </message>
@@ -591,12 +597,6 @@
 </message>
 <message name="removePossibleChildrenForClassWithIdResponse">
 <part name="parameters" element="tns:removePossibleChildrenForClassWithIdResponse"/>
-</message>
-<message name="getPoolsForParentWithId">
-<part name="parameters" element="tns:getPoolsForParentWithId"/>
-</message>
-<message name="getPoolsForParentWithIdResponse">
-<part name="parameters" element="tns:getPoolsForParentWithIdResponse"/>
 </message>
 <portType name="Kuwaiba">
 <operation name="getClass">
@@ -1039,6 +1039,11 @@
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGeneralActivityAuditTrailResponse" message="tns:getGeneralActivityAuditTrailResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getGeneralActivityAuditTrail/Fault/Exception"/>
 </operation>
+<operation name="getPoolsForParentWithId">
+<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPoolsForParentWithIdRequest" message="tns:getPoolsForParentWithId"/>
+<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPoolsForParentWithIdResponse" message="tns:getPoolsForParentWithIdResponse"/>
+<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPoolsForParentWithId/Fault/Exception"/>
+</operation>
 <operation name="getObjectChildrenForClassWithId">
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectChildrenForClassWithIdRequest" message="tns:getObjectChildrenForClassWithId"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getObjectChildrenForClassWithIdResponse" message="tns:getObjectChildrenForClassWithIdResponse"/>
@@ -1083,11 +1088,6 @@
 <input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenForClassWithIdRequest" message="tns:removePossibleChildrenForClassWithId"/>
 <output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenForClassWithIdResponse" message="tns:removePossibleChildrenForClassWithIdResponse"/>
 <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/removePossibleChildrenForClassWithId/Fault/Exception"/>
-</operation>
-<operation name="getPoolsForParentWithId">
-<input wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPoolsForParentWithIdRequest" message="tns:getPoolsForParentWithId"/>
-<output wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPoolsForParentWithIdResponse" message="tns:getPoolsForParentWithIdResponse"/>
-<fault message="tns:Exception" name="Exception" wsam:Action="http://ws.kuwaiba.org/Kuwaiba/getPoolsForParentWithId/Fault/Exception"/>
 </operation>
 </portType>
 <binding name="KuwaibaPortBinding" type="tns:Kuwaiba">
@@ -2148,6 +2148,18 @@
 <soap:fault name="Exception" use="literal"/>
 </fault>
 </operation>
+<operation name="getPoolsForParentWithId">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="Exception">
+<soap:fault name="Exception" use="literal"/>
+</fault>
+</operation>
 <operation name="getObjectChildrenForClassWithId">
 <soap:operation soapAction=""/>
 <input>
@@ -2245,18 +2257,6 @@
 </fault>
 </operation>
 <operation name="removePossibleChildrenForClassWithId">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="Exception">
-<soap:fault name="Exception" use="literal"/>
-</fault>
-</operation>
-<operation name="getPoolsForParentWithId">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
