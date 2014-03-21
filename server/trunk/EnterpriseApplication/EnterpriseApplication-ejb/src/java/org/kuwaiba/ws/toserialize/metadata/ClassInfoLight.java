@@ -38,6 +38,7 @@ public class ClassInfoLight implements Serializable {
     protected String className;
     protected String displayName;
     protected String parentClassName;
+    protected int color;
     /**
      * 16x16 icon
      */
@@ -57,11 +58,12 @@ public class ClassInfoLight implements Serializable {
         this.listType = myClassLight.isListType();
         this.custom = myClassLight.isCustom();
         this.inDesign = myClassLight.isInDesign();
+        this.color = myClassLight.getColor();
     }
 
     public ClassInfoLight (long id, String className, String displayName, 
             Validator[] validators, boolean viewable, boolean _abstract, boolean custom, 
-            boolean inDesign, String parentClassName, boolean listType, byte[] smallIcon){
+            boolean inDesign, String parentClassName, boolean listType, byte[] smallIcon, int color){
         this.id = id;
         this.className = className;
         this.displayName = displayName;
@@ -73,6 +75,7 @@ public class ClassInfoLight implements Serializable {
         this.validators = validators;
         this.smallIcon = smallIcon;
         this.listType = listType;
+        this.color = color;
     }
 
     public String getClassName() {
@@ -161,6 +164,14 @@ public class ClassInfoLight implements Serializable {
 
     public void setListType(Boolean listType) {
         this.listType = listType;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     @Override
