@@ -491,7 +491,8 @@ public class CommunicationsStub {
                                                 cil.getParentClassName(),
                                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                                 cil.isCustom(), cil.isInDesign(),
-                                                cil.getSmallIcon(), validators));
+                                                cil.getSmallIcon(), 
+                                                cil.getColor(), validators));
                 }
                 cache.addPossibleChildrenCached(className, resAsLocal);
             }
@@ -524,7 +525,8 @@ public class CommunicationsStub {
                                                 cil.getParentClassName(),
                                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                                 cil.isCustom(), cil.isInDesign(),
-                                                cil.getSmallIcon(), validators));
+                                                cil.getSmallIcon(), 
+                                                cil.getColor(), validators));
             }
             return resAsLocal;
         }catch(Exception ex){
@@ -549,7 +551,7 @@ public class CommunicationsStub {
                                                 cil.getParentClassName(),
                                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                                 cil.isCustom(), cil.isInDesign(),
-                                                cil.getSmallIcon(), validators));
+                                                cil.getSmallIcon(), cil.getColor(), validators));
             }
             return resAsLocal;
         }catch(Exception ex){
@@ -572,7 +574,7 @@ public class CommunicationsStub {
                                                 cil.getParentClassName(),
                                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                                 cil.isCustom(), cil.isInDesign(),
-                                                cil.getSmallIcon(), validators));
+                                                cil.getSmallIcon(), cil.getColor(), validators));
             }
             return res;
         }catch(Exception ex){
@@ -606,7 +608,7 @@ public class CommunicationsStub {
                                                 cil.getParentClassName(),
                                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                                 cil.isCustom(), cil.isInDesign(),
-                                                cil.getSmallIcon(), validators);
+                                                cil.getSmallIcon(), cil.getColor(), validators);
                 i++;
             }
 
@@ -645,7 +647,7 @@ public class CommunicationsStub {
                                                 ci.getParentClassName(),
                                                 ci.isAbstract(),ci.isViewable(), ci.isListType(),
                                                 ci.isCustom(), ci.isInDesign(),
-                                                ci.getSmallIcon(), validators, ci.getIcon(),
+                                                ci.getSmallIcon(), ci.getColor(), validators, ci.getIcon(),
                                                 ci.getDescription(), ci.getAttributeIds(), 
                                                 ci.getAttributeNames().toArray(new String[0]),
                                                 ci.getAttributeTypes().toArray(new String[0]),
@@ -686,7 +688,7 @@ public class CommunicationsStub {
                                             cm.getParentClassName(),
                                             cm.isAbstract(),cm.isViewable(), cm.isListType(),
                                             cm.isCustom(), cm.isInDesign(),
-                                            cm.getSmallIcon(), validators, cm.getIcon(),
+                                            cm.getSmallIcon(), cm.getColor(), validators, cm.getIcon(),
                                             cm.getDescription(), cm.getAttributeIds(), 
                                             cm.getAttributeNames().toArray(new String[0]),
                                             cm.getAttributeTypes().toArray(new String[0]),
@@ -726,7 +728,7 @@ public class CommunicationsStub {
                         cm.getParentClassName(),
                         cm.isAbstract(),cm.isViewable(), cm.isListType(),
                         cm.isCustom(), cm.isInDesign(),
-                        cm.getSmallIcon(), validators, cm.getIcon(),
+                        cm.getSmallIcon(), cm.getColor(), validators, cm.getIcon(),
                         cm.getDescription(), cm.getAttributeIds(), 
                         cm.getAttributeNames().toArray(new String[0]),
                         cm.getAttributeTypes().toArray(new String[0]),
@@ -816,7 +818,7 @@ public class CommunicationsStub {
                                 cil.getParentClassName(),
                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                 cil.isCustom(), cil.isInDesign(),
-                                cil.getSmallIcon(), validators);
+                                cil.getSmallIcon(), cil.getColor(), validators);
                 i++;
             }
             return res;
@@ -843,7 +845,7 @@ public class CommunicationsStub {
                                 cil.getParentClassName(),
                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                 cil.isCustom(), cil.isInDesign(),
-                                cil.getSmallIcon(), validators);
+                                cil.getSmallIcon(), cil.getColor(), validators);
                 i++;
             }
             return res;
@@ -1409,7 +1411,7 @@ public class CommunicationsStub {
                             cm.getParentClassName(),
                             cm.isAbstract(),cm.isViewable(), cm.isListType(),
                             cm.isCustom(), cm.isInDesign(),
-                            cm.getSmallIcon(), validators, cm.getIcon(),
+                            cm.getSmallIcon(), cm.getColor(), validators, cm.getIcon(),
                             cm.getDescription(), cm.getAttributeIds(), 
                             cm.getAttributeNames().toArray(new String[0]),
                             cm.getAttributeTypes().toArray(new String[0]),
@@ -1460,7 +1462,7 @@ public class CommunicationsStub {
         
     public long createClassMetadata(String className, String displayName, String description, String parentClassName, boolean custom, boolean countable, int color, boolean _abstract, boolean inDesign){
         try{
-            return port.createClass(className, displayName, description, _abstract, custom, countable, inDesign, parentClassName, null, null, this.session.getSessionId());
+            return port.createClass(className, displayName, description, _abstract, custom, countable, inDesign, parentClassName, null, null, color, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return -1;
@@ -1515,10 +1517,10 @@ public class CommunicationsStub {
     
     public boolean setClassMetadataProperties(long classId, String className, 
                                                  String displayName, String description, 
-                                                 byte[] smallIcon, byte[] icon, 
+                                                 byte[] smallIcon, byte[] icon, int color,
                                                  Boolean _abstract,Boolean inDesign, Boolean countable, Boolean custom){
         try{
-            port.setClassProperties(classId, className, displayName, description, smallIcon, icon,
+            port.setClassProperties(classId, className, displayName, description, smallIcon, icon, color,
                     _abstract, inDesign, countable, custom, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -1549,7 +1551,7 @@ public class CommunicationsStub {
                                 cil.getParentClassName(),
                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                 cil.isCustom(), cil.isInDesign(), 
-                                cil.getSmallIcon(), validators);
+                                cil.getSmallIcon(), cil.getColor(), validators);
                 i++;
             }
             return res;

@@ -134,6 +134,10 @@ public class Constants {
      */
     public static final String PROPERTY_CUSTOM = "custom";
     /**
+     * Property class color
+     */
+    public static final String PROPERTY_COLOR = "color";
+    /**
      * Property small icon
      */
     public static final String PROPERTY_SMALLICON = "smallIcon";

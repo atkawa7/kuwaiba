@@ -48,13 +48,13 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
     
     public LocalClassMetadata (long id, String className, String displayName, 
             String parentName, boolean _abstract, boolean viewable, boolean listType, 
-            boolean custom, boolean inDesign, byte[] smallIcon, HashMap<String, Integer> validators,
+            boolean custom, boolean inDesign, byte[] smallIcon, int color, HashMap<String, Integer> validators,
             byte[] icon, String description, List<Long> attributeIds, 
             String[] attributeNames, String[] attributeTypes, String[] attributeDisplayNames,
             List<Boolean> attributeIsVisibles, String[] attributeDescriptions) {
         
         super(id, className, displayName, parentName, _abstract, viewable, listType, 
-            custom, inDesign, smallIcon, validators);
+            custom, inDesign, smallIcon, color, validators);
         this.icon = Utils.getImageFromByteArray(icon);
         this.description = description;
         this.attributeIds = new long[attributeIds.size()];

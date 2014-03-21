@@ -75,6 +75,11 @@ public class LocalClassMetadataLight implements Transferable {
      */
     protected Image smallIcon;
     /**
+     * Color for the class. The class will show this color in maps 
+     */
+    private int color;
+    
+    /**
      * Misc validators. Validators tell you states of this class related to business rules
      */
     protected HashMap<String, Integer> validators;
@@ -91,7 +96,7 @@ public class LocalClassMetadataLight implements Transferable {
 
     public LocalClassMetadataLight(long id, String className, String displayName, 
             String parentName, boolean _abstract, boolean viewable, boolean listType, 
-            boolean custom, boolean inDesign,byte[] smallIcon, HashMap<String, Integer> validators) {
+            boolean custom, boolean inDesign,byte[] smallIcon, int color, HashMap<String, Integer> validators) {
         this.id = id;
         this.className = className;
         this.displayName = displayName;
@@ -102,6 +107,7 @@ public class LocalClassMetadataLight implements Transferable {
         this.custom = custom;
         this.inDesign = inDesign;
         this.smallIcon = Utils.getImageFromByteArray(smallIcon);
+        this.color = color;
         this.validators = validators;
     }
 
@@ -174,6 +180,14 @@ public class LocalClassMetadataLight implements Transferable {
 
     public void setSmallIcon(Image newIcon){
         this.smallIcon = newIcon;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     @Override
