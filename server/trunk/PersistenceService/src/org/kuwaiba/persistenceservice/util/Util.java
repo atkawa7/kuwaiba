@@ -278,6 +278,7 @@ public class Util {
         
         myClass.setAbstract((Boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT));
         myClass.setSmallIcon((byte[])classNode.getProperty(Constants.PROPERTY_SMALL_ICON));
+        myClass.setColor((Integer)classNode.getProperty(Constants.PROPERTY_COLOR));
         myClass.setCustom((Boolean)classNode.getProperty(Constants.PROPERTY_CUSTOM));
         myClass.setInDesign((Boolean)classNode.getProperty(Constants.PROPERTY_IN_DESIGN));
         myClass.setViewable((Boolean)isSubClass(Constants.CLASS_VIEWABLEOBJECT, classNode));
