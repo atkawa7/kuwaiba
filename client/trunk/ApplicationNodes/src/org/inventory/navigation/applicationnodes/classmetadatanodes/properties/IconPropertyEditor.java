@@ -30,9 +30,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.communications.core.caching.Cache;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.Utils;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
 import org.openide.explorer.propertysheet.PropertyEnv;
@@ -98,12 +98,12 @@ public class IconPropertyEditor extends PropertyEditorSupport
                         myPanel.updateIcon();
                         //This should be here but in the setValue method, however I haven't discovered yet why clicking on "cancel" still calls setValue
                         if (attribute.equals(Constants.PROPERTY_ICON)){
-                            if(!com.setClassMetadataProperties(id, null, null, null, null, icon, null, null, null, null))
+                            if(!com.setClassMetadataProperties(id, null, null, null, null, icon, -1, null, null, null, null))
                                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                             else
                                 Cache.getInstace().resetAll();
                         }else{
-                            if(!com.setClassMetadataProperties(id, null, null, null, icon, null, null, null, null, null))
+                            if(!com.setClassMetadataProperties(id, null, null, null, icon, null, -1, null, null, null, null))
                                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                             else
                                 Cache.getInstace().resetAll();
@@ -123,7 +123,7 @@ public class IconPropertyEditor extends PropertyEditorSupport
     }  
     
     private class InnerPanel extends JPanel{
-        private JFileChooser fChooser;;
+        private JFileChooser fChooser;
         private JLabel lblText;
         private JButton btnImageChooser;
         

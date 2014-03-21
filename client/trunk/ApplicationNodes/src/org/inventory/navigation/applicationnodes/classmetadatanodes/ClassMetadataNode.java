@@ -15,6 +15,7 @@
  */
 package org.inventory.navigation.applicationnodes.classmetadatanodes;
 
+import java.awt.Color;
 import java.awt.Image;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -107,8 +108,8 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
 
     @Override
     public void setName(String newName) {
-        if(com.setClassMetadataProperties(classMetadata.getOid(), newName, null, null, null, 
-                null, null, null, null, null)){
+        if(com.setClassMetadataProperties(classMetadata.getOid(), newName,  null, 
+                null, null, null, -1, null, null, null, null )){
             classMetadata.setClassName(newName);
             refresh();
         }else
@@ -165,6 +166,10 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
                                                                            Boolean.class, lcm.isCountable(), 
                                                                            java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_COUNTABLE")
                                                                            , "", this);
+        ClassMetadataProperty colorProp = new ClassMetadataProperty(Constants.PROPERTY_COLOR, 
+                                                                           Color.class, new Color(lcm.getColor()), 
+                                                                           java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_COLOR")
+                                                                           , "", this);
         ClassMetadataProperty smallIconProp = new ClassMetadataProperty(Constants.PROPERTY_SMALLICON, 
                                                                              Byte.class, null, 
                                                                            java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SMALL_ICON")
@@ -181,6 +186,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
         generalPropertySet.put(abstractProp);
         generalPropertySet.put(inDesignProp);
         generalPropertySet.put(countableProp);
+        generalPropertySet.put(colorProp);
         generalPropertySet.put(smallIconProp);
         generalPropertySet.put(iconProp);
         

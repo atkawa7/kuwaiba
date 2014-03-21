@@ -58,7 +58,7 @@ public class CreateClassAction extends AbstractAction {
                     com.getError());
         else{
             LocalClassMetadataLight lcml = new LocalClassMetadataLight(classId, className, 
-                    className, null, false, true, false, true, true, null, null);
+                    className, null, false, true, false, true, true, null, -1, null);
             node.getChildren().add(new Node[]{new ClassMetadataNode(lcml)});
             NotificationUtil.getInstance().showSimplePopup(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATION_TITLE"), NotificationUtil.INFO_MESSAGE,
                     java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CLASS_CREATED"));

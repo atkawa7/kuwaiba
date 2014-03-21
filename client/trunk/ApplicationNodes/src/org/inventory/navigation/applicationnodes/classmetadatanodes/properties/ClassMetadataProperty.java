@@ -15,6 +15,7 @@
  */
 package org.inventory.navigation.applicationnodes.classmetadatanodes.properties;
 
+import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyEditor;
 import java.io.File;
@@ -26,6 +27,7 @@ import org.inventory.communications.core.caching.Cache;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.ClassMetadataNode;
 import org.openide.nodes.PropertySupport.ReadWrite;
+import sun.beans.editors.ColorEditor;
 
 /**
  * ClassMetadata properties
@@ -50,10 +52,8 @@ public class ClassMetadataProperty extends ReadWrite {
 
     @Override
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        
         if (t == value)
             return;
-        
         try{
             if(!CommunicationsStub.getInstance().setClassMetadataProperties(node.getClassMetadata().getOid(), 
                     (getName().equals(Constants.PROPERTY_NAME)) ? (String)t :  null, 
@@ -61,6 +61,7 @@ public class ClassMetadataProperty extends ReadWrite {
                     (getName().equals(Constants.PROPERTY_DESCRIPTION)) ? (String)t :  null, 
                     (getName().equals(Constants.PROPERTY_SMALLICON)) ? (byte[])t :  null, 
                     (getName().equals(Constants.PROPERTY_ICON)) ? (byte[])t :  null, 
+                    (getName().equals(Constants.PROPERTY_COLOR)) ? (Integer)((Color)t).getRGB() : -1,
                     (getName().equals(Constants.PROPERTY_ABSTRACT)) ? (Boolean)t :  null, 
                     (getName().equals(Constants.PROPERTY_INDESIGN)) ? (Boolean)t :  null, 
                     (getName().equals(Constants.PROPERTY_COUNTABLE)) ? (Boolean)t :  null, 
@@ -110,5 +111,4 @@ public class ClassMetadataProperty extends ReadWrite {
         }
         return ext;
     }
-    
 }

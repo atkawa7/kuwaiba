@@ -19,7 +19,7 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 /**
- *
+ * Image Filter
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class ImageFileFilter extends FileFilter {
