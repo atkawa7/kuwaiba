@@ -2009,7 +2009,8 @@ public class Kuwaiba {
         boolean inDesign, @WebParam(name = "parentClassName")
         String parentClassName, @WebParam(name = "icon")
         byte[] icon, @WebParam(name = "smallIcon")
-        byte[] smallIcon, @WebParam(name = "sessionId")
+        byte[] smallIcon, @WebParam(name = "color")
+        int color, @WebParam(name = "sessionId")
         String sessionId) throws Exception {
         
         try{
@@ -2029,6 +2030,7 @@ public class Kuwaiba {
             ci.setDescription(description);
             ci.setIcon(icon);
             ci.setSmallIcon(smallIcon);
+            ci.setColor(color);
             ci.setParentClassName(parentClassName);
             ci.setAbstract(_abstract);
             ci.setCountable(countable);
@@ -2066,7 +2068,8 @@ public class Kuwaiba {
         String displayName, @WebParam(name = "description")
         String description, @WebParam(name = "smallIcon")
         byte[] smallIcon,  @WebParam(name = "icon")
-        byte[] icon, @WebParam(name = "_abstract")
+        byte[] icon, @WebParam(name = "color")
+        int color,@WebParam(name = "_abstract")
         Boolean _abstract, @WebParam(name = "inDesign")
         Boolean inDesign, @WebParam(name = "custom")
         Boolean custom, @WebParam(name = "countable")
@@ -2089,6 +2092,7 @@ public class Kuwaiba {
             ci.setDescription(description);
             ci.setIcon(icon);
             ci.setSmallIcon(smallIcon);
+            ci.setColor(color);
             ci.setAbstract(_abstract);
             ci.setInDesign(inDesign);
             ci.setCountable(countable);
