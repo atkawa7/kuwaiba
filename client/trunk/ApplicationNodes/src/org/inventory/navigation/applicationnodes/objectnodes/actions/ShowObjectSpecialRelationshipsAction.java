@@ -16,36 +16,27 @@
 package org.inventory.navigation.applicationnodes.objectnodes.actions;
 
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
 import javax.swing.AbstractAction;
-import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.windows.SpecialRelationshipsTopComponent;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.awt.ActionRegistration;
+import org.openide.util.NbBundle;
 
 /**
  * Gets the selected object special relationships
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
+@ActionID(category = "Tools", id = "org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectSpecialRelationshipsAction")
+@ActionRegistration(displayName = "#CTL_ShowSpecialRelationships")
+@ActionReference(path = "Menu/Tools/Navigation")
+@NbBundle.Messages({"CTL_ShowSpecialRelationships=Show special relationships"})
 public final class ShowObjectSpecialRelationshipsAction extends AbstractAction{
-    private LocalObjectLight object;
-
-    public ShowObjectSpecialRelationshipsAction(LocalObjectLight object) {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_SHOW_OBJECT_SPECIAL_RELATIONSHIPS_ACTION"));
-        this.object = object;
-    }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        HashMap<String, LocalObjectLight[]> relationships = CommunicationsStub.
-                getInstance().getSpecialAttributes(object.getClassName(), object.getOid());
-        if (relationships == null){
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            return;
-        }
-        SpecialRelationshipsTopComponent tc = new SpecialRelationshipsTopComponent(object, relationships);
+        SpecialRelationshipsTopComponent tc = SpecialRelationshipsTopComponent.getInstance();
         tc.open();
         tc.requestActive();
     }
-
 }

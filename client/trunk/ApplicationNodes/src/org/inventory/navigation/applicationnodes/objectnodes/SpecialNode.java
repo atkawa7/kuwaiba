@@ -25,7 +25,6 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusin
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectSpecialRelationshipsAction;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 
@@ -62,8 +61,6 @@ public class SpecialNode extends ObjectNode {
             }
         }
         actions.add(null); //Separator
-        actions.add(showRelationshipsAction == null ? showRelationshipsAction = 
-                                new ShowObjectSpecialRelationshipsAction(this.getObject()) : showRelationshipsAction);
         actions.add(showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction);
         
         return actions.toArray(new Action[]{});

@@ -108,7 +108,6 @@ public class ObjectViewService implements LookupListener{
            loadView(myObject);
         }else{
             if(!lookupResult.allInstances().isEmpty()){
-               vrtc.getNotifier().showStatusMessage("More than one object selected. No view available", false);
                vrtc.toggleButtons(false);
             }
         }

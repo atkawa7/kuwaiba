@@ -41,7 +41,6 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusin
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
-import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectSpecialRelationshipsAction;
 import org.inventory.navigation.applicationnodes.objectnodes.properties.ObjectNodeProperty;
 import org.openide.actions.CopyAction;
 import org.openide.actions.CutAction;
@@ -77,7 +76,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     protected RefreshObjectAction refreshAction;
     protected EditObjectAction editAction;
     protected ShowObjectIdAction showObjectIdAction;
-    protected ShowObjectSpecialRelationshipsAction showRelationshipsAction;
     
     protected Sheet sheet;
     private Image icon;
@@ -299,8 +297,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
             }
         }
         actions.add(null); //Separator
-        actions.add(showRelationshipsAction == null ? showRelationshipsAction = 
-                                new ShowObjectSpecialRelationshipsAction(this.getObject()) : showRelationshipsAction);
         actions.add(showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction);
         
         return actions.toArray(new Action[]{});

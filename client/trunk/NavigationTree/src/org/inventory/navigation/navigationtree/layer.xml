@@ -14,9 +14,11 @@
     <file name="Debugger_hidden"/>
     <folder name="Menu">
         <folder name="Tools">
-            <file name="NavigationTreeAction.shadow">
-                    <attr name="originalFile" stringvalue="Actions/Tools/org-inventory-navigation-navigationtree-NavigationTreeAction.instance"/>
-            </file>
+            <folder name="Navigation">
+                <file name="NavigationTreeAction.shadow">
+                        <attr name="originalFile" stringvalue="Actions/Tools/org-inventory-navigation-navigationtree-NavigationTreeAction.instance"/>
+                </file>
+            </folder>        
         </folder>     
     </folder>
     <folder name="Toolbars">

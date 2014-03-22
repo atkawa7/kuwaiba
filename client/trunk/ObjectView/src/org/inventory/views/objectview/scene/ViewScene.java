@@ -120,7 +120,7 @@ public final class ViewScene extends AbstractScene {
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         AbstractConnectionWidget widget = new AbstractConnectionWidget(this, edge);
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
-        widget.getActions(ACTION_SELECT).addAction(createSelectAction());
+        widget.getActions().addAction(createSelectAction());
         widget.getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
         edgesLayer.addChild(widget);
         return widget;

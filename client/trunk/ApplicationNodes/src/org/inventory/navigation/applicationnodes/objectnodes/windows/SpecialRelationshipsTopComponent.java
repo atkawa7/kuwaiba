@@ -18,8 +18,11 @@ package org.inventory.navigation.applicationnodes.objectnodes.windows;
 import java.awt.BorderLayout;
 import java.awt.Image;
 import java.util.HashMap;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
@@ -27,6 +30,10 @@ import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
+import org.openide.util.Lookup.Result;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
+import org.openide.util.Utilities;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -39,22 +46,31 @@ import org.openide.windows.WindowManager;
     preferredID = "SpecialRelationshipsTopComponent",
 persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "navigator", openAtStartup = false)
-public class SpecialRelationshipsTopComponent extends TopComponent implements ExplorerManager.Provider {
+public class SpecialRelationshipsTopComponent extends TopComponent 
+    implements ExplorerManager.Provider, LookupListener {
     private BeanTreeView tree;
     private ExplorerManager em;
+    //Singleton
+    private static SpecialRelationshipsTopComponent self;
     private static final Image icon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/relationship.png");
+    private Result<LocalObjectLight> lookupResult;
     
-    public SpecialRelationshipsTopComponent(LocalObjectLight object, HashMap<String, LocalObjectLight[]> relationships) {
+    private SpecialRelationshipsTopComponent() {
         em = new ExplorerManager();
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
-        setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_RELATIONSHIPS") + " - " + object);
+        setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_RELATIONSHIPS"));
         tree = new BeanTreeView();
-        tree.setRootVisible(false);
-        em.setRootContext(new RootNode(relationships));
         setLayout(new BorderLayout());
         add(tree);
+        em.setRootContext(new RootNode(null));
+    }
+    
+    public static SpecialRelationshipsTopComponent getInstance() {
+        if (self  == null)
+            self = new SpecialRelationshipsTopComponent();
         Mode navigator = WindowManager.getDefault().findMode("navigator");//For some reason, the TopComponent.Registration annotation is being ignored
-        navigator.dockInto(this);
+        navigator.dockInto(self);
+        return self;
     }
 
     @Override
@@ -63,15 +79,46 @@ public class SpecialRelationshipsTopComponent extends TopComponent implements Ex
     }
     
     @Override
-    public void componentOpened() {    }
+    public void componentOpened() {
+        lookupResult = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
+        lookupResult.addLookupListener(this);
+    }
     
+    @Override
+    public void componentClosed() {
+        lookupResult.removeLookupListener(this);
+    }
+    
+    @Override
+    public void resultChanged(LookupEvent ev) {
+        if(lookupResult.allInstances().size() == 1){
+            //Don't update if the same object is selected
+            LocalObjectLight object = (LocalObjectLight)lookupResult.allInstances().iterator().next();
+            HashMap<String, LocalObjectLight[]> relationships = CommunicationsStub.
+                   getInstance().getSpecialAttributes(object.getClassName(), object.getOid());
+            if (relationships == null){
+                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                return;
+            }
+            em.setRootContext(new RootNode(relationships));
+        }
+    }
+    
+    /**
+     * Dummy class to represent a node in the special relationships tree
+     */
     private class RootNode extends AbstractNode {
-        
         public RootNode (HashMap<String, LocalObjectLight[]> relationships){
             super (new Children.Array());
-            for (String relationship : relationships.keySet())
-                getChildren().add(new RelationshipNode[]{new RelationshipNode(relationship, relationships.get(relationship))});
-        }     
+            setIconBaseWithExtension(RootObjectNode.DEFAULT_ICON_PATH);
+            if (relationships != null) {
+                setDisplayName(String.format("%s special relationship types", relationships.size()));
+
+                for (String relationship : relationships.keySet())
+                    getChildren().add(new RelationshipNode[]{new RelationshipNode(relationship, relationships.get(relationship))});
+            }else
+                setDisplayName("No special relationships to show");
+        }
     }
     
     private class RelationshipNode extends AbstractNode {

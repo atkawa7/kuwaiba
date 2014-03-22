@@ -27,7 +27,7 @@ import org.openide.nodes.Children;
  */
 public class RootObjectNode extends AbstractNode {
 
-   static final String DEFAULT_ICON_PATH = "org/inventory/navigation/applicationnodes/res/root.png";
+   public static final String DEFAULT_ICON_PATH = "org/inventory/navigation/applicationnodes/res/root.png";
 
     public RootObjectNode(Children children) {
         super(children); //Dummy object
