@@ -18,7 +18,6 @@ package org.kuwaiba.ws.toserialize.application;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 
 /**
@@ -49,6 +48,9 @@ public class UserInfo extends UserInfoLight {
      * Group's privileges
      */
     private PrivilegeInfo[] privileges;
+
+    public UserInfo() {
+    }
     
     public UserInfo(UserProfile user){
         super(user);
@@ -65,9 +67,6 @@ public class UserInfo extends UserInfoLight {
         this.privileges = new PrivilegeInfo[user.getPrivileges().size()];
         for(int i=0; i < user.getPrivileges().size(); i++)
                 privileges[i] = new PrivilegeInfo(user.getPrivileges().get(i));
-        
-        
-        
     }
 
     public String getFirstName() {

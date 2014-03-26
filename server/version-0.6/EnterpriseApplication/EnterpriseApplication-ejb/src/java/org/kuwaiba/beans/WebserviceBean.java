@@ -803,21 +803,15 @@ public class WebserviceBean implements WebserviceBeanRemote {
     @Override
     public RemoteSession createSession(String user, String password, String IPAddress)
             throws ServerSideException {
-        if (aem == null){
+        if (aem == null)
             throw new ServerSideException(Level.SEVERE, "Can't reach the backend. Contact your administrator");
-        }
         try {
             Session newSession = aem.createSession(user, password, IPAddress);
-            
             return new RemoteSession(newSession.getToken(), newSession.getUser());
-            
-        } catch (ApplicationObjectNotFoundException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        } catch (RemoteException ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
-            return null;
-        }
+        } catch (Exception ex) {
+        Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE, ex.getMessage());
+            throw new ServerSideException(Level.SEVERE, ex.getMessage());
+        } 
     }
 
     @Override

@@ -36,6 +36,9 @@ public class UserInfoLight implements Serializable{
     */
     private String userName;
 
+    public UserInfoLight() {
+    }
+
     public UserInfoLight(UserProfile user) {
             this.id = user.getId();
             this.userName = user.getUserName(); 
