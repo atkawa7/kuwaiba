@@ -30,9 +30,9 @@ public static void main(String argv[]) throws IOException, Exception {
         a.read(XMLBackupReader.getBytesFromFile(classHierarchyFile));
         a.load();
         
-        PrivilegesReader pr = new PrivilegesReader();
-        File privilegesFile = new File(System.getProperty("user.home") + "/privileges.csv");
-        pr.read(privilegesFile);
-        pr.setDefaultSettings();
+//        PrivilegesReader pr = new PrivilegesReader();
+//        File privilegesFile = new File(System.getProperty("user.home") + "/privileges.csv");
+//        pr.read(privilegesFile);
+//        pr.setDefaultSettings();
     }
 }

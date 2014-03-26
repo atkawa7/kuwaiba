@@ -347,7 +347,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             String lastName, boolean enabled, long[] privileges, long[] groups, String ipAddress, String sessionId)
             throws InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         
-        validateCall("setUserProperties", ipAddress, sessionId);
+        //validateCall("setUserProperties", ipAddress, sessionId);
         
         Node userNode = userIndex.get(Constants.PROPERTY_NAME, formerUsername).getSingle();
         if(userNode == null)
@@ -1723,6 +1723,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             UserProfile user = Util.createUserProfileFromNode(userNode);
             cm.putUser(user);
         }
+        else
+            throw  new ApplicationObjectNotFoundException("Wrong Password");
         for (Session aSession : sessions.values()){
             if (aSession.getUser().getUserName().equals(userName)){
                 Logger.getLogger("createSession").log(Level.INFO, String.format("An existing session for user %1s has been dropped", aSession.getUser().getUserName()));
