@@ -16,9 +16,13 @@
 package org.kuwaiba.management.services.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -27,6 +31,11 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 
@@ -35,24 +44,55 @@ import org.inventory.communications.core.LocalObjectLight;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ServicesFrame extends JFrame{
+    
+    private JTextField txtField;
     private JScrollPane pnlScrollMain;
     private JList lstAvailableServices;
     private LocalObjectLight object;
-
+    private LocalObjectLight[] services;
+    
+    
     public ServicesFrame(LocalObjectLight object, LocalObjectLight[] services) {
         this.object = object;
+        this.services = services;
         setLayout(new BorderLayout());
         setTitle(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_TITLE_AVAILABLE_SERVICES"));
-        setSize(300, 700);
+        setSize(400, 650);
         setLocationRelativeTo(null);
         JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_INSTRUCTIONS_SELECT_SERVICE"));
-        lblInstructions.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
-        add(lblInstructions, BorderLayout.NORTH);
+        lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
+                
+        JPanel pnlSearch = new JPanel();
+        pnlSearch.setLayout(new GridLayout(1, 2));
         lstAvailableServices = new JList(services);
         pnlScrollMain = new JScrollPane();
+        txtField = new JTextField();
+        txtField.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2));
+        txtField.getDocument().addDocumentListener(new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                servicesFilter(txtField.getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                servicesFilter(txtField.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                servicesFilter(txtField.getText());
+            }
+        });
+        
+        pnlSearch.add(lblInstructions);
+        pnlSearch.add(txtField);
+        add(pnlSearch, BorderLayout.NORTH);
+        
         pnlScrollMain.setViewportView(lstAvailableServices);
-        add(pnlScrollMain, BorderLayout.CENTER);
+        add(lstAvailableServices, BorderLayout.CENTER);
         
         JPanel pnlButtons = new JPanel();
         pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -89,8 +129,18 @@ public class ServicesFrame extends JFrame{
                 else 
                     JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 
                             "Error", JOptionPane.ERROR_MESSAGE);
-                
             }
         }
+    }
+    
+    public void servicesFilter(String text){
+        List<LocalObjectLight> filteredServices = new ArrayList<LocalObjectLight>();
+        for(LocalObjectLight service : services){
+            if(service.getClassName().toLowerCase().contains(text.toLowerCase()) 
+                    || service.getName().toLowerCase().contains(text.toLowerCase()))
+                filteredServices.add(service);
+        }
+        LocalObjectLight[] toArray = filteredServices.toArray(new LocalObjectLight[filteredServices.size()]);
+        lstAvailableServices.setListData(toArray);
     }
 }
