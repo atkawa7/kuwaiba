@@ -14,7 +14,7 @@
  * 
  */
 
-package org.inventory.queries.graphical.dialogs;
+package org.inventory.queries.dialogs;
 
 import java.awt.Color;
 import java.awt.Component;

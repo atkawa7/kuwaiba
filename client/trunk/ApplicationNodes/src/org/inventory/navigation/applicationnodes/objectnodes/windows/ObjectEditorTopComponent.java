@@ -39,12 +39,12 @@ public class ObjectEditorTopComponent extends TopComponent{
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         editor = new PropertySheetView();
         this.node = node;
-
         this.setDisplayName(node.getDisplayName());
-
         setLayout(new BorderLayout());
-
         add(editor,BorderLayout.CENTER);
+        //This requires that CoreUI to be enable in the project
+        Mode myMode = WindowManager.getDefault().findMode("properties");
+        myMode.dockInto(this);
     }
 
     @Override
@@ -54,9 +54,6 @@ public class ObjectEditorTopComponent extends TopComponent{
 
     @Override
     public void componentOpened() {
-        //This requires that CoreUI to be enable in the project
-        Mode myMode = WindowManager.getDefault().findMode("properties");
-        myMode.dockInto(this);
         //This is important. If setNodes is called in the constructor, it won't work!
         editor.setNodes(new Node[]{node});
     }

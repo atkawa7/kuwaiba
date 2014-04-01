@@ -55,7 +55,7 @@ public class SpecialChildrenTopComponent extends TopComponent
     private SpecialChildrenTopComponent() {
         em = new ExplorerManager();
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
-        setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_RELATIONSHIPS"));
+        setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_SPECIALCHILDREN"));
         tree = new BeanTreeView();
         setLayout(new BorderLayout());
         add(tree);

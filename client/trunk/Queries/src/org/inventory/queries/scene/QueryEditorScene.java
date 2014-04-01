@@ -44,9 +44,8 @@
  * Modified By Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org> for project Kuwaiba
  */
 
-package org.inventory.queries.graphical;
+package org.inventory.queries.scene;
 
-import org.inventory.queries.graphical.elements.QueryEditorNodeWidget;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -63,14 +62,12 @@ import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.core.visual.decorators.ColorSchemeFactory;
 import org.inventory.queries.actions.SwitchClassNodeWidgetFilterAction;
-import org.inventory.queries.graphical.elements.AttributePinWidget;
-import org.inventory.queries.graphical.elements.ClassNodeWidget;
-import org.inventory.queries.graphical.elements.filters.BooleanFilterNodeWidget;
-import org.inventory.queries.graphical.elements.filters.DateFilterNodeWidget;
-import org.inventory.queries.graphical.elements.filters.ListTypeFilter;
-import org.inventory.queries.graphical.elements.filters.NumericFilterNodeWidget;
-import org.inventory.queries.graphical.elements.filters.SimpleCriteriaNodeWidget;
-import org.inventory.queries.graphical.elements.filters.StringFilterNodeWidget;
+import org.inventory.queries.scene.filters.BooleanFilterNodeWidget;
+import org.inventory.queries.scene.filters.DateFilterNodeWidget;
+import org.inventory.queries.scene.filters.ListTypeFilter;
+import org.inventory.queries.scene.filters.NumericFilterNodeWidget;
+import org.inventory.queries.scene.filters.SimpleCriteriaNodeWidget;
+import org.inventory.queries.scene.filters.StringFilterNodeWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.action.WidgetAction;

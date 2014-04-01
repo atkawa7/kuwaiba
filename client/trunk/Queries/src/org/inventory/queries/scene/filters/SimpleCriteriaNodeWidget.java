@@ -14,13 +14,13 @@
  * 
  */
 
-package org.inventory.queries.graphical.elements.filters;
+package org.inventory.queries.scene.filters;
 
 import javax.swing.JComboBox;
 import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.core.visual.decorators.ColorSchemeFactory;
-import org.inventory.queries.graphical.elements.QueryEditorNodeWidget;
-import org.inventory.queries.graphical.QueryEditorScene;
+import org.inventory.queries.scene.QueryEditorNodeWidget;
+import org.inventory.queries.scene.QueryEditorScene;
 
 /**
  * This class represents a simple searching criteria, this is, related to a simple data type.

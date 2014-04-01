@@ -20,7 +20,7 @@
  * Created on Jan 31, 2011, 1:05:16 PM
  */
 
-package org.inventory.queries.graphical.dialogs;
+package org.inventory.queries.dialogs;
 
 /**
  *

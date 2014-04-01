@@ -14,7 +14,7 @@
  * 
  */
 
-package org.inventory.queries.graphical.elements;
+package org.inventory.queries.scene;
 
 import java.awt.Dimension;
 import javax.swing.Icon;
@@ -24,7 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import org.inventory.communications.core.LocalAttributeMetadata;
 import org.inventory.communications.util.Constants;
-import org.inventory.queries.graphical.QueryEditorScene;
+import org.inventory.queries.scene.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDColorScheme;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
 import org.netbeans.api.visual.widget.ComponentWidget;

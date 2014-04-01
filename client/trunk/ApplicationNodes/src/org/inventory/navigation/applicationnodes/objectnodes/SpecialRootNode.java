@@ -70,12 +70,14 @@ public class SpecialRootNode extends AbstractNode {
 
         @Override
         public Image getIcon(int type) {
+            if (childrenIcon == null)
+                return super.getIcon(type);
             return childrenIcon;
         }
 
         @Override
         public Image getOpenedIcon(int type) {
-            return childrenIcon;
+            return getIcon(type);
         }
     }
     private class SpecialObjectChildren extends Children.Array {

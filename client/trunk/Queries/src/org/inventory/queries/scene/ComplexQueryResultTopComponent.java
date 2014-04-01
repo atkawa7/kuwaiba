@@ -14,7 +14,7 @@
  * 
  */
 
-package org.inventory.queries.graphical;
+package org.inventory.queries.scene;
 
 import java.awt.BorderLayout;
 import java.awt.Point;
@@ -46,6 +46,7 @@ import org.netbeans.swing.etable.ETable;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.util.Lookup;
+import org.openide.util.actions.Presenter;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -271,8 +272,14 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
                 node = new ObjectNode(singleRecord);
             
             for (Action action : node.getActions(true)){
-                if (action != null)
-                    menu.add(action);
+                if (action != null){
+                    //For some stupid reason, the show-pop-up-action is ignoring actions
+                    //implementing the Presenter.Popup interface, thus not showing the submenus
+                    if (action instanceof Presenter.Popup)
+                        menu.add(((Presenter.Popup)action).getPopupPresenter());
+                    else
+                        menu.add(action);
+                }
             }
             menu.show(e.getComponent(), e.getX(), e.getY());
           }

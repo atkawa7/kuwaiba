@@ -14,7 +14,7 @@
  * 
  */
 
-package org.inventory.queries.graphical;
+package org.inventory.queries.scene;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;

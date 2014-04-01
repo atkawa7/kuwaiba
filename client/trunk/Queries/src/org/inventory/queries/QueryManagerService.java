@@ -38,10 +38,10 @@ import org.inventory.communications.core.queries.LocalResultRecord;
 import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
-import org.inventory.queries.graphical.elements.QueryEditorNodeWidget;
-import org.inventory.queries.graphical.QueryEditorScene;
-import org.inventory.queries.graphical.elements.ClassNodeWidget;
-import org.inventory.queries.graphical.elements.filters.ListTypeFilter;
+import org.inventory.queries.scene.QueryEditorNodeWidget;
+import org.inventory.queries.scene.QueryEditorScene;
+import org.inventory.queries.scene.ClassNodeWidget;
+import org.inventory.queries.scene.filters.ListTypeFilter;
 
 /**
  * This class will replace the old QueryManagerService in next releases

@@ -14,9 +14,9 @@
  * 
  */
 
-package org.inventory.queries.graphical.elements;
+package org.inventory.queries.scene;
 
-import org.inventory.queries.graphical.QueryEditorScene;
+import org.inventory.queries.scene.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDColorScheme;
 import org.netbeans.api.visual.vmd.VMDNodeWidget;
 

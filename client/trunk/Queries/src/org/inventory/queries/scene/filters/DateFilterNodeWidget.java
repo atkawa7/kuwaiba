@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.inventory.queries.graphical.elements.filters;
+package org.inventory.queries.scene.filters;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,7 +22,7 @@ import java.util.Random;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import org.inventory.communications.core.queries.LocalTransientQuery;
-import org.inventory.queries.graphical.QueryEditorScene;
+import org.inventory.queries.scene.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
 import org.netbeans.api.visual.widget.ComponentWidget;
 

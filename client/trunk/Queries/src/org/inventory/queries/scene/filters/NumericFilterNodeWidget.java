@@ -14,37 +14,40 @@
  * 
  */
 
-package org.inventory.queries.graphical.elements.filters;
+package org.inventory.queries.scene.filters;
 
 import java.util.Random;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import org.inventory.communications.core.queries.LocalTransientQuery;
-import org.inventory.queries.graphical.QueryEditorScene;
+import org.inventory.queries.scene.QueryEditorScene;
 import org.netbeans.api.visual.vmd.VMDPinWidget;
 import org.netbeans.api.visual.widget.ComponentWidget;
 
 /**
- * Represents a filter for string values
+ * Represents a filter for numeric values (integers, floats and longs)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class StringFilterNodeWidget extends SimpleCriteriaNodeWidget{
+public class NumericFilterNodeWidget extends SimpleCriteriaNodeWidget{
 
     protected JTextField insideText;
 
-    public StringFilterNodeWidget(QueryEditorScene scene) {
+    public NumericFilterNodeWidget(QueryEditorScene scene) {
         super(scene);
-        setNodeProperties(null, "String", "Filter", null);
+        setNodeProperties(null, "Numeric", "Filter", null);
     }
 
     @Override
     public void build(String id) {
-        insideText = new JTextField(10);
+        insideText = new JTextField("0", 10);
         defaultPinId = "DefaultPin_"+new Random().nextInt(1000);
         VMDPinWidget dummyPin = (VMDPinWidget)((QueryEditorScene)getScene()).addPin(id, defaultPinId);
         condition = new JComboBox(new Object[]{
                                                 LocalTransientQuery.Criteria.EQUAL,
-                                                LocalTransientQuery.Criteria.LIKE
+                                                LocalTransientQuery.Criteria.EQUAL_OR_GREATER_THAN,
+                                                LocalTransientQuery.Criteria.GREATER_THAN,
+                                                LocalTransientQuery.Criteria.EQUAL_OR_LESS_THAN,
+                                                LocalTransientQuery.Criteria.LESS_THAN
                           });
         dummyPin.addChild(new ComponentWidget(getScene(), condition));
         dummyPin.addChild(new ComponentWidget(getScene(), insideText));
@@ -52,6 +55,14 @@ public class StringFilterNodeWidget extends SimpleCriteriaNodeWidget{
 
     @Override
     public String getValue() {
+        try {
+            Integer.valueOf(insideText.getText());
+            Float.valueOf(insideText.getText());
+            Long.valueOf(insideText.getText());
+        }catch(NumberFormatException ex){
+            //In case of a problem, take a default value of 0
+            return "0"; //NOI18N
+        }
         return insideText.getText();
     }
 }
