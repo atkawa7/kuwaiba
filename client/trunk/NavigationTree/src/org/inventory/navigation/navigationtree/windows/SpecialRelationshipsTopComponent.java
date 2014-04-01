@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.navigation.applicationnodes.objectnodes.windows;
+package org.inventory.navigation.navigationtree.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
@@ -22,13 +22,10 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
-import org.inventory.navigation.applicationnodes.objectnodes.RootObjectNode;
+import org.inventory.navigation.applicationnodes.objectnodes.SpecialRootNode;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
-import org.openide.nodes.AbstractNode;
-import org.openide.nodes.Children;
-import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup.Result;
 import org.openide.util.LookupEvent;
@@ -52,17 +49,17 @@ public class SpecialRelationshipsTopComponent extends TopComponent
     private ExplorerManager em;
     //Singleton
     private static SpecialRelationshipsTopComponent self;
-    private static final Image icon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/relationship.png");
-    private Result<LocalObjectLight> lookupResult;
+    private static final Image icon = ImageUtilities.loadImage("org/inventory/navigation/navigationtree/res/relationship.png");
+    private Result<ObjectNode> lookupResult;
     
     private SpecialRelationshipsTopComponent() {
         em = new ExplorerManager();
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
-        setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_RELATIONSHIPS"));
+        setDisplayName(java.util.ResourceBundle.getBundle("org/inventory/navigation/navigationtree/Bundle").getString("LBL_RELATIONSHIPS"));
         tree = new BeanTreeView();
         setLayout(new BorderLayout());
         add(tree);
-        em.setRootContext(new RootNode(null));
+        em.setRootContext(new SpecialRootNode());
     }
     
     public static SpecialRelationshipsTopComponent getInstance() {
@@ -80,12 +77,14 @@ public class SpecialRelationshipsTopComponent extends TopComponent
     
     @Override
     public void componentOpened() {
-        lookupResult = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
+        lookupResult = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class);
         lookupResult.addLookupListener(this);
+        resultChanged(null);
     }
     
     @Override
     public void componentClosed() {
+        em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
         lookupResult.removeLookupListener(this);
     }
     
@@ -93,64 +92,17 @@ public class SpecialRelationshipsTopComponent extends TopComponent
     public void resultChanged(LookupEvent ev) {
         if(lookupResult.allInstances().size() == 1){
             //Don't update if the same object is selected
-            LocalObjectLight object = (LocalObjectLight)lookupResult.allInstances().iterator().next();
+            ObjectNode node = (ObjectNode)lookupResult.allInstances().iterator().next();
             HashMap<String, LocalObjectLight[]> relationships = CommunicationsStub.
-                   getInstance().getSpecialAttributes(object.getClassName(), object.getOid());
+                   getInstance().getSpecialAttributes(node.getObject().getClassName(), node.getObject().getOid());
             if (relationships == null){
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;
             }
-            em.setRootContext(new RootNode(relationships));
-        }
-    }
-    
-    /**
-     * Dummy class to represent a node in the special relationships tree
-     */
-    private class RootNode extends AbstractNode {
-        public RootNode (HashMap<String, LocalObjectLight[]> relationships){
-            super (new Children.Array());
-            setIconBaseWithExtension(RootObjectNode.DEFAULT_ICON_PATH);
-            if (relationships != null) {
-                setDisplayName(String.format("%s special relationship types", relationships.size()));
-
-                for (String relationship : relationships.keySet())
-                    getChildren().add(new RelationshipNode[]{new RelationshipNode(relationship, relationships.get(relationship))});
-            }else
-                setDisplayName("No special relationships to show");
-        }
-    }
-    
-    private class RelationshipNode extends AbstractNode {
-        public RelationshipNode (String label, LocalObjectLight[] relatedObjects){
-            super(new RelationshipChildren(relatedObjects));
-            this.setDisplayName(label);
-        }
-        
-        @Override
-        public Image getIcon(int type) {
-            return icon;
-        }
-        
-        @Override
-        public Image getOpenedIcon(int type) {
-            return icon;
-        }
-    }
-    private class RelationshipChildren extends Children.Array {
-        private LocalObjectLight[] relatedObjects;
-        
-        public RelationshipChildren(LocalObjectLight[] relatedObjects){
-            this.relatedObjects = relatedObjects;
-        }
-
-        @Override
-        protected void addNotify() {
-            for (LocalObjectLight item : relatedObjects){
-                ObjectNode newNode = new ObjectNode(item, true);
-                remove(new Node[]{newNode});
-                add(new Node[]{newNode});
-           }
+            SpecialRootNode rootNode = new SpecialRootNode(relationships);
+            rootNode.setChildrenIcon(icon);
+            rootNode.setDisplayName(String.format("%s special relationship types", relationships.size()));
+            em.setRootContext(rootNode);
         }
     }
 }

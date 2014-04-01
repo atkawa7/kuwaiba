@@ -89,11 +89,17 @@
             </module-dependencies>
             <public-packages>
                 <package>org.inventory.navigation.applicationnodes.attributemetadatanodes</package>
+                <package>org.inventory.navigation.applicationnodes.attributemetadatanodes.customeditor</package>
+                <package>org.inventory.navigation.applicationnodes.attributemetadatanodes.properties</package>
                 <package>org.inventory.navigation.applicationnodes.classmetadatanodes</package>
+                <package>org.inventory.navigation.applicationnodes.classmetadatanodes.action</package>
+                <package>org.inventory.navigation.applicationnodes.classmetadatanodes.properties</package>
                 <package>org.inventory.navigation.applicationnodes.listmanagernodes</package>
                 <package>org.inventory.navigation.applicationnodes.listmanagernodes.actions</package>
                 <package>org.inventory.navigation.applicationnodes.objectnodes</package>
                 <package>org.inventory.navigation.applicationnodes.objectnodes.actions</package>
+                <package>org.inventory.navigation.applicationnodes.objectnodes.properties</package>
+                <package>org.inventory.navigation.applicationnodes.objectnodes.windows</package>
                 <package>org.inventory.navigation.applicationnodes.pools</package>
                 <package>org.inventory.navigation.applicationnodes.pools.actions</package>
                 <package>org.inventory.navigation.applicationnodes.querynodes</package>

@@ -97,7 +97,7 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
-                <package>org.inventory.navigation.navigationtree.special</package>
+                <package>org.inventory.navigation.navigationtree.windows</package>
             </public-packages>
         </data>
     </configuration>

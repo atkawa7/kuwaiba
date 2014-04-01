@@ -21,7 +21,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.navigationtree.special.SpecialObjectExplorerTopComponent;
+import org.inventory.navigation.navigationtree.windows.SpecialChildrenTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.TopComponent;
 
@@ -43,7 +43,7 @@ public class CreateSoftwareAssetAction extends GenericObjectNodeAction {
         if (newLicense == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
-            TopComponent explorer = new SpecialObjectExplorerTopComponent(object);
+            TopComponent explorer = SpecialChildrenTopComponent.getInstance();
             explorer.open();
             explorer.requestActive();
         }
@@ -52,6 +52,5 @@ public class CreateSoftwareAssetAction extends GenericObjectNodeAction {
     @Override
     public String getValidator() {
         return Constants.VALIDATOR_APPLICATION_ELEMENT;
-    }
-    
+    }   
 }
