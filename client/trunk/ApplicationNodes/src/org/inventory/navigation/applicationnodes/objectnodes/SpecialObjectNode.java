@@ -15,7 +15,6 @@
  */
 package org.inventory.navigation.applicationnodes.objectnodes;
 
-import java.awt.Image;
 import java.util.ArrayList;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
@@ -25,7 +24,6 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.DeleteBusin
 import org.inventory.navigation.applicationnodes.objectnodes.actions.EditObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.RefreshObjectAction;
 import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectIdAction;
-import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 
 /**
