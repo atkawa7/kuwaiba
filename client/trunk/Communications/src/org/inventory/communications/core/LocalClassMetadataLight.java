@@ -15,6 +15,7 @@
  */
 package org.inventory.communications.core;
 
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -106,7 +107,8 @@ public class LocalClassMetadataLight implements Transferable {
         this.listType = listType;
         this.custom = custom;
         this.inDesign = inDesign;
-        this.smallIcon = Utils.getImageFromByteArray(smallIcon);
+        this.smallIcon = Utils.getIconFromByteArray(smallIcon, new Color(color),
+                Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
         this.color = color;
         this.validators = validators;
     }

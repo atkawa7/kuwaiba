@@ -90,6 +90,11 @@ public class SpecialRelationshipsTopComponent extends TopComponent
         if(lookupResult.allInstances().size() == 1){
             //Don't update if the same object is selected
             ObjectNode node = (ObjectNode)lookupResult.allInstances().iterator().next();
+            
+            //If the current object is the same that the last selected object, do nothing
+            if (node.getObject().equals(((SpecialRootNode)em.getRootContext()).getCurrentObject()))
+                return;
+            
             HashMap<String, LocalObjectLight[]> relationships = CommunicationsStub.
                    getInstance().getSpecialAttributes(node.getObject().getClassName(), node.getObject().getOid());
             if (relationships == null){

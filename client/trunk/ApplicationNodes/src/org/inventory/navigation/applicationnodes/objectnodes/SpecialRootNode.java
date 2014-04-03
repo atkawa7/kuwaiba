@@ -24,6 +24,10 @@ import org.openide.nodes.Children;
  * Dummy class to represent a node in the special relationships tree
  */
 public class SpecialRootNode extends AbstractNode {  
+    /**
+     * Current Object being displayed
+     */
+    private LocalObjectLight currentObject;
     
     public SpecialRootNode() {
         super (new Children.Array());
@@ -33,12 +37,18 @@ public class SpecialRootNode extends AbstractNode {
     
     public SpecialRootNode (LocalObjectLight rootObject, HashMap<String, LocalObjectLight[]> children){
         this();
+        currentObject = rootObject;
         for (String label : children.keySet())
             getChildren().add(new LabelNode[]{new LabelNode(label, children.get(label))});
     }
     
     public SpecialRootNode (LocalObjectLight rootObject, LocalObjectLight[] directChildren){
         this();
+        currentObject = rootObject;
         getChildren().add(new SpecialObjectNode[]{new SpecialObjectNode(rootObject, directChildren)});
+    }
+
+    public LocalObjectLight getCurrentObject() {
+        return currentObject;
     }
 }

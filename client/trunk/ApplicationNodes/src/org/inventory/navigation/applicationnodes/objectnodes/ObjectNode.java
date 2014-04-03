@@ -52,7 +52,6 @@ import org.openide.nodes.Node;
 import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
-import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.PasteType;
@@ -64,7 +63,6 @@ import org.openide.util.lookup.Lookups;
  */
 public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
-    public static final String GENERIC_ICON_PATH="org/inventory/navigation/applicationnodes/res/default.png";
     protected LocalObjectLight object;
     //There can be only one instance for OpenLocalExplorerAction, this attribute is a kind of singleton
     protected static OpenLocalExplorerAction explorerAction = new OpenLocalExplorerAction();
@@ -78,8 +76,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     protected ShowObjectIdAction showObjectIdAction;
     
     protected Sheet sheet;
-    private Image icon;
-    private final Image defaultIcon = ImageUtilities.loadImage(GENERIC_ICON_PATH);
+    private Image icon ;
     
     public ObjectNode(LocalObjectLight lol){
         super(new ObjectChildren(), Lookups.singleton(lol));
@@ -87,7 +84,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         com = CommunicationsStub.getInstance();
         if (lol.getClassName() != null){
             this.object.addPropertyChangeListener(this);
-            icon = (com.getMetaForClass(lol.getClassName(),false)).getSmallIcon();
+            icon = com.getMetaForClass(lol.getClassName(),false).getSmallIcon();
             explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
         }
     }
@@ -97,7 +94,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         this.object = lol;
         this.object.addPropertyChangeListener(this);
         com = CommunicationsStub.getInstance();
-        icon = (com.getMetaForClass(lol.getClassName(),false)).getSmallIcon();
+        icon = com.getMetaForClass(lol.getClassName(),false).getSmallIcon();
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
     }
 
@@ -400,7 +397,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
     @Override
     public Image getIcon(int i){
-        return icon == null ? defaultIcon : icon;
+        return icon;
     }
 
     @Override

@@ -25,7 +25,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
-import org.inventory.core.services.utils.Utils;
+import org.inventory.communications.util.Utils;
 
 /**
  * Panel that shows

@@ -32,8 +32,8 @@ import javax.swing.border.EmptyBorder;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.caching.Cache;
 import org.inventory.communications.util.Constants;
+import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.services.utils.Utils;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
 import org.openide.explorer.propertysheet.PropertyEnv;
 
@@ -154,7 +154,8 @@ public class IconPropertyEditor extends PropertyEditorSupport
         }
         
         public void updateIcon() {
-            btnImageChooser.setIcon(new ImageIcon(org.inventory.communications.util.Utils.getImageFromByteArray(icon)));
+            btnImageChooser.setIcon(new ImageIcon(Utils.getIconFromByteArray(icon, 
+                    Utils.DEFAULT_ICON_COLOR, Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT)));
         }
     }
 }

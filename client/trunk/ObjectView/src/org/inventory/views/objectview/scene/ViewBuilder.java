@@ -30,7 +30,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
-import org.inventory.core.services.utils.Utils;
+import org.inventory.communications.util.Utils;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Widget;

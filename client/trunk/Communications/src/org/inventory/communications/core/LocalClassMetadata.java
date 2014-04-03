@@ -15,6 +15,7 @@
  */
 package org.inventory.communications.core;
 
+import java.awt.Color;
 import java.awt.Image;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +56,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
         
         super(id, className, displayName, parentName, _abstract, viewable, listType, 
             custom, inDesign, smallIcon, color, validators);
-        this.icon = Utils.getImageFromByteArray(icon);
+        this.icon = Utils.getIconFromByteArray(icon, new Color(color), 32, 32);
         this.description = description;
         this.attributeIds = new long[attributeIds.size()];
         this.attributeMappings = new int[attributeIds.size()];
@@ -138,7 +139,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
                 return this.attributeTypes[i];
             }
         }
-        return "String";
+        return String.class.getName();
     }
 
 
@@ -178,10 +179,6 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
         return countable;
     }
         
-//    public LocalClassMetadataLight asLocalClassMetadataLight(){
-//        return new LocalClassMetadataLight(id, className, displayName, parentName, _abstract, viewable, listType, custom, inDesign, smallIcon, validators);
-//    }
-
     public long getCreationDate() {
         return creationDate;
     }

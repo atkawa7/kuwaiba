@@ -20,14 +20,19 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.swing.filechooser.FileFilter;
 import org.inventory.communications.core.LocalObjectLight;
 
 /**
@@ -35,7 +40,19 @@ import org.inventory.communications.core.LocalObjectLight;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class Utils {
-        /**
+    /**
+     * Default icon color (used in navigation trees and views). It's a light blue
+     */
+    public static final Color DEFAULT_ICON_COLOR = new Color(0, 170, 212);
+    /**
+     * Default icon height (used in navigation trees and views)
+     */
+    public static final int DEFAULT_ICON_HEIGHT = 10;
+    /**
+     * Default icon height (used in navigation trees and views)
+     */
+    public static final int DEFAULT_ICON_WIDTH = 10;
+     /**
      * Finds the real type for a given type provided as a string
      * Possible types:
      * -A string --> String
@@ -67,8 +84,8 @@ public class Utils {
         else
             return LocalObjectLight.class;
     }
-    
-        /**
+       
+    /**
      * Convert a byte array into an image
      * @param bytes The byte array
      * @return
@@ -82,6 +99,29 @@ public class Utils {
             return bf;
         } catch (IOException ex) {
             return null;
+        }
+    }
+    
+    /**
+     * The same as getImageFromByteArray, but it returns a default icon instead of null
+     * if the input parameter is null, or the byte can't be converted to an image
+     * @param bytes Bytes to create the icon from. Null if you want to get the default icon
+     * @param defaultColor default color in case the byte array is null. Null to use the default icon color. Ignored if "bytes" is a readable image
+     * @param defaultWidth default width in case the byte array is null. Ignored if "bytes" is a readable image
+     * @param defaultHeight default height in case the byte array is null. Ignored if "bytes" is a readable image
+     * @return 
+     */
+    public static Image getIconFromByteArray(byte[] bytes, Color defaultColor, int defaultWidth, int defaultHeight){
+        if (bytes == null || bytes.length == 0)
+            return createRectangleIcon(defaultColor == null ? DEFAULT_ICON_COLOR : defaultColor, 
+                    defaultWidth, defaultHeight);
+        try {
+            InputStream in = new ByteArrayInputStream(bytes);
+            BufferedImage bf = ImageIO.read(in);
+            return bf;
+        } catch (IOException ex) {
+            return createRectangleIcon(defaultColor ==  null ? DEFAULT_ICON_COLOR : defaultColor, 
+                    defaultWidth, defaultHeight);
         }
     }
     
@@ -157,5 +197,160 @@ public class Utils {
         graphics.fillRect(0, 0, width, height);
         graphics.dispose();
         return image;
+    }
+    
+    /**
+     * Gets the bytes from a file
+     * @param f File object
+     * @param format format to be read
+     * @return The byte array
+     */
+    public static byte[] getByteArrayFromFile(File f) throws IOException{
+        InputStream is = new FileInputStream(f);
+        long length = f.length();
+        byte[] bytes;
+        if (length < Integer.MAX_VALUE) { //checks if the file is too big
+            bytes = new byte[(int)length];
+            // Read in the bytes
+            int offset = 0;
+            int numRead = 0;
+            while (offset < bytes.length
+                   && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+                offset += numRead;
+            }
+
+            // Ensure all the bytes have been read in
+            if (offset < bytes.length) {
+                throw new IOException("Could not completely read file "+f.getName());
+            }
+        }else{
+            throw new IOException("File too big "+f.getName());
+        }
+        is.close();
+        return bytes;
+    }
+
+    /**
+    *  Converts a java.awt.Image into a byte array
+    *  @param im Image to be converted
+    *  @param format format used to save ("png","jpg", etc). Read more about the constraints <a href="http://docs.oracle.com/javase/6/docs/api/javax/imageio/ImageIO.html#write%28java.awt.image.RenderedImage,%20java.lang.String,%20java.io.File%29">here</a>
+    *  @return An byte array o null if the image passed is null
+    *  @throws IOException If it's not possible to create an image using the given format
+    **/
+    public static byte[] getByteArrayFromImage(Image im, String format) throws IOException{
+
+        if (im == null)
+            return null;
+
+        //PNG by default
+        String myFormat = format ==null?"png":format;
+
+        BufferedImage bu = new BufferedImage(im.getWidth(null), im.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        bu.getGraphics().drawImage(im, 0, 0, null);
+        ByteArrayOutputStream bas = new ByteArrayOutputStream();
+        ImageIO.write(bu, myFormat, bas);
+
+        //Do we need bu.getGraphics().dispose()?
+        return bas.toByteArray();
+    }
+
+    public static FileFilter getImageFileFilter(){
+        return new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                if (f.isDirectory())
+                    return true;
+
+                String extension = getExtension(f);
+                if (extension != null) {
+                    if(extension.equals("gif") || extension.equals("jpeg") || extension.equals("jpg") ||
+                            extension.equals("png")) {
+                        return true;
+                    } else {return false;}
+                }
+                return false;
+            }
+
+            public String getExtension(File f){
+                String ext = null;
+                String s = f.getName();
+                int i = s.lastIndexOf('.');
+
+                if (i > 0 &&  i < s.length() - 1) {
+                    ext = s.substring(i+1).toLowerCase();
+                }
+                return ext;
+            }
+
+            @Override
+            public String getDescription() {
+                return "Image Files";
+            }
+        };
+    }
+    
+    /**
+     * This method receives two conjuncts and extract the elements that are not common among them
+     * @param groupA
+     * @param groupB
+     * @return An array of two positions with the remaining elements in the conjunct A and the second with the B's elements
+     */
+    public static Collection[] inverseIntersection(Collection groupA, Collection groupB){
+        for (Object elementA : groupA){
+            for (Object elementB : groupB){
+                if (elementA.equals(elementB)){
+                    List<Object> myGroupA = new ArrayList<Object>(groupA);
+                    List<Object> myGroupB = new ArrayList<Object>(groupB);
+                    myGroupA.remove(elementA);
+                    myGroupB.remove(elementB);
+                    return inverseIntersection(myGroupA, myGroupB);
+                }
+            }
+        }
+        return new Collection[]{groupA,groupB};
+    }
+
+    /**
+     * Returns string based on a given color. For now is pretty simple making a plain comparison
+     * it could be extended by guessing the name base on the RGB value
+     * @param value The color to be evaluated
+     * @return The string representing the color
+     */
+    public static String getColorName(Color value){
+        if (value.equals(Color.black))
+                    return "Black";
+                else
+                    if (value.equals(Color.white))
+                        return "White";
+                    else
+                        if (value.equals(Color.red))
+                            return "Red";
+                        else
+                            if (value.equals(Color.blue))
+                                return "Blue";
+                            else
+                                if (value.equals(Color.green))
+                                    return "Green";
+                                else
+                                    if (value.equals(Color.orange))
+                                        return "Orange";
+                                    else
+                                        if (value.equals(Color.yellow))
+                                            return "Yellow";
+        return "Other";
+    }
+    
+    public static Color getConnectionColor(String connectionClass){
+        if (connectionClass.equals(Constants.CLASS_ELECTRICALLINK))
+            return Color.ORANGE;
+        if (connectionClass.equals(Constants.CLASS_OPTICALLINK))
+            return Color.GREEN;
+        if (connectionClass.equals(Constants.CLASS_WIRELESSLINK))
+            return Color.MAGENTA;
+        if (connectionClass.equals(Constants.CLASS_WIRECONTAINER))
+            return Color.RED;
+        if (connectionClass.equals(Constants.CLASS_WIRELESSCONTAINER))
+            return Color.BLUE;
+        return Color.BLACK;
     }
 }
