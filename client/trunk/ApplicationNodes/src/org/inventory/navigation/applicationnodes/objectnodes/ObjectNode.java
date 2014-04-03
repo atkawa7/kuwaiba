@@ -101,7 +101,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         explorerAction.putValue(OpenLocalExplorerAction.NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_EXPLORE"));
     }
 
-    /*
+    /**
      * Returns the wrapped object
      * @return returns the related business object
      */
@@ -111,13 +111,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     
     @Override
     public String getDisplayName(){
-        String className;
-        LocalClassMetadata aClass = CommunicationsStub.getInstance().getMetaForClass(object.getClassName(),false);
-        if (aClass == null) //This is rare, but may happen. The cached object metadata is not synchronized with the server's due to a data model change
-            className = "";
-        else
-            className = aClass.getDisplayName();
-        return getEditableText() + " ["+(className==null?object.getClassName():className)+"]";
+        return object.toString();
     }
 
     @Override
@@ -384,7 +378,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         };
     }
 
-    //TODO Set this to false is the object is locked
     @Override
     public boolean canRename(){
         return true;
@@ -407,9 +400,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
     @Override
     public Image getIcon(int i){
-        if (icon == null)
-            return defaultIcon;
-        return icon;
+        return icon == null ? defaultIcon : icon;
     }
 
     @Override
@@ -442,10 +433,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     }
 
     public String getEditableText(){
-        if (object.getName() == null)
-            return java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME");
-        if (object.getName().equals(""))
-            return java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NONAME");
         return object.getName();
     }
     

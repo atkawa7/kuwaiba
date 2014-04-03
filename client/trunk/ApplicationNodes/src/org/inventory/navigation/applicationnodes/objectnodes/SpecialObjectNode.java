@@ -34,13 +34,18 @@ import org.openide.util.Lookup;
  * children as defined by a particular model
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class SpecialNode extends ObjectNode {
-    private static Image icon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/special_object.png");
-    public SpecialNode(LocalObjectLight anObject) {
+public class SpecialObjectNode extends ObjectNode {
+    public SpecialObjectNode(LocalObjectLight anObject) {
         super(anObject);
         setChildren(new SpecialChildren());
     }
 
+    public SpecialObjectNode(LocalObjectLight anObject, LocalObjectLight[] directChildren) {
+        this(anObject);
+        for (LocalObjectLight directChild : directChildren)
+            getChildren().add(new SpecialObjectNode[] {new SpecialObjectNode(directChild)});
+    }
+    
     @Override
     public Action[] getActions(boolean context) {
         ArrayList<Action> actions = new ArrayList<Action>();
@@ -64,15 +69,5 @@ public class SpecialNode extends ObjectNode {
         actions.add(showObjectIdAction == null ? showObjectIdAction = new ShowObjectIdAction(object.getOid(), object.getClassName()) : showObjectIdAction);
         
         return actions.toArray(new Action[]{});
-    }
-
-    @Override
-    public Image getIcon(int i) {
-        return icon;
-    }
-
-    @Override
-    public Image getOpenedIcon(int i) {
-        return icon;
     }
 }

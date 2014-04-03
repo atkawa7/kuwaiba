@@ -15,30 +15,34 @@
  */
 package org.inventory.navigation.applicationnodes.objectnodes;
 
-import java.util.HashMap;
+import java.awt.Color;
+import java.awt.Image;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Utils;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 
 /**
- * Dummy class to represent a node in the special relationships tree
+ * A node that represents only a label
  */
-public class SpecialRootNode extends AbstractNode {  
-    
-    public SpecialRootNode() {
+public class LabelNode extends AbstractNode {
+    private final Image icon = Utils.createRectangleIcon(new Color(170, 212,0), 10, 10);
+    public LabelNode(String label, LocalObjectLight[] children) {
         super (new Children.Array());
-        setDisplayName("Nothing to show");
-        setIconBaseWithExtension(RootObjectNode.DEFAULT_ICON_PATH);      
+        setDisplayName(label);
+        for (LocalObjectLight child : children)
+            getChildren().add(new ObjectNode[] {new ObjectNode(child, true)});
+    }
+
+    @Override
+    public Image getIcon(int type) {
+        return icon;
+    }
+
+    @Override
+    public Image getOpenedIcon(int type) {
+        return getIcon(type);
     }
     
-    public SpecialRootNode (LocalObjectLight rootObject, HashMap<String, LocalObjectLight[]> children){
-        this();
-        for (String label : children.keySet())
-            getChildren().add(new LabelNode[]{new LabelNode(label, children.get(label))});
-    }
     
-    public SpecialRootNode (LocalObjectLight rootObject, LocalObjectLight[] directChildren){
-        this();
-        getChildren().add(new SpecialObjectNode[]{new SpecialObjectNode(rootObject, directChildren)});
-    }
 }

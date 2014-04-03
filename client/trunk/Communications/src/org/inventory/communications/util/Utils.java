@@ -15,6 +15,8 @@
  */
 package org.inventory.communications.util;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -138,5 +140,22 @@ public class Utils {
         }catch(Exception e){
             throw new IllegalArgumentException();
         }
+    }
+    
+    /**
+     * Creates an image of a rectangle of given dimensions and color. can be used to generate icons
+     * @param color Color
+     * @param width Width
+     * @param height Height
+     * @return A BufferedImage object
+     */
+    public static Image createRectangleIcon(Color color, int width, int height){
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = image.createGraphics();
+        if (color != null)
+            graphics.setColor(color);
+        graphics.fillRect(0, 0, width, height);
+        graphics.dispose();
+        return image;
     }
 }

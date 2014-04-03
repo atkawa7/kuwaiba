@@ -26,7 +26,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.applicationnodes.objectnodes.SpecialChildren;
-import org.inventory.navigation.applicationnodes.objectnodes.SpecialNode;
+import org.inventory.navigation.applicationnodes.objectnodes.SpecialObjectNode;
 import org.openide.util.actions.Presenter;
 
 /**
@@ -35,10 +35,10 @@ import org.openide.util.actions.Presenter;
  */
 public final class CreateSpecialBusinessObjectAction extends AbstractAction 
             implements Presenter.Popup {
-    private SpecialNode node;
+    private SpecialObjectNode node;
     private CommunicationsStub com;
 
-    public CreateSpecialBusinessObjectAction(SpecialNode node) {
+    public CreateSpecialBusinessObjectAction(SpecialObjectNode node) {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
         com = CommunicationsStub.getInstance();
         this.node = node;
@@ -54,7 +54,7 @@ public final class CreateSpecialBusinessObjectAction extends AbstractAction
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
             if (!((SpecialChildren)node.getChildren()).isCollapsed())
-                ((SpecialChildren)node.getChildren()).add(new SpecialNode[]{new SpecialNode(myLol)});
+                ((SpecialChildren)node.getChildren()).add(new SpecialObjectNode[]{new SpecialObjectNode(myLol)});
                 
             NotificationUtil.getInstance().showSimplePopup("Sucess", NotificationUtil.INFO_MESSAGE,
                         java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));

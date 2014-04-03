@@ -99,10 +99,9 @@ public class SpecialChildrenTopComponent extends TopComponent
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;
             }
-            SpecialRootNode rootNode = new SpecialRootNode(specialChildren);
-            rootNode.setChildrenIcon(icon);
-            rootNode.setDisplayName(String.format("%s special children", specialChildren.length));
-            em.setRootContext(new SpecialRootNode(specialChildren));
+            SpecialRootNode rootNode = new SpecialRootNode(node.getObject(), specialChildren);
+            rootNode.setDisplayName(String.format("%s special children found", specialChildren.length));
+            em.setRootContext(rootNode);
         }
     }
 }

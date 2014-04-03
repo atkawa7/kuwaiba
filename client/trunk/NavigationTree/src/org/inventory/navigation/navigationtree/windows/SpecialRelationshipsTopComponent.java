@@ -16,7 +16,6 @@
 package org.inventory.navigation.navigationtree.windows;
 
 import java.awt.BorderLayout;
-import java.awt.Image;
 import java.util.HashMap;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
@@ -26,7 +25,6 @@ import org.inventory.navigation.applicationnodes.objectnodes.SpecialRootNode;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
-import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup.Result;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
@@ -49,7 +47,6 @@ public class SpecialRelationshipsTopComponent extends TopComponent
     private ExplorerManager em;
     //Singleton
     private static SpecialRelationshipsTopComponent self;
-    private static final Image icon = ImageUtilities.loadImage("org/inventory/navigation/navigationtree/res/relationship.png");
     private Result<ObjectNode> lookupResult;
     
     private SpecialRelationshipsTopComponent() {
@@ -99,9 +96,8 @@ public class SpecialRelationshipsTopComponent extends TopComponent
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;
             }
-            SpecialRootNode rootNode = new SpecialRootNode(relationships);
-            rootNode.setChildrenIcon(icon);
-            rootNode.setDisplayName(String.format("%s special relationship types", relationships.size()));
+            SpecialRootNode rootNode = new SpecialRootNode(node.getObject(), relationships);
+            rootNode.setDisplayName(String.format("%s relationship types found", relationships.size()));
             em.setRootContext(rootNode);
         }
     }

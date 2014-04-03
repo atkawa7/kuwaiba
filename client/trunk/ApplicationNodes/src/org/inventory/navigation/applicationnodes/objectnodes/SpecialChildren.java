@@ -39,6 +39,6 @@ public class SpecialChildren extends ObjectChildren {
         }
             
         for (LocalObjectLight lol : specialChildren)
-            add(new SpecialNode[]{new SpecialNode(lol)});
+            add(new SpecialObjectNode[]{new SpecialObjectNode(lol)});
     }
 }

@@ -203,7 +203,7 @@ public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalOb
             removeNode(getNodes().iterator().next());
 
         while (!getEdges().isEmpty())
-            removeNode(getEdges().iterator().next());
+            removeEdge(getEdges().iterator().next());
         
         labelsLayer.removeChildren();
         validate();
