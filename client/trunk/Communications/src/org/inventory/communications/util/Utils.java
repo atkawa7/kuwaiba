@@ -45,6 +45,10 @@ public class Utils {
      */
     public static final Color DEFAULT_ICON_COLOR = new Color(0, 170, 212);
     /**
+     * Default class icon color. Used in the Data Model Manager
+     */
+    public static final Color DEFAULT_CLASS_ICON_COLOR = new Color(32, 207, 29);
+    /**
      * Default icon height (used in navigation trees and views)
      */
     public static final int DEFAULT_ICON_HEIGHT = 10;

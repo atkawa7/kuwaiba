@@ -21,6 +21,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import javax.swing.JOptionPane;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.views.gis.scene.GISViewScene;
 import org.netbeans.api.visual.action.AcceptProvider;
@@ -59,6 +60,7 @@ public class AcceptActionProvider implements AcceptProvider{
                 point.x -= newNode.getBounds().width / 2;
                 point.y -= newNode.getBounds().height / 2;
                 newNode.setPreferredLocation(point);
+                newNode.setBackground(CommunicationsStub.getInstance().getMetaForClass(droppedObject.getClassName(), false).getColor());
                 scene.validate();
             }else
                 JOptionPane.showMessageDialog(null, "The view already contains this object","Error",JOptionPane.ERROR_MESSAGE);

@@ -115,6 +115,7 @@ public class GISViewService {
                                 GeoPositionedNodeWidget widget = (GeoPositionedNodeWidget)scene.addNode(lol);
                                 widget.setCoordinates(latitude, longitude);
                                 widget.setPreferredLocation(scene.getMap().getMapPosition(latitude, longitude));
+                                widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
                                 scene.validate();
                             }
                             else

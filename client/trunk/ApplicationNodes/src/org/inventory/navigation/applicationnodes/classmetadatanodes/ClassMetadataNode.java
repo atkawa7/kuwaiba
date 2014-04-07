@@ -25,6 +25,7 @@ import org.inventory.communications.core.LocalAttributeMetadata;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.attributemetadatanodes.properties.ClassAttributeMetadataProperty;
 import org.inventory.navigation.applicationnodes.classmetadatanodes.action.CreateAttributeAction;
@@ -35,7 +36,6 @@ import org.inventory.navigation.applicationnodes.classmetadatanodes.action.Refre
 import org.inventory.navigation.applicationnodes.classmetadatanodes.properties.ClassMetadataProperty;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Sheet;
-import org.openide.util.ImageUtilities;
 import org.openide.util.lookup.Lookups;
 
 /**
@@ -43,9 +43,7 @@ import org.openide.util.lookup.Lookups;
  * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
 public class ClassMetadataNode extends AbstractNode implements PropertyChangeListener{
-    
-    public static final String GENERIC_ICON_PATH="org/inventory/navigation/applicationnodes/res/metadataclassdefaulticon.png";
-    
+       
     protected LocalClassMetadataLight classMetadata;
     
     protected CommunicationsStub com;
@@ -55,15 +53,14 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
     protected CreateAttributeAction createAttributeAction;
     protected DeleteAttributeAction deleteAttributeAction;
     protected Sheet sheet;
-    protected Image icon;
-    private final Image defaultIcon = ImageUtilities.loadImage(GENERIC_ICON_PATH);
+    private final Image defaultIcon = Utils.createRectangleIcon(Utils.DEFAULT_CLASS_ICON_COLOR, 
+            Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
 
     public ClassMetadataNode(LocalClassMetadataLight lcml) {
         super(new ClassMetadataChildren(), Lookups.singleton(lcml));
         this.classMetadata =  lcml;
         this.classMetadata.addPropertyChangeListener(this);
         com = CommunicationsStub.getInstance();
-        icon  = classMetadata.getSmallIcon();
         createAction = new CreateClassAction(this);
         deleteAction = new DeleteClassAction(this);
         createAttributeAction = new CreateAttributeAction(this);
@@ -81,10 +78,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
     
     @Override
     public Image getIcon(int i){
-        if (icon == null){
-            return defaultIcon;
-        }
-        return icon;
+        return defaultIcon;
     }
         
     @Override
@@ -167,7 +161,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
                                                                            java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_COUNTABLE")
                                                                            , "", this);
         ClassMetadataProperty colorProp = new ClassMetadataProperty(Constants.PROPERTY_COLOR, 
-                                                                           Color.class, new Color(lcm.getColor()), 
+                                                                           Color.class, lcm.getColor(), 
                                                                            java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_COLOR")
                                                                            , "", this);
         ClassMetadataProperty smallIconProp = new ClassMetadataProperty(Constants.PROPERTY_SMALLICON, 

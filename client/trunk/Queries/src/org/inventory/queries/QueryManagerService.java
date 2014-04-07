@@ -226,7 +226,7 @@ public class QueryManagerService implements ActionListener {
                         myMetadata.getClassName(), myMetadata.getDisplayName(),
                         myMetadata.getParentName(), myMetadata.isAbstract(), 
                         myMetadata.isViewable(), myMetadata.isListType(), myMetadata.isCustom(), 
-                                myMetadata.isInDesign(), null, myMetadata.getColor(), null);
+                                myMetadata.isInDesign(), null, 0, null);
                     }
                     else 
                         myMetadataLight = myMetadata;

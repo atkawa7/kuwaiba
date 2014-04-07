@@ -78,7 +78,7 @@ public class LocalClassMetadataLight implements Transferable {
     /**
      * Color for the class. The class will show this color in maps 
      */
-    private int color;
+    private Color color;
     
     /**
      * Misc validators. Validators tell you states of this class related to business rules
@@ -109,7 +109,7 @@ public class LocalClassMetadataLight implements Transferable {
         this.inDesign = inDesign;
         this.smallIcon = Utils.getIconFromByteArray(smallIcon, new Color(color),
                 Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
-        this.color = color;
+        this.color = new Color(color);
         this.validators = validators;
     }
 
@@ -184,11 +184,11 @@ public class LocalClassMetadataLight implements Transferable {
         this.smallIcon = newIcon;
     }
 
-    public int getColor() {
+    public Color getColor() {
         return color;
     }
 
-    public void setColor(int color) {
+    public void setColor(Color color) {
         this.color = color;
     }
 

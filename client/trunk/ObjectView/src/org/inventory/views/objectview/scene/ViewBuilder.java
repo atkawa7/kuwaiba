@@ -101,11 +101,11 @@ public class ViewBuilder {
                         int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
                         long objectId = Long.valueOf(reader.getElementText());
 
-                        LocalObjectLight lol = CommunicationsStub.getInstance().
-                                getObjectInfoLight(objectClass, objectId);
+                        LocalObjectLight lol = com.getObjectInfoLight(objectClass, objectId);
                         if (lol != null){
                             Widget widget = scene.addNode(lol);
                             widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
+                            widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
                         }
                         else
                             currentView.setDirty(true);
@@ -116,7 +116,7 @@ public class ViewBuilder {
                             long bSide = Long.valueOf(reader.getAttributeValue(null,"bside"));
 
                             String className = reader.getAttributeValue(null,"class");
-                            LocalObjectLight container = CommunicationsStub.getInstance().getObjectInfoLight(className, objectId);
+                            LocalObjectLight container = com.getObjectInfoLight(className, objectId);
                             if (container != null){
                                 LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
                                 Widget aSideWidget = scene.findWidget(aSideObject);
@@ -187,6 +187,7 @@ public class ViewBuilder {
             //Puts an element after another
             Widget widget = scene.addNode(node);
             widget.setPreferredLocation(new Point(lastX, 0));
+            widget.setBackground(com.getMetaForClass(node.getClassName(), false).getColor());
 
             lastX += 100;
         }
@@ -240,6 +241,7 @@ public class ViewBuilder {
             //Puts an element after another
             Widget widget = scene.addNode(node);
             widget.setPreferredLocation(new Point(lastX, 20));
+            widget.setBackground(com.getMetaForClass(node.getClassName(), false).getColor());
             lastX +=100;
         }
 
