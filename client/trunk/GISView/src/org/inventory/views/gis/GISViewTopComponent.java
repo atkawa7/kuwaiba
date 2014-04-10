@@ -22,6 +22,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.views.LocalObjectViewLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
@@ -39,6 +40,7 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.explorer.ExplorerManager;
+import org.openide.util.Exceptions;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 
 /**
@@ -76,7 +78,6 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     public GISViewTopComponent() {
         initComponents();
         initCustomComponents();
-        setName(NbBundle.getMessage(GISViewTopComponent.class, "CTL_GISViewTopComponent"));
         setToolTipText(NbBundle.getMessage(GISViewTopComponent.class, "HINT_GISViewTopComponent"));
         this.gvs = new GISViewService(scene, this);
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
@@ -431,6 +432,8 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
                         scene.setEnabled(true);
                         pnlMap.setVisible(true);
                     }catch(Exception ex){
+                        if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
+                            Exceptions.printStackTrace(ex);
                         getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
                     }
                 }
@@ -517,7 +520,12 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         toggleButtons(false);
         scene.clear();
     }
-
+    
+    @Override
+    public void componentOpened() {
+        setName(NbBundle.getMessage(GISViewTopComponent.class, "CTL_GISViewTopComponent"));
+    }
+    
     /**
      * Enable or disable buttons massively
      * @param enabled

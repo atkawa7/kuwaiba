@@ -35,6 +35,7 @@ import org.inventory.views.gis.scene.providers.AcceptActionProvider;
 import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.PointShape;
+import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.ComponentWidget;
 import org.netbeans.api.visual.widget.ConnectionWidget;
@@ -196,8 +197,8 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
         int deltaY = map.getCenter().y - lastYPosition;
         
         for (Widget node : nodesLayer.getChildren())
-            node.setPreferredLocation(new Point(node.getPreferredLocation().x - 
-                    deltaX, node.getPreferredLocation().y - deltaY));
+            node.setPreferredLocation(new Point(node.getLocation().x - 
+                    deltaX, node.getLocation().y - deltaY));
 
         for (Widget connection : edgesLayer.getChildren()){
             List<Point> controlPoints = ((AbstractConnectionWidget)connection).getControlPoints();
@@ -218,7 +219,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
     public void zoom() {
         
         for (Widget node : nodesLayer.getChildren()){
-            Coordinate geoPosition = getLastPosition(node.getPreferredLocation().x, node.getPreferredLocation().y);
+            Coordinate geoPosition = getLastPosition(node.getLocation().x, node.getLocation().y);
             Point newLocation = map.getMapPosition(geoPosition, false);
             node.setPreferredLocation(newLocation);
         }
@@ -322,7 +323,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
         
         @Override
         public void revalidateDependency() {
-            setPreferredBounds(getScene().getBounds());
+            getComponent().setBounds(getScene().getBounds());
             nodesLayer.setPreferredBounds(getScene().getBounds());
             labelsLayer.setPreferredBounds(getScene().getBounds());
             validate();

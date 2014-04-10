@@ -190,7 +190,6 @@ public class GISViewService {
                     }
                 }
                 reader.close();
-                scene.validate();
                 gvtc.toggleButtons(true);
             } catch (XMLStreamException ex) {
                 gvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "Error rendering view file (Corrupted File)");
@@ -199,6 +198,7 @@ public class GISViewService {
             } catch (NumberFormatException nfe){
                 gvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "Error rendering view file (Wrong Number Format)");
             }
+            gvtc.setDisplayName(currentView.getName());
         }
     }
 
@@ -216,11 +216,12 @@ public class GISViewService {
             if (com.updateGeneralView(currentView.getId(), nameInTxt, descriptionInTxt, scene.getAsXML(), null)){
                 currentView.setName(nameInTxt);
                 currentView.setDescription(descriptionInTxt);
-                gvtc.getNotifier().showSimplePopup("SUccess", NotificationUtil.INFO_MESSAGE, "View saved successfully");
+                gvtc.getNotifier().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "View saved successfully");
             }
             else
                 gvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         }
+        gvtc.setDisplayName(currentView.getName() == null ? "No Name" : currentView.getName());
     }
 
     public boolean deleteCurrentView() {

@@ -22,6 +22,15 @@ package org.inventory.communications.util;
  */
 public class Constants {
     /**
+     * No debugging
+     */
+    public static final int DEBUG_LEVEL_DISABLED = 0;
+    public static final int DEBUG_LEVEL_INFO = 1;
+    public static final int DEBUG_LEVEL_FINE = 2;
+    public static int DEBUG_LEVEL = DEBUG_LEVEL_FINE;
+    //public static int DEBUG_LEVEL = DEBUG_LEVEL_DISABLED;
+    
+    /**
      * Name of the validator to indicate if a given class is a container
      */
     public static final String VALIDATOR_PHYSICAL_CONTAINER = "physicalContainer";
