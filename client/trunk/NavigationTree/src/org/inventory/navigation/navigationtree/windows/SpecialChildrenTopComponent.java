@@ -21,6 +21,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.applicationnodes.objectnodes.SpecialObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.SpecialRootNode;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
@@ -93,6 +94,9 @@ public class SpecialChildrenTopComponent extends TopComponent
         if(lookupResult.allInstances().size() == 1){
             //Don't update if the same object is selected
             ObjectNode node = (ObjectNode)lookupResult.allInstances().iterator().next();
+            
+            if (node instanceof SpecialObjectNode) //Ignore its own nodes
+                return;
             
             //If the current object is the same that the last selected object, do nothing
             if (node.getObject().equals(((SpecialRootNode)em.getRootContext()).getCurrentObject()))

@@ -150,7 +150,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
                                                                 lam.getName(),
                                                                 lam.getType(),
                                                                 lo.getAttribute(lam.getName()),
-                                                                lam.getDisplayName().equals("")?lam.getName():lam.getDisplayName(),
+                                                                lam.getDisplayName().isEmpty() ? lam.getName() : lam.getDisplayName(),
                                                                 lam.getDescription(),this);
                     break;
                     case Constants.MAPPING_MANYTOONE:
@@ -448,9 +448,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
 
     @Override
     public boolean equals(Object obj){
-        if (obj instanceof ObjectNode){
-            return ((ObjectNode)obj).getObject().getOid() == this.getObject().getOid();
-        }else return false;
+        if (obj instanceof ObjectNode)
+            return ((ObjectNode)obj).getObject().equals(this.getObject());
+        else return false;
     }
 
     @Override

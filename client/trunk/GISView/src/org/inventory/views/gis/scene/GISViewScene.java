@@ -35,7 +35,6 @@ import org.inventory.views.gis.scene.providers.AcceptActionProvider;
 import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.PointShape;
-import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.ComponentWidget;
 import org.netbeans.api.visual.widget.ConnectionWidget;
@@ -113,12 +112,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
             }
         });
         
-        this.map.setTileLoader(new CustomTileLoader(new CustomTileLoaderListener()));
-        
-        this.lastXPosition = map.getCenter().x;
-        this.lastYPosition = map.getCenter().y;
-        this.lastZoomLevel = map.getZoom();
-        
+        this.map.setTileLoader(new CustomTileLoader(new CustomTileLoaderListener()));      
         this.connectionProvider = new PhysicalConnectionProvider(this);
         
         mapLayer = new LayerWidget(this);
@@ -237,15 +231,21 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
         lastXPosition = map.getCenter().x;
         lastYPosition = map.getCenter().y;
     }
+    
+    public void resetDefaultLastPositions(){
+        this.lastXPosition = map.getCenter().x;
+        this.lastYPosition = map.getCenter().y;
+        this.lastZoomLevel = map.getZoom();
+    }
 
     /**
      * Cleans up the scene and release resources
      */
     @Override
-    public void clear() {
-        
+    public void clear() {      
         map.setVisible(false);
         map.setDisplayPosition(DEFAULT_CENTER_POSITION, DEFAULT_ZOOM_LEVEL);
+        resetDefaultLastPositions();
         super.clear();       
         //polygonsLayer.removeChildren();
     }

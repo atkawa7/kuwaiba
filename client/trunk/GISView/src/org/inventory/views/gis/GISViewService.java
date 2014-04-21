@@ -190,6 +190,7 @@ public class GISViewService {
                     }
                 }
                 reader.close();
+                scene.resetDefaultLastPositions();
                 gvtc.toggleButtons(true);
             } catch (XMLStreamException ex) {
                 gvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "Error rendering view file (Corrupted File)");

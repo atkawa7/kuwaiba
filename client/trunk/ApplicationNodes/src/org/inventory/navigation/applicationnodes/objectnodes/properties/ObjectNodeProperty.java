@@ -45,7 +45,7 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
      */
     public ObjectNodeProperty(String name, Class valueType, Object value,
             String displayName,String toolTextTip,ObjectNode node) {
-        super(name,valueType,displayName,toolTextTip);
+        super(name, valueType, displayName, toolTextTip);
         this.setName(name);
         this.value = value;
         this.node = node;
@@ -71,6 +71,8 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
 
     @Override
     public Object getValue() throws IllegalAccessException, InvocationTargetException {
+       if (getValueType() == Boolean.class) //For some reason, a null value for a boolean property is mapped to true, not to false
+           return value == null ? false : value;
        return this.value;
     }
 

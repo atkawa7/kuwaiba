@@ -39,7 +39,7 @@ public final class CreateSpecialBusinessObjectAction extends AbstractAction
     private CommunicationsStub com;
 
     public CreateSpecialBusinessObjectAction(SpecialObjectNode node) {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW"));
+        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_NEW_SPECIAL_OBJECT"));
         com = CommunicationsStub.getInstance();
         this.node = node;
     }
