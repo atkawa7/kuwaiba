@@ -100,12 +100,14 @@ public class SpecialRelationshipsTopComponent extends TopComponent
             
             HashMap<String, LocalObjectLight[]> relationships = CommunicationsStub.
                    getInstance().getSpecialAttributes(node.getObject().getClassName(), node.getObject().getOid());
+            
             if (relationships == null){
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;
             }
+            
             SpecialRootNode rootNode = new SpecialRootNode(node.getObject(), relationships);
-            rootNode.setDisplayName(String.format("%s relationship types found", relationships.size()));
+            rootNode.setDisplayName(String.format("%s relationships found", relationships.size()));
             em.setRootContext(rootNode);
         }
     }

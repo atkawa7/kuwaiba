@@ -31,8 +31,8 @@ public class SpecialRootNode extends AbstractNode {
     
     public SpecialRootNode() {
         super (new Children.Array());
+        setIconBaseWithExtension(RootObjectNode.DEFAULT_ICON_PATH);
         setDisplayName("Nothing to show");
-        setIconBaseWithExtension(RootObjectNode.DEFAULT_ICON_PATH);      
     }
     
     public SpecialRootNode (LocalObjectLight rootObject, HashMap<String, LocalObjectLight[]> children){
@@ -42,10 +42,10 @@ public class SpecialRootNode extends AbstractNode {
             getChildren().add(new LabelNode[]{new LabelNode(label, children.get(label))});
     }
     
-    public SpecialRootNode (LocalObjectLight rootObject, LocalObjectLight[] directChildren){
+    public SpecialRootNode (LocalObjectLight rootObject){
         this();
         currentObject = rootObject;
-        getChildren().add(new SpecialObjectNode[]{new SpecialObjectNode(rootObject, directChildren)});
+        getChildren().add(new SpecialObjectNode[]{new SpecialObjectNode(rootObject)});
     }
 
     public LocalObjectLight getCurrentObject() {

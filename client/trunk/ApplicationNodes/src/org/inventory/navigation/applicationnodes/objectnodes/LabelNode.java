@@ -31,7 +31,7 @@ public class LabelNode extends AbstractNode {
         super (new Children.Array());
         setDisplayName(label);
         for (LocalObjectLight child : children)
-            getChildren().add(new ObjectNode[] {new ObjectNode(child, true)});
+            getChildren().add(new SpecialObjectNode[] {new SpecialObjectNode(child)});
     }
 
     @Override

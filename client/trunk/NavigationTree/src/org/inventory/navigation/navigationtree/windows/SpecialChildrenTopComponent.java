@@ -16,17 +16,12 @@
 package org.inventory.navigation.navigationtree.windows;
 
 import java.awt.BorderLayout;
-import java.awt.Image;
-import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.SpecialObjectNode;
 import org.inventory.navigation.applicationnodes.objectnodes.SpecialRootNode;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
-import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
@@ -50,7 +45,6 @@ public class SpecialChildrenTopComponent extends TopComponent
     private BeanTreeView tree;
     //Singleton
     private static SpecialChildrenTopComponent self;
-    private static final Image icon = ImageUtilities.loadImage("org/inventory/navigation/navigationtree/res/special_object.png");
     private Lookup.Result<ObjectNode> lookupResult;
     
     private SpecialChildrenTopComponent() {
@@ -99,18 +93,12 @@ public class SpecialChildrenTopComponent extends TopComponent
                 return;
             
             //If the current object is the same that the last selected object, do nothing
-            if (node.getObject().equals(((SpecialRootNode)em.getRootContext()).getCurrentObject()))
+            if (node.equals(em.getRootContext()))
                 return;
             
-            LocalObjectLight[] specialChildren = CommunicationsStub.getInstance().getObjectSpecialChildren(node.getObject().getClassName(), 
-                    node.getObject().getOid());
-            if (specialChildren == null){
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                return;
-            }
-            SpecialRootNode rootNode = new SpecialRootNode(node.getObject(), specialChildren);
-            rootNode.setDisplayName(String.format("%s special children found", specialChildren.length));
-            em.setRootContext(rootNode);
+            SpecialObjectNode newRootNode = new SpecialObjectNode(node.getObject());
+            em.setRootContext(newRootNode);
+            tree.expandNode(newRootNode);
         }
     }
 }

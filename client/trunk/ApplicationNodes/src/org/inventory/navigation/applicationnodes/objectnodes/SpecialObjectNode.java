@@ -37,12 +37,6 @@ public class SpecialObjectNode extends ObjectNode {
         super(anObject);
         setChildren(new SpecialChildren());
     }
-
-    public SpecialObjectNode(LocalObjectLight anObject, LocalObjectLight[] directChildren) {
-        this(anObject);
-        for (LocalObjectLight directChild : directChildren)
-            getChildren().add(new SpecialObjectNode[] {new SpecialObjectNode(directChild)});
-    }
     
     @Override
     public Action[] getActions(boolean context) {
