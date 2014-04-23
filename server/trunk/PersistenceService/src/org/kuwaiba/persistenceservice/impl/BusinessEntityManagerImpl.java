@@ -16,6 +16,11 @@
 
 package org.kuwaiba.persistenceservice.impl;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -25,6 +30,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
+import org.kuwaiba.apis.persistence.application.Privilege;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
@@ -1215,5 +1221,49 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             }
         }
         return newInstance;
+    }
+
+    @Override
+    public int[] executePatch() throws NotAuthorizedException {
+        int executedFiles = 0;
+        BufferedReader br = null;
+        File patchDirectory = new File(Constants.PACTHES_PATH);
+        int totalPatchFiles = patchDirectory.listFiles().length;
+
+        for (File patchFile : patchDirectory.listFiles()) {
+            if (!patchFile.getName().contains("~") && !patchFile.getName().endsWith(".ole")) {
+                try {
+                    br = new BufferedReader(new FileReader(patchFile));
+                    String line = br.readLine();
+                    while (line != null) {
+                        if (line.startsWith("#")) {
+                            System.out.println(line);
+                        }
+                        if (line.startsWith(Constants.DATABASE_SENTENCE)) {
+                            String cypherQuery = br.readLine();
+                            ExecutionEngine engine = new ExecutionEngine(graphDb);
+                            engine.execute(cypherQuery);
+                        }
+                        line = br.readLine();
+                    }
+                    File readFile = new File(patchFile.getPath()+".ole");
+                    patchFile.renameTo(readFile);
+                    executedFiles++;
+                } catch (IOException e) {
+                    Logger.getLogger(getClass().getName()).log(Level.INFO, "executePatch: {0}", e.getMessage()); //NOI18N
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex.getMessage());
+                } finally {
+                    try {
+                        if (br != null) {
+                            br.close();
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(getClass().getName()).log(Level.INFO, "executePatch: {0}", ex.getMessage()); //NOI18N
+                    }
+                }
+            }
+        }//end for
+        return new int[]{executedFiles, totalPatchFiles};
     }
 }

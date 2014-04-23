@@ -225,4 +225,12 @@ public class Constants {
      * Date format for queries
      */
     public static final String DATE_FORMAT = "yyyy-MM-dd";
+    /**
+     * Path for patches files
+     */
+    public static final String PACTHES_PATH =  "patches/";
+    /**
+     * Hint in patch file for a cypher query
+     */
+    public static final String DATABASE_SENTENCE = "!db_sentence";
 }
