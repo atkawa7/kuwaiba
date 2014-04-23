@@ -118,6 +118,9 @@ public interface BusinessEntityManagerRemote extends Remote{
     
     public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships, String ipAddress, String sessionId) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
+    
+    public int[] executePatch() throws NotAuthorizedException, RemoteException;
+    
     //TO DELETE
     public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId, String ipAddress, String sessionId) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
