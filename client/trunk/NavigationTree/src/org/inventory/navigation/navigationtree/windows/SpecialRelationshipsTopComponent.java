@@ -107,7 +107,7 @@ public class SpecialRelationshipsTopComponent extends TopComponent
             }
             
             SpecialRootNode rootNode = new SpecialRootNode(node.getObject(), relationships);
-            rootNode.setDisplayName(String.format("%s relationships found", relationships.size()));
+            rootNode.setDisplayName(String.format("%s relationship types found", relationships.size()));
             em.setRootContext(rootNode);
         }
     }

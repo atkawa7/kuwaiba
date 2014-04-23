@@ -71,6 +71,7 @@ public class GISViewService {
         if (this.currentView == null)
             throw new Exception(com.getError());
         buildView();
+        scene.validate();
     }
 
     private void buildView() throws IllegalArgumentException{
@@ -116,7 +117,6 @@ public class GISViewService {
                                 widget.setCoordinates(latitude, longitude);
                                 widget.setPreferredLocation(scene.getMap().getMapPosition(latitude, longitude));
                                 widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
-                                scene.validate();
                             }
                             else
                                 currentView.setDirty(true);

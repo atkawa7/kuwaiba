@@ -16,8 +16,10 @@
 
 package org.inventory.views.gis.scene;
 
+import java.awt.Point;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.visual.widgets.AbstractNodeWidget;
+import org.netbeans.api.visual.widget.LayerWidget;
 
 /**
  * An ObjectNodeWidget with extra geo attributes
@@ -34,10 +36,11 @@ public class GeoPositionedNodeWidget extends AbstractNodeWidget {
     private double latitude;
 
     public GeoPositionedNodeWidget(GISViewScene scene, LocalObjectLight object, 
-            double latitude, double longitude) {
-        super(scene, object);
+            double latitude, double longitude, LayerWidget labelWidget) {
+        super(scene, object, labelWidget);
         this.longitude = longitude;
         this.latitude = latitude;
+        setPreferredLocation(new Point());
     }
 
     public double getLatitude() {

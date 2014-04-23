@@ -99,7 +99,7 @@ public class ObjectViewService implements LookupListener{
            scene.clear();
 
            if (myObject.getOid() != -1){ //Other nodes than the root one
-               if(!com.getMetaForClass(myObject.getClassName(), false).isViewable()){
+               if(!com.getMetaForClass(myObject.getClassName(), false).isViewable()) {
                    vrtc.getNotifier().showStatusMessage("This object doesn't have any view", false);
                    disableView();
                    return;
@@ -107,9 +107,8 @@ public class ObjectViewService implements LookupListener{
            }
            loadView(myObject);
         }else{
-            if(!lookupResult.allInstances().isEmpty()){
+            if(!lookupResult.allInstances().isEmpty())
                vrtc.toggleButtons(false);
-            }
         }
     }
 

@@ -33,11 +33,11 @@ import org.inventory.views.objectview.scene.actions.CustomMoveControlPointAction
 import org.inventory.core.visual.menu.ObjectWidgetMenu;
 import org.inventory.core.visual.widgets.AbstractConnectionWidget;
 import org.inventory.core.visual.widgets.AbstractNodeWidget;
-import org.inventory.core.visual.widgets.TagLabelWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.widget.ImageWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
+import org.openide.util.Exceptions;
 
 /**
  * This is the main scene for an object's view
@@ -102,16 +102,13 @@ public final class ViewScene extends AbstractScene {
      */
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
-        AbstractNodeWidget widget = new AbstractNodeWidget(this, node);
+        AbstractNodeWidget widget = new AbstractNodeWidget(this, node, labelsLayer);
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         //The order the actions are added to a widget matters, if Select goes
         //after Move, you will need a double click to select the widget
         widget.getActions(ACTION_SELECT).addAction(createSelectAction());
         widget.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction());
         widget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, myConnectionProvider));
-        TagLabelWidget aLabelWidget = new TagLabelWidget(this, widget);
-        widget.addDependency(aLabelWidget);
-        labelsLayer.addChild(aLabelWidget);
         nodesLayer.addChild(widget);
         return widget;
     }
@@ -138,10 +135,6 @@ public final class ViewScene extends AbstractScene {
 
     @Override
     protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {
-    }
-
-    public LayerWidget getBackgroundLayer(){
-        return backgroundLayer;
     }
 
     public LayerWidget getNodesLayer(){
@@ -182,6 +175,8 @@ public final class ViewScene extends AbstractScene {
         try {
             return Utils.getByteArrayFromImage(((ImageWidget) backgroundLayer.getChildren().iterator().next()).getImage(), "png"); //NOI18n
         } catch (IOException ex) {
+            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
+                Exceptions.printStackTrace(ex);
             return null;
         }
     }

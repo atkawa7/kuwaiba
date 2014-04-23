@@ -78,7 +78,6 @@ public class TagLabelWidget extends LabelWidget implements Widget.Dependency {
     public TagLabelWidget(Scene scene, AbstractNodeWidget widget) {
         super(scene);
         this.widget = widget;
-        setOpaque(true);
         setForeground(Color.WHITE);
         setBorder(DEFAULT_BORDER);
         setFont(DEFAULT_SMALL_FONT);
@@ -97,29 +96,29 @@ public class TagLabelWidget extends LabelWidget implements Widget.Dependency {
     public void revalidateDependency() {
         switch (position){
             case TOP:
-                setPreferredLocation(new Point(widget.getLocation().x  + widget.getPreferredBounds().width / 2 - getPreferredBounds().width / 2, 
-                        widget.getLocation().y - getPreferredBounds().height / 2));
+                setPreferredLocation(new Point(widget.getPreferredLocation().x  + widget.getPreferredBounds().width / 2 - getPreferredBounds().width / 2, 
+                        widget.getPreferredLocation().y - getPreferredBounds().height / 2));
                 break;
             case TOP_LEFT:
-                setPreferredLocation(new Point(widget.getLocation().x + widget.getPreferredBounds().width  - getPreferredBounds().width, 
-                        widget.getLocation().y - getPreferredBounds().height / 2));
+                setPreferredLocation(new Point(widget.getPreferredLocation().x + widget.getPreferredBounds().width  - getPreferredBounds().width, 
+                        widget.getPreferredLocation().y - getPreferredBounds().height / 2));
                 break;
             case TOP_RIGHT:
-                setPreferredLocation(new Point(widget.getLocation().x + widget.getPreferredBounds().width, 
-                        widget.getLocation().y - getPreferredBounds().height / 2));
+                setPreferredLocation(new Point(widget.getPreferredLocation().x + widget.getPreferredBounds().width, 
+                        widget.getPreferredLocation().y - getPreferredBounds().height / 2));
                 break;    
             default:
             case BOTTOM:
-                setPreferredLocation(new Point(widget.getLocation().x  + widget.getPreferredBounds().width / 2 - getPreferredBounds().width / 2, 
-                        widget.getLocation().y + widget.getPreferredBounds().height / 2 + getPreferredBounds().height));
+                setPreferredLocation(new Point(widget.getPreferredLocation().x  + widget.getPreferredBounds().width / 2 - getPreferredBounds().width / 2, 
+                        widget.getPreferredLocation().y + widget.getPreferredBounds().height / 2 + getPreferredBounds().height));
                 break;
             case BOTTOM_LEFT:
-                setPreferredLocation(new Point(widget.getLocation().x + widget.getPreferredBounds().width  - getPreferredBounds().width, 
-                        widget.getLocation().y + widget.getPreferredBounds().height / 2 + getPreferredBounds().height));
+                setPreferredLocation(new Point(widget.getPreferredLocation().x + widget.getPreferredBounds().width  - getPreferredBounds().width, 
+                        widget.getPreferredLocation().y + widget.getPreferredBounds().height / 2 + getPreferredBounds().height));
                 break;
             case BOTTOM_RIGHT:
-                setPreferredLocation(new Point(widget.getLocation().x + widget.getPreferredBounds().width, 
-                        widget.getLocation().y + widget.getPreferredBounds().height / 2 + getPreferredBounds().height));
+                setPreferredLocation(new Point(widget.getPreferredLocation().x + widget.getPreferredBounds().width, 
+                        widget.getPreferredLocation().y + widget.getPreferredBounds().height / 2 + getPreferredBounds().height));
                 break;
         }
         

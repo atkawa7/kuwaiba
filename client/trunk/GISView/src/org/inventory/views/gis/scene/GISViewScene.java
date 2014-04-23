@@ -30,7 +30,6 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.visual.menu.ObjectWidgetMenu;
 import org.inventory.core.visual.widgets.AbstractScene;
-import org.inventory.core.visual.widgets.TagLabelWidget;
 import org.inventory.views.gis.scene.providers.AcceptActionProvider;
 import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.netbeans.api.visual.action.ActionFactory;
@@ -142,15 +141,12 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
     
     @Override
     protected Widget attachNodeWidget(LocalObjectLight node) {
-        GeoPositionedNodeWidget myWidget =  new GeoPositionedNodeWidget(this,node, 0, 0);
-        nodesLayer.addChild(myWidget);
+        GeoPositionedNodeWidget myWidget =  new GeoPositionedNodeWidget(this,node, 0, 0, labelsLayer);
         myWidget.getActions(AbstractScene.ACTION_SELECT).addAction(createSelectAction());
         myWidget.getActions(AbstractScene.ACTION_SELECT).addAction(ActionFactory.createMoveAction());
         myWidget.getActions(AbstractScene.ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, connectionProvider));
         myWidget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
-        TagLabelWidget aLabelWidget = new TagLabelWidget(this, myWidget);
-        myWidget.addDependency(aLabelWidget);
-        labelsLayer.addChild(aLabelWidget);
+        nodesLayer.addChild(myWidget);
         return myWidget;
     }
 
@@ -326,7 +322,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
             getComponent().setBounds(getScene().getBounds());
             nodesLayer.setPreferredBounds(getScene().getBounds());
             labelsLayer.setPreferredBounds(getScene().getBounds());
-            validate();
+            //validate();
         }
     }
     

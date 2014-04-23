@@ -17,9 +17,11 @@ package org.inventory.core.visual.widgets;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import javax.swing.BorderFactory;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.netbeans.api.visual.model.ObjectState;
+import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
@@ -42,8 +44,18 @@ public class AbstractNodeWidget extends Widget implements SelectableWidget {
      * Object node. The wrapped object will be referenced here
      */
     private ObjectNode node;
+    /**
+     * The label
+     */
+    private TagLabelWidget label;
 
-    public AbstractNodeWidget(Scene scene, LocalObjectLight object) {
+    /**
+     * Default constructor
+     * @param scene Scene this widget belongs to
+     * @param object object represented by this widget
+     * @param labelLayer Layer where the label associated with this widget will be placed. Null if none (no label will be added)
+     */
+    public AbstractNodeWidget(Scene scene, LocalObjectLight object, LayerWidget labelLayer) {
         super(scene);
         this.node = new ObjectNode(object);
         setPreferredSize(DEFAULT_DIMENSION);
@@ -53,6 +65,11 @@ public class AbstractNodeWidget extends Widget implements SelectableWidget {
         createActions(AbstractScene.ACTION_SELECT);
         createActions(AbstractScene.ACTION_CONNECT);
         setOpaque(true);
+        if (labelLayer != null){
+            label = new TagLabelWidget(scene, this, object.toString(), TagLabelWidget.BOTTOM);
+            labelLayer.addChild(label);
+            addDependency(label);
+        }
     }
 
     /**
@@ -84,9 +101,9 @@ public class AbstractNodeWidget extends Widget implements SelectableWidget {
     @Override
     public void notifyStateChanged (ObjectState previousState, ObjectState state) {
         if (state.isSelected())
-            setBackground(Color.RED);
+            label.setBorder(BorderFactory.createLineBorder(Color.RED));
         else
-            setBackground(Color.ORANGE);
+            label.setBorder(BorderFactory.createEmptyBorder());
     }
 
     @Override
