@@ -86,6 +86,24 @@ public class Tools extends HttpServlet {
                     out.println("<div id=\"content\">"+ex.getMessage()+"</div>");
                 }
                 break;
+            case 2:
+                try {
+                    out.println("<h1>Apply patch</h1>");
+                    int[] executedPatches = tbr.executePatch();
+                    if(executedPatches[0] == executedPatches[1]){
+                        out.println("<h2>Success</h2>");
+                        out.println("<div id=\"content\"><h2>" + executedPatches[0] + "/" + executedPatches[1] + " patches successfully applied</h2></div>");
+                    }
+                    else if(executedPatches[0] < executedPatches[1])
+                        
+                        out.println("<div id=\"content\"><h2>" + executedPatches[0] + "/" + executedPatches[1] + " Patches successfully applied </h2><br/> Are you trying to run the patches for second time?</div>");
+                    
+                } catch (Exception ex) {
+                    Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
+                    out.println("<h2 class=\"error\">Error</h2>");
+                    out.println("<div id=\"content\">"+ex.getMessage()+"</div>");
+                }
+                break;
             case 3:
                 out.println("<h2 class=\"error\">Error</h2>");
                 out.println("<div id=\"content\">Unknown option</div>");
