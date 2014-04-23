@@ -382,4 +382,11 @@ public interface BusinessEntityManager {
      */
     public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships, String ipAddress, String sessionId) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException;
+    
+    /**
+     * Excute a patch file 
+     * @throws MetadataObjectNotFoundException
+     * @throws NotAuthorizedException 
+     */
+    public int[] executePatch() throws NotAuthorizedException;
 }
