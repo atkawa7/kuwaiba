@@ -24,9 +24,11 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
+import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 
 /**
  * Session bean implementing
@@ -34,7 +36,10 @@ import org.kuwaiba.psremoteinterfaces.ApplicationEntityManagerRemote;
  */
 @Stateless
 public class ToolsBean implements ToolsBeanRemote {
+    
     private static ApplicationEntityManagerRemote aem;
+    private static BusinessEntityManagerRemote bem;
+    
     @Override
     public void resetAdmin()  throws ServerSideException, NotAuthorizedException{
         try{
@@ -54,17 +59,15 @@ public class ToolsBean implements ToolsBeanRemote {
         }
     }
 
-//    @Override
-//    public void createDefaultGroups() throws ServerSideException{
-//        try {
-//            getAEMInstance().createGroup("Administrators", "Administrators Group", null, null);
-//            getAEMInstance().createGroup("Users", "Standard Users Group", null, null);
-//        } catch (Exception ex) {
-//            Logger.getLogger(ToolsBean.class.getName()).log(Level.INFO, ex.getMessage());
-//            throw new ServerSideException(Level.SEVERE, ex.getMessage());
-//        }
-//    }
-    
+    @Override
+    public int[] executePatch() throws ServerSideException, NotAuthorizedException {
+        try{
+            return getBEMInstance().executePatch();
+        }catch(RemoteException re){
+            throw new ServerSideException(Level.SEVERE, re.getMessage());
+        }
+    }
+   
     private static ApplicationEntityManagerRemote getAEMInstance(){
         if (aem == null){
             try{
@@ -77,6 +80,20 @@ public class ToolsBean implements ToolsBeanRemote {
             }
         }
         return aem;
+    }
+    
+    private static BusinessEntityManagerRemote getBEMInstance(){
+        if (bem == null){
+            try{
+                Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+                bem = (BusinessEntityManagerRemote) registry.lookup(BusinessEntityManagerRemote.REFERENCE_BEM);
+            }catch(Exception ex){
+                Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE,
+                        ex.getClass().getSimpleName()+": {0}",ex.getMessage()); //NOI18N
+                bem = null;
+            }
+        }
+        return bem;
     }
 
     @Override

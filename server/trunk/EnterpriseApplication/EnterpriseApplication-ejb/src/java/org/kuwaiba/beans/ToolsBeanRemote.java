@@ -27,15 +27,16 @@ import org.kuwaiba.exceptions.ServerSideException;
 public interface ToolsBeanRemote {
     /**
      * Resets/create admin account (sets it to user <b>admin</b> password <b>kuwaiba</b>)
+     * @throws Exception 
      */
     public void resetAdmin() throws Exception;
-
-//    /**
-//     * Created the default groups
-//     * @throws ServerSideException
-//     */
-//    public void createDefaultGroups() throws ServerSideException;
     
+    /**
+     * Executes patches
+     * @throws Exception 
+     */
+    public int[] executePatch() throws Exception;
+   
     /**
      * Tries to retrieve the references to the remote objects exposed by the Persistence Service
      * @throws ServerSideException
