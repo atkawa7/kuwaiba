@@ -2,6 +2,7 @@ This software makes use of the following third-party components and neither of t
 
 * Netbeans Platform (CDDL, http://opensource.org/licenses/CDDL-1.0) http://platform.netbeans.org/
 * WAX, a simple API for XML (New BSD, http://opensource.org/licenses/BSD-3-Clause) http://code.google.com/p/waxy/
+* JMapViewer, which supports the GIS module. The code remains unchanged, only the icons were modified (GPL, https://wiki.openstreetmap.org/wiki/JMapViewer)
 
 We want to thank all people that made possible this software to be available.
 

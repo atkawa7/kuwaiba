@@ -78,8 +78,8 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     public GISViewTopComponent() {
         initComponents();
         initCustomComponents();
-        setToolTipText(NbBundle.getMessage(GISViewTopComponent.class, "HINT_GISViewTopComponent"));
         this.gvs = new GISViewService(scene, this);
+        setToolTipText(NbBundle.getMessage(GISViewTopComponent.class, "HINT_GISViewTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         associateLookup(scene.getLookup());
     }
@@ -402,6 +402,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         pnlMap.setEnabled(false);
         scene.revalidate();
         gvs.setCurrentView(null);
+        scene.updateMapInfo();
         toggleButtons(true);
     }//GEN-LAST:event_btnNewActionPerformed
 

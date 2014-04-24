@@ -21,6 +21,7 @@ import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
 import java.awt.BasicStroke;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -28,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.menu.ObjectWidgetMenu;
 import org.inventory.core.visual.widgets.AbstractScene;
 import org.inventory.views.gis.scene.providers.AcceptActionProvider;
@@ -90,9 +92,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
     /**
      * Local connect provider
      */
-    private PhysicalConnectionProvider connectionProvider;
-    
-    
+    private PhysicalConnectionProvider connectionProvider; 
 
     public GISViewScene(JMapViewer map) {
         super();
@@ -136,7 +136,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
         getActions().addAction(ActionFactory.createAcceptAction(new AcceptActionProvider(this)));
         
         initSelectionListener();
-        setOpaque(false);
+        //setOpaque(false);
     }
     
     @Override
@@ -201,6 +201,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
         revalidate();
         lastXPosition = map.getCenter().x;
         lastYPosition = map.getCenter().y;
+        updateMapInfo();
     }
     
     /**
@@ -226,6 +227,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
         lastZoomLevel = map.getZoom();
         lastXPosition = map.getCenter().x;
         lastYPosition = map.getCenter().y;
+        updateMapInfo();
     }
     
     public void resetDefaultLastPositions(){
@@ -307,6 +309,12 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
         double lat = map.getTileController().getTileSource().YToLat(y, lastZoomLevel);
         return new Coordinate(lat, lon);
     }
+    
+    public void updateMapInfo() {
+        NotificationUtil.getInstance().showStatusMessage(String.format(
+                "Center: (%s, %s) Zoom level: %s", map.getPosition().getLat(),
+                                            map.getPosition().getLon(), map.getZoom()), false);
+    }
        
     /**
      * Inner class to wrap the map panel and handle scene resize/relocation events
@@ -319,10 +327,11 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
         
         @Override
         public void revalidateDependency() {
-            getComponent().setBounds(getScene().getBounds());
+            //getComponent().setBounds(getScene().getBounds());
+            getComponent().setPreferredSize(new Dimension(700, 600));
             nodesLayer.setPreferredBounds(getScene().getBounds());
             labelsLayer.setPreferredBounds(getScene().getBounds());
-            //validate();
+            getScene().validate();
         }
     }
     

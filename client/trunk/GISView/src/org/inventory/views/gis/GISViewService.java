@@ -29,6 +29,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.views.gis.scene.GISViewScene;
 import org.inventory.views.gis.scene.GeoPositionedConnectionWidget;
@@ -115,8 +116,11 @@ public class GISViewService {
                             if (lol != null){
                                 GeoPositionedNodeWidget widget = (GeoPositionedNodeWidget)scene.addNode(lol);
                                 widget.setCoordinates(latitude, longitude);
-                                widget.setPreferredLocation(scene.getMap().getMapPosition(latitude, longitude));
+                                widget.setPreferredLocation(scene.getMap().getMapPosition(latitude, longitude, false));
                                 widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
+                                if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
+                                    System.out.println(String.format("%s --> lon=%s lat=%s (x,y)=%s", 
+                                            lol, longitude, latitude, widget.getPreferredLocation()));
                             }
                             else
                                 currentView.setDirty(true);
@@ -151,7 +155,7 @@ public class GISViewService {
                                                     double longitude = Double.valueOf(reader.getAttributeValue(null,"x"));
                                                     double latitude = Double.valueOf(reader.getAttributeValue(null,"y"));
                                                     newEdge.getGeoPositionedControlPoints().add(new double[]{longitude, latitude});
-                                                    Point newControlPoint = scene.getMap().getMapPosition(latitude, longitude);
+                                                    Point newControlPoint = scene.getMap().getMapPosition(latitude, longitude, false);
                                                     localControlPoints.add(newControlPoint);
                                                 }
                                             }else{

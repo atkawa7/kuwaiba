@@ -49,8 +49,8 @@ persistenceType = TopComponent.PERSISTENCE_NEVER)
     displayName = "#CTL_ServiceManagerAction",
 preferredID = "ServiceManagerTopComponent")
 @Messages({
-    "CTL_ServiceManagerAction=ServiceManager",
-    "CTL_ServiceManagerTopComponent=ServiceManager",
+    "CTL_ServiceManagerAction=Service Manager",
+    "CTL_ServiceManagerTopComponent=Service Manager",
     "HINT_ServiceManagerTopComponent=Manage Customers and Services"
 })
 public final class ServiceManagerTopComponent extends TopComponent 
