@@ -123,6 +123,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         btnZoomIn = new javax.swing.JButton();
         btnZoomOut = new javax.swing.JButton();
         btnShowNodeLabels = new javax.swing.JToggleButton();
+        jButton1 = new javax.swing.JButton();
         sepMainSeparator = new javax.swing.JToolBar.Separator();
         btnWireContainer = new javax.swing.JToggleButton();
         btnWirelessContainer = new javax.swing.JToggleButton();
@@ -272,6 +273,17 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
             }
         });
         barToolMain.add(btnShowNodeLabels);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(GISViewTopComponent.class, "GISViewTopComponent.jButton1.text")); // NOI18N
+        jButton1.setFocusable(false);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        barToolMain.add(jButton1);
         barToolMain.add(sepMainSeparator);
 
         btnWireContainer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/gis/res/wire-container.png"))); // NOI18N
@@ -433,7 +445,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
                         scene.setEnabled(true);
                         pnlMap.setVisible(true);
                     }catch(Exception ex){
-                        if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
+                        if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO || Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
                             Exceptions.printStackTrace(ex);
                         getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
                     }
@@ -461,6 +473,14 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        System.out.println("TC Bounds: " +  getBounds());
+        System.out.println("TC Size: " +  getSize());
+        System.out.println("TC PSize: " +  getPreferredSize());
+        System.out.println("Scene Bounds: " +  scene.getBounds());
+        System.out.println("Scene PSize: " +  scene.getPreferredSize());
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barToolMain;
     private javax.swing.JToggleButton btnConnect;
@@ -478,6 +498,7 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     private javax.swing.JToggleButton btnWirelessLink;
     private javax.swing.JButton btnZoomIn;
     private javax.swing.JButton btnZoomOut;
+    private javax.swing.JButton jButton1;
     private javax.swing.JToolBar.Separator sepMainSeparator;
     // End of variables declaration//GEN-END:variables
     /**

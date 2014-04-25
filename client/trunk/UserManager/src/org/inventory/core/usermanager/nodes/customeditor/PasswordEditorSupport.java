@@ -22,6 +22,7 @@ import java.beans.PropertyEditorSupport;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import java.lang.reflect.InvocationTargetException;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.usermanager.nodes.properties.UserProperty;
 import org.openide.explorer.propertysheet.ExPropertyEditor;
@@ -94,14 +95,16 @@ public class PasswordEditorSupport extends PropertyEditorSupport
         if(evt.getNewValue().equals(PropertyEnv.STATE_VALID)){
             //property.setPassword(String.valueOf(myPanel.getTxtPassword().getPassword()));
             try {
-                //property.setPassword(String.valueOf(myPanel.getTxtPassword().getPassword()));
                 property.setValue(String.valueOf(myPanel.getTxtPassword().getPassword()));
             } catch (IllegalAccessException ex) {
-                Exceptions.printStackTrace(ex);
+                if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO || Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
+                    Exceptions.printStackTrace(ex);
             } catch (IllegalArgumentException ex) {
-                Exceptions.printStackTrace(ex);
+                if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO || Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
+                    Exceptions.printStackTrace(ex);
             } catch (InvocationTargetException ex) {
-                Exceptions.printStackTrace(ex);
+                if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO || Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
+                    Exceptions.printStackTrace(ex);
             }
         }
     }

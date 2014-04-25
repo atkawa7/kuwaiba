@@ -34,6 +34,8 @@ import org.inventory.core.visual.menu.ObjectWidgetMenu;
 import org.inventory.core.visual.widgets.AbstractConnectionWidget;
 import org.inventory.core.visual.widgets.AbstractNodeWidget;
 import org.netbeans.api.visual.action.ActionFactory;
+import org.netbeans.api.visual.anchor.PointShape;
+import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.ImageWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
@@ -119,6 +121,10 @@ public final class ViewScene extends AbstractScene {
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         widget.getActions().addAction(createSelectAction());
         widget.getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
+        widget.getActions().addAction(ActionFactory.createMoveControlPointAction(ActionFactory.createFreeMoveControlPointProvider()));
+        widget.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
+        widget.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
+        widget.setRouter(RouterFactory.createFreeRouter());
         edgesLayer.addChild(widget);
         return widget;
     }
@@ -175,7 +181,7 @@ public final class ViewScene extends AbstractScene {
         try {
             return Utils.getByteArrayFromImage(((ImageWidget) backgroundLayer.getChildren().iterator().next()).getImage(), "png"); //NOI18n
         } catch (IOException ex) {
-            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
+            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO || Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
                 Exceptions.printStackTrace(ex);
             return null;
         }

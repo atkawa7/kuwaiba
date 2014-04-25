@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.views.gis.scene.GISViewScene;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ConnectorState;
@@ -65,9 +66,11 @@ public class AcceptActionProvider implements AcceptProvider{
             }else
                 JOptionPane.showMessageDialog(null, "The view already contains this object","Error",JOptionPane.ERROR_MESSAGE);
         } catch (UnsupportedFlavorException ex) {
-            Exceptions.printStackTrace(ex);
+            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO || Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
+                Exceptions.printStackTrace(ex);
         } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO || Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
+                Exceptions.printStackTrace(ex);
         }
     }
 }

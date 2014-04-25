@@ -111,8 +111,8 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
             }
         });
         
-        this.map.setTileLoader(new CustomTileLoader(new CustomTileLoaderListener()));      
-        this.connectionProvider = new PhysicalConnectionProvider(this);
+        map.setTileLoader(new CustomTileLoader(new CustomTileLoaderListener()));      
+        connectionProvider = new PhysicalConnectionProvider(this);
         
         mapLayer = new LayerWidget(this);
         nodesLayer = new LayerWidget(this);
@@ -131,7 +131,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
         mapLayer.addChild(mapWidget);
         addDependency(mapWidget);
         
-        this.defaultPopupMenuProvider = new ObjectWidgetMenu();        
+        defaultPopupMenuProvider = new ObjectWidgetMenu();        
         //Actions
         getActions().addAction(ActionFactory.createAcceptAction(new AcceptActionProvider(this)));
         
@@ -327,11 +327,14 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
         
         @Override
         public void revalidateDependency() {
-            //getComponent().setBounds(getScene().getBounds());
-            getComponent().setPreferredSize(new Dimension(700, 600));
-            nodesLayer.setPreferredBounds(getScene().getBounds());
-            labelsLayer.setPreferredBounds(getScene().getBounds());
+            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
+                System.out.println("Before --> Revalidating scene dependencies \n Map bounds: " + getComponent().getBounds());
+            getComponent().setBounds(getScene().getView().getParent().getBounds());            
+            nodesLayer.setPreferredBounds(getComponent().getBounds());
+            labelsLayer.setPreferredBounds(getComponent().getBounds());
             getScene().validate();
+            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
+                System.out.println("After --> Revalidatinng Scene dependencies \n Map bounds: " + getComponent().getBounds());
         }
     }
     
