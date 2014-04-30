@@ -22,6 +22,7 @@ package org.inventory.views.topology.scene.provider;
 import java.awt.Point;
 import java.util.Random;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.visual.widgets.AbstractNodeWidget;
 import org.inventory.views.topology.scene.ObjectNodeWidget;
 import org.inventory.views.topology.scene.TopologyViewScene;
 import org.netbeans.api.visual.action.ConnectProvider;
@@ -46,7 +47,7 @@ public class SceneConnectProvider implements ConnectProvider{
 
     @Override
     public boolean isSourceWidget(Widget sourceWidget) {
-        if (sourceWidget instanceof ObjectNodeWidget){
+        if (sourceWidget instanceof ObjectNodeWidget || sourceWidget instanceof AbstractNodeWidget){
             Object object = scene.findObject(sourceWidget);
             source = scene.isNode(object) ? (LocalObjectLight)object : null;
             return source != null;
@@ -56,7 +57,7 @@ public class SceneConnectProvider implements ConnectProvider{
 
     @Override
     public ConnectorState isTargetWidget(Widget sourceWidget, Widget targetWidget) {
-        if (targetWidget instanceof ObjectNodeWidget){
+        if (targetWidget instanceof ObjectNodeWidget|| targetWidget instanceof AbstractNodeWidget){
             Object object = scene.findObject(targetWidget);
             target = scene.isNode(object) ? (LocalObjectLight)object : null;
             if (target != null)

@@ -32,7 +32,7 @@ public class ObjectConnectionWidget extends ConnectionWidget{
     public ObjectConnectionWidget(GraphScene<Object, String> scene, String name) {
         super(scene);
         this.name = name;
-        createActions(ObjectNodeWidget.ACTION_SELECT);
+        createActions(TopologyViewScene.ACTION_SELECT);
     }
 
     public String getName() {

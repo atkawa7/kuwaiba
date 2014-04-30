@@ -264,22 +264,17 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
-        scene.setActiveTool(ObjectNodeWidget.ACTION_SELECT);
         btnConnect.setSelected(false);
+        scene.setActiveTool(TopologyViewScene.ACTION_SELECT);
     }//GEN-LAST:event_btnSelectActionPerformed
 
     private void btnShowNodesLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodesLabelsActionPerformed
-        for (Widget node : scene.getNodesLayer().getChildren())
-            ((ObjectNodeWidget)node).getLabelWidget().setVisible(!btnShowNodesLabels.isSelected());
-        scene.validate();
-        for (Widget node : scene.getIconLayer().getChildren())
-            ((ObjectNodeWidget)node).getLabelWidget().setVisible(!btnShowNodesLabels.isSelected());
-        scene.validate();
+        scene.toggleLabels(!btnShowNodesLabels.isSelected());
     }//GEN-LAST:event_btnShowNodesLabelsActionPerformed
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        scene.setActiveTool(ObjectNodeWidget.ACTION_CONNECT);
         btnSelect.setSelected(false);
+        scene.setActiveTool(TopologyViewScene.ACTION_CONNECT);
     }//GEN-LAST:event_btnConnectActionPerformed
 
     private void btnCloudActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloudActionPerformed
@@ -372,6 +367,7 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
             scene.clear();
             tvsrv.setTvId(0);
             toggleButtons(false);
+            btnSelectActionPerformed(evt);
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
@@ -532,7 +528,7 @@ public final class TopologyViewTopComponent extends TopComponent implements Acti
                 if(btnConnect.isSelected()){
                     btnConnect.setSelected(true);
                     btnSelect.setSelected(false);
-                }
+    }
                 break;
         }
     }

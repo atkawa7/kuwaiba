@@ -33,6 +33,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.visual.widgets.AbstractNodeWidget;
 import org.inventory.views.topology.scene.ObjectConnectionWidget;
 import org.inventory.views.topology.scene.ObjectNodeWidget;
 import org.inventory.views.topology.scene.TopologyViewScene;
@@ -204,7 +205,7 @@ public class TopologyViewService implements LookupListener {
                     LocalObjectLight lol = CommunicationsStub.getInstance().
                             getObjectInfoLight(objectClass, objectId);
                     if (lol != null){
-                        ObjectNodeWidget widget = (ObjectNodeWidget)scene.addNode(lol);
+                        AbstractNodeWidget widget = (AbstractNodeWidget)scene.addNode(lol);
                         widget.setPreferredLocation(new Point(x, y));
                     }
                     else

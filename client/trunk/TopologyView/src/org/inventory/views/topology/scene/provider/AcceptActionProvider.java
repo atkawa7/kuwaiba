@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010, 2011, 2012 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010 - 2014 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,9 +46,10 @@ public class AcceptActionProvider implements AcceptProvider{
 
     @Override
     public ConnectorState isAcceptable(Widget widget, Point point, Transferable transferable) {
-        if (transferable.isDataFlavorSupported(LocalObjectLight.DATA_FLAVOR)){
+        if (transferable.isDataFlavorSupported(LocalObjectLight.DATA_FLAVOR))
             return ConnectorState.ACCEPT;
-        }else return ConnectorState.REJECT_AND_STOP;
+        else 
+            return ConnectorState.REJECT_AND_STOP;
     }
 
     @Override
