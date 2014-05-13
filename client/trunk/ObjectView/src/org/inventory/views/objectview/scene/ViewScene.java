@@ -33,6 +33,7 @@ import org.inventory.views.objectview.scene.actions.CustomMoveControlPointAction
 import org.inventory.core.visual.menu.ObjectWidgetMenu;
 import org.inventory.core.visual.widgets.AbstractConnectionWidget;
 import org.inventory.core.visual.widgets.AbstractNodeWidget;
+import org.inventory.views.objectview.scene.actions.CustomAddRemoveControlPointAction;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.RouterFactory;
@@ -62,8 +63,8 @@ public final class ViewScene extends AbstractScene {
     /**
      * Default add/remove control point action (shared by all connection widgets)
      */
-//    private CustomAddRemoveControlPointAction addRemoveControlPointAction =
-//            new CustomAddRemoveControlPointAction(this);
+    private CustomAddRemoveControlPointAction addRemoveControlPointAction =
+            new CustomAddRemoveControlPointAction(this);
     /**
      * Object owning the current view
      */
@@ -120,8 +121,8 @@ public final class ViewScene extends AbstractScene {
         AbstractConnectionWidget widget = new AbstractConnectionWidget(this, edge);
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         widget.getActions().addAction(createSelectAction());
-        widget.getActions().addAction(ActionFactory.createAddRemoveControlPointAction());
-        widget.getActions().addAction(ActionFactory.createMoveControlPointAction(ActionFactory.createFreeMoveControlPointProvider()));
+        widget.getActions().addAction(addRemoveControlPointAction);
+        widget.getActions().addAction(moveControlPointAction);
         widget.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         widget.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         widget.setRouter(RouterFactory.createFreeRouter());
@@ -190,7 +191,6 @@ public final class ViewScene extends AbstractScene {
     @Override
     public void clear(){
         backgroundLayer.removeChildren();
-        removeAllListeners();
         super.clear();
     }
 

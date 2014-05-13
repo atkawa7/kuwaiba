@@ -60,7 +60,7 @@ public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalOb
     /**
      * Event ID to indicate a change in the scene (saving is mandatory)
      */
-    public final static int SCENE_CHANGETOSAVE = 2;
+    public final static int SCENE_CHANGEANDSAVE = 2;
     /**
      * Default font
      */

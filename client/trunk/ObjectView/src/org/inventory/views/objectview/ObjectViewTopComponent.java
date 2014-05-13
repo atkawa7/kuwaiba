@@ -498,13 +498,13 @@ public final class ObjectViewTopComponent extends TopComponent
 
     @Override
     public void componentOpened() {
-        vrs.initializeLookupListener();
+        vrs.initializeListeners();
         scene.addChangeListener(this);
     }
 
     @Override
     public void componentClosed() {
-        vrs.terminateLookupListener();
+        vrs.terminateListeners();
         vrs.disableView();
     }
 
@@ -577,7 +577,7 @@ public final class ObjectViewTopComponent extends TopComponent
             case ViewScene.SCENE_CHANGE:
                 this.setSaved(false);
                 break;
-            case ViewScene.SCENE_CHANGETOSAVE:
+            case ViewScene.SCENE_CHANGEANDSAVE:
                 btnSaveActionPerformed(e);
                 NotificationUtil.getInstance().showSimplePopup("Object View", NotificationUtil.INFO_MESSAGE, "The view has been saved automatically");
         }

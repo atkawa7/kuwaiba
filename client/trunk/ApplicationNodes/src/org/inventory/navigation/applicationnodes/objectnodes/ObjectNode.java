@@ -430,7 +430,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
     }
 
     public String getEditableText(){
-        return object.getName();
+        return object.getName() == null ? "" : object.getName();
     }
     
     /**

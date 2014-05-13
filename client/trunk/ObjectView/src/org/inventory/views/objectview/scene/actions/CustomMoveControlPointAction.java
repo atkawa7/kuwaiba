@@ -41,18 +41,20 @@
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
  *
- * Modified by Charles Bedon for project Kuwaiba 2010
+ * Modified by Charles Bedon for project Kuwaiba 2014
  */
 
 package org.inventory.views.objectview.scene.actions;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Widget;
 import java.awt.event.MouseEvent;
 import org.inventory.core.visual.widgets.AbstractScene;
+import org.netbeans.api.visual.action.ActionFactory;
+import org.netbeans.api.visual.action.MoveControlPointProvider;
+import org.netbeans.api.visual.action.WidgetAction;
 
 /**
  * This class is used to fire an action event whenever this is triggered so we can
@@ -63,14 +65,16 @@ import org.inventory.core.visual.widgets.AbstractScene;
  */
 public final class CustomMoveControlPointAction extends WidgetAction.LockedAdapter {
 
+    private MoveControlPointProvider provider;
+    private AbstractScene scene;
+
     private ConnectionWidget movingWidget = null;
     private Point controlPointLocation;
     private int controlPointIndex;
     private Point lastLocation = null;
-    private AbstractScene scene;
 
     public CustomMoveControlPointAction (AbstractScene scene) {
-        //this.provider = new FreeMoveControlPointProvider();
+        this.provider = ActionFactory.createFreeMoveControlPointProvider();
         this.scene = scene;
     }
 
@@ -80,9 +84,9 @@ public final class CustomMoveControlPointAction extends WidgetAction.LockedAdapt
     }
 
     @Override
-    public State mousePressed (Widget widget, WidgetMouseEvent event) {
+    public WidgetAction.State mousePressed (Widget widget, WidgetAction.WidgetMouseEvent event) {
         if (isLocked ())
-            return State.createLocked (widget, this);
+            return WidgetAction.State.createLocked (widget, this);
         if (event.getButton () == MouseEvent.BUTTON1  &&  event.getClickCount () == 1) {
             if (widget instanceof ConnectionWidget) {
                 ConnectionWidget conn = (ConnectionWidget) widget;
@@ -91,31 +95,31 @@ public final class CustomMoveControlPointAction extends WidgetAction.LockedAdapt
                     movingWidget = conn;
                     controlPointLocation = new Point (conn.getControlPoints (). get (controlPointIndex));
                     lastLocation = new Point (event.getPoint ());
-                    return State.createLocked (widget, this);
+                    return WidgetAction.State.createLocked (widget, this);
                 } else {
                     movingWidget = null;
                 }
             }
         }
-        return State.REJECTED;
+        return WidgetAction.State.REJECTED;
     }
 
     @Override
-    public State mouseReleased(Widget widget, WidgetMouseEvent event) {
-        State state = move(widget, event.getPoint()) ? State.CONSUMED : State.REJECTED;
+    public WidgetAction.State mouseReleased(Widget widget, WidgetAction.WidgetMouseEvent event) {
+        WidgetAction.State state = move(widget, event.getPoint()) ? WidgetAction.State.CONSUMED : WidgetAction.State.REJECTED;
         movingWidget = null;
-        if (state == State.CONSUMED)
-            scene.fireChangeEvent(new ActionEvent(scene, AbstractScene.SCENE_CHANGE, "control-point-moved")); //NOI18N
+        if (state == WidgetAction.State.CONSUMED)
+            scene.fireChangeEvent(new ActionEvent(scene, AbstractScene.SCENE_CHANGE, "move-control-point")); //NOI18N
         return state;
     }
 
     @Override
-    public State mouseDragged(Widget widget, WidgetMouseEvent event) {
+    public WidgetAction.State mouseDragged(Widget widget, WidgetAction.WidgetMouseEvent event) {
         if (move(widget, event.getPoint())) {
-            return State.createLocked(widget, this);
+            return WidgetAction.State.createLocked(widget, this);
         } else {
             movingWidget = null;
-            return State.REJECTED;
+            return WidgetAction.State.REJECTED;
         }
     }
 
@@ -123,13 +127,18 @@ public final class CustomMoveControlPointAction extends WidgetAction.LockedAdapt
         if (movingWidget != widget)
             return false;
 
-        if (controlPointIndex < 0  ||  controlPointIndex >= movingWidget.getControlPoints ().size ())
+        java.util.List<Point> controlPoints = movingWidget.getControlPoints ();
+        if (controlPointIndex < 0  ||  controlPointIndex >= controlPoints.size ())
             return false;
 
-        controlPointLocation.translate (newLocation.x - lastLocation.x, newLocation.y - lastLocation.y);
+        Point location = new Point (controlPointLocation);
+        location.translate (newLocation.x - lastLocation.x, newLocation.y - lastLocation.y);
 
-        movingWidget.getControlPoints().set(controlPointIndex, controlPointLocation);
+        controlPoints = provider.locationSuggested (movingWidget, controlPointIndex, location);
+        if (controlPoints == null)
+            return false;
+
+        movingWidget.setControlPoints (controlPoints, false);
         return true;
     }
-
 }

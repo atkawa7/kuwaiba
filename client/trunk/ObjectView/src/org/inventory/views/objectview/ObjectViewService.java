@@ -61,7 +61,7 @@ public class ObjectViewService implements LookupListener{
      * Add this instance as listener for the selected nodes in the NavigationTree.
      * Should be called when the TopComponent is opened
      */
-    public void initializeLookupListener(){
+    public void initializeListeners(){
         selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
         selectedNodes.addLookupListener(this);
         if (selectedNodes.allInstances().size() == 1) //There's a node already selected
@@ -72,8 +72,9 @@ public class ObjectViewService implements LookupListener{
      * Removes this instance as listener for the selected nodes in the NavigationTree.
      * Should be called when the TopComponent is closed
      */
-    public void terminateLookupListener(){
+    public void terminateListeners(){
         selectedNodes.removeLookupListener(this);
+        scene.removeAllListeners();
     }
 
     /**
@@ -137,7 +138,7 @@ public class ObjectViewService implements LookupListener{
            viewBuilder.buildView();
            if (defaultView.isDirty()){
                vrtc.getNotifier().showSimplePopup("Information", NotificationUtil.WARNING_MESSAGE, "Some elements in the view has been deleted since the last time it was opened. They were removed");
-               scene.fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGETOSAVE, "Removing old objects"));
+               scene.fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGEANDSAVE, "Removing old objects"));
                defaultView.setDirty(false);
            }
        }
