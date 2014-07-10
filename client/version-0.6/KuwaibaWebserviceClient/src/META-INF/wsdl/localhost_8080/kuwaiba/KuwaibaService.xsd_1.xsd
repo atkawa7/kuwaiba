@@ -16,10 +16,6 @@
 
 <xs:element name="associateObjectToServiceResponse" type="tns:associateObjectToServiceResponse"/>
 
-<xs:element name="bulkUpload" type="tns:bulkUpload"/>
-
-<xs:element name="bulkUploadResponse" type="tns:bulkUploadResponse"/>
-
 <xs:element name="closeSession" type="tns:closeSession"/>
 
 <xs:element name="closeSessionResponse" type="tns:closeSessionResponse"/>
@@ -155,14 +151,6 @@
 <xs:element name="deleteUsers" type="tns:deleteUsers"/>
 
 <xs:element name="deleteUsersResponse" type="tns:deleteUsersResponse"/>
-
-<xs:element name="downloadErrors" type="tns:downloadErrors"/>
-
-<xs:element name="downloadErrorsResponse" type="tns:downloadErrorsResponse"/>
-
-<xs:element name="downloadLog" type="tns:downloadLog"/>
-
-<xs:element name="downloadLogResponse" type="tns:downloadLogResponse"/>
 
 <xs:element name="executeQuery" type="tns:executeQuery"/>
 
@@ -625,19 +613,6 @@
 <xs:sequence/>
 </xs:complexType>
 
-<xs:complexType name="downloadErrors">
-<xs:sequence>
-<xs:element name="fileName" type="xs:string" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="downloadErrorsResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:base64Binary" nillable="true" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
 <xs:complexType name="deleteGeneralView">
 <xs:sequence>
 <xs:element name="oids" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
@@ -740,7 +715,7 @@
 <xs:sequence>
 <xs:element name="classId" type="xs:string" minOccurs="0"/>
 <xs:element name="attributeName" type="xs:string" minOccurs="0"/>
-<xs:element name="sesionId" type="xs:string" minOccurs="0"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -884,19 +859,6 @@
 
 <xs:complexType name="createAttributeResponse">
 <xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="bulkUpload">
-<xs:sequence>
-<xs:element name="chossenFile" type="xs:base64Binary" nillable="true" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="bulkUploadResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:string" minOccurs="0"/>
-</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="addPossibleChildrenForClassWithId">
@@ -1142,18 +1104,6 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="removePossibleChildrenForClassWithId">
-<xs:sequence>
-<xs:element name="parentClassId" type="xs:long"/>
-<xs:element name="childrenToBeRemoved" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="removePossibleChildrenForClassWithIdResponse">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="createGeneralView">
 <xs:sequence>
 <xs:element name="viewType" type="xs:int"/>
@@ -1169,6 +1119,18 @@
 <xs:sequence>
 <xs:element name="return" type="xs:long"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removePossibleChildrenForClassWithId">
+<xs:sequence>
+<xs:element name="parentClassId" type="xs:long"/>
+<xs:element name="childrenToBeRemoved" type="xs:long" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removePossibleChildrenForClassWithIdResponse">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="getObjectChildren">
@@ -1925,7 +1887,7 @@
 
 <xs:complexType name="getObjectsOfClassLight">
 <xs:sequence>
-<xs:element name="objectclass" type="xs:string" minOccurs="0"/>
+<xs:element name="className" type="xs:string" minOccurs="0"/>
 <xs:element name="maxResults" type="xs:int"/>
 <xs:element name="sessionId" type="xs:string" minOccurs="0"/>
 </xs:sequence>
@@ -2064,19 +2026,6 @@
 
 <xs:complexType name="addPossibleChildrenResponse">
 <xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="downloadLog">
-<xs:sequence>
-<xs:element name="fileName" type="xs:string" minOccurs="0"/>
-<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="downloadLogResponse">
-<xs:sequence>
-<xs:element name="return" type="xs:base64Binary" nillable="true" minOccurs="0"/>
-</xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="remoteObjectLightArray" final="#all">

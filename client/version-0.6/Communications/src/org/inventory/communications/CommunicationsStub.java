@@ -1993,7 +1993,7 @@ public class CommunicationsStub {
 //            return "";
 //        }
 //    }
-     public byte[] downloadErrors(String fileName){
+/*     public byte[] downloadErrors(String fileName){
         try{
             return port.downloadErrors(fileName, this.session.getSessionId());
         }catch(Exception ex){
@@ -2009,6 +2009,6 @@ public class CommunicationsStub {
             this.error =  ex.getMessage();
             return null;
         }
-    }
+    }*/
     // </editor-fold>    
 }

@@ -66,14 +66,24 @@
 0.5 Alpha (23092012)
 * Support for GIS views
 * Support for topology views
+
 0.5.1 (12122013)
 * Support for Pools
 * Support for bulk data uploads
-* Multiple bug fixes
-* Data model manager
-0.6 (20022014)
-* Rack View
-* Audit Trail
-* Improvements to physical connections capabilities
 * Multiple bugfixes
-* Removed references to SwingX and NimROD L&F due to licensing issues
+
+0.6 Beta (11022013)
+* Multiple bugfixes
+* New rack view
+* New show physical path
+* Support for client/services 
+* Support for audit trail
+* Additional support in physical connections 
+* Improvements in the login window
+
+0.6 stable (24022013)
+* Multiple bugfixes (see tracker for details)
+* New graphical presentation for physical connections
+
+0.6.1
+* It's possible to launch the explorer window from an object related to a service in the service manager or see its children in the same window
