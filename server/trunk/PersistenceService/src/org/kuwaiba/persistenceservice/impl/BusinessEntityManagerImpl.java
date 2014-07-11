@@ -18,7 +18,6 @@ package org.kuwaiba.persistenceservice.impl;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
-import org.kuwaiba.apis.persistence.application.Privilege;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
@@ -83,7 +81,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
      */
     private Index<Node> objectIndex;
     /**
-     * Speial nodes index
+     * Special nodes index
      */
     private Index<Node> specialNodesIndex;
     /**

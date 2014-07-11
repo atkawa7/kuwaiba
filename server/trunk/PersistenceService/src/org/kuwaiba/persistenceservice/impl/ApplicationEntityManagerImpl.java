@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -72,11 +71,9 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.traversal.Evaluators;
-import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.helpers.collection.IteratorUtil;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.Traversal;
-import org.neo4j.kernel.impl.traversal.TraversalDescriptionImpl;
 
 /**
  * Application Entity Manager reference implementation
@@ -943,21 +940,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     try{
                         new File(props.getProperty("background_path") + "/" + fileName).delete();
                     }catch(Exception ex){
-                        throw new InvalidArgumentException(String.format("View background %1s couldn't be deleted",props.getProperty("background_path") + "/" + fileName), Level.SEVERE);
+                        throw new InvalidArgumentException(String.format("View background %s couldn't be deleted", props.getProperty("background_path") + "/" + fileName), Level.SEVERE);
                     }
                     viewNode.removeProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME);
                 }
             }
 
             tx.success();
+            tx.finish();
         }catch (Exception ex){
-            Logger.getLogger("updateObjectRelatedView: "+ex.getMessage()); //NOI18N
-            if (tx != null)
-                tx.failure();
+            Logger.getLogger("updateObjectRelatedView: "+ ex.getMessage()); //NOI18N
+            tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
         }
     }
 
