@@ -16,41 +16,32 @@
 
 package org.inventory.views.objectview.scene;
 
+import org.inventory.core.visual.scene.PhysicalConnectionProvider;
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
-import java.awt.Image;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.util.Constants;
-import org.inventory.communications.util.Utils;
-import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.visual.widgets.AbstractScene;
-import org.inventory.views.objectview.scene.actions.CustomMoveControlPointAction;
+import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.core.visual.actions.CustomMoveControlPointAction;
 import org.inventory.core.visual.menu.ObjectWidgetMenu;
-import org.inventory.core.visual.widgets.AbstractConnectionWidget;
-import org.inventory.core.visual.widgets.AbstractNodeWidget;
-import org.inventory.views.objectview.scene.actions.CustomAddRemoveControlPointAction;
+import org.inventory.core.visual.scene.AbstractConnectionWidget;
+import org.inventory.core.visual.scene.AbstractNodeWidget;
+import org.inventory.core.visual.actions.CustomAddRemoveControlPointAction;
+import org.inventory.core.visual.actions.CustomMoveAction;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.RouterFactory;
-import org.netbeans.api.visual.widget.ImageWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
-import org.openide.util.Exceptions;
 
 /**
  * This is the main scene for an object's view
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class ViewScene extends AbstractScene {
-    /**
-     * Used to hold the background (just an image right now)
-     */
-    private LayerWidget backgroundLayer;
+public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
+    
     /**
      * The common connection provider
      */
@@ -66,15 +57,12 @@ public final class ViewScene extends AbstractScene {
     private CustomAddRemoveControlPointAction addRemoveControlPointAction =
             new CustomAddRemoveControlPointAction(this);
     /**
-     * Object owning the current view
+     * Default move widget action (shared by all connection widgets)
      */
-    private LocalObjectLight currentObject;
-    /**
-     * Current view (if any, null if the current view does is just about to be created)
-     */
-    private LocalObjectViewLight currentView;
+    private CustomMoveAction moveAction = new CustomMoveAction(this);
     
-    public ViewScene (){
+    
+    public ChildrenViewScene () {
         interactionLayer = new LayerWidget(this);
         backgroundLayer = new LayerWidget(this);
         nodesLayer = new LayerWidget(this);
@@ -97,7 +85,7 @@ public final class ViewScene extends AbstractScene {
         setActiveTool(ACTION_SELECT);
         initSelectionListener();
     }
-
+    
     /**
      * This methods are called if addNode/addEdge instead of "addChild"
      * @param node
@@ -110,7 +98,7 @@ public final class ViewScene extends AbstractScene {
         //The order the actions are added to a widget matters, if Select goes
         //after Move, you will need a double click to select the widget
         widget.getActions(ACTION_SELECT).addAction(createSelectAction());
-        widget.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction());
+        widget.getActions(ACTION_SELECT).addAction(moveAction);
         widget.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, myConnectionProvider));
         nodesLayer.addChild(widget);
         return widget;
@@ -126,6 +114,7 @@ public final class ViewScene extends AbstractScene {
         widget.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         widget.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         widget.setRouter(RouterFactory.createFreeRouter());
+        if (newLineColor != null) widget.setLineColor(newLineColor);
         edgesLayer.addChild(widget);
         return widget;
     }
@@ -151,65 +140,16 @@ public final class ViewScene extends AbstractScene {
     public LayerWidget getEdgesLayer(){
         return edgesLayer;
     }
-
-    public LocalObjectLight getCurrentObject() {
-        return currentObject;
-    }
-
-    public void setCurrentObject(LocalObjectLight currentObject) {
-        this.currentObject = currentObject;
-    }
-
-    public LocalObjectViewLight getCurrentView() {
-        return currentView;
-    }
-
-    public void setCurrentView(LocalObjectViewLight currentView) {
-        this.currentView = currentView;
-    }
-    
-    public PhysicalConnectionProvider getConnectionProvider(){
+   
+    @Override
+    public PhysicalConnectionProvider getConnectProvider(){
         return this.myConnectionProvider;
-    }
-
-    /**
-     * Gets the background image
-     * @return
-     */
-    public byte[] getBackgroundImage(){
-        if (backgroundLayer.getChildren().isEmpty())
-            return null;
-        try {
-            return Utils.getByteArrayFromImage(((ImageWidget) backgroundLayer.getChildren().iterator().next()).getImage(), "png"); //NOI18n
-        } catch (IOException ex) {
-            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO || Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
-                Exceptions.printStackTrace(ex);
-            return null;
-        }
     }
 
     @Override
     public void clear(){
         backgroundLayer.removeChildren();
         super.clear();
-    }
-
-    /**
-     *
-     * @return
-     */
-    public void setBackgroundImage(Image im){
-        if (im == null) //Do nothing
-            return;
-        backgroundLayer.removeChildren();
-        backgroundLayer.addChild(new ImageWidget(this, im));
-        validate();
-    }
-    
-    public void removeBackground() {
-        backgroundLayer.removeChildren();
-        fireChangeEvent(new ActionEvent(this, ViewScene.SCENE_CHANGE, "Remove Background"));
-        validate();
     }
 
     @Override
@@ -250,7 +190,13 @@ public final class ViewScene extends AbstractScene {
         return bas.toByteArray();
     }
 
-    public NotificationUtil getNotifier() {
-        return NotificationUtil.getInstance();
+    @Override
+    public boolean supportsConnections() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsBackgrounds() {
+        return true;
     }
 }

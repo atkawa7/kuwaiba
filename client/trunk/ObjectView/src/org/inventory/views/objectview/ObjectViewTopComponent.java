@@ -17,20 +17,32 @@ package org.inventory.views.objectview;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
-import org.inventory.core.visual.widgets.AbstractScene;
+import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.core.visual.scene.PhysicalConnectionProvider;
 import org.inventory.views.objectview.dialogs.FormatTextPanel;
-import org.inventory.views.objectview.scene.ViewScene;
+import org.inventory.views.objectview.scene.ChildrenViewBuilder;
+import org.inventory.views.objectview.scene.ChildrenViewScene;
+import org.inventory.views.objectview.scene.RackViewBuilder;
 import org.openide.explorer.ExplorerManager;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
@@ -47,7 +59,7 @@ import org.openide.explorer.ExplorerManager.Provider;
  */
 @ConvertAsProperties(dtd = "-//org.inventory.views.objectview//ObjectView//EN",
 autostore = false)
-public final class ObjectViewTopComponent extends TopComponent 
+public final class ObjectViewTopComponent extends TopComponent
         implements Provider, ActionListener, Refreshable {
 
     private static ObjectViewTopComponent instance;
@@ -65,18 +77,16 @@ public final class ObjectViewTopComponent extends TopComponent
     private Color currentColor = AbstractScene.defaultForegroundColor;
     private ButtonGroup buttonGroupUpperToolbar;
     private ButtonGroup buttonGroupRightToolbar;
+    
+    public static final ComboBoxModel defaultListModel = new DefaultComboBoxModel(new String[] {"Default View", "Rack View"});
 
     private ExplorerManager em = new ExplorerManager();
-    private ObjectViewService vrs;
+    private ObjectViewService service;
     
     /**
      * To warn the user if the view has not been saved yet
      */
     private boolean isSaved = true;
-    /**
-     * Represents the local scene
-     */
-    private ViewScene scene;
 
     public ObjectViewTopComponent() {
         initComponents();
@@ -84,15 +94,14 @@ public final class ObjectViewTopComponent extends TopComponent
         setName(NbBundle.getMessage(ObjectViewTopComponent.class, "CTL_ObjectViewTopComponent"));
         setToolTipText(NbBundle.getMessage(ObjectViewTopComponent.class, "HINT_ObjectViewTopComponent"));
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
-        associateLookup(scene.getLookup());
+        associateLookup(service.getViewBuilder().getScene().getLookup());
     }
 
     public final void initCustomComponents(){
+        cmbViewType.setModel(defaultListModel);
+        service = new ObjectViewService(this);
 
-        scene = new ViewScene();
-        vrs = new ObjectViewService(scene, this);
-
-        pnlScrollMain.setViewportView(scene.createView());
+        pnlScrollMain.setViewportView(service.getViewBuilder().getScene().createView());
 
         btnWireContainer.setName(Constants.CLASS_WIRECONTAINER);
         btnWirelessContainer.setName(Constants.CLASS_WIRELESSCONTAINER);
@@ -269,7 +278,12 @@ public final class ObjectViewTopComponent extends TopComponent
         });
         barMain.add(btnRefresh);
 
-        cmbViewType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Default View" }));
+        cmbViewType.setMaximumSize(new java.awt.Dimension(200, 20));
+        cmbViewType.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cmbViewTypeItemStateChangedPerformed(evt);
+            }
+        });
         barMain.add(cmbViewType);
 
         add(barMain, java.awt.BorderLayout.PAGE_START);
@@ -354,59 +368,117 @@ public final class ObjectViewTopComponent extends TopComponent
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
-        scene.setActiveTool(ViewScene.ACTION_SELECT);
+        service.getViewBuilder().getScene().setActiveTool(ChildrenViewScene.ACTION_SELECT);
         buttonGroupRightToolbar.clearSelection();
     }//GEN-LAST:event_btnSelectActionPerformed
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        scene.setActiveTool(ViewScene.ACTION_CONNECT);
-        btnWireContainer.doClick();
+        if (service.getViewBuilder().getScene().getConnectProvider() == null)
+            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+        else{
+            service.getViewBuilder().getScene().setActiveTool(ChildrenViewScene.ACTION_CONNECT);
+            btnWireContainer.doClick();
+        }
     }//GEN-LAST:event_btnConnectActionPerformed
 
     private void btnAddBackgroundImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddBackgroundImageActionPerformed
-        vrs.addBackground();
+        if (!service.getViewBuilder().getScene().supportsBackgrounds())
+            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+        else{
+            JFileChooser fChooser = new JFileChooser();
+            fChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            fChooser.setFileFilter(new FileNameExtensionFilter("Image files", "gif","jpg", "png"));
+            if (fChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+                try {
+                    Image myBackgroundImage = ImageIO.read(new File(fChooser.getSelectedFile().getAbsolutePath()));
+                    service.getViewBuilder().getScene().setBackgroundImage(myBackgroundImage);
+                    service.getViewBuilder().getScene().fireChangeEvent(new ActionEvent(this, ChildrenViewScene.SCENE_CHANGE, "Add Background"));
+                } catch (IOException ex) {
+                    getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+                }
+            }
+        } 
     }//GEN-LAST:event_btnAddBackgroundImageActionPerformed
 
     private void btnRemoveBackgroundActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveBackgroundActionPerformed
-        scene.removeBackground();
+        if (!service.getViewBuilder().getScene().supportsBackgrounds())
+            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+        else{
+            service.getViewBuilder().getScene().setBackgroundImage(null);
+            service.getViewBuilder().getScene().fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "Remove Background"));
+        }
     }//GEN-LAST:event_btnRemoveBackgroundActionPerformed
 
     private void btnElectricalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnElectricalLinkActionPerformed
-        scene.getConnectionProvider().setCurrentLineColor(Color.ORANGE);
-        scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_ELECTRICALLINK);
+        if (!service.getViewBuilder().getScene().supportsConnections())
+            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+        else{
+            service.getViewBuilder().getScene().setNewLineColor(Color.ORANGE);
+            service.getViewBuilder().getScene().getConnectProvider().setConnectionClass(Constants.CLASS_ELECTRICALLINK);
+            service.getViewBuilder().getScene().getConnectProvider().setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
+        }
     }//GEN-LAST:event_btnElectricalLinkActionPerformed
 
     private void btnOpticalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpticalLinkActionPerformed
-        scene.getConnectionProvider().setCurrentLineColor(Color.GREEN);
-        scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_OPTICALLINK);
+        if (!service.getViewBuilder().getScene().supportsConnections())
+            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+        else{
+            service.getViewBuilder().getScene().setNewLineColor(Color.GREEN);
+            service.getViewBuilder().getScene().getConnectProvider().setConnectionClass(Constants.CLASS_OPTICALLINK);
+            service.getViewBuilder().getScene().getConnectProvider().setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
+        }
     }//GEN-LAST:event_btnOpticalLinkActionPerformed
 
     private void btnWirelessLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessLinkActionPerformed
-        scene.getConnectionProvider().setCurrentLineColor(Color.MAGENTA);
-        scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_WIRELESSLINK);
+        if (!service.getViewBuilder().getScene().supportsConnections())
+            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+        else{
+            service.getViewBuilder().getScene().setNewLineColor(Color.MAGENTA);
+            service.getViewBuilder().getScene().getConnectProvider().setConnectionClass(Constants.CLASS_WIRELESSLINK);
+            service.getViewBuilder().getScene().getConnectProvider().setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
+        }
     }//GEN-LAST:event_btnWirelessLinkActionPerformed
 
     private void btnWireContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWireContainerActionPerformed
-        scene.getConnectionProvider().setCurrentLineColor(Color.RED);
-        scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_WIRECONTAINER);
+        if (!service.getViewBuilder().getScene().supportsConnections())
+            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+        else{
+            service.getViewBuilder().getScene().setNewLineColor(Color.RED);
+            service.getViewBuilder().getScene().getConnectProvider().setConnectionClass(Constants.CLASS_WIRECONTAINER);
+            service.getViewBuilder().getScene().getConnectProvider().setWizardType(PhysicalConnectionProvider.WIZARD_CONTAINER);
+        }
     }//GEN-LAST:event_btnWireContainerActionPerformed
 
     private void btnWirelessContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessContainerActionPerformed
-        scene.getConnectionProvider().setCurrentLineColor(Color.BLUE);
-        scene.getConnectionProvider().setCurrentConnectionSelection(CONNECTION_WIRELESSCONTAINER);
+        if (!service.getViewBuilder().getScene().supportsConnections())
+            JOptionPane.showMessageDialog(null, "This view does not support the selected action", 
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+        else{
+            service.getViewBuilder().getScene().setNewLineColor(Color.BLUE);
+            service.getViewBuilder().getScene().getConnectProvider().setConnectionClass(Constants.CLASS_WIRELESSCONTAINER);
+            service.getViewBuilder().getScene().getConnectProvider().setWizardType(PhysicalConnectionProvider.WIZARD_CONTAINER);
+        }
     }//GEN-LAST:event_btnWirelessContainerActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        vrs.saveView();
+        service.getViewBuilder().saveView();
         isSaved = true;
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        vrs.refreshView();
+        service.getViewBuilder().refresh();
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
-        ExportScenePanel exportPanel = new ExportScenePanel(new SceneExportFilter[]{ImageFilter.getInstance()}, scene);
+        ExportScenePanel exportPanel = new ExportScenePanel(
+                new SceneExportFilter[]{ImageFilter.getInstance()}, service.getViewBuilder().getScene());
         DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportActionPerformed
@@ -421,12 +493,12 @@ public final class ObjectViewTopComponent extends TopComponent
 
                     if (pnlFormat.getNodesFontSize() != -1){
                         currentFont = currentFont.deriveFont(Float.valueOf(pnlFormat.getNodesFontSize()+".0")); //NOI18N
-                        scene.setSceneFont(currentFont);
+                        service.getViewBuilder().getScene().setSceneFont(currentFont);
                     }
 
                     if (pnlFormat.getNodesFontColor() != null){
                         currentColor = pnlFormat.getNodesFontColor();
-                        scene.setSceneForegroundColor(pnlFormat.getNodesFontColor());
+                        service.getViewBuilder().getScene().setSceneForegroundColor(pnlFormat.getNodesFontColor());
                     }
                 }
             }
@@ -435,8 +507,22 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_btnFormatTextActionPerformed
 
     private void btnShowNodeLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowNodeLabelsActionPerformed
-        scene.toggleLabels(!btnShowNodeLabels.isSelected());
+        service.getViewBuilder().getScene().toggleLabels(!btnShowNodeLabels.isSelected());
     }//GEN-LAST:event_btnShowNodeLabelsActionPerformed
+
+    private void cmbViewTypeItemStateChangedPerformed(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbViewTypeItemStateChangedPerformed
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            switch (cmbViewType.getSelectedIndex()) {
+                default:
+                case 0:
+                    service.setViewBuilder(new ChildrenViewBuilder(service));
+                    break;
+                case 1:
+                    service.setViewBuilder(new RackViewBuilder(service));
+                    
+            }
+       }
+    }//GEN-LAST:event_cmbViewTypeItemStateChangedPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barConnections;
@@ -498,14 +584,14 @@ public final class ObjectViewTopComponent extends TopComponent
 
     @Override
     public void componentOpened() {
-        vrs.initializeListeners();
-        scene.addChangeListener(this);
+        service.initializeListeners();
+        service.getViewBuilder().getScene().addChangeListener(this);
     }
 
     @Override
     public void componentClosed() {
-        vrs.terminateListeners();
-        vrs.disableView();
+        service.terminateListeners();
+        service.disableView();
     }
 
     void writeProperties(java.util.Properties p) {
@@ -556,7 +642,7 @@ public final class ObjectViewTopComponent extends TopComponent
     public String getDisplayName(){
         if (super.getDisplayName() == null)
             return "<No View>";
-        return super.getDisplayName().trim().equals("") ? "<No view>" : super.getDisplayName();
+        return super.getDisplayName().trim().isEmpty() ? "<No view>" : super.getDisplayName();
     }
 
     public boolean isSaved() {
@@ -574,10 +660,10 @@ public final class ObjectViewTopComponent extends TopComponent
     @Override
     public void actionPerformed(ActionEvent e) {
         switch (e.getID()){
-            case ViewScene.SCENE_CHANGE:
+            case ChildrenViewScene.SCENE_CHANGE:
                 this.setSaved(false);
                 break;
-            case ViewScene.SCENE_CHANGEANDSAVE:
+            case ChildrenViewScene.SCENE_CHANGEANDSAVE:
                 btnSaveActionPerformed(e);
                 NotificationUtil.getInstance().showSimplePopup("Object View", NotificationUtil.INFO_MESSAGE, "The view has been saved automatically");
         }
@@ -594,8 +680,7 @@ public final class ObjectViewTopComponent extends TopComponent
                     return false;
             }
         }
-        isSaved = true;
-        return true;
+        return isSaved = true;
     }
 
     @Override
@@ -613,5 +698,13 @@ public final class ObjectViewTopComponent extends TopComponent
         btnFormatText.setEnabled(enabled);
         btnRefresh.setEnabled(enabled);
         btnShowNodeLabels.setEnabled(enabled);
+    }
+    
+    public void setListModel (ComboBoxModel newModel) {
+        cmbViewType.setModel(newModel);
+    }
+
+    void selectView(int index) {
+        cmbViewType.setSelectedIndex(index);
     }
 }

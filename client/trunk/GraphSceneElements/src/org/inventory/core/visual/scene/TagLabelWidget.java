@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.core.visual.widgets;
+package org.inventory.core.visual.scene;
 
 import java.awt.Color;
 import java.awt.Font;

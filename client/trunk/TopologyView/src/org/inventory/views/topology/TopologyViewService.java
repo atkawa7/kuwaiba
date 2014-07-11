@@ -33,9 +33,8 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.visual.widgets.AbstractNodeWidget;
+import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.inventory.views.topology.scene.ObjectConnectionWidget;
-import org.inventory.views.topology.scene.ObjectNodeWidget;
 import org.inventory.views.topology.scene.TopologyViewScene;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Lookup;
@@ -149,7 +148,7 @@ public class TopologyViewService implements LookupListener {
             try {
                 parseXML(localView.getStructure());
             } catch (XMLStreamException ex) {
-                System.out.println("An exception was thrown parsing the XML View: "+ex.getMessage());
+                System.out.println("An exception was thrown parsing the XML View: "+ ex.getMessage());
             }
             tvtc.getScene().validate();
         }

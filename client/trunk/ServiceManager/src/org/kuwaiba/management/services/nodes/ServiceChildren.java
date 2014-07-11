@@ -28,7 +28,8 @@ import org.openide.nodes.Children;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ServiceChildren extends Children.Array {
-    LocalObjectLight service;
+    private LocalObjectLight service;
+    
     public ServiceChildren(LocalObjectLight service) {
         this.service = service;
     }
@@ -42,7 +43,7 @@ public class ServiceChildren extends Children.Array {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else{
                 for (LocalObjectLight resource : resources)
-                    add(new ObjectNode[] {new ObjectNode(resource, true)});
+                    add(new ObjectNode[] {new ObjectNode(resource)});
             }
         }
         else{

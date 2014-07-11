@@ -16,12 +16,11 @@
 
 package org.inventory.views.gis.scene;
 
-import org.inventory.core.visual.widgets.AbstractConnectionWidget;
+import org.inventory.core.visual.scene.AbstractConnectionWidget;
 import com.ociweb.xml.StartTagWAX;
 import com.ociweb.xml.WAX;
 import java.awt.BasicStroke;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -31,9 +30,9 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.menu.ObjectWidgetMenu;
-import org.inventory.core.visual.widgets.AbstractScene;
+import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.core.visual.scene.PhysicalConnectionProvider;
 import org.inventory.views.gis.scene.providers.AcceptActionProvider;
-import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.RouterFactory;
@@ -42,7 +41,6 @@ import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
-import org.openide.util.Lookup;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
@@ -56,7 +54,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
  * Scene used by the GISView component
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class GISViewScene extends AbstractScene implements Lookup.Provider {
+public class GISViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
     /**
      * Default coordinates to center the map
      */
@@ -112,7 +110,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
         });
         
         map.setTileLoader(new CustomTileLoader(new CustomTileLoaderListener()));      
-        connectionProvider = new PhysicalConnectionProvider(this);
+        connectionProvider = new PhysicalConnectionProvider();
         
         mapLayer = new LayerWidget(this);
         nodesLayer = new LayerWidget(this);
@@ -171,6 +169,7 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
     @Override
     protected void attachEdgeTargetAnchor(LocalObjectLight edge, LocalObjectLight oldTargetNode, LocalObjectLight targetNode) {}
 
+    @Override
     public PhysicalConnectionProvider getConnectProvider() {
         return connectionProvider;
     }
@@ -314,6 +313,16 @@ public class GISViewScene extends AbstractScene implements Lookup.Provider {
         NotificationUtil.getInstance().showStatusMessage(String.format(
                 "Center: (%s, %s) Zoom level: %s", map.getPosition().getLat(),
                                             map.getPosition().getLon(), map.getZoom()), false);
+    }
+
+    @Override
+    public boolean supportsConnections() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsBackgrounds() {
+        return false;
     }
        
     /**

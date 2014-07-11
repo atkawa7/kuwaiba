@@ -22,7 +22,7 @@ package org.inventory.views.topology.scene.provider;
 import java.awt.Point;
 import java.util.Random;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.visual.widgets.AbstractNodeWidget;
+import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.inventory.views.topology.scene.ObjectNodeWidget;
 import org.inventory.views.topology.scene.TopologyViewScene;
 import org.netbeans.api.visual.action.ConnectProvider;
@@ -34,7 +34,7 @@ import org.netbeans.api.visual.widget.Widget;
  * Action invoked when an element try to connect to other on the scene
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public class SceneConnectProvider implements ConnectProvider{
+public class SceneConnectProvider implements ConnectProvider {
 
     private Object source = null;
     private Object target = null;
@@ -57,7 +57,7 @@ public class SceneConnectProvider implements ConnectProvider{
 
     @Override
     public ConnectorState isTargetWidget(Widget sourceWidget, Widget targetWidget) {
-        if (targetWidget instanceof ObjectNodeWidget|| targetWidget instanceof AbstractNodeWidget){
+        if (targetWidget instanceof ObjectNodeWidget || targetWidget instanceof AbstractNodeWidget){
             Object object = scene.findObject(targetWidget);
             target = scene.isNode(object) ? (LocalObjectLight)object : null;
             if (target != null)

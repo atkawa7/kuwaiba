@@ -34,7 +34,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.export.ExportableScene;
 import org.inventory.core.visual.export.Layer;
-import org.inventory.core.visual.widgets.AbstractNodeWidget;
+import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.views.topology.scene.menus.ConnectionMenu;
 import org.inventory.views.topology.scene.menus.IconMenu;

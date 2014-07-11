@@ -23,6 +23,14 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.inventory.core.wizards</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.inventory.navigation.applicationnodes</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -72,12 +80,13 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
+                <package>org.inventory.core.visual.actions</package>
                 <package>org.inventory.core.visual.actions.providers</package>
                 <package>org.inventory.core.visual.decorators</package>
                 <package>org.inventory.core.visual.export</package>
                 <package>org.inventory.core.visual.export.filters</package>
                 <package>org.inventory.core.visual.menu</package>
-                <package>org.inventory.core.visual.widgets</package>
+                <package>org.inventory.core.visual.scene</package>
             </public-packages>
         </data>
     </configuration>

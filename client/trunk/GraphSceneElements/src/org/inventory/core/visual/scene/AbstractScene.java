@@ -14,15 +14,19 @@
  *  limitations under the License.
  */
 
-package org.inventory.core.visual.widgets;
+package org.inventory.core.visual.scene;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
+import org.inventory.communications.util.Utils;
 import org.inventory.core.visual.export.ExportableScene;
 import org.inventory.core.visual.export.Layer;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
@@ -32,18 +36,21 @@ import org.netbeans.api.visual.model.ObjectSceneEvent;
 import org.netbeans.api.visual.model.ObjectSceneEventType;
 import org.netbeans.api.visual.model.ObjectSceneListener;
 import org.netbeans.api.visual.model.ObjectState;
+import org.netbeans.api.visual.widget.ImageWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
 /**
  * Root class to all GraphScenes
+ * TODO: This should inherit from ObjectScene
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalObjectLight> 
+public abstract class AbstractScene <N, E> extends GraphScene<N, E> 
         implements ExportableScene {
     /**
      * Constant to represent the selection tool
@@ -64,7 +71,7 @@ public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalOb
     /**
      * Default font
      */
-    public static final Font defaultFont = new Font(Font.SANS_SERIF, Font.BOLD, 12);
+    public static final Font defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
     /**
      * Default foreground color
      */
@@ -73,6 +80,14 @@ public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalOb
      * Default background color
      */
     public static final Color defaultBackgroundColor = Color.LIGHT_GRAY;
+    /**
+     * Color to be assigned to the new lines 
+     */
+    protected Color newLineColor;
+    /**
+     * Used to contain the background image
+     */
+    protected LayerWidget backgroundLayer;
     /**
      * This layer is used to paint the auxiliary elements 
      */
@@ -96,15 +111,13 @@ public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalOb
     /**
      * Scene lookup
      */
-    private SceneLookup lookup;
+    private SceneLookup lookup = new SceneLookup(Lookup.EMPTY);
     /**
      * Change listeners
      */
-    private ArrayList<ActionListener> changeListeners;
+    private ArrayList<ActionListener> changeListeners = new ArrayList<ActionListener>();;
 
     public AbstractScene() {
-        this.lookup = new SceneLookup(Lookup.EMPTY);
-        this.changeListeners = new ArrayList<ActionListener>();
         setActiveTool(ACTION_SELECT);
     }
     
@@ -214,7 +227,61 @@ public abstract class AbstractScene extends GraphScene<LocalObjectLight, LocalOb
         return this.lookup;
     }
     
+    public void setNewLineColor(Color newColor){
+        newLineColor = newColor;
+    }
+    
+    /**
+     * Gets the background image
+     * @return
+     */
+    public byte[] getBackgroundImage(){
+        if (backgroundLayer.getChildren().isEmpty())
+            return null;
+        try {
+            return Utils.getByteArrayFromImage(((ImageWidget) backgroundLayer.getChildren().iterator().next()).getImage(), "png"); //NOI18n
+        } catch (IOException ex) {
+            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO || Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
+                Exceptions.printStackTrace(ex);
+            return null;
+        }
+    }
+    
+    /**
+     * Sets the current background. Do nothing if supportsBackgrounds always returns false
+     * @param im The image. Null of you want to remove the existing one
+     */
+    public void setBackgroundImage(Image im){
+        backgroundLayer.removeChildren();
+        
+        if (im == null)
+            return;
+        
+        backgroundLayer.addChild(new ImageWidget(this, im));
+        validate();
+    }
+    
+    /**
+     * The XML representation of the view. Typically used to serialize it
+     * @return XML document as a byte arrays
+     */
     public abstract byte[] getAsXML();
+    /**
+     * Get the active connect provider. Null if supportsConnections returns false.
+     * @return 
+     */
+    public abstract PhysicalConnectionProvider getConnectProvider();
+    /**
+     * Does this view support connections
+     * @return 
+     */
+    public abstract boolean supportsConnections();
+    /**
+     * Does this view support backgrounds?
+     * @return 
+     */
+    public abstract boolean supportsBackgrounds();
+    
     
     /**
      * Helper class to let us launch a lookup event every time a widget is selected

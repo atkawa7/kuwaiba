@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.view.rackview.scene;
+package org.inventory.views.objectview.scene;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -21,9 +21,10 @@ import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.visual.export.ExportableScene;
 import org.inventory.core.visual.export.Layer;
+import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.core.visual.scene.PhysicalConnectionProvider;
 import org.netbeans.api.visual.border.Border;
 import org.netbeans.api.visual.border.BorderFactory;
-import org.netbeans.api.visual.graph.GraphScene;
 import org.netbeans.api.visual.layout.Layout;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.LabelWidget;
@@ -34,7 +35,7 @@ import org.netbeans.api.visual.widget.Widget;
  * Scene class used in this module
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RackViewScene extends GraphScene<LocalObject, LocalObject> implements ExportableScene {
+public class RackViewScene extends AbstractScene<LocalObject, LocalObject> implements ExportableScene {
     public static final int STANDARD_RACK_WIDTH = 300;
     public static final int RACK_UNIT_IN_PX = 20;
     private Widget rackWidget;
@@ -59,7 +60,7 @@ public class RackViewScene extends GraphScene<LocalObject, LocalObject> implemen
     }   
     
     @Override
-    protected Widget attachNodeWidget(LocalObject node) {
+    public Widget attachNodeWidget(LocalObject node) {
         Widget widget = new Widget(this);
         widget.setPreferredSize(new Dimension(STANDARD_RACK_WIDTH, 50));
         widget.setOpaque(true);
@@ -80,20 +81,15 @@ public class RackViewScene extends GraphScene<LocalObject, LocalObject> implemen
     }
 
     @Override
-    protected Widget attachEdgeWidget(LocalObject edge) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    protected Widget attachEdgeWidget(LocalObject edge) {return null;}
 
     @Override
-    protected void attachEdgeSourceAnchor(LocalObject edge, LocalObject oldSourceNode, LocalObject sourceNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    protected void attachEdgeSourceAnchor(LocalObject edge, LocalObject oldSourceNode, LocalObject sourceNode) {}
 
     @Override
-    protected void attachEdgeTargetAnchor(LocalObject edge, LocalObject oldTargetNode, LocalObject targetNode) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    protected void attachEdgeTargetAnchor(LocalObject edge, LocalObject oldTargetNode, LocalObject targetNode) {}
     
+    @Override
     public void clear(){
         while (!getNodes().isEmpty())
             removeNode(getNodes().iterator().next());
@@ -126,5 +122,24 @@ public class RackViewScene extends GraphScene<LocalObject, LocalObject> implemen
     @Override
     public Layer[] getLayers() {
         return null;
+    }
+
+    //Not needed
+    @Override
+    public byte[] getAsXML() {return null;}
+
+    @Override
+    public PhysicalConnectionProvider getConnectProvider() {
+        return null;
+    }
+
+    @Override
+    public boolean supportsConnections() {
+        return false;
+    }
+
+    @Override
+    public boolean supportsBackgrounds() {
+        return false;
     }
 }

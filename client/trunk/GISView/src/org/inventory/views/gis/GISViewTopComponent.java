@@ -16,6 +16,7 @@
 package org.inventory.views.gis;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
@@ -27,11 +28,11 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
-import org.inventory.core.visual.widgets.AbstractScene;
+import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.core.visual.scene.PhysicalConnectionProvider;
 import org.inventory.views.gis.dialogs.OpenDialog;
 import org.inventory.views.gis.dialogs.SaveDialog;
 import org.inventory.views.gis.scene.GISViewScene;
-import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -378,31 +379,41 @@ public final class GISViewTopComponent extends TopComponent implements ExplorerM
     }//GEN-LAST:event_btnConnectActionPerformed
 
     private void btnWireContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWireContainerActionPerformed
-        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRECONTAINER);
+        scene.setNewLineColor(Color.RED);
+        scene.getConnectProvider().setConnectionClass(Constants.CLASS_WIRECONTAINER);
+        scene.getConnectProvider().setWizardType(PhysicalConnectionProvider.WIZARD_CONTAINER);
         btnConnect.setSelected(true);
         btnConnectActionPerformed(evt);
     }//GEN-LAST:event_btnWireContainerActionPerformed
 
     private void btnWirelessContainerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessContainerActionPerformed
-        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRELESSCONTAINER);
+        scene.setNewLineColor(Color.BLUE);
+        scene.getConnectProvider().setConnectionClass(Constants.CLASS_WIRELESSCONTAINER);
+        scene.getConnectProvider().setWizardType(PhysicalConnectionProvider.WIZARD_CONTAINER);
         btnConnect.setSelected(true);
         btnConnectActionPerformed(evt);
     }//GEN-LAST:event_btnWirelessContainerActionPerformed
 
     private void btnOpticalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpticalLinkActionPerformed
-        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_OPTICALLINK);
+        scene.setNewLineColor(Color.GREEN);
+        scene.getConnectProvider().setConnectionClass(Constants.CLASS_OPTICALLINK);
+        scene.getConnectProvider().setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
         btnConnect.setSelected(true);
         btnConnectActionPerformed(evt);
     }//GEN-LAST:event_btnOpticalLinkActionPerformed
 
     private void btnElectricalLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnElectricalLinkActionPerformed
-        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_ELECTRICALLINK);
+        scene.setNewLineColor(Color.ORANGE);
+        scene.getConnectProvider().setConnectionClass(Constants.CLASS_ELECTRICALLINK);
+        scene.getConnectProvider().setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
         btnConnect.setSelected(true);
         btnConnectActionPerformed(evt);
     }//GEN-LAST:event_btnElectricalLinkActionPerformed
 
     private void btnWirelessLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWirelessLinkActionPerformed
-        scene.getConnectProvider().setCurrentConnectionSelection(PhysicalConnectionProvider.CONNECTION_WIRELESSLINK);
+        scene.setNewLineColor(Color.MAGENTA);
+        scene.getConnectProvider().setConnectionClass(Constants.CLASS_WIRELESSLINK);
+        scene.getConnectProvider().setWizardType(PhysicalConnectionProvider.WIZARD_LINK);
         btnConnect.setSelected(true);
         btnConnectActionPerformed(evt);
     }//GEN-LAST:event_btnWirelessLinkActionPerformed

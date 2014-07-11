@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.kuwaiba.management.services.nodes.ServiceManagerRootNode;
 
@@ -37,8 +38,8 @@ public class ServiceManagerService {
     }
     
     public void setTreeRoot(){
-        List<LocalObjectLight> customersPools = com.getPools("GenericCustomer");
-        LocalObjectLight[] customers = com.getObjectsOfClassLight("GenericCustomer");
+        List<LocalObjectLight> customersPools = com.getPools(Constants.CLASS_GENERICCUSTOMER);
+        LocalObjectLight[] customers = com.getObjectsOfClassLight(Constants.CLASS_GENERICCUSTOMER);
                 
         if (customers == null)
             this.smtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

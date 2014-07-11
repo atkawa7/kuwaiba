@@ -19,11 +19,10 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.visual.widgets.AbstractScene;
+import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.core.visual.scene.PhysicalConnectionProvider;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.router.Router;
@@ -35,9 +34,7 @@ import org.netbeans.api.visual.widget.Widget;
  * Service class for this module
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class PhysicalPathScene extends AbstractScene {
-    private LayerWidget nodesLayer;
-    private LayerWidget edgesLayer;
+public class PhysicalPathScene  extends AbstractScene <LocalObjectLight, LocalObjectLight>{
     private Router router;
 
     public PhysicalPathScene() {       
@@ -79,19 +76,6 @@ public class PhysicalPathScene extends AbstractScene {
         nodesLayer.addChild(widget);
     }
 
-    public void clear() {
-        List<LocalObjectLight> clonedNodes = new ArrayList<LocalObjectLight>(getNodes());
-        List<LocalObjectLight> clonedEdges = new ArrayList<LocalObjectLight>(getEdges());
-        
-        for(LocalObjectLight lol : clonedNodes)
-            removeNode(lol);
-        for(LocalObjectLight lol : clonedEdges)
-            removeEdge(lol);
-
-        nodesLayer.removeChildren();
-        edgesLayer.removeChildren();
-    }
-
     public Router getRouter() {
         return router;
     }
@@ -109,5 +93,20 @@ public class PhysicalPathScene extends AbstractScene {
     public byte[] getAsXML() {
         //For now
         return null;
+    }
+
+    @Override
+    public PhysicalConnectionProvider getConnectProvider() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean supportsConnections() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsBackgrounds() {
+        return false;
     }
 }

@@ -16,7 +16,7 @@
 
 package org.inventory.views.gis.scene;
 
-import org.inventory.core.visual.widgets.AbstractConnectionWidget;
+import org.inventory.core.visual.scene.AbstractConnectionWidget;
 import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.core.LocalObjectLight;

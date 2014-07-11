@@ -18,7 +18,7 @@ package org.inventory.core.visual.menu;
 import java.awt.Point;
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
-import org.inventory.core.visual.widgets.SelectableWidget;
+import org.inventory.core.visual.scene.SelectableWidget;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.actions.Presenter;

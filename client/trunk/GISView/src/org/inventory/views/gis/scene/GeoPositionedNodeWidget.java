@@ -17,7 +17,7 @@
 package org.inventory.views.gis.scene;
 
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.visual.widgets.AbstractNodeWidget;
+import org.inventory.core.visual.scene.AbstractNodeWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 
 /**

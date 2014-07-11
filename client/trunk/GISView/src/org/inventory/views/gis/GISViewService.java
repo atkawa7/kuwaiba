@@ -30,11 +30,11 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.views.gis.scene.GISViewScene;
 import org.inventory.views.gis.scene.GeoPositionedConnectionWidget;
 import org.inventory.views.gis.scene.GeoPositionedNodeWidget;
-import org.inventory.views.gis.scene.providers.PhysicalConnectionProvider;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.Widget;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
@@ -145,7 +145,7 @@ public class GISViewService {
                                         GeoPositionedConnectionWidget newEdge = (GeoPositionedConnectionWidget)scene.addEdge(container);
                                         newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
                                         newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
-                                        newEdge.setLineColor(PhysicalConnectionProvider.getConnectionColor(container.getClassName()));
+                                        newEdge.setLineColor(Utils.getConnectionColor(container.getClassName()));
 
                                         List<Point> localControlPoints = new ArrayList<Point>();
                                         while(true){

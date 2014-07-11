@@ -269,7 +269,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener{
         actions.add(editAction == null ? editAction = new EditObjectAction(this) : editAction);
         actions.add(deleteAction == null ? deleteAction = new DeleteBusinessObjectAction(this) : deleteAction);
         actions.add(null); //Separator
-        if (getParentNode() != null) {
+        if (!isLeaf()) {
             actions.add(SystemAction.get(CopyAction.class));
             actions.add(SystemAction.get(CutAction.class));
             actions.add(SystemAction.get(PasteAction.class));

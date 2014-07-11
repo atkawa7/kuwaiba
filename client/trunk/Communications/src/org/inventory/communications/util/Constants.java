@@ -27,8 +27,8 @@ public class Constants {
     public static final int DEBUG_LEVEL_DISABLED = 0;
     public static final int DEBUG_LEVEL_INFO = 1;
     public static final int DEBUG_LEVEL_FINE = 2;
-    //public static int DEBUG_LEVEL = DEBUG_LEVEL_FINE;
-    public static int DEBUG_LEVEL = DEBUG_LEVEL_DISABLED;
+    public static int DEBUG_LEVEL = DEBUG_LEVEL_INFO;
+    //public static int DEBUG_LEVEL = DEBUG_LEVEL_DISABLED;
     
     /**
      * Name of the validator to indicate if a given class is a container

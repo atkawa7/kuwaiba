@@ -44,14 +44,14 @@
  * Modified by Charles Bedon for project Kuwaiba 2014
  */
 
-package org.inventory.views.objectview.scene.actions;
+package org.inventory.core.visual.actions;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import org.inventory.core.visual.widgets.AbstractScene;
+import org.inventory.core.visual.scene.AbstractScene;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Widget;
