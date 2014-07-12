@@ -472,15 +472,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             return newGroupNode.getId();
             
         }catch(Exception ex){
-            Logger.getLogger("createGroup: "+ex.getMessage()); //NOI18N
-            if (tx != null){
-                tx.failure();
-            }
-        throw new RuntimeException(ex.getMessage());
-        } finally {
-            if (tx != null){
-                tx.finish();
-            }
+            tx.failure();
+            tx.finish();
+            throw new RuntimeException(ex.getMessage());
         }
     }
 
@@ -823,12 +817,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             if (background != null){
                 try{
                     Properties props = new Properties();
-                    String fileName = "view-" + oid + "-" + viewNode.getId() + "-" + viewNode.getProperty(Constants.PROPERTY_TYPE);
+                    String fileName = "view-" + oid + "-" + viewNode.getId() + "-" + viewType;
                     props.load(new FileInputStream("persistence.properties"));
                     Util.saveFile(props.getProperty("background_path"), fileName, background);
                     viewNode.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
                 }catch(Exception ex){
-                    throw new InvalidArgumentException(String.format("Background image for view %s could not be saved",oid), Level.SEVERE);
+                    throw new InvalidArgumentException(String.format("Background image for view %s could not be saved: %s",
+                            oid, ex.getMessage()), Level.SEVERE);
                 }
             }
 
@@ -872,21 +867,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     Util.saveFile(props.getProperty("background_path"), fileName, background);
                     newView.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
                 }catch(Exception ex){
-                    throw new InvalidArgumentException(String.format("Background image for view %1s couldn't be saved",newView.getId()), Level.SEVERE);
+                    throw new InvalidArgumentException(String.format("Background image for view %s couldn't be saved: %s", 
+                            newView.getId(), ex.getMessage()), Level.SEVERE);
                 }
             }
             generalViewsIndex.add(newView, Constants.PROPERTY_ID, newView.getId());
             tx.success();
-
+            tx.finish();
             return newView.getId();
         }catch (Exception ex){
-            Logger.getLogger("createGeneralView: "+ex.getMessage()); //NOI18N
-            if (tx != null)
-                tx.failure();
+            Logger.getLogger("createGeneralView: "+ ex.getMessage()); //NOI18N
+            tx.failure();
+            tx.finish();
             throw new RuntimeException(ex.getMessage());
-        }finally{
-            if (tx != null)
-                tx.finish();
         }
     }
 
@@ -926,13 +919,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
 
             Properties props = new Properties();
             props.load(new FileInputStream("persistence.properties"));
-            String fileName = "view-" + oid + "-" + viewNode.getId() + "-" + viewNode.getProperty(Constants.PROPERTY_TYPE);
+            String fileName = "view-" + oid + "-" + viewId + "-" + viewNode.getProperty(Constants.PROPERTY_TYPE);
             if (background != null){
                 try{
                     Util.saveFile(props.getProperty("background_path"), fileName, background);
                     viewNode.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
                 }catch(Exception ex){
-                    throw new InvalidArgumentException(String.format("Background image for view %1s couldn't be saved",oid), Level.SEVERE);
+                    throw new InvalidArgumentException(String.format("Background image for view %s couldn't be saved: %s",
+                            oid, ex.getMessage()), Level.SEVERE);
                 }
             }
             else{
@@ -940,7 +934,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     try{
                         new File(props.getProperty("background_path") + "/" + fileName).delete();
                     }catch(Exception ex){
-                        throw new InvalidArgumentException(String.format("View background %s couldn't be deleted", props.getProperty("background_path") + "/" + fileName), Level.SEVERE);
+                        throw new InvalidArgumentException(String.format("View background %s couldn't be deleted: %s", 
+                                props.getProperty("background_path") + "/" + fileName, ex.getMessage()), Level.SEVERE);
                     }
                     viewNode.removeProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME);
                 }
@@ -949,7 +944,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             tx.success();
             tx.finish();
         }catch (Exception ex){
-            Logger.getLogger("updateObjectRelatedView: "+ ex.getMessage()); //NOI18N
             tx.failure();
             tx.finish();
             throw new RuntimeException(ex.getMessage());
@@ -983,7 +977,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                         Util.saveFile(props.getProperty("background_path"), fileName, background);
                         gView.setProperty(Constants.PROPERTY_BACKGROUND_FILE_NAME, fileName);
                     }catch(Exception ex){
-                        throw new InvalidArgumentException(String.format("Background image for view %1s couldn't be saved",oid), Level.SEVERE);
+                        throw new InvalidArgumentException(String.format("Background image for view %s couldn't be saved: %s",
+                                oid, ex.getMessage()), Level.SEVERE);
                     }
                 }
             }else
@@ -993,7 +988,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             tx.finish();
             
         }catch (Exception ex){
-            Logger.getLogger("updateGeneralView: "+ex.getMessage()); //NOI18N
             tx.failure();
             tx.finish();
             throw new RuntimeException(ex.getMessage());
@@ -1016,7 +1010,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             tx.success();
             tx.finish();
         }catch (Exception ex){
-            Logger.getLogger("deleteGeneralView: "+ex.getMessage()); //NOI18N
             tx.failure();
             tx.finish();
             throw new RuntimeException(ex.getMessage());
