@@ -35,6 +35,7 @@ import org.netbeans.api.visual.widget.Widget;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class PhysicalPathScene  extends AbstractScene <LocalObjectLight, LocalObjectLight>{
+    public static final int X_OFFSET = 50;
     private Router router;
 
     public PhysicalPathScene() {       
@@ -85,7 +86,7 @@ public class PhysicalPathScene  extends AbstractScene <LocalObjectLight, LocalOb
         for (Widget child : nodesLayer.getChildren()){
             child.resolveBounds (new Point (x, 10), new Rectangle (child.getPreferredBounds().x, 
                     child.getPreferredBounds().y, child.getPreferredBounds().width, child.getPreferredBounds().height));
-            x += child.getPreferredBounds().width + 50;
+            x += child.getPreferredBounds().width + X_OFFSET;
         }
     }
 
@@ -97,12 +98,12 @@ public class PhysicalPathScene  extends AbstractScene <LocalObjectLight, LocalOb
 
     @Override
     public PhysicalConnectionProvider getConnectProvider() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
     public boolean supportsConnections() {
-        return true;
+        return false;
     }
 
     @Override

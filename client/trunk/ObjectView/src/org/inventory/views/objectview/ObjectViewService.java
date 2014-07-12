@@ -89,8 +89,11 @@ public class ObjectViewService implements LookupListener {
            }
            
            //If the current view type does not support the selected object, fallback to the default view
-           if (!viewBuilder.supportsClass(myObject.getClassName()))
+           if (!viewBuilder.supportsClass(myObject.getClassName())){
+               vrtc.getNotifier().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, 
+                    String.format("Class %s does not support %s", currentObject.getClassName(), viewBuilder.getName()));
                vrtc.selectView (0);
+           }
            else{
                 try{
                     viewBuilder.buildView(myObject);
@@ -103,6 +106,7 @@ public class ObjectViewService implements LookupListener {
                 vrtc.setDisplayName(myObject.toString());
                 viewBuilder.getScene().setSceneFont(vrtc.getCurrentFont());
                 viewBuilder.getScene().setSceneForegroundColor(vrtc.getCurrentColor());
+                viewBuilder.getScene().validate();
                 vrtc.toggleButtons(true);
                 
            }
@@ -136,6 +140,20 @@ public class ObjectViewService implements LookupListener {
     }
 
     public void setViewBuilder(AbstractViewBuilder viewBuilder) {
-        this.viewBuilder = viewBuilder;
+        //If the current view type does not support the selected object, fallback to the default view
+        if (!viewBuilder.supportsClass(currentObject.getClassName())){
+            vrtc.getNotifier().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, 
+                    String.format("Class %s does not support %s", currentObject.getClassName(), viewBuilder.getName()));
+            vrtc.selectView(0);
+        }else{ 
+            this.viewBuilder = viewBuilder;
+            try{
+                viewBuilder.buildView(currentObject);
+            }catch (IllegalArgumentException ex){
+                vrtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+                viewBuilder.getScene().clear();
+                disableView();
+            }
+        }
     }
 }

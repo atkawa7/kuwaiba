@@ -22,7 +22,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
@@ -512,6 +515,8 @@ public final class ObjectViewTopComponent extends TopComponent
 
     private void cmbViewTypeItemStateChangedPerformed(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbViewTypeItemStateChangedPerformed
         if (evt.getStateChange() == ItemEvent.SELECTED) {
+            checkForUnsavedView(false);
+            service.getViewBuilder().getScene().clear();
             switch (cmbViewType.getSelectedIndex()) {
                 default:
                 case 0:
@@ -521,6 +526,8 @@ public final class ObjectViewTopComponent extends TopComponent
                     service.setViewBuilder(new RackViewBuilder(service));
                     
             }
+            if (service.getViewBuilder().getScene().getView() == null)
+                pnlScrollMain.setViewportView(service.getViewBuilder().getScene().createView());
        }
     }//GEN-LAST:event_cmbViewTypeItemStateChangedPerformed
 
@@ -586,18 +593,35 @@ public final class ObjectViewTopComponent extends TopComponent
     public void componentOpened() {
         service.initializeListeners();
         service.getViewBuilder().getScene().addChangeListener(this);
+        FileInputStream input;
+        try{
+            input = new FileInputStream(System.getProperty("user.dir") + "/.viewproperties"); //NOI18N
+            Properties properties = new Properties();
+            properties.load(input);
+            currentColor = properties.getProperty("fontColor") == null ? 
+                Color.black : new Color(Integer.valueOf(properties.getProperty("fontColor")));
+            currentFont = currentFont.deriveFont(properties.getProperty("fontSize") == null ? 
+                currentFont.getSize() : Float.valueOf(properties.getProperty("fontSize")));
+            input.close();
+        }catch (IOException e) {}
     }
 
     @Override
     public void componentClosed() {
         service.terminateListeners();
         service.disableView();
+        FileOutputStream output;
+        try{
+            output = new FileOutputStream(System.getProperty("user.dir") + "/.viewproperties"); //NOI18N
+            Properties properties = new Properties();
+            properties.setProperty("fontSize", String.valueOf(currentFont.getSize()));
+            properties.setProperty("fontColor", String.valueOf(currentColor.getRGB()));
+            properties.store(output, null);
+            output.close();
+        }catch (IOException e) {}
     }
 
-    void writeProperties(java.util.Properties p) {
-        p.setProperty("fontSize", String.valueOf(currentFont.getSize()));
-        p.setProperty("fontColor", String.valueOf(currentColor.getRGB()));
-    }
+    void writeProperties(java.util.Properties p) {}
 
     Object readProperties(java.util.Properties p) {
         if (instance == null) {
@@ -607,9 +631,7 @@ public final class ObjectViewTopComponent extends TopComponent
         return instance;
     }
 
-    private void readPropertiesImpl(java.util.Properties p) {
-        currentColor = p.getProperty("fontColor") == null ? Color.black : new Color(Integer.valueOf(p.getProperty("fontColor")));
-    }
+    private void readPropertiesImpl(java.util.Properties p) {}
 
     @Override
     protected String preferredID() {

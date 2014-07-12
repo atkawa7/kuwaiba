@@ -254,10 +254,9 @@ public abstract class AbstractScene <N, E> extends GraphScene<N, E>
     public void setBackgroundImage(Image im){
         backgroundLayer.removeChildren();
         
-        if (im == null)
-            return;
+        if (im != null)
+            backgroundLayer.addChild(new ImageWidget(this, im));
         
-        backgroundLayer.addChild(new ImageWidget(this, im));
         validate();
     }
     

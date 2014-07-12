@@ -164,6 +164,7 @@ public class Installer extends ModuleInstall {
             loginProperties.put("port", String.valueOf(serverPort)); //NOI18N
             loginProperties.put("path", wsdlPath); //NOI18N
             loginProperties.store(output, "Last login: " + Calendar.getInstance().getTimeInMillis());
+            output.close();
         }catch(IOException e){
             if (output != null)
                 try{ output.close();} catch(IOException ex){} //Do nothing if it fails
@@ -171,13 +172,16 @@ public class Installer extends ModuleInstall {
     }
     
     private Properties readProperties(){
-        FileInputStream input;
+        FileInputStream input = null;
         try{
             input = new FileInputStream(System.getProperty("user.dir") + "/.properties"); //NOI18N
             Properties loginProperties = new Properties();
             loginProperties.load(input);
+            input.close();
             return loginProperties;
         }catch (IOException e) {
+            if (input != null)
+                try{ input.close();} catch(IOException ex){} //Do nothing if it fails
             return null;
         }
     }

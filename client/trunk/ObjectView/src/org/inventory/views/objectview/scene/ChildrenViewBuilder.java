@@ -50,7 +50,7 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
     /**
      * Number of pixels between elements in a default view
      */
-    private final int X_OFFSET = 100;
+    public static final int X_OFFSET = 100;
     /**
      * Wraps the view to be built
      */
