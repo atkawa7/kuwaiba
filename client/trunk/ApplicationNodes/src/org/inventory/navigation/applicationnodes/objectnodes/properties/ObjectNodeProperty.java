@@ -105,8 +105,9 @@ public class ObjectNodeProperty extends ReadWrite implements PropertyChangeListe
     public PropertyEditor getPropertyEditor(){
         if (value instanceof LocalObjectListItem)
             return new ItemListPropertyEditor(list);
-        else
-            return super.getPropertyEditor();
+        if (this.getValueType() ==  Date.class)
+            return java.beans.PropertyEditorManager.findEditor(String.class);
+        return super.getPropertyEditor();
     }
 
      //PropertyListener methods
