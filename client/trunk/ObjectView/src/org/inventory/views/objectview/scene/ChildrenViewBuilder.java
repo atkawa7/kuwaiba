@@ -87,124 +87,134 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
         try {
             
             List<LocalObjectViewLight> views = com.getObjectRelatedViews(object.getOid(), object.getClassName());
-       
+            List<LocalObjectLight> myChildren = com.getObjectChildren(object.getOid(), com.getMetaForClass(object.getClassName(),false).getOid());
+            List<LocalObject> myConnections = com.getChildrenOfClass(object.getOid(),object.getClassName(), Constants.CLASS_GENERICCONNECTION);
+
             if(views.isEmpty()){ //There are no saved views
-                List<LocalObjectLight> myChildren = com.getObjectChildren(object.getOid(), com.getMetaForClass(object.getClassName(),false).getOid());
-                List<LocalObject> myConnections = com.getChildrenOfClass(object.getOid(),object.getClassName(), Constants.CLASS_GENERICCONNECTION);
+                
                 buildDefaultView(myChildren, myConnections);
-                return;
+                currentView = null;
             }else{
                 currentView = com.getObjectRelatedView(object.getOid(),object.getClassName(), views.get(0).getId());
-                if (currentView.isDirty()){
-                    service.getComponent().getNotifier().showSimplePopup("Information", NotificationUtil.WARNING_MESSAGE, "Some elements in the view has been deleted since the last time it was opened. They were removed");
-                    scene.fireChangeEvent(new ActionEvent(this, ChildrenViewScene.SCENE_CHANGEANDSAVE, "Removing old objects"));
-                    currentView.setDirty(false);
-                }
-            }
-            
-            /*Comment this out for debugging purposes
-            try{
-                FileOutputStream fos = new FileOutputStream("/home/zim/oview_"+currentView.getId()+".xml");
-                fos.write(currentView.getStructure());
-                fos.close();
-            }catch(Exception e){}*/
+                
+                /*Comment this out for debugging purposes
+                try{
+                    FileOutputStream fos = new FileOutputStream("/home/zim/oview_"+currentView.getId()+".xml");
+                    fos.write(currentView.getStructure());
+                    fos.close();
+                }catch(Exception e){}*/
 
-            //Here is where we use Woodstox as StAX provider
-            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+                //Here is where we use Woodstox as StAX provider
+                XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
-            QName qZoom = new QName("zoom"); //NOI18N
-            QName qCenter = new QName("center"); //NOI18N
-            QName qNode = new QName("node"); //NOI18N
-            QName qEdge = new QName("edge"); //NOI18N
-            QName qLabel = new QName("label"); //NOI18N
-            QName qControlPoint = new QName("controlpoint"); //NOI18N
+                QName qZoom = new QName("zoom"); //NOI18N
+                QName qCenter = new QName("center"); //NOI18N
+                QName qNode = new QName("node"); //NOI18N
+                QName qEdge = new QName("edge"); //NOI18N
+                QName qLabel = new QName("label"); //NOI18N
+                QName qControlPoint = new QName("controlpoint"); //NOI18N
 
-            ByteArrayInputStream bais = new ByteArrayInputStream(currentView.getStructure());
-            XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+                ByteArrayInputStream bais = new ByteArrayInputStream(currentView.getStructure());
+                XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
 
-            while (reader.hasNext()){
-                int event = reader.next();
-                if (event == XMLStreamConstants.START_ELEMENT){
-                    if (reader.getName().equals(qNode)){
-                        String objectClass = reader.getAttributeValue(null, "class");
+                while (reader.hasNext()){
+                    int event = reader.next();
+                    if (event == XMLStreamConstants.START_ELEMENT){
+                        if (reader.getName().equals(qNode)){
+                            String objectClass = reader.getAttributeValue(null, "class");
 
-                        int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
-                        int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
-                        long objectId = Long.valueOf(reader.getElementText());
+                            int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
+                            int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
+                            long objectId = Long.valueOf(reader.getElementText());
 
-                        LocalObjectLight lol = com.getObjectInfoLight(objectClass, objectId);
-                        if (lol != null){
-                            Widget widget = scene.addNode(lol);
-                            widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
-                            widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
-                        }
-                        else
-                            currentView.setDirty(true);
-                    }else{
-                        if (reader.getName().equals(qEdge)){
-                            long objectId = Long.valueOf(reader.getAttributeValue(null,"id"));
-                            long aSide = Long.valueOf(reader.getAttributeValue(null,"aside"));
-                            long bSide = Long.valueOf(reader.getAttributeValue(null,"bside"));
-
-                            String className = reader.getAttributeValue(null,"class");
-                            LocalObjectLight container = com.getObjectInfoLight(className, objectId);
-                            if (container != null){
-                                LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
-                                Widget aSideWidget = scene.findWidget(aSideObject);
-
-                                LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
-                                Widget bSideWidget = scene.findWidget(bSideObject);
-
-                                if (aSideWidget == null || bSideWidget == null)
-                                    currentView.setDirty(true);
-                                else{
-                                    ConnectionWidget newEdge = (ConnectionWidget)scene.addEdge(container);
-                                    newEdge.setLineColor(Utils.getConnectionColor(container.getClassName()));
-                                    newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
-                                    newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
-                                    List<Point> localControlPoints = new ArrayList<Point>();
-                                    while(true){
-                                        reader.nextTag();
-                                        
-                                        if (reader.getName().equals(qControlPoint)){
-                                            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                                localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
-                                        }else{
-                                            newEdge.setControlPoints(localControlPoints,false);
-                                            break;
-                                        }
-                                    }
-                                }
-                            }else
+                            LocalObjectLight lol = com.getObjectInfoLight(objectClass, objectId);
+                            if (lol != null){
+                                Widget widget = scene.addNode(lol);
+                                widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
+                                widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
+                                myChildren.remove(lol);
+                            }
+                            else
                                 currentView.setDirty(true);
                         }else{
-                            if (reader.getName().equals(qLabel)){
-                                //Unavailable for now
-                            }
-                            else{
-                                if (reader.getName().equals(qZoom))
-                                    currentView.setZoom(Integer.valueOf(reader.getText()));
+                            if (reader.getName().equals(qEdge)){
+                                long objectId = Long.valueOf(reader.getAttributeValue(null,"id"));
+                                long aSide = Long.valueOf(reader.getAttributeValue(null,"aside"));
+                                long bSide = Long.valueOf(reader.getAttributeValue(null,"bside"));
+
+                                String className = reader.getAttributeValue(null,"class");
+                                LocalObjectLight container = com.getObjectInfoLight(className, objectId);
+                                if (container != null){
+                                    myConnections.remove(container);
+                                    LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
+                                    Widget aSideWidget = scene.findWidget(aSideObject);
+
+                                    LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
+                                    Widget bSideWidget = scene.findWidget(bSideObject);
+
+                                    if (aSideWidget == null || bSideWidget == null)
+                                        currentView.setDirty(true);
+                                    else{
+                                        ConnectionWidget newEdge = (ConnectionWidget)scene.addEdge(container);
+                                        newEdge.setLineColor(Utils.getConnectionColor(container.getClassName()));
+                                        newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
+                                        newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
+                                        List<Point> localControlPoints = new ArrayList<Point>();
+                                        while(true){
+                                            reader.nextTag();
+
+                                            if (reader.getName().equals(qControlPoint)){
+                                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                                    localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                            }else{
+                                                newEdge.setControlPoints(localControlPoints,false);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }else
+                                    currentView.setDirty(true);
+                            }else{
+                                if (reader.getName().equals(qLabel)){
+                                    //Unavailable for now
+                                }
                                 else{
-                                    if (reader.getName().equals(qCenter)){
-                                        double x = Double.valueOf(reader.getAttributeValue(null, "x"));
-                                        double y = Double.valueOf(reader.getAttributeValue(null, "y"));
-                                        currentView.setCenter(new double[]{x,y});
-                                    }else {
-                                        //Place more tags
+                                    if (reader.getName().equals(qZoom))
+                                        currentView.setZoom(Integer.valueOf(reader.getText()));
+                                    else{
+                                        if (reader.getName().equals(qCenter)){
+                                            double x = Double.valueOf(reader.getAttributeValue(null, "x"));
+                                            double y = Double.valueOf(reader.getAttributeValue(null, "y"));
+                                            currentView.setCenter(new double[]{x,y});
+                                        }else {
+                                            //Place more tags
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
+                reader.close();
+                
+                //We check here if there are new elements but those in the save view
+                if (!myChildren.isEmpty() || !myConnections.isEmpty())
+                    currentView.setDirty(true);
+                
+                buildDefaultView(myChildren, myConnections);
+                
+                scene.setBackgroundImage(currentView.getBackground());
+                if (currentView.isDirty()){
+                    service.getComponent().getNotifier().showSimplePopup("Information", NotificationUtil.WARNING_MESSAGE, "Some elements in the view has been deleted since the last time it was opened. They were removed");
+                    scene.fireChangeEvent(new ActionEvent(this, ChildrenViewScene.SCENE_CHANGEANDSAVE, "Removing old objects"));
+                    currentView.setDirty(false);
+                }
             }
-            reader.close();
         } catch (XMLStreamException ex) {
             if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO)
                 Exceptions.printStackTrace(ex);
         }
 
-        scene.setBackgroundImage(currentView.getBackground());
         scene.validate();
     }
 
@@ -245,8 +255,6 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
             newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
             newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
         }
-        currentView = null;
-        scene.validate();
     }
 
     /**
@@ -285,61 +293,8 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
 
     @Override
     public void refresh() {
-        List<LocalObjectLight> childrenNodes = com.getObjectChildren(service.getCurrentObject().getOid(),
-                com.getMetaForClass(service.getCurrentObject().getClassName(), false).getOid());
-        List<LocalObject> childrenEdges = com.getChildrenOfClass(service.getCurrentObject().getOid(),
-                service.getCurrentObject().getClassName(),Constants.CLASS_GENERICCONNECTION);
-
-        Collection[] nodesIntersection = Utils.inverseIntersection(childrenNodes, scene.getNodes());
-        Collection[] edgesIntersection = Utils.inverseIntersection(childrenEdges, scene.getEdges());
-                
-        for (LocalObjectLight node : (Collection<LocalObjectLight>)nodesIntersection[1]){
-            Widget toDelete = scene.findWidget(node);
-            scene.getNodesLayer().removeChild(toDelete);
-            scene.removeNode(node);
-        }
-
-        for (LocalObjectLight connection : (Collection<LocalObjectLight>)edgesIntersection[1]){
-            Widget toDelete = scene.findWidget(connection);
-            scene.getEdgesLayer().removeChild(toDelete);
-            scene.removeEdge(connection);
-        }
-
-        int lastX = 0;
-        for (LocalObjectLight node : (Collection<LocalObjectLight>)nodesIntersection[0]){ //Add the nodes
-            //Puts an element after another
-            Widget widget = scene.addNode(node);
-            widget.setPreferredLocation(new Point(lastX, 20));
-            widget.setBackground(com.getMetaForClass(node.getClassName(), false).getColor());
-            lastX +=100;
-        }
-
-        for (LocalObjectLight toAdd : (Collection<LocalObjectLight>)edgesIntersection[0]){
-            
-            LocalObjectLight[] aSide = com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(), "endpointA");
-            if (aSide == null)
-                return;
-
-            Widget aSideWidget = scene.findWidget(aSide[0]);
-
-            LocalObjectLight[] bSide = com.getSpecialAttribute(toAdd.getClassName(), toAdd.getOid(),"endpointB");
-            if (bSide == null)
-                return;
-
-            Widget bSideWidget = scene.findWidget(bSide[0]);
-
-            ConnectionWidget newEdge = (ConnectionWidget)scene.addEdge(toAdd);
-            newEdge.setLineColor(Utils.getConnectionColor(toAdd.getClassName()));
-            newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget));
-            newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget));
-        }
-        
-        scene.setSceneFont(service.getComponent().getCurrentFont());
-        scene.setSceneForegroundColor(service.getComponent().getCurrentColor());
-        scene.validate();
-        if (!nodesIntersection[0].isEmpty() || !nodesIntersection[1].isEmpty()
-                || !edgesIntersection[0].isEmpty() || !edgesIntersection[1].isEmpty())
-            scene.fireChangeEvent(new ActionEvent(this, ChildrenViewScene.SCENE_CHANGE, "Refresh result"));
+        scene.clear();
+        buildView(service.getCurrentObject());
     }
 
     @Override

@@ -476,7 +476,8 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        service.getViewBuilder().refresh();
+        if (checkForUnsavedView(true))
+            service.getViewBuilder().refresh();
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
@@ -687,7 +688,7 @@ public final class ObjectViewTopComponent extends TopComponent
                 break;
             case ChildrenViewScene.SCENE_CHANGEANDSAVE:
                 btnSaveActionPerformed(e);
-                NotificationUtil.getInstance().showSimplePopup("Object View", NotificationUtil.INFO_MESSAGE, "The view has been saved automatically");
+                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "An external change was detected. The view has been saved automatically");
         }
     }
 
