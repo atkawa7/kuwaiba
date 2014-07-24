@@ -120,6 +120,18 @@ public final class ObjectViewTopComponent extends TopComponent
         buttonGroupRightToolbar.add(btnWireContainer);
         buttonGroupRightToolbar.add(btnWirelessContainer);
         btnSelect.setSelected(true);
+        
+        FileInputStream input;
+        try{
+            input = new FileInputStream(System.getProperty("user.dir") + "/.viewproperties"); //NOI18N
+            Properties properties = new Properties();
+            properties.load(input);
+            currentColor = properties.getProperty("fontColor") == null ? 
+                Color.black : new Color(Integer.valueOf(properties.getProperty("fontColor")));
+            currentFont = currentFont.deriveFont(properties.getProperty("fontSize") == null ? 
+                currentFont.getSize() : Float.valueOf(properties.getProperty("fontSize")));
+            input.close();
+        }catch (IOException e) {}
     }
 
     /** This method is called from within the constructor to
@@ -476,8 +488,11 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        if (checkForUnsavedView(true))
+        if (checkForUnsavedView(true)){
             service.getViewBuilder().refresh();
+            service.getViewBuilder().getScene().setSceneFont(currentFont);
+            service.getViewBuilder().getScene().setSceneForegroundColor(currentColor);
+        }
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
@@ -594,17 +609,6 @@ public final class ObjectViewTopComponent extends TopComponent
     public void componentOpened() {
         service.initializeListeners();
         service.getViewBuilder().getScene().addChangeListener(this);
-        FileInputStream input;
-        try{
-            input = new FileInputStream(System.getProperty("user.dir") + "/.viewproperties"); //NOI18N
-            Properties properties = new Properties();
-            properties.load(input);
-            currentColor = properties.getProperty("fontColor") == null ? 
-                Color.black : new Color(Integer.valueOf(properties.getProperty("fontColor")));
-            currentFont = currentFont.deriveFont(properties.getProperty("fontSize") == null ? 
-                currentFont.getSize() : Float.valueOf(properties.getProperty("fontSize")));
-            input.close();
-        }catch (IOException e) {}
     }
 
     @Override

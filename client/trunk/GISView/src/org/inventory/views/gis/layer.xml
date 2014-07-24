@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
+    <!--
     <folder name="Actions">
         <folder name="Window">
             <file name="org-inventory-views-gis-GISViewAction.instance">
@@ -36,8 +37,8 @@
         </folder>
     </folder>
     <folder name="Shortcuts">
-        <!--<file name="DS-G.shadow">
+        <file name="DS-G.shadow">
             <attr name="originalFile" stringvalue="Actions/Window/org-inventory-views-gis-GISViewAction.instance"/>
-        </file>-->
-    </folder>
+        </file>
+    </folder> -->
 </filesystem>

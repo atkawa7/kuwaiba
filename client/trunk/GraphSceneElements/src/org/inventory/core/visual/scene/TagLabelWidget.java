@@ -78,7 +78,7 @@ public class TagLabelWidget extends LabelWidget implements Widget.Dependency {
     public TagLabelWidget(Scene scene, AbstractNodeWidget widget) {
         super(scene);
         this.widget = widget;
-        setForeground(Color.WHITE);
+        setForeground(Color.BLACK);
         setBorder(DEFAULT_BORDER);
         setFont(DEFAULT_SMALL_FONT);
         this.position = BOTTOM;

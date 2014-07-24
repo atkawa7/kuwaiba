@@ -50,7 +50,7 @@ public class ObjectViewService implements LookupListener {
         selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
         selectedNodes.addLookupListener(this);
         if (selectedNodes.allInstances().size() == 1) //There's a node already selected
-            viewBuilder.buildView(selectedNodes.allInstances().iterator().next());
+            resultChanged(new LookupEvent(selectedNodes));
     }
 
     /**

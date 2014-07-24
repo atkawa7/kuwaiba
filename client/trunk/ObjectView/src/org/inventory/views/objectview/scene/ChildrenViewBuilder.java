@@ -257,20 +257,6 @@ public class ChildrenViewBuilder implements AbstractViewBuilder {
         }
     }
 
-    /**
-     * This method takes the current view and adds/removes the nodes/connections according to a recalculation
-     * of the view
-     * @param myNodes
-     * @param myPhysicalConnections
-     */
-    public void refreshView(Collection<LocalObjectLight> newNodes, 
-            Collection<LocalObjectLight> newPhysicalConnections,
-            Collection<LocalObjectLight> nodesToDelete, 
-            Collection<LocalObjectLight> physicalConnectionsToDelete){
-
-        
-    }
-
     public LocalObjectView getCurrentView(){
         return this.currentView;
     }
