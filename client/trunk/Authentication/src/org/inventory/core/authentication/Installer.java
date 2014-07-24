@@ -47,9 +47,7 @@ public class Installer extends ModuleInstall {
     @Override
     public void restored() {
       pnlAuthentication = new AuthenticationPanel(readProperties());
-      String javaVersion = System.getProperties().get("java.version").toString();
-      if (!javaVersion.contains("1.6"))
-          showExceptions(String.format("Your current Java version (%s) is not supported. Try version 1.6.x", javaVersion));
+            
       dd = new DialogDescriptor(pnlAuthentication, "Login Window", true, new ActionListener() {
 
             @Override
