@@ -25,6 +25,7 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.kuwaiba.management.services.nodes.CustomerNode;
+import org.kuwaiba.management.services.nodes.CustomersPoolChildren;
 import org.kuwaiba.management.services.nodes.CustomersPoolNode;
 import org.kuwaiba.management.services.nodes.ServiceManagerRootNode;
 import org.openide.util.actions.Presenter;
@@ -64,7 +65,8 @@ public class CreateCustomerAction extends GenericObjectNodeAction implements Pre
             if (newCustomer == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else{
-                customersPoolNode.getChildren().add(new CustomerNode[]{new CustomerNode(newCustomer)});
+                if (!((CustomersPoolChildren)customersPoolNode.getChildren()).isCollapsed())
+                    customersPoolNode.getChildren().add(new CustomerNode[]{new CustomerNode(newCustomer)});
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
             }
         }

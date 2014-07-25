@@ -23,9 +23,13 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.applicationnodes.pools.PoolChildren;
 import org.inventory.navigation.applicationnodes.pools.PoolNode;
+import org.kuwaiba.management.services.nodes.CustomerChildren;
 import org.kuwaiba.management.services.nodes.CustomerNode;
+import org.kuwaiba.management.services.nodes.CustomersPoolChildren;
 import org.kuwaiba.management.services.nodes.CustomersPoolNode;
+import org.kuwaiba.management.services.nodes.ServiceChildren;
 import org.kuwaiba.management.services.nodes.ServiceNode;
 import org.kuwaiba.management.services.nodes.ServicesPoolNode;
 import org.openide.nodes.Children;
@@ -57,8 +61,11 @@ public class CreateServiceAction extends GenericObjectNodeAction implements Pres
             LocalObjectLight newService = CommunicationsStub.getInstance().
                 createService(objectClass, customerNode.getObject().getClassName(), 
                 customerNode.getObject().getOid(), null, null);
-            if (newService != null)
-                customerNode.getChildren().add(new ServiceNode[] {new ServiceNode(newService)});
+            if (newService != null){
+                if (!((CustomerChildren)customerNode.getChildren()).isCollapsed())
+                    customerNode.getChildren().add(new ServiceNode[] {new ServiceNode(newService)});
+                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
+            }
             else
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
@@ -67,7 +74,8 @@ public class CreateServiceAction extends GenericObjectNodeAction implements Pres
             if (newService == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else{
-                poolNode.getChildren().add(new ServiceNode[]{new ServiceNode(newService)});
+                if (!((ServiceChildren)poolNode.getChildren()).isCollapsed())
+                    poolNode.getChildren().add(new ServiceNode[]{new ServiceNode(newService)});
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
             }
         }
@@ -77,10 +85,13 @@ public class CreateServiceAction extends GenericObjectNodeAction implements Pres
             for (Node node : nodes) {
                 CustomerNode poolCustomer = (CustomerNode)node;
                 LocalObjectLight newService = CommunicationsStub.getInstance().
-                createService(objectClass, poolCustomer.getObject().getClassName(),
+                                                createService(objectClass, poolCustomer.getObject().getClassName(),
                 poolCustomer.getObject().getOid(), null, null);
-                if (newService != null)
-                    poolCustomer.getChildren().add(new ServiceNode[] {new ServiceNode(newService)});
+                if (newService != null){
+                    if (!((CustomersPoolChildren)poolCustomer.getChildren()).isCollapsed())
+                        poolCustomer.getChildren().add(new ServiceNode[] {new ServiceNode(newService)});
+                    NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
+                }
                 else
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }

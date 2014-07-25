@@ -23,17 +23,15 @@ import org.inventory.navigation.applicationnodes.objectnodes.actions.ShowObjectI
 import org.inventory.navigation.applicationnodes.pools.PoolNode;
 import org.inventory.navigation.applicationnodes.pools.actions.DeletePoolAction;
 import org.kuwaiba.management.services.nodes.actions.CreateCustomerAction;
-import org.kuwaiba.management.services.nodes.actions.CreateServiceAction;
-import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
 
 /**
- * Represents a pool (a set of customers)
+ * Represents a pool of customers
  * @author adrian martinez molina <adrian.martinez@kuwaiba.org>
  */
 public class CustomersPoolNode extends PoolNode{
 
-    private static Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/customersPool.png");
+    private static final Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/customersPool.png");
     
     public CustomersPoolNode(LocalObjectLight customer) {
         super(customer);
@@ -43,7 +41,7 @@ public class CustomersPoolNode extends PoolNode{
     
     @Override
     public String getName(){
-        return object.getName() +" ["+java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CUSTOMERS_POOL")+"]";
+        return object.getName() + " ["+java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CUSTOMERS_POOL")+"]";
     }
     
     @Override
@@ -51,7 +49,6 @@ public class CustomersPoolNode extends PoolNode{
         CreateCustomerAction createCustomerAction = new CreateCustomerAction(this);
         createCustomerAction.setObject(object);
         return new Action[]{createCustomerAction, 
-            new CreateServiceAction(this), 
             new DeletePoolAction(this),
             new ShowObjectIdAction(object.getOid(), object.getClassName())};
     }

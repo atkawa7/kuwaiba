@@ -24,18 +24,21 @@ import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.nodes.Children;
 
 /**
- * Node representing a customer
+ * All children under a Service node
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ServiceChildren extends Children.Array {
     private LocalObjectLight service;
+    private boolean collapsed;
     
     public ServiceChildren(LocalObjectLight service) {
         this.service = service;
+        collapsed = true;
     }
     
     @Override
     protected void addNotify() {
+        collapsed = false;
         if(!service.getClassName().equals(Constants.CLASS_GENERICSERVICE)){
             LocalObjectLight[] resources = CommunicationsStub.getInstance().
                     getServiceResources(service.getClassName(), service.getOid());
@@ -55,5 +58,9 @@ public class ServiceChildren extends Children.Array {
                     add(new ServiceNode[]{new ServiceNode(item)});
             }
         }
+    }
+
+    public boolean isCollapsed() {
+        return collapsed;
     }
 }

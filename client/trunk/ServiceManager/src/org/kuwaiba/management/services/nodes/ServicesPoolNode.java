@@ -29,7 +29,7 @@ import org.openide.util.ImageUtilities;
  * Represents a pool (a set of services)
  * @author adrian martinez molina <adrian.martinez@kuwaiba.org>
  */
-public class ServicesPoolNode extends PoolNode{
+public class ServicesPoolNode extends PoolNode {
     
     private static Image icon = ImageUtilities.loadImage("org/kuwaiba/management/services/res/servicesPool.png");
     

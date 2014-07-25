@@ -30,12 +30,16 @@ import org.openide.nodes.Node;
 public class PoolChildren extends Children.Array{
 
     private LocalObjectLight pool;
+    private boolean collapsed;
+    
     public PoolChildren(LocalObjectLight pool) {
         this.pool = pool;
+        collapsed = true;
     }
     
     @Override
     public void addNotify(){
+        collapsed = false;
         List<LocalObjectLight> items = CommunicationsStub.getInstance().getPoolItems(pool.getOid());
         if (items == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -43,5 +47,9 @@ public class PoolChildren extends Children.Array{
             for (LocalObjectLight item : items)
                 add(new Node[]{new ObjectNode(item)});
         }
+    }
+
+    public boolean isCollapsed() {
+        return collapsed;
     }
 }

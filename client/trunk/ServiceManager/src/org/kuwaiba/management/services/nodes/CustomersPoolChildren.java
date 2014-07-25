@@ -29,19 +29,26 @@ import org.openide.nodes.Children;
 public class CustomersPoolChildren extends Children.Array{
     
     private LocalObjectLight customer;
+    private boolean collapsed;
 
     public CustomersPoolChildren(LocalObjectLight customer) {
         this.customer = customer;
+        collapsed = true;
     }
     
     @Override
     public void addNotify(){
+        collapsed = false;
         List<LocalObjectLight> customersPool = CommunicationsStub.getInstance().getPoolItems(customer.getOid());
         if (customersPool == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
-            for (LocalObjectLight customer : customersPool)
-                add(new CustomerNode[]{ new CustomerNode(customer)});
+            for (LocalObjectLight aCustomer : customersPool)
+                add(new CustomerNode[]{ new CustomerNode(aCustomer)});
         }
+    }
+
+    public boolean isCollapsed() {
+        return collapsed;
     }
 }

@@ -77,3 +77,10 @@
 * Improvements to physical connections capabilities
 * Multiple bugfixes
 * Removed references to SwingX and NimROD L&F due to licensing issues
+0.7 (24072014)
+* ObjectView and Services modules rewritten
+* Support for software assets
+* Support for Customers and Services Pools
+* Lots of bugfixes
+* Special Relationships window improved and moved
+* Full JRE 1.7 compatibility

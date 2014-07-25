@@ -26,6 +26,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
+import org.kuwaiba.management.services.nodes.CustomerChildren;
 import org.kuwaiba.management.services.nodes.CustomerNode;
 import org.kuwaiba.management.services.nodes.ServiceManagerRootNode;
 import org.kuwaiba.management.services.nodes.ServicesPoolNode;
@@ -84,7 +85,8 @@ public class CreateServicesPoolAction extends GenericObjectNodeAction {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else{
                 if(object != null){
-                    customerNode.getChildren().add(new ServicesPoolNode[]{new ServicesPoolNode(newPool)});
+                    if (!((CustomerChildren)customerNode.getChildren()).isCollapsed())
+                        customerNode.getChildren().add(new ServicesPoolNode[]{new ServicesPoolNode(newPool)});
                     NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_CREATED"));
                 }
             }

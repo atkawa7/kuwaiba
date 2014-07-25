@@ -16,7 +16,6 @@
 package org.kuwaiba.management.services.nodes;
 
 import java.awt.Image;
-import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.util.ImageUtilities;
@@ -34,8 +33,6 @@ public class ServiceNode extends ObjectNode {
         this.object = service;
     }
 
-   
-    
     @Override
     public Image getIcon(int i){
         return icon;
