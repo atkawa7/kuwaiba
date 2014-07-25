@@ -74,6 +74,8 @@
 * Multiple bugfixes
 * Sessions are managed in the service
 
-0.7
-* Improved Service manager
+0.7 (24072014)
+* Improved Service manager data model
 * Datamodel change 
+* Support for software assets
+* Lots of bugfixes
