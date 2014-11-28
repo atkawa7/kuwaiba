@@ -17,12 +17,9 @@
 package org.inventory.navigation.applicationnodes.listmanagernodes.actions;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
@@ -35,24 +32,10 @@ import org.openide.nodes.Node;
 public final class DeleteListTypeAction extends AbstractAction {
 
     private ListTypeItemNode node;
-    private LocalObjectLight lol;
     
     public DeleteListTypeAction(ListTypeItemNode node) {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE"));
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
-        putValue(MNEMONIC_KEY,KeyEvent.VK_D);
         this.node = node;
-    }
-
-    /**
-     * Dirty quick fix. This should be the only constructor, and no nodes should be manipulated here
-     * @param lol 
-     */
-    public DeleteListTypeAction(LocalObjectLight lol) {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE"));
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
-        putValue(MNEMONIC_KEY,KeyEvent.VK_D);
-        this.lol = lol;
     }
     
     @Override
@@ -61,11 +44,8 @@ public final class DeleteListTypeAction extends AbstractAction {
         if(JOptionPane.showConfirmDialog(null, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETE_LIST_TYPE_ITEM"),
                 java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CONFIRMATION"),JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
 
-            if (CommunicationsStub.getInstance().deleteListTypeItem(node == null ?  lol.getClassName() : node.getObject().getClassName(),
-                    node == null ? lol.getOid() : node.getObject().getOid(),false)){
-                if (node != null)
-                    ((ObjectChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
-                
+            if (CommunicationsStub.getInstance().deleteListTypeItem(node.getObject().getClassName(), node.getObject().getOid(),false)){
+               ((ObjectChildren)node.getParentNode().getChildren()).remove(new Node[]{node});
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_DELETION_TEXT_OK"));
                 
                 //Refresh cache

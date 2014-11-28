@@ -18,7 +18,7 @@ package org.inventory.navigation.applicationnodes.listmanagernodes.actions;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemChildren;
 import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
@@ -40,12 +40,12 @@ public final class CreateListTypeAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        LocalObjectLight myLol = com.createListTypeItem(node.getObject().getClassName());
+        LocalObjectListItem myLol = com.createListTypeItem(node.getObject().getClassName());
             if (myLol == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
             if (!((ListTypeItemChildren)node.getChildren()).isCollapsed())
-                ((ListTypeItemChildren)node.getChildren()).add(new ListTypeItemNode[]{new ListTypeItemNode(myLol)});
+                node.getChildren().add(new ListTypeItemNode[]{new ListTypeItemNode(myLol)});
             //Refresh cache
             com.getList(node.getObject().getClassName(), false, true);
         }

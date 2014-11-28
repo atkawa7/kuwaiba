@@ -85,6 +85,16 @@ public class LocalObject extends LocalObjectLight {
         return attributes.get(name);
     }
     
+    public void setAttribute(String name, Object t) {
+        firePropertyChangeEvent(name, getAttribute(name), t);
+        attributes.put(name, t);
+    }
+
+    @Override
+    public String getName() {
+        return (String)getAttribute(Constants.PROPERTY_NAME);
+    }
+    
     @Override
     public String toString(){
         return getAttribute(Constants.PROPERTY_NAME) + "[" + getClassName() + "]";

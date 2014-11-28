@@ -99,6 +99,10 @@ public class CommunicationsStub {
         serverURL = URL;
     }
     
+    public static URL getServerURL (){
+        return serverURL;
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
     public LocalSession getSession(){
         return session;
@@ -861,10 +865,10 @@ public class CommunicationsStub {
      * @param className
      * @return
      */
-    public LocalObjectLight createListTypeItem(String className) {
+    public LocalObjectListItem createListTypeItem(String className) {
         try {
             long myObjectId = port.createListTypeItem(className, "", "", this.session.getSessionId());
-            return new LocalObjectLight(myObjectId, null, className);
+            return new LocalObjectListItem(myObjectId, className, null);
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;

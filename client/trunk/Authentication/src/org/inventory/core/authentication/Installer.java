@@ -102,8 +102,10 @@ public class Installer extends ModuleInstall {
 
                     @Override
                     public void windowOpened(WindowEvent e) {
-                            WindowManager.getDefault().getMainWindow().setTitle(String.format("%s - [%s]",
-                            WindowManager.getDefault().getMainWindow().getTitle(), CommunicationsStub.getInstance().getSession().getUsername()));
+                            WindowManager.getDefault().getMainWindow().setTitle(String.format("%s - [%s - %s]",
+                                WindowManager.getDefault().getMainWindow().getTitle(), 
+                                CommunicationsStub.getInstance().getSession().getUsername(), 
+                                CommunicationsStub.getServerURL().getHost()));
                     }
 
                     @Override

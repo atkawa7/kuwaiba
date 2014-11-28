@@ -25,6 +25,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
+import org.inventory.navigation.applicationnodes.pools.PoolChildren;
 import org.inventory.navigation.applicationnodes.pools.PoolNode;
 import org.openide.util.actions.Presenter;
 
@@ -48,7 +49,8 @@ public class NewPoolItemAction extends AbstractAction implements Presenter.Popup
         if (newObject == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
-            poolNode.getChildren().add(new ObjectNode[]{new ObjectNode(newObject)});
+            if (!((PoolChildren)poolNode.getChildren()).isCollapsed())
+                poolNode.getChildren().add(new ObjectNode[]{new ObjectNode(newObject)});
             NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("org/inventory/navigation/applicationnodes/Bundle").getString("LBL_CREATED"));
         }
     }

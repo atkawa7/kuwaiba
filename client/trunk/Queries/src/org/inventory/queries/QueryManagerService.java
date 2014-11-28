@@ -72,7 +72,7 @@ public class QueryManagerService implements ActionListener {
     }
 
     public LocalClassMetadataLight[] getClassList(){
-        LocalClassMetadataLight[] items = com.getAllLightMeta(true);
+        LocalClassMetadataLight[] items = com.getAllLightMeta(false);
         if (items == null){
             qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             return new LocalClassMetadataLight[0];

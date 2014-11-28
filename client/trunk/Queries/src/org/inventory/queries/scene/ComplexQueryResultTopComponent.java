@@ -30,7 +30,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.table.TableModel;
-import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.queries.LocalResultRecord;
 import org.inventory.core.services.api.export.ExportTablePanel;
@@ -39,7 +38,6 @@ import org.inventory.core.services.api.export.filters.CSVFilter;
 import org.inventory.core.services.api.export.filters.TextExportFilter;
 import org.inventory.core.services.api.export.filters.XMLFilter;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.applicationnodes.listmanagernodes.ListTypeItemNode;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.inventory.queries.QueryManagerService;
 import org.netbeans.swing.etable.ETable;
@@ -264,12 +262,8 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
         private void showPopup(MouseEvent e) {
           if (e.isPopupTrigger()) {
             LocalObjectLight singleRecord = (LocalObjectLight)aTable.getValueAt(aTable.rowAtPoint(new Point(e.getX(), e.getY())), 0);
-            ObjectNode node;
+            ObjectNode node = new ObjectNode(singleRecord);
             JPopupMenu  menu = new JPopupMenu();
-            if (CommunicationsStub.getInstance().getMetaForClass(singleRecord.getClassName(),false).isListType())
-                node = new ListTypeItemNode(singleRecord);
-            else
-                node = new ObjectNode(singleRecord);
             
             for (Action action : node.getActions(true)){
                 if (action != null){

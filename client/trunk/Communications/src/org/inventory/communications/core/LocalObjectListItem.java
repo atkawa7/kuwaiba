@@ -26,25 +26,17 @@ public class LocalObjectListItem extends LocalObjectLight {
 
     public LocalObjectListItem(){
         this.oid = NULL_ID;
-        this.setName("None");
-    }
-
-    public LocalObjectListItem(LocalObjectLight lol){
-        this.oid = lol.getOid();
-        this.className = lol.getClassName();
-        this.name = lol.getName();
+        this.name = "None";
     }
 
     /**
      * Used to create simple items at runtime
-     * @param _id
-     * @param _className
-     * @param _name
+     * @param id
+     * @param className
+     * @param name
      */
-    public LocalObjectListItem(long id, String className,String name){
-        this.oid = id;
-        this.className = className;
-        this.name = name;
+    public LocalObjectListItem(long id, String className, String name){
+        super(id, name, className);
     }
 
     public long getId() {
@@ -66,7 +58,7 @@ public class LocalObjectListItem extends LocalObjectLight {
     @Override
     public String toString(){
         if (this.displayName != null)
-            if (!this.displayName.trim().equals(""))
+            if (!this.displayName.isEmpty())
                 return this.displayName;
         return this.name;
     }

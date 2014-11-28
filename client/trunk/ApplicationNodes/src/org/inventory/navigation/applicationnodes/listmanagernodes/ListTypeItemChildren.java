@@ -16,12 +16,9 @@
 
 package org.inventory.navigation.applicationnodes.listmanagernodes;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
-import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectChildren;
@@ -33,30 +30,17 @@ import org.openide.nodes.Node;
  */
 public class ListTypeItemChildren extends ObjectChildren {
 
-
-    //This is basically the same code as in ObjectChildren but changes ObjectNodes for ListElementNodes
-    @Override
-    protected Collection<Node> initCollection(){
-        List<Node> myNodes = new ArrayList<Node>();
-
-        for (LocalObjectLight lol : keys)
-            myNodes.add(new ListTypeItemNode(lol));
-        return myNodes;
-    }
-
     @Override
     public void addNotify(){
-        if (this.getNode() instanceof ListTypeNode){
-            collapsed = false;
-            LocalClassMetadataLight lcml = ((ListTypeNode)this.getNode()).getObject();
-            List<LocalObjectListItem> myObjects = CommunicationsStub.getInstance().getList(lcml.getClassName(), false, false);
+        collapsed = false;
+        LocalClassMetadataLight lcml = ((ListTypeNode)this.getNode()).getObject();
+        List<LocalObjectListItem> myObjects = CommunicationsStub.getInstance().getList(lcml.getClassName(), false, false);
 
-            if (myObjects == null)
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            else{
-                for (LocalObjectListItem child : myObjects)
-                    add(new Node[]{new ListTypeItemNode(child)});
-            }
+        if (myObjects == null)
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        else{
+            for (LocalObjectListItem child : myObjects)
+                add(new Node[]{new ListTypeItemNode(child)});
         }
     }
 }

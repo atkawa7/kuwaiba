@@ -18,7 +18,8 @@ package org.inventory.navigation.applicationnodes.listmanagernodes;
 
 import java.awt.Image;
 import javax.swing.Action;
-import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.navigation.applicationnodes.listmanagernodes.actions.DeleteListTypeAction;
 import org.inventory.navigation.applicationnodes.objectnodes.ObjectNode;
 import org.openide.util.ImageUtilities;
@@ -31,13 +32,20 @@ public class ListTypeItemNode extends ObjectNode {
 
     private static Image icon = ImageUtilities.loadImage("org/inventory/navigation/applicationnodes/res/list-type-item.png");
 
-    public ListTypeItemNode(LocalObjectLight lol) {
+    public ListTypeItemNode(LocalObjectListItem lol) {
         super(lol,true);
     }
 
     @Override
     public Action[] getActions(boolean context){
         return new Action[]{editAction,new DeleteListTypeAction(this)};
+    }
+
+    @Override
+    public void setName(String newName) {
+        super.setName(newName);
+        //Refresh the cache
+        CommunicationsStub.getInstance().getList(object.getClassName(), true, true);
     }
     
     @Override
