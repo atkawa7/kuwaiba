@@ -99,10 +99,12 @@ public class AuthenticationPanel extends javax.swing.JPanel {
         txtPassword = new javax.swing.JPasswordField();
         lblError = new javax.swing.JLabel();
         pnlSettingsContainer = new javax.swing.JPanel();
+        pnlLogin2 = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
 
         pnlLogin.setMaximumSize(new java.awt.Dimension(380, 110));
+        pnlLogin.setOpaque(false);
         pnlLogin.setPreferredSize(new java.awt.Dimension(380, 110));
 
         lblUser.setText(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.lblUser.text")); // NOI18N
@@ -166,6 +168,11 @@ public class AuthenticationPanel extends javax.swing.JPanel {
         pnlSettingsContainer.setRequestFocusEnabled(false);
         pnlSettingsContainer.setLayout(new java.awt.BorderLayout());
         add(pnlSettingsContainer, java.awt.BorderLayout.CENTER);
+
+        pnlLogin2.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(AuthenticationPanel.class, "AuthenticationPanel.pnlLogin2.border.title"))); // NOI18N
+        pnlLogin2.setRequestFocusEnabled(false);
+        pnlLogin2.setLayout(new java.awt.BorderLayout());
+        add(pnlLogin2, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void lblErrorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblErrorMouseClicked
@@ -178,6 +185,7 @@ public class AuthenticationPanel extends javax.swing.JPanel {
     private javax.swing.JLabel lblPassword;
     private javax.swing.JLabel lblUser;
     private javax.swing.JPanel pnlLogin;
+    private javax.swing.JPanel pnlLogin2;
     private javax.swing.JPanel pnlSettingsContainer;
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUser;

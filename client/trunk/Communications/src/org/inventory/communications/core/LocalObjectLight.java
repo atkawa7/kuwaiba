@@ -156,6 +156,6 @@ public class LocalObjectLight implements Transferable { //This class does not im
 
     @Override
     public String toString(){
-        return getName() + " [" + getClassName() + "]"; //NOI18N
+        return (getName() == null ? "<No Name>" : getName()) + " [" + getClassName() + "]"; //NOI18N
     }
 }

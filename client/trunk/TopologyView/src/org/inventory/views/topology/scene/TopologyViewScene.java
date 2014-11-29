@@ -68,11 +68,6 @@ import org.openide.util.lookup.ProxyLookup;
 public class TopologyViewScene extends GraphScene<Object, String> 
         implements PropertyChangeListener, Lookup.Provider, ExportableScene {
 
-    /**
-     * Path to nodes default icon
-     */
-    private final String GENERIC_ICON_PATH="org/inventory/views/topology/res/default.png"; //NOI18
-    
      /**
      * String for Selection tool
      */
@@ -349,13 +344,13 @@ public class TopologyViewScene extends GraphScene<Object, String>
 
     }
     public void addFreeLabel(){
-        Widget f = addNode(randomGenerator.nextInt(1000)+FREE_LABEL+"New Label");
+        Widget f = addNode(randomGenerator.nextInt(1000) + FREE_LABEL + "New Label");
         f.setPreferredLocation (new Point (100, 100));
         this.validate();
         this.repaint();
     }
     public void addFreeCloud(){
-        LocalObjectLight lol = new LocalObjectLight(randomGenerator.nextInt(1000), CLOUD_ICON + "New Icon", null);
+        LocalObjectLight lol = new LocalObjectLight(randomGenerator.nextInt(1000), CLOUD_ICON + "New Cloud", null);
         Widget f = addNode(lol);
         f.setPreferredLocation (new Point (100, 100));
         this.validate();

@@ -138,12 +138,13 @@ public class TopologyViewService implements LookupListener {
      */
     public void loadTopologyView(LocalObjectViewLight selectedTopologyView){
         LocalObjectView localView = com.getGeneralView(selectedTopologyView.getId());
-        tvId = localView.getId();
-        viewProperties[0] = localView.getName();
-        viewProperties[1] = localView.getDescription();
+        
         if (localView == null)
             tvtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
+            tvId = localView.getId();
+            viewProperties[0] = localView.getName();
+            viewProperties[1] = localView.getDescription();
             tvtc.getScene().clear();
             try {
                 parseXML(localView.getStructure());
