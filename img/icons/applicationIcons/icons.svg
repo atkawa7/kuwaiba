@@ -14,7 +14,7 @@
    height="744.09448"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="icons.svg"
    inkscape:export-filename="/home/zim/workspace/java/KuwaibaRCP04/ClassManager/src/org/inventory/customization/classmanager/res/icon24.png"
    inkscape:export-xdpi="44.66494"
@@ -477,16 +477,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710685"
-     inkscape:cx="859.48914"
-     inkscape:cy="90.193952"
+     inkscape:zoom="4.8079405"
+     inkscape:cx="453.48724"
+     inkscape:cy="112.15661"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="756"
+     inkscape:window-width="1366"
+     inkscape:window-height="727"
      inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-y="24"
      inkscape:window-maximized="1"
      inkscape:snap-bbox="false"
      inkscape:object-paths="false"
@@ -505,7 +505,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -3879,5 +3879,100 @@
        inkscape:export-filename="/home/gir/workspace/java/KuwaibaRCP/trunk/ApplicationNodes/src/org/inventory/navigation/applicationnodes/res/relationship.png"
        inkscape:export-xdpi="22.500002"
        inkscape:export-ydpi="22.500002" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#4d4d4d;fill-opacity:1;stroke:none"
+       id="path3435-6-6-0-4-9-6-5-1"
+       sodipodi:cx="214.5"
+       sodipodi:cy="120.59447"
+       sodipodi:rx="32.5"
+       sodipodi:ry="29.5"
+       d="m 247,120.59447 c 0,16.2924 -14.55075,29.5 -32.5,29.5 -17.94925,0 -32.5,-13.2076 -32.5,-29.5 0,-16.2924 14.55075,-29.500003 32.5,-29.500003 17.94925,0 32.5,13.207603 32.5,29.500003 z"
+       transform="matrix(0.74400118,0,0,0.81966231,266.7971,851.69207)"
+       inkscape:export-filename="/home/adrian/workspace/java/kuwaiba/kuwaiba-code/client/trunk/Sync/src/org/inventory/sync/res/sync.png"
+       inkscape:export-xdpi="29.780001"
+       inkscape:export-ydpi="29.780001" />
+    <path
+       transform="matrix(0,-0.26516371,0.4294267,0,321.0979,969.93164)"
+       sodipodi:type="star"
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="path2816-0-0-1"
+       sodipodi:sides="3"
+       sodipodi:cx="120"
+       sodipodi:cy="232.36218"
+       sodipodi:r1="25.714287"
+       sodipodi:r2="12.857143"
+       sodipodi:arg1="0"
+       sodipodi:arg2="1.0471976"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 145.71429,232.36218 -19.28572,11.13462 -19.28571,11.13461 0,-22.26923 0,-22.26922 19.28571,11.13461 z"
+       inkscape:export-filename="/home/adrian/workspace/java/kuwaiba/kuwaiba-code/client/trunk/Sync/src/org/inventory/sync/res/sync.png"
+       inkscape:export-xdpi="29.780001"
+       inkscape:export-ydpi="29.780001" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="rect4178-1"
+       width="8.2729998"
+       height="18.923"
+       x="-425.01169"
+       y="-957.96149"
+       ry="1.7158061"
+       inkscape:export-filename="/home/adrian/workspace/java/kuwaiba/kuwaiba-code/client/trunk/Sync/src/org/inventory/sync/res/sync.png"
+       inkscape:export-xdpi="29.780001"
+       inkscape:export-ydpi="29.780001"
+       transform="scale(-1,-1)" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#cccccc;stroke-width:0.99029052;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect4488-2-6"
+       width="15.157822"
+       height="20.027988"
+       x="426.09616"
+       y="946.1236"
+       ry="1.1874088"
+       inkscape:export-filename="/home/adrian/workspace/java/kuwaiba/kuwaiba-code/client/trunk/Sync/src/org/inventory/sync/res/sync.png"
+       inkscape:export-xdpi="29.780001"
+       inkscape:export-ydpi="29.780001" />
+    <path
+       style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1.12232983;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 428.88186,953.33902 9.45242,0"
+       id="path4515-8-6-5"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/adrian/workspace/java/kuwaiba/kuwaiba-code/client/trunk/Sync/src/org/inventory/sync/res/sync.png"
+       inkscape:export-xdpi="29.780001"
+       inkscape:export-ydpi="29.780001" />
+    <path
+       style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1.12232983;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 428.88186,950.11114 9.45242,0"
+       id="path4515-64-1"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/adrian/workspace/java/kuwaiba/kuwaiba-code/client/trunk/Sync/src/org/inventory/sync/res/sync.png"
+       inkscape:export-xdpi="29.780001"
+       inkscape:export-ydpi="29.780001" />
+    <path
+       style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1.12232983;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 429.00861,956.48606 9.45219,0"
+       id="path4515-6-9-7"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/adrian/workspace/java/kuwaiba/kuwaiba-code/client/trunk/Sync/src/org/inventory/sync/res/sync.png"
+       inkscape:export-xdpi="29.780001"
+       inkscape:export-ydpi="29.780001" />
+    <path
+       style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1.12232983;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 429.05077,959.63309 9.45215,0"
+       id="path4515-0-5-5"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/adrian/workspace/java/kuwaiba/kuwaiba-code/client/trunk/Sync/src/org/inventory/sync/res/sync.png"
+       inkscape:export-xdpi="29.780001"
+       inkscape:export-ydpi="29.780001" />
+    <path
+       style="fill:#4d4d4d;stroke:#4d4d4d;stroke-width:1.12232983;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 429.05077,962.8609 9.45215,0"
+       id="path4515-9-0-6"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/adrian/workspace/java/kuwaiba/kuwaiba-code/client/trunk/Sync/src/org/inventory/sync/res/sync.png"
+       inkscape:export-xdpi="29.780001"
+       inkscape:export-ydpi="29.780001" />
   </g>
 </svg>
