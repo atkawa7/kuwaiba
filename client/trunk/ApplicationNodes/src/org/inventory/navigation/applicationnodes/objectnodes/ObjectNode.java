@@ -379,8 +379,11 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     @Override
     public void setName(String newName) {
         LocalObject update = new LocalObject(object.getClassName(), object.getOid(), new String[]{Constants.PROPERTY_NAME}, new Object[]{newName});
-        if (com.saveObject(update))
-            object.setName(newName); 
+        if (com.saveObject(update)) {
+            object.setName(newName);
+            if (getSheet() != null)
+                setSheet(createSheet());
+        }
         else
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());      
     }
