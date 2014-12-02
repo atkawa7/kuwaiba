@@ -16,7 +16,6 @@
 package org.inventory.core.authentication;
 
 import java.util.Properties;
-import javax.swing.JTextField;
 
 /**
  * This panel shows the form with the connection settings (server, port and WSDL path)
@@ -26,9 +25,6 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
 
     ConnectionSettingsPanel(Properties loginProperties) {
         initComponents();        
-        //Let's hide them for now
-        btnSaveConfiguration.setVisible(false);
-        btnTestConnection.setVisible(false);
         if (loginProperties != null){
             if (loginProperties.getProperty("address") != null) //NOI18N
                 txtServerAddress.setText((String)loginProperties.getProperty("address")); //NOI18N
@@ -49,20 +45,14 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btnTestConnection = new javax.swing.JButton();
         txtServerPort = new javax.swing.JTextField();
-        btnSaveConfiguration = new javax.swing.JButton();
         lblServerPort = new javax.swing.JLabel();
         lblServerAddress = new javax.swing.JLabel();
         txtServerAddress = new javax.swing.JTextField();
         lblWSDLPath = new javax.swing.JLabel();
         txtWSDLPath = new javax.swing.JTextField();
 
-        btnTestConnection.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.btnTestConnection.text")); // NOI18N
-
         txtServerPort.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.txtServerPort.text")); // NOI18N
-
-        btnSaveConfiguration.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.btnSaveConfiguration.text")); // NOI18N
 
         lblServerPort.setText(org.openide.util.NbBundle.getMessage(ConnectionSettingsPanel.class, "ConnectionSettingsPanel.lblServerPort.text")); // NOI18N
 
@@ -80,23 +70,18 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblWSDLPath)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnTestConnection)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnSaveConfiguration))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(lblWSDLPath)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(lblServerAddress)
-                                .addComponent(lblServerPort))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtWSDLPath, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtServerPort)
-                                    .addComponent(txtServerAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblServerAddress)
+                            .addComponent(lblServerPort))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtWSDLPath, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(txtServerPort)
+                                .addComponent(txtServerAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -114,18 +99,12 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtWSDLPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblWSDLPath))
-                .addGap(22, 22, 22)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSaveConfiguration)
-                    .addComponent(btnTestConnection))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnSaveConfiguration;
-    private javax.swing.JButton btnTestConnection;
     private javax.swing.JLabel lblServerAddress;
     private javax.swing.JLabel lblServerPort;
     private javax.swing.JLabel lblWSDLPath;
@@ -142,6 +121,10 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
     public String getServerAddress(){
         return txtServerAddress.getText();
     }
+    
+    public void setServerAddress (String serverAddress) {
+        txtServerAddress.setText(serverAddress);
+    }
 
     /**
      * Retrieves the port number. Defaults to 8080 if the text is misformatted
@@ -157,6 +140,13 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
             return 8080;
         }
     }
+    
+    public void setServerPort(int serverPort) {
+            if (serverPort > 65535 || serverPort < 1)
+                txtServerPort.setText("8080");
+            else
+                txtServerPort.setText(String.valueOf(serverPort));
+    }
 
     /**
      * Retrieves the WSDL path from the root of the application server
@@ -165,17 +155,8 @@ public class ConnectionSettingsPanel extends javax.swing.JPanel {
     public String getWSDLPath(){
         return txtWSDLPath.getText();
     }
-
-    /* Getters */
-    public JTextField getTxtServerAddress() {
-        return txtServerAddress;
-    }
-
-    public JTextField getTxtServerPort() {
-        return txtServerPort;
-    }
-
-    public JTextField getTxtWSDLPath() {
-        return txtWSDLPath;
-    }
+    
+    public void setWSDLPath(String wsdlPath) {
+        txtWSDLPath.setText(wsdlPath);
+    }    
 }

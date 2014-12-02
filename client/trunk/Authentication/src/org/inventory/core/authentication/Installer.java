@@ -28,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Properties;
+import javax.swing.JButton;
 import org.inventory.communications.CommunicationsStub;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -43,30 +44,61 @@ import org.openide.windows.WindowManager;
 public class Installer extends ModuleInstall {
     private AuthenticationPanel pnlAuthentication;
     private DialogDescriptor dd;
+    private JButton btnConnectionSettings;
+    private ConnectionSettingsPanel connSettings;
+    
+    private String oldHost;
+    private String oldWSDLPath;
+    private int oldPort;
 
     @Override
     public void restored() {
-      pnlAuthentication = new AuthenticationPanel(readProperties());
-            
+      Properties defaultSettings = readProperties();
+      pnlAuthentication = new AuthenticationPanel(defaultSettings);
+      connSettings = new ConnectionSettingsPanel(defaultSettings);
+      btnConnectionSettings = new JButton("Connection Settings");
+      
       dd = new DialogDescriptor(pnlAuthentication, "Login Window", true, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 //Surprisingly, pressing the "OK" button doesn't fire a property change, but
                 //only an action event
-                if (e.getSource() == DialogDescriptor.OK_OPTION){
+                if (e.getSource().equals(DialogDescriptor.OK_OPTION)){
                     //This is done instead of the older approach to prompt for the user credentials
                     //again in case of error (versions 0.3 beta and earlier). With the past approach, a new
                     //Dialog was created every time, creating a new window over the past ones
                     //With this approach, errors are painted in the same dialog, but we have to tell the
                     //descriptor to not close if something went wrong
-                        if (connect())
-                            dd.setClosingOptions(new Object[]{DialogDescriptor.OK_OPTION, DialogDescriptor.CANCEL_OPTION, DialogDescriptor.CLOSED_OPTION});
-                        else
-                            dd.setClosingOptions(new Object[]{DialogDescriptor.CANCEL_OPTION, DialogDescriptor.CLOSED_OPTION});
+                    if (connect())
+                        dd.setClosingOptions(new Object[]{DialogDescriptor.OK_OPTION, DialogDescriptor.CANCEL_OPTION, DialogDescriptor.CLOSED_OPTION});
+                    else
+                        dd.setClosingOptions(new Object[]{DialogDescriptor.CANCEL_OPTION, DialogDescriptor.CLOSED_OPTION});
+                }else {
+                    if (e.getSource().equals(btnConnectionSettings)) {
+                        oldHost = connSettings.getServerAddress();
+                        oldWSDLPath = connSettings.getWSDLPath();
+                        oldPort = connSettings.getServerPort();
+
+                        DialogDescriptor myDialog = new DialogDescriptor(connSettings, "Connection Settings");
+                        myDialog.setModal(true);
+                        myDialog.addPropertyChangeListener(new PropertyChangeListener() {
+                            @Override
+                            public void propertyChange(PropertyChangeEvent evt) {
+                                if(evt.getNewValue() == DialogDescriptor.CANCEL_OPTION ||
+                                        evt.getNewValue()==DialogDescriptor.CLOSED_OPTION){
+                                    connSettings.setServerAddress(oldHost);
+                                    connSettings.setWSDLPath(oldWSDLPath);
+                                    connSettings.setServerPort(oldPort);
+                                }
+                            }
+                        });
+                        DialogDisplayer.getDefault().notifyLater(myDialog);
+                    }
                 }
             }
         });
+      dd.setAdditionalOptions(new JButton[]{btnConnectionSettings});
       dd.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -80,14 +112,13 @@ public class Installer extends ModuleInstall {
     }
 
     public boolean connect(){
-        ConnectionSettingsPanel containedPanel = pnlAuthentication.getContainedPanel();
         try {
             CommunicationsStub.setServerURL(
-                    new URL("http", containedPanel.getServerAddress(), containedPanel.getServerPort(),
-                    containedPanel.getWSDLPath()));
+                    new URL("http", connSettings.getServerAddress(), connSettings.getServerPort(),
+                    connSettings.getWSDLPath()));
 
         } catch (MalformedURLException ex) {
-            showExceptions("Malformed URL: "+ex.getMessage());
+            showExceptions("Malformed URL: " + ex.getMessage());
             return false;
         }
         try{
@@ -95,8 +126,8 @@ public class Installer extends ModuleInstall {
                showExceptions(CommunicationsStub.getInstance().getError());
                return false;
             }else{
-                writeProperties(pnlAuthentication.getTxtUser().getText(), containedPanel.getServerAddress(), containedPanel.getServerPort(),
-                        containedPanel.getWSDLPath());
+                writeProperties(pnlAuthentication.getTxtUser().getText(), connSettings.getServerAddress(), connSettings.getServerPort(),
+                        connSettings.getWSDLPath());
                 //The title can't be set directly since it's overwritten right after the startup. We have to wait till the window is open
                 WindowManager.getDefault().getMainWindow().addWindowListener(new WindowListener() {
 
