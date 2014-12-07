@@ -46,38 +46,38 @@ public class SyncService implements ActionListener{
         
     }
     
-    public void loadFile(byte[] file){
+    public String loadFile(byte[] file, int commitSize, int fileType){
         CommunicationsStub com = CommunicationsStub.getInstance();
-        //fileName = com.loadDataFromFile(choosenFile);
+        return com.loadDataFromFile(file, commitSize, fileType);
     }
     
-    public void downloadErrors(){
-        logFileName = ERRORS+fileName;
-        CommunicationsStub com = CommunicationsStub.getInstance();
-        //wrongLinesResults = com.downloadErrors(fileName);
-    }    
-    
-    public void downloadLog(){
-        wrongLinesFileName = LOGS+fileName;
-        CommunicationsStub com = CommunicationsStub.getInstance();
-        //logResults = com.downloadLog(fileName);
-    }
+//    public void downloadErrors(){
+//        logFileName = ERRORS+fileName;
+//        CommunicationsStub com = CommunicationsStub.getInstance();
+//        //wrongLinesResults = com.downloadErrors(fileName);
+//    }    
+//    
+//    public void downloadLog(){
+//        wrongLinesFileName = LOGS+fileName;
+//        CommunicationsStub com = CommunicationsStub.getInstance();
+//        //logResults = com.downloadLog(fileName);
+//    }
 
-    public byte[] getLogResults() {
-        return logResults;
-    }
-
-    public String getLogFileName() {
-        return logFileName;
-    }
-
-    public byte[] getWrongLinesResults() {
-        return wrongLinesResults;
-    }
-
-    public String getWrongLinesFileName() {
-        return wrongLinesFileName;
-    }
+//    public byte[] getLogResults() {
+//        return logResults;
+//    }
+//
+//    public String getLogFileName() {
+//        return logFileName;
+//    }
+//
+//    public byte[] getWrongLinesResults() {
+//        return wrongLinesResults;
+//    }
+//
+//    public String getWrongLinesFileName() {
+//        return wrongLinesFileName;
+//    }
     
     
 }
