@@ -490,8 +490,32 @@ public interface ApplicationEntityManager {
      */
     public void validateCall(String methodName, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException;
     
+    /**
+     * 
+     * @param user
+     * @param password
+     * @param IPAddress
+     * @return
+     * @throws ApplicationObjectNotFoundException 
+     */
     public Session createSession(String user, String password, String IPAddress)throws ApplicationObjectNotFoundException;
     
+    /**
+     * 
+     * @param IPAddress
+     * @param sessionId
+     * @return
+     * @throws ApplicationObjectNotFoundException
+     * @throws NotAuthorizedException 
+     */
+    public UserProfile getUserInSession(String IPAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException;
+    
+    /**
+     * 
+     * @param sessionId
+     * @param remoteAddress
+     * @throws NotAuthorizedException 
+     */
     public void closeSession(String sessionId, String remoteAddress) throws NotAuthorizedException;
             
 }
