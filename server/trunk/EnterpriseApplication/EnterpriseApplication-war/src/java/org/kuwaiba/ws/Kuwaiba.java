@@ -2770,23 +2770,24 @@ public class Kuwaiba {
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Sync/Load methods. Click on the + sign on the left to edit the code.">/**
-//    @WebMethod(operationName = "bulkUpload")
-//    public String bulkUpload(@WebParam(name = "file")
-//        byte[] file, @WebParam(name = "sessionId")
-//            String sessionId) throws Exception {
-//        try{
-//            UserInfo user = wsBean.getUserInSession(sessionId);
-//            return wsBean.bulkUpload(file, user.getId());
-//        }catch(Exception e){
-//            Level level = Level.SEVERE;
-//            if (e instanceof ServerSideException)
-//                level = ((ServerSideException)e).getLevel();
-//            Logger.getLogger(Kuwaiba.class.getName()).log(level,
-//                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-//            throw e;
-//        }
-//    }
+    // <editor-fold defaultstate="collapsed" desc="Sync/ bulk load methods. Click on the + sign on the left to edit the code.">/**
+    @WebMethod(operationName = "bulkUpload")
+    public String bulkUpload(@WebParam(name = "file")
+        byte[] file, @WebParam(name = "commitSize")
+        int commitSize, @WebParam(name = "dataType")
+        int dataType, @WebParam(name = "sessionId")
+        String sessionId) throws Exception {
+        try{
+            return wsBean.bulkUpload(file, commitSize, dataType, getIPAddress(), sessionId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
     
     
 //    @WebMethod(operationName = "downloadErrors")
