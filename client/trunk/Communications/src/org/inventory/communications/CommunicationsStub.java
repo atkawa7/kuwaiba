@@ -2007,20 +2007,22 @@ public class CommunicationsStub {
         }
     }// </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Sync methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="Sync/bulk load data methods. Click on the + sign on the left to edit the code.">
     /**
-     * BulkUpload from a file
-     * @param choosenFile csv file with the data
-     * @return percent  of progress
+     * Load data from a file 
+     * @param file choosen file with the data
+     * @param commitSize commit after n rows 
+     * @param classType if the file contains listTypes or Classes or any other kind of information
+     * @return 
      */
-//    public String loadDataFromFile(byte[] choosenFile){
-//        try{
-//            return port.loadDataFromFile(choosenFile, this.session.getSessionId());
-//        }catch(Exception ex){
-//            this.error =  ex.getMessage();
-//            return "";
-//        }
-//    }
+    public String loadDataFromFile(byte[] file, int commitSize, int classType){
+        try{
+            return  port.bulkUpload(file, commitSize, classType, this.session.getSessionId());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return "";
+        }
+    }
 //     public byte[] downloadErrors(String fileName){
 //        try{
 //            return port.downloadErrors(fileName, this.session.getSessionId());
