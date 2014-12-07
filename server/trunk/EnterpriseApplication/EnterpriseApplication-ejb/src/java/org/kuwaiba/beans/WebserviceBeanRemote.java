@@ -563,13 +563,18 @@ public interface WebserviceBeanRemote {
     
     // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Sync/Load data methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="Sync/bulkupload methods. Click on the + sign on the left to edit the code.">
     /**
      * Loads data from a csv file
-     * @param choosenFile the csv file as a byte array
-     * @return 
+     * @param file a csv file as a byte array with the data
+     * @param commitSize commit after n rows  
+     * @param dataType what kind of data contains the file, listTypes, Objects, etc
+     * @param ipAddress
+     * @param sessionId
+     * @return
+     * @throws ServerSideException 
      */
-    public String bulkUpload(byte[] choosenFile, long userId) throws ServerSideException;
+    public String bulkUpload(byte[] file, int commitSize, int dataType, String ipAddress, String sessionId) throws ServerSideException;
     /**
      * Returns a file with the wrong lines of the load file
      * @param fileName
