@@ -1789,6 +1789,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         sessions.put(newSession.getToken(), newSession);
         return newSession;
     }
+    
+    @Override
+    public UserProfile getUserInSession(String IPAddress, String sessionId) throws NotAuthorizedException{
+        validateCall("getUserInSession", IPAddress, sessionId);
+        return sessions.get(sessionId).getUser();
+    }
 
     @Override
     public void closeSession(String sessionId, String remoteAddress) throws NotAuthorizedException {
