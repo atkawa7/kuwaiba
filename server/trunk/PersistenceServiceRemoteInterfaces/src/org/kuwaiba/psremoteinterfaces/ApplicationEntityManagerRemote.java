@@ -474,7 +474,34 @@ public interface ApplicationEntityManagerRemote extends Remote {
      */
     public void validateCall(String methodName, String ipAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
     
+    /**
+     * 
+     * @param user
+     * @param password
+     * @param IPAddress
+     * @return a session
+     * @throws ApplicationObjectNotFoundException
+     * @throws RemoteException 
+     */
     public Session createSession(String user, String password, String IPAddress) throws ApplicationObjectNotFoundException, RemoteException;
     
+    /**
+     * 
+     * @param IPAddress
+     * @param sessionId
+     * @return
+     * @throws ApplicationObjectNotFoundException
+     * @throws NotAuthorizedException
+     * @throws RemoteException 
+     */
+    public UserProfile getUserInSession(String IPAddress, String sessionId) throws ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
+    
+    /**
+     * close a session
+     * @param sessionId
+     * @param remoteAddress
+     * @throws NotAuthorizedException
+     * @throws RemoteException 
+     */
     public void closeSession(String sessionId, String remoteAddress) throws NotAuthorizedException ,RemoteException;
 }
