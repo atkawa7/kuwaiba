@@ -15,6 +15,8 @@
  */
 package org.inventory.communications.core;
 
+import org.inventory.communications.util.Constants;
+
 /**
  * This is a local representation of an element within a list (enumerations and so on)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -57,9 +59,10 @@ public class LocalObjectListItem extends LocalObjectLight {
 
     @Override
     public String toString(){
-        if (this.displayName != null)
-            if (!this.displayName.isEmpty())
-                return this.displayName;
-        return this.name;
+        if (this.displayName != null && !this.displayName.isEmpty())
+            return this.displayName;
+        if (this.name != null && !this.name.isEmpty())
+            return this.name;
+        return Constants.LABEL_NONAME;
     }
 }

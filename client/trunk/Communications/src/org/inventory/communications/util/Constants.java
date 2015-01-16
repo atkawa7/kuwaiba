@@ -110,6 +110,12 @@ public class Constants {
      * Many to Many relationship (such as accountable persons for a given equipment)
      */
     public static final int MAPPING_MANYTOMANY = 6;
+    
+    /**
+     * A fixed label to indicate a given node doesn't have a name set
+     */
+    public static final String LABEL_NONAME = "<No Name>";
+    
     /**
      * Possible attributes types
      */

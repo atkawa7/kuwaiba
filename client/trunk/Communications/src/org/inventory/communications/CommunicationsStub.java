@@ -2010,7 +2010,7 @@ public class CommunicationsStub {
     // <editor-fold defaultstate="collapsed" desc="Sync/bulk load data methods. Click on the + sign on the left to edit the code.">
     /**
      * Load data from a file 
-     * @param file choosen file with the data
+     * @param file data with the information to be uploaded
      * @param commitSize commit after n rows 
      * @param classType if the file contains listTypes or Classes or any other kind of information
      * @return 

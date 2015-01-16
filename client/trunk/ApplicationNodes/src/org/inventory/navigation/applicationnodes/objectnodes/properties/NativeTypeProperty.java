@@ -47,9 +47,8 @@ public class NativeTypeProperty extends ReadWrite {
     
     @Override
     public Object getValue() throws IllegalAccessException, InvocationTargetException {        
-       if (value == null)
-           return  getValueType() == Boolean.class ? false : "";
-
+       if (value == null && getValueType() == Boolean.class)
+           return false;
        return value;
     }
 
