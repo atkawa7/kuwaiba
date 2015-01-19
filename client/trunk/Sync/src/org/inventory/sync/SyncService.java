@@ -18,6 +18,7 @@ package org.inventory.sync;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JFrame;
 import org.inventory.communications.CommunicationsStub;
 
 /**
@@ -26,7 +27,7 @@ import org.inventory.communications.CommunicationsStub;
  */
 public class SyncService implements ActionListener{
 
-    private SyncTopComponent stc;
+    private JFrame stc;
     private String fileName;
     
     private byte[] logResults;
@@ -37,7 +38,7 @@ public class SyncService implements ActionListener{
     private static final String LOGS = "kuwaiba_load_data.log_";
     private static final String ERRORS = "kuwaiba_load_data.errors_";
 
-    public SyncService(SyncTopComponent stc) {
+    public SyncService(JFrame stc) {
         this.stc = stc;
     }
 
