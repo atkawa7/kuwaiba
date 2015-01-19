@@ -65,7 +65,7 @@ public class UserInfo extends UserInfoLight {
         }
         
         this.privileges = new PrivilegeInfo[user.getPrivileges().size()];
-        for(int i=0; i < user.getPrivileges().size(); i++)
+        for(int i = 0; i < user.getPrivileges().size(); i++)
                 privileges[i] = new PrivilegeInfo(user.getPrivileges().get(i));
     }
 

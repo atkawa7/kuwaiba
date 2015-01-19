@@ -175,7 +175,8 @@
 * Added class Subnet
 * Added class Manhole
 
-0.6 - 0.7 alpha
+0.6 - 0.7
 
 * Class "GenericCustomer" is no longer subclass of "GenericPerson" now is subclass of "AdminstrativeItem"
 * attribute *creationDate* added
+* IPAddress and Subnet no longer have the attribute "customer"

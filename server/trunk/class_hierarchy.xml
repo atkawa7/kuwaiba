@@ -2240,7 +2240,6 @@
                       <class name="IPAddress" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.logical.addressing">
                         <attributes>
                           <attribute name="type" type="IPAddressType" javaModifiers="4" applicationModifiers="0"/>
-                          <attribute name="customer" type="CorporateCustomer" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                           <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                         </attributes>
@@ -2248,7 +2247,6 @@
                       </class>
                       <class name="Subnet" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.logical.addressing">
                         <attributes>
-                          <attribute name="customer" type="CorporateCustomer" javaModifiers="4" applicationModifiers="0"/>
                           <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                           <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                         </attributes>
