@@ -49,7 +49,7 @@ import org.kuwaiba.psremoteinterfaces.BusinessEntityManagerRemote;
 import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
 
 /**
- * Manages the load, update and sync services
+ * Manages the bulk load for list types an object from CSV files
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public final class LoadDataFromFile implements Runnable{
@@ -74,24 +74,18 @@ public final class LoadDataFromFile implements Runnable{
      */
     private static final String PATH_DATA_LOAD_ERRORS = "../kuwaiba/errors/";
     /**
-     * 
+     * Minimum fields required in a csv file to load list types
      */
     private static final int MINIMUN_LISTTYPE_FIELDS = 2;
     /**
-     * 
+     * Minimum fields required in a csv file to load objects
      */
     private static final int MINIMUN_CLASSTYPE_FIELDS = 4;
-    /**
-     * 
-     */
-    private static final String NONE = "none";
     /**
      * if the parent is the dummy root
      */
     private static final String ROOT = "root";
 
-    private static final String VALUE_OPERATOR = ":";
-    
     
     private int commitSize;
     private long userId;
@@ -171,7 +165,7 @@ public final class LoadDataFromFile implements Runnable{
                 HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
                 String[] splitLine = line.split(";");
                 //not enough fields in the line
-                if (splitLine.length < MINIMUN_LISTTYPE_FIELDS) {
+                if (splitLine.length < MINIMUN_CLASSTYPE_FIELDS) {
                     errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE")+currentFileLine+
                                  java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_LISTTYPE_NOT_ENOUGH_FIELDS")+"\n";
                     errors = true;
@@ -180,7 +174,13 @@ public final class LoadDataFromFile implements Runnable{
                     try{
                         String className = splitLine[0];
                         //TODO implement templates support
-                        for(int i = 2; i < splitLine.length; i+=2){
+                        List<String> parentClass = new ArrayList<String>();
+                        parentClass.add(splitLine[2]);
+                        List<String> parentName = new ArrayList<String>();
+                        parentName.add(splitLine[4]);
+                        attributes.put(ATTRIBUTE_PARENT_CLASS, parentClass);
+                        attributes.put(ATTRIBUTE_PARENT_NAME, parentName);
+                        for(int i = 6; i < splitLine.length; i+=2){
                             List<String> attirbuteValues = new  ArrayList<String>();
                             String attributeType = "";
                             if(insetertedAttributes.containsKey(splitLine[i]))
@@ -222,7 +222,7 @@ public final class LoadDataFromFile implements Runnable{
             for(RemoteBusinessObject object : data){
                 String parentClassName = object.getAttributes().remove(ATTRIBUTE_PARENT_CLASS).get(0);
                 String parentName = object.getAttributes().remove(ATTRIBUTE_PARENT_NAME).get(0);
-                long template = Long.parseLong(object.getAttributes().remove(ATTRIBUTE_TEMPLATE).get(0));
+                long template = 0; //Long.parseLong(object.getAttributes().remove(ATTRIBUTE_TEMPLATE).get(0));
                 
                 if (parentClassName.equals(ROOT) && parentName.equals(ROOT)) 
                     oid = bem.createObject(object.getClassName(), null, -1, 
@@ -234,12 +234,11 @@ public final class LoadDataFromFile implements Runnable{
                             currentCreatedObjects.get(parentName), 
                             object.getAttributes(), 
                             template, IPAddress, sessionId);
-
+                
                 currentCreatedObjects.put(object.getAttributes().get(ATTRIBUTE_NAME).get(0), oid);
             }//end for
         }catch(Exception ex){
-            System.out.println(ex.getMessage()+"eeror en la linea");
-            //check your containment hierarchy
+            Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, "check your containment hierarchy, Atribute's names, List Types", ex);
         }
     }
     
@@ -299,7 +298,7 @@ public final class LoadDataFromFile implements Runnable{
             }// end while read line
             input.close();
         } catch (IOException ex) {
-            ex.getMessage();
+            Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, "check atribute's names", ex);
         }
     }
     
@@ -394,22 +393,8 @@ public final class LoadDataFromFile implements Runnable{
     public void run() {
         try {
             uploadFile();
-        } catch (ApplicationObjectNotFoundException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NotAuthorizedException ex) {
-            Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (RemoteException ex) {
-            Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MetadataObjectNotFoundException ex) {
-            Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidArgumentException ex) {
-            Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ObjectNotFoundException ex) {
-            Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (OperationNotPermittedException ex) {
-            Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (WrongMappingException ex) {
-            Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }        
     }
 }
