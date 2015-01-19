@@ -31,8 +31,8 @@ public class UserChildren extends Children.Array{
 
     private LocalUserObject[] list;
 
-    public UserChildren(LocalUserObject[] _list){
-        this.list = _list;
+    public UserChildren(LocalUserObject[] list){
+        this.list = list;
     }
 
     @Override

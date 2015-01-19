@@ -33,11 +33,11 @@ import org.openide.windows.WindowManager;
  */
 public class UserNode extends AbstractNode{
     private LocalUserObject object;
-    public static final String PROP_USERNAME="username";
-    public static final String PROP_LASTNAME="lastName";
-    public static final String PROP_FIRSTNAME="name";
-    public static final String PROP_GROUPS="groups";
-    public static final String PROP_PASSWORD="password";
+    public static final String PROP_USERNAME = "username";
+    public static final String PROP_LASTNAME = "lastName";
+    public static final String PROP_FIRSTNAME = "name";
+    public static final String PROP_GROUPS = "groups";
+    public static final String PROP_PASSWORD = "password";
 
     public UserNode(LocalUserObject localUserObject) {
         super(Children.LEAF,Lookups.singleton(localUserObject));
@@ -58,9 +58,9 @@ public class UserNode extends AbstractNode{
             s.put(ss);
         }
         ss.put(new UserProperty(PROP_USERNAME, "Username", "User name used in the login process", object.getUserName(),this.object));
-        ss.put(new UserProperty(PROP_LASTNAME, "Last Name", "User's last name", object.getLastName()==null?"":object.getLastName(),this.object));
-        ss.put(new UserProperty(PROP_FIRSTNAME, "First Name", "User's first name", object.getFirstName()==null?"":object.getFirstName(),this.object));
-        ss.put(new UserProperty(PROP_GROUPS, "Groups", "Groups this user belongs to", "",this.object));
+        ss.put(new UserProperty(PROP_LASTNAME, "Last Name", "User's last name", object.getLastName()==null? "" : object.getLastName(),this.object));
+        ss.put(new UserProperty(PROP_FIRSTNAME, "First Name", "User's first name", object.getFirstName()==null ? "" : object.getFirstName(),this.object));
+        ss.put(new UserProperty(PROP_GROUPS, "Groups", "Groups this user belongs to", object.getGroups(),this.object));
         ss.put(new UserProperty(PROP_PASSWORD, "Password", "User's password", "****",this.object));
         return s;      
     }

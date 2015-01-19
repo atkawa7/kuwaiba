@@ -77,10 +77,10 @@ public class GroupsEditorSupport extends PropertyEditorSupport
 
     @Override
     public String getAsText(){
-        if (user.getGroups() == null)
+        if (user.getGroups() == null || user.getGroups().length == 0)
             return "";
-        if (user.getGroups().length == 0)
-            return "";
+        if (user.getGroups().length == 1)
+            return user.getGroups()[0].getName();
         return "[Many]";
     }
 
