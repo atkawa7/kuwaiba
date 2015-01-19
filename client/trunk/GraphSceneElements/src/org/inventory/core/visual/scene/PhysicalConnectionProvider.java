@@ -35,11 +35,11 @@ public class PhysicalConnectionProvider implements ConnectProvider {
     /**
      * A wizard for container connections
      */
-    public static int WIZARD_CONTAINER = 0;
+    public static int WIZARD_CONTAINER = 1;
     /**
      * A wizard for link connections
      */
-    public static int WIZARD_LINK = 1;
+    public static int WIZARD_LINK = 2;
     /**
      * The new object will be instance of this class
      */

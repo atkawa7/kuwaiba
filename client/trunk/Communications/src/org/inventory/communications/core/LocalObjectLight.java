@@ -95,8 +95,9 @@ public class LocalObjectLight implements Transferable { //This class does not im
     }
 
     public void setName(String name) {
+        String oldName = name;
         this.name = name;
-        firePropertyChangeEvent(Constants.PROPERTY_NAME, this.name, name);
+        firePropertyChangeEvent(Constants.PROPERTY_NAME, oldName, name);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener newListener){
@@ -131,7 +132,6 @@ public class LocalObjectLight implements Transferable { //This class does not im
     public int hashCode() {
         int hash = 5;
         hash = 47 * hash + (int) (this.oid ^ (this.oid >>> 32));
-        //hash = 47 * hash + (this.className != null ? this.className.hashCode() : 0);
         return hash;
     }
 
