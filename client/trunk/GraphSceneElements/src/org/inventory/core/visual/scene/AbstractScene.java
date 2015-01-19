@@ -218,7 +218,8 @@ public abstract class AbstractScene <N, E> extends GraphScene<N, E>
         while (!getEdges().isEmpty())
             removeEdge(getEdges().iterator().next());
         
-        labelsLayer.removeChildren();
+        if (labelsLayer != null)
+            labelsLayer.removeChildren();
         validate();
     }
     
