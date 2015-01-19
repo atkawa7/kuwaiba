@@ -61,15 +61,12 @@ public class UserInfo extends UserInfoLight {
         if(user.getGroups() != null){
             this.groups = new GroupInfoLight[user.getGroups().size()];
             for(int i=0; i < user.getGroups().size(); i++)
-            groups[i] = new GroupInfoLight(user.getGroups().get(i));
+                this.groups[i] = new GroupInfoLight(user.getGroups().get(i));
         }
-        groups = null;
+        
         this.privileges = new PrivilegeInfo[user.getPrivileges().size()];
         for(int i=0; i < user.getPrivileges().size(); i++)
                 privileges[i] = new PrivilegeInfo(user.getPrivileges().get(i));
-        
-        
-        
     }
 
     public String getFirstName() {

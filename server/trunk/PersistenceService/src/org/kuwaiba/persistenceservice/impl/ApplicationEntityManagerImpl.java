@@ -340,9 +340,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
         if(userNode == null)
             throw new ApplicationObjectNotFoundException(String.format("Can not find a user with name %s", formerUsername));
         
-        Transaction tx = null;
         if(newUserName != null){
-            if (newUserName.trim().equals(""))
+            if (newUserName.isEmpty())
                 throw new InvalidArgumentException("User name can not be an empty string", Level.INFO);
 
             Node storedUser = userIndex.get(Constants.PROPERTY_NAME, newUserName).getSingle();
@@ -356,7 +355,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             if (password.trim().isEmpty())
                 throw new InvalidArgumentException("Password can't be an empty string", Level.INFO);
         }
-        
+
+        Transaction tx = null;
         try{
             tx =  graphDb.beginTx();
             if (newUserName != null){
@@ -401,7 +401,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             tx.finish();
             cm.putUser(Util.createUserProfileFromNode(userNode));
         }catch(Exception ex){
-            Logger.getLogger("setUserProperties: "+ex.getMessage()); //NOI18N
+            Logger.getLogger("setUserProperties: " + ex.getMessage()); //NOI18N
             tx.failure();
             tx.finish();
             throw new RuntimeException(ex.getMessage());
@@ -414,29 +414,26 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             throws InvalidArgumentException, NotAuthorizedException {
         
         //validateCall("createGroup", ipAddress, sessionId);
-        
-        Transaction tx = null;
-        if (groupName == null){
+               
+        if (groupName == null)
             throw new InvalidArgumentException("Group name can not be null", Level.INFO);
-        }
-        if (groupName.trim().equals("")){
+        if (groupName.isEmpty())
             throw new InvalidArgumentException("Group name can not be an empty string", Level.INFO);
-        }
         if (!groupName.matches("^[a-zA-Z0-9_]*$"))
             throw new InvalidArgumentException(String.format("Class %s contains invalid characters", groupName), Level.INFO);
         
         Node storedGroup = groupIndex.get(Constants.PROPERTY_NAME,groupName).getSingle();
-        if (storedGroup != null){
+        if (storedGroup != null)
             throw new InvalidArgumentException(String.format("Group %s already exists", groupName), Level.WARNING);
-        }
+        
+        Transaction tx = null;
         try{
             tx = graphDb.beginTx();
             Node newGroupNode = graphDb.createNode();
 
             newGroupNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
             newGroupNode.setProperty(Constants.PROPERTY_NAME, groupName);
-            if(description != null)
-                newGroupNode.setProperty(Constants.PROPERTY_DESCRIPTION, "");
+            newGroupNode.setProperty(Constants.PROPERTY_DESCRIPTION, description == null ? "" : description);
             if (users != null){
                 for (long userId : users) {
                     Node userNode = userIndex.get(Constants.PROPERTY_ID, userId).getSingle();
@@ -518,11 +515,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
             tx = graphDb.beginTx();
 
             Node groupNode = groupIndex.get(Constants.PROPERTY_ID, id).getSingle();
-            if(groupNode == null){
+            if(groupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find the group with id %1s",id));
-            }
+            
             if(groupName != null){
-                if (groupName.trim().equals(""))
+                if (groupName.isEmpty())
                     throw new InvalidArgumentException("Group name can not be an empty string", Level.INFO);
                 if (!groupName.matches("^[a-zA-Z0-9_]*$"))
                     throw new InvalidArgumentException(String.format("Class %s contains invalid characters", groupName), Level.INFO);
@@ -533,10 +530,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                 groupIndex.remove(groupNode, Constants.PROPERTY_NAME, (String)groupNode.getProperty(Constants.PROPERTY_NAME));
                 cm.removeGroup((String)groupNode.getProperty(Constants.PROPERTY_NAME));
                 groupNode.setProperty(Constants.PROPERTY_NAME, groupName);
+                groupIndex.add(groupNode, Constants.PROPERTY_NAME, groupName);
             }
             if(description != null)
                 groupNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
-            if(users != null){
+            if(users != null && users.length != 0){
                 Iterable<Relationship> relationships = groupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP);
                 for (Relationship relationship : relationships)
                     relationship.delete();
@@ -551,7 +549,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     }
                 }
             }
-            if (privileges != null){
+            if (privileges != null && privileges.length != 0){
                 Iterable<Relationship> privilegesRelationships = groupNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_PRIVILEGE);
                 for (Relationship relationship : privilegesRelationships)
                     relationship.delete();
@@ -566,12 +564,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager, A
                     }
                 }
             }
-            groupIndex.putIfAbsent(groupNode, Constants.PROPERTY_NAME, groupName);
+            
             cm.putGroup(Util.createGroupProfileFromNode(groupNode));
             tx.success();
             tx.finish();
         }catch(Exception ex){
-            Logger.getLogger("setGroupProperties: "+ex.getMessage()); //NOI18N
+            Logger.getLogger("setGroupProperties: " + ex.getMessage()); //NOI18N
             tx.failure();
             tx.finish();
             throw new RuntimeException(ex.getMessage());

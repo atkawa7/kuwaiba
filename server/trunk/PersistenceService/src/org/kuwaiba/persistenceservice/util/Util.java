@@ -457,7 +457,7 @@ public class Util {
            //TODO get users
            groups.add(new GroupProfile(groupNode.getId(),
                         (String)groupNode.getProperty(Constants.PROPERTY_NAME),
-                        (String)groupNode.getProperty(Constants.PROPERTY_DESCRIPTION),
+                        groupNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? (String)groupNode.getProperty(Constants.PROPERTY_DESCRIPTION) : "",
                         (Long)groupNode.getProperty(Constants.PROPERTY_CREATION_DATE),
                         null,groupPrivileges));
             
