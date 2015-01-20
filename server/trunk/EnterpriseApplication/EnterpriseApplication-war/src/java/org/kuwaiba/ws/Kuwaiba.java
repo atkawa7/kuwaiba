@@ -2789,40 +2789,21 @@ public class Kuwaiba {
         }
     }
     
-    
-//    @WebMethod(operationName = "downloadErrors")
-//    public byte[] downloadErrors(@WebParam(name = "fileName")
-//        String fileName, @WebParam(name = "sessionId")
-//            String sessionId) throws Exception {
-//        try{
-//            wsBean.validateCall("downloadErrors", getIPAddress(), sessionId);
-//            return wsBean.downloadErrors(fileName);
-//        }catch(Exception e){
-//            Level level = Level.SEVERE;
-//            if (e instanceof ServerSideException)
-//                level = ((ServerSideException)e).getLevel();
-//            Logger.getLogger(Kuwaiba.class.getName()).log(level,
-//                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-//            throw e;
-//        }
-//    }
-     
-//    @WebMethod(operationName = "downloadLog")
-//    public byte[] downloadLog(@WebParam(name = "fileName")
-//        String fileName, @WebParam(name = "sessionId")
-//            String sessionId) throws Exception {
-//        try{
-//            wsBean.validateCall("downloadLog", getIPAddress(), sessionId);
-//            return wsBean.downloadLog(fileName);
-//        }catch(Exception e){
-//            Level level = Level.SEVERE;
-//            if (e instanceof ServerSideException)
-//                level = ((ServerSideException)e).getLevel();
-//            Logger.getLogger(Kuwaiba.class.getName()).log(level,
-//                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
-//            throw e;
-//        }
-//    }
+    @WebMethod(operationName = "downloadBulkLoadLog")
+    public byte[] downloadBulkLoadLog(@WebParam(name = "fileName")
+        String fileName, @WebParam(name = "sessionId")
+            String sessionId) throws Exception {
+        try{
+            return wsBean.downloadBulkLoadLog(fileName, getIPAddress(), sessionId);
+        }catch(Exception e){
+            Level level = Level.SEVERE;
+            if (e instanceof ServerSideException)
+                level = ((ServerSideException)e).getLevel();
+            Logger.getLogger(Kuwaiba.class.getName()).log(level,
+                    e.getClass().getSimpleName()+": {0}",e.getMessage()); //NOI18N
+            throw e;
+        }
+    }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**
