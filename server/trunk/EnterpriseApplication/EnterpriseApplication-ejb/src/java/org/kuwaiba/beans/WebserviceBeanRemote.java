@@ -581,14 +581,6 @@ public interface WebserviceBeanRemote {
      * @return
      * @throws ServerSideException 
      */
-    public byte[] downloadLog(String fileName) throws ServerSideException;
-    
-    /**
-     * Returns a file with the errors in the lines of the load file
-     * @param fileName
-     * @return
-     * @throws ServerSideException 
-     */
-    public byte[] downloadErrors(String fileName) throws ServerSideException;
+    public byte[] downloadBulkLoadLog(String fileName, String ipAddress, String sessionId) throws ServerSideException;
     // </editor-fold>
 }
