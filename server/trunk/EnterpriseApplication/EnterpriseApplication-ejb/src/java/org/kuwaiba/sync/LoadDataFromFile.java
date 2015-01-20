@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -52,7 +53,7 @@ import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
  * Manages the bulk load for list types an object from CSV files
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public final class LoadDataFromFile implements Runnable{
+public final class LoadDataFromFile extends NotifyingThread{
     /**
      * Date format for sync 
      */
@@ -61,10 +62,18 @@ public final class LoadDataFromFile implements Runnable{
      * Path to upload file
      */
     private static final String PATH_DATA_LOAD_FILES = "../kuwaiba/upload-files/";
+    /**
+     * Attribute name
+     */
     private static final String ATTRIBUTE_NAME = "name";
+    /**
+     * Attribute parent name for the class
+     */
     private static final String ATTRIBUTE_PARENT_NAME = "parentName";
+    /**
+     * Attribute parent class for the class
+     */
     private static final String ATTRIBUTE_PARENT_CLASS = "parentClass";
-    private static final String ATTRIBUTE_TEMPLATE = "template";
     /**
      * Path to log file after a bulkupload
      */
@@ -76,17 +85,18 @@ public final class LoadDataFromFile implements Runnable{
     /**
      * Minimum fields required in a csv file to load list types
      */
-    private static final int MINIMUN_LISTTYPE_FIELDS = 2;
+    private static final int MINIMUN_LISTTYPE_FIELDS = 3;
     /**
      * Minimum fields required in a csv file to load objects
      */
-    private static final int MINIMUN_CLASSTYPE_FIELDS = 4;
+    private static final int MINIMUN_CLASSTYPE_FIELDS = 7;
     /**
      * if the parent is the dummy root
      */
     private static final String ROOT = "root";
-
-    
+    /**
+     * number of rows before commit
+     */
     private int commitSize;
     private long userId;
     private File uploadFile;
@@ -112,8 +122,12 @@ public final class LoadDataFromFile implements Runnable{
         data = new ArrayList<RemoteBusinessObject>();
         currentCreatedObjects = new HashMap<String, Long>();
     }
+
+    public File getUploadFile() {
+        return uploadFile;
+    }
     
-    public void uploadFile() throws ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException, MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, OperationNotPermittedException, WrongMappingException{
+    public synchronized void uploadFile() throws ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException, MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, OperationNotPermittedException, WrongMappingException{
         this.userId = aem.getUserInSession(IPAddress, sessionId).getId();
         
         DateFormat dateFormat = new SimpleDateFormat(DATE_HOUR_FORMAT);
@@ -122,7 +136,9 @@ public final class LoadDataFromFile implements Runnable{
 
         try {
             new File(PATH_DATA_LOAD_FILES + userId).mkdirs();
-            uploadFile = new File(PATH_DATA_LOAD_FILES + userId + fileName);
+            new File(PATH_DATA_LOAD_ERRORS + userId).mkdirs();
+            uploadFile = new File(PATH_DATA_LOAD_FILES + userId + "/" + fileName);
+            
             if(!uploadFile.exists())
                 uploadFile.createNewFile();
             fileOuputStream = new FileOutputStream(uploadFile, false);
@@ -162,12 +178,18 @@ public final class LoadDataFromFile implements Runnable{
             while ((line = input.readLine()) != null) {
                 currentFileLine++;
                 errors = false;
+                errorsMsgs = "";
                 HashMap<String, List<String>> attributes = new HashMap<String, List<String>>();
                 String[] splitLine = line.split(";");
                 //not enough fields in the line
                 if (splitLine.length < MINIMUN_CLASSTYPE_FIELDS) {
-                    errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE")+currentFileLine+
-                                 java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_LISTTYPE_NOT_ENOUGH_FIELDS")+"\n";
+                    errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE")+ line + "\n" +
+                                 java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_NOT_ENOUGH_FIELDS")+"\n";
+                    errors = true;
+                }
+                else if(splitLine.length % 2 == 0){
+                    errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE") + line + "\n" +
+                                 java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_NO_ATTIRBUTE_VALUE")+ "\n";
                     errors = true;
                 }
                 else{
@@ -180,6 +202,7 @@ public final class LoadDataFromFile implements Runnable{
                         parentName.add(splitLine[4]);
                         attributes.put(ATTRIBUTE_PARENT_CLASS, parentClass);
                         attributes.put(ATTRIBUTE_PARENT_NAME, parentName);
+                        
                         for(int i = 6; i < splitLine.length; i+=2){
                             List<String> attirbuteValues = new  ArrayList<String>();
                             String attributeType = "";
@@ -187,6 +210,11 @@ public final class LoadDataFromFile implements Runnable{
                                 attributeType = insetertedAttributes.get(splitLine[i]);
                             else{    
                                 AttributeMetadata attribute = mem.getAttribute(className, splitLine[i-1]);
+                                if(attribute == null){
+                                    errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE") + line + "\n" + splitLine[i-1] +
+                                        java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_ATTRIBUTE_NOT_FOUND")+"\n";
+                                    errors = true;
+                                }
                                 insetertedAttributes.put(splitLine[i], attribute.getType());
                                 attributeType = attribute.getType();
                             }
@@ -199,13 +227,17 @@ public final class LoadDataFromFile implements Runnable{
                         data.add(new RemoteBusinessObject(-1, className, attributes));
                         commitCounter++;
                     }catch(Exception ex){
-                        errorsMsgs += ex.getMessage();
+                        errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE") + line + "\n" + ex.getMessage() + "\n";
+                        errors = true;
                         //theres something wrong whit the line x please check your list types uppercase
                         // attribute name 
                     }
                 }
+                if(errors)
+                    log(uploadFile.getName(), errorsMsgs, line);
+                
                 if(commitSize == commitCounter && !errors){
-                    commitObjects();
+                    commitObjects(line);
                     commitCounter = 0;
                     data = new ArrayList<RemoteBusinessObject>();
                 }
@@ -216,7 +248,7 @@ public final class LoadDataFromFile implements Runnable{
         }
     }
     
-    public void commitObjects(){
+    public void commitObjects(String line) throws IOException{
         try{
             long oid;
             for(RemoteBusinessObject object : data){
@@ -224,21 +256,31 @@ public final class LoadDataFromFile implements Runnable{
                 String parentName = object.getAttributes().remove(ATTRIBUTE_PARENT_NAME).get(0);
                 long template = 0; //Long.parseLong(object.getAttributes().remove(ATTRIBUTE_TEMPLATE).get(0));
                 
-                if (parentClassName.equals(ROOT) && parentName.equals(ROOT)) 
+                if (parentClassName.equals(ROOT) && parentName.equals(ROOT)){ 
                     oid = bem.createObject(object.getClassName(), null, -1, 
                             object.getAttributes(), 
                             template, IPAddress, sessionId);
-                else
-                    oid = bem.createObject(object.getClassName(), 
+                    currentCreatedObjects.put(object.getAttributes().get(ATTRIBUTE_NAME).get(0), oid);
+                }
+                else{
+                    Long pid = currentCreatedObjects.get(parentName);
+                    if(pid == null){
+                        log(uploadFile.getName(), java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE") + line + "\n" + 
+                                        java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_NO_PARENT_NAME")+"\n", line);
+                    }
+                    else{
+                        oid = bem.createObject(object.getClassName(), 
                             parentClassName, 
-                            currentCreatedObjects.get(parentName), 
+                            pid, 
                             object.getAttributes(), 
                             template, IPAddress, sessionId);
-                
-                currentCreatedObjects.put(object.getAttributes().get(ATTRIBUTE_NAME).get(0), oid);
+                        currentCreatedObjects.put(object.getAttributes().get(ATTRIBUTE_NAME).get(0), oid);
+                    }
+                }
             }//end for
         }catch(Exception ex){
-            Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, "check your containment hierarchy, Atribute's names, List Types", ex);
+            log(uploadFile.getName(), java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE") + line + "\n" +
+                                ex.getMessage() + "\n", "");
         }
     }
     
@@ -250,7 +292,7 @@ public final class LoadDataFromFile implements Runnable{
         try {
             BufferedReader input = new BufferedReader(new FileReader(uploadFile));
             int currentFileLine = 0;
-            int counter = 0;
+            int commitCounter = 0;
             String line;
 
             while ((line = input.readLine()) != null) {
@@ -260,8 +302,13 @@ public final class LoadDataFromFile implements Runnable{
                 String[] splitLine = line.split(";");
                 //not enough fields in the line
                 if (splitLine.length < MINIMUN_LISTTYPE_FIELDS) {
-                    errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE")+currentFileLine+
+                    errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE") + line + "\n" +
                                  java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_LISTTYPE_NOT_ENOUGH_FIELDS")+"\n";
+                    errors = true;
+                }
+                else if(splitLine.length % 2 == 0){
+                    errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE") + line + "\n" +
+                                 java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_NO_ATTIRBUTE_VALUE")+"\n";
                     errors = true;
                 }
                 else{
@@ -275,24 +322,43 @@ public final class LoadDataFromFile implements Runnable{
                                 attributeType = insetertedAttributes.get(splitLine[i]);
                             else{    
                                 AttributeMetadata attribute = mem.getAttribute(className, splitLine[i-1]);
-                                insetertedAttributes.put(splitLine[i], attribute.getType());
-                                attributeType = attribute.getType();
+                                if(attribute ==  null){
+                                    errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE") + line + "\n" + splitLine[i-1] +
+                                        java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_ATTRIBUTE_NOT_FOUND")+"\n";
+                                    errors = true;
+                                }
+                                else{    
+                                    insetertedAttributes.put(splitLine[i], attribute.getType());
+                                    attributeType = attribute.getType();
+                                }
                             }
-                            if (!isPrimitive(attributeType))
-                               attirbuteValues.add(Long.toString(aem.getListTypeItem(splitLine[i], IPAddress, sessionId).getId()));
+                            if (!isPrimitive(attributeType)){
+                               RemoteBusinessObjectLight newObj = aem.getListTypeItem(splitLine[i], IPAddress, sessionId);
+                               if(newObj == null){
+                                    errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE") + line + "\n" +
+                                        java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_LISTTYPE_NOT_FOUND")+"\n";
+                                    errors = true;
+                               }
+                               else
+                                    attirbuteValues.add(Long.toString(newObj.getId()));
+                            }
                             else
                                 attirbuteValues.add(splitLine[i]);
                             attributes.put(splitLine[i-1],attirbuteValues);
                         }
                         data.add(new RemoteBusinessObject(-1, className, attributes));
-                        counter++;
+                        commitCounter++;
                     }catch(Exception ex){
-                        errorsMsgs += ex.getMessage();
+                        errorsMsgs += java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE") + line + "\n" + ex.getMessage() + "\n";
+                        errors = true;
                     }
                 }
-                if(commitSize == counter && !errors){
-                    commitLisTypes();
-                    counter = 0;
+                if(errors)
+                    log(uploadFile.getName(), errorsMsgs, line);
+                
+                if(commitSize == commitCounter && !errors){
+                    commitLisTypes(line);
+                    commitCounter = 0;
                     data = new ArrayList<RemoteBusinessObject>();
                 }
             }// end while read line
@@ -302,27 +368,29 @@ public final class LoadDataFromFile implements Runnable{
         }
     }
     
-    public void commitLisTypes(){
+    public void commitLisTypes(String line) throws IOException{
         for(RemoteBusinessObject object : data){ 
             try {
                 long oid = aem.createListTypeItem(object.getClassName(), "", "", IPAddress , sessionId);
                 bem.updateObject(object.getClassName(), oid, object.getAttributes(), IPAddress, sessionId);
             } catch (Exception ex) {
-                Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, "", ex);
+                log(uploadFile.getName(), java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_IN_LINE") + line + "\n" +
+                                java.util.ResourceBundle.getBundle("org/kuwaiba/sync/Errors").getString("ERROR_WRONG_ATTIRBUTE_VALUE")+"\n","");
             }
         }
     }
     
     public void log(String fileName, String msgs, String fileLines) throws IOException{
-        FileWriter aWriter = new FileWriter(PATH_DATA_LOAD_ERRORS+fileName, true);
-        aWriter.write(fileLines);
-        aWriter.flush();
-        aWriter.close();
-        
-        aWriter = new FileWriter(PATH_DATA_LOAD_LOGS+fileName, true);
+        FileWriter aWriter = new FileWriter(PATH_DATA_LOAD_ERRORS+ userId + "/" + fileName, true);
         aWriter.write(msgs);
         aWriter.flush();
         aWriter.close();
+        
+//        aWriter = new FileWriter(PATH_DATA_LOAD_LOGS+fileName, true);
+//        aWriter.write(msgs);
+//        aWriter.flush();
+//        aWriter.close();
     }
 
     protected void connect(){
@@ -390,7 +458,7 @@ public final class LoadDataFromFile implements Runnable{
     }
     
     @Override
-    public void run() {
+    public void doRun() {
         try {
             uploadFile();
         } catch (Exception ex) {

@@ -17,18 +17,9 @@
 package org.kuwaiba.sync;
 
 /**
- *
+ * to notify if a thread has finished its execution
  * @author adrian martinez molina <adrian.martinez@kuwaiba.org>
  */
-public class SyncService {
-    
-    public String bulkUploadFromFile(byte [] uploadData, int commitSize, int dataType, 
-            String IPAddress, String sessionId) {
-        
-         Thread t = new Thread(new LoadDataFromFile(uploadData, commitSize, dataType, IPAddress, sessionId));
-         t.start();
-        
-        return ":)";
-    }
-
+public interface ThreadCompleteListener {
+    boolean notifyOfThreadComplete(final Thread thread);
 }
