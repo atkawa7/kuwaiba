@@ -14,19 +14,26 @@
  *  limitations under the License.
  */
 
-package org.inventory.sync.windows;
+package org.inventory.sync;
 
 import static java.awt.Component.CENTER_ALIGNMENT;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
 import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.sync.SyncService;
-import org.inventory.sync.UploadFileFilter;
+import org.inventory.sync.windows.ExporFilePanel;
+import org.inventory.sync.windows.WriteFile;
 import org.openide.util.Exceptions;
+import org.openide.windows.IOProvider;
+import org.openide.windows.InputOutput;
+import org.openide.windows.TopComponent;
+import org.openide.windows.WindowManager;
 
 /**
  * JFrame to select csv files for bulk load
@@ -53,8 +60,10 @@ public class BulkUploadFrame extends javax.swing.JFrame {
 
     public BulkUploadFrame() {
         initComponents();
-        ss = new SyncService(this);
-//        btnFileChooserObjects.setEnabled(true);
+        final String OUTPUT_ID = "output";
+//        TopComponent outputWindow = WindowManager.getDefault().findTopComponent(OUTPUT_ID);
+//        if (!outputWindow.isOpened())
+//            outputWindow.open();
     }
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
@@ -77,7 +86,7 @@ public class BulkUploadFrame extends javax.swing.JFrame {
         fChooser.setAcceptAllFileFilterUsed(false);
         fChooser.setFileFilter(new UploadFileFilter());
         fChooser.setMultiSelectionEnabled(false);
-        
+                
         setTitle(java.util.ResourceBundle.getBundle("org/inventory/sync/Bundle").getString("LBL_TITLE"));
         
         btnFileChooserListTypes.addActionListener(new java.awt.event.ActionListener() {
@@ -130,7 +139,7 @@ public class BulkUploadFrame extends javax.swing.JFrame {
         pnlListType.add(lblCommitSizeLt);
         pnlListType.add(txtListTypeCommitSize);
         pnlListType.add(btnProcessListTypes);
-        
+
         tabPnlBulkUpload.addTab(java.util.ResourceBundle.getBundle("org/inventory/sync/Bundle").getString("LBL_LIST_TYPES"), pnlListType); // NOI18N
         
         btnFileChooserObjects.setText(java.util.ResourceBundle.getBundle("org/inventory/sync/Bundle").getString("LBL_SELECT_FILE")); // NOI18N
@@ -158,37 +167,53 @@ public class BulkUploadFrame extends javax.swing.JFrame {
         pnlObject.add(btnProcessObjects);
 
         tabPnlBulkUpload.addTab(java.util.ResourceBundle.getBundle("org/inventory/sync/Bundle").getString("LBL_OBJECTS"), pnlObject); // NOI18N
-
-
         getContentPane().add(tabPnlBulkUpload);
 
         pack();
     }
     // </editor-fold> 
-    
-     private void btnFileChooserObjectsActionPerformed(java.awt.event.ActionEvent evt) {                                                      
-        if (fChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
-            try {
-                choosenFile = Utils.getByteArrayFromFile(fChooser.getSelectedFile());
-                
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        }
-    }                                                     
-
-    private void btnProcessListTypesActionPerformed(java.awt.event.ActionEvent evt) {                                                    
-        ss.loadFile(choosenFile, Integer.parseInt(txtObjectsCommitSize.getText()), 1);
-        NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Your file is being processed in background");
+   
+    private void btnProcessListTypesActionPerformed(java.awt.event.ActionEvent evt) { 
+        ss = new SyncService(choosenFile,Integer.parseInt(txtObjectsCommitSize.getText()), 1);
+        ss.run();
+        NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Your will be being process in background");
         if(choosenFile == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "Please select a file");
+        if(ss.loadFile()){
+            ExporFilePanel efp = new ExporFilePanel();
+            if(JOptionPane.showConfirmDialog(null, efp, "Choose a path to save your logs", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+                efp.getPath();
+                WriteFile wr = new WriteFile();
+                ss.downloadLog();
+                byte[] logFile = ss.getLogFile();
+                try {
+                    wr.writeLog(ss.getLogFile(), efp.getPath()+"/"+ss.getFileName());
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        }
     }                                                   
 
     private void btnProcessObjectsActionPerformed(java.awt.event.ActionEvent evt) {                                                  
-        ss.loadFile(choosenFile, Integer.parseInt(txtObjectsCommitSize.getText()), 2);
-        NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Your file is being processed in background");
-            if(choosenFile == null)
+        ss = new SyncService(choosenFile,Integer.parseInt(txtObjectsCommitSize.getText()), 2);
+        ss.run();
+        NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Your file will be process in background");
+        if(choosenFile == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "Please select a file");
+        if(ss.loadFile()){
+            ExporFilePanel efp = new ExporFilePanel();
+            if(JOptionPane.showConfirmDialog(null, efp, "Choose a path", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+                efp.getPath();
+                WriteFile wr = new WriteFile();
+                ss.downloadLog();
+                byte[] logFile = ss.getLogFile();
+                try {
+                    wr.writeLog(ss.getLogFile(), efp.getPath()+"/"+ss.getFileName());
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        }
     }                                                 
-
 }

@@ -18,28 +18,26 @@ package org.inventory.sync;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JFrame;
 import org.inventory.communications.CommunicationsStub;
 
 /**
  * This class provides the business logic to the associated component
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class SyncService implements ActionListener{
+public class SyncService implements ActionListener, Runnable{
 
-    private JFrame stc;
     private String fileName;
-    
     private byte[] logResults;
-    private String logFileName;
-    private byte[] wrongLinesResults;
-    private String wrongLinesFileName;
+    private int fileType;
+    private int commitSize;
+    private byte[] file;
+            
     
-    private static final String LOGS = "kuwaiba_load_data.log_";
-    private static final String ERRORS = "kuwaiba_load_data.errors_";
-
-    public SyncService(JFrame stc) {
-        this.stc = stc;
+    public SyncService(byte[] file, int commitSize, int fileType) {
+        fileName = "";
+        this.file = file;
+        this.commitSize = commitSize;
+        this.fileType = fileType;
     }
 
     @Override
@@ -47,38 +45,30 @@ public class SyncService implements ActionListener{
         
     }
     
-    public String loadFile(byte[] file, int commitSize, int fileType){
-        CommunicationsStub com = CommunicationsStub.getInstance();
-        return com.loadDataFromFile(file, commitSize, fileType);
+    public boolean loadFile(){
+        if(!fileName.isEmpty())
+            return true;
+        else
+            return false;
     }
-    
-//    public void downloadErrors(){
-//        logFileName = ERRORS+fileName;
-//        CommunicationsStub com = CommunicationsStub.getInstance();
-//        //wrongLinesResults = com.downloadErrors(fileName);
-//    }    
-//    
-//    public void downloadLog(){
-//        wrongLinesFileName = LOGS+fileName;
-//        CommunicationsStub com = CommunicationsStub.getInstance();
-//        //logResults = com.downloadLog(fileName);
-//    }
+   
+    public void downloadLog(){
+        CommunicationsStub com = CommunicationsStub.getInstance();
+        logResults = com.downloadLog(fileName);
+    }
 
-//    public byte[] getLogResults() {
-//        return logResults;
-//    }
-//
-//    public String getLogFileName() {
-//        return logFileName;
-//    }
-//
-//    public byte[] getWrongLinesResults() {
-//        return wrongLinesResults;
-//    }
-//
-//    public String getWrongLinesFileName() {
-//        return wrongLinesFileName;
-//    }
-    
-    
+    public byte[] getLogFile() {
+        return logResults;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    @Override
+    public void run() {
+        CommunicationsStub com = CommunicationsStub.getInstance();
+        fileName =  com.loadDataFromFile(file, commitSize, fileType);
+    }
+ 
 }

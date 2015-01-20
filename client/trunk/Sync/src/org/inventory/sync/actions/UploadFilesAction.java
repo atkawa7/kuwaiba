@@ -18,7 +18,7 @@ package org.inventory.sync.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
-import org.inventory.sync.windows.BulkUploadFrame;
+import org.inventory.sync.BulkUploadFrame;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
@@ -44,7 +44,4 @@ public class UploadFilesAction  extends AbstractAction{
         uf.setLocationRelativeTo(null);
         uf.setVisible(true);
     }
-    
-    
-
 }
