@@ -2022,23 +2022,15 @@ public class CommunicationsStub {
             this.error =  ex.getMessage();
             return "";
         }
+    }  
+    
+    public byte[] downloadLog(String fileName){
+        try{
+            return port.downloadBulkLoadLog(fileName, this.session.getSessionId());
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
     }
-//     public byte[] downloadErrors(String fileName){
-//        try{
-//            return port.downloadErrors(fileName, this.session.getSessionId());
-//        }catch(Exception ex){
-//            this.error =  ex.getMessage();
-//            return null;
-//        }
-//    }    
-//    
-//    public byte[] downloadLog(String fileName){
-//        try{
-//            return port.downloadLog(fileName, this.session.getSessionId());
-//        }catch(Exception ex){
-//            this.error =  ex.getMessage();
-//            return null;
-//        }
-//    }
     // </editor-fold>    
 }
