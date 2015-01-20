@@ -53,7 +53,7 @@ import org.kuwaiba.psremoteinterfaces.MetadataEntityManagerRemote;
  * Manages the bulk load for list types an object from CSV files
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public final class LoadDataFromFile extends NotifyingThread{
+public final class LoadDataFromFile{
     /**
      * Date format for sync 
      */
@@ -78,10 +78,6 @@ public final class LoadDataFromFile extends NotifyingThread{
      * Path to log file after a bulkupload
      */
     private static final String PATH_DATA_LOAD_LOGS = "../kuwaiba/logs/";
-    /**
-     * Path to errors file after bulkupload
-     */
-    private static final String PATH_DATA_LOAD_ERRORS = "../kuwaiba/errors/";
     /**
      * Minimum fields required in a csv file to load list types
      */
@@ -127,7 +123,10 @@ public final class LoadDataFromFile extends NotifyingThread{
         return uploadFile;
     }
     
-    public synchronized void uploadFile() throws ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException, MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, OperationNotPermittedException, WrongMappingException{
+    public String uploadFile() throws ApplicationObjectNotFoundException, 
+            NotAuthorizedException, RemoteException, MetadataObjectNotFoundException, 
+            InvalidArgumentException, ObjectNotFoundException, OperationNotPermittedException, WrongMappingException
+    {
         this.userId = aem.getUserInSession(IPAddress, sessionId).getId();
         
         DateFormat dateFormat = new SimpleDateFormat(DATE_HOUR_FORMAT);
@@ -135,9 +134,9 @@ public final class LoadDataFromFile extends NotifyingThread{
         String fileName = Long.toString(userId) + dateFormat.format(new Date());
 
         try {
-            new File(PATH_DATA_LOAD_FILES + userId).mkdirs();
-            new File(PATH_DATA_LOAD_ERRORS + userId).mkdirs();
-            uploadFile = new File(PATH_DATA_LOAD_FILES + userId + "/" + fileName);
+            new File(PATH_DATA_LOAD_FILES).mkdirs();
+            new File(PATH_DATA_LOAD_LOGS).mkdirs();
+            uploadFile = new File(PATH_DATA_LOAD_FILES + fileName);
             
             if(!uploadFile.exists())
                 uploadFile.createNewFile();
@@ -156,17 +155,17 @@ public final class LoadDataFromFile extends NotifyingThread{
                 e.getMessage();
             }
         }
-        
         if(dataType == 1)
             loadListTypes();
         else if (dataType == 2)
             loadObjects();
+        
+        return uploadFile.getName();
     }
     
     private void loadObjects(){
         boolean errors = false;
         String errorsMsgs = "";
-        String errorLines = "";
         HashMap<String, String> insetertedAttributes = new HashMap<String, String>();
         
         try {
@@ -382,15 +381,10 @@ public final class LoadDataFromFile extends NotifyingThread{
     }
     
     public void log(String fileName, String msgs, String fileLines) throws IOException{
-        FileWriter aWriter = new FileWriter(PATH_DATA_LOAD_ERRORS+ userId + "/" + fileName, true);
+        FileWriter aWriter = new FileWriter(PATH_DATA_LOAD_LOGS + fileName, true);
         aWriter.write(msgs);
         aWriter.flush();
         aWriter.close();
-        
-//        aWriter = new FileWriter(PATH_DATA_LOAD_LOGS+fileName, true);
-//        aWriter.write(msgs);
-//        aWriter.flush();
-//        aWriter.close();
     }
 
     protected void connect(){
@@ -406,11 +400,6 @@ public final class LoadDataFromFile extends NotifyingThread{
             aem = null;
             mem = null;
         }
-    }
-    
-    public byte[] downloadErrors(String fileName) throws IOException{
-        File file = new File(PATH_DATA_LOAD_ERRORS + fileName);
-        return getByteArrayFromFile(file);
     }
     
     public byte[] downloadLog(String fileName) throws IOException{
@@ -455,14 +444,5 @@ public final class LoadDataFromFile extends NotifyingThread{
             return true;
         else
             return false;
-    }
-    
-    @Override
-    public void doRun() {
-        try {
-            uploadFile();
-        } catch (Exception ex) {
-            Logger.getLogger(LoadDataFromFile.class.getName()).log(Level.SEVERE, null, ex);
-        }        
     }
 }
