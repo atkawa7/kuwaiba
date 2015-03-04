@@ -118,6 +118,23 @@ public class Util {
         }
         return res;
     }
+    
+    /**
+     * Gets the requested nodes representing list type items
+     * @param values A list of String objects containing the names of the required list type items
+     * @param listType Node the list items are supposed to be instance of
+     * @return A list of nodes representing the list type items
+     */
+    public static List<Node> getRealValueByName(List<String> values, Node listType) throws InvalidArgumentException{
+        Iterable<Relationship> listTypeItems = listType.getRelationships(RelTypes.INSTANCE_OF);
+        List<Node> res = new ArrayList<Node>();
+        for (Relationship listTypeItem : listTypeItems){
+            Node instance = listTypeItem.getStartNode();
+            if (values.contains(instance.getProperty(Constants.PROPERTY_NAME)))
+                res.add(instance);                
+        }
+        return res;
+    }
 
     /**
      * Releases all relationships related to an object given its direction and a relationship's property value

@@ -114,7 +114,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         
         ClassMetadata myClass= cm.getClass(className);
         
-        Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
+        Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
         if (classNode == null)
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
@@ -170,6 +170,45 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "createObject: {0}", ex.getMessage()); //NOI18N
             tx.failure();
             tx.finish();
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public long createObject(String className, String parentClassName, String criteria, HashMap<String,List<String>> attributes, long template, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        try {
+                aem.validateCall("createObject", ipAddress, sessionId);
+                String[] splitCriteria = criteria.split(":");
+                if (splitCriteria.length < 2)
+                    throw new InvalidArgumentException("The criteria is not valid. It has to have at least two components", Level.INFO);
+                
+                if (splitCriteria[0].equals("oid"))
+                    return createObject(className, parentClassName, Long.parseLong(splitCriteria[1]), attributes, template, ipAddress, sessionId);
+                
+                if (splitCriteria[0].equals("name")) {
+                    Node classNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
+                    if (classNode == null)
+                        throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", parentClassName));
+                    long parentOid = -1;
+                    Iterator<Relationship> children = classNode.getRelationships(RelTypes.INSTANCE_OF).iterator();
+                    while (children.hasNext()){
+                        Node possibleParentNode = children.next().getStartNode();
+                        if (splitCriteria[1].equals(possibleParentNode.getProperty(Constants.PROPERTY_NAME))) {
+                            parentOid = possibleParentNode.getId();
+                            break;
+                        }
+                    }
+                    if (parentOid != -1)
+                        return createObject(className, parentClassName, parentOid, attributes, template, ipAddress, sessionId);
+                    
+                    throw new InvalidArgumentException(String.format("A parent with name %s of class %s could not be found", 
+                            splitCriteria[1], parentClassName), Level.INFO);
+                }
+                
+                throw new InvalidArgumentException("Wrong criteria identifier: " + splitCriteria[1], Level.INFO);
+            }catch(Exception ex){
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "createObject: {0}", ex.getMessage()); //NOI18N
             throw new RuntimeException(ex.getMessage());
         }
     }
@@ -1169,18 +1208,20 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                                 newObject.setProperty(att.getName(), Util.getRealValue(attributes.get(att.getName()).get(0), classToMap.getType(att.getName())));
                         else{
                         //If it's not a primitive type, maybe it's a relationship
-                            List<Long> listTypeItems = new ArrayList<Long>();
+
                             if (!cm.isSubClass(Constants.CLASS_GENERICOBJECTLIST, att.getType()))
                                 throw new InvalidArgumentException(String.format("Type %s is not a primitive nor a list type", att.getName()), Level.WARNING);
-                            try{
-                                for (String value : attributes.get(att.getName()))
-                                    listTypeItems.add(Long.valueOf(value));
-                            }catch(NumberFormatException ex){
-                                throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
-                            }
+                                                           
                             Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, att.getType()).getSingle();
-                            List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
-
+                            
+                            if (listTypeNode == null)
+                                throw new InvalidArgumentException(String.format("Class %s could not be found as list type", att.getType()), Level.INFO);
+                            
+                            List<Node> listTypeNodes = Util.getRealValueByName(attributes.get(att.getName()), listTypeNode);
+                            
+                            if (listTypeNodes.isEmpty())
+                                throw new InvalidArgumentException(String.format("At least one of list type items could not be found. Check attribute definition for %s", att.getName()), Level.INFO);
+                      
                             //Create the new relationships
                             for (Node item : listTypeNodes){
                                 Relationship newRelationship = newObject.createRelationshipTo(item, RelTypes.RELATED_TO);

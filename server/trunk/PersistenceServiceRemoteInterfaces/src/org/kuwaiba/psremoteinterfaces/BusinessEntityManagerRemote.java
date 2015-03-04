@@ -79,6 +79,10 @@ public interface BusinessEntityManagerRemote extends Remote{
             HashMap<String,List<String>> attributes, long template, String ipAddress, String sessionId)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
    
+    public long createObject(String className, String parentClass, String criteria, 
+            HashMap<String, List<String>> attributes, long template, String IPAddress, String sessionId)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
+    
     public long createSpecialObject(String className, String parentClassName, long parentOid,
             HashMap<String,List<String>> attributes,long template, String ipAddress, String sessionId)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException, RemoteException;
