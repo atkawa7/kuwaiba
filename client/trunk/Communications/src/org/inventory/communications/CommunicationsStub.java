@@ -2020,7 +2020,7 @@ public class CommunicationsStub {
             return  port.bulkUpload(file, commitSize, classType, this.session.getSessionId());
         }catch(Exception ex){
             this.error =  ex.getMessage();
-            return "";
+            return null;
         }
     }  
     

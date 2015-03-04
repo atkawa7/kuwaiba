@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
 import org.inventory.communications.core.LocalObjectLight;
 
 /**
@@ -55,6 +56,10 @@ public class Utils {
      * Default icon height (used in navigation trees and views)
      */
     public static final int DEFAULT_ICON_WIDTH = 10;
+    /**
+     * A singleton used to open the file choosers in the last opened location
+     */
+    private static JFileChooser globalFileChooser;
      /**
      * Finds the real type for a given type provided as a string
      * Possible types:
@@ -308,6 +313,11 @@ public class Utils {
         return "Other";
     }
     
+    /**
+     * Returns the color that should be used to render a connection
+     * @param connectionClass The class of the connection 
+     * @return The corresponding color
+     */
     public static Color getConnectionColor(String connectionClass){
         if (connectionClass.equals(Constants.CLASS_ELECTRICALLINK))
             return Color.ORANGE;
@@ -320,5 +330,16 @@ public class Utils {
         if (connectionClass.equals(Constants.CLASS_WIRELESSCONTAINER))
             return Color.BLUE;
         return Color.BLACK;
+    }
+    
+    /**
+     * Manages the file chooser singleton
+     * @return The instance of file chooser to be shared across modules. This way, the
+     * last directory is preserved
+     */
+    public static JFileChooser getGlobalFileChooser() {
+        if (globalFileChooser == null)
+            globalFileChooser = new JFileChooser();
+        return globalFileChooser;
     }
 }

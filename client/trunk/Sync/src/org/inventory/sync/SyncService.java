@@ -16,45 +16,31 @@
 
 package org.inventory.sync;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import org.inventory.communications.CommunicationsStub;
+import org.openide.windows.IOProvider;
+import org.openide.windows.InputOutput;
 
 /**
  * This class provides the business logic to the associated component
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class SyncService implements ActionListener, Runnable{
+public class SyncService implements Runnable {
 
     private String fileName;
     private byte[] logResults;
     private int fileType;
     private int commitSize;
     private byte[] file;
-            
     
     public SyncService(byte[] file, int commitSize, int fileType) {
-        fileName = "";
+        this.fileName = "";
         this.file = file;
         this.commitSize = commitSize;
         this.fileType = fileType;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        
-    }
-    
-    public boolean loadFile(){
-        if(!fileName.isEmpty())
-            return true;
-        else
-            return false;
-    }
-   
-    public void downloadLog(){
-        CommunicationsStub com = CommunicationsStub.getInstance();
-        logResults = com.downloadLog(fileName);
     }
 
     public byte[] getLogFile() {
@@ -67,8 +53,24 @@ public class SyncService implements ActionListener, Runnable{
 
     @Override
     public void run() {
+        InputOutput io = IOProvider.getDefault().getIO ("Bulk upload results", true);
         CommunicationsStub com = CommunicationsStub.getInstance();
         fileName =  com.loadDataFromFile(file, commitSize, fileType);
-    }
- 
+        logResults = com.downloadLog(fileName);
+        if (logResults != null) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(logResults)));
+            try {
+                String line;
+                while ((line = br.readLine()) != null)
+                    io.getOut().println (line);
+                
+                br.close();
+            }catch (IOException ex){
+                io.getOut().println ("Error reading log file");
+            }
+        }else
+            io.getOut().println (com.getError());
+        
+        io.getOut().close();
+    } 
 }
