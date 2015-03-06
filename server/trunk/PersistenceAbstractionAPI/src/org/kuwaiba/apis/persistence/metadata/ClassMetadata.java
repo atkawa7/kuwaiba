@@ -132,6 +132,14 @@ public class ClassMetadata extends ClassMetadataLight{
         this.possibleChildren = possibleChildren;
     }// </editor-fold>
 
+    public AttributeMetadata getAttribute(String attributeName) {
+        for (AttributeMetadata att : attributes) {
+            if (att.getName().equals(attributeName))
+                return att;
+        }
+        return null;
+    }
+    
     public boolean implementsInterface(String interfaceName){
         if (interfaces == null)
             return false;

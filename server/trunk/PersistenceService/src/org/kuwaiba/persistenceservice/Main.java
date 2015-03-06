@@ -76,7 +76,7 @@ public class Main {
             System.out.println(String.format("[%s] Persistence Service is up and running", Calendar.getInstance().getTime()));
 
             Runtime.getRuntime().addShutdownHook(new Thread() {
-
+                
                     @Override
                     public void run() {
                        System.out.println(String.format("[%s] Closing connection...", Calendar.getInstance().getTime()));

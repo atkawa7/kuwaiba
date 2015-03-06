@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -174,41 +175,83 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
         }
     }
     
+    //TODO: This method could be optimized, since it force to search for the parent object twice
     @Override
     public long createObject(String className, String parentClassName, String criteria, HashMap<String,List<String>> attributes, long template, String ipAddress, String sessionId)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
         try {
                 aem.validateCall("createObject", ipAddress, sessionId);
                 String[] splitCriteria = criteria.split(":");
-                if (splitCriteria.length < 2)
-                    throw new InvalidArgumentException("The criteria is not valid. It has to have at least two components", Level.INFO);
+                if (splitCriteria.length != 2)
+                    throw new InvalidArgumentException("The criteria is not valid, two components expected (attributeName:attributeValue)", Level.INFO);
                 
-                if (splitCriteria[0].equals("oid"))
+                if (splitCriteria[0].equals(Constants.PROPERTY_OID))
                     return createObject(className, parentClassName, Long.parseLong(splitCriteria[1]), attributes, template, ipAddress, sessionId);
                 
-                if (splitCriteria[0].equals("name")) {
-                    Node classNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
-                    if (classNode == null)
-                        throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", parentClassName));
-                    long parentOid = -1;
-                    Iterator<Relationship> children = classNode.getRelationships(RelTypes.INSTANCE_OF).iterator();
-                    while (children.hasNext()){
-                        Node possibleParentNode = children.next().getStartNode();
-                        if (splitCriteria[1].equals(possibleParentNode.getProperty(Constants.PROPERTY_NAME))) {
-                            parentOid = possibleParentNode.getId();
-                            break;
-                        }
-                    }
-                    if (parentOid != -1)
-                        return createObject(className, parentClassName, parentOid, attributes, template, ipAddress, sessionId);
-                    
-                    throw new InvalidArgumentException(String.format("A parent with name %s of class %s could not be found", 
-                            splitCriteria[1], parentClassName), Level.INFO);
-                }
+                ClassMetadata parentClass = cm.getClass(parentClassName);
+                if (parentClass == null)
+                    throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", parentClassName));
                 
-                throw new InvalidArgumentException("Wrong criteria identifier: " + splitCriteria[1], Level.INFO);
+                AttributeMetadata filterAttribute = parentClass.getAttribute(splitCriteria[1]);
+                
+                if (filterAttribute == null)
+                    throw new MetadataObjectNotFoundException(String.format("Attribute %s could not be found", splitCriteria[1]));
+
+                if (!AttributeMetadata.isPrimitive(filterAttribute.getType()))
+                    throw new InvalidArgumentException(String.format(
+                            "The filter provided (%s) is not a primitive type. Non-primitive types are not supported as they typically don't uniquely identify an object", 
+                            splitCriteria[0]), Level.INFO);
+                
+                long parentOid = -1;
+                Node parentClassNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
+                Iterator<Relationship> instances = parentClassNode.getRelationships(RelTypes.INSTANCE_OF).iterator();
+                
+                while (instances.hasNext()){
+                    Node possibleParentNode = instances.next().getStartNode();                   
+                    if (possibleParentNode.getProperty(splitCriteria[0]).toString().equals(splitCriteria[1])) {
+                        parentOid = possibleParentNode.getId();
+                        break;
+                    }
+                }
+                if (parentOid != -1)
+                    return createObject(className, parentClassName, parentOid, attributes, template, ipAddress, sessionId);
+
+                throw new InvalidArgumentException(String.format("A parent with %s %s of class %s could not be found", 
+                        splitCriteria[0], splitCriteria[1], parentClassName), Level.INFO);
             }catch(Exception ex){
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "createObject: {0}", ex.getMessage()); //NOI18N
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+    
+    //@Override
+    public long[] createObjects(List<String> classNamesString, List<String> parentClassNames, List<AttributeDefinitionSet> criteria, List<AttributeDefinitionSet> attributes, String ipAddress, String sessionId)
+            throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, DatabaseException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        aem.validateCall("createObjects", ipAddress, sessionId);
+        
+        Transaction tx = null;
+        try{
+            if (classNamesString.size() != parentClassNames.size() || parentClassNames.size() != criteria.size()
+                    || criteria.size() != attributes.size())
+                throw new InvalidArgumentException("The length of the parameters provided doen't match", Level.INFO);
+
+            tx = graphDb.beginTx();
+            long[] newObjects = new long[classNamesString.size()];
+            
+            for (int i = 0; i < classNamesString.size(); i++){
+            
+            }
+            
+            tx.success();
+            tx.finish();
+            
+            return newObjects;
+        }catch(Exception ex){
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "createSpecialObject: {0}", ex.getMessage()); //NOI18N
+            if (tx != null) {
+                tx.failure();
+                tx.finish();
+            }
             throw new RuntimeException(ex.getMessage());
         }
     }
@@ -1304,5 +1347,23 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             }
         }//end for
         return new int[]{executedFiles, totalPatchFiles};
+    }
+    
+    /**
+     * This class wraps a set of attribute definitions necessary to create objects with default values
+     */
+    public class AttributeDefinitionSet implements Serializable{
+        /**
+         * The key is the attribute name, the value, the attribute definition, typically one value, a string or a number
+         */
+        private HashMap<String, String[]> attributes;
+
+        public HashMap<String, String[]> getAttributes() {
+            return attributes;
+        }
+
+        public void setAttributes(HashMap<String, String[]> attributes) {
+            this.attributes = attributes;
+        }
     }
 }

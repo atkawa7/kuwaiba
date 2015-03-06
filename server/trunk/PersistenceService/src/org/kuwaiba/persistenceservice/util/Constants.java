@@ -151,6 +151,7 @@ public class Constants {
     public static final String PROPERTY_DESCRIPTION = "description"; //NOI18N
     public static final String PROPERTY_READ_ONLY = "readOnly"; //NOI18N
     public static final String PROPERTY_ID = "id"; //NOI18N
+    public static final String PROPERTY_OID = "oid"; //NOI18N
     public static final String PROPERTY_ABSTRACT = "abstract"; //NOI18N
     public static final String PROPERTY_CUSTOM = "custom"; //NOI18N
     public static final String PROPERTY_COUNTABLE = "countable"; //NOI18N

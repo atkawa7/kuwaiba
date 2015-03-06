@@ -14,7 +14,7 @@
 
 0.1.1
 * Added preliminar User/Groups management (You can create users and groups and relate them, but there's no privileges scheme yet)
-* The server and the client can reside in diferent computers.
+* The server and the client can reside in different computers.
 * More methods use now the Criteria API, and the updateObject method doesn't use native queries to avoid SQL Injection
 * Multiple bugfixes
 
@@ -79,3 +79,8 @@
 * Datamodel change 
 * Support for software assets
 * Lots of bugfixes
+* Preliminary support for bulk uploads
+
+0.7.1
+* The bulk upload file format was improved
+* Added method to allow the creation of multiple objects at once in the API
