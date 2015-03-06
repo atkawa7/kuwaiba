@@ -408,7 +408,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             object = (LocalObjectLight) evt.getSource();
             if (evt.getPropertyName().equals(Constants.PROPERTY_NAME)) {
                 setDisplayName(getDisplayName());
-                fireDisplayNameChange((String)evt.getOldValue(), (String)evt.getNewValue());
+                //fireDisplayNameChange((String)evt.getOldValue(), (String)evt.getNewValue());
+                fireNameChange(null, object.getName());
                 //firePropertyChange(Constants.PROPERTY_NAME, null, object.getName());
             }
         }
