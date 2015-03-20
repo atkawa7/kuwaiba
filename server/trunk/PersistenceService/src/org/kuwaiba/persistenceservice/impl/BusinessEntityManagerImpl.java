@@ -239,7 +239,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
             long[] newObjects = new long[classNamesString.size()];
             
             for (int i = 0; i < classNamesString.size(); i++){
-            
+                
             }
             
             tx.success();

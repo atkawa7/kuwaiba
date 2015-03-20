@@ -799,7 +799,6 @@
                               <attribute name="band" type="String" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="edge" type="Integer" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="orientation" type="Float" javaModifiers="4" applicationModifiers="0"/>
-                              <attribute name="owner" type="CorporateCustomer" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
                               <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                               <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
@@ -816,7 +815,6 @@
                                   <attribute name="segment" type="Integer" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="edge" type="Integer" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="orientation" type="Float" javaModifiers="4" applicationModifiers="0"/>
-                                  <attribute name="owner" type="CorporateCustomer" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
                                   <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
@@ -834,7 +832,6 @@
                                   <attribute name="band" type="String" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="edge" type="Integer" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="orientation" type="Float" javaModifiers="4" applicationModifiers="0"/>
-                                  <attribute name="owner" type="CorporateCustomer" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
                                   <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
@@ -853,7 +850,6 @@
                                   <attribute name="segment" type="Integer" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="edge" type="Integer" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="orientation" type="Float" javaModifiers="4" applicationModifiers="0"/>
-                                  <attribute name="owner" type="CorporateCustomer" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="serialNumber" type="String" javaModifiers="4" applicationModifiers="1"/>
                                   <attribute name="vendor" type="EquipmentVendor" javaModifiers="4" applicationModifiers="0"/>
                                   <attribute name="conditions" type="EnvironmentalCondition" javaModifiers="4" applicationModifiers="0"/>
@@ -2225,14 +2221,12 @@
               </class>
               <class name="GenericLogicalElement" javaModifiers="1025" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.logical">
                 <attributes>
-                  <attribute name="customer" type="CorporateCustomer" javaModifiers="4" applicationModifiers="0"/>
                   <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                   <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                 </attributes>
                 <subclasses>
                   <class name="GenericAddress" javaModifiers="1025" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.logical.addressing">
                     <attributes>
-                      <attribute name="customer" type="CorporateCustomer" javaModifiers="4" applicationModifiers="0"/>
                       <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                       <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                     </attributes>
@@ -2257,7 +2251,6 @@
                   <class name="VLAN" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.logical.misc">
                     <attributes>
                       <attribute name="ports" type="String" javaModifiers="4" applicationModifiers="2"/>
-                      <attribute name="customer" type="CorporateCustomer" javaModifiers="4" applicationModifiers="0"/>
                       <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                       <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                     </attributes>
@@ -2265,7 +2258,6 @@
                   </class>
                   <class name="VPN" javaModifiers="1" applicationModifiers="0" classType="1" classPackage="org.kuwaiba.entity.logical.misc">
                     <attributes>
-                      <attribute name="customer" type="CorporateCustomer" javaModifiers="4" applicationModifiers="0"/>
                       <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                       <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                     </attributes>
@@ -2276,7 +2268,6 @@
                       <attribute name="hardDisk" type="Float" javaModifiers="4" applicationModifiers="0"/>
                       <attribute name="ram" type="Integer" javaModifiers="4" applicationModifiers="0"/>
                       <attribute name="type" type="VirtualizationSoftware" javaModifiers="4" applicationModifiers="0"/>
-                      <attribute name="customer" type="CorporateCustomer" javaModifiers="4" applicationModifiers="0"/>
                       <attribute name="creationDate" type="Date" javaModifiers="4" applicationModifiers="5"/>
                       <attribute name="name" type="String" javaModifiers="4" applicationModifiers="0"/>
                     </attributes>
