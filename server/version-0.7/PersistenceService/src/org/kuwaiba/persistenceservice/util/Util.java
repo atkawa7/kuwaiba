@@ -104,34 +104,33 @@ public class Util {
 
     /**
      * Gets the requested nodes representing list type items
-     * @param values A list of Long objects containing the ids of the required list type items
+     * @param values This list may contain the id of the associated objects or their names
      * @param listType Node the list items are supposed to be instance of
      * @return A list of nodes representing the list type items
      */
-    public static List<Node> getRealValue(List<Long> values, Node listType) throws InvalidArgumentException{
+    public static List<Node> getRealValue(List<String> values, Node listType) throws InvalidArgumentException{
         Iterable<Relationship> listTypeItems = listType.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
         List<Node> res = new ArrayList<Node>();
-        for (Relationship listTypeItem : listTypeItems){
-            Node instance = listTypeItem.getStartNode();
-            if (values.contains(new Long(instance.getId())))
-                res.add(instance);
-        }
-        return res;
-    }
-    
-    /**
-     * Gets the requested nodes representing list type items
-     * @param values A list of String objects containing the names of the required list type items
-     * @param listType Node the list items are supposed to be instance of
-     * @return A list of nodes representing the list type items
-     */
-    public static List<Node> getRealValueByName(List<String> values, Node listType) throws InvalidArgumentException{
-        Iterable<Relationship> listTypeItems = listType.getRelationships(RelTypes.INSTANCE_OF);
-        List<Node> res = new ArrayList<Node>();
-        for (Relationship listTypeItem : listTypeItems){
-            Node instance = listTypeItem.getStartNode();
-            if (values.contains(instance.getProperty(Constants.PROPERTY_NAME)))
-                res.add(instance);                
+        
+        for (String value : values) {
+            try { //If the value provided is a number, match the node id, if not, the name
+                long valueAsLong = Long.valueOf(value);
+                for (Relationship listTypeItem : listTypeItems){
+                    Node instance = listTypeItem.getStartNode();
+                    if (instance.getId() == valueAsLong) {
+                        res.add(instance);
+                        break;
+                    }
+                }
+            }catch(NumberFormatException ex) {
+                for (Relationship listTypeItem : listTypeItems){
+                    Node instance = listTypeItem.getStartNode();
+                    if (instance.getProperty(Constants.PROPERTY_NAME).equals(value)) {
+                        res.add(instance);
+                        break;
+                    }
+                }
+            }
         }
         return res;
     }
