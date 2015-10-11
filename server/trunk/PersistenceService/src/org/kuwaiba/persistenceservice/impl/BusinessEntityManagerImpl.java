@@ -572,7 +572,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                             }
                         }
                     }else { //If the attribute is not a primitive type, then it's a relationship
-                        List<Long> listTypeItems = new ArrayList<Long>();
                         if (!cm.getClass(myClass.getType(attributeName)).isListType())
                             throw new InvalidArgumentException(String.format("Class %s is not a list type", myClass.getType(attributeName)), Level.WARNING);
 
@@ -585,15 +584,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                             }
                         }
                         if (attributes.get(attributeName) != null){ //If the new value is different than null, then create the new relationships
-                            try{
-                                for (String value : attributes.get(attributeName))
-                                    listTypeItems.add(Long.valueOf(value));
-                            }catch(NumberFormatException ex){
-                                throw new InvalidArgumentException(ex.getMessage(), Level.WARNING);
-                            }
 
                             Node listTypeNode = classIndex.get(Constants.PROPERTY_NAME, myClass.getType(attributeName)).getSingle();
-                            List<Node> listTypeNodes = Util.getRealValue(listTypeItems, listTypeNode);
+                            List<Node> listTypeNodes = Util.getRealValue(attributes.get(attributeName), listTypeNode);
 
                             newValue = "";
                             //Create the new relationships
@@ -1226,7 +1219,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
     }
     
     protected Node createObject(Node classNode, ClassMetadata classToMap, HashMap<String,List<String>> attributes, long template) 
-            throws InvalidArgumentException, MetadataObjectNotFoundException{
+            throws InvalidArgumentException, MetadataObjectNotFoundException {
  
         if (classToMap.isAbstract())
                 throw new InvalidArgumentException(String.format("Can not create objects from abstract classes (%s)", classToMap.getName()), Level.OFF);
@@ -1260,7 +1253,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager, Busines
                             if (listTypeNode == null)
                                 throw new InvalidArgumentException(String.format("Class %s could not be found as list type", att.getType()), Level.INFO);
                             
-                            List<Node> listTypeNodes = Util.getRealValueByName(attributes.get(att.getName()), listTypeNode);
+                            List<Node> listTypeNodes = Util.getRealValue(attributes.get(att.getName()), listTypeNode);
                             
                             if (listTypeNodes.isEmpty())
                                 throw new InvalidArgumentException(String.format("At least one of list type items could not be found. Check attribute definition for %s", att.getName()), Level.INFO);

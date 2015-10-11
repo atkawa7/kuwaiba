@@ -1,0 +1,10 @@
+grant {
+        permission java.util.PropertyPermission "*","read,write";
+        permission java.util.PropertyPermission "sun.arch.data.model","read";
+        permission java.io.FilePermission "persistence.properties","read";
+        permission java.io.FilePermission "<<ALL FILES>>","read,write,delete";
+        permission java.lang.RuntimePermission "accessDeclaredMembers", "read";
+        permission java.lang.RuntimePermission "shutdownHooks", "write";
+        permission java.lang.RuntimePermission "modifyThread";
+        permission java.net.SocketPermission "127.0.0.1","connect,accept,resolve";
+};
